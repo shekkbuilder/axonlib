@@ -1,0 +1,23 @@
+axContainer
+- widget hover
+
+axWindow X11/W32
+- mouse cursor
+- mouse setpos/lockpos/restict
+
+axCanvas
+- createPen, Brush, Font
+- usePen
+
+
+
+----------
+
+TODO:
+  axProgram
+  axBank
+  axPen
+  axBrush
+  axFont
+  [axMouseCursor]
+
