@@ -1,0 +1,29 @@
+#!/bin/bash
+
+function compile_linux
+{
+  echo - $1
+  `g++ -I../ax -I../vstsdk24 -lX11 -lpthread -O3 -Os -fdata-sections -ffunction-sections $1.cpp -s -o $1 -Wl,-gc-sections`
+  `strip --strip-all $1`
+
+}
+
+function compile_win32
+{
+  echo - $1.exe
+  `i586-mingw32msvc-g++ -I../ax -I../vstsdk24 -mwindows -O3 -Os -fdata-sections -ffunction-sections $1.cpp -s -o $1.exe -Wl,-gc-sections`
+  `i586-mingw32msvc-strip --strip-all $1.exe`
+}
+
+compile_linux $1
+compile_win32 $1
+
+# cp $1.exe ../../bin
+# cp $1 ../../bin
+
+# echo name of script is $0
+# echo first argument is $1
+# echo second argument is $2
+# echo seventeenth argument is $17
+# echo number of arguments is $#
+

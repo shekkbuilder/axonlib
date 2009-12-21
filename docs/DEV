@@ -1,0 +1,59 @@
+parameter
+
+-----
+
+pluginvst
+- aeffect -> do..
+
+plugin
+- parameters
+- [editor]
+
+-----
+
+widget
+- rect
+- event handlers
+- listener
+
+container
+- subwidgets
+- event distribution
+- layout
+- is listener
+
+window
+- os/host -> do..
+
+editor
+- gui/update [canvas]
+- connections (widget <-> parameter)
+- [plugin]
+
+
+----------------------------------------------------------------------
+
+plugin
+  parameters
+
+editor
+  widgets
+
+----------------------------------------------------------------------
+
+
+constructor:
+  axWidget(aListener,aID,aRect,aAlignment,aParameter) { mListener=aListener }
+
+axWindowX11.eventhandler
+  doMouseDown(ev->xbutton.x, ev->xbutton.y, but|key );
+    wdgSwitch.doMouseDown()
+      mListener->onChange(this);
+
+        axWindow.onChange(axWidget* aWidget) { redrawWidget(aWidget); }
+        axWindow.redrawWidget(axWidget* aWidget) { redrawRect( aWidget->mRect ); }
+        axWindow.redrawRect(axRect aRect)  { redrawRect( aRect.x, aRect.y, aRect.w, aRect.h ); }
+        axWindow.redrawRect( int aX, int aY, int aW, int aH ) { invalidate(aX,aY,aW,aH); }
+          axWindowX11.invalidate(int aX, int aY, int aW, int aH) {}
+            axWIndowX11.eventHandler(Expose)
+

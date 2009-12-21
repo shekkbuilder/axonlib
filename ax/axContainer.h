@@ -1,0 +1,414 @@
+#ifndef axContainer_included
+#define axContainer_included
+//----------------------------------------------------------------------
+
+//#define AX_PAINTERS
+
+#include "axWidget.h"
+
+class axContainer : public axWidget,
+                    public axWidgetListener
+{
+  //protected:
+  public:
+    axWidgets mWidgets;
+    //mouse
+    axWidget* mCapturedWidget;
+    axWidget* mClickedWidget;
+    int       mClickedX;
+    int       mClickedY;
+    int       mClickedB;
+    //layout
+    axRect    mClient;                // current Client area
+    int       mStackedX, mStackedY;   // where to put next wal_Stacked widget
+    axRect    mMargins;               // container inner space (between outer border & widgets)
+    int       mPaddingX, mPaddingY;   // space between wal_Stacked widgets
+
+  public:
+
+    axContainer(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None)
+    : axWidget(aListener, aID, aRect, aAlignment)
+      {
+        //if (!aListener) aListener = this;
+        //clearAllFlags();
+        //setFlag(wfl_Active);
+        //setFlag(wfl_Visible);
+        //setFlag(wfl_Capture);
+        //setFlag(wfl_Align);
+        //mWidgets.clear();
+        mCapturedWidget = NULL;
+        mClickedWidget = NULL;
+        //doRealign();
+        mMargins.set(0,0,0,0);
+        mPaddingX = 0;
+        mPaddingY = 0;
+        mClient = mRect;
+        mStackedX = 0;
+        mStackedY = 0;
+      }
+
+    //----------
+
+    virtual ~axContainer()
+      {
+        deleteWidgets();
+      }
+
+    //--------------------------------------------------
+
+    virtual void initMouseState(void)
+      {
+        mCapturedWidget = NULL;
+        mClickedWidget  = NULL;
+      }
+
+    //----------
+
+    virtual void clearWidgets(void)
+      {
+        mWidgets.clear();
+      }
+
+    //----------
+
+    virtual int numWidgets(void)
+      {
+        return mWidgets.size();
+      }
+
+    //----------
+
+    virtual void appendWidget(axWidget* aWidget, bool aRealign=false)
+      {
+        //aWidget->doMove( mRect.x + aWidget->mRect.x, mRect.y + aWidget->mRect.y );
+        mWidgets.append(aWidget);
+        if(aRealign)
+        {
+          aWidget->doMove( mRect.x + aWidget->mRect.x, mRect.y + aWidget->mRect.y );
+          //doRealign();
+        }
+      }
+
+    //----------
+
+    virtual void removeWidget(int aIndex)
+      {
+      }
+
+    //----------
+
+    virtual void deleteWidgets(void)
+      {
+        for( int i=0; i<numWidgets(); i++ ) delete mWidgets[i];
+        mWidgets.clear();
+      }
+
+    //----------
+
+    virtual axWidget* widget(int aIndex)
+      {
+        return mWidgets[aIndex];
+      }
+
+    //--------------------------------------------------
+    //
+    //--------------------------------------------------
+
+    // return first (active) widget that contains aX,aY
+    virtual axWidget* findWidget(int aX, int aY)
+      {
+        //if( mHoverWidget && mHoverWidget->contains(aX,aY) ) return mHoverWidget;
+        for( int i=0; i<mWidgets.size(); i++ )
+        {
+          axWidget* W = mWidgets[i];
+          if(W->hasFlag(wfl_Active))
+            if(W->contains(aX,aY))
+              return W;
+        }
+        return NULL;
+      }
+
+    //--------------------------------------------------
+    // widget handler
+    //--------------------------------------------------
+
+    //virtual void      doReset(void) {}
+    //virtual void      doSetValue(float aValue) {} // 0..1
+    //virtual float     doGetValue(void) { return 0; } // 0..1
+    //virtual axString  doGetName(void) { return STR_EMPTY; }
+
+    //----------
+
+    virtual void doMove(int aX, int aY)
+      {
+        int dx = aX - mRect.x;                // how much we have moved
+        int dy = aY - mRect.y;
+        axWidget::doMove(aX,aY);              // move ourselves...
+        for( int i=0;i<mWidgets.size(); i++ ) // ... and move sub-widgets same amount
+        {
+          mWidgets[i]->doMove( mWidgets[i]->mRect.x + dx, mWidgets[i]->mRect.y + dy );
+        }
+      }
+
+    //----------
+
+    virtual void doResize(int aW, int aH)
+      {
+        axWidget::doResize(aW,aH);
+        //if( hasFlag(wfl_Align) ) doRealign();
+      }
+
+    //----------
+
+//    //TODO: fix
+//    virtual void doRealign(void)
+//      {
+//        if( hasFlag(wfl_Align ) )
+//        {
+//          //bool empty = false;
+//          axRect R = mRect;
+//          R.add( mSpaceX, mSpaceY, -(mSpaceX*2), -(mSpaceY*2) ); // spacing (outer border)
+//          axRect C = R;
+//          int largest = 0;
+//          int stackx = R.x + mPadX;
+//          int stacky = R.y + mPadY;
+//          for( int i=0; i<mWidgets.size(); i++ )
+//          {
+//            axWidget* wdg = mWidgets[i];
+//            //int xx = wdg->mRect.x;// - mRect.x;
+//            //int yy = wdg->mRect.y;// - mRect.y;
+//
+//
+//            int ww = wdg->mRect.w;
+//            int hh = wdg->mRect.h;
+//            switch( wdg->mAlignment )
+//            {
+//              //case wal_None:
+//              //  break;
+//              case wal_Parent:
+//                wdg->doMove( R.x + wdg->mOrigin.x, R.y + wdg->mOrigin.y );
+//                break;
+//              //case wal_Fill:
+//              //  wdg->doMove( R.x, R.y );
+//              //  wdg->doResize( R.w, R.h );
+//              //  break;
+//              case wal_Client:
+//                wdg->doMove( C.x, C.y );
+//                wdg->doResize( C.w, C.h );
+//                //empty = true;
+//                break;
+//              case wal_Left:
+//                wdg->doMove( C.x, C.y );
+//                wdg->doResize( ww, C.h );
+//                C.x += ww;
+//                C.w -= (ww*2);
+//                break;
+//              case wal_Right:
+//                wdg->doMove( C.x2()-ww, C.y );
+//                wdg->doResize( ww, C.h );
+//                C.w -= ww;
+//                break;
+//              case wal_Top:
+//                wdg->doMove( C.x, C.y );
+//                wdg->doResize( C.w, hh );
+//                C.y += hh;
+//                C.h -= hh;
+//                break;
+//              case wal_Bottom:
+//                wdg->doMove( C.x, C.y2()-hh );
+//                wdg->doResize( C.w, hh );
+//                C.h -= hh;
+//                break;
+//              case wal_Stacked:
+//                wdg->doMove( stackx, stacky );
+//                //TODO: fix
+//                int w = ww + mPadX;
+//                int h = hh + mPadY;
+//
+//                // denne er feil
+//                // wrapper til neste linje/row, hvis current widget ikke får plass,
+//
+//                if( mFlags&wfl_Vertical )
+//                {
+//                  int remain = R.y2() - stacky - h;
+//                  if( remain>=h )
+//                  {
+//                    stacky+=h;
+//                    if(w>largest) largest=w;
+//                  }
+//                  else
+//                  {
+//                    stacky=R.y+mPadY;
+//                    stackx+=largest;//w;                                        // largest
+//                    largest = 0;
+//                  }
+//                } //vertical
+//                else
+//                {
+//                  int remain = R.x2() - stackx - w;
+//                  if( remain>=w )
+//                  {
+//                    stackx+=w;
+//                    if(h>largest) largest=h;
+//                  }
+//                  else
+//                  {
+//                    stackx=R.x+mPadX;
+//                    stacky+=largest;//h;                                        // largest
+//                    largest = 0;
+//                  }
+//                } //horizontal
+//                break;
+//            } //switch alignment
+//            wdg->doRealign();
+//
+//
+//          } //for widgets
+//        } //wfl_Align
+//      }
+
+    //----------
+
+    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
+      {
+        if( hasFlag(wfl_Visible) )
+        {
+          if( mRect.intersects(aRect) )
+          {
+            if( hasFlag(wfl_Clip) ) aCanvas->setClipRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
+            axWidget::doPaint( aCanvas, aRect );
+#ifdef AX_PAINTERS
+            for( int i=mWidgets.size()-1; i>=0; i-- )
+#else
+            for( int i=0; i<mWidgets.size(); i++ )
+#endif
+            {
+              axWidget* W = mWidgets[i];
+              if( W->intersects(aRect) ) W->doPaint( aCanvas,aRect );
+            }
+            if( hasFlag(wfl_Clip) ) aCanvas->clearClipRect();
+          } //intersect
+        }
+      }
+
+    //----------
+
+    //virtual void doEnter(void) {}
+    //virtual void doLeave(void) {}
+    //virtual void doTimer(void) {}
+
+    //----------
+
+    virtual void doMouseDown(int aX, int aY, int aB)
+      {
+        if( hasFlag(wfl_Active) )
+        {
+          axWidget* wdg = findWidget(aX,aY);
+          if(wdg)
+          {
+            wdg->doMouseDown(aX,aY,aB);
+            mClickedWidget = wdg;
+            mClickedX = aX;
+            mClickedY = aY;
+            mClickedB = aB;
+            if(hasFlag(wfl_Capture)) mCapturedWidget = wdg;
+          } //wdg
+        } //active
+      }
+
+    //----------
+
+    virtual void doMouseUp(int aX, int aY, int aB)
+      {
+        if( hasFlag(wfl_Active) )
+        {
+          if( mCapturedWidget )
+          {
+            mCapturedWidget->doMouseUp(aX,aY,aB);
+            mCapturedWidget = NULL;
+            //releaseCursor();
+          } //captured
+          //else if (mHoverWidget) mHoverWidget->doMouseUp(aX,aY,aB);
+          mClickedWidget = NULL;
+        } //active
+      }
+
+    //----------
+
+    virtual void doMouseMove(int aX, int aY, int aB)
+      {
+        if( hasFlag(wfl_Active) )
+        {
+          if( mCapturedWidget ) mCapturedWidget->doMouseMove(aX,aY,aB);
+        } //active
+      }
+
+    //----------
+
+    //virtual void doKeyDown(int aK, int aS) {}
+    //virtual void doKeyUp(int aK, int aS) {}
+
+    //----------------------------------------
+    // widget listener
+    //----------------------------------------
+
+    virtual void onChange(axWidget* aWidget)
+      {
+        mListener->onChange(aWidget);
+      }
+
+    //----------
+
+    virtual void onRedraw(axWidget* aWidget)
+      {
+        mListener->onRedraw(aWidget);
+      }
+
+    //----------
+
+    virtual void onRedraw(axRect aRect)
+      {
+        mListener->onRedraw(aRect);
+      }
+
+    //----------
+
+    virtual void onRedrawAll(void)
+      {
+        mListener->onRedraw(this);
+      }
+
+    //----------
+
+    //virtual void onMoved(int aX, int aY)
+    //  {
+    //    if(hasFlag(wfl_Align))
+    //    {
+    //      doRealign();
+    //      mListener->onRedraw(this);
+    //    }
+    // }
+
+    //----------
+
+    //virtual void onResized(int aW, int aH)
+    //  {
+    //    if(hasFlag(wfl_Align))
+    //    {
+    //      doRealign();
+    //      mListener->onRedraw(this);
+    //    }
+    //  }
+
+    //----------
+
+    virtual void onSetHint(axString aHint)
+      {
+        mListener->onSetHint(aHint);
+      }
+
+};
+
+//----------------------------------------------------------------------
+#endif
+
