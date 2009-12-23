@@ -95,6 +95,7 @@ class axPluginImpl :  public AudioEffectX
     virtual void      doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3) {}
     virtual bool      doProcessBlock(float** inputs, float** outputs, long sampleFrames) { return false; }
     virtual void      doProcessSample(float** ins, float** outs) { *outs[0]=*ins[0]; *outs[1]=*ins[1]; }
+    virtual void      doPostProcess(float** inputs, float** outputs, long sampleFrames) {}
 
     //----------------------------------------------------------------------
 
@@ -403,6 +404,13 @@ class axPluginImpl :  public AudioEffectX
     // AudioEffectX
     //----------------------------------------
 
+    //TODO: sort?
+    // if so, stuff all events into a buffer
+    // a) check last item offset, of later, append after previous
+    // if before, search from start, and insert (move later)
+    // b) sort
+    // c) pre-scan VstEvents array
+
     virtual VstInt32 processEvents(VstEvents* ev)
       {
         //sendMidiClear();
@@ -527,6 +535,7 @@ class axPluginImpl :  public AudioEffectX
             outs[1]++;
           } //sampleflrames
         } //process_block
+        doPostProcess(inputs,outputs,sampleFrames);
         sendMidiAll();
       }
 
