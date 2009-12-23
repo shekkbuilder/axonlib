@@ -31,14 +31,14 @@ class dspBuffer
     inline float* getBuffer(void) { return mBuffer; }
     inline int getLength(void) { return mLength; }
 
+    inline void setIndex(int aIndex) { mIndex = aIndex; } // toto: error-check, range-check, ...
+    inline int getIndex(void) { return mIndex; }
+
     void setup(float* aBuffer, int aLength)
       {
         mBuffer = aBuffer;
         mLength = aLength;
       }
-
-    inline void setIndex(int aIndex) { mIndex = aIndex; } // toto: error-check, range-check, ...
-    inline int getIndex(void) { return mIndex; }
 
     //----------
 

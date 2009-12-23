@@ -13,14 +13,12 @@
 #define AX_NUMPARAMS  1
 #include "axPlugin.h"
 #include "parFloat.h"
-#include "dspPitchDetect.h"
 
 class myPlugin : public axPlugin
 {
   private:
     float gain;
     float buf[1024];
-    dspPitchDetect pitdet;
   public:
     myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
     : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
@@ -33,11 +31,10 @@ class myPlugin : public axPlugin
       {
         if (aParameter->mID==0) gain = aParameter->getValue();
       }
-    virtual bool doProcessBlock(float** ins, float** outs, int sampleFrames)
-      {
-        pitdet.process( ins[0], sampleFrames,4);
-        return false;
-      }
+    //virtual bool doProcessBlock(float** ins, float** outs, int sampleFrames)
+    //  {
+    //    return false;
+    //  }
     virtual void doProcessSample(float** ins, float** outs)
       {
         *outs[0] = *ins[0] * gain;

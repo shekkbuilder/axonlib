@@ -311,7 +311,7 @@ class axWindowImpl : public axWindowBase
 
     //virtual void beginPaint(void)
     //  {
-    //  };
+    //  }
 
     //----------
 
@@ -319,7 +319,7 @@ class axWindowImpl : public axWindowBase
     //  {
     //    //XFlush(gDP);
     //    //XSync(gDP,false);
-    //  };
+    //  }
 
     //----------
 

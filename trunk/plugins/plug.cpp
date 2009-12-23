@@ -30,6 +30,8 @@
 //#include "ccernn/syn_perc0.cpp"
 //#include "ccernn/syn_plucked0.cpp"
 
+//#include "ccernn/syn_poly0.cpp"             // !!!
+
 //----------------------------------------------------------------------
 // gui
 //----------------------------------------------------------------------
@@ -46,7 +48,7 @@
 //#include "ccernn/syn_perc0.cpp"
 //#include "ccernn/syn_plucked0.cpp"
 
-//#include "ccernn/test_syncview0.cpp"
+//#include "ccernn/test_syncview0.cpp"      // !!!
 
 //----------------------------------------------------------------------
 // liteon

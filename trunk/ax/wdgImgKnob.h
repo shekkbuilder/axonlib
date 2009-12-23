@@ -7,7 +7,8 @@
 
 class wdgImgKnob : public wdgValue
 {
-  private:
+  //private:
+  protected:
     bool  is_vertical;
     int   mImgWidth, mImgHeight;
     //char buf[32];
@@ -18,9 +19,6 @@ class wdgImgKnob : public wdgValue
     int mNumImages;
     axSurface* mSurface;
     //
-    axRect mNameRect;
-    axRect mImageRect;
-    axRect mDisplayRect;
 
   public:
 
