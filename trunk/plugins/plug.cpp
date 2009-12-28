@@ -6,10 +6,8 @@
 
 //----------------------------------------------------------------------
 
-
-
 //#include "plug_debug.cpp"
-#include "ccernn/again.cpp"
+//#include "ccernn/again.cpp"
 
 //----------------------------------------------------------------------
 // no gui
@@ -38,7 +36,7 @@
 
 //#include "ccernn/ana_sigview0.cpp"
 //#include "ccernn/ana_vu0.cpp"             // !!!
-//#include "ccernn/fx_cutter0.cpp"
+#include "ccernn/fx_cutter0.cpp"
 //#include "ccernn/fx_dynamics0.cpp"
 //#include "ccernn/fx_tempodelay0.cpp"
 //#include "ccernn/fx_wgtavg0.cpp"
@@ -58,6 +56,7 @@
 //#include "liteon/liteon_lofi.cpp"
 
 //----------------------------------------------------------------------
-//
+// ported
 //----------------------------------------------------------------------
 
+//#include "ports/mda_ambience.cpp"
