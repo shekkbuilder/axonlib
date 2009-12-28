@@ -121,4 +121,34 @@ float rttof( float x, long root )
 }
 
 //----------------------------------------------------------------------
+// not really math related, but it have to stay here, until we find a
+// better 'home'
+
+void axRadix (long *source, long *dest, long N, int byte)
+{
+  int i;
+  long count[256];
+  long index[256];
+  memset (count, 0, sizeof (count));
+  for ( i=0; i<N; i++ ) count[((source[i])>>(byte*8))&0xff]++;
+  index[0]=0;
+  for ( i=1; i<256; i++ ) index[i]=index[i-1]+count[i-1];
+  for ( i=0; i<N; i++ ) dest[index[((source[i])>>(byte*8))&0xff]++] = source[i];
+}
+
+//i = 1;
+//loop( size-1,
+//  cur = buf[i];
+//  j = i;
+//  buf[j-1] > cur ? (
+//    while(
+//      buf[j] = buf[j-1];
+//      j -= 1;
+//      ( (j>0) && (buf[j-1]>cur) )
+//    );
+//  );
+//  i += 1;
+//);
+
+//----------------------------------------------------------------------
 #endif

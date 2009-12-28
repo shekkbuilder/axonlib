@@ -194,10 +194,10 @@ class axVoiceManager
 
     void  noteOn(int aOffset, int aNote, float aVelocity)
       {
-        TRACE("axVoiceManager.noteOn( %i,%f)\n",aNote,aVelocity);
+        //TRACE("axVoiceManager.noteOn( %i,%f)\n",aNote,aVelocity);
         if (mNoteMap[aNote]>=0) return; // already playing
         int voice = findVoice();
-        TRACE("  voice:%i\n",voice);
+        //TRACE("  voice:%i\n",voice);
         if (voice>=0)
         {
           mNoteMap[aNote] = voice;
@@ -209,10 +209,10 @@ class axVoiceManager
 
     void  noteOff(int aOffset, int aNote, float aVelocity)
       {
-        TRACE("axVoiceManager.noteOff(%i,%f)\n",aNote,aVelocity);
+        //TRACE("axVoiceManager.noteOff(%i,%f)\n",aNote,aVelocity);
         int voice = mNoteMap[aNote];
         if (voice<0) return; // not playing
-        TRACE("  voice:%i\n",voice);
+        //TRACE("  voice:%i\n",voice);
         mNoteMap[aNote] = -1;
         mVoices[voice]->noteOff(aOffset,aNote,aVelocity);
       }
