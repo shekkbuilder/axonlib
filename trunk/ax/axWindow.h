@@ -107,7 +107,7 @@ class axWindow : public axWindowImpl
 
     void redrawRect( int aX, int aY, int aW, int aH )
       {
-        //TRACE("invalidate: %i,%i - %i,%i\n",aX,aY,aW,aH);
+        //TRACE("redrawRect %i,%i - %i,%i\n",aX,aY,aW,aH);
         invalidate(aX,aY,aW,aH);
       }
 

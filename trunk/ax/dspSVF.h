@@ -2,6 +2,8 @@
 #define dspSVF_included
 //----------------------------------------------------------------------
 
+#include "dspModule.h"
+
 #define svf_mode_none 0
 #define svf_mode_lp   1
 #define svf_mode_hp   2
@@ -11,7 +13,7 @@
 class dspSVF
 {
   private:
-    float z1,z2;
+    float z1_L,z2_L;
   public:
     int   mMode;
     float mFreq;
@@ -21,7 +23,7 @@ class dspSVF
 
     dspSVF()
       {
-        z1 =z2 = 0;
+        z1_L =z2_L = 0;
         setup(0,1,1);
       }
 
@@ -32,33 +34,34 @@ class dspSVF
         mBW    = b;
       }
 
-    void resume(void)
-      {
-        z1 = z2 = 0;
-      }
+    //void resume(void)
+    //  {
+    //    z1 = z2 = 0;
+    //  }
 
-    float process(float in)
+    virtual float process(float** ins, float** outs)
+    //float process(float in)
       {
-        float out = 0;
-        if( mMode==0 ) out=in;
+        float in_L = *ins[0];
+        float out_L = 0;
+        if( mMode==0 ) out_L = in_L;
         else
-        //if( mMode > 0 )
         {
-          float L = z2 + mFreq * z1;
-          float H = in - L - mBW   * z1;
-          float B = mFreq * H + z1;
+          float L = z2_L + mFreq * z1_L;
+          float H = in_L - L - mBW   * z1_L;
+          float B = mFreq * H + z1_L;
           float N = H + L;
-          z1 = B;
-          z2 = L;
+          z1_L = B;
+          z2_L = L;
           switch(mMode)
           {
-            case 1: out = L; break;
-            case 2: out = H; break;
-            case 3: out = B; break;
-            case 4: out = N; break;
+            case 1: out_L = L; break;
+            case 2: out_L = H; break;
+            case 3: out_L = B; break;
+            case 4: out_L = N; break;
           } //switch
         } //mMode
-        return out;
+        return out_L;
       } //process
 
 };

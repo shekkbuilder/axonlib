@@ -250,6 +250,7 @@ class axWindowImpl : public axWindowBase
 
     virtual void invalidate(int aX, int aY, int aW, int aH)
       {
+        //TRACE("invalidate (winx11)\n");
         static XExposeEvent ev;
         ev.type     = Expose;
         ev.display  = gDP;
@@ -485,6 +486,7 @@ class axWindowImpl : public axWindowBase
             } //newsize
             break;
           case Expose:
+            //TRACE("Expose\n");
             beginPaint();
             rc = axRect(ev->xexpose.x,
                         ev->xexpose.y,
@@ -494,6 +496,7 @@ class axWindowImpl : public axWindowBase
             {
               rc.combine( ev->xexpose.x, ev->xexpose.y, ev->xexpose.width, ev->xexpose.height );
             }
+            //TRACE("- %i,%i - %i,%i\n",rc.x, rc.y, rc.w,rc.h);
             if (mWinFlags&AX_BUFFERED)
             {
               axCanvasBase* can = mSurface->mCanvas;

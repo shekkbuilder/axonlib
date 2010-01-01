@@ -10,6 +10,7 @@
 #include "axPlugin.h"
 #include "parFloat.h"
 #include "parInteger.h"
+
 #include "dspSVF.h"
 
 //----------------------------------------------------------------------
@@ -74,8 +75,8 @@ class myPlugin : public axPlugin
 
     virtual void doProcessSample(float** ins, float** outs)
       {
-        *outs[0] = svf1.process( *ins[0] );
-        *outs[1] = svf2.process( *ins[1] );
+        *outs[0] = svf1.process( ins, outs );
+        *outs[1] = svf2.process( ins, outs );
       }
 
 };
