@@ -598,6 +598,7 @@ class axPluginImpl :  public AudioEffectX
         switch (opcode)
         {
           case effEditGetRect:
+            //TRACE("effEditGetRect\n");
             if (mFlags&pfl_HasEditor)
             {
               rect.left     = 0;
@@ -609,10 +610,12 @@ class axPluginImpl :  public AudioEffectX
             }
             break;
           case effEditOpen:
+            //TRACE("effEditOpen. ptr=%08x\n",(int)ptr);
             if (mFlags&pfl_HasEditor)
             {
               #ifdef linux
                 if (gDP==NULL) gDP = (Display*)value;
+                //TRACE("- value=%08x, gDP=%08x\n",(int)value,(int)gDP);
               #endif
               openEditor(ptr,value);
               result = 1;
@@ -620,6 +623,7 @@ class axPluginImpl :  public AudioEffectX
             }
             break;
           case effEditClose:
+            //TRACE("effEditClose\n");
             if (mFlags&pfl_HasEditor && mEditorIsOpen);
             {
               mEditorIsOpen = false;
@@ -627,6 +631,7 @@ class axPluginImpl :  public AudioEffectX
             }
             break;
           case effEditIdle:
+            //TRACE("effEditIdle\n");
             if (mFlags&pfl_HasEditor && mEditorIsOpen);
             {
               idleEditor();
