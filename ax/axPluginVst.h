@@ -8,6 +8,7 @@
 #include "public.sdk/source/vst2.x/audioeffect.cpp"
 #include "public.sdk/source/vst2.x/audioeffectx.cpp"
 #include "axWindow.h"
+//#include "axHostVst.h"
 
 // #include "dispatcher_enums.h"
 
@@ -101,6 +102,8 @@ class axPluginImpl :  public AudioEffectX
 
     axPluginImpl(audioMasterCallback audioMaster,long numProgs,long numParams)
     : AudioEffectX(audioMaster,numProgs,numParams)
+    //axPluginImpl(axHostVst* host,long numProgs,long numParams)
+    //: AudioEffectX(host->getAudioMaster(),numProgs,numParams)
       {
 
         mCurProg = 0;

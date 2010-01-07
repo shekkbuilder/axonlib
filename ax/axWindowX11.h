@@ -231,6 +231,15 @@ class axWindowImpl : public axWindowBase
 
     //----------
 
+    virtual void setParentSize(int aWidth, int aHeight)
+      {
+        //if (mParent!=0)
+        //  XResizeWindow(gDP, mParent, aWidth, aHeight);
+        setSize(aWidth, aHeight);
+      }
+
+    //----------
+
     virtual void setTitle(axString aTitle)
       {
         XTextProperty window_title_property;
@@ -243,6 +252,7 @@ class axWindowImpl : public axWindowBase
 
     virtual void reparent(int aParent)
       {
+        mParent = aParent;
         XReparentWindow(gDP,mHandle,aParent,0,0);
       }
 
@@ -267,6 +277,24 @@ class axWindowImpl : public axWindowBase
         //XClearArea(gDP, mHandle, aRect.x1, aRect.y1, aRect.width(), aRect.height(), true);
         //XSync(gDP,false);
       }
+
+//    virtual void resizewindow(int aW, int aH)
+//      {
+//        //TRACE("invalidate (winx11)\n");
+//        static XConfigureEvent ev;
+//        ev.type     = ConfigureNotify;
+//        ev.display  = gDP;
+//        ev.window   = mHandle;
+//        ev.width    = aW;
+//        ev.height   = aH;
+//        //ev.count    = 0;
+//        //TODO: test true
+//        XSendEvent(gDP,mHandle,false, StructureNotifyMask,(XEvent*)&ev);
+//        //eventhandler( (XEvent*)&ev);
+//        //XFlush(gDP);
+//        //XClearArea(gDP, mHandle, aRect.x1, aRect.y1, aRect.width(), aRect.height(), true);
+//        //XSync(gDP,false);
+//      }
 
     //----------
 
@@ -473,6 +501,7 @@ class axWindowImpl : public axWindowBase
             //TODO: resize surface, if any
             w = ev->xconfigure.width;
             h = ev->xconfigure.height;
+            //TRACE("resize %i,%i\n",w,h);
             if( w!=mRect.w || h!=mRect.h )
             {
               if (mWinFlags&AX_BUFFERED)

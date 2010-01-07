@@ -20,6 +20,7 @@
 //----------------------------------------------------------------------
 
 #include "axPluginVst.h"
+//#include "axHostVst.h"
 
 class axPlugin  : public axPluginImpl,
                   public axParameterListener//,
@@ -35,6 +36,8 @@ class axPlugin  : public axPluginImpl,
 
     axPlugin(audioMasterCallback audioMaster,long numProgs,long numParams, int aPlugFlags=0)
     : axPluginImpl(audioMaster,numProgs,numParams)
+    //axPlugin(axHostVst* host,long numProgs,long numParams, int aPlugFlags=0)
+    //: axPluginImpl(host,numProgs,numParams)
       {
         mPlugFlags = aPlugFlags;
         axInitialize(mPlugFlags);

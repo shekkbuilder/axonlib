@@ -173,7 +173,67 @@ class axWindowImpl : public axWindowBase
 
     virtual void setSize(int aWidth, int aHeight)
       {
-        SetWindowPos(mHandle,0,0,0,aWidth,aHeight,SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOZORDER);
+        SetWindowPos(mHandle,HWND_TOP,0,0,aWidth,aHeight,SWP_NOMOVE);
+        //SetWindowPos(mHandle,0,0,0,aWidth,aHeight,SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOZORDER);
+      }
+
+      //----------
+
+          void GetWindowSize(HWND pWnd, int* pW, int* pH)
+          {
+            if (pWnd)
+            {
+              RECT r;
+              GetWindowRect(pWnd, &r);
+              *pW = r.right - r.left;
+              *pH = r.bottom - r.top;
+            }
+            else
+            {
+              *pW = *pH = 0;
+            }
+          }
+
+          bool IsChildWindow(HWND pWnd)
+          {
+            if (pWnd)
+            {
+              int style = GetWindowLong(pWnd, GWL_STYLE);
+              int exStyle = GetWindowLong(pWnd, GWL_EXSTYLE);
+              return ((style & WS_CHILD) && !(exStyle & WS_EX_MDICHILD));
+            }
+            return false;
+          }
+
+          #define SETPOS_FLAGS SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE
+
+      //----------
+
+    virtual void setParentSize(int aWidth, int aHeight)
+      {
+        int dw = aWidth - mRect.w, dh = aHeight - mRect.h;
+        HWND pParent = 0, pGrandparent = 0;
+        int w=0, h=0, parentW=0, parentH=0, grandparentW=0, grandparentH=0;
+        GetWindowSize(mHandle,&w,&h);
+        if (IsChildWindow(mHandle))
+        {
+          pParent = GetParent(mHandle);
+          GetWindowSize(pParent, &parentW, &parentH);
+          if (IsChildWindow(pParent))
+          {
+            pGrandparent = GetParent(pParent);
+            GetWindowSize(pGrandparent, &grandparentW, &grandparentH);
+          }
+        }
+        SetWindowPos(mHandle, 0, 0, 0, w + dw, h + dh, SETPOS_FLAGS);
+        if (pParent)
+        {
+          SetWindowPos(pParent, 0, 0, 0, parentW + dw, parentH + dh, SETPOS_FLAGS);
+        }
+        if (pGrandparent)
+        {
+          SetWindowPos(pGrandparent, 0, 0, 0, grandparentW + dw, grandparentH + dh, SETPOS_FLAGS);
+        }
       }
 
     //----------
@@ -186,6 +246,7 @@ class axWindowImpl : public axWindowBase
 
     virtual void reparent(int aParent)
       {
+        mParent = aParent;
         SetWindowLong(mHandle,GWL_STYLE,(GetWindowLong(mHandle,GWL_STYLE)&~WS_POPUP)|WS_CHILD);
         SetParent(mHandle, (HWND)aParent);
       }
@@ -445,17 +506,18 @@ class axWindowImpl : public axWindowBase
             //int y = ev->xconfigure.y;
             w = short(LOWORD(lParam));
             h = short(HIWORD(lParam));
-//            if (w!=mRect.w || h!=mRect.h )
-//            {
-//              if (mWinFlags&AX_BUFFERED)
-//              {
-//                if (mSurface) delete mSurface;
-//                mSurface = new axSurface(w,h,mWinFlags);
-//              }
-//              mRect.w = w;
-//              mRect.h = h;
-//              doResize(w,h);
-//            } //newsize
+            //TRACE("resize %i,%i\n",w,h);
+            if (w!=mRect.w || h!=mRect.h )
+            {
+              if (mWinFlags&AX_BUFFERED)
+              {
+                if (mSurface) delete mSurface;
+                mSurface = new axSurface(w,h,mWinFlags);
+              }
+              mRect.w = w;
+              mRect.h = h;
+              doResize(w,h);
+            } //newsize
             result = 0;
             break;
           case WM_DESTROY:

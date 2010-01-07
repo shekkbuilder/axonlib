@@ -47,7 +47,6 @@ class axEditor : public axWindow,
     axWidgets       mDirtyList;
     axWPConnections mConnections;
 
-
   public:
 
     axEditor(axString aWinName, axPlugin* aPlugin, int aID, axRect aRect, int aWinFlags=0)
@@ -193,6 +192,18 @@ class axEditor : public axWindow,
           //redrawWidget( wdg );
           appendDirty(wdg);
         }
+      }
+
+
+    virtual void onResize(int dX, int dY)
+      {
+        //TODO: if 'reaper'
+        #ifdef WIN32
+          mPlugin->mWidth = mRect.w+dX;   // reaper checks effEditGetRect 4-5 times per second, so we just set the
+          mPlugin->mHeight = mRect.h+dY;  // new size, and hope reaper wil pick it up, and resize the window for us
+        #endif
+        setSize( mRect.w+dX, mRect.h+dY );            // resize os window
+        mPlugin->sizeWindow(mRect.w+dX, mRect.h+dY);  // let vst host know
       }
 
 };
