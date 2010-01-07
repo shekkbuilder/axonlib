@@ -2,7 +2,7 @@
 #define axContainer_included
 //----------------------------------------------------------------------
 
-//#define AX_PAINTERS
+#define AX_PAINTERS
 
 #include "axWidget.h"
 
@@ -19,10 +19,11 @@ class axContainer : public axWidget,
     int       mClickedY;
     int       mClickedB;
     //layout
+    int       mMarginX,  mMarginY;      // container inner space (between outer border & widgets)
+    int       mPaddingX, mPaddingY;   // space between wal_Stacked widgets
+    // runtime
     axRect    mClient;                // current Client area
     int       mStackedX, mStackedY;   // where to put next wal_Stacked widget
-    axRect    mMargins;               // container inner space (between outer border & widgets)
-    int       mPaddingX, mPaddingY;   // space between wal_Stacked widgets
 
   public:
 
@@ -39,7 +40,8 @@ class axContainer : public axWidget,
         mCapturedWidget = NULL;
         mClickedWidget = NULL;
         //doRealign();
-        mMargins.set(0,0,0,0);
+        mMarginX = 0;
+        mMarginY = 0;
         mPaddingX = 0;
         mPaddingY = 0;
         mClient = mRect;
@@ -55,6 +57,14 @@ class axContainer : public axWidget,
       }
 
     //--------------------------------------------------
+
+    virtual void setAlign(int aMarginX, int aMarginY, int aPaddingX, int aPaddingY)
+      {
+        mMarginX = aMarginX;
+        mMarginY = aMarginY;
+        mPaddingX = aPaddingX;
+        mPaddingY = aPaddingY;
+      }
 
     virtual void initMouseState(void)
       {
@@ -85,7 +95,7 @@ class axContainer : public axWidget,
         if(aRealign)
         {
           aWidget->doMove( mRect.x + aWidget->mRect.x, mRect.y + aWidget->mRect.y );
-          //doRealign();
+          doRealign();
         }
       }
 
@@ -155,117 +165,142 @@ class axContainer : public axWidget,
     virtual void doResize(int aW, int aH)
       {
         axWidget::doResize(aW,aH);
-        //if( hasFlag(wfl_Align) ) doRealign();
+        if( hasFlag(wfl_Align) ) doRealign();
       }
 
     //----------
 
-//    //TODO: fix
-//    virtual void doRealign(void)
-//      {
-//        if( hasFlag(wfl_Align ) )
-//        {
-//          //bool empty = false;
-//          axRect R = mRect;
-//          R.add( mSpaceX, mSpaceY, -(mSpaceX*2), -(mSpaceY*2) ); // spacing (outer border)
-//          axRect C = R;
-//          int largest = 0;
-//          int stackx = R.x + mPadX;
-//          int stacky = R.y + mPadY;
-//          for( int i=0; i<mWidgets.size(); i++ )
-//          {
-//            axWidget* wdg = mWidgets[i];
-//            //int xx = wdg->mRect.x;// - mRect.x;
-//            //int yy = wdg->mRect.y;// - mRect.y;
-//
-//
-//            int ww = wdg->mRect.w;
-//            int hh = wdg->mRect.h;
-//            switch( wdg->mAlignment )
-//            {
-//              //case wal_None:
-//              //  break;
-//              case wal_Parent:
-//                wdg->doMove( R.x + wdg->mOrigin.x, R.y + wdg->mOrigin.y );
-//                break;
-//              //case wal_Fill:
-//              //  wdg->doMove( R.x, R.y );
-//              //  wdg->doResize( R.w, R.h );
-//              //  break;
-//              case wal_Client:
-//                wdg->doMove( C.x, C.y );
-//                wdg->doResize( C.w, C.h );
-//                //empty = true;
-//                break;
-//              case wal_Left:
-//                wdg->doMove( C.x, C.y );
-//                wdg->doResize( ww, C.h );
-//                C.x += ww;
-//                C.w -= (ww*2);
-//                break;
-//              case wal_Right:
-//                wdg->doMove( C.x2()-ww, C.y );
-//                wdg->doResize( ww, C.h );
-//                C.w -= ww;
-//                break;
-//              case wal_Top:
-//                wdg->doMove( C.x, C.y );
-//                wdg->doResize( C.w, hh );
-//                C.y += hh;
-//                C.h -= hh;
-//                break;
-//              case wal_Bottom:
-//                wdg->doMove( C.x, C.y2()-hh );
-//                wdg->doResize( C.w, hh );
-//                C.h -= hh;
-//                break;
-//              case wal_Stacked:
-//                wdg->doMove( stackx, stacky );
-//                //TODO: fix
-//                int w = ww + mPadX;
-//                int h = hh + mPadY;
-//
-//                // denne er feil
-//                // wrapper til neste linje/row, hvis current widget ikke får plass,
-//
-//                if( mFlags&wfl_Vertical )
-//                {
-//                  int remain = R.y2() - stacky - h;
-//                  if( remain>=h )
-//                  {
-//                    stacky+=h;
-//                    if(w>largest) largest=w;
-//                  }
-//                  else
-//                  {
-//                    stacky=R.y+mPadY;
-//                    stackx+=largest;//w;                                        // largest
-//                    largest = 0;
-//                  }
-//                } //vertical
-//                else
-//                {
-//                  int remain = R.x2() - stackx - w;
-//                  if( remain>=w )
-//                  {
-//                    stackx+=w;
-//                    if(h>largest) largest=h;
-//                  }
-//                  else
-//                  {
-//                    stackx=R.x+mPadX;
-//                    stacky+=largest;//h;                                        // largest
-//                    largest = 0;
-//                  }
-//                } //horizontal
-//                break;
-//            } //switch alignment
-//            wdg->doRealign();
-//
-//
-//          } //for widgets
-//        } //wfl_Align
-//      }
+    //TODO: fix
+    //TODO: clipping
+    virtual void doRealign(void)
+      {
+        if( hasFlag(wfl_Align ) )
+        {
+          //bool empty = false;
+          axRect R = mRect;
+          R.add( mMarginX, mMarginY, -(mMarginX*2), -(mMarginY*2) ); // spacing (outer border)
+          axRect C = R;
+          int largest = 0;//-1;
+          int stackx = R.x + mPaddingX;
+          int stacky = R.y + mPaddingY;
+          for( int i=0; i<mWidgets.size(); i++ )
+          {
+            axWidget* wdg = mWidgets[i];
+            //int xx = wdg->mRect.x;// - mRect.x;
+            //int yy = wdg->mRect.y;// - mRect.y;
+            int ww = wdg->mRect.w;
+            int hh = wdg->mRect.h;
+            switch( wdg->mAlignment )
+            {
+              //case wal_None:
+              //  break;
+              case wal_Parent:
+                wdg->doMove( R.x + wdg->mOrigin.x, R.y + wdg->mOrigin.y );
+                break;
+              //case wal_Fill:
+              //  wdg->doMove( R.x, R.y );
+              //  wdg->doResize( R.w, R.h );
+              //  break;
+              case wal_Client:
+                wdg->doMove( C.x, C.y );
+                wdg->doResize( C.w, C.h );
+                //empty = true;
+                break;
+              case wal_Left:
+                wdg->doMove( C.x, C.y );
+                wdg->doResize( ww, C.h );
+                C.x += ww;
+                C.w -= ww;//(ww*2);
+                break;
+              case wal_Right:
+                wdg->doMove( C.x2()-ww+1, C.y );
+                wdg->doResize( ww, C.h );
+                C.w -= ww;
+                break;
+              case wal_Top:
+                wdg->doMove( C.x, C.y );
+                wdg->doResize( C.w, hh );
+                C.y += hh;
+                C.h -= hh;
+                break;
+              case wal_Bottom:
+                wdg->doMove( C.x, C.y2()-hh+1 );
+                wdg->doResize( C.w, hh );
+                C.h -= hh;
+                break;
+              case wal_LeftTop:
+                wdg->doMove( C.x, C.y );
+                //wdg->doResize( ww, C.h );
+                C.x += ww;
+                C.w -= ww;//(ww*2);
+                break;
+              case wal_RightTop:
+                wdg->doMove( C.x2()-ww+1, C.y );
+                //wdg->doResize( ww, C.h );
+                C.w -= ww;
+                break;
+              case wal_LeftBottom:
+                wdg->doMove( C.x, C.y2()-hh+1 );
+                //wdg->doResize( C.w, hh );
+                //C.y += hh;
+                C.h -= hh;
+                break;
+              case wal_RightBottom:
+                wdg->doMove( C.x2()-ww+1, C.y2()-hh+1 );
+                //wdg->doResize( C.w, hh );
+                C.h -= hh;
+                break;
+              case wal_Stacked:
+                wdg->doMove( stackx, stacky );
+                //TODO: fix
+                int w = ww + mPaddingX;
+                int h = hh + mPaddingY;
+
+                // denne er feil
+                // wrapper til neste linje/row, hvis current widget ikke får plass,
+
+                if( mFlags&wfl_Vertical )
+                {
+                  int remain = R.y2() - stacky + 1 - hh;
+                  if( remain>=h )
+                  {
+                    stacky+=h;
+                    if(w>largest) largest=w;
+                  }
+                  else
+                  {
+                    stacky=R.y+mPaddingY;
+                    if (largest>0) stackx+=largest;//w;                                        // largest
+                    else stackx+=w;
+                    largest = 0;//-1;
+                  }
+                } //vertical
+
+                else
+                {
+                  int remain = R.x2() - stackx + 1 - ww;
+                  if( remain>=w )
+                  {
+                    stackx+=w;
+                    if(h>largest) largest=h;
+                  }
+                  else
+                  {
+                    stackx=R.x+mPaddingX;
+                    if (largest>0) stacky+=largest;//h;                                        // largest
+                    else stacky+=h;
+                    largest = 0;//-1;
+                  }
+                } //horizontal
+
+                break;
+            } //switch alignment
+            wdg->doRealign();
+
+
+          } //for widgets
+        } //wfl_Align
+      }
 
     //----------
 
@@ -391,14 +426,14 @@ class axContainer : public axWidget,
 
     //----------
 
-    //virtual void onResized(int aW, int aH)
-    //  {
+    virtual void onResized(int aW, int aH)
+      {
     //    if(hasFlag(wfl_Align))
     //    {
     //      doRealign();
-    //      mListener->onRedraw(this);
+          mListener->onRedraw(this);
     //    }
-    //  }
+      }
 
     //----------
 

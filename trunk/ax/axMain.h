@@ -27,7 +27,6 @@
 
   int main(void)
   {
-    //void* ptr = NULL;
     AX_APPLICATION* app = new AX_APPLICATION();
     app->main();
     return 0;
@@ -43,6 +42,8 @@
 
 #ifdef AX_PLUGIN
 
+//#include "axHostVst.h"
+
   #ifdef WIN32
 
     BOOL APIENTRY DllMain(HINSTANCE hModule,DWORD reason,LPVOID lpReserved)
@@ -54,8 +55,9 @@
     int main(audioMasterCallback audioMaster)
     {
       AX_PLUGIN* plugin = new AX_PLUGIN(audioMaster,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
+      //axHostVst* host = new axHostVst(audioMaster);
+      //AX_PLUGIN* plugin = new AX_PLUGIN(host,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
       if (!plugin) return 0;
-      //plugin->create(audioMaster);
       return (int)plugin->getAeffect();
     }
 
@@ -67,17 +69,14 @@
 
     AEffect* main_plugin(audioMasterCallback audioMaster) asm ("main");
     #define main main_plugin
-    //AEffect* AX_PLUGIN_main(audioMasterCallback audioMaster) asm ("main");
-    //#define main AX_PLUGIN_main
     //----------
     AEffect* main(audioMasterCallback audioMaster)
-    //int main(audioMasterCallback audioMaster)
     {
       AX_PLUGIN* plugin = new AX_PLUGIN(audioMaster,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
+      //axHostVst* host = new axHostVst(audioMaster);
+      //AX_PLUGIN* plugin = new AX_PLUGIN(host,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
       if (!plugin) return 0;
-      //plugin->create(audioMaster);
       return plugin->getAeffect();
-      //return (int)plugin->getAeffect();
     }
 
   #endif //linux

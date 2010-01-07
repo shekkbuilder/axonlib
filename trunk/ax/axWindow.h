@@ -22,6 +22,7 @@
 class axWindowBase : public axContainer
 {
   protected:
+    int         mParent;
     int         mWinFlags;
     axCanvas*   mCanvas;
     axSurface*  mSurface;
@@ -31,6 +32,7 @@ class axWindowBase : public axContainer
     axWindowBase(axString aWinName, axWidgetListener* aListener, int aID, axRect aRect, int aWinFlags=0)
     : axContainer(aListener,aID,aRect/*,aWinFlags*/)
       {
+        mParent = 0;
         mWinFlags = aWinFlags;
         mCanvas = NULL;
         mSurface = NULL;
@@ -47,6 +49,7 @@ class axWindowBase : public axContainer
     virtual void hide(void) {}
     virtual void setPos(int aX, int aY) {}
     virtual void setSize(int aWidth, int aHeight) {}
+    virtual void setParentSize(int aWidth, int aHeight) {}
     virtual void setTitle(axString aTitle) {}
     virtual void reparent(int aParent) {}
     virtual void invalidate(int aX, int aY, int aW, int aH) {}

@@ -10,9 +10,11 @@
 // mod pin type
 #define mpt_Data    0
 #define mpt_Signal  1
+
 // mod pin dir
 #define mpd_Input   0
 #define mpd_Output  1
+
 // mod pin resolution
 #define mpr_Const   0
 #define mpr_Static  1
@@ -35,8 +37,11 @@ class axPin
     int       mDir;     // 0=input, 1=output
     int       mRes;     // 0=const, 1=static, 2=dynamic
   public:
-    float*    mPtr;     // if input
-    float     mValue;   // if output
+    union
+    {
+      float*    mPtr;     // if input
+      float     mValue;   // if output
+    };
   public:
     axPin(axModule* aOwner, axString aName, int aType, int aDir, int aRes=mpr_Dynamic, float* aPtr=NULL, float aValue=0)
       {
@@ -58,24 +63,26 @@ typedef axArray<axPin*> axPins;
 //----------------------------------------------------------------------
 
 // signal types
-#define sty_noop  0
-#define sty_reset 1
-#define sty_exec  2
-#define sty_sync  3
-#define sty_val   4
+
+#define sty_gate    1
+#define sty_num     2
+#define sty_value   3
+#define sty_noteon  4
+#define sty_noteoff 5
+#define sty_ctrl    6
 
 //----------
 
 class axModuleHandler
 {
   public:
-    virtual void doSignal(int aType, int aNum, float aVal, void* aPtr) {}
+    virtual void doSignal(int aIndex, int aType, int aNum=0, float aVal=0/*, void* aPtr*/) {}
     virtual void doProcess(void) {}
     virtual void doCompile(void) {}
     virtual void doExecute(void) {}
-    virtual void doNoteOn(int aNote, float aVelocity) {}
-    virtual void doNoteOff(int aNote/*, float aVelocity*/) {}
-    virtual void doControl(int aIndex, float aValue) {}
+    //virtual void doNoteOn(int aNote, float aVelocity) {}
+    //virtual void doNoteOff(int aNote/*, float aVelocity*/) {}
+    //virtual void doControl(int aIndex, float aValue) {}
 };
 
 /*
@@ -131,6 +138,11 @@ class axModule : public axModuleHandler
       }
 
     //----------------------------------------
+
+    void appendPin( axPin* pin)
+      {
+        mPins.append(pin);
+      }
 
     void deletePins(void)
       {

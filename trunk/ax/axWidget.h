@@ -13,18 +13,22 @@
 #define wfl_Clip      8
 #define wfl_Capture   16
 #define wfl_Vertical  32
-//#define wfl_AutoAlign 64
+#define wfl_Align     64
 #define wfl_All       0xffff
 
 //widget alignment
-#define wal_None      0
-#define wal_Client    1
-#define wal_Left      2
-#define wal_Top       3
-#define wal_Right     4
-#define wal_Bottom    5
-#define wal_Stacked   6
-#define wal_Parent    7
+#define wal_None        0
+#define wal_Client      1
+#define wal_Left        2
+#define wal_Top         3
+#define wal_Right       4
+#define wal_Bottom      5
+#define wal_LeftTop     6
+#define wal_RightTop    7
+#define wal_LeftBottom  8
+#define wal_RightBottom 9
+#define wal_Stacked     10
+#define wal_Parent      11
 
 //#define MAX_TEXT_LEN 16
 
@@ -71,8 +75,8 @@ class axWidgetListener
     virtual void onRedraw(axWidget* aWidget)  {}
     virtual void onRedraw(axRect aRect)       {}
     virtual void onRedrawAll(void)            {}
-    virtual void onMoved(int aX, int aY)      {}
-    virtual void onResized(int aW, int aH)    {}
+    virtual void onMove(int aX, int aY)       {}
+    virtual void onResize(int dX, int dY)     {}
     virtual void onSetHint(axString aHint)    {}
 };
 

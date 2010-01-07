@@ -10,55 +10,48 @@ class wdgTabs : public axContainer
 {
   //protected:
   public:
-    int mPage;
-    wdgSwitches* mHeader;
-    axContainer* mPages;
+    int           mActivePage;
+    axContainer*  mPages;
 
   public:
 
     wdgTabs(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None)
     : axContainer(aListener, aID, aRect, aAlignment)
       {
-        mPage = 0;
-        appendWidget( mHeader = new wdgSwitches(this,0,axRect(0,0, aRect.w,20),wal_Top ) );
-        appendWidget( mPages  = new axContainer(this,1,axRect(0,20,aRect.w,aRect.h-20), wal_Client ) );
-        //doRealign(); // hmmm...
-        //mPages->setBackground( true, AX_GREY_LIGHT );
-        //setBackground( true, AX_BLACK );
+        mActivePage = 0;
+        appendWidget( mPages = new axContainer(this,0,axRect(0,0,aRect.w,aRect.h), wal_Client ) );
+        mPages->setFlag(wfl_Align);
       }
 
     //virtual ~wdgTabs()
     //  {
     //  }
 
-    void setup(int aNum, char** aStr)
-      {
-        mHeader->setup(aNum,aStr);
-      }
+    //void setup(int aNum, char** aStr)
+    //  {
+    //    mHeader->setup(aNum,aStr);
+    //  }
 
     void appendPage( axContainer* aPage )
       {
         aPage->clearFlag(wfl_Active);
         aPage->clearFlag(wfl_Visible);
-        //aPage->mRect = axRect(0,0,mPages->mRect.w,mPages->mRect.h);
+        aPage->doMove(mRect.x,mRect.y);
+        aPage->doResize(mRect.w,mRect.h);
         mPages->appendWidget( aPage );
       }
 
-    void setPage(int aIndex, bool aRedraw=true)
+    void setPage(int aPage)
       {
-        //if( aIndex!=mPage)
+        //if( aPage!=mActivePage)
         //{
-          //axWidget* w = NULL;
-          int num = mPages->mWidgets.size();
-
-          for( int i=0; i<num; i++ )
+          for( int i=0; i<mPages->mWidgets.size(); i++ )
           {
             axWidget* wdg = mPages->mWidgets[i];
-            if( i==aIndex )
+            if (i==aPage)
             {
               wdg->setFlag(wfl_Active);
               wdg->setFlag(wfl_Visible);
-              //w = wdg;
             }
             else
             {
@@ -66,14 +59,10 @@ class wdgTabs : public axContainer
               wdg->clearFlag(wfl_Visible);
             }
           } //for
-
-          mHeader->setNum(aIndex);
-          if(aRedraw) mListener->onRedraw(this);//(mPages); // double drawing of header...
-          mPages->initMouseState();
-          //initMouse();
-          mPage = aIndex;
-        //} //!=aIndex
-        //TODO: fixup mouse hover/capture etc...
+          //mPages->initMouseState();
+          mActivePage = aPage;
+          mListener->onRedraw(this);
+        //} // !=aIndex
       }
 
     //--------------------------------------------------

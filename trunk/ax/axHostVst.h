@@ -2,17 +2,28 @@
 #define axHostVst_included
 //----------------------------------------------------------------------
 
-#include "axHost.h"
+//#include "axHost.h"
 
-class axHostVst : public axHost
+class axHostVst// : public axHostBase
 {
   protected:
     audioMasterCallback mAudioMaster;
+
   public:
-    axHostVst() : axHost() {}
+
+    axHostVst(audioMasterCallback aAudioMaster)
+    //: axHostBase()
+      {
+        mAudioMaster = aAudioMaster;
+      }
+
     virtual ~axHostVst() {}
+
+    inline audioMasterCallback getAudioMaster(void) { return mAudioMaster; }
 };
 
 //----------------------------------------------------------------------
 #endif
+
+
 
