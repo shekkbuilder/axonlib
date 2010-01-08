@@ -1,6 +1,6 @@
 #summary compatible hosts
 
-plugins made with axonlib reportedly working correctly in: (with eventual comments)
+plugins made with axonlib reportedly working in: (with eventual comments)
 
 *linux:*
   * energy xt 2
