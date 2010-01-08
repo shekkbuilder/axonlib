@@ -1,5 +1,25 @@
+#include "ccernn/plug_debug.cpp"
 
-//#include "axModule.h"
+
+
+
+
+
+//#include "ccernn/ana_daubechies0.cpp"
+//#include "ccernn/ana_fft.cpp"
+
+
+
+
+
+
+
+
+
+
+
+
+//#include "test/module_test.cpp"
 
 //----------------------------------------------------------------------
 
@@ -10,6 +30,8 @@
 
 //#include "plug_debug.cpp"
 //#include "ccernn/again.cpp"
+
+//#include "ccernn/test_pitch.cpp"
 
 //----------------------------------------------------------------------
 // no gui
@@ -30,7 +52,7 @@
 //#include "ccernn/syn_perc0.cpp"
 //#include "ccernn/syn_plucked0.cpp"
 
-// #include "ccernn/syn_poly0.cpp"             // !!!
+//#include "ccernn/syn_poly0.cpp"             // !!!
 
 //----------------------------------------------------------------------
 // gui
@@ -64,5 +86,6 @@
 //#include "ports/mda_ambience.cpp"
 //#include "ports/autotalent.cpp"
 //#include "ports/emerald.cpp"
-#include "ports/freeverb.cpp"
+//#include "ports/freeverb.cpp"
 
+//----------------------------------------------------------------------

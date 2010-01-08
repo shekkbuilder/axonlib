@@ -164,8 +164,13 @@ class axContainer : public axWidget,
 
     virtual void doResize(int aW, int aH)
       {
+        //TRACE("axContainer doResize %i,%i\n",aW,aH);
         axWidget::doResize(aW,aH);
-        if( hasFlag(wfl_Align) ) doRealign();
+        if( hasFlag(wfl_Align) )
+        {
+          //TRACE("doRealign\n");
+          doRealign();
+        }
       }
 
     //----------
@@ -306,6 +311,8 @@ class axContainer : public axWidget,
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
+        //TRACE("axContainer.doPaint aRect %i,%i,%i,%i\n",aRect.x,aRect.y,aRect.w,aRect.h);
+        //TRACE("                    mRect %i,%i,%i,%i\n",aRect.x,aRect.y,mRect.w,mRect.h);
         if( hasFlag(wfl_Visible) )
         {
           if( mRect.intersects(aRect) )

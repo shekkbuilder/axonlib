@@ -18,6 +18,8 @@
 #include "wdgSwitches.h"
 #include "wdgScope.h"
 
+//#include "wdgResizer.h"
+
 //----------------------------------------------------------------------
 
 #define MAX_SAMPLE_RATE 192000
@@ -49,6 +51,7 @@ class myPlugin : public axPlugin,
     wdgKnob*      wLength;
     wdgSwitches*  wViewMode;
     wdgScope*      wScope;
+    //wdgResizer*   wSizer;
 
   public:
 
@@ -193,6 +196,16 @@ class myPlugin : public axPlugin,
         mEditor->onRedraw(aWidget);
       }
 
+    //----------
+
+    virtual void onResize(int dX, int dY)   // delta x,y
+      {
+        int w = wScope->mRect.w + dX;
+        int h = wScope->mRect.h + dY;
+        wScope->doResize( w,h );
+        mEditor->onResize(dX,dY);
+      }
+
     //----------------------------------------------------------------------
     // editor
     //----------------------------------------------------------------------
@@ -212,6 +225,9 @@ class myPlugin : public axPlugin,
           wScope->mWaveColor = AX_YELLOW;
           wScope->mNumSlices = 8;
           wScope->mSlicesColor = AX_WHITE;
+
+        //E->appendWidget( wSizer = new wdgResizer( this,99,axRect(276,270,10,10),wal_None ) );
+
         E->connect( wScale, pScale  );
         E->connect( wLength,pLength );
         // could mEditor be in use from another thread? gui? audio? setParameter?

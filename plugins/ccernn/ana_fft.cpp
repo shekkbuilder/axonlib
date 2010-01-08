@@ -275,17 +275,27 @@ class myPlugin : public axPlugin,
           if (mFilled)
           {
             memcpy(mViewBuffer,mRec2Buffer,mLength*sizeof(float));
-            memset(mViewBuffer2,0,mLength*sizeof(float));
+            //memset(mViewBuffer2,0,mLength*sizeof(float));
+
             //daub.daubTrans( mViewBuffer, BUFFERSIZE );
-            for (int i=0; i<BUFFERSIZE; i++) mViewBuffer[i] *= mWindow[i];
+
+            //for (int i=0; i<BUFFERSIZE; i++) mViewBuffer[i] *= mWindow[i];
+
             mayer_realfft(BUFFERSIZE,mViewBuffer);
             //mayer_fft(BUFFERSIZE,mViewBuffer,mViewBuffer2);
-            float scale = 1.0f / ( (float)BUFFERSIZE/2  );
-            for (int i=0; i<BUFFERSIZE; i++)
-            {
-              float n = mViewBuffer[i]*mViewBuffer[i] + mViewBuffer2[i]*mViewBuffer2[i];
-              mViewBuffer[i] = sqrtf(n) * scale;
-            }
+
+//            float floor = -200.0f;
+//            int HALF = BUFFERSIZE / 2;
+//            float scale = 1.0f / (float)HALF;
+//            for (int i=0; i<HALF; i++)
+//            {
+//              float n = mViewBuffer[i]*mViewBuffer[i] + mViewBuffer[HALF+i]*mViewBuffer[HALF+i];
+//              float db = /*20. **/ log10f( 2. * sqrtf(n) / (float)BUFFERSIZE);
+//              mViewBuffer[i] = (floor + db) * 0.001;
+//            }
+
+            for (int i=0;i<BUFFERSIZE/2; i++) mViewBuffer[i] /= BUFFERSIZE;
+
 
             mFilled=false;
             mEditor->appendDirty( wScope );
