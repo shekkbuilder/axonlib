@@ -44,6 +44,7 @@ class wdgScope : public axWidget
     int       mSize;    // num samples
     float*    mBuffer;  // mSize*2 samples (stereo)
     int       mMode;    // left/right
+    bool      mUnipolar;
   public:
     int       mDrawFlags;
     int       mNumSlices;
@@ -65,6 +66,7 @@ class wdgScope : public axWidget
         mSize   = 0;
         mBuffer = NULL;
         mMode   = 0;
+        mUnipolar = false;
         //
         mDrawFlags        = wbf_Wave;
         mNumSlices        = 0;
@@ -145,15 +147,18 @@ class wdgScope : public axWidget
             aCanvas->setPenColor( mWaveColor );
             int h2 = mRect.h * 0.5;
             int x   = mRect.x;
-            int yh  = mRect.y + h2;
+            int y1,y2;
+            if (mUnipolar) y2 = mRect.y2() - 1;
+            else y2  = mRect.y + h2;
             float pos = 0;
             float posadd = mSize / mRect.w;
             for( int i=0; i<mRect.w; i++ )
             {
               float n = mBuffer[ (int)pos ];
               pos += posadd;
-              int   y = yh - (h2*n);
-              aCanvas->drawLine(x,yh,x,y);
+              if (mUnipolar) y1 = y2 - (mRect.h*n);
+              else y1 = y2 - (h2*n);
+              aCanvas->drawLine(x,y1,x,y2);
               x++;
             }
           }

@@ -8,6 +8,7 @@
 #include "../extern/lodepng.h"
 #include "../extern/lodepng.cpp"
 
+//TODO: split decoding & buffer preparation into separate function
 
 axSurface* loadPng(unsigned char* buffer, unsigned int buffersize)
   {

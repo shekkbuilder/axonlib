@@ -1,8 +1,11 @@
 #ifndef axPen_included
 #define axPen_included
 //----------------------------------------------------------------------
+//TODO
 
 #include "axCanvas.h"
+
+#define DEF_PENWIDTH 0
 
 class axPen
 {
