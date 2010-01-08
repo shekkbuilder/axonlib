@@ -1,0 +1,30 @@
+#summary compatible hosts
+
+plugins made with axonlib reportedly working correctly in: (with eventual comments)
+
+*linux:*
+  * energy xt 2
+  * qtractor (plugin window resizing doesn't work)
+  * renoise 2.5
+
+*win32:*
+  * ableton live 8.1
+  * audacity
+  * cantabile
+  * energy xt 1.4
+  * energy xt 2
+  * fl studio 9
+  * kristal
+  * reaper
+  * renoise 2.5
+  * savihost
+  * vsthost
+  * wavosaur
+
+buggy hosts:
+
+*linux:*
+  * jost (mouse/painting event bugs, patch available [http://www.anticore.org/jucetice/forums/viewtopic.php?pid=612#p612 here] )
+
+*win32:*
+  * 
