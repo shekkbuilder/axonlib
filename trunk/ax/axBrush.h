@@ -1,6 +1,7 @@
 #ifndef axBrush_included
 #define axBrush_included
 //----------------------------------------------------------------------
+//TODO
 
 #include "axCanvas.h"
 

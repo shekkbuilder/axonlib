@@ -6,6 +6,10 @@
 #include "axColor.h"
 #include "axBitmap.h"
 
+#include "axPen.h"
+#include "axBrush.h"
+#include "axFont.h"
+
 // text align
 #define tal_Center        0
 #define tal_Left          1
@@ -24,7 +28,7 @@
 #define cmo_window        0
 #define cmo_buffer        1
 
-#define DEF_PENWIDTH      0
+//#define DEF_PENWIDTH      0
 
 //----------------------------------------------------------------------
 
@@ -40,6 +44,11 @@ class axCanvasBase
     axColor mTextColor;
     int     mPenWidth;
     int     mXpos, mYpos;
+
+    axPen*    defaultPen;
+    axBrush*  defaultBrush;
+    axFont*   defaultFont;
+
 
   public:
 
@@ -62,16 +71,16 @@ class axCanvasBase
 
     //----------
 
-//    //TODO:
-//    axPen*    defaultPen;
-//    axBrush*  defaultPen;
-//    axFont*   defaultFont;
-//    virtual axPen*    createPen(axColor, int aWidth, nt aStyle) { return NULL; }
-//    virtual axBrush*  createBrush(axColor, int aStyle) { return NULL; }
-//    virtual axFont*   createFont(axString aName, int aSize, int aStyle) { return NULL; }
-//    virtual void selectPen(axPen* aPen) {}
-//    virtual void selectBrush(axBrush* aBrush) {}
-//    virtual void selectFont(axFont* aFont) {}
+    //TODO
+    virtual axPen*    createPen(axColor, int aWidth, int aStyle) { return NULL; }
+    virtual axBrush*  createBrush(axColor, int aStyle) { return NULL; }
+    virtual axFont*   createFont(axString aName, int aSize, int aStyle) { return NULL; }
+    virtual void      selectPen(axPen* aPen) {}
+    virtual void      selectBrush(axBrush* aBrush) {}
+    virtual void      selectFont(axFont* aFont) {}
+    virtual void      resetPen(void) {}
+    virtual void      resetBrush(void) {}
+    virtual void      resetFont(void) {}
 
     virtual void setPenColor(axColor aColor) {}
     virtual void setBrushColor(axColor aColor) {}
