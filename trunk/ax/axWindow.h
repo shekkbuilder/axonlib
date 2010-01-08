@@ -50,6 +50,7 @@ class axWindowBase : public axContainer
     virtual void setPos(int aX, int aY) {}
     virtual void setSize(int aWidth, int aHeight) {}
     virtual void setParentSize(int aWidth, int aHeight) {}
+    virtual void resizeBuffer(int aWidth, int aHeight) {}
     virtual void setTitle(axString aTitle) {}
     virtual void reparent(int aParent) {}
     virtual void invalidate(int aX, int aY, int aW, int aH) {}
@@ -69,6 +70,8 @@ class axWindowBase : public axContainer
     virtual void releaseCursor(void) {}
     virtual void sendEvent(unsigned int aValue) {}
     virtual void eventLoop(void) {}
+
+    //
 
 };
 
@@ -108,9 +111,12 @@ class axWindow : public axWindowImpl
     //
     //----------------------------------------
 
+
+    //----------------------------------------
+
     void redrawRect( int aX, int aY, int aW, int aH )
       {
-        //TRACE("redrawRect %i,%i - %i,%i\n",aX,aY,aW,aH);
+        //("redrawRect %i,%i - %i,%i\n",aX,aY,aW,aH);
         invalidate(aX,aY,aW,aH);
       }
 
@@ -126,6 +132,7 @@ class axWindow : public axWindowImpl
 
     void redraw(void)
       {
+        //TRACE("axWindow redraw %i,%i,%i,%i\n",mRect.x,mRect.y,mRect.w,mRect.h);
         redrawRect( mRect );
       }
 
@@ -149,6 +156,22 @@ class axWindow : public axWindowImpl
     //virtual void      doMouseMove(int aX, int aY, int aB)       {}
     //virtual void      doKeyDown(int aK, int aS)                 {}
     //virtual void      doKeyUp(int aK, int aS)                   {}
+
+    //virtual void doResize(int aW, int aH)
+    //  {
+    //    TRACE("doResize %i,%i\n",aW,aH);
+    //    axContainer::doResize(aW,aH);
+    //  }
+
+    //virtual void      doPaint(axCanvas* aCanvas, axRect aRect)
+    //  {
+    //    TRACE("axContainer.doPaint %i,%i\n",aRect.w,aRect.h);
+    //    TRACE("              mRect %i,%i\n",mRect.w,mRect.h);
+    //    axContainer::doPaint(aCanvas, aRect);
+    //  }
+
+
+
 
     //----------------------------------------
     // widget listener

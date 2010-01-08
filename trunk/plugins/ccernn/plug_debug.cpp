@@ -22,12 +22,17 @@
 #include "wdgPanel.h"
 #include "wdgResizer.h"
 
+#include "wdgImgKnob.h"
+#include "axBitmapLoader.h"
+#include "images/vslider1_20x100_65h.h" // 46002
+
 //----------------------------------------------------------------------
 
 class myPlugin : public axPlugin,
                  public axWidgetListener
 {
   public:
+    bool        is_gui_initialized;
     axEditor    *mEditor;
     wdgKnob     *wKnob;
     wdgTabs     *wTabs;
@@ -35,21 +40,27 @@ class myPlugin : public axPlugin,
     wdgResizer  *wSizer;
     wdgPanel    *wLeft, *wRight, *wTop, *wBottom, *wClient;
 
+    axSurface   *mSrfSlider;
+    wdgImgKnob  *slid;
+
   public:
 
     myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
     : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
       {
         mEditor = NULL;
+        is_gui_initialized = false;
+        mSrfSlider = NULL;
         hasEditor(AX_WIDTH,AX_HEIGHT);
         describe("plug_debug","ccernn","product_string",0,0);
       }
 
     //----------
 
-    //virtual ~myPlugin()
-    //  {
-    //  }
+    virtual ~myPlugin()
+      {
+        if (mSrfSlider) delete mSrfSlider;
+      }
 
     //--------------------------------------------------
     //
@@ -150,7 +161,14 @@ class myPlugin : public axPlugin,
 
     virtual axWindow* doCreateEditor(void)
       {
-        axEditor* E = new axEditor("plug_debug_win",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
+        axEditor* E = new axEditor("plug_debug_win",this,-1,axRect(0,0,mWidth,mHeight),AX_FLAGS);
+        //E->setFlag(wfl_Align);
+        if(!is_gui_initialized)
+        {
+          mSrfSlider = loadPng( vslider1, 46002 );
+          is_gui_initialized=true;
+        }
+
         E->setBackground(false);
         E->setFlag(wfl_Align);
         E->setAlign(0,0,0,0);
@@ -159,6 +177,9 @@ class myPlugin : public axPlugin,
         E->appendWidget( wBottom = new wdgPanel( this,-1,axRect(0,0,0,  20),wal_Bottom  ) );
         E->appendWidget( wRight  = new wdgPanel( this,-1,axRect(0,0,100,0 ),wal_Right   ) );
         E->appendWidget( wClient = new wdgPanel( this,-1,NULL_RECT,         wal_Client  ) );
+
+        wLeft->appendWidget( slid = new wdgImgKnob(this, -1, axRect(5,5,20,100), wal_None,65,mSrfSlider ));
+        slid->mSens1 = 0.01;
 
         wBottom->setFlag(wfl_Align);
         wBottom->setAlign(5,5,0,0);

@@ -240,6 +240,23 @@ class axWindowImpl : public axWindowBase
 
     //----------
 
+    virtual void resizeBuffer(int aWidth, int aHeight)
+      {
+        //if( aWidth!=mRect.w || aHeight!=mRect.h )
+        {
+          if (mWinFlags&AX_BUFFERED)
+          {
+            if (mSurface) delete mSurface;
+            mSurface = new axSurface(aWidth,aHeight,mWinFlags);
+          }
+          //mRect.w = aWidth;  //mRect.w(w);
+          //mRect.h = aHeight;  //mRect.h(h);
+          //doResize(aWidth,aHeight);
+        } //newsize
+      }
+
+    //----------
+
     virtual void setTitle(axString aTitle)
       {
         XTextProperty window_title_property;
@@ -489,6 +506,23 @@ class axWindowImpl : public axWindowBase
 
     //----------
 
+//    virtual void resize_window(int w, int h)
+//      {
+//        TRACE("axWindow.resize_window\n");
+//        //if( w!=mRect.w || h!=mRect.h )
+//        //{
+//          if (mWinFlags&AX_BUFFERED)
+//          {
+//            if (mSurface) delete mSurface;
+//            mSurface = new axSurface(w,h,mWinFlags);
+//          }
+//          mRect.w = w;  //mRect.w(w);
+//          mRect.h = h;  //mRect.h(h);
+//          //doResize(w,h);
+//        //} //newsize
+//      }
+//
+//
     void eventhandler(XEvent* ev)
       {
         axRect rc;
@@ -501,21 +535,18 @@ class axWindowImpl : public axWindowBase
             //TODO: resize surface, if any
             w = ev->xconfigure.width;
             h = ev->xconfigure.height;
-            //TRACE("resize %i,%i\n",w,h);
-            if( w!=mRect.w || h!=mRect.h )
+            while (XCheckTypedWindowEvent(gDP, ev->xexpose.window, ConfigureNotify, ev))
             {
-              if (mWinFlags&AX_BUFFERED)
-              {
-                if (mSurface) delete mSurface;
-                mSurface = new axSurface(w,h,mWinFlags);
-              }
-              mRect.w = w;  //mRect.w(w);
-              mRect.h = h;  //mRect.h(h);
-              doResize(w,h);
-            } //newsize
+              //rc.combine( ev->xexpose.x, ev->xexpose.y, ev->xexpose.width, ev->xexpose.height );
+              w = ev->xconfigure.width;
+              h = ev->xconfigure.height;
+            }
+            //TRACE("ConfigureNotify %i,%i\n",w,h);
+            resizeBuffer(w,h);
+            doResize(w,h);
+            //onRedraw(mRect);
             break;
           case Expose:
-            //TRACE("Expose\n");
             beginPaint();
             rc = axRect(ev->xexpose.x,
                         ev->xexpose.y,
@@ -525,7 +556,7 @@ class axWindowImpl : public axWindowBase
             {
               rc.combine( ev->xexpose.x, ev->xexpose.y, ev->xexpose.width, ev->xexpose.height );
             }
-            //TRACE("- %i,%i - %i,%i\n",rc.x, rc.y, rc.w,rc.h);
+            //TRACE("Expose %i,%i,%i,%i\n",rc.x, rc.y, rc.w,rc.h);
             if (mWinFlags&AX_BUFFERED)
             {
               axCanvasBase* can = mSurface->mCanvas;
@@ -542,7 +573,6 @@ class axWindowImpl : public axWindowBase
               //mCanvas->clearClipRect();
             }
             endPaint();
-            //flush();
             break;
           case ClientMessage:
             val = ev->xclient.data.l[0];

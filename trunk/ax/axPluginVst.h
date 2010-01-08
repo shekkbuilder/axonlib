@@ -88,7 +88,8 @@ class axPluginImpl :  public AudioEffectX
     //void sendMidi_all(void)
     //void updateTimeInfo(void)
 
-    virtual axWindow* doCreateEditor(void) { return NULL; }
+    //virtual axWindow* doCreateEditor(void) { return NULL; }
+    virtual axWindow* doCreateEditor(/*int aWidth, int aHeight*/) { return NULL; }
     virtual void      doDestroyEditor(void) {}
     virtual void      doIdleEditor(void) {}
     virtual void      doProcessState(int aState) {}
@@ -113,8 +114,8 @@ class axPluginImpl :  public AudioEffectX
           for (int j=0; j<AX_NUMPARAMS; j++) mPrograms[i][j] = 0;
         }
         mFlags  = 0;
-        mWidth  = 256;
-        mHeight = 256;
+        //mWidth  = 256;
+        //mHeight = 256;
         mWindow = NULL;
         mMidiEventList.numEvents = 0;
         mMidiEventList.reserved  = 0;
@@ -306,7 +307,7 @@ class axPluginImpl :  public AudioEffectX
     // plug->host
     //bool AudioEffectX::sizeWindow(VstInt32 width, VstInt32 height)
 
-    void hasEditor(int aWidth, int aHeight/*, bool aState=true*/)
+    void hasEditor(int aWidth, int aHeight)
       {
         cEffect.flags |= effFlagsHasEditor;
         mFlags |= pfl_HasEditor;
@@ -323,7 +324,7 @@ class axPluginImpl :  public AudioEffectX
         //#endif
         //if( mWindow ) doDestroyEditor();
         //if( mWindow ) TRACE("oops! mWindo is not NULL (axPluginVst::openEditor)\n"); // meaning we could be executing 'inside' it in another thread?????
-        axWindow* win = doCreateEditor();
+        axWindow* win = doCreateEditor(/*mWidth,mHeight*/);
         if (win)
         {
           win->reparent((int)ptr);

@@ -44,7 +44,6 @@ LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 #define cuPlus            -1
 #define cuQuestion        -1
 #define cuIbeam           -1
-
 #define DEF_CURSOR    cuArrow
 
 //----------------------------------------------------------------------
@@ -234,6 +233,24 @@ class axWindowImpl : public axWindowBase
         {
           SetWindowPos(pGrandparent, 0, 0, 0, grandparentW + dw, grandparentH + dh, SETPOS_FLAGS);
         }
+      }
+
+    //----------
+
+    virtual void resizeBuffer(int aWidth, int aHeight)
+      {
+        TRACE("resizeBuffer %i %i\n",aWidth,aHeight);
+        //if (aWidth!=mRect.w || aHeight!=mRect.h )
+        {
+          if (mWinFlags&AX_BUFFERED)
+          {
+            if (mSurface) delete mSurface;
+            mSurface = new axSurface(aWidth,aHeight,mWinFlags);
+          }
+          //mRect.w = aWidth;
+          //mRect.h = aHeight;
+          //doResize(aWidth,h);
+        } //newsize
       }
 
     //----------
@@ -506,18 +523,8 @@ class axWindowImpl : public axWindowBase
             //int y = ev->xconfigure.y;
             w = short(LOWORD(lParam));
             h = short(HIWORD(lParam));
-            //TRACE("resize %i,%i\n",w,h);
-            if (w!=mRect.w || h!=mRect.h )
-            {
-              if (mWinFlags&AX_BUFFERED)
-              {
-                if (mSurface) delete mSurface;
-                mSurface = new axSurface(w,h,mWinFlags);
-              }
-              mRect.w = w;
-              mRect.h = h;
-              doResize(w,h);
-            } //newsize
+            resizeBuffer(w,h);
+            doResize(w,h);
             result = 0;
             break;
           case WM_DESTROY:
