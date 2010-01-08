@@ -88,7 +88,7 @@ class myPlugin : public axPlugin,
         // Standard raised cosine window, max height at N/2
         for (int i=0; i<BUFFERSIZE; i++)
         {
-          mWindow[i] = -0.5 * cos(2*PI*i/(BUFFERSIZE-1)) + 0.5;
+          mWindow[i] = -0.5 * cosf(2*PI*i/(BUFFERSIZE-1)) + 0.5;
         }
 
 //        appendParameter( pScale  = new parFloat(  this, 0, "scale", "",   1,   0,  4 ) );
@@ -239,6 +239,7 @@ class myPlugin : public axPlugin,
           wScope->mBuffer = mViewBuffer;
           wScope->mDrawFlags = wbf_Wave;// | wbf_Slices;
           wScope->mWaveColor = AX_YELLOW;
+          wScope->mUnipolar = true;
           //wScope->mNumSlices = 8;
           //wScope->mSlicesColor = AX_WHITE;
 
@@ -284,18 +285,18 @@ class myPlugin : public axPlugin,
             mayer_realfft(BUFFERSIZE,mViewBuffer);
             //mayer_fft(BUFFERSIZE,mViewBuffer,mViewBuffer2);
 
-//            float floor = -200.0f;
-//            int HALF = BUFFERSIZE / 2;
-//            float scale = 1.0f / (float)HALF;
-//            for (int i=0; i<HALF; i++)
-//            {
-//              float n = mViewBuffer[i]*mViewBuffer[i] + mViewBuffer[HALF+i]*mViewBuffer[HALF+i];
-//              float db = /*20. **/ log10f( 2. * sqrtf(n) / (float)BUFFERSIZE);
-//              mViewBuffer[i] = (floor + db) * 0.001;
-//            }
+            float floor = powf(10,-100/20); //  // 1e-10 = pow(10, -200/20);
+            int HALF = BUFFERSIZE / 2;
+            //float scale = 1.0f / (float)HALF;
+            for (int i=1; i<HALF; i++)
+            {
+              float n = sqrtf( mViewBuffer[i]*mViewBuffer[i] + mViewBuffer[HALF+i]*mViewBuffer[HALF+i] );
+              //float n = mViewBuffer[i]*mViewBuffer[i] + mViewBuffer[HALF+i]*mViewBuffer[HALF+i];
+              float power = 20.0 * log10f( axMax( n, floor) );
+              mViewBuffer[i] = power / 100.0f;
+            }
 
-            for (int i=0;i<BUFFERSIZE/2; i++) mViewBuffer[i] /= BUFFERSIZE;
-
+            //for (int i=0;i<BUFFERSIZE/2; i++) mViewBuffer[i] /= BUFFERSIZE;
 
             mFilled=false;
             mEditor->appendDirty( wScope );
