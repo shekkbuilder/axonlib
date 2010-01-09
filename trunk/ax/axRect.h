@@ -5,13 +5,14 @@
 struct axRect
 {
 
-  union
-  {
-    //struct { int x,y,w,h; };
-    //struct { int data[4]; };
-    int x,y,w,h;
-    int data[4];
-  };
+  int x,y,w,h;
+  //union
+  //{
+  //  //struct { int x,y,w,h; };
+  //  //struct { int data[4]; };
+  //  int x,y,w,h;
+  //  int data[4];
+  //};
   axRect()                                { }
   axRect(int i)                           { x=i; y=i; w=i; h=i; }
   axRect(int aX, int aY, int aW, int aH)  { x=aX; y=aY; w=aW; h=aH; }

@@ -75,8 +75,8 @@ class axWidgetListener
     virtual void onRedraw(axWidget* aWidget)  {}
     virtual void onRedraw(axRect aRect)       {}
     virtual void onRedrawAll(void)            {}
-    virtual void onMove(int aX, int aY)       {}
-    virtual void onResize(int dX, int dY)     {}
+    virtual void onMoved(axWidget* aWidget, int aX, int aY)       {}
+    virtual void onResized(axWidget* aWidget, int dX, int dY)     {}
     virtual void onSetHint(axString aHint)    {}
 };
 

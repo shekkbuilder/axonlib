@@ -194,16 +194,14 @@ class axEditor : public axWindow,
         }
       }
 
-    virtual void onResize(int dX, int dY)
+    void resizeWindow(int aWidth, int aHeight)
       {
-        int w = mRect.w+dX;
-        int h = mRect.h+dY;
-        mRect.w = w;
-        mRect.h = h;
-        setSize( w, h );      // resize os window
-        mPlugin->mWidth = w;
-        mPlugin->mHeight = h;
-        mPlugin->sizeWindow(w, h);  // let vst host know (request to resize window), Expose
+        mRect.w = aWidth;
+        mRect.h = aHeight;
+        setSize( aWidth, aHeight );      // resize os window
+        mPlugin->mWidth = aWidth;
+        mPlugin->mHeight = aHeight;
+        mPlugin->sizeWindow(aWidth, aHeight);  // let vst host know (request to resize window), Expose
       }
 
 };
