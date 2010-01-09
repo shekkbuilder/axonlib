@@ -2,7 +2,7 @@
 #define axContainer_included
 //----------------------------------------------------------------------
 
-#define AX_PAINTERS
+//#define AX_PAINTERS
 
 #include "axWidget.h"
 
@@ -422,24 +422,16 @@ class axContainer : public axWidget,
 
     //----------
 
-    //virtual void onMoved(int aX, int aY)
-    //  {
-    //    if(hasFlag(wfl_Align))
-    //    {
-    //      doRealign();
-    //      mListener->onRedraw(this);
-    //    }
-    // }
+    virtual void onMoved(axWidget* aWidget, int aX, int aY)
+      {
+        mListener->onMoved(aWidget,aX,aY);
+      }
 
     //----------
 
-    virtual void onResized(int aW, int aH)
+    virtual void onResized(axWidget* aWidget, int aW, int aH)
       {
-    //    if(hasFlag(wfl_Align))
-    //    {
-    //      doRealign();
-          mListener->onRedraw(this);
-    //    }
+        mListener->onResized(aWidget,aW,aH);
       }
 
     //----------

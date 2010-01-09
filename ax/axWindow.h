@@ -197,8 +197,8 @@ class axWindow : public axWindowImpl
         redraw();
       }
 
-    //virtual void onMoved(int aX, int aY)      {}
-    //virtual void onResized(int aW, int aH)    {}
+    //virtual void onMoved(axWidget* aWidget, int aX, int aY)      {}
+    //virtual void onResized(axWidget* aWidget, int aW, int aH)    {}
 
     virtual void onSetHint(axString aHint)
       {
