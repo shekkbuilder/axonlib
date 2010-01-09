@@ -15,6 +15,7 @@
 #include "axGlobals.h"
 //#include "axColor.h"
 #include "axWindow.h"
+#include "axDebug.h"
 
 //----------------------------------------------------------------------
 

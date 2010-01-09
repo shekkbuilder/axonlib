@@ -48,14 +48,14 @@ class parInteger : public axParameter
     virtual int getInt(void)
       {
         //return mRange * (float)(mValue + mMin);
-        float n = floor( mValue * mRange );
-        return mMin + axMin(n,(mRange-1));
+        float n = floor (mValue * mRange );
+        return (mMin + (int)axMin(n,(mRange-1)));
       }
 
     //--------------------------------------------------
 
-    virtual void  setValue(float aValue)  { setInt(aValue); }
-    virtual float getValue(void)          { return getInt(); }
+    virtual void  setValue(float aValue)  { setInt((int)aValue); }
+    virtual float getValue(void)          { return (float)getInt(); }
 
     //--------------------------------------------------
 

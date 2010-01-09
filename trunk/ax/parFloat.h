@@ -71,7 +71,7 @@ class parFloat : public axParameter
         if( mStep>0 )
         {
           float n = mValue * mNumSteps;
-          int st = axMin(n,(mNumSteps-1));
+          int st = (int)axMin(n,(mNumSteps-1));
           return mMin + (st*mStep);
         }
         else
