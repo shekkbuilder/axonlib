@@ -16,16 +16,21 @@ if .%1==. goto nofile
 		call set target=%%infile:%rstring%=%%
 		set target=%target%.dll
 		:: --------------------------
+		if exist %target% del %target%;		
+		:: --------------------------
 		echo.
 		echo * compiling windows binary for '%1'...
 		echo.
-		%mgwpath%mingw32-g++.exe -I../ax -I../../vstsdk24 -shared -mwindows -O3 -Os -fdata-sections -ffunction-sections %1 -s -o %target% -Wl,-gc-sections
-		%mgwpath%strip --strip-all %target%
+		%mgwpath%g++.exe -I../ax -I../../vstsdk24 -shared -mwindows -O3 -Os -fdata-sections -ffunction-sections %1 -s -o %target% -pedantic -fpermissive -Wl,-gc-sections
+		if exist %target% %mgwpath%strip --strip-all %target%
 		:: optional upx
 		rem upx --best %target%
 		:: moving file
-		echo moving %target% to ../bin
-		move %target% ../bin
+		echo.
+		if not exist ..\BIN md ..\bin		
+		if not exist %target% echo # not compiled!		
+		if exist %target% echo moving %target% to ..\bin
+		if exist %target%	move %target% ..\bin
 		:: --------------------------
 		:: done
 		echo.

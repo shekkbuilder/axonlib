@@ -50,7 +50,7 @@
     {
       gInstance = hModule;
       return TRUE;
-    };
+    }
     //----------
     int main(audioMasterCallback audioMaster)
     {

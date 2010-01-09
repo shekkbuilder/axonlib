@@ -34,7 +34,7 @@ float axRandom(float f)
 int axRandomInt(int i)
   {
     float f = axRandom(i+1);
-    return axMin( i, floorf(f) );
+    return (int)axMin( i, floorf(f) );
 
   }
 

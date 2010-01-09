@@ -19,6 +19,13 @@
 
 //----------------------------------------------------------------------
 
+//AX_NUMPROGS should a minimum of 1 ?,
+//otherwise zero-length arrays in axPluginVst.h
+#if (AX_NUMPROGS == 0)	
+	#undef AX_NUMPROGS
+	#define AX_NUMPROGS 1	
+#endif
+
 #include "axPluginVst.h"
 //#include "axHostVst.h"
 

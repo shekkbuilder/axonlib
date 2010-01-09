@@ -69,9 +69,9 @@ class axPluginImpl :  public AudioEffectX
     axVstEvents   mMidiEventList;
     VstEvent      mMidiEvents[MAX_MIDI_SEND];
   public:
-    char          mProgramNames[AX_NUMPROGS][kVstMaxProgNameLen+1];        // !!!!!
     int           mCurProg;
     float         mPrograms[AX_NUMPROGS][AX_NUMPARAMS];
+    char          mProgramNames[AX_NUMPROGS][kVstMaxProgNameLen+1];        // !!!!!
 
   public:
 

@@ -228,7 +228,7 @@ class axCanvasImpl : public axCanvasBase
           float y1 = y + sin(a1*PI2) * size;
           float x2 = x + cos(a2*PI2) * size;
           float y2 = y + sin(a2*PI2) * size;
-          Arc(mDC,aX1,aY1,aX2,aY2,x1,y1,x2,y2);
+          Arc(mDC,aX1,aY1,aX2,aY2,(int)x1,(int)y1,(int)x2,(int)y2);
         }
       }
 
@@ -253,7 +253,7 @@ class axCanvasImpl : public axCanvasBase
           float y1 = y + sin(a1*PI2) * size;
           float x2 = x + cos(a2*PI2) * size;
           float y2 = y + sin(a2*PI2) * size;
-          Pie(mDC,aX1,aY1,aX2,aY2,x1,y1,x2,y2);
+          Pie(mDC,aX1,aY1,aX2,aY2,(int)x1,(int)y1,(int)x2,(int)y2);
         }
       }
 

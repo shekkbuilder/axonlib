@@ -12,7 +12,8 @@
   #define PI    (3.1415926535f)
 //#endif
 
-#define PI2   (PI*2.0f)
+#define DENORM	(10e-30)
+#define PI2   	(PI*2.0f)
 #define EPSILON (0.0001f)
 #define inv360  (1.0f/360.0f)
 #define inv16   (1.0f/16.0f)
