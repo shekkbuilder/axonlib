@@ -75,8 +75,8 @@ struct axRect
 
   inline void combine(int aX, int aY, int aW, int aH)
     {
-      if( aX < x ) x = aX;
-      if( aY < y ) y = aY;
+      if( aX < x ) { w += (x-aX); x=aX; }
+      if( aY < y ) { h += (y-aY); y=aY; }
       if( (aX+aW) >= (x+w) ) w = (aX+aW) - x;
       if( (aY+aH) >= (y+h) ) h = (aY+aH) - y;
     }
