@@ -42,6 +42,42 @@ axSurface* loadPng(unsigned char* buffer, unsigned int buffersize)
     return srf;
   }
 
+//----------
+
+axBitmap* decodePng(unsigned char* buffer, unsigned int buffersize)
+  {
+    unsigned char*  image;
+    unsigned int    imagesize;
+    axBitmap*       bmp = NULL;
+    LodePNG_Decoder decoder;
+    LodePNG_Decoder_init(&decoder);
+    LodePNG_decode(&decoder,&image,&imagesize,buffer,buffersize);
+    if (!decoder.error)
+    {
+      int width  = decoder.infoPng.width;
+      int height = decoder.infoPng.height;
+      bmp = new axBitmap(width,height,image);
+      //bmp->convertRgbaBgra();
+      free(image);
+    }
+    LodePNG_Decoder_cleanup(&decoder);
+    return bmp;
+  }
+
+//----------
+
+axSurface* uploadBitmap(axBitmap* bmp)
+{
+  axSurface* srf = new axSurface(bmp->getWidth(),bmp->getHeight(),0);
+  srf->mCanvas->drawBitmap(bmp,0,0,0,0,bmp->getWidth(),bmp->getHeight());
+  srf->mCanvas->drawBitmap(bmp,0,0,0,0,bmp->getWidth(),bmp->getHeight());
+  return srf;
+  //delete bmp;
+}
+
+// axBitmap* bmp =
+//
+//
 
 //----------------------------------------------------------------------
 #endif

@@ -38,7 +38,7 @@ class axContainer : public axWidget,
         //setFlag(wfl_Align);
         //mWidgets.clear();
         mCapturedWidget = NULL;
-        mClickedWidget = NULL;
+        mClickedWidget  = NULL;
         //doRealign();
         mMarginX = 0;
         mMarginY = 0;
@@ -47,6 +47,8 @@ class axContainer : public axWidget,
         mClient = mRect;
         mStackedX = 0;
         mStackedY = 0;
+        setFlag(wfl_Align);
+        setFlag(wfl_Clip);
       }
 
     //----------
@@ -58,7 +60,7 @@ class axContainer : public axWidget,
 
     //--------------------------------------------------
 
-    virtual void setAlign(int aMarginX, int aMarginY, int aPaddingX, int aPaddingY)
+    virtual void setAlign(int aMarginX, int aMarginY, int aPaddingX=0, int aPaddingY=0)
       {
         mMarginX = aMarginX;
         mMarginY = aMarginY;
@@ -166,17 +168,17 @@ class axContainer : public axWidget,
       {
         //TRACE("axContainer doResize %i,%i\n",aW,aH);
         axWidget::doResize(aW,aH);
-        if( hasFlag(wfl_Align) )
-        {
+        //if( hasFlag(wfl_Align) )
+        //{
           //TRACE("doRealign\n");
           doRealign();
-        }
+        //}
       }
 
     //----------
 
-    //TODO: fix
-    //TODO: clipping
+    //TODO: clipping [hierarchial]
+    //TODO: wal_Center
     virtual void doRealign(void)
       {
         if( hasFlag(wfl_Align ) )
@@ -198,6 +200,7 @@ class axContainer : public axWidget,
             switch( wdg->mAlignment )
             {
               //case wal_None:
+              //  wdg->doMove( R.x + xx, R.y+yy );
               //  break;
               case wal_Parent:
                 wdg->doMove( R.x + wdg->mOrigin.x, R.y + wdg->mOrigin.y );
@@ -302,7 +305,6 @@ class axContainer : public axWidget,
             } //switch alignment
             wdg->doRealign();
 
-
           } //for widgets
         } //wfl_Align
       }
@@ -326,7 +328,7 @@ class axContainer : public axWidget,
 #endif
             {
               axWidget* W = mWidgets[i];
-              if( W->intersects(aRect) ) W->doPaint( aCanvas,aRect );
+              if( W->intersects(aRect) ) W->doPaint( aCanvas, mRect );
             }
             if( hasFlag(wfl_Clip) ) aCanvas->clearClipRect();
           } //intersect
@@ -422,23 +424,14 @@ class axContainer : public axWidget,
 
     //----------
 
-    virtual void onMoved(axWidget* aWidget, int aX, int aY)
-      {
-        mListener->onMoved(aWidget,aX,aY);
-      }
-
-    //----------
-
-    virtual void onResized(axWidget* aWidget, int aW, int aH)
-      {
-        mListener->onResized(aWidget,aW,aH);
-      }
-
-    //----------
-
     virtual void onSetHint(axString aHint)
       {
         mListener->onSetHint(aHint);
+      }
+
+    virtual void onResize(axWidget* aWidget, int aX, int aY)
+      {
+        mListener->onResize(aWidget,aX,aY);
       }
 
 };
