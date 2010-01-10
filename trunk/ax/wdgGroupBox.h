@@ -44,14 +44,6 @@ class wdgGroupBox : public axContainer
         if( !mClosed ) axContainer::doPaint(aCanvas,aRect);
       }
 
-//    inline void appendWidget(axWidget* aWidget)
-//      {
-//        //aWidget->mRect.y += mTitleSize;
-//        //aWidget->doMove( mRect.x + aWidget->mRect.x, mRect.y + aWidget->mRect.y + mTitleSize );
-//        //mWidgets.append(aWidget);
-//        axContainer::appendWidget(aWidget);
-//      }
-
     virtual void appendWidget(axWidget* aWidget, bool aRealign=true)
       {
         //aWidget->doMove( mRect.x + aWidget->mRect.x, mRect.y + aWidget->mRect.y );
@@ -62,27 +54,6 @@ class wdgGroupBox : public axContainer
           //doRealign();
         }
       }
-
-//    virtual void doMouseDown(int aX, int aY, int aB)
-//      {
-//        if( aY-mRect.y < mTitleSize )
-//        {
-//          if( mClosed )
-//          {
-//            mRect.h = mHeight;
-//            mClosed = false;
-//            mListener->onResized(mRect.w, mTitleSize);
-//          }
-//          else
-//          {
-//            mHeight = mRect.h;
-//            mRect.h = mTitleSize;
-//            mListener->onResized(mRect.w, mTitleSize);
-//            mClosed = true;
-//          }
-//        } //<20
-//        axContainer::doMouseDown(aX,aY,aB);
-//      }
 
 };
 

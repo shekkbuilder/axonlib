@@ -13,6 +13,16 @@
   the note will be ignored (cancelled by note off
   before it has had a chance to be 'seen')
 
+  TODO:
+  proper array/list. midi is handlen 'in-between proces blocks, so it should be safe enough
+  to mess with this during doProcessMidi
+
+  do we need to sort the events?
+  insert sorted? check if offset is equal or larger than prevoiusly (or last) event,
+  if not, search for correct position
+
+  assume not that many events per block, so that sorting shouldn't take that much time?
+
 */
 
 class axVoiceManager;
@@ -22,6 +32,9 @@ class axVoiceManager;
 // voice
 //
 //----------------------------------------------------------------------
+
+// env_offset = offset into following process block before the voice
+// should be started
 
 #define env_offset    0
 #define env_attack    1

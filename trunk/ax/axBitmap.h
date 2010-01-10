@@ -23,6 +23,8 @@ class axBitmapBase
     virtual ~axBitmapBase() {}
     virtual int   getHandle(void) { return 0; }
     virtual char* getBuffer(void) { return NULL; }
+    virtual int   getWidth(void) { return mWidth; }
+    virtual int   getHeight(void) { return mHeight; }
 };
 
 //----------------------------------------------------------------------
