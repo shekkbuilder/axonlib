@@ -4,6 +4,7 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include "axDebug.h"
 
 //------------------------------
 
@@ -100,6 +101,8 @@ float dB2lin( float dB )
 
 //----------
 
+// *** asm translations bellow
+// ------------------------------------
 float approx_sqrt( float f )
 {
   //assert( sizeof(unsigned int) == sizeof(float) );
@@ -119,6 +122,105 @@ float rttof( float x, long root )
   l += 0x3F800000;
   return *(float*)&l;
 }
+// ------------------------------------
+// *** asm translations bellow
+
+//-----------------------------------------------------------------------
+// approximation: n-th root of x
+//----------------------------------------------------------------------
+float axNrt (float radicand, long root)
+{
+		float result;
+	 	__asm__ volatile
+		(
+			"movl %1, %%eax;"
+			"subl $0x3f800000, %%eax;"
+			"subl $1, %2;"
+			"shrl %b2, %%eax;"
+			"addl $0x3f800000, %%eax;"
+			"movl %%eax, %0;"
+	    : "=r" (result)
+	    : "r" (radicand), "c" (root)
+			: "%eax"
+		);
+    return result;    
+}
+
+//----------------------------------------------------------------------
+// approximation: square root of x
+//----------------------------------------------------------------------
+float axSqrt (float radicand)
+{
+	float result;
+ 	__asm__ volatile
+	(
+		"movl %1, %%eax;"
+		"subl $0x3f800000, %%eax;"			
+		"shrl $1, %%eax;"
+		"addl $0x3f800000, %%eax;"
+		"movl %%eax,%0;"
+    : "=r" (result)
+    : "r" (radicand)
+		: "%eax"
+	);
+	return result;
+}
+
+//----------------------------------------------------------------------
+// approximation: invert square root of x 
+// * at&t asm pending
+//----------------------------------------------------------------------
+float axInvSqrt (float x)
+{
+    float xhalf = 0.5f*x;
+    int i = *(int*)&x;
+    i = 0x5f3759df - (i>>1);
+    x = *(float*)&i;
+    return x*(1.5f - xhalf*x*x);
+}
+
+//----------------------------------------------------------------------
+// approximation: powf(x, n) [currently 4.37 times faster than powf()]
+// * at&t asm pending
+//----------------------------------------------------------------------
+float axPow (float x, long n)
+{
+	const int org_n = n;
+	float z = 1;
+	if (n < 0) n = -n;
+	while (n != 0)
+	{
+		if ((n & 1) != 0) z *= x;
+		n >>= 1;
+		x *= x;
+	}	
+	return ((org_n < 0) ? 1.0f / z : z);
+}
+
+//----------------------------------------------------------------------
+// approximation: exp(x)
+// * at&t asm pending
+//----------------------------------------------------------------------
+float axExp(float exponent)
+{
+	union
+	{
+		double d;
+		struct
+		{		
+			#ifdef LITTLE_ENDIAN
+				int i, j;
+			#else
+				int j, i;
+			#endif
+		} s;
+	} u;
+	u.s.i = (int)(1512775*(double)exponent) + 1072632447;
+	u.s.j = 0;
+	return (float)u.d;
+}
+
+
 
 //----------------------------------------------------------------------
 // not really math related, but it have to stay here, until we find a
@@ -151,4 +253,5 @@ void axRadix (long *source, long *dest, long N, int byte)
 //);
 
 //----------------------------------------------------------------------
+
 #endif
