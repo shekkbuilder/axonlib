@@ -12,6 +12,7 @@ class wdgValue : public axWidget
     bool    is_dragging;
     int     prev;
     char    buf[MAX_TEXT];
+    char    hint[256];
   public:
     //float   mValue;
     axColor mTextColor;
@@ -74,8 +75,16 @@ class wdgValue : public axWidget
     virtual void doMouseDown(int aX, int aY, int aB)
       {
         is_dragging = true;
-        if( mFlags&wfl_Vertical) prev = aY;
-        else prev = -aX;
+        if( mFlags&wfl_Vertical)
+        {
+          prev = aY;
+          mListener->onCursor(cuArrowUpDown);
+        }
+        else
+        {
+          prev = -aX;
+          mListener->onCursor(cuArrowLeftRight);
+        }
       }
 
     //----------
@@ -83,6 +92,7 @@ class wdgValue : public axWidget
     virtual void doMouseUp(int aX, int aY, int aB)
       {
         is_dragging = false;
+          mListener->onCursor(DEF_CURSOR);
       }
 
     //----------
@@ -103,6 +113,8 @@ class wdgValue : public axWidget
           mValue = axMin(1,axMax(0,mValue));
           if(mParameter) mParameter->mValue = mValue;
           mListener->onChange( this );
+          sprintf(hint," %.3f",mValue);
+          mListener->onHint(hint);
         }
       }
 

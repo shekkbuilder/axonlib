@@ -1,6 +1,10 @@
 #ifndef axWidget_included
 #define axWidget_included
 //----------------------------------------------------------------------
+//TODO: mSurface in here, from axWindow
+//  axWindow: double buffering
+//  axWidget: bitmap for gui
+//  (axContainer?)
 
 #include "axString.h"
 #include "axRect.h"
@@ -75,8 +79,11 @@ class axWidgetListener
     virtual void onRedraw(axWidget* aWidget)  {}
     virtual void onRedraw(axRect aRect)       {}
     virtual void onRedrawAll(void)            {}
-    virtual void onResize(axWidget* aWidget, int dX, int dY)     {}
-    virtual void onSetHint(axString aHint)    {}
+    virtual void onMove(axWidget* aWidget, int dX,int dY)   {}
+    virtual void onResize(axWidget* aWidget, int dX,int dY) {}
+    virtual void onHint(axString aHint)       {}
+    virtual void onHover(axWidget* aWidget)   {}
+    virtual void onCursor(int aCursor)        {}
 };
 
 //----------------------------------------------------------------------

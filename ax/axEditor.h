@@ -204,6 +204,13 @@ class axEditor : public axWindow,
         mPlugin->sizeWindow(aWidth, aHeight);  // let vst host know (request to resize window), Expose
       }
 
+    //virtual void onCursor(int aCursor)
+    //  {
+    //    TRACE("set cursor %i\n",aCursor);
+    //    setCursor(aCursor);
+    //  }
+
+
 };
 
 //----------------------------------------------------------------------

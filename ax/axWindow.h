@@ -114,101 +114,24 @@ class axWindow : public axWindowImpl
 
     //----------------------------------------
 
-    void redrawRect( int aX, int aY, int aW, int aH )
-      {
-        //("redrawRect %i,%i - %i,%i\n",aX,aY,aW,aH);
-        invalidate(aX,aY,aW,aH);
-      }
-
-    void redrawRect( axRect aRect )
-      {
-        redrawRect( aRect.x, aRect.y, aRect.w, aRect.h );
-      }
-
-    void redrawWidget(axWidget* aWidget)
-      {
-        redrawRect( aWidget->mRect );
-      }
-
-    void redraw(void)
-      {
-        //TRACE("axWindow redraw %i,%i,%i,%i\n",mRect.x,mRect.y,mRect.w,mRect.h);
-        redrawRect( mRect );
-      }
+    void redrawRect(int aX, int aY, int aW, int aH) { invalidate(aX,aY,aW,aH); }
+    void redrawRect(axRect aRect)                   { redrawRect(aRect.x,aRect.y,aRect.w,aRect.h); }
+    void redrawWidget(axWidget* aWidget)            { redrawRect(aWidget->mRect); }
+    void redraw(void)                               { redrawRect(mRect ); }
 
     //----------------------------------------
     // widget handler
     //----------------------------------------
 
-    //virtual void      doReset(void)                             {}
-    //virtual void      doSetValue(float aValue)                  {} // 0..1
-    //virtual float     doGetValue(void)                          { return 0; } // 0..1
-    //virtual axString  doGetName(void)                           { return STR_EMPTY; }
-    //virtual void      doMove(int aX, int aY)                    {}
-    //virtual void      doResize(int aW, int aH)                  {}
-    //virtual void      doRealign(void)                           {}
-    //virtual void      doPaint(axCanvas* aCanvas, axRect aRect)  {}
-    //virtual void      doEnter(void)                             {}
-    //virtual void      doLeave(void)                             {}
-    //virtual void      doTimer(void)                             {}
-    //virtual void      doMouseDown(int aX, int aY, int aB)       {}
-    //virtual void      doMouseUp(int aX, int aY, int aB)         {}
-    //virtual void      doMouseMove(int aX, int aY, int aB)       {}
-    //virtual void      doKeyDown(int aK, int aS)                 {}
-    //virtual void      doKeyUp(int aK, int aS)                   {}
-
-    //virtual void doResize(int aW, int aH)
-    //  {
-    //    TRACE("doResize %i,%i\n",aW,aH);
-    //    axContainer::doResize(aW,aH);
-    //  }
-
-    //virtual void      doPaint(axCanvas* aCanvas, axRect aRect)
-    //  {
-    //    TRACE("axContainer.doPaint %i,%i\n",aRect.w,aRect.h);
-    //    TRACE("              mRect %i,%i\n",mRect.w,mRect.h);
-    //    axContainer::doPaint(aCanvas, aRect);
-    //  }
-
-
-
-
     //----------------------------------------
     // widget listener
     //----------------------------------------
 
-    virtual void onChange(axWidget* aWidget)
-      {
-        redrawWidget(aWidget);
-      }
-
-    virtual void onRedraw(axWidget* aWidget)
-      {
-        redrawWidget(aWidget);
-      }
-
-    virtual void onRedraw(axRect aRect)
-      {
-        redrawRect(aRect);
-      }
-
-    virtual void onRedrawAll(void)
-      {
-        redraw();
-      }
-
-    virtual void onSetHint(axString aHint)
-      {
-        //mListener->onSetHint(aHint);
-        //setTitle(aHint);
-      }
-
-    //----------
-
-    //virtual void onSetCursor(int aCursor)
-    //  {
-    //    mListener->onSetCursor(aCursor);
-    //  }
+    virtual void onChange(axWidget* aWidget)  { redrawWidget(aWidget); }
+    virtual void onRedraw(axWidget* aWidget)  { redrawWidget(aWidget); }
+    virtual void onRedraw(axRect aRect)       { redrawRect(aRect); }
+    virtual void onRedrawAll(void)            { redraw(); }
+    virtual void onCursor(int aCursor)        { setCursor(aCursor); }
 
 };
 

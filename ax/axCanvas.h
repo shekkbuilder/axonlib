@@ -25,6 +25,7 @@
 #define tal_Horz          1024
 #define tal_Vert          2048
 
+// canvas mode
 #define cmo_window        0
 #define cmo_buffer        1
 

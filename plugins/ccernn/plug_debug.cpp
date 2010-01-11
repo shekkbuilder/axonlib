@@ -16,11 +16,12 @@
 //#include "parFloat.h"
 //#include "parInteger.h"
 
-//#include "wdgLabel.h"
+#include "wdgLabel.h"
 #include "wdgKnob.h"
 #include "wdgTabs.h"
 #include "wdgPanel.h"
 #include "wdgResizer.h"
+#include "wdgGroupBox.h"
 
 #include "wdgImgKnob.h"
 #include "wdgImgSwitch.h"
@@ -51,6 +52,9 @@ class myPlugin : public axPlugin,
     axSurface   *mSrfBut1, *mSrfBut2, *mSrfBut3;
     wdgImgSwitch *wBut1,*wBut2,*wBut3;
 
+    wdgLabel      *wStatus;
+
+    wdgGroupBox *gr1,*gr2,*gr3,*gr4,*gr5;
 
   public:
 
@@ -158,6 +162,22 @@ class myPlugin : public axPlugin,
           mEditor->doRealign();
           mEditor->redraw();
         }
+        if (aWidget->mID == 1000) // wdgSplitter
+        {
+          wLeft->doRealign();
+          mEditor->onChange(wLeft);
+        }
+
+      }
+
+    virtual void onCursor(int aCursor) { mEditor->onCursor(aCursor); }
+
+    //
+
+    virtual void onHint(axString aHint)
+      {
+        wStatus->setText(aHint);
+        mEditor->onChange(wStatus);
       }
 
     //--------------------------------------------------
@@ -236,33 +256,50 @@ class myPlugin : public axPlugin,
         }
 
         E->setBackground(false);
-        E->appendWidget(    wLeft  = new wdgPanel(    this,-1,   axRect(0,0,100,0  ),wal_Left    ) );
-        E->appendWidget( wSplitter = new wdgResizer( this, 315, axRect( 0,0,5,5 ),wal_Left ) );
-
-        E->appendWidget(     wTop      = new wdgPanel(    this,-1,   axRect(0,0,0,  40 ),wal_Top     ) );
-        E->appendWidget(     wBottom   = new wdgPanel(    this,-1,   axRect(0,0,0,  20 ),wal_Bottom  ) );
-        E->appendWidget(     wRight    = new wdgPanel(    this,-1,   axRect(0,0,100,0  ),wal_Right   ) );
-        E->appendWidget(     wClient   = new wdgPanel(    this,-1,   NULL_RECT,          wal_Client  ) );
+        E->appendWidget(    wLeft  = new wdgPanel(    this,-1,   axRect( 0,0,200,0  ),wal_Left    ) );
+        E->appendWidget( wSplitter = new wdgResizer(  this, 315, axRect( 0,0,5,5 ),wal_Left ) );
+        E->appendWidget(     wTop      = new wdgPanel(this,-1,   axRect( 0,0,0,  40 ),wal_Top     ) );
+        E->appendWidget(     wBottom   = new wdgPanel(this,-1,   axRect( 0,0,0,  20 ),wal_Bottom  ) );
+        E->appendWidget(     wRight    = new wdgPanel(this,-1,   axRect( 0,0,100,0  ),wal_Right   ) );
+        E->appendWidget(     wClient   = new wdgPanel(this,-1,   NULL_RECT,          wal_Client  ) );
 
         wTop->setAlign(5,5);
         wTop->appendWidget(  wBut1   = new wdgImgSwitch(this, 100, axRect( 0,0,30,30 ),wal_LeftTop,1, mSrfBut1 ) );
         wTop->appendWidget(  wBut2   = new wdgImgSwitch(this, 101, axRect( 0,0,30,30 ),wal_LeftTop,0, mSrfBut2 ) );
         wTop->appendWidget(  wBut3   = new wdgImgSwitch(this, 102, axRect( 0,0,30,30 ),wal_LeftTop,0, mSrfBut3 ) );
 
-        wLeft->setAlign(5,5);
-        wLeft->appendWidget( slid    = new wdgImgKnob(  this,-1,   axRect( 0,0,20,100),wal_Right,65,mSrfSlider ));
-        slid->mSens1 = 0.01;
+        wLeft->setAlign(5,5,5,5);
+        wLeft->appendWidget( gr1 = new wdgGroupBox( this,1000, axRect( 0,0,0,100),wal_Top ));
+        wLeft->appendWidget( gr2 = new wdgGroupBox( this,1000, axRect( 0,0,0, 50),wal_Top ));
+        wLeft->appendWidget( gr3 = new wdgGroupBox( this,1000, axRect( 0,0,0,250),wal_Top ));
+        wLeft->appendWidget( gr4 = new wdgGroupBox( this,1000, axRect( 0,0,0,100),wal_Top ));
+        wLeft->appendWidget( gr5 = new wdgGroupBox( this,1000, axRect( 0,0,0,100),wal_Top ));
 
-        wBottom->setAlign(3,3);
+        gr1->setup("groupbox1",  false,true);
+        gr2->setup("group 2",    false,true);
+        gr3->setup("box 3",      false,true);
+        gr4->setup("...4",       false,true);
+        gr5->setup("and five..", false,true);
+
+        gr1->setBackground(false,axColor(96,96,96));
+        gr2->setBackground(false,axColor(96,96,96));
+        gr3->setBackground(false,axColor(96,96,96));
+        gr4->setBackground(false,axColor(144,144,144));
+        gr5->setBackground(false,axColor(96,96,96));
+
+        wBottom->setAlign(3,3,10,0);
         wBottom->appendWidget( wSizer = new wdgResizer( this, 314, axRect( 0,0,16,16 ),wal_Right ) );
+        wBottom->appendWidget( wStatus = new wdgLabel( this, -1, axRect( 0,0,16,16 ),wal_Client, "[status]", AX_GREY_DARK, tal_Left ) );
 
         wRight->setAlign(5,5);
-        wRight->appendWidget( wKnob   = new wdgKnob(this,-99,axRect(10,148,80,16),wal_RightTop,0 ) );
+        wRight->appendWidget( wKnob   = new wdgKnob(this,-99,     axRect(10,148,80,16),wal_RightTop,0 ) );
+        wRight->appendWidget( slid    = new wdgImgKnob(  this,-1, axRect( 10,50,20,100),wal_None,65,mSrfSlider ));
+        slid->mSens1 = 0.01;
 
         wClient->setAlign(5,5);
         wClient->appendWidget( wTabs  = new wdgTabs(this, -1,axRect(10,10,256,128),wal_Client));
 
-        wTabs->setBackground(true,AX_RED_DARK);
+        //wTabs->setBackground(true,AX_RED_DARK);
         wTabs->appendPage( wPage1 = new axContainer(this, -1,NULL_RECT,wal_Client) );
         wTabs->appendPage( wPage2 = new axContainer(this, -1,NULL_RECT,wal_Client) );
         wTabs->appendPage( wPage3 = new axContainer(this, -1,NULL_RECT,wal_Client) );

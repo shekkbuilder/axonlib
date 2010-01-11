@@ -39,7 +39,7 @@ class axCanvasImpl : public axCanvasBase
     virtual ~axCanvasImpl()
       {
         //XFreeFontInfo(char** names, XFontStruct* free_info, int actual_count);
-        XFreeFontInfo(0,mFont,1);
+        XFreeFontInfo(0,mFont,1);   // 1??
         XFreeGC(gDP,mGC);
       }
 

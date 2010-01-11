@@ -179,35 +179,38 @@ class axWindowImpl : public axWindowBase
 
       //----------
 
-          void GetWindowSize(HWND pWnd, int* pW, int* pH)
+      //internal
+      void GetWindowSize(HWND pWnd, int* pW, int* pH)
+        {
+          if (pWnd)
           {
-            if (pWnd)
-            {
-              RECT r;
-              GetWindowRect(pWnd, &r);
-              *pW = r.right - r.left;
-              *pH = r.bottom - r.top;
-            }
-            else
-            {
-              *pW = *pH = 0;
-            }
+            RECT r;
+            GetWindowRect(pWnd, &r);
+            *pW = r.right - r.left;
+            *pH = r.bottom - r.top;
           }
-
-          bool IsChildWindow(HWND pWnd)
+          else
           {
-            if (pWnd)
-            {
-              int style = GetWindowLong(pWnd, GWL_STYLE);
-              int exStyle = GetWindowLong(pWnd, GWL_EXSTYLE);
-              return ((style & WS_CHILD) && !(exStyle & WS_EX_MDICHILD));
-            }
-            return false;
+            *pW = *pH = 0;
           }
+        }
 
-          #define SETPOS_FLAGS SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE
+      //internal
+      bool IsChildWindow(HWND pWnd)
+        {
+          if (pWnd)
+          {
+            int style = GetWindowLong(pWnd, GWL_STYLE);
+            int exStyle = GetWindowLong(pWnd, GWL_EXSTYLE);
+            return ((style & WS_CHILD) && !(exStyle & WS_EX_MDICHILD));
+          }
+          return false;
+        }
+
 
       //----------
+
+    #define SETPOS_FLAGS SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE
 
     virtual void setParentSize(int aWidth, int aHeight)
       {
@@ -236,22 +239,30 @@ class axWindowImpl : public axWindowBase
         }
       }
 
+    #undef SETPOS_FLAGS
+
     //----------
 
     virtual void resizeBuffer(int aWidth, int aHeight)
       {
-        TRACE("resizeBuffer %i %i\n",aWidth,aHeight);
-        //if (aWidth!=mRect.w || aHeight!=mRect.h )
-        {
+        //if( aWidth!=mRect.w || aHeight!=mRect.h )
+        //{
           if (mWinFlags&AX_BUFFERED)
           {
-            if (mSurface) delete mSurface;
-            mSurface = new axSurface(aWidth,aHeight,mWinFlags);
+            axSurface* srf;
+            if (mSurface)
+            {
+              srf = mSurface;
+              mSurface = NULL;
+              delete srf;
+            }
+            srf = new axSurface(aWidth,aHeight,mWinFlags);
+            mSurface = srf;
           }
           //mRect.w = aWidth;
           //mRect.h = aHeight;
           //doResize(aWidth,h);
-        } //newsize
+        //} //newsize
       }
 
     //----------
@@ -353,13 +364,13 @@ class axWindowImpl : public axWindowBase
 
     //------------------------------
 
-    virtual void setCursor(int aCursor)
+    virtual void setCursor(int aCursor/*, bool aHide=false*/)
       {
         if( aCursor<0 )
         {
           hideCursor();// aCursor = DEF_CURSOR;
           mPrevCursor = aCursor;
-        }
+        } //-1
         else
         {
           if( mPrevCursor<0 ) showCursor();
@@ -370,7 +381,7 @@ class axWindowImpl : public axWindowBase
             SetCursor( LoadCursor(NULL,(char*)aCursor) );
             mPrevCursor = aCursor;
           }
-        }
+        } //>0
       }
 
     //----------
@@ -460,7 +471,7 @@ class axWindowImpl : public axWindowBase
                           mPS.rcPaint.top,
                           mPS.rcPaint.right -  mPS.rcPaint.left + 1,
                           mPS.rcPaint.bottom - mPS.rcPaint.top  + 1);
-            if (mWinFlags&AX_BUFFERED)
+            if (mWinFlags&AX_BUFFERED && mSurface)
             {
               axCanvas* can = mSurface->mCanvas;
               //can->setClipRect(rc);

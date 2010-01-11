@@ -2,6 +2,11 @@
 #define wdgGroupBox_included
 //----------------------------------------------------------------------
 
+//TODO:
+//hierarch:
+//  sub-container for 'main area'-
+//  title-bar & button as (auto-aligned) widgets
+
 class wdgGroupBox : public axContainer
 {
   protected:
@@ -21,12 +26,40 @@ class wdgGroupBox : public axContainer
         mTitleColor = AX_GREY_LIGHT;
         mTitleBack  = AX_GREY_DARK;
         mClosable   = false;//true;
-        mClosed = false;
+        mClosed     = false;
+        mHeight     = mRect.h;
       }
 
     virtual ~wdgGroupBox()
       {
       }
+
+    void setup(axString aTitle, bool aClosed=false, bool aClosable=false)
+      {
+        mTitleText = aTitle;
+        mClosed = aClosed;
+        mClosable = aClosable;
+      }
+
+    void toggle_closed(void)
+      {
+        if (mClosed)
+        {
+          mClosed = false;
+          mRect.h = mHeight;
+        }
+        else
+        {
+          mClosed = true;
+          mRect.h = mTitleSize;
+        }
+      }
+
+    //virtual void doResize(int aW, int aH)
+    //  {
+    //    //mHeight = aH;
+    //    axContainer::doResize(aW,aH);
+    //  }
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
@@ -52,6 +85,21 @@ class wdgGroupBox : public axContainer
         {
           aWidget->doMove( mRect.x + aWidget->mRect.x, mRect.y + aWidget->mRect.y + mTitleSize );
           //doRealign();
+        }
+      }
+
+    virtual void doMouseDown(int aX, int aY, int aB)
+      {
+        if (aB==1 && mClosable)
+        {
+          if (aY < (mRect.y+mTitleSize))
+          {
+            //if (mClosed) mClosed = false;
+            //else mClosed = true;
+            toggle_closed();
+            mListener->onResize(this,0,0);
+            //mListener->onRedrawAll();
+          }
         }
       }
 
