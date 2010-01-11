@@ -22,6 +22,7 @@
 #include "wdgPanel.h"
 #include "wdgResizer.h"
 #include "wdgGroupBox.h"
+#include "wdgScroller.h"
 
 #include "wdgImgKnob.h"
 #include "wdgImgSwitch.h"
@@ -39,22 +40,21 @@ class myPlugin : public axPlugin,
   public:
     bool        is_gui_initialized;
     axEditor    *mEditor;
-    wdgKnob     *wKnob;
-    wdgTabs     *wTabs;
-    axContainer *wPage1,*wPage2,*wPage3;
-    wdgResizer  *wSizer;
-    wdgResizer  *wSplitter;
-    wdgPanel    *wLeft, *wRight, *wTop, *wBottom, *wClient;
 
     axSurface   *mSrfSlider;
-    wdgImgKnob  *slid;
-
     axSurface   *mSrfBut1, *mSrfBut2, *mSrfBut3;
-    wdgImgSwitch *wBut1,*wBut2,*wBut3;
 
+    wdgKnob       *wKnob;
+    wdgTabs       *wTabs;
+    axContainer   *wPage1,*wPage2,*wPage3;
+    wdgResizer    *wSizer;
+    wdgResizer    *wSplitter;
+    wdgPanel      *wLeft, *wRight, *wTop, *wBottom, *wClient;
+    wdgImgKnob    *slid;
+    wdgImgSwitch  *wBut1,*wBut2,*wBut3;
     wdgLabel      *wStatus;
-
-    wdgGroupBox *gr1,*gr2,*gr3,*gr4,*gr5;
+    wdgGroupBox   *gr1,*gr2,*gr3,*gr4,*gr5;
+    wdgScroller   *scr;
 
   public:
 
@@ -146,28 +146,47 @@ class myPlugin : public axPlugin,
 
     //----------
 
+    void recalc_scroller(void)
+      {
+        //HACK
+        int total = gr1->mRect.h
+                  + gr2->mRect.h
+                  + gr3->mRect.h
+                  + gr4->mRect.h
+                  + gr5->mRect.h
+                  + (5*4);
+        //TRACE("total: %i\n",total);
+        float n = (float)scr->mRect.h / (float)total;
+        n = axMax(0,axMin(1,n));
+        scr->setThumbSize(n);
+        //mEditor->onChange(scr);
+      }
+
     virtual void onResize(axWidget* aWidget,int dX, int dY)   // delta x,y
       {
-        if (aWidget->mID == 314) // wdgResizer
+        if (aWidget->mID == 314) // wdgSplitter, window resizer
         {
-          int w = mEditor->mRect.w+dX;
-          int h = mEditor->mRect.h+dY;
+          int w = mEditor->mRect.w + dX;
+          int h = mEditor->mRect.h + dY;
           mEditor->resizeWindow(w,h);
+          recalc_scroller();
+          mEditor->onChange(scr);
         }
-        if (aWidget->mID == 315) // wdgSplitter
+        if (aWidget->mID == 315) // wdgSplitter, left splitter
         {
           int w = wLeft->mRect.w + dX;
           int h = wLeft->mRect.h;// + dY;
           wLeft->doResize(w,h);
           mEditor->doRealign();
+          recalc_scroller();
           mEditor->redraw();
         }
-        if (aWidget->mID == 1000) // wdgSplitter
+        if (aWidget->mID == 1000)
         {
           wLeft->doRealign();
+          recalc_scroller();
           mEditor->onChange(wLeft);
         }
-
       }
 
     virtual void onCursor(int aCursor) { mEditor->onCursor(aCursor); }
@@ -244,8 +263,7 @@ class myPlugin : public axPlugin,
 
     virtual axWindow* doCreateEditor(void)
       {
-        axEditor* E = new axEditor("plug_debug_win",this,-1,axRect(0,0,mWidth,mHeight),AX_FLAGS);
-        //E->setFlag(wfl_Align);
+        axEditor* ed = new axEditor("plug_debug_win",this,-1,axRect(0,0,mWidth,mHeight),AX_FLAGS);
         if(!is_gui_initialized)
         {
           mSrfSlider = loadPng( vslider1,    46002 );
@@ -255,25 +273,37 @@ class myPlugin : public axPlugin,
           is_gui_initialized=true;
         }
 
-        E->setBackground(false);
-        E->appendWidget(    wLeft  = new wdgPanel(    this,-1,   axRect( 0,0,200,0  ),wal_Left    ) );
-        E->appendWidget( wSplitter = new wdgResizer(  this, 315, axRect( 0,0,5,5 ),wal_Left ) );
-        E->appendWidget(     wTop      = new wdgPanel(this,-1,   axRect( 0,0,0,  40 ),wal_Top     ) );
-        E->appendWidget(     wBottom   = new wdgPanel(this,-1,   axRect( 0,0,0,  20 ),wal_Bottom  ) );
-        E->appendWidget(     wRight    = new wdgPanel(this,-1,   axRect( 0,0,100,0  ),wal_Right   ) );
-        E->appendWidget(     wClient   = new wdgPanel(this,-1,   NULL_RECT,          wal_Client  ) );
+        // the 5 main panels & splitter
+
+        ed->setBackground(false);
+        ed->appendWidget(    wLeft      = new wdgPanel(   this,-1,   axRect( 0,0,200,0  ),wal_Left    ) );
+        ed->appendWidget( wSplitter     = new wdgResizer( this, 315, axRect( 0,0,5,5 ),wal_Left ) );
+        ed->appendWidget(     wTop      = new wdgPanel(   this,-1,   axRect( 0,0,0,  40 ),wal_Top     ) );
+        ed->appendWidget(     wBottom   = new wdgPanel(   this,-1,   axRect( 0,0,0,  20 ),wal_Bottom  ) );
+        ed->appendWidget(     wRight    = new wdgPanel(   this,-1,   axRect( 0,0,100,0  ),wal_Right   ) );
+        ed->appendWidget(     wClient   = new wdgPanel(   this,-1,   NULL_RECT,          wal_Client  ) );
+
+        // top : buttons for tabs
 
         wTop->setAlign(5,5);
         wTop->appendWidget(  wBut1   = new wdgImgSwitch(this, 100, axRect( 0,0,30,30 ),wal_LeftTop,1, mSrfBut1 ) );
         wTop->appendWidget(  wBut2   = new wdgImgSwitch(this, 101, axRect( 0,0,30,30 ),wal_LeftTop,0, mSrfBut2 ) );
         wTop->appendWidget(  wBut3   = new wdgImgSwitch(this, 102, axRect( 0,0,30,30 ),wal_LeftTop,0, mSrfBut3 ) );
 
+        // left: group boxes
+
         wLeft->setAlign(5,5,5,5);
+
+        wLeft->appendWidget( scr = new wdgScroller( this,1001, axRect(0,0,10,0), wal_Right ));
+
         wLeft->appendWidget( gr1 = new wdgGroupBox( this,1000, axRect( 0,0,0,100),wal_Top ));
         wLeft->appendWidget( gr2 = new wdgGroupBox( this,1000, axRect( 0,0,0, 50),wal_Top ));
         wLeft->appendWidget( gr3 = new wdgGroupBox( this,1000, axRect( 0,0,0,250),wal_Top ));
         wLeft->appendWidget( gr4 = new wdgGroupBox( this,1000, axRect( 0,0,0,100),wal_Top ));
         wLeft->appendWidget( gr5 = new wdgGroupBox( this,1000, axRect( 0,0,0,100),wal_Top ));
+
+        scr->setFlag(wfl_Vertical);
+        scr->setThumb(0, 0.25);
 
         gr1->setup("groupbox1",  false,true);
         gr2->setup("group 2",    false,true);
@@ -287,19 +317,24 @@ class myPlugin : public axPlugin,
         gr4->setBackground(false,axColor(144,144,144));
         gr5->setBackground(false,axColor(96,96,96));
 
+        // bottom: status bar & resize widget
+
         wBottom->setAlign(3,3,10,0);
-        wBottom->appendWidget( wSizer = new wdgResizer( this, 314, axRect( 0,0,16,16 ),wal_Right ) );
-        wBottom->appendWidget( wStatus = new wdgLabel( this, -1, axRect( 0,0,16,16 ),wal_Client, "[status]", AX_GREY_DARK, tal_Left ) );
+        wBottom->appendWidget( wSizer = new wdgResizer( this, 314,  axRect( 0,0,16,16 ),wal_Right ) );
+        wBottom->appendWidget( wStatus = new wdgLabel(  this, -1,   axRect( 0,0,16,16 ),wal_Client, "[status]", AX_GREY_DARK, tal_Left ) );
+
+        // right: some xtra widgets for testing
 
         wRight->setAlign(5,5);
-        wRight->appendWidget( wKnob   = new wdgKnob(this,-99,     axRect(10,148,80,16),wal_RightTop,0 ) );
-        wRight->appendWidget( slid    = new wdgImgKnob(  this,-1, axRect( 10,50,20,100),wal_None,65,mSrfSlider ));
+        wRight->appendWidget( wKnob   = new wdgKnob(    this,-99, axRect(10,148,80,16),wal_RightTop,0 ) );
+        wRight->appendWidget( slid    = new wdgImgKnob( this,-1,  axRect( 10,50,20,100),wal_None,65,mSrfSlider ));
         slid->mSens1 = 0.01;
+
+        // client area: tabs
 
         wClient->setAlign(5,5);
         wClient->appendWidget( wTabs  = new wdgTabs(this, -1,axRect(10,10,256,128),wal_Client));
 
-        //wTabs->setBackground(true,AX_RED_DARK);
         wTabs->appendPage( wPage1 = new axContainer(this, -1,NULL_RECT,wal_Client) );
         wTabs->appendPage( wPage2 = new axContainer(this, -1,NULL_RECT,wal_Client) );
         wTabs->appendPage( wPage3 = new axContainer(this, -1,NULL_RECT,wal_Client) );
@@ -308,11 +343,11 @@ class myPlugin : public axPlugin,
         wPage2->setBackground(true);
         wPage3->setBackground(true);
 
-        wPage2->setFlag(wfl_Vertical);
-
         wPage1->setAlign(10,10,5, 15);
         wPage2->setAlign(10,10,20,20);
         wPage3->setAlign(10,10,5, 5);
+
+        wPage2->setFlag(wfl_Vertical);
 
         wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
         wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
@@ -346,8 +381,11 @@ class myPlugin : public axPlugin,
 
         wTabs->setPage(0);
 
-        E->doRealign();
-        mEditor = E;
+        ed->doRealign();
+
+        recalc_scroller();
+
+        mEditor = ed;
         return mEditor;
       }
 
