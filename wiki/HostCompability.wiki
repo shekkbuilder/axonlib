@@ -25,6 +25,7 @@ buggy hosts:
 
 *linux:*
   * jost (mouse/painting event bugs, patch available [http://www.anticore.org/jucetice/forums/viewtopic.php?pid=612#p612 here] )
+  * cakewalk vst adapter 4 (vst -> dx wrapper)
 
 *win32:*
   * 
