@@ -21,7 +21,7 @@ if .%1==. goto nofile
 		echo.
 		echo * compiling windows binary for '%1'...
 		echo.
-		%mgwpath%g++.exe -I../ax -I../../vstsdk24 -shared -mwindows -O3 -Os -fdata-sections -ffunction-sections %1 -s -o %target% -pedantic -fpermissive -Wl,-gc-sections
+		%mgwpath%g++.exe -I../ax -I../../vstsdk24 -shared -mwindows -O3 -Os -fdata-sections -ffunction-sections -pedantic -fpermissive -Wl,-gc-sections %1 -s -o %target%
 		if exist %target% %mgwpath%strip --strip-all %target%
 		:: optional upx
 		rem upx --best %target%
