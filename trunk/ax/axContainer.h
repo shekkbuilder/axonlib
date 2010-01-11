@@ -217,46 +217,46 @@ class axContainer : public axWidget,
               case wal_Left:
                 wdg->doMove( C.x, C.y );
                 wdg->doResize( ww, C.h );
-                C.x += ww;
-                C.w -= ww;//(ww*2);
+                C.x += (ww + mPaddingX);
+                C.w -= (ww + mPaddingX);
                 break;
               case wal_Right:
                 wdg->doMove( C.x2()-ww+1, C.y );
                 wdg->doResize( ww, C.h );
-                C.w -= ww;
+                C.w -= (ww + mPaddingX);
                 break;
               case wal_Top:
                 wdg->doMove( C.x, C.y );
                 wdg->doResize( C.w, hh );
-                C.y += hh;
-                C.h -= hh;
+                C.y += (hh + mPaddingY);
+                C.h -= (hh + mPaddingY);
                 break;
               case wal_Bottom:
                 wdg->doMove( C.x, C.y2()-hh+1 );
                 wdg->doResize( C.w, hh );
-                C.h -= hh;
+                C.h -= (hh + mPaddingY);
                 break;
               case wal_LeftTop:
                 wdg->doMove( C.x, C.y );
                 //wdg->doResize( ww, C.h );
-                C.x += ww;
-                C.w -= ww;//(ww*2);
+                C.x += (ww + mPaddingX);
+                C.w -= (ww + mPaddingX);
                 break;
               case wal_RightTop:
                 wdg->doMove( C.x2()-ww+1, C.y );
                 //wdg->doResize( ww, C.h );
-                C.w -= ww;
+                C.w -= (ww + mPaddingX);
                 break;
               case wal_LeftBottom:
                 wdg->doMove( C.x, C.y2()-hh+1 );
                 //wdg->doResize( C.w, hh );
                 //C.y += hh;
-                C.h -= hh;
+                C.h -= (hh + mPaddingY);
                 break;
               case wal_RightBottom:
                 wdg->doMove( C.x2()-ww+1, C.y2()-hh+1 );
                 //wdg->doResize( C.w, hh );
-                C.h -= hh;
+                C.h -= (hh + mPaddingY);
                 break;
               case wal_Stacked:
                 wdg->doMove( stackx, stacky );
@@ -311,6 +311,7 @@ class axContainer : public axWidget,
 
     //----------
 
+    //TODO: if w>0 && h>0
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
         //TRACE("axContainer.doPaint aRect %i,%i,%i,%i\n",aRect.x,aRect.y,aRect.w,aRect.h);
@@ -396,43 +397,15 @@ class axContainer : public axWidget,
     // widget listener
     //----------------------------------------
 
-    virtual void onChange(axWidget* aWidget)
-      {
-        mListener->onChange(aWidget);
-      }
-
-    //----------
-
-    virtual void onRedraw(axWidget* aWidget)
-      {
-        mListener->onRedraw(aWidget);
-      }
-
-    //----------
-
-    virtual void onRedraw(axRect aRect)
-      {
-        mListener->onRedraw(aRect);
-      }
-
-    //----------
-
-    virtual void onRedrawAll(void)
-      {
-        mListener->onRedraw(this);
-      }
-
-    //----------
-
-    virtual void onSetHint(axString aHint)
-      {
-        mListener->onSetHint(aHint);
-      }
-
-    virtual void onResize(axWidget* aWidget, int aX, int aY)
-      {
-        mListener->onResize(aWidget,aX,aY);
-      }
+    virtual void onChange(axWidget* aWidget)                  { mListener->onChange(aWidget); }
+    virtual void onRedraw(axWidget* aWidget)                  { mListener->onRedraw(aWidget); }
+    virtual void onRedraw(axRect aRect)                       { mListener->onRedraw(aRect); }
+    virtual void onRedrawAll(void)                            { mListener->onRedraw(this); }
+    virtual void onMove(axWidget* aWidget, int aX, int aY)    { mListener->onMove(aWidget,aX,aY); }
+    virtual void onResize(axWidget* aWidget, int aX, int aY)  { mListener->onResize(aWidget,aX,aY); }
+    virtual void onHint(axString aHint)                       { mListener->onHint(aHint); }
+    virtual void onHover(axWidget* aWidget)                   { mListener->onHover(aWidget); }
+    virtual void onCursor(int aCursor)                        { mListener->onCursor(aCursor); }
 
 };
 

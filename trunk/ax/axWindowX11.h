@@ -240,19 +240,37 @@ class axWindowImpl : public axWindowBase
 
     //----------
 
+    //TODO: safe-checking
+    //- be careful with messing with the mSurface pointer
+    //  multi-core / multi-thread, ...
+    //- perhaps create the new surface first
+    //  then exchange the pointers (danger!)
+    //- do a sync() first, to empty the event queue??
+
     virtual void resizeBuffer(int aWidth, int aHeight)
       {
         //if( aWidth!=mRect.w || aHeight!=mRect.h )
-        {
+        //{
           if (mWinFlags&AX_BUFFERED)
           {
-            if (mSurface) delete mSurface;
-            mSurface = new axSurface(aWidth,aHeight,mWinFlags);
+            axSurface* srf;
+            if (mSurface)
+            {
+              // hopefully, the compiler won't optimize away this!
+              // we want to set the mSurface member to NULL before deleting the clas
+              // in case some late-coming things are trying to access it
+              // they check for NULL
+              srf = mSurface;
+              mSurface = NULL;
+              delete srf;
+            }
+            srf = new axSurface(aWidth,aHeight,mWinFlags);
+            mSurface = srf;
           }
           //mRect.w = aWidth;  //mRect.w(w);
           //mRect.h = aHeight;  //mRect.h(h);
           //doResize(aWidth,aHeight);
-        } //newsize
+        //} //newsize
       }
 
     //----------
@@ -363,6 +381,7 @@ class axWindowImpl : public axWindowBase
 
     //virtual void endPaint(void)
     //  {
+    //    flush();
     //    //XFlush(gDP);
     //    //XSync(gDP,false);
     //  }
@@ -506,23 +525,6 @@ class axWindowImpl : public axWindowBase
 
     //----------
 
-//    virtual void resize_window(int w, int h)
-//      {
-//        TRACE("axWindow.resize_window\n");
-//        //if( w!=mRect.w || h!=mRect.h )
-//        //{
-//          if (mWinFlags&AX_BUFFERED)
-//          {
-//            if (mSurface) delete mSurface;
-//            mSurface = new axSurface(w,h,mWinFlags);
-//          }
-//          mRect.w = w;  //mRect.w(w);
-//          mRect.h = h;  //mRect.h(h);
-//          //doResize(w,h);
-//        //} //newsize
-//      }
-//
-//
     void eventhandler(XEvent* ev)
       {
         axRect rc;
@@ -535,7 +537,7 @@ class axWindowImpl : public axWindowBase
             //TODO: resize surface, if any
             w = ev->xconfigure.width;
             h = ev->xconfigure.height;
-            while (XCheckTypedWindowEvent(gDP, ev->xexpose.window, ConfigureNotify, ev))
+            while (XCheckTypedWindowEvent(gDP, ev->xconfigure.window, ConfigureNotify, ev))
             {
               //rc.combine( ev->xexpose.x, ev->xexpose.y, ev->xexpose.width, ev->xexpose.height );
               w = ev->xconfigure.width;
@@ -557,11 +559,13 @@ class axWindowImpl : public axWindowBase
               rc.combine( ev->xexpose.x, ev->xexpose.y, ev->xexpose.width, ev->xexpose.height );
             }
             //TRACE("Expose %i,%i,%i,%i\n",rc.x, rc.y, rc.w,rc.h);
-            if (mWinFlags&AX_BUFFERED)
+            if (mWinFlags&AX_BUFFERED && mSurface)
             {
-              axCanvasBase* can = mSurface->mCanvas;
+              //axCanvasBase* can = mSurface->mCanvas;
+              axCanvas* can = mSurface->mCanvas;
               //can->setClipRect(rc);
-              doPaint(mSurface->mCanvas,rc);
+              //doPaint(mSurface->mCanvas,rc);
+              doPaint(can,rc);
               //mCanvas->blit(mSurface->mHandle,rc.x1,rc.y1,rc.x1,rc.y1,rc.w(),rc.h());
               mCanvas->blit(can,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
               //can->clearClipRect();
