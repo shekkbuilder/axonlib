@@ -79,8 +79,8 @@ class axWidgetListener
     virtual void onRedraw(axWidget* aWidget)  {}
     virtual void onRedraw(axRect aRect)       {}
     virtual void onRedrawAll(void)            {}
-    virtual void onMove(axWidget* aWidget, int dX,int dY)   {}
-    virtual void onResize(axWidget* aWidget, int dX,int dY) {}
+    virtual void onMove(axWidget* aWidget, int dX,int dY)   {}  // delta x/y
+    virtual void onResize(axWidget* aWidget, int dX,int dY) {}  // delta x/y
     virtual void onHint(axString aHint)       {}
     virtual void onHover(axWidget* aWidget)   {}
     virtual void onCursor(int aCursor)        {}
@@ -105,8 +105,6 @@ class axWidget : public axWidgetHandler
     int       mCNum;
 
   public:
-
-    // TODO: remove aParameter, setup things in connect(wdg,par) instead?
 
     //axWidget(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None, axParameter* aParameter=NULL)
     axWidget(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None/*, axParameter* aParameter=NULL*/)

@@ -1,4 +1,6 @@
 #include "ccernn/plug_debug.cpp"
+//#include "ccernn/ana_fft.cpp"
+//#include "ccernn/ana_daubechies0.cpp"
 
 
 //#include "liteon/liteon_lofi.cpp"
@@ -6,8 +8,6 @@
 
 
 
-//#include "ccernn/ana_daubechies0.cpp"
-//#include "ccernn/ana_fft.cpp"
 
 
 

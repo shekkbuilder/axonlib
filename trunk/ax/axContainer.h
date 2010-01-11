@@ -401,8 +401,8 @@ class axContainer : public axWidget,
     virtual void onRedraw(axWidget* aWidget)                  { mListener->onRedraw(aWidget); }
     virtual void onRedraw(axRect aRect)                       { mListener->onRedraw(aRect); }
     virtual void onRedrawAll(void)                            { mListener->onRedraw(this); }
-    virtual void onMove(axWidget* aWidget, int aX, int aY)    { mListener->onMove(aWidget,aX,aY); }
-    virtual void onResize(axWidget* aWidget, int aX, int aY)  { mListener->onResize(aWidget,aX,aY); }
+    virtual void onMove(axWidget* aWidget, int dX, int dY)    { mListener->onMove(aWidget,dX,dY); }   // delta x/y
+    virtual void onResize(axWidget* aWidget, int dX, int dY)  { mListener->onResize(aWidget,dX,dY); } // delta x/y
     virtual void onHint(axString aHint)                       { mListener->onHint(aHint); }
     virtual void onHover(axWidget* aWidget)                   { mListener->onHover(aWidget); }
     virtual void onCursor(int aCursor)                        { mListener->onCursor(aCursor); }

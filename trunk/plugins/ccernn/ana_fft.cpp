@@ -277,14 +277,10 @@ class myPlugin : public axPlugin,
           {
             memcpy(mViewBuffer,mRec2Buffer,mLength*sizeof(float));
             //memset(mViewBuffer2,0,mLength*sizeof(float));
-
             //daub.daubTrans( mViewBuffer, BUFFERSIZE );
-
             //for (int i=0; i<BUFFERSIZE; i++) mViewBuffer[i] *= mWindow[i];
-
             mayer_realfft(BUFFERSIZE,mViewBuffer);
             //mayer_fft(BUFFERSIZE,mViewBuffer,mViewBuffer2);
-
             float floor = powf(10,-100/20); //  // 1e-10 = pow(10, -200/20);
             int HALF = BUFFERSIZE / 2;
             //float scale = 1.0f / (float)HALF;
@@ -295,9 +291,7 @@ class myPlugin : public axPlugin,
               float power = 20.0 * log10f( axMax( n, floor) );
               mViewBuffer[i] = power / 100.0f;
             }
-
             //for (int i=0;i<BUFFERSIZE/2; i++) mViewBuffer[i] /= BUFFERSIZE;
-
             mFilled=false;
             mEditor->appendDirty( wScope );
           }
