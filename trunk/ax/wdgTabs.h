@@ -19,7 +19,7 @@ class wdgTabs : public axContainer
     : axContainer(aListener, aID, aRect, aAlignment)
       {
         mActivePage = 0;
-        appendWidget( mPages = new axContainer(/*this*/aListener,-1,NULL_RECT/*axRect(0,0,aRect.w,aRect.h)*/, wal_Client ) );
+        appendWidget( mPages = new axContainer(this/*aListener*/,-1,NULL_RECT/*axRect(0,0,aRect.w,aRect.h)*/, wal_Client ) );
         mPages->setFlag(wfl_Align);
       }
 
@@ -29,8 +29,10 @@ class wdgTabs : public axContainer
 
     void appendPage( axContainer* aPage )
       {
+        // initially hidden
         aPage->clearFlag(wfl_Active);
         aPage->clearFlag(wfl_Visible);
+        // put it on top of self & all others
         aPage->doMove(mRect.x,mRect.y);
         aPage->doResize(mRect.w,mRect.h);
         mPages->appendWidget( aPage );

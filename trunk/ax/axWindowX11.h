@@ -46,6 +46,9 @@ static char noData[] = { 0,0,0,0,0,0,0,0 };
 
 class axWindowImpl : public axWindowBase
 {
+  private:
+    long eventmask;
+
   public:
 
     Window    mHandle;
@@ -63,7 +66,7 @@ class axWindowImpl : public axWindowBase
     axWindowImpl(axString aWinName, axWidgetListener* aListener, int aID, axRect aRect, int aWinFlags=0)
     : axWindowBase(aWinName,aListener,aID,aRect,aWinFlags)
       {
-        long eventmask  = ExposureMask
+    /*long*/ eventmask  = ExposureMask
                         | ButtonPressMask
                         | ButtonReleaseMask
                         | PointerMotionMask
@@ -492,7 +495,7 @@ class axWindowImpl : public axWindowBase
           XNextEvent(gDP,&ev);
           unsigned int data = ev.xclient.data.l[0];
           if (ev.type==ClientMessage && data==wmDeleteMessage) break;
-          else eventhandler(&ev);
+          else eventHandler(&ev);
         }
       }
 
@@ -525,8 +528,10 @@ class axWindowImpl : public axWindowBase
 
     //----------
 
-    void eventhandler(XEvent* ev)
+    virtual void eventHandler(XEvent* ev)
+    //virtual void eventHandler(int aEvent)
       {
+        //XEvent* ev = (XEvent*)aEvent;
         axRect rc;
         int but,key,val;
         //int x,y;
@@ -544,6 +549,7 @@ class axWindowImpl : public axWindowBase
               h = ev->xconfigure.height;
             }
             //TRACE("ConfigureNotify %i,%i\n",w,h);
+            //flush();
             resizeBuffer(w,h);
             doResize(w,h);
             //onRedraw(mRect);
@@ -685,7 +691,7 @@ void eventProc(XEvent* ev)
 {
   axWindowImpl* win = (axWindowImpl*)getProperty(ev->xany.window, XInternAtom(gDP,"_this",false));
   if (win==0) return;
-  win->eventhandler(ev);
+  win->eventHandler(ev);
 }
 
 //----------------------------------------------------------------------

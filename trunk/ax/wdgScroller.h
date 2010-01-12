@@ -92,7 +92,8 @@ class wdgScroller : public axWidget
         {
           int deltax = aX - clickx;
           int deltay = aY - clicky;
-          mPos += ((float)deltay * pixel_size);
+          if (hasFlag(wfl_Vertical)) mPos += ((float)deltay * pixel_size);
+          else mPos += ((float)deltax * pixel_size);
           mPos = axMax(0,axMin(mPos,1));
           mListener->onChange(this);
           clickx = aX;
