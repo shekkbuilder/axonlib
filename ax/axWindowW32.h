@@ -243,6 +243,8 @@ class axWindowImpl : public axWindowBase
 
     //----------
 
+    //TODO: locking?
+
     virtual void resizeBuffer(int aWidth, int aHeight)
       {
         //if( aWidth!=mRect.w || aHeight!=mRect.h )
@@ -450,15 +452,16 @@ class axWindowImpl : public axWindowBase
 
     //----------
 
-    LRESULT eventhandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+    LRESULT eventHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
       {
+        MSG msg2;
         //HDC dc;
         LRESULT result = 0;
         int btn;
         axRect rc;
         int w,h;
 
-        //TRACE("win32 eventhandler. msg=%x\n",message);
+        //TRACE("win32 eventHandler. msg=%x\n",message);
         switch (message)
         {
           case WM_GETDLGCODE:
@@ -535,8 +538,19 @@ class axWindowImpl : public axWindowBase
             //int y = ev->xconfigure.y;
             w = short(LOWORD(lParam));
             h = short(HIWORD(lParam));
-            resizeBuffer(w,h);
-            doResize(w,h);
+
+            //// hack: ignore this if there is other WM_SIZE messages in the queue
+            //if ( PeekMessage(&msg2,mHandle,WM_SIZE,WM_SIZE,PM_NOREMOVE) )
+            //{
+            //  TRACE("there are oher WN_SIZE messages in the queue, so we're ignoring this one\n");
+            //}
+            //else
+            //{
+              //flush();
+              resizeBuffer(w,h);
+              doResize(w,h);
+            //}
+
             result = 0;
             break;
           case WM_DESTROY:
@@ -565,7 +579,7 @@ LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 {
   axWindowImpl* wnd = (axWindowImpl*)GetWindowLong(hWnd,GWL_USERDATA);
 	if (wnd==0) return DefWindowProc(hWnd,message,wParam,lParam);
-  return wnd->eventhandler(hWnd, message, wParam, lParam);
+  return wnd->eventHandler(hWnd, message, wParam, lParam);
 }
 
 //----------------------------------------------------------------------

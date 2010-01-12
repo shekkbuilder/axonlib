@@ -40,6 +40,7 @@ class myPlugin : public axPlugin,
   public:
     bool        is_gui_initialized;
     axEditor    *mEditor;
+    //axWindow    *testwin;
 
     axSurface   *mSrfSlider;
     axSurface   *mSrfBut1, *mSrfBut2, *mSrfBut3;
@@ -51,7 +52,7 @@ class myPlugin : public axPlugin,
     wdgResizer    *wSplitter;
     wdgPanel      *wLeft, *wRight, *wTop, *wBottom, *wClient;
     wdgImgKnob    *slid;
-    wdgImgSwitch  *wBut1,*wBut2,*wBut3;
+    wdgImgSwitch  *wBut1,*wBut2,*wBut3,*wBut4;
     wdgLabel      *wStatus;
     wdgGroupBox   *gr1,*gr2,*gr3,*gr4,*gr5;
     wdgScroller   *scr;
@@ -61,6 +62,7 @@ class myPlugin : public axPlugin,
     myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
     : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
       {
+        //testwin = NULL;
         mEditor = NULL;
         is_gui_initialized = false;
         mSrfSlider = NULL;
@@ -139,6 +141,31 @@ class myPlugin : public axPlugin,
             }
             else wBut3->doSetValue(1);
             break;
+//          case 199:
+//            if (val>0.5)
+//            {
+//              testwin = new axWindow( "win_2", this, 12345, axRect(0,0,300,200), AX_WINDOWED|AX_BUFFERED);
+//              wdgPanel* pnl;
+//              testwin->appendWidget( new wdgPanel(    testwin,-1, axRect( 0,0,100,0  ),wal_Left    ) );
+//              testwin->appendWidget( new wdgPanel(    testwin,-1, axRect( 0,0,0,  50 ),wal_Top     ) );
+//              testwin->appendWidget( new wdgPanel(    testwin,-1, axRect( 0,0,0,  20 ),wal_Bottom  ) );
+//              testwin->appendWidget( new wdgPanel(    testwin,-1, axRect( 0,0,40, 0  ),wal_Right   ) );
+//              testwin->appendWidget( pnl=new wdgPanel(testwin,-1, NULL_RECT, wal_Client  ) );
+//              pnl->setAlign(5,5,5,5);
+//              pnl->appendWidget( new wdgKnob( testwin,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+//              pnl->appendWidget( new wdgKnob( testwin,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+//              pnl->appendWidget( new wdgKnob( testwin,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+//              pnl->appendWidget( new wdgKnob( testwin,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+//              pnl->appendWidget( new wdgKnob( testwin,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+//              testwin->doRealign();
+//              testwin->show();
+//              testwin->redraw();
+//              testwin->eventLoop(); // blocks!!
+//              testwin->hide();
+//              delete testwin;
+//              testwin = NULL;
+//            }
+//            break;
         }
         // then back to the default handler
         mEditor->onChange(aWidget);
@@ -169,8 +196,8 @@ class myPlugin : public axPlugin,
           int w = mEditor->mRect.w + dX;
           int h = mEditor->mRect.h + dY;
           mEditor->resizeWindow(w,h);
-          recalc_scroller();
-          mEditor->onChange(scr);
+          //recalc_scroller();
+          //mEditor->onChange(scr);
         }
         if (aWidget->mID == 315) // wdgSplitter, left splitter
         {
@@ -181,7 +208,7 @@ class myPlugin : public axPlugin,
           recalc_scroller();
           mEditor->redraw();
         }
-        if (aWidget->mID == 1000)
+        if (aWidget->mID == 1000) // group boxes
         {
           wLeft->doRealign();
           recalc_scroller();
@@ -277,7 +304,7 @@ class myPlugin : public axPlugin,
 
         ed->setBackground(false);
         ed->appendWidget(    wLeft      = new wdgPanel(   this,-1,   axRect( 0,0,200,0  ),wal_Left    ) );
-        ed->appendWidget( wSplitter     = new wdgResizer( this, 315, axRect( 0,0,5,5 ),wal_Left ) );
+        ed->appendWidget( wSplitter     = new wdgResizer( this, 315, axRect( 0,0,5,5    ),wal_Left ) );
         ed->appendWidget(     wTop      = new wdgPanel(   this,-1,   axRect( 0,0,0,  40 ),wal_Top     ) );
         ed->appendWidget(     wBottom   = new wdgPanel(   this,-1,   axRect( 0,0,0,  20 ),wal_Bottom  ) );
         ed->appendWidget(     wRight    = new wdgPanel(   this,-1,   axRect( 0,0,100,0  ),wal_Right   ) );
@@ -289,33 +316,41 @@ class myPlugin : public axPlugin,
         wTop->appendWidget(  wBut1   = new wdgImgSwitch(this, 100, axRect( 0,0,30,30 ),wal_LeftTop,1, mSrfBut1 ) );
         wTop->appendWidget(  wBut2   = new wdgImgSwitch(this, 101, axRect( 0,0,30,30 ),wal_LeftTop,0, mSrfBut2 ) );
         wTop->appendWidget(  wBut3   = new wdgImgSwitch(this, 102, axRect( 0,0,30,30 ),wal_LeftTop,0, mSrfBut3 ) );
+        wTop->appendWidget(  wBut4   = new wdgImgSwitch(this, 199, axRect( 0,0,30,30 ),wal_LeftTop,0, mSrfBut3 ) );
 
         // left: group boxes
 
         wLeft->setAlign(5,5,5,5);
 
-        wLeft->appendWidget( scr = new wdgScroller( this,1001, axRect(0,0,10,0), wal_Right ));
+        wLeft->appendWidget( scr = new wdgScroller( this,1001, axRect(0,0,8,0), wal_Left ));
 
-        wLeft->appendWidget( gr1 = new wdgGroupBox( this,1000, axRect( 0,0,0,100),wal_Top ));
-        wLeft->appendWidget( gr2 = new wdgGroupBox( this,1000, axRect( 0,0,0, 50),wal_Top ));
-        wLeft->appendWidget( gr3 = new wdgGroupBox( this,1000, axRect( 0,0,0,250),wal_Top ));
-        wLeft->appendWidget( gr4 = new wdgGroupBox( this,1000, axRect( 0,0,0,100),wal_Top ));
-        wLeft->appendWidget( gr5 = new wdgGroupBox( this,1000, axRect( 0,0,0,100),wal_Top ));
+        wLeft->appendWidget( gr1 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0, 75),wal_Top ));
+        wLeft->appendWidget( gr2 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0, 50),wal_Top ));
+        wLeft->appendWidget( gr3 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0,100),wal_Top ));
+        wLeft->appendWidget( gr4 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0,200),wal_Top ));
+        wLeft->appendWidget( gr5 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0, 50),wal_Top ));
+
+        gr3->wContainer->setAlign(0,0,3,3);
+        gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+        gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+        gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+        gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+        gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
 
         scr->setFlag(wfl_Vertical);
         scr->setThumb(0, 0.25);
 
-        gr1->setup("groupbox1",  false,true);
-        gr2->setup("group 2",    false,true);
-        gr3->setup("box 3",      false,true);
-        gr4->setup("...4",       false,true);
-        gr5->setup("and five..", false,true);
+//        gr1->setup("groupbox1",  false,true);
+//        gr2->setup("group 2",    false,true);
+//        gr3->setup("box 3",      false,true);
+//        gr4->setup("...4",       false,true);
+//        gr5->setup("and five..", false,true);
 
-        gr1->setBackground(false,axColor(96,96,96));
-        gr2->setBackground(false,axColor(96,96,96));
-        gr3->setBackground(false,axColor(96,96,96));
-        gr4->setBackground(false,axColor(144,144,144));
-        gr5->setBackground(false,axColor(96,96,96));
+//        gr1->setBackground(false,axColor(96,96,96));
+//        gr2->setBackground(false,axColor(96,96,96));
+//        gr3->setBackground(false,axColor(96,96,96));
+//        gr4->setBackground(false,axColor(144,144,144));
+//        gr5->setBackground(false,axColor(96,96,96));
 
         // bottom: status bar & resize widget
 
