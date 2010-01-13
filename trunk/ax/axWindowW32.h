@@ -117,8 +117,8 @@ class axWindowImpl : public axWindowBase
 //-----
         SetWindowLong(mHandle,GWL_USERDATA,(int)this);
         //DragAcceptFiles(mHandle,true);
-        mCanvas = new axCanvas((int)mHandle,cmo_window);
-        if (aWinFlags&AX_BUFFERED) mSurface = new axSurface(mRect.w,mRect.h);
+        //mCanvas = new axCanvas((int)mHandle,cmo_window);
+        //if (aWinFlags&AX_BUFFERED) mSurface = new axSurface(mRect.w,mRect.h);
       }
 
     //----------
@@ -126,8 +126,8 @@ class axWindowImpl : public axWindowBase
     virtual ~axWindowImpl()
       {
         //hide();
-        if (mSurface) delete mSurface;
-        if (mCanvas) delete mCanvas;
+        //if (mSurface) delete mSurface;
+        //if (mCanvas) delete mCanvas;
         DestroyWindow(mHandle);
         UnregisterClass( mWinName.ptr(), gInstance);
       }
