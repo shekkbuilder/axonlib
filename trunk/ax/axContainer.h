@@ -24,6 +24,9 @@ class axContainer : public axWidget,
     // runtime
     axRect    mClient;                // current Client area
     int       mStackedX, mStackedY;   // where to put next wal_Stacked widget
+    //int       mMinX,mMaxX,mMinY,mMaxY;
+    axRect    mContent;
+    int       mOffsetX,mOffsetY;
 
   public:
 
@@ -48,7 +51,9 @@ class axContainer : public axWidget,
         mStackedX = 0;
         mStackedY = 0;
         setFlag(wfl_Align);
-        setFlag(wfl_Clip);
+        //setFlag(wfl_Clip);
+        mOffsetX = 0;
+        mOffsetY = 0;
       }
 
     //----------
@@ -92,13 +97,13 @@ class axContainer : public axWidget,
 
     virtual void appendWidget(axWidget* aWidget, bool aRealign=false)
       {
-        //aWidget->doMove( mRect.x + aWidget->mRect.x, mRect.y + aWidget->mRect.y );
+        aWidget->doMove( mRect.x + aWidget->mRect.x, mRect.y + aWidget->mRect.y );
         mWidgets.append(aWidget);
-        if(aRealign)
-        {
-          aWidget->doMove( mRect.x + aWidget->mRect.x, mRect.y + aWidget->mRect.y );
-          doRealign();
-        }
+        //if(aRealign)
+        //{
+        //  aWidget->doMove( mRect.x + aWidget->mRect.x, mRect.y + aWidget->mRect.y );
+          //doRealign();
+        //}
       }
 
     //----------
@@ -122,8 +127,6 @@ class axContainer : public axWidget,
         return mWidgets[aIndex];
       }
 
-    //--------------------------------------------------
-    //
     //--------------------------------------------------
 
     // return first (active) widget that contains aX,aY
@@ -164,6 +167,16 @@ class axContainer : public axWidget,
 
     //----------
 
+    virtual void doScroll(int dX, int dY)
+      {
+        for( int i=0;i<mWidgets.size(); i++ ) // move sub-widgets only
+        {
+          mWidgets[i]->doMove( mWidgets[i]->mRect.x + dX, mWidgets[i]->mRect.y + dY );
+        }
+      }
+
+    //----------
+
     virtual void doResize(int aW, int aH)
       {
         //TRACE("axContainer doResize %i,%i\n",aW,aH);
@@ -185,11 +198,17 @@ class axContainer : public axWidget,
         {
           //bool empty = false;
           axRect R = mRect;
+          //mContent = R;
+          mContent.set(R.x,R.y,0,0);
           R.add( mMarginX, mMarginY, -(mMarginX*2), -(mMarginY*2) ); // spacing (outer border)
           axRect C = R;
           int largest = 0;//-1;
           int stackx = R.x + mPaddingX;
           int stacky = R.y + mPaddingY;
+          //mMinX = 999999;
+          //mMaxX = -1;
+          //mMinY = 999999;
+          //mMaxY = -1;
           for( int i=0; i<mWidgets.size(); i++ )
           {
             axWidget* wdg = mWidgets[i];
@@ -303,9 +322,10 @@ class axContainer : public axWidget,
 
                 break;
             } //switch alignment
-            wdg->doRealign();
-
+            mContent.combine( wdg->mRect );
+            //wdg->doRealign();
           } //for widgets
+          //TRACE("minx:%i, miny:%i, maxx:%i, maxy:%i\n",mMinX,mMinY,mMaxX,mMaxY);
         } //wfl_Align
       }
 

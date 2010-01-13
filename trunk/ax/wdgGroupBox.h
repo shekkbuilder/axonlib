@@ -80,6 +80,19 @@ class wdgGroupBox : public axContainer
         }
       }
 
+    //virtual void doScroll(int dX, int dY)
+    //  {
+    //    for( int i=0;i<wContainer->mWidgets.size(); i++ ) // move sub-widgets only
+    //    {
+    //      //mWidgets[i]->doMove( mWidgets[i]->mRect.x + dX, mWidgets[i]->mRect.y + dY );
+    //      wContainer->mWidgets[i]->doMove( dX, dY );
+    //    }
+    //  }
+
+    //----------
+
+    //----------
+
     virtual void onChange(axWidget* aWidget)
       {
         if( aWidget->mID == 0 ) toggle_closed();
