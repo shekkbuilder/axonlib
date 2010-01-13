@@ -54,6 +54,7 @@ class axWidgetHandler
     virtual float     doGetValue(void)                          { return 0; } // 0..1
     virtual axString  doGetName(void)                           { return STR_EMPTY; }
     virtual void      doMove(int aX, int aY)                    {}
+    virtual void      doScroll(int dX, int dY)                  {}
     virtual void      doResize(int aW, int aH)                  {}
     virtual void      doRealign(void)                           {}
     virtual void      doPaint(axCanvas* aCanvas, axRect aRect)  {}
@@ -167,6 +168,18 @@ class axWidget : public axWidgetHandler
         //mRect.y += dy;
         mRect.x = aX;
         mRect.y = aY;
+      }
+
+    //----------
+
+    virtual void doScroll(int dX, int dY)
+      {
+        //int dx = aX - mRect.x;
+        //int dy = aY - mRect.y;
+        //mRect.x += dx;
+        //mRect.y += dy;
+        mRect.x += dX;
+        mRect.y += dY;
       }
 
     //----------
