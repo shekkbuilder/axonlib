@@ -22,7 +22,8 @@
 #include "wdgPanel.h"
 #include "wdgResizer.h"
 #include "wdgGroupBox.h"
-#include "wdgScroller.h"
+//#include "wdgScroller.h"
+#include "wdgScrollBox.h"
 
 #include "wdgImgKnob.h"
 #include "wdgImgSwitch.h"
@@ -45,7 +46,7 @@ class myPlugin : public axPlugin,
     axSurface   *mSrfSlider;
     axSurface   *mSrfBut1, *mSrfBut2, *mSrfBut3;
 
-    wdgKnob       *wKnob;
+    wdgKnob       *wKnob,*wKnob2,*wKnob3;
     wdgTabs       *wTabs;
     axContainer   *wPage1,*wPage2,*wPage3;
     wdgResizer    *wSizer;
@@ -55,13 +56,17 @@ class myPlugin : public axPlugin,
     wdgImgSwitch  *wBut1,*wBut2,*wBut3,*wBut4;
     wdgLabel      *wStatus;
     wdgGroupBox   *gr1,*gr2,*gr3,*gr4,*gr5;
-    wdgScroller   *scr;
+
+    //wdgScroller   *scr;
+    wdgScrollBox   *scr;
+    //float prevscroll;
 
   public:
 
     myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
     : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
       {
+        //prevscroll = 0;
         //testwin = NULL;
         mEditor = NULL;
         is_gui_initialized = false;
@@ -96,7 +101,6 @@ class myPlugin : public axPlugin,
     virtual void onChange(axWidget* aWidget)
       {
         // if changed widget = knob, switch tab/page
-        //int i;
         int id = aWidget->mID;
         float val = aWidget->doGetValue();
         switch(id)
@@ -105,6 +109,21 @@ class myPlugin : public axPlugin,
             wTabs->setPage( (int)axMin(2,floorf(val*3)) );
             mEditor->onChange(wTabs);
             break;
+//          case -199:
+//          {
+//            int hh = wLeft->mRect.h - wLeft->mMarginY;
+//            int i = (float)(wLeft->mMaxY - hh) * val;
+//            int dy = i - prevscroll;
+//            wLeft->doScroll(0,-dy);
+//            mEditor->onChange(wLeft);
+//            //TRACE("%i\n",y2);
+//            //wLeft->doScroll(dx,dy);
+//            prevscroll = i;
+//          }
+//            break;
+//          //case -299:
+//          //  break;
+
           case 100:
             if (val>0.5)
             {
@@ -173,21 +192,21 @@ class myPlugin : public axPlugin,
 
     //----------
 
-    void recalc_scroller(void)
-      {
-        //HACK
-        int total = gr1->mRect.h
-                  + gr2->mRect.h
-                  + gr3->mRect.h
-                  + gr4->mRect.h
-                  + gr5->mRect.h
-                  + (5*4);
-        //TRACE("total: %i\n",total);
-        float n = (float)scr->mRect.h / (float)total;
-        n = axMax(0,axMin(1,n));
-        scr->setThumbSize(n);
-        //mEditor->onChange(scr);
-      }
+//    void recalc_scroller(void)
+//      {
+//        //HACK
+//        int total = gr1->mRect.h
+//                  + gr2->mRect.h
+//                  + gr3->mRect.h
+//                  + gr4->mRect.h
+//                  + gr5->mRect.h
+//                  + (5*4);
+//        //TRACE("total: %i\n",total);
+//        float n = (float)scr->mRect.h / (float)total;
+//        n = axMax(0,axMin(1,n));
+//        scr->setThumbSize(n);
+//        //mEditor->onChange(scr);
+//      }
 
     virtual void onResize(axWidget* aWidget,int dX, int dY)   // delta x,y
       {
@@ -205,15 +224,15 @@ class myPlugin : public axPlugin,
           int h = wLeft->mRect.h;// + dY;
           wLeft->doResize(w,h);
           mEditor->doRealign();
-          recalc_scroller();
+          //recalc_scroller();
           mEditor->redraw();
         }
-        if (aWidget->mID == 1000) // group boxes
-        {
-          wLeft->doRealign();
-          recalc_scroller();
-          mEditor->onChange(wLeft);
-        }
+//        if (aWidget->mID == 1000) // group boxes
+//        {
+//          wLeft->doRealign();
+//          //recalc_scroller();
+//          mEditor->onChange(wLeft);
+//        }
       }
 
     virtual void onCursor(int aCursor) { mEditor->onCursor(aCursor); }
@@ -320,15 +339,15 @@ class myPlugin : public axPlugin,
 
         // left: group boxes
 
-        wLeft->setAlign(5,5,5,5);
+        //wLeft->setAlign(5,5,5,5);
+        //wLeft->appendWidget( scr = new wdgScroller( this,1001, axRect(0,0,8,0), wal_Left ));
+        wLeft->appendWidget( scr = new wdgScrollBox( this,1001, NULL_RECT, wal_Client ));
 
-        wLeft->appendWidget( scr = new wdgScroller( this,1001, axRect(0,0,8,0), wal_Left ));
-
-        wLeft->appendWidget( gr1 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0, 75),wal_Top ));
-        wLeft->appendWidget( gr2 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0, 50),wal_Top ));
-        wLeft->appendWidget( gr3 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0,100),wal_Top ));
-        wLeft->appendWidget( gr4 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0,200),wal_Top ));
-        wLeft->appendWidget( gr5 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0, 50),wal_Top ));
+        /*wLeft*/scr->appendWidget( gr1 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0, 75),wal_Top ));
+        /*wLeft*/scr->appendWidget( gr2 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0, 50),wal_Top ));
+        /*wLeft*/scr->appendWidget( gr3 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0,100),wal_Top ));
+        /*wLeft*/scr->appendWidget( gr4 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0,200),wal_Top ));
+        /*wLeft*/scr->appendWidget( gr5 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0, 50),wal_Top ));
 
         gr3->wContainer->setAlign(0,0,3,3);
         gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
@@ -337,8 +356,8 @@ class myPlugin : public axPlugin,
         gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
         gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
 
-        scr->setFlag(wfl_Vertical);
-        scr->setThumb(0, 0.25);
+        //scr->setFlag(wfl_Vertical);
+        //scr->setThumb(0, 0.25);
 
 //        gr1->setup("groupbox1",  false,true);
 //        gr2->setup("group 2",    false,true);
@@ -361,8 +380,10 @@ class myPlugin : public axPlugin,
         // right: some xtra widgets for testing
 
         wRight->setAlign(5,5);
-        wRight->appendWidget( wKnob   = new wdgKnob(    this,-99, axRect(10,148,80,16),wal_RightTop,0 ) );
-        wRight->appendWidget( slid    = new wdgImgKnob( this,-1,  axRect( 10,50,20,100),wal_None,65,mSrfSlider ));
+        wRight->appendWidget( wKnob   = new wdgKnob(    this,-99,  axRect( 10, 10, 80,16),wal_None,0 ) );
+        wRight->appendWidget( wKnob2  = new wdgKnob(    this,-199, axRect( 10, 30, 80,16),wal_None,0 ) );
+        wRight->appendWidget( wKnob3  = new wdgKnob(    this,-299, axRect( 10, 50, 80,16),wal_None,0 ) );
+        wRight->appendWidget( slid    = new wdgImgKnob( this,-1,   axRect( 10,100,20,100),wal_None,65,mSrfSlider ));
         slid->mSens1 = 0.01;
 
         // client area: tabs
@@ -418,7 +439,7 @@ class myPlugin : public axPlugin,
 
         ed->doRealign();
 
-        recalc_scroller();
+        //recalc_scroller();
 
         mEditor = ed;
         return mEditor;
