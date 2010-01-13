@@ -194,8 +194,11 @@ class axEditor : public axWindow,
         }
       }
 
+    //TODO: clear dirtyList??
+
     void resizeWindow(int aWidth, int aHeight)
       {
+        //TRACE("dirtyList size : %i\n",mDirtyList.size());
         mRect.w = aWidth;
         mRect.h = aHeight;
         //resizeBuffer(aWidth,aHeight);

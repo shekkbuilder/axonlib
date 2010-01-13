@@ -98,13 +98,15 @@ class axWindow : public axWindowImpl
     : axWindowImpl(aWinName, aListener,aID,aRect,aWinFlags)
       {
         mCanvas = new axCanvas( getHandle(), cmo_window );
-        if (aWinFlags&AX_BUFFERED) mSurface = new axSurface(aRect.w,aRect.h,cmo_buffer); // aFlags...
+        if (aWinFlags&AX_BUFFERED) mSurface = new axSurface(aRect.w,aRect.h/*,cmo_buffer*/); // aFlags...
         setBackground( true, AX_GREY );
       }
 
     virtual ~axWindow()
       {
         //if( mCanvas ) delete mCanvas;
+        if (mSurface) delete mSurface;
+        if (mCanvas) delete mCanvas;
       }
 
     //----------------------------------------

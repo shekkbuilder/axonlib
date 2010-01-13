@@ -106,7 +106,6 @@ class axWindowImpl : public axWindowBase
             &swa
           );
 
-
           // --- WM_DELETE_WINDOW ClientMessage
           wmDeleteMessage = XInternAtom(gDP,"WM_DELETE_WINDOW",True);
           XSetWMProtocols(gDP,mHandle,&wmDeleteMessage,1);
@@ -168,8 +167,8 @@ class axWindowImpl : public axWindowBase
         mBlack.blue  = 0;
         mBlack.flags = (DoRed or DoGreen or DoBlue);
         XAllocColor(gDP,XDefaultColormap(gDP,0),&mBlack);
-        mCanvas = new axCanvas(mHandle,cmo_window);
-        if (aWinFlags&AX_BUFFERED) mSurface = new axSurface(aRect.w,aRect.h);
+        //mCanvas = new axCanvas(mHandle,cmo_window);
+        //if (aWinFlags&AX_BUFFERED) mSurface = new axSurface(aRect.w,aRect.h);
       }
 
     //----------
@@ -177,8 +176,8 @@ class axWindowImpl : public axWindowBase
     virtual ~axWindowImpl()
       {
         //hide();
-        if (mSurface) delete mSurface;
-        if (mCanvas) delete mCanvas;
+        //if (mSurface) delete mSurface;
+        //if (mCanvas) delete mCanvas;
         XDestroyWindow(gDP,mHandle);
         XFreePixmap(gDP, bitmapNoData);
         if (mWinCursor>=0) XFreeCursor(gDP,mWinCursor);
