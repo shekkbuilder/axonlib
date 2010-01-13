@@ -32,12 +32,35 @@
 #include "../ccernn/images/testbutton2.h"         // 10935
 #include "../ccernn/images/testbutton3.h"         // 10935
 
+#include "axMutex.h"
+#include "axThread.h"
+
+//----------------------------------------------------------------------
+
+class myThread1 : public axThread
+{
+  public:
+    myThread1() : axThread() {}
+    virtual void doThreadFunc(void) { printf("tick1..\n"); }
+};
+
+class myThread2 : public axThread
+{
+  public:
+    myThread2() : axThread() {}
+    virtual void doThreadFunc(void) { printf("tick2..\n"); }
+};
+
 //----------------------------------------------------------------------
 
 class myPlugin : public axPlugin,
-                 public axWidgetListener
+                 public axWidgetListener//,
+                 //public myThread
 {
   private:
+    myThread1 thread1;
+    myThread2 thread2;
+
     // ---parameters-----
     float         mValue;
     // ---gui---
@@ -116,6 +139,8 @@ class myPlugin : public axPlugin,
 
     virtual axWindow* doCreateEditor(void)
       {
+        thread1.startThread(100);
+        thread2.startThread(-1);
         if(!mGuiPrepared)
         {
           mSrfSlider = loadPng( vslider1,    46002 );
@@ -241,6 +266,8 @@ class myPlugin : public axPlugin,
 
     virtual void doDestroyEditor(void)
       {
+        thread1.stopThread();
+        thread2.stopThread();
         axEditor* tempeditor = mEditor;
         mEditor = NULL;
         delete tempeditor;
