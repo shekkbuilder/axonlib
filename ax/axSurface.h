@@ -9,7 +9,7 @@ class axSurfaceBase
 {
   public:
 
-    int       mFlags;
+    //int       mFlags;
     int       mWidth;
     int       mHeight;
     int       mDepth;
@@ -17,11 +17,11 @@ class axSurfaceBase
 
   public:
 
-    axSurfaceBase(int aWidth, int aHeight, int aFlags=0)
+    axSurfaceBase(int aWidth, int aHeight/*, int aFlags=0*/)
       {
         mWidth  = aWidth;
         mHeight = aHeight;
-        mFlags  = aFlags;
+        //mFlags  = aFlags;
         mDepth  = 24;
         mCanvas = NULL;
       };
@@ -52,8 +52,8 @@ class axSurfaceBase
 class axSurface : public axSurfaceImpl
 {
   public:
-    axSurface(int aWidth, int aHeight, int aFlags=0)
-    : axSurfaceImpl(aWidth,aHeight,aFlags)
+    axSurface(int aWidth, int aHeight/*, int aFlags=0*/)
+    : axSurfaceImpl(aWidth,aHeight/*,aFlags*/)
       {
       }
 

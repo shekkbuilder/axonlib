@@ -259,14 +259,15 @@ class axWindowImpl : public axWindowBase
             if (mSurface)
             {
               // hopefully, the compiler won't optimize away this!
-              // we want to set the mSurface member to NULL before deleting the clas
+              // we want to set the mSurface member to NULL before deleting the class
               // in case some late-coming things are trying to access it
               // they check for NULL
+              // todo: LOCK
               srf = mSurface;
               mSurface = NULL;
               delete srf;
             }
-            srf = new axSurface(aWidth,aHeight,mWinFlags);
+            srf = new axSurface(aWidth,aHeight/*,mWinFlags*/);
             mSurface = srf;
           }
           //mRect.w = aWidth;  //mRect.w(w);
@@ -538,6 +539,7 @@ class axWindowImpl : public axWindowBase
         switch (ev->type)
         {
           case ConfigureNotify:
+            TRACE("ConfigureNotify\n");
             //TODO: resize surface, if any
             w = ev->xconfigure.width;
             h = ev->xconfigure.height;
@@ -549,8 +551,15 @@ class axWindowImpl : public axWindowBase
             }
             //TRACE("ConfigureNotify %i,%i\n",w,h);
             //flush();
+
+            //if (w!=mRect.w || h!=mRect.h)
+            //{
+
             resizeBuffer(w,h);
             doResize(w,h);
+
+            //}
+
             //onRedraw(mRect);
             break;
           case Expose:
