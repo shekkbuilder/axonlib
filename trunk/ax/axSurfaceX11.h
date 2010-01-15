@@ -16,8 +16,8 @@ class axSurfaceImpl : public axSurfaceBase
 
     //----------
 
-    axSurfaceImpl(int aWidth, int aHeight, int aFlags=0)
-    : axSurfaceBase(aWidth, aHeight, aFlags)
+    axSurfaceImpl(int aWidth, int aHeight/*, int aFlags=0*/)
+    : axSurfaceBase(aWidth, aHeight/*, aFlags*/)
       {
         mDepth  = DefaultDepth(gDP,DefaultScreen(gDP));
         mHandle = XCreatePixmap(gDP,XDefaultRootWindow(gDP),mWidth,mHeight,mDepth);

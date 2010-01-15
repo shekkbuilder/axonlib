@@ -258,7 +258,7 @@ class axWindowImpl : public axWindowBase
               mSurface = NULL;
               delete srf;
             }
-            srf = new axSurface(aWidth,aHeight,mWinFlags);
+            srf = new axSurface(aWidth,aHeight/*,mWinFlags*/);
             mSurface = srf;
           }
           //mRect.w = aWidth;
@@ -530,6 +530,8 @@ class axWindowImpl : public axWindowBase
             doKeyDown(wParam,lParam);
             break;
           case WM_SIZE:
+            TRACE("WM_SIZE\n");
+
             //lParam:
             //  The low-order word of lParam specifies the new width of the client area.
             //  The high-order word of lParam specifies the new height of the client area.
@@ -538,6 +540,9 @@ class axWindowImpl : public axWindowBase
             //int y = ev->xconfigure.y;
             w = short(LOWORD(lParam));
             h = short(HIWORD(lParam));
+
+            //if (w!=mRect.w || h!=mRect.h)
+            //{
 
             //// hack: ignore this if there is other WM_SIZE messages in the queue
             //if ( PeekMessage(&msg2,mHandle,WM_SIZE,WM_SIZE,PM_NOREMOVE) )
@@ -549,6 +554,7 @@ class axWindowImpl : public axWindowBase
               //flush();
               resizeBuffer(w,h);
               doResize(w,h);
+            //}
             //}
 
             result = 0;

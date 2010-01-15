@@ -201,10 +201,9 @@ class axEditor : public axWindow,
         //TRACE("dirtyList size : %i\n",mDirtyList.size());
         mRect.w = aWidth;
         mRect.h = aHeight;
+        setSize(aWidth,aHeight);  // resize os window
         //resizeBuffer(aWidth,aHeight);
         //doRealign();
-        setSize( aWidth, aHeight );             // resize os window
-
         mPlugin->mWidth = aWidth;
         mPlugin->mHeight = aHeight;
         mPlugin->sizeWindow(aWidth, aHeight);  // let vst host know (request to resize window), Expose

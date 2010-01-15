@@ -33,7 +33,7 @@ axSurface* loadPng(unsigned char* buffer, unsigned int buffersize)
       bmp = new axBitmap(width,height,image);
       bmp->convertRgbaBgra();
       bmp->setBackground(128,128,128);
-      srf = new axSurface(width,height,0);
+      srf = new axSurface(width,height/*,0*/);
       srf->mCanvas->drawBitmap(bmp, 0,0, 0,0,width,height);
       free(image);
       delete bmp;
@@ -68,8 +68,7 @@ axBitmap* decodePng(unsigned char* buffer, unsigned int buffersize)
 
 axSurface* uploadBitmap(axBitmap* bmp)
 {
-  axSurface* srf = new axSurface(bmp->getWidth(),bmp->getHeight(),0);
-  srf->mCanvas->drawBitmap(bmp,0,0,0,0,bmp->getWidth(),bmp->getHeight());
+  axSurface* srf = new axSurface(bmp->getWidth(),bmp->getHeight()/*,0*/);
   srf->mCanvas->drawBitmap(bmp,0,0,0,0,bmp->getWidth(),bmp->getHeight());
   return srf;
   //delete bmp;
