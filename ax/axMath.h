@@ -101,89 +101,91 @@ float dB2lin( float dB )
 
 //----------
 
-// *** asm translations bellow
-// ------------------------------------
-float approx_sqrt( float f )
+//-----------------------------------------------------------------------
+// fast fabs()
+//-----------------------------------------------------------------------
+inline float axAbs (float value)
 {
-  //assert( sizeof(unsigned int) == sizeof(float) );
-  unsigned int* u;
-  u = (unsigned int*)&f;
-  *u -= 0x3F800000;
-  *u >>= 1;
-  *u += 0x3F800000;
-  return *(float*)(u);
+	__asm__ volatile
+	(
+		"andl $0x7fffffff, %0;"
+		: "=r" (value)
+		: "0" (value)
+	);
+	return value;
 }
 
-float rttof( float x, long root )
+//-----------------------------------------------------------------------
+// x = -x
+//-----------------------------------------------------------------------
+inline float axNeg (float value)
 {
-  long l = *(long*)&x;
-  l -= 0x3F800000;
-  l >>= root-1;
-  l += 0x3F800000;
-  return *(float*)&l;
+	__asm__ volatile
+	(
+		"xorl $0x80000000, %0;"
+		: "=r" (value)
+		: "0" (value)
+	);
+	return value;
 }
-// ------------------------------------
-// *** asm translations bellow
+
+//-----------------------------------------------------------------------
+// fast sign(x)
+//-----------------------------------------------------------------------
+inline float axSign (const float value)
+{
+	return 1.0f + (((*(int*)&value) >> 31) << 1);
+}
 
 //-----------------------------------------------------------------------
 // approximation: n-th root of x
-//----------------------------------------------------------------------
-float axNrt (float radicand, long root)
+//-----------------------------------------------------------------------
+inline float axNrt (float value, long root)
 {
-		float result;
-	 	__asm__ volatile
-		(
-			"movl %1, %%eax;"
-			"subl $0x3f800000, %%eax;"
-			"subl $1, %2;"
-			"shrl %b2, %%eax;"
-			"addl $0x3f800000, %%eax;"
-			"movl %%eax, %0;"
-	    : "=r" (result)
-	    : "r" (radicand), "c" (root)
-			: "%eax"
-		);
-    return result;    
+	__asm__ volatile
+	(
+		"subl $0x3f800000, %0;"
+		"subl $1, %2;"
+		"shrl %b2, %0;"
+		"addl $0x3f800000, %0;"
+		: "=r" (value)
+		: "0" (value), "c" (root)
+	);
+	return value;
 }
 
 //----------------------------------------------------------------------
 // approximation: square root of x
 //----------------------------------------------------------------------
-float axSqrt (float radicand)
+inline float axSqrt (float value)
 {
-	float result;
- 	__asm__ volatile
+	__asm__ volatile
 	(
-		"movl %1, %%eax;"
-		"subl $0x3f800000, %%eax;"			
-		"shrl $1, %%eax;"
-		"addl $0x3f800000, %%eax;"
-		"movl %%eax,%0;"
-    : "=r" (result)
-    : "r" (radicand)
-		: "%eax"
+		"subl $0x3f800000, %0;"
+		"shrl $1, %0;"
+		"addl $0x3f800000, %0;"
+		: "=r" (value)
+		: "0" (value)		
 	);
-	return result;
+	return value;
 }
 
 //----------------------------------------------------------------------
 // approximation: invert square root of x 
-// * at&t asm pending
 //----------------------------------------------------------------------
-float axInvSqrt (float x)
+inline float axInvSqrt (float x)
 {
-    float xhalf = 0.5f*x;
-    int i = *(int*)&x;
-    i = 0x5f3759df - (i>>1);
-    x = *(float*)&i;
-    return x*(1.5f - xhalf*x*x);
+	float xhalf = 0.5f*x;
+	int i = *(int*)&x;
+	i = 0x5f3759df - (i>>1);
+	x = *(float*)&i;
+	return x*(1.5f - xhalf*x*x);
 }
 
 //----------------------------------------------------------------------
 // approximation: powf(x, n) [currently 4.37 times faster than powf()]
-// * at&t asm pending
 //----------------------------------------------------------------------
-float axPow (float x, long n)
+inline float axPow (float x, long n)
 {
 	const int org_n = n;
 	float z = 1;
@@ -199,15 +201,14 @@ float axPow (float x, long n)
 
 //----------------------------------------------------------------------
 // approximation: exp(x)
-// * at&t asm pending
 //----------------------------------------------------------------------
-float axExp(float exponent)
+inline float axExp (const float exponent)
 {
 	union
 	{
 		double d;
 		struct
-		{		
+		{
 			#ifdef LITTLE_ENDIAN
 				int i, j;
 			#else
@@ -219,6 +220,81 @@ float axExp(float exponent)
 	u.s.j = 0;
 	return (float)u.d;
 }
+
+//----------------------------------------------------------------------
+// approximation: fsin(x) for range [-pi, pi]
+//----------------------------------------------------------------------
+inline float axSin (float v)
+{
+	v = v * (1.2732395447f - 0.4052847345f * axAbs(v));
+	return 0.225f * (v * axAbs(v) - v) + v;
+	//---------------------------------------------------------
+	/*
+	// ## tmp / gas
+	// ------  
+	float result;
+  float a = -1.2732395447f;
+	float b = -0.4052847345f;
+	float c = 0.225f;	
+  __asm__ volatile
+	(
+		"movl %0, %%eax;"		"andl $0x7fffffff, %%eax;"		"fld %2;"		"fld %3;"
+		"fmulp;"		"fld %2;"		"fldl %%eax;"		"faddp;"		"fstp %0;"		
+		"fld %0;"		"fld %%eax;"		"fmulp;"		"fstp %0;"		"movl %0, %%eax;"
+		"andl $0x7fffffff, %%eax;"		"fld %0;"		"fld %%eax;"		"fmulp;"
+		"fstp %%eax;"		"fld %0;"		"fld %%eax;"			"fsubp;"		"fstp %%eax;"
+		"fld %%eax;"		"fld %4;"		"fmulp;"		"fld %%eax;"
+		"fld %0;"		"faddp;"		"fstp %0;"
+		: "=m" (result)
+		: "g" (value), "g" (a), "g" (b), "g" (c)
+		: "eax"			
+  );
+  return result;
+  */  
+}
+
+
+//----------------------------------------------------------------------
+// approximation: fcos(x) for range [-pi, pi] from identity
+//----------------------------------------------------------------------
+inline float axCos (float v)
+{
+    return axSin(v + PI_2);
+}
+
+//----------------------------------------------------------------------
+// fsin(x)
+//----------------------------------------------------------------------
+inline float axFsin (float value)
+{
+	__asm__ volatile
+	(
+		"fsin %1, %0;"
+		: "=f" (value)
+		: "f" (value)
+  );
+	return value;
+}
+
+//----------------------------------------------------------------------
+// fcos(x)
+//----------------------------------------------------------------------
+inline float axFcos (float value)
+{
+	__asm__ volatile
+	(
+		"fcos %1, %0;"
+		: "=f" (value)
+		: "f" (value)
+  );
+	return value;
+}
+
+
+
+
+
+
 
 
 
