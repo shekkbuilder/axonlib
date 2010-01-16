@@ -251,6 +251,7 @@ class axWindowImpl : public axWindowBase
         //{
           if (mWinFlags&AX_BUFFERED)
           {
+            mSurfaceMutex.lock();
             axSurface* srf;
             if (mSurface)
             {
@@ -260,6 +261,7 @@ class axWindowImpl : public axWindowBase
             }
             srf = new axSurface(aWidth,aHeight/*,mWinFlags*/);
             mSurface = srf;
+            mSurfaceMutex.unlock();
           }
           //mRect.w = aWidth;
           //mRect.h = aHeight;
@@ -476,11 +478,14 @@ class axWindowImpl : public axWindowBase
                           mPS.rcPaint.bottom - mPS.rcPaint.top  + 1);
             if (mWinFlags&AX_BUFFERED && mSurface)
             {
+              mSurfaceMutex.lock();
               axCanvas* can = mSurface->mCanvas;
               //can->setClipRect(rc);
               doPaint(can,rc);
               mCanvas->blit( can, rc.x,rc.y, rc.x,rc.y,rc.w,rc.h );
               //can->clearClipRect();
+              mSurfaceMutex.unlock();
+
             }
             else
             {
