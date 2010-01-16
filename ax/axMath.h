@@ -201,17 +201,31 @@ inline float axRandom(const float aLow, const float aHigh)
 //----------------------------------------------------------------------
 // axBitReverse
 //----------------------------------------------------------------------
-inline unsigned int axBitReverse(const unsigned int aInput)
+inline unsigned int axBitReverse(unsigned int x)
 {
-	unsigned int in  = (unsigned int)aInput;
-	unsigned int out = 0;
-	for(unsigned int i=0; i<32; i++ )
-	{
-		unsigned int bit = (1<<i);
-		unsigned int rev = (0x80000000>>i);
-		if (in&bit) out += rev;
-	};
-	return out;
+	/*
+	// from: http://www.jjj.de/fxt/fxtpage.html
+	x = ((x & 0xaaaaaaaa) >> 1) | ((x & 0x55555555) << 1);
+	x = ((x & 0xcccccccc) >> 2) | ((x & 0x33333333) << 2);
+	x = ((x & 0xf0f0f0f0) >> 4) | ((x & 0x0f0f0f0f) << 4);
+	x = ((x & 0xff00ff00) >> 8) | ((x & 0x00ff00ff) << 8);
+	x = ((x & 0xffff0000) >> 16) | ((x & 0x0000ffff) << 16);
+	*/
+	__asm__ volatile
+	(
+		"movl %0, %%eax;"		"andl $0xaaaaaaaa, %%eax;"		"shrl $1, %%eax;"
+		"andl $0x55555555, %0;"		"shll $1, %0;"		"orl %%eax, %0;"
+		"movl %0, %%eax;"		"andl $0xcccccccc, %%eax;"		"shrl $2, %%eax;"
+		"andl $0x33333333, %0;"		"shll $2, %0;"		"orl %%eax, %0;"
+		"movl %0, %%eax;"		"andl $0xf0f0f0f0, %%eax;"		"shrl $4, %%eax;"
+		"andl $0x0f0f0f0f, %0;"		"shll $4, %0;"		"orl %%eax, %0;"
+		"movl %0, %%eax;"		"andl $0xff00ff00, %%eax;"		"shrl $8, %%eax;"
+		"andl $0x00ff00ff, %0;"		"shll $8, %0;"		"orl %%eax, %0;"
+		"movl %0, %%eax;"		"andl $0xffff0000, %%eax;"		"shrl $16, %%eax;"
+		"andl $0x0000ffff, %0;"		"shll $16, %0;"		"orl %%eax, %0;"
+		: "=m" (x)	:		: "eax"
+	);
+	return x;
 }
 
 //----------------------------------------------------------------------
