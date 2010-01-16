@@ -9,8 +9,8 @@
 #endif
 
 #define DENORM   10e-30f
-#define LOG2DB   8.68588963806f
-#define DB2LOG   0.11512925464f
+#define LOG2DB   8.65617024533f
+#define DB2LOG   0.11552453009f
 
 #define E        2.71828182845f
 #define LOG2E    1.44269504088f
