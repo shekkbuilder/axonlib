@@ -6,105 +6,57 @@
 #include <stdlib.h>
 #include "axDebug.h"
 
-//------------------------------
-
-#define axMin(a,b)  ((a<b)?a:b)
-#define axMax(a,b)  ((a>b)?a:b)
-
-#define axCalcStep(v,s)     (axMin(floorf(v*s),s-1))
-#define axCalcValue(v,m,a)  (v*m+a)
-
 //----------------------------------------------------------------------
-
-void axRandomize(int aSeed=19)
-  {
-    srand(aSeed);
-  }
-
-//----------
-
-// 0..f
-float axRandom(float f)
-  {
-    return ( f * (float)rand() / (float)RAND_MAX );
-  }
-
-//----------
-
-// 0..i (int, inclusive)
-int axRandomInt(int i)
-  {
-    float f = axRandom(i+1);
-    return (int)axMin( i, floorf(f) );
-
-  }
-
-//----------
-
-// 0..1
-float axRandom(void)
-  {
-    return ( (float)rand() / (float)RAND_MAX );
-  }
-
-//----------
-
-// -1..1
-float axRandomSigned(void)
-  {
-    return ( 2 * (float)rand() / (float)RAND_MAX ) - 1;
-  }
-
-//----------
-
-// aLow..aHigh
-float axRandom(float aLow, float aHigh)
-  {
-    float range = aHigh-aLow;
-    float rnd = axRandom();//(float)rand() / (float)RAND_MAX;
-    return aLow + rnd*range;
-  }
-
-//----------
-
-
+// fast floorf() / int()
 //----------------------------------------------------------------------
-
-unsigned int axBitReverse( unsigned int aInput )
-  {
-    unsigned int in  = (unsigned int)aInput;
-    unsigned int out = 0;
-    for( unsigned int i=0; i<32; i++ )
-    {
-      unsigned int bit = (1<<i);
-      unsigned int rev = (0x80000000>>i);
-      if (in&bit) out+=rev;
-    };
-    return out;
-  }
-
-//----------------------------------------------------------------------
-
-// convert linear -> dB
-float lin2dB( float lin )
+inline float axFloor(float value)
 {
-  float precalc_a = 20.0 / log(10.0);
-  return precalc_a * log(lin);
+	int j;	
+	__asm__ volatile
+	(
+		"flds %1;"		"fistpl %0;"
+		: "=m" (j)
+		: "m" (value)
+	);
+	return j;
 }
 
-// convert dB-> linear
-float dB2lin( float dB )
+//----------------------------------------------------------------------
+// fast ceilf()
+//----------------------------------------------------------------------
+inline float axCeil(float value)
 {
-  float precalc_b = 0.05 * log(10.0);
-  return exp( precalc_b * dB );
+	int j;
+	float im = 1.0f;
+	__asm__ volatile
+	(
+		"flds %1;"		"flds %2;"		"faddp;"		"fistpl %0;"		
+		: "=m" (j)
+		: "m" (value), "m" (im)
+	);
+	return j;
 }
 
-//----------
+//----------------------------------------------------------------------
+// fast roundf()
+//----------------------------------------------------------------------
+inline float axRound(float value)
+{
+	int j;
+	float im = 0.5f;
+	__asm__ volatile
+	(
+		"flds %1;"		"fistpl %0;"		"flds %2;"		"faddp;"
+		: "=m" (j)
+		: "m" (value), "m" (im)
+	);
+	return j;
+}
 
 //-----------------------------------------------------------------------
 // fast fabs()
 //-----------------------------------------------------------------------
-inline float axAbs (float value)
+inline float axAbs(float value)
 {
 	__asm__ volatile
 	(
@@ -118,7 +70,7 @@ inline float axAbs (float value)
 //-----------------------------------------------------------------------
 // x = -x
 //-----------------------------------------------------------------------
-inline float axNeg (float value)
+inline float axNeg(float value)
 {
 	__asm__ volatile
 	(
@@ -131,16 +83,157 @@ inline float axNeg (float value)
 
 //-----------------------------------------------------------------------
 // fast sign(x)
+// NOTE: gas with -O3 optimizes better in this case
 //-----------------------------------------------------------------------
-inline float axSign (const float value)
+inline float axSign(const float value)
 {
 	return 1.0f + (((*(int*)&value) >> 31) << 1);
+}
+
+//----------------------------------------------------------------------
+// min(x,y)
+//----------------------------------------------------------------------
+inline float axMin(const float a, const float b)
+{
+	return (a < b) ? a : b;
+}
+
+//----------------------------------------------------------------------
+// max(x,y)
+//----------------------------------------------------------------------
+inline float axMax(const float a, const float b)
+{
+	return (a > b) ? a : b;
+}
+
+//----------------------------------------------------------------------
+// limit(input,limit_value)
+//----------------------------------------------------------------------
+inline float axLimit(const float input, const float limit)
+{
+	return axMin(axMax(input, -limit), limit);
+}
+
+//----------------------------------------------------------------------
+// minInt(x,y)
+//----------------------------------------------------------------------
+inline int axMinInt(const int a, const int b)
+{
+	return (a < b) ? a : b;
+}
+
+//----------------------------------------------------------------------
+// maxInt(x,y)
+//----------------------------------------------------------------------
+inline int axMaxInt(const int a, const int b)
+{
+	return (a > b) ? a : b;
+}
+
+//----------------------------------------------------------------------
+// limitInt(input,limit_value)
+//----------------------------------------------------------------------
+inline int axLimitInt(const int input, const int limit)
+{
+	return axMinInt(axMaxInt(input, -limit), limit);
+}
+
+
+//----------------------------------------------------------------------
+// axCalcStep
+//----------------------------------------------------------------------
+inline float axCalcStep(const float v, const float s)
+{
+	return axMin(axFloor(v*s), s - 1);
+} 
+
+//----------------------------------------------------------------------
+// axCalcValue
+//----------------------------------------------------------------------
+inline float axCalcValuep(const float v, const float m, const float a)
+{
+	return (v*m+a);
+} 
+//----------------------------------------------------------------------
+// axRandomize -> default seed: 19
+//----------------------------------------------------------------------
+inline void axRandomize(const int aSeed = 19)
+{
+    srand(aSeed);
+}
+
+//----------------------------------------------------------------------
+// axRandom -> range: 0..1 (default)
+//----------------------------------------------------------------------
+inline float axRandom(const float f = 1)
+{
+	return (f * (float)rand() / (float)RAND_MAX);
+}
+
+//----------------------------------------------------------------------
+// axRandomInt -> 0..i (int, inclusive)
+//----------------------------------------------------------------------
+inline int axRandomInt(const int i)
+{
+	const float f = axRandom(i + 1);
+	return (int)axMin(i, axFloor(f));
+}
+
+//----------------------------------------------------------------------
+// axRandomSigned
+//----------------------------------------------------------------------
+inline float axRandomSigned(void)
+{
+	return (2 * (float)rand() / (float)RAND_MAX) - 1;
+}
+
+//----------------------------------------------------------------------
+// axRandom -> range: aLow..aHigh
+//----------------------------------------------------------------------
+// 
+inline float axRandom(const float aLow, const float aHigh)
+{
+	float range = aHigh-aLow;
+	float rnd = axRandom();
+	return aLow + rnd*range;
+}
+
+//----------------------------------------------------------------------
+// axBitReverse
+//----------------------------------------------------------------------
+inline unsigned int axBitReverse(const unsigned int aInput)
+{
+	unsigned int in  = (unsigned int)aInput;
+	unsigned int out = 0;
+	for(unsigned int i=0; i<32; i++ )
+	{
+		unsigned int bit = (1<<i);
+		unsigned int rev = (0x80000000>>i);
+		if (in&bit) out += rev;
+	};
+	return out;
+}
+
+//----------------------------------------------------------------------
+// lin2dB: convert linear -> dB
+//----------------------------------------------------------------------
+inline float lin2dB(const float lin)
+{
+	return LOG2DB * log(lin);
+}
+
+//----------------------------------------------------------------------
+// dB2lin: convert dB -> linear
+//----------------------------------------------------------------------
+inline float dB2lin(const float dB)
+{
+	return exp(DB2LOG * dB);
 }
 
 //-----------------------------------------------------------------------
 // approximation: n-th root of x
 //-----------------------------------------------------------------------
-inline float axNrt (float value, long root)
+inline float axNrt(float value, long root)
 {
 	__asm__ volatile
 	(
@@ -157,7 +250,7 @@ inline float axNrt (float value, long root)
 //----------------------------------------------------------------------
 // approximation: square root of x
 //----------------------------------------------------------------------
-inline float axSqrt (float value)
+inline float axSqrt(float value)
 {
 	__asm__ volatile
 	(
@@ -173,7 +266,7 @@ inline float axSqrt (float value)
 //----------------------------------------------------------------------
 // approximation: invert square root of x 
 //----------------------------------------------------------------------
-inline float axInvSqrt (float x)
+inline float axInvSqrt(float x)
 {
 	float xhalf = 0.5f*x;
 	int i = *(int*)&x;
@@ -185,7 +278,7 @@ inline float axInvSqrt (float x)
 //----------------------------------------------------------------------
 // approximation: powf(x, n) [currently 4.37 times faster than powf()]
 //----------------------------------------------------------------------
-inline float axPow (float x, long n)
+inline float axPow(float x, long n)
 {
 	const int org_n = n;
 	float z = 1;
@@ -202,7 +295,7 @@ inline float axPow (float x, long n)
 //----------------------------------------------------------------------
 // approximation: exp(x)
 //----------------------------------------------------------------------
-inline float axExp (const float exponent)
+inline float axExp(const float exponent)
 {
 	union
 	{
@@ -224,10 +317,11 @@ inline float axExp (const float exponent)
 //----------------------------------------------------------------------
 // approximation: fsin(x) for range [-pi, pi]
 //----------------------------------------------------------------------
-inline float axSin (float v)
+inline float axSin(float v)
 {
 	v = v * (1.2732395447f - 0.4052847345f * axAbs(v));
 	return 0.225f * (v * axAbs(v) - v) + v;
+	
 	//---------------------------------------------------------
 	/*
 	// ## tmp / gas
@@ -257,7 +351,7 @@ inline float axSin (float v)
 //----------------------------------------------------------------------
 // approximation: fcos(x) for range [-pi, pi] from identity
 //----------------------------------------------------------------------
-inline float axCos (float v)
+inline float axCos(float v)
 {
     return axSin(v + PI_2);
 }
@@ -265,7 +359,7 @@ inline float axCos (float v)
 //----------------------------------------------------------------------
 // fsin(x)
 //----------------------------------------------------------------------
-inline float axFsin (float value)
+inline float axFsin(float value)
 {
 	__asm__ volatile
 	(
@@ -279,7 +373,7 @@ inline float axFsin (float value)
 //----------------------------------------------------------------------
 // fcos(x)
 //----------------------------------------------------------------------
-inline float axFcos (float value)
+inline float axFcos(float value)
 {
 	__asm__ volatile
 	(
@@ -289,13 +383,6 @@ inline float axFcos (float value)
   );
 	return value;
 }
-
-
-
-
-
-
-
 
 
 //----------------------------------------------------------------------
