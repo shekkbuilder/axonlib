@@ -58,6 +58,7 @@ class myPlugin : public axPlugin,
                  //public myThread
 {
   private:
+
     //myThread1 thread1;
     //myThread2 thread2;
 
@@ -88,6 +89,7 @@ class myPlugin : public axPlugin,
     myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
     : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
       {
+
         mGuiPrepared = false;
         mEditor = NULL;
         hasEditor(AX_WIDTH,AX_HEIGHT);
@@ -95,6 +97,10 @@ class myPlugin : public axPlugin,
         //isSynth();
         appendParameter(new parFloat(this,0,"value","",0));
         processParameters();
+        mWidth = AX_WIDTH;
+        mHeight = AX_HEIGHT;
+
+
       }
 
     //----------
@@ -139,8 +145,10 @@ class myPlugin : public axPlugin,
 
     virtual axWindow* doCreateEditor(void)
       {
+
         //thread1.startThread(100);
         //thread2.startThread(-1);
+
         if(!mGuiPrepared)
         {
           mSrfSlider = loadPng( vslider1,    46002 );
@@ -149,7 +157,7 @@ class myPlugin : public axPlugin,
           mSrfBut3   = loadPng( testbutton3, 10935 );
           mGuiPrepared = true;
         }
-        axEditor* ed = new axEditor("demo_window",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
+        axEditor* ed = new axEditor("demo_window",this,-1,axRect(0,0,mWidth,mHeight/*AX_WIDTH,AX_HEIGHT*/),AX_FLAGS);
           ed->setBackground(false);
 
           // main panels & splitters
@@ -266,8 +274,10 @@ class myPlugin : public axPlugin,
 
     virtual void doDestroyEditor(void)
       {
+
         //thread1.stopThread();
         //thread2.stopThread();
+
         axEditor* tempeditor = mEditor;
         mEditor = NULL;
         delete tempeditor;
@@ -503,3 +513,4 @@ class myPlugin : public axPlugin,
 
 //----------------------------------------------------------------------
 #include "axMain.h"
+

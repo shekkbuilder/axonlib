@@ -5,6 +5,7 @@
 #include "axString.h"
 #include "axContainer.h"
 #include "axSurface.h"
+#include "axMutex.h"
 
 // mouse buttons and mod keys
 #define but_None    0
@@ -26,6 +27,7 @@ class axWindowBase : public axContainer
     int         mWinFlags;
     axCanvas*   mCanvas;
     axSurface*  mSurface;
+    axMutex     mSurfaceMutex;
 
   public:
 
@@ -98,13 +100,23 @@ class axWindow : public axWindowImpl
     : axWindowImpl(aWinName, aListener,aID,aRect,aWinFlags)
       {
         mCanvas = new axCanvas( getHandle(), cmo_window );
-        if (aWinFlags&AX_BUFFERED) mSurface = new axSurface(aRect.w,aRect.h/*,cmo_buffer*/);
+        if (aWinFlags&AX_BUFFERED)
+        {
+          //mSurfaceMutex.lock();
+          mSurface = new axSurface(aRect.w,aRect.h/*,cmo_buffer*/);
+          //mSurfaceMutex.unlock();
+        }
         setBackground( true, AX_GREY );
       }
 
     virtual ~axWindow()
       {
-        if (mSurface) delete mSurface;
+        if (mSurface)
+        {
+          //mSurfaceMutex.lock();
+          delete mSurface;
+          //mSurfaceMutex.unlock();
+        }
         if (mCanvas) delete mCanvas;
       }
 
