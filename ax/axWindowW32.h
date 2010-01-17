@@ -12,6 +12,7 @@
 
 #include "axRect.h"
 #include "axMath.h"
+#include "axUtils.h"
 #include "axGlobals.h"
 //#include "axColor.h"
 #include "axWindow.h"

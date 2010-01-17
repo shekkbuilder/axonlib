@@ -45,7 +45,7 @@ inline float axRound(float value)
 	int j;
 	float im = 0.5f;
 	__asm__ volatile
-	(
+	(		
 		"flds %1;"		"fistpl %0;"		"flds %2;"		"faddp;"
 		: "=m" (j)
 		: "m" (value), "m" (im)
@@ -138,7 +138,6 @@ inline int axLimitInt(const int input, const int limit)
 	return axMinInt(axMaxInt(input, -limit), limit);
 }
 
-
 //----------------------------------------------------------------------
 // axCalcStep
 //----------------------------------------------------------------------
@@ -199,49 +198,123 @@ inline float axRandom(const float aLow, const float aHigh)
 }
 
 //----------------------------------------------------------------------
-// axBitReverse
+// FPU ln(x) 
 //----------------------------------------------------------------------
-inline unsigned int axBitReverse(unsigned int x)
+inline float axLogf(float value)
 {
-	/*
-	// from: http://www.jjj.de/fxt/fxtpage.html
-	x = ((x & 0xaaaaaaaa) >> 1) | ((x & 0x55555555) << 1);
-	x = ((x & 0xcccccccc) >> 2) | ((x & 0x33333333) << 2);
-	x = ((x & 0xf0f0f0f0) >> 4) | ((x & 0x0f0f0f0f) << 4);
-	x = ((x & 0xff00ff00) >> 8) | ((x & 0x00ff00ff) << 8);
-	x = ((x & 0xffff0000) >> 16) | ((x & 0x0000ffff) << 16);
-	*/
+	__asm__ __volatile__
+	(
+		"fld %0;"		"fldln2;"		"fxch;"		"fyl2x;"		"fst %0;"
+		: "=m" (value)
+		: "m" (value)
+	);
+	return value;
+}
+
+//----------------------------------------------------------------------
+// FPU log2(x) log base 2 
+//----------------------------------------------------------------------
+inline float axLog2f(float value)
+{
+	__asm__ __volatile__
+	(
+		"fld1;"		"fld %0;"    "fyl2x;"		"fst %0;"
+		: "=m" (value)
+		: "m" (value)
+	);
+	return value;
+}
+
+//----------------------------------------------------------------------
+// FPU sinf(x)
+//----------------------------------------------------------------------
+inline float axSinf(float value)
+{
 	__asm__ volatile
 	(
-		"movl %0, %%eax;"		"andl $0xaaaaaaaa, %%eax;"		"shrl $1, %%eax;"
-		"andl $0x55555555, %0;"		"shll $1, %0;"		"orl %%eax, %0;"
-		"movl %0, %%eax;"		"andl $0xcccccccc, %%eax;"		"shrl $2, %%eax;"
-		"andl $0x33333333, %0;"		"shll $2, %0;"		"orl %%eax, %0;"
-		"movl %0, %%eax;"		"andl $0xf0f0f0f0, %%eax;"		"shrl $4, %%eax;"
-		"andl $0x0f0f0f0f, %0;"		"shll $4, %0;"		"orl %%eax, %0;"
-		"movl %0, %%eax;"		"andl $0xff00ff00, %%eax;"		"shrl $8, %%eax;"
-		"andl $0x00ff00ff, %0;"		"shll $8, %0;"		"orl %%eax, %0;"
-		"movl %0, %%eax;"		"andl $0xffff0000, %%eax;"		"shrl $16, %%eax;"
-		"andl $0x0000ffff, %0;"		"shll $16, %0;"		"orl %%eax, %0;"
-		: "=m" (x)	:		: "eax"
-	);
-	return x;
+		"fsin %1, %0;"
+		: "=f" (value)
+		: "f" (value)
+  );
+	return value;
 }
 
 //----------------------------------------------------------------------
-// lin2dB: convert linear -> dB
+// FPU cosf(x)
 //----------------------------------------------------------------------
-inline float lin2dB(const float lin)
+inline float axCosf(float value)
 {
-	return LOG2DB * log(lin);
+	__asm__ volatile
+	(
+		"fcos %1, %0;"
+		: "=f" (value)
+		: "f" (value)
+  );
+	return value;
 }
 
 //----------------------------------------------------------------------
-// dB2lin: convert dB -> linear
+// FPU tanf(x)
 //----------------------------------------------------------------------
-inline float dB2lin(const float dB)
+inline float axTanf(float value)
 {
-	return exp(DB2LOG * dB);
+	__asm__ volatile
+	(
+		"fld %0;"		"fsincos;"    "fdivrp;"    "fst %0;"		
+		: "=m" (value)
+		: "m" (value)
+  );
+	return value;
+}
+
+//----------------------------------------------------------------------
+// FPU asinf(x)
+// asin(x)=atan(sqrt(x*x/(1-x*x)))
+//----------------------------------------------------------------------
+inline float axAsinf(float value)
+{
+	float tmp;	
+	__asm__ volatile
+	(
+		"fld %0;"		"fld %0;"		"fmulp;"		"fst %1;"		"fld1;"		"fsubp;"
+		"fld %1;"		"fdivp;"		"fsqrt;"		"fld1;"		"fpatan;"		"fst %0;"
+		: "=m" (value)
+		: "m" (tmp)
+		: "eax"
+  );
+	return value;
+}
+
+//----------------------------------------------------------------------
+// FPU acosf(x)
+// acos(x) = atan(sqrt((1-x*x)/(x*x)))
+//----------------------------------------------------------------------
+inline float axAcosf(float value)
+{	
+	float tmp;	
+	__asm__ volatile
+	(
+		"fld %0;"		"fld %0;"		"fmulp;"		"fst %1;"		"fld1;"		"fsubp;"		
+		"fld %1;"		"fdivrp;"		"fsqrt;"		"fld1;"		"fpatan;"		"fst %0;"
+		: "=m" (value)
+		: "m" (tmp)
+		: "eax"
+  );
+	return value;
+}
+
+//----------------------------------------------------------------------
+// FPU atanf(x)
+//----------------------------------------------------------------------
+inline float axAtanf(float value)
+{
+	__asm__ volatile
+	(
+		"fld %0;"		"fld1;"		"fpatan;"		"fst %0;"
+		: "=m" (value)
+		: "m" (value)
+  );
+	return value;
 }
 
 //-----------------------------------------------------------------------
@@ -251,10 +324,8 @@ inline float axNrt(float value, long root)
 {
 	__asm__ volatile
 	(
-		"subl $0x3f800000, %0;"
-		"subl $1, %2;"
-		"shrl %b2, %0;"
-		"addl $0x3f800000, %0;"
+		"subl $0x3f800000, %0;"		"subl $1, %2;"
+		"shrl %b2, %0;"		"addl $0x3f800000, %0;"
 		: "=r" (value)
 		: "0" (value), "c" (root)
 	);
@@ -268,17 +339,16 @@ inline float axSqrt(float value)
 {
 	__asm__ volatile
 	(
-		"subl $0x3f800000, %0;"
-		"shrl $1, %0;"
-		"addl $0x3f800000, %0;"
-		: "=r" (value)
+		"subl $0x3f800000, %0;"		"shrl $1, %0;"
+		"addl $0x3f800000, %0;"		: "=r" (value)
 		: "0" (value)		
 	);
 	return value;
 }
 
 //----------------------------------------------------------------------
-// approximation: invert square root of x 
+// approximation: invert square root of x
+// q3
 //----------------------------------------------------------------------
 inline float axInvSqrt(float x)
 {
@@ -308,6 +378,7 @@ inline float axPow(float x, long n)
 
 //----------------------------------------------------------------------
 // approximation: exp(x)
+// http://theoval.sys.uea.ac.uk/publications/pdf/nc2000a.pdf
 //----------------------------------------------------------------------
 inline float axExp(const float exponent)
 {
@@ -329,41 +400,50 @@ inline float axExp(const float exponent)
 }
 
 //----------------------------------------------------------------------
-// approximation: fsin(x) for range [-pi, pi]
+// approximation: log2(x)
+// http://www.flipcode.com/archives/Fast_log_Function.shtml
+//----------------------------------------------------------------------
+inline float axLog2(float val)
+{	
+	assert (val > 0);
+	int * const  exp_ptr = reinterpret_cast <int *> (&val);
+	int          x = *exp_ptr;
+	const int    log_2 = ((x >> 23) & 255) - 128;
+	x &= ~(255 << 23);
+	x += 127 << 23;
+	*exp_ptr = x;
+	return (val + log_2);
+}
+
+//----------------------------------------------------------------------
+// approximation: ln(x)
+//----------------------------------------------------------------------
+inline float axLog(const float &val)
+{
+	return (axLog2 (val) * 0.69314718f);
+}
+
+//----------------------------------------------------------------------
+// approximation: sinf(x) for range [-pi, pi]
 //----------------------------------------------------------------------
 inline float axSin(float v)
 {
 	v = v * (1.2732395447f - 0.4052847345f * axAbs(v));
 	return 0.225f * (v * axAbs(v) - v) + v;
-	
-	//---------------------------------------------------------
-	/*
-	// ## tmp / gas
-	// ------  
-	float result;
-  float a = -1.2732395447f;
-	float b = -0.4052847345f;
-	float c = 0.225f;	
-  __asm__ volatile
-	(
-		"movl %0, %%eax;"		"andl $0x7fffffff, %%eax;"		"fld %2;"		"fld %3;"
-		"fmulp;"		"fld %2;"		"fldl %%eax;"		"faddp;"		"fstp %0;"		
-		"fld %0;"		"fld %%eax;"		"fmulp;"		"fstp %0;"		"movl %0, %%eax;"
-		"andl $0x7fffffff, %%eax;"		"fld %0;"		"fld %%eax;"		"fmulp;"
-		"fstp %%eax;"		"fld %0;"		"fld %%eax;"			"fsubp;"		"fstp %%eax;"
-		"fld %%eax;"		"fld %4;"		"fmulp;"		"fld %%eax;"
-		"fld %0;"		"faddp;"		"fstp %0;"
-		: "=m" (result)
-		: "g" (value), "g" (a), "g" (b), "g" (c)
-		: "eax"			
-  );
-  return result;
-  */  
 }
 
+//----------------------------------------------------------------------
+// approximation: asinf(x)
+// NOTE: not very accurate but fast
+//----------------------------------------------------------------------
+inline float axAsin(const float x)
+{
+	return M_PI_2 - sqrtf(1 - x)*(1.5707288 - x*(0.2121144 + x*(0.0742610
+	- x*(0.0187293 + 0.2698391*x))));
+}
 
 //----------------------------------------------------------------------
-// approximation: fcos(x) for range [-pi, pi] from identity
+// approximation: cosf(x) for range [-pi, pi] from identity
 //----------------------------------------------------------------------
 inline float axCos(float v)
 {
@@ -371,64 +451,19 @@ inline float axCos(float v)
 }
 
 //----------------------------------------------------------------------
-// fsin(x)
+// lin2dB: convert linear -> dB
 //----------------------------------------------------------------------
-inline float axFsin(float value)
+inline float lin2dB(const float lin)
 {
-	__asm__ volatile
-	(
-		"fsin %1, %0;"
-		: "=f" (value)
-		: "f" (value)
-  );
-	return value;
+	return LOG2DB * log(lin);
 }
 
 //----------------------------------------------------------------------
-// fcos(x)
+// dB2lin: convert dB -> linear
 //----------------------------------------------------------------------
-inline float axFcos(float value)
+inline float dB2lin(const float dB)
 {
-	__asm__ volatile
-	(
-		"fcos %1, %0;"
-		: "=f" (value)
-		: "f" (value)
-  );
-	return value;
+	return exp(DB2LOG * dB);
 }
-
-
-//----------------------------------------------------------------------
-// not really math related, but it have to stay here, until we find a
-// better 'home'
-
-void axRadix (long *source, long *dest, long N, int byte)
-{
-  int i;
-  long count[256];
-  long index[256];
-  memset (count, 0, sizeof (count));
-  for ( i=0; i<N; i++ ) count[((source[i])>>(byte*8))&0xff]++;
-  index[0]=0;
-  for ( i=1; i<256; i++ ) index[i]=index[i-1]+count[i-1];
-  for ( i=0; i<N; i++ ) dest[index[((source[i])>>(byte*8))&0xff]++] = source[i];
-}
-
-//i = 1;
-//loop( size-1,
-//  cur = buf[i];
-//  j = i;
-//  buf[j-1] > cur ? (
-//    while(
-//      buf[j] = buf[j-1];
-//      j -= 1;
-//      ( (j>0) && (buf[j-1]>cur) )
-//    );
-//  );
-//  i += 1;
-//);
-
-//----------------------------------------------------------------------
 
 #endif
