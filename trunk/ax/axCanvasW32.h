@@ -162,6 +162,19 @@ class axCanvasImpl : public axCanvasBase
         SelectClipRgn(mDC,NULL);
       }
 
+    //----------
+
+//    axRect getClipRect(void)
+//      {
+//        axRect R;
+//        RECT rect;
+//        HRGN hrgn;
+//        int res1 = GetClipRgn(mDC,hrgn); // res = 0=no region, 1=region, -1=error
+//        int res2 = GetRgnBox(hrgn,&rect); //
+//        R.set(rect.left, rect.top, rect.right-rect.left+1, rect.bottom-rect.top+1);
+//        return R;
+//      }
+
     //--------------------------------------------------
     // shapes
     //--------------------------------------------------

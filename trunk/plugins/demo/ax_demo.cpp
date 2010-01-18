@@ -37,6 +37,43 @@
 
 //----------------------------------------------------------------------
 
+//extern "C"
+//{
+//  #include "../../extern/tcc/libtcc.h"
+//}
+//
+///* this function is called by the generated code */
+//int add(int a, int b)
+//  {
+//    return a + b;
+//  }
+//
+//char my_program[] =
+//  "int fib(int n)\n"
+//  "{\n"
+//  "    if (n <= 2)\n"
+//  "        return 1;\n"
+//  "    else\n"
+//  "        return fib(n-1) + fib(n-2);\n"
+//  "}\n"
+//  "\n"
+//  "int foo(int n)\n"
+//  "{\n"
+//  "    printf(\"Hello World!\\n\");\n"
+//  "    printf(\"fib(%d) = %d\\n\", n, fib(n));\n"
+//  "    printf(\"add(%d, %d) = %d\\n\", n, 2 * n, add(n, 2 * n));\n"
+//  "    return 0;\n"
+//  "}\n";
+//
+//TCCState *s;
+//int (*func)(int);
+//void *mem;
+//int size;
+//
+//typedef int (*functype)(int);
+
+//----------------------------------------------------------------------
+
 //class myThread1 : public axThread
 //{
 //  public:
@@ -89,6 +126,21 @@ class myPlugin : public axPlugin,
     myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
     : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
       {
+
+//    s = tcc_new();
+//    tcc_set_output_type(s,TCC_OUTPUT_MEMORY);
+//    if (tcc_compile_string(s, my_program) == -1) TRACE("tcc compile error\n");
+//    else TRACE("tcc compile ok\n");
+//    tcc_add_symbol(s, "add", (void*)add);
+//    size = tcc_relocate(s, NULL);
+//    if (size == -1) TRACE("tcc get size error\n");
+//    mem = malloc(size);
+//    tcc_relocate(s, mem);
+//    func = (functype)tcc_get_symbol(s, "foo");
+//    if (!func) TRACE("tcc get func error\n");
+//    tcc_delete(s);
+//    func(32);
+//    free(mem);
 
         mGuiPrepared = false;
         mEditor = NULL;

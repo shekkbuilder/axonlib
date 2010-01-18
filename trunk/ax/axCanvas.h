@@ -31,6 +31,9 @@
 
 //#define DEF_PENWIDTH      0
 
+// max depth of cliprect stack
+#define MAX_CLIPRECTS     32
+
 //----------------------------------------------------------------------
 
 class axCanvasBase
@@ -50,6 +53,9 @@ class axCanvasBase
     axBrush*  defaultBrush;
     axFont*   defaultFont;
 
+    int mNumClipRects;
+    axRect mClipRects[MAX_CLIPRECTS];
+    //axArray<axRect*> mClipRects;
 
   public:
 
@@ -62,6 +68,7 @@ class axCanvasBase
         mTextColor  = axColor(255,255,255);
         mPenWidth   = 0;
         mXpos=mYpos = 0;
+        mNumClipRects = 0;
       }
 
     virtual ~axCanvasBase()
@@ -188,6 +195,32 @@ class axCanvas : public axCanvasImpl
         setBrushColor( AX_GREY );
         fillRect(x+1,y+1,x2-1,y2-1);
       }
+
+    //----------
+
+//    void pushClipRect(int aX1, int aY1, int aX2, int aY2)
+//      {
+//        setClipRect(aX1,aY1,aX2,aY2);
+//        if (mNumClipRects<MAX_CLIPRECTS)
+//        {
+//          mClipRects[mNumClipRects].set(aX1,aY1,aX2,aY2);
+//          mNumClipRects++;
+//        }
+//        //axRect* R = new axRect(aX1,aY1,aX2,aY2);
+//        //mClipRects.push(R);
+//      }
+//
+//    void popClipRect(void)
+//      {
+//        if (mNumClipRects>0)
+//        {
+//          mNumClipRects--;
+//          setClipRect(mClipRects[mNumClipRects].x,
+//                      mClipRects[mNumClipRects].y,
+//                      mClipRects[mNumClipRects].x2(),
+//                      mClipRects[mNumClipRects].y2());
+//        }
+//      }
 
 };
 

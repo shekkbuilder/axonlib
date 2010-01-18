@@ -341,6 +341,7 @@ class axContainer : public axWidget,
           if( mRect.intersects(aRect) )
           {
             if( hasFlag(wfl_Clip) ) aCanvas->setClipRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
+            //if( hasFlag(wfl_Clip) ) aCanvas->pushClipRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
             axWidget::doPaint( aCanvas, aRect );
 #ifdef AX_PAINTERS
             for( int i=mWidgets.size()-1; i>=0; i-- )
@@ -352,6 +353,7 @@ class axContainer : public axWidget,
               if( W->intersects(aRect) ) W->doPaint( aCanvas, mRect );
             }
             if( hasFlag(wfl_Clip) ) aCanvas->clearClipRect();
+            //if( hasFlag(wfl_Clip) ) aCanvas->popClipRect();
           } //intersect
         }
       }

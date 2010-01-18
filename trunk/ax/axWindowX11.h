@@ -566,7 +566,7 @@ class axWindowImpl : public axWindowBase
             //onRedraw(mRect);
             break;
           case Expose:
-            beginPaint();
+            beginPaint(); // should this be inside the lock() ?
             rc = axRect(ev->xexpose.x,
                         ev->xexpose.y,
                         ev->xexpose.width,
@@ -599,7 +599,7 @@ class axWindowImpl : public axWindowBase
             break;
           case ClientMessage:
             val = ev->xclient.data.l[0];
-            if (val==666) doTimer();
+            if (val==666) doTimer();  //TODO: fix?
             break;
           case ButtonPress:
             but = buttons(ev->xbutton.button);

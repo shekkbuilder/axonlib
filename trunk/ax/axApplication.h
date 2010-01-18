@@ -3,6 +3,8 @@
 //----------------------------------------------------------------------
 // standalone
 
+#include "axGlobals.h"
+
 class axApplication
 {
   public:
