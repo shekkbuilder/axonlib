@@ -2,7 +2,11 @@
 #define axScript_included
 //----------------------------------------------------------------------
 // forth inspired stack-based script
-// TODO: error checking, memory safety...
+// TODO:
+// - error checking / memory safety
+// - strings/pointers ." "string"
+// - variables
+// - repeat/until, while/wend, loop
 
 #include <stdio.h>
 #include <stdlib.h> // atoi..
@@ -24,8 +28,9 @@
 #define op_None   0
 #define op_Opcode 1
 #define op_Word   2
-#define op_Int    3
-#define op_Float  4
+#define op_Label  3
+#define op_Int    4
+#define op_Float  5
 
 #define op_Exit   0xffff
 
@@ -71,6 +76,7 @@ typedef axArray<axToken*> axTokens;
 //----------------------------------------------------------------------
 // word
 //----------------------------------------------------------------------
+// also used for: label, (string)
 
 class axWord
 {
@@ -117,18 +123,23 @@ typedef axArray<axOpcode*> axOpcodes;
 class axScript
 {
   protected:
-    int       mSrcSize;
     char*     mSource;
     axTokens  mTokens;
     axOpcodes mOpcodes;
+    axWords   mWords;
+    axWords   mLabels;
     int*      mCode;
-    int       mCodeSize;
     int*      mDataStack;
     int*      mCallStack;
+    int*      mCondStack;
+
+    int       mSrcSize;
+    int       mCodeSize;
+
     int       mCodePos;
     int       mDataPos;
     int       mCallPos;
-    axWords   mWords;
+    int       mCondPos;
     int       mCurToken;
 
   public:
@@ -142,10 +153,13 @@ class axScript
         mCode = new int[MAX_CODESIZE];
         mDataStack = new int[MAX_STACKSIZE];
         mCallStack = new int[MAX_STACKSIZE];
+        mCondStack = new int[MAX_STACKSIZE];
         mCodePos = 0;
         mDataPos = 0;
         mCallPos = 0;
+        mCondPos = 0;
         mWords.clear();
+        mLabels.clear();
         append_stdlib();
         mCurToken = 0;
       }
@@ -179,6 +193,7 @@ class axScript
     inline void       codePos(int aPos)   { mCodePos = aPos; }
     inline int        next(void)          { return mCode[mCodePos++]; };
     inline void       writeCode(int aCode)  { mCode[mCodePos++] = aCode; }
+    inline void       writeCodeAt(int aPos, int aCode)  { mCode[aPos] = aCode; }
 
     inline char*      nextToken(void)     { return mTokens[mCurToken++]->name(); }
     inline void       deleteTokens(void)  { for (int i=0; i<mTokens.size(); i++) delete mTokens[i]; }
@@ -192,8 +207,19 @@ class axScript
     inline int        popData(void)         { return mDataStack[--mDataPos]; }
     inline void       popCall(void)         { mCodePos = mCallStack[--mCallPos]; }
 
+    inline int        peekData(void)        { return mDataStack[mDataPos-1]; }
+
     inline int        wordPos(int aWord)    { return mWords[aWord]->pos(); }
-    inline void       callWord(int aWord)   { pushCall(); mCodePos = mWords[aWord]->pos(); }
+    inline int        labelPos(int aLabel)    { return mLabels[aLabel]->pos(); }
+    //inline void       callWord(int aWord)   { pushCall(); mCodePos = mWords[aWord]->pos(); }
+
+    inline void       pushCond(void)        { mCondStack[mCondPos++] = mCodePos; }
+    inline int        popCond(void)         { return mCondStack[--mCondPos]; }
+
+    //----------
+
+    inline void   dupData(void)   { mDataStack[mDataPos++] = mDataStack[mDataPos-1]; }
+    inline void   dropData(void)  { mDataPos--; }
 
     //----------
 
@@ -220,11 +246,23 @@ class axScript
         mWords.append(aWord);
       }
 
-    //----------
-
     int findWord(char* token)
       {
         for (int i=0; i<mWords.size(); i++) { if (strcmp(token,mWords[i]->name())==0) return i; }
+        return -1;
+      }
+
+    //----------
+
+    void appendLabel(axWord* aWord)
+      {
+        aWord->pos( mCodePos );
+        mLabels.append(aWord);
+      }
+
+    int findLabel(char* token)
+      {
+        for (int i=0; i<mLabels.size(); i++) { if (strcmp(token,mLabels[i]->name())==0) return i; }
         return -1;
       }
 
@@ -264,6 +302,15 @@ class axScript
 
     //----------
 
+    virtual void compileLabel(int aLabel)
+      {
+        writeCode(op_Label);
+        //writeCode( aWord );
+        writeCode( labelPos(aLabel) );
+      }
+
+    //----------
+
     virtual void compileInt(int aValue)
       {
         writeCode(op_Int);
@@ -296,8 +343,14 @@ class axScript
             if (wo>=0) compileWord(wo);
             else
             {
-              if (strchr(token,'.')!=NULL) compileFloat(atof(token));
-              else compileInt(atoi(token));
+
+              int la = findLabel(token);
+              if (la>=0) compileLabel(la);
+              else
+              {
+                if (strchr(token,'.')!=NULL) compileFloat(atof(token));
+                else compileInt(atoi(token));
+              }
             }
           }
         } while ( mCurToken<mTokens.size() );
@@ -314,8 +367,9 @@ class axScript
         mCodePos = aStart;
         mDataPos = 0;
         mCallPos = 0;
+        mCondPos = 0;
         int val;
-        int opcode = next();//NEXT;
+        int opcode = next();
         while (opcode!=op_Exit)
         {
           switch(opcode)
@@ -329,7 +383,11 @@ class axScript
             case op_Word:
               val = next();
               pushCall();
-              //mCodePos = mWords[val]->pos();
+              mCodePos = val;
+              break;
+            case op_Label:
+              val = next();
+              //pushCall();
               mCodePos = val;
               break;
             case op_Int:
@@ -353,14 +411,30 @@ class axScript
     #include "axScript_Std.h"
     void append_stdlib(void)
       {
-        appendOpcode( new opExit() );
+        // base
         appendOpcode( new opColon() );
         appendOpcode( new opSemiColon() );
-        appendOpcode( new opDot() );
+        appendOpcode( new opDollar() );
+        // stack (data)
+        appendOpcode( new opDup() );
+        appendOpcode( new opDrop() );
+        // conditionals
+        appendOpcode( new opEqual() );
+        appendOpcode( new opNotEqual() );
+        appendOpcode( new opGreater() );
+        appendOpcode( new opLess() );
+        // flow control
+        appendOpcode( new opExit() );
+        appendOpcode( new opIf() );
+        appendOpcode( new opEndif() );
+        // arithmetic (int)
         appendOpcode( new opAdd() );
         appendOpcode( new opSub() );
         appendOpcode( new opMul() );
         appendOpcode( new opDiv() );
+        // io
+        appendOpcode( new opPrintInt() );
+
       }
 
     #endif
