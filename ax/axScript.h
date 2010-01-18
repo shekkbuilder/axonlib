@@ -2,7 +2,7 @@
 #define axScript_included
 //----------------------------------------------------------------------
 // forth inspired stack-based script
-// TODO: eeor checking, memory safety...
+// TODO: error checking, memory safety...
 
 #include <stdio.h>
 #include <stdlib.h> // atoi..
@@ -33,10 +33,11 @@
 
 // token types
 #define tty_Unknown 0
-//#define tty_Word    1
-//#define tty_Int     2
-//#define tty_Float   3
-//#define tty_Ptr     4
+#define tty_Word    1
+#define tty_Int     2
+#define tty_Float   3
+#define tty_String  4
+#define tty_Ptr     5
 
 //// script states
 //#define sst_Compile 1
@@ -101,6 +102,7 @@ class axOpcode
     inline void  setOwner(axScript* aOwner) { mOwner=aOwner; }
     inline void  setIndex(int aIndex) { mIndex=aIndex; }
     virtual void compile(int aIndex) {}
+    //virtual void compile(int aIndex) { mOwner->writeCode(op_Opcode); mOwner->writeCode(aIndex); }
     virtual void execute(void) {}
 };
 
@@ -127,7 +129,6 @@ class axScript
     int       mDataPos;
     int       mCallPos;
     axWords   mWords;
-    //int       mState;
     int       mCurToken;
 
   public:
@@ -177,22 +178,22 @@ class axScript
     inline int        codePos(void)       { return mCodePos; }
     inline void       codePos(int aPos)   { mCodePos = aPos; }
     inline int        next(void)          { return mCode[mCodePos++]; };
+    inline void       writeCode(int aCode)  { mCode[mCodePos++] = aCode; }
+
     inline char*      nextToken(void)     { return mTokens[mCurToken++]->name(); }
+    inline void       deleteTokens(void)  { for (int i=0; i<mTokens.size(); i++) delete mTokens[i]; }
+
     inline int        numOpcodes(void)    { return mOpcodes.size(); }
     inline axOpcode*  opcode(int aIndex)  { return mOpcodes[aIndex]; }
+    inline void       deleteOpcodes(void) { for (int i=0; i<mOpcodes.size(); i++) delete mOpcodes[i]; }
 
-    inline void   deleteTokens(void)  { for (int i=0; i<mTokens.size(); i++) delete mTokens[i]; }
-    inline void   deleteOpcodes(void) { for (int i=0; i<mOpcodes.size(); i++) delete mOpcodes[i]; }
+    inline void       pushData(int aData)   { mDataStack[mDataPos++] = aData; }
+    inline void       pushCall(void)        { mCallStack[mCallPos++] = mCodePos; }
+    inline int        popData(void)         { return mDataStack[--mDataPos]; }
+    inline void       popCall(void)         { mCodePos = mCallStack[--mCallPos]; }
 
-    inline void writeCode(int aCode)  { mCode[mCodePos++] = aCode; }
-    inline void pushData(int aData)   { mDataStack[mDataPos++] = aData; }
-    //inline void pushCall(int aCall)   { mCallStack[mCallPos++] = aCall; }
-    inline void pushCall(void)        { mCallStack[mCallPos++] = mCodePos; }
-    inline int  popData(void)         { return mDataStack[--mDataPos]; }
-    //inline int  popCall(void)         { return mCallStack[--mCallPos]; }
-    inline void popCall(void)         { mCodePos = mCallStack[--mCallPos]; }
-    inline void callWord(int aWord)   { pushCall(/*mCodePos*/); mCodePos = mWords[aWord]->pos(); }
-    //inline void returnWord(void)      { mCodePos = popCall(); }
+    inline int        wordPos(int aWord)    { return mWords[aWord]->pos(); }
+    inline void       callWord(int aWord)   { pushCall(); mCodePos = mWords[aWord]->pos(); }
 
     //----------
 
@@ -227,9 +228,7 @@ class axScript
         return -1;
       }
 
-    int wordPos(int num) { return mWords[num]->pos(); }
-
-    //----------
+    //--------------------------------------------------
 
     int parse(axString aSource)
       {
@@ -251,7 +250,6 @@ class axScript
 
     virtual void compileOpcode(int aOpcode)
       {
-        //TRACE("  - [pos:%i] op_Opcode (%i), %i ('%s')\n",mCodePos,op_Opcode, aOpcode, mOpcodes[aOpcode]->name());
         mOpcodes[aOpcode]->compile(aOpcode);
       }
 
@@ -259,16 +257,15 @@ class axScript
 
     virtual void compileWord(int aWord)
       {
-        //TRACE("  - [pos:%i] op_Word (%i), %i ('%s')\n",mCodePos,op_Word, aWord, mWords[aWord]->name());
         writeCode(op_Word);
-        writeCode( aWord/*mWords[aWord]->pos()*/ );
+        //writeCode( aWord );
+        writeCode( wordPos(aWord) );
       }
 
     //----------
 
     virtual void compileInt(int aValue)
       {
-        //TRACE("  - [pos:%i] op_Int (%i), %i\n",mCodePos,op_Int, aValue);
         writeCode(op_Int);
         writeCode(aValue);
       }
@@ -278,7 +275,6 @@ class axScript
     virtual void compileFloat(float aValue)
       {
         int value = *(int*)(&aValue);
-        //TRACE("  [pos:%i] op_Float (%i), %i (%f)\n",mCodePos,op_Float, value, aValue);
         writeCode(op_Float);
         writeCode(value);
       }
@@ -287,16 +283,11 @@ class axScript
 
     virtual int compile(axString aSource)
       {
-        //TRACE("compiling..........\n");
-        //TRACE("- parsing\n");
         parse(aSource);
         mCurToken = 0;
-        //for( int i=0; i<mTokens.size(); i++)
         do
         {
-          //char* token = mTokens[i]->name();
-          char* token = nextToken(); //mTokens[mCurToken]->name();
-          //TRACE("  token:'%s'\n",token);
+          char* token = nextToken();
           int op = findOpcode(token);
           if (op>=0) compileOpcode(op);
           else
@@ -310,20 +301,15 @@ class axScript
             }
           }
         } while ( mCurToken<mTokens.size() );
-        //TRACE("  exit\n");
-        //TRACE("  - [pos:%i] op_Exit (%i)\n",mCodePos,op_Exit);
         writeCode(op_Exit);
-        //TRACE("..........compiled ok\n");
         mCodeSize = mCodePos;
         return mCodeSize;
       }
 
     //--------------------------------------------------
 
-    //#define NEXT mCode[mCodePos++]
     virtual int execute(int aStart=0)
       {
-        //TRACE("executing..........\n");
         int result = 0;
         mCodePos = aStart;
         mDataPos = 0;
@@ -335,36 +321,28 @@ class axScript
           switch(opcode)
           {
             //case op_None:
-            //  //TRACE("- op_None\n");
             //  break;
             case op_Opcode:
-              val = next();//NEXT;
-              //TRACE("- op_Opcode %i\n",val);
+              val = next();
               mOpcodes[val]->execute();
               break;
             case op_Word:
               val = next();
-              //TRACE("- op_Word %i\n",val);
               pushCall();
-              mCodePos = mWords[val]->pos();    //TODO: save destination pos directly
+              //mCodePos = mWords[val]->pos();
+              mCodePos = val;
               break;
             case op_Int:
-              //TRACE("- op_Int\n");
               pushData(next());
               break;
             case op_Float:
-              //TRACE("- op_Float\n");
               pushData(next());
               break;
-            case op_Exit:
-              //TRACE("- op_Exit\n");
-              break;
-            //default:
+            //case op_Exit:
             //  break;
           }
-          opcode = next();//NEXT;
+          opcode = next();
         }
-        //TRACE("..........executed ok\n");
         return result;
       }
 
@@ -375,10 +353,14 @@ class axScript
     #include "axScript_Std.h"
     void append_stdlib(void)
       {
-        appendOpcode( new opAdd() );
-        appendOpcode( new opDot() );
+        appendOpcode( new opExit() );
         appendOpcode( new opColon() );
         appendOpcode( new opSemiColon() );
+        appendOpcode( new opDot() );
+        appendOpcode( new opAdd() );
+        appendOpcode( new opSub() );
+        appendOpcode( new opMul() );
+        appendOpcode( new opDiv() );
       }
 
     #endif

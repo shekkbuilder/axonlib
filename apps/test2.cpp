@@ -10,12 +10,15 @@
 //----------------------------------------------------------------------
 
 char* myScript = (char*)
-  ": test 10 5 + ; "
-  ": test2 3 4 6 + + ; "
-  ": main"
-  "    test test2 + . "
-  "    1 test + . "
-  "    test2 . ";
+  ": test 10 5 + ; "      // 15
+  ": test2 3 4 6 + + ; "  // 13
+  ": main "
+  "    test test2 + . "   // 13+15 =  28
+  "    3 test * . "       // 15*3  =  45
+  "    test2 2 - . "      // 2-13  = -11
+  "    2 10 / . EXIT "    // 10/2  =  5
+  ": main2 "
+  "    0 . EXIT ";
 
 //----------------------------------------------------------------------
 
@@ -23,6 +26,7 @@ class myApp : public axApplication
 {
   private:
     axScript* mScript;
+    int word,pos;
   public:
 
     myApp() : axApplication() {}
@@ -34,11 +38,15 @@ class myApp : public axApplication
         mScript = new axScript();
         /*int codesize = */mScript->compile(myScript);
         mScript->dumpCode();
+
         printf("----------\n");
-        int entry = mScript->findWord((char*)"main");
-        int pos = 0;
-        if (entry>=0) pos = mScript->wordPos(entry);
-        mScript->execute(pos);
+        word = mScript->findWord((char*)"main");
+        if (word>=0) mScript->execute( mScript->wordPos(word) );
+
+        printf("----------\n");
+        word = mScript->findWord((char*)"main2");
+        if (word>=0) mScript->execute( mScript->wordPos(word) );
+
         delete mScript;
         axCleanup(AX_FLAGS);
       }

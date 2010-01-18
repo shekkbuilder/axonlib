@@ -6,6 +6,51 @@
 
 //----------------------------------------------------------------------
 
+// ;
+class opExit : public axOpcode
+{
+  public:
+    opExit() : axOpcode(NULL,"EXIT") {}
+    virtual void compile(int aIndex) { mOwner->writeCode(op_Exit); }
+    //virtual void execute(void) {}
+};
+
+//----------
+
+// :
+class opColon : public axOpcode
+{
+  public:
+    opColon() : axOpcode(NULL,":") {}
+    virtual void compile(int aIndex) { mOwner->appendWord(new axWord( mOwner->nextToken(), mOwner->codePos() )); }
+    //virtual void execute(void) {)
+};
+
+//----------
+
+// ;
+class opSemiColon : public axOpcode
+{
+  public:
+    opSemiColon() : axOpcode(NULL,";") {}
+    virtual void compile(int aIndex) { mOwner->writeCode(op_Opcode); mOwner->writeCode(aIndex); }
+    virtual void execute(void) { mOwner->popCall(); }
+};
+
+//----------------------------------------
+
+// .
+class opDot : public axOpcode
+{
+  public:
+    opDot() : axOpcode(NULL,".") {}
+    virtual void compile(int aIndex) { mOwner->writeCode(op_Opcode); mOwner->writeCode(aIndex); }
+    virtual void execute(void) { printf("%i\n",mOwner->popData()); }
+};
+
+//----------------------------------------
+
+// +
 class opAdd : public axOpcode
 {
   public:
@@ -14,43 +59,37 @@ class opAdd : public axOpcode
     virtual void execute(void) { mOwner->pushData( mOwner->popData() + mOwner->popData() ); }
 };
 
-//----------------------------------------------------------------------
+//----------
 
-class opDot : public axOpcode
+// -
+class opSub : public axOpcode
 {
   public:
-    opDot() : axOpcode(NULL,".") {}
-    //virtual void compile(int aIndex) {}
+    opSub() : axOpcode(NULL,"-") {}
     virtual void compile(int aIndex) { mOwner->writeCode(op_Opcode); mOwner->writeCode(aIndex); }
-    virtual void execute(void) { printf("%i\n",mOwner->popData()); }
+    virtual void execute(void) { mOwner->pushData( mOwner->popData() - mOwner->popData() ); }
 };
 
-//----------------------------------------------------------------------
+//----------
 
-class opColon : public axOpcode
+// *
+class opMul : public axOpcode
 {
   public:
-    opColon() : axOpcode(NULL,":") {}
-    virtual void compile(int aIndex)
-      {
-        char* name = mOwner->nextToken();
-        int pos = mOwner->codePos();
-        mOwner->appendWord(new axWord(name,pos));
-      }
-    //virtual void execute(void)
-    //  {
-    //    mOwner->callWord( mOwner->popData() );
-    //  }
+    opMul() : axOpcode(NULL,"*") {}
+    virtual void compile(int aIndex) { mOwner->writeCode(op_Opcode); mOwner->writeCode(aIndex); }
+    virtual void execute(void) { mOwner->pushData( mOwner->popData() * mOwner->popData() ); }
 };
 
-//----------------------------------------------------------------------
+//----------
 
-class opSemiColon : public axOpcode
+// /
+class opDiv : public axOpcode
 {
   public:
-    opSemiColon() : axOpcode(NULL,";") {}
+    opDiv() : axOpcode(NULL,"/") {}
     virtual void compile(int aIndex) { mOwner->writeCode(op_Opcode); mOwner->writeCode(aIndex); }
-    virtual void execute(void) { mOwner->popCall(); }
+    virtual void execute(void) { mOwner->pushData( mOwner->popData() / mOwner->popData() ); }
 };
 
 //----------------------------------------------------------------------
