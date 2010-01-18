@@ -128,6 +128,25 @@ class axArray
         }
       }
 
+    //----------
+
+    void push(const _T& aItem)
+      {
+        append(aItem);
+      }
+
+    //----------
+
+    _T& pop(void)
+      {
+        if (mSize>0)
+        {
+          mSize--;
+          return mArray[mSize];
+        }
+        else return NULL;
+      }
+
 };
 
 //----------------------------------------------------------------------
