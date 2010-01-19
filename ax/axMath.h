@@ -11,7 +11,7 @@
 //----------------------------------------------------------------------
 inline float axFloor(float value)
 {
-	int j;	
+	int j;
 	__asm__ volatile
 	(
 		"flds %1;"		"fistpl %0;"
@@ -30,7 +30,7 @@ inline float axCeil(float value)
 	float im = 1.0f;
 	__asm__ volatile
 	(
-		"flds %1;"		"flds %2;"		"faddp;"		"fistpl %0;"		
+		"flds %1;"		"flds %2;"		"faddp;"		"fistpl %0;"
 		: "=m" (j)
 		: "m" (value), "m" (im)
 	);
@@ -45,7 +45,7 @@ inline float axRound(float value)
 	int j;
 	float im = 0.5f;
 	__asm__ volatile
-	(		
+	(
 		"flds %1;"		"fistpl %0;"		"flds %2;"		"faddp;"
 		: "=m" (j)
 		: "m" (value), "m" (im)
@@ -144,7 +144,7 @@ inline int axLimitInt(const int input, const int limit)
 inline float axCalcStep(const float v, const float s)
 {
 	return axMin(axFloor(v*s), s - 1);
-} 
+}
 
 //----------------------------------------------------------------------
 // axCalcValue
@@ -152,7 +152,7 @@ inline float axCalcStep(const float v, const float s)
 inline float axCalcValuep(const float v, const float m, const float a)
 {
 	return (v*m+a);
-} 
+}
 //----------------------------------------------------------------------
 // axRandomize -> default seed: 19
 //----------------------------------------------------------------------
@@ -189,7 +189,7 @@ inline float axRandomSigned(void)
 //----------------------------------------------------------------------
 // axRandom -> range: aLow..aHigh
 //----------------------------------------------------------------------
-// 
+//
 inline float axRandom(const float aLow, const float aHigh)
 {
 	float range = aHigh-aLow;
@@ -198,11 +198,11 @@ inline float axRandom(const float aLow, const float aHigh)
 }
 
 //----------------------------------------------------------------------
-// FPU ln(x) 
+// FPU ln(x)
 //----------------------------------------------------------------------
 inline float axLogf(float value)
 {
-	__asm__ __volatile__
+	__asm__ volatile
 	(
 		"fld %0;"		"fldln2;"		"fxch;"		"fyl2x;"		"fst %0;"
 		: "=m" (value)
@@ -212,11 +212,11 @@ inline float axLogf(float value)
 }
 
 //----------------------------------------------------------------------
-// FPU log2(x) log base 2 
+// FPU log2(x) log base 2
 //----------------------------------------------------------------------
 inline float axLog2f(float value)
 {
-	__asm__ __volatile__
+	__asm__ volatile
 	(
 		"fld1;"		"fld %0;"    "fyl2x;"		"fst %0;"
 		: "=m" (value)
@@ -260,7 +260,7 @@ inline float axTanf(float value)
 {
 	__asm__ volatile
 	(
-		"fld %0;"		"fsincos;"    "fdivrp;"    "fst %0;"		
+		"fld %0;"		"fsincos;"    "fdivrp;"    "fst %0;"
 		: "=m" (value)
 		: "m" (value)
   );
@@ -273,7 +273,7 @@ inline float axTanf(float value)
 //----------------------------------------------------------------------
 inline float axAsinf(float value)
 {
-	float tmp;	
+	float tmp;
 	__asm__ volatile
 	(
 		"fld %0;"		"fld %0;"		"fmulp;"		"fst %1;"		"fld1;"		"fsubp;"
@@ -290,11 +290,11 @@ inline float axAsinf(float value)
 // acos(x) = atan(sqrt((1-x*x)/(x*x)))
 //----------------------------------------------------------------------
 inline float axAcosf(float value)
-{	
-	float tmp;	
+{
+	float tmp;
 	__asm__ volatile
 	(
-		"fld %0;"		"fld %0;"		"fmulp;"		"fst %1;"		"fld1;"		"fsubp;"		
+		"fld %0;"		"fld %0;"		"fmulp;"		"fst %1;"		"fld1;"		"fsubp;"
 		"fld %1;"		"fdivrp;"		"fsqrt;"		"fld1;"		"fpatan;"		"fst %0;"
 		: "=m" (value)
 		: "m" (tmp)
@@ -341,7 +341,7 @@ inline float axSqrt(float value)
 	(
 		"subl $0x3f800000, %0;"		"shrl $1, %0;"
 		"addl $0x3f800000, %0;"		: "=r" (value)
-		: "0" (value)		
+		: "0" (value)
 	);
 	return value;
 }
@@ -360,20 +360,18 @@ inline float axInvSqrt(float x)
 }
 
 //----------------------------------------------------------------------
-// approximation: powf(x, n) [currently 4.37 times faster than powf()]
+// approximation: pow(float, integer)
 //----------------------------------------------------------------------
-inline float axPow(float x, long n)
+inline float axPow(float x, int n)
 {
-	const int org_n = n;
-	float z = 1;
-	if (n < 0) n = -n;
-	while (n != 0)
+	float res = 1;
+	while (n > 0)
 	{
-		if ((n & 1) != 0) z *= x;
+		if (n & 1) res *= x;
 		n >>= 1;
 		x *= x;
-	}	
-	return ((org_n < 0) ? 1.0f / z : z);
+	}
+	return res;
 }
 
 //----------------------------------------------------------------------
@@ -404,7 +402,7 @@ inline float axExp(const float exponent)
 // http://www.flipcode.com/archives/Fast_log_Function.shtml
 //----------------------------------------------------------------------
 inline float axLog2(float val)
-{	
+{
 	assert (val > 0);
 	int * const  exp_ptr = reinterpret_cast <int *> (&val);
 	int          x = *exp_ptr;
@@ -424,7 +422,7 @@ inline float axLog(const float &val)
 }
 
 //----------------------------------------------------------------------
-// approximation: sinf(x) for range [-pi, pi]
+// approximation: sin(x)
 //----------------------------------------------------------------------
 inline float axSin(float v)
 {
@@ -433,8 +431,25 @@ inline float axSin(float v)
 }
 
 //----------------------------------------------------------------------
-// approximation: asinf(x)
-// NOTE: not very accurate but fast
+// approximation: cos(x)
+//----------------------------------------------------------------------
+inline float axCos(float x)
+{
+	const float x2 = x*x;
+	return (15120 + x2*(-6900 + 313*x2)) / (15120 + x2*(660 + 13*x2));
+}
+
+//----------------------------------------------------------------------
+// approximation: tan(x)
+//----------------------------------------------------------------------
+inline float axTan(float x)
+{
+	const float x2 = x*x;
+	return (x*(105 - 10*x2)) / (105 - x*(45*x - x*x2));
+}
+
+//----------------------------------------------------------------------
+// approximation: asin(x)
 //----------------------------------------------------------------------
 inline float axAsin(const float x)
 {
@@ -443,11 +458,48 @@ inline float axAsin(const float x)
 }
 
 //----------------------------------------------------------------------
-// approximation: cosf(x) for range [-pi, pi] from identity
+// approximation: acos(x)
 //----------------------------------------------------------------------
-inline float axCos(float v)
+inline float axAcos(const float x)
 {
-    return axSin(v + PI_2);
+	const float x2 = x*x;
+	return (15120 + x2*(-6900 + 313*x2)) / (15120 + x2*(660 + 13*x2));
+}
+
+//----------------------------------------------------------------------
+// approximation: atan(x)
+//----------------------------------------------------------------------
+inline float axAtan(const float x)
+{
+	const float x2 = x*x;
+	return (x*(105 + 55*x2)) / (105 + x2*(90 + 9*x2));
+}
+
+//----------------------------------------------------------------------
+// approximation: sinh(x)
+//----------------------------------------------------------------------
+inline float axSinh(const float x)
+{
+	const float x2 = x*x;
+	return x*(x2*(0.012*x2 + 0.156) + 1.004);
+}
+
+//----------------------------------------------------------------------
+// approximation: cosh(x)
+//----------------------------------------------------------------------
+inline float axCosh(const float x)
+{
+	const float x2 = x*x;
+	return x2*(0.065*x2 + 0.428) + 1.025;
+}
+
+//----------------------------------------------------------------------
+// approximation: tanh(x)
+//----------------------------------------------------------------------
+inline float axTanh(const float x)
+{
+	const float x2 = x*x;
+	return x*(27 + x2) / (27 + 9*x*x);
 }
 
 //----------------------------------------------------------------------

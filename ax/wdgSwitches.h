@@ -53,8 +53,8 @@ class wdgSwitches : public axWidget
         mValue = aValue;
         //if( aValue >= 0.5 ) mState=true;
         //else mState=false;
-        int n = floor( aValue * (float)mNum );
-        mSelected = axMin( mNum-1, n );
+        int n = (int)axFloor( aValue * (float)mNum );
+        mSelected = axMinInt( mNum-1, n );
       }
 
     //----------
