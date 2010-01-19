@@ -2,7 +2,7 @@
 #define dspSVF_included
 //----------------------------------------------------------------------
 
-#include "dspModule.h"
+//#include "dspModule.h"
 
 #define svf_mode_none 0
 #define svf_mode_lp   1

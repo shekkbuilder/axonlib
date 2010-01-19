@@ -507,7 +507,7 @@ inline float axTanh(const float x)
 //----------------------------------------------------------------------
 inline float lin2dB(const float lin)
 {
-	return LOG2DB * log(lin);
+	return LOG2DB * logf(lin);
 }
 
 //----------------------------------------------------------------------
@@ -515,7 +515,7 @@ inline float lin2dB(const float lin)
 //----------------------------------------------------------------------
 inline float dB2lin(const float dB)
 {
-	return exp(DB2LOG * dB);
+	return expf(DB2LOG * dB);
 }
 
 #endif
