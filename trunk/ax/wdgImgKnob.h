@@ -49,8 +49,8 @@ class wdgImgKnob : public wdgValue
 
     void drawKnob(axCanvas* aCanvas, axRect aRect, float aValue, axString aName, axString aDisplay, int aFlags)
       {
-        float n = floor( aValue * mNumImages );
-        int num = axMin(n,(mNumImages-1));
+        int n = (int)axFloor( aValue * mNumImages );
+        int num = axMinInt(n,(mNumImages-1));
         int bx,by;
         if(is_vertical) { bx=0; by=num*mImgHeight; }
         else { bx=num*mImgWidth; by=0; }

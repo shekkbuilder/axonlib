@@ -48,8 +48,8 @@ class wdgScroller : public axWidget
       {
         axWidget::doPaint( aCanvas, aRect );
 
-        int thumb = mThumbSize * mRect.h;
-        int ipos   = mValue * (mRect.h - thumb);
+        int thumb = (int)mThumbSize * mRect.h;
+        int ipos   = (int)mValue * (mRect.h - thumb);
 
         aCanvas->setBrushColor( AX_GREY_DARK );
         aCanvas->fillRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );

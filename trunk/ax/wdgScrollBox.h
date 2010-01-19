@@ -149,7 +149,7 @@ class wdgScrollBox : public axContainer
           //TRACE("- scrollable: %f\n",scrollable);
           int i = (int)(scrollable*val);
           //TRACE("- pixels to scroll: %i\n",i);
-          int dy = i - mPrevScroll;
+          int dy = i - (int)mPrevScroll;
           doScroll(0,dy);
           mListener->onChange(wContainer);
           mPrevScroll = i;
