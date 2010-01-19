@@ -8,11 +8,14 @@
 // - variables
 // - repeat/until, while/wend, loop
 
+// TODO: JIT compiler
+// - http://code.google.com/p/asmjit/
+// - http://homepage1.nifty.com/herumi/soft/xbyak_e.html
+
 #include <stdio.h>
 #include <stdlib.h> // atoi..
 #include <string.h>
 #include "axString.h"
-//#include "axScript_Std.h"
 
 //----------------------------------------------------------------------
 
@@ -22,7 +25,7 @@
 //  .: ,;
 
 #define MAX_CODESIZE  65536
-#define MAX_STACKSIZE 65536
+#define MAX_STACKSIZE 1024
 
 // opcodes
 #define op_None   0
@@ -59,15 +62,15 @@ class axToken
   protected:
     axScript* mOwner;
     char      mName[16];
-    int       mType;
-    union     mValue
-    {
-      int   i;
-      float f;
-      void* p;
-    };
+    //int       mType;
+    //union     mValue
+    //{
+    //  int   i;
+    //  float f;
+    //  void* p;
+    //};
   public:
-    axToken(axScript* aOwner, char* aName, int aType) { mOwner=aOwner; strcpy(mName,aName); mType=aType; }
+    axToken(axScript* aOwner, char* aName/*, int aType*/) { mOwner=aOwner; strcpy(mName,aName); /*mType=aType;*/ }
     inline char* name(void) { return mName; }
 };
 
@@ -220,6 +223,14 @@ class axScript
 
     inline void   dupData(void)   { mDataStack[mDataPos++] = mDataStack[mDataPos-1]; }
     inline void   dropData(void)  { mDataPos--; }
+    inline void   swapData(void)
+      {
+        int temp = mDataStack[mDataPos-1];
+        mDataStack[mDataPos-1] = mDataStack[mDataPos-2];
+        mDataStack[mDataPos-2] = temp;
+      }
+    inline void   incData(void)   { mDataStack[mDataPos-1]++; }
+    inline void   decData(void)   { mDataStack[mDataPos-1]--; }
 
     //----------
 
@@ -279,7 +290,7 @@ class axScript
         char* delimiters = (char*)" ";
         char* token = NULL;
         token  = strtok_r(mSource," ",&temp);
-        do { mTokens.append(new axToken(this,token,tty_Unknown)); }
+        do { mTokens.append(new axToken(this,token/*,tty_Unknown*/)); }
         while ((token=strtok_r(NULL,delimiters,&temp)));
         return res;
       }
@@ -418,6 +429,7 @@ class axScript
         // stack (data)
         appendOpcode( new opDup() );
         appendOpcode( new opDrop() );
+        appendOpcode( new opSwap() );
         // conditionals
         appendOpcode( new opEqual() );
         appendOpcode( new opNotEqual() );
@@ -426,12 +438,15 @@ class axScript
         // flow control
         appendOpcode( new opExit() );
         appendOpcode( new opIf() );
+        appendOpcode( new opElse() );
         appendOpcode( new opEndif() );
         // arithmetic (int)
         appendOpcode( new opAdd() );
         appendOpcode( new opSub() );
         appendOpcode( new opMul() );
         appendOpcode( new opDiv() );
+        appendOpcode( new opInc() );
+        appendOpcode( new opDec() );
         // io
         appendOpcode( new opPrintInt() );
 

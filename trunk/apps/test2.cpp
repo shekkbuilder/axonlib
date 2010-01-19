@@ -28,14 +28,20 @@
 //  "  5 2 10 + + 10 > IF 3 SQUARE . ENDIF "
 //  " EXIT ";
 
+//char* myScript = (char*)
+//  ": func1 10 8 > IF 1 . ENDIF ; "
+//  "$ label2 5 DUP * . EXIT "
+//  "$ main func1 label2 EXIT ";
+
 char* myScript = (char*)
-  "$ label1 "
-  "  1 . EXIT "
-  ": func1 "
-  "  3 2 * . ; "
-  "$ main func1 label1 EXIT ";
-
-
+" : dump DUP . ; "
+" $ main "
+"   10 "
+" $ loop1 "
+"   dump "
+"   1- "
+"   DUP -1 > IF loop1 ELSE 666 . ENDIF "
+" EXIT ";
 
 //----------------------------------------------------------------------
 
@@ -51,22 +57,9 @@ class myApp : public axApplication
 
     virtual void main(void)
       {
-
-        TRACE("1>2 = %i\n",(int)(1>2));
-        TRACE("2>1 = %i\n",(int)(2>1));
-
         axInitialize(AX_FLAGS);
         mScript = new axScript();
-        /*int codesize = */mScript->compile(myScript);
-        mScript->dumpCode();
-        printf("----------\n");
-
-        //word = mScript->findWord((char*)"main");
-        //if (word>=0) mScript->execute( mScript->wordPos(word) );
-
-        //word = mScript->findWord((char*)"main");
-        //if (word>=0) mScript->execute( mScript->wordPos(word) );
-
+        mScript->compile(myScript);
         label = mScript->findLabel((char*)"main");
         if (label>=0) mScript->execute( mScript->labelPos(label) );
 
