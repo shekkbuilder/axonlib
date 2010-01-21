@@ -5,13 +5,17 @@
 // - onChange(wdg/par) transfer mValue, widget <-> parameter (if mID>0)
 // - keep track of 'dirty widgets'
 
+//#define AX_DIRTYWIDGETS
+
 #include "axParameter.h"
 #include "axPlugin.h"
 #include "axWindow.h"
 
-#include "axMutex.h"
+//#include "axMutex.h"
 
 //----------------------------------------------------------------------
+
+// widget <-> parameter connection
 
 class axWPConnection
 {
@@ -33,7 +37,7 @@ typedef axArray<axWPConnection*> axWPConnections;
 
 //----------------------------------------------------------------------
 //
-//
+// editor
 //
 //----------------------------------------------------------------------
 
@@ -41,11 +45,13 @@ class axEditor : public axWindow,
                  public axParameterListener
 {
   private:
-    axMutex   mutex_dirty;
+    //axMutex   mutex_dirty;
   public:
     axPlugin        *mPlugin;
-    axWidgets       mDirtyList;
     axWPConnections mConnections;
+    #ifdef AX_DIRTYWIDGETS
+    axWidgets       mDirtyList;
+    #endif
 
   public:
 
@@ -68,6 +74,8 @@ class axEditor : public axWindow,
     //----------------------------------------
     // dirty
     //----------------------------------------
+
+    #ifdef AX_DIRTYWIDGETS
 
     void clearDirty(void)
       {
@@ -110,6 +118,8 @@ class axEditor : public axWindow,
         //flush();
 
       }
+
+    #endif
 
     //----------------------------------------
     // connections
@@ -189,8 +199,11 @@ class axEditor : public axWindow,
           float val = aParameter->doGetValue();
           //wdg->doSetValue(val);
           wdg->mValue = val;
-          //redrawWidget( wdg );
+          #ifdef AX_DIRTYWIDGETS
           appendDirty(wdg);
+          #else
+          redrawWidget(wdg);
+          #endif
         }
       }
 

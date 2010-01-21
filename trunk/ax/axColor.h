@@ -2,7 +2,11 @@
 #define axColor_included
 //----------------------------------------------------------------------
 
+/// platform/device dependent color
+
 #include "axGlobals.h"
+
+// some pre-defined colors
 
   #define AX_BLACK        axColor(   0,   0,   0 )
   #define AX_GREY_DARK    axColor(  64,  64,  64 )
@@ -34,7 +38,11 @@ struct axColor
 
   //public:
 
+    /// empty constructor
+
     axColor() { mColor=0; }
+
+    /// constructor w/initial setup
 
     axColor(int aR,int aG,int aB) { set(aR,aG,aB); }
     //axColor(float aR,float aG,float aB) { setcolor(aR*255,aG*255,aB*255); }
@@ -44,6 +52,7 @@ struct axColor
     //void  operator = (int  i)        { mColor = i; }
     //void  operator = (const int i)   { mColor = i; }
 
+    /// create/set color
 
     void set(int aR, int aG, int aB)
       {
@@ -68,12 +77,11 @@ struct axColor
 
 //----------------------------------------------------------------------
 
+/// initialize a default set of colors
+
 void initDefaultColors(void)
   {
   }
-
-
-
 
 //----------------------------------------------------------------------
 #endif

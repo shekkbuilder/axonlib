@@ -1,8 +1,31 @@
 #ifndef axPlugin_included
 #define axPlugin_included
 //----------------------------------------------------------------------
+/*
+ * This file is part of Axonlib.
+ *
+ * Axonlib is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3
+ * of the License, or (at your option) any later version.
+ *
+ * Axonlib is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with Axonlib.
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+
 //TODO: dirty parameters, ala widgets/editor?
 // så setParameter appender til dirtyList, og
+
+/**
+  \file axPlugin.h
+  \brief main plugin class
+*/
 
 #include "axDefines.h"
 #include "axString.h"
@@ -21,13 +44,22 @@
 
 //AX_NUMPROGS should a minimum of 1 ?,
 //otherwise zero-length arrays in axPluginVst.h
-#if (AX_NUMPROGS == 0)	
+#if (AX_NUMPROGS == 0)
 	#undef AX_NUMPROGS
-	#define AX_NUMPROGS 1	
+	#define AX_NUMPROGS 1
 #endif
 
 #include "axPluginVst.h"
 //#include "axHostVst.h"
+
+/**
+  \class axPlugin
+  \brief main plugin class
+
+  this class in the main clas you inherit from to make a plugin...
+
+  \sa axPluginVst
+*/
 
 class axPlugin  : public axPluginImpl,
                   public axParameterListener//,
@@ -41,28 +73,52 @@ class axPlugin  : public axPluginImpl,
 
   public:
 
+    /// constructor
+    /**
+      initializes the plugin to a workable state.
+      the default settings is a stereo in/out do-nothing effect
+      \param audioMaster audioMaster (vst)
+      \param numProgs number of programs
+      \param numParams number of parameters
+      \param aPlugFlags flags
+
+    */
+
     axPlugin(audioMasterCallback audioMaster,long numProgs,long numParams, int aPlugFlags=0)
     : axPluginImpl(audioMaster,numProgs,numParams)
     //axPlugin(axHostVst* host,long numProgs,long numParams, int aPlugFlags=0)
     //: axPluginImpl(host,numProgs,numParams)
       {
         mPlugFlags = aPlugFlags;
-        axInitialize(mPlugFlags);
-        canProcessReplacing();
-        setNumInputs(2);
-        setNumOutputs(2);
+        axInitialize(mPlugFlags);   // os/platform specific initialization
+        canProcessReplacing();      // need this for vst sdk 2.4
+        setNumInputs(2);            // defaults to 2 inputs & outputs
+        setNumOutputs(2);           // aka stereo effect
         mParameters.clear();
         mName = "?";
       }
 
     //----------
 
+    /// destructor
+    /**
+      clean up memory and things...
+      parameters are automaticlly destroyed
+    */
     virtual ~axPlugin()
       {
         deleteParameters();
         axCleanup(mPlugFlags);
         //TRACE("axPlugin destructor ok\n");
       }
+
+    /// select a program
+    /**
+      switches the current program (set of parameters)
+      copies the current parameters into the program memory,
+      and updates all parameters to their correct value from the new program
+      \param program  program to switch to
+    */
 
     virtual void setProgram(VstInt32 program)
       {
@@ -71,10 +127,21 @@ class axPlugin  : public axPluginImpl,
         for (int i=0; i<AX_NUMPARAMS; i++) mParameters[i]->doSetValue( mPrograms[mCurProg][i] );
       }
 
+    /// save program
+    /**
+      saves all parameters to program memory
+    */
+
     virtual void saveProgram(void)
       {
         for (int i=0; i<AX_NUMPARAMS; i++) mPrograms[mCurProg][i] = mParameters[i]->doGetValue();
       }
+
+    /// duplicate program
+    /**
+      duplicates the parameters for the first program [0] to all other programs
+      for simple initializing to a blank state
+    */
 
     virtual void duplicatePrograms(void)
       {
@@ -86,16 +153,30 @@ class axPlugin  : public axPluginImpl,
 
       }
 
-
     //--------------------------------------------------
     //
     //--------------------------------------------------
+
+    /// parameter change handler
+    /**
+      called every time a parameter has been changed, either from tweaking a widget,
+      or from host automation. in your own plugin, overload this to grab the changed values.
+      .
+      \param aParameter the parameter that has been changed
+    */
 
     virtual void doProcessParameter(axParameter* aParameter) {}
 
     //--------------------------------------------------
     // plugin handler
     //--------------------------------------------------
+
+    /// add parameter
+    /**
+      append parameter to the end of the plugin parameter-list
+      (and set its listener to 'this')
+      \param aParameter the parameter to append
+    */
 
     void appendParameter( axParameter* aParameter )
       {
@@ -107,6 +188,12 @@ class axPlugin  : public axPluginImpl,
 
     //----------
 
+    /// delete parameters
+    /**
+      deletes all parameters (if any)
+      will automatically be called from the destructor
+    */
+
     void deleteParameters(void)
       {
         //TODO: crash-protection :-)
@@ -117,6 +204,12 @@ class axPlugin  : public axPluginImpl,
       }
 
     //----------
+
+    /// process parameters
+    /**
+      process all parameters, for initial setup
+      will call doProcessParameter for all parameters
+    */
 
     void processParameters(void)
       {
@@ -160,6 +253,13 @@ class axPlugin  : public axPluginImpl,
     //
     //--------------------------------------------------
 
+    /// get parameter name
+    /**
+      get name of parameter, "lowpass", "size", ..
+      \param index index of parameter
+      \param text pointer to (pre-allocated) buffer to copy string to
+    */
+
     virtual void getParameterName(VstInt32 index, char* text)
       {
         //if (index>=0 && index<mParameters.size())
@@ -167,6 +267,14 @@ class axPlugin  : public axPluginImpl,
       }
 
     //----------
+
+    /// get parameter label
+    /**
+      get label of parameter, "db", "ms", ..
+      \param index index of parameter
+      \param label pointer to (pre-allocated) buffer to copy string to
+    */
+
 
     virtual void getParameterLabel(VstInt32 index, char* label)
       {
@@ -176,6 +284,13 @@ class axPlugin  : public axPluginImpl,
 
     //----------
 
+    /// get parameter display
+    /**
+      get text representaion of internal value, for displauy on gui...
+      \param index index of parameter
+      \param text pointer to (pre-allocated) buffer to copy string to
+    */
+
     virtual void getParameterDisplay(VstInt32 index, char* text)
       {
         //if (index>=0 && index<mParameters.size())
@@ -184,6 +299,14 @@ class axPlugin  : public axPluginImpl,
 
     //----------
 
+    /// set parameter value
+    /**
+      set parameter, value = 0..1
+      \param index index of parameter
+      \param value value (0..1) to set
+    */
+
+
     virtual void setParameter(VstInt32 index, float value)
       {
         //if (index>=0 && index<mParameters.size())
@@ -191,6 +314,14 @@ class axPlugin  : public axPluginImpl,
       }
 
     //----------
+
+    /// get parameter value
+    /**
+      get parameter value (0..1)
+      \param index index of parameter
+      \return parameter value (0..1)
+    */
+
 
     virtual float getParameter(VstInt32 index)
       {
@@ -202,6 +333,14 @@ class axPlugin  : public axPluginImpl,
     //--------------------------------------------------
     // parameter listener
     //--------------------------------------------------
+
+    /// onChange handler
+    /**
+      called when parameter has changed.
+      default action is to just call doProcessParameter
+      \param aParameter the parameter that has changed
+    */
+
 
     virtual void onChange(axParameter* aParameter)
       {

@@ -2,6 +2,11 @@
 #define axDefines_included
 //----------------------------------------------------------------------
 
+// ascii 'AX', 0x4158
+// AX_MAGIC+05 -> 41580005,
+// hopefully a unique id
+// (and it seems most people are using ascii for this)
+
 #define AX_MAGIC 0x41580000
 
 #ifndef NULL
