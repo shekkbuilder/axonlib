@@ -5,6 +5,13 @@
 #include "axCanvas.h"
 //#include "axSurfaceBase.h"
 
+/**
+
+base surface class.
+hardware/os/platform surface classes inherit from this one.
+
+*/
+
 class axSurfaceBase
 {
   public:

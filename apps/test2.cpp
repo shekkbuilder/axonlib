@@ -7,6 +7,9 @@
 #include "axApplication.h"
 #include "axScript.h"
 
+//#include "ax.h"
+#include "doxygen_test1.h"
+
 //----------------------------------------------------------------------
 
 //char* myScript = (char*)
@@ -42,6 +45,9 @@ char* myScript = (char*)
 "   1- "
 "   DUP -1 > IF loop1 ELSE 666 . ENDIF "
 " EXIT ";
+
+// " : dump DUP . ; $ main 10 $ loop1 dump 1- DUP -1 > IF loop1 ELSE 666 . ENDIF EXIT ";
+
 
 //----------------------------------------------------------------------
 

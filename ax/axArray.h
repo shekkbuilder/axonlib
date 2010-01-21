@@ -3,19 +3,23 @@
 //----------------------------------------------------------------------
 #include <stdlib.h>
 
-#define SIZE_INIT 16
-#define SIZE_MULT 2
+#define SIZE_INIT 16  ///< initial size of array
+#define SIZE_MULT 2   ///< multiply factor when array needs to resize
+
+/// templated dynamic array
 
 template<class _T>
 class axArray
 {
 	private:
 
-    _T* mArray;
-    int mSize;
-    int mRealSize;
+    _T* mArray;       ///< the memory
+    int mSize;        ///< array size
+    int mRealSize;    ///< real (allocated) size of array
 
   public:
+
+    /// empty constructor. initializes the array to a defined size (SIZE_INIT)
 
 		axArray()
 			{
@@ -26,6 +30,8 @@ class axArray
 
     //----------
 
+    /// copy constructor. initializes array from another array (copies data)
+
     axArray(const axArray& aArray)
       {
         mArray = (_T*)malloc(sizeof(_T)*aArray.mRealSize);
@@ -35,6 +41,8 @@ class axArray
       }
 
     //----------
+
+    /// destructor
 
     ~axArray()
       {
@@ -47,15 +55,23 @@ class axArray
 
     //----------
 
+    /// [] operator, so that you can do things like
+    /// int a = mArray[3] to get the 3rd element
     _T& operator [] (int aIndex) { return mArray[aIndex]; }
+
+    /// direct access to elements, with index
     _T& item(int aIndex) { return mArray[aIndex]; }
 
+    /// resutns size of array (number of elements in array)
     int size() { return mSize; }
+
+    /// pointer to first element [0]
     void* ptr() { return mArray; }
 
 
     //----------
 
+    /// ini/copy array from another array
     axArray& operator = (const axArray &aArray)
       {
         if (this==&aArray) return *this;
@@ -76,6 +92,7 @@ class axArray
 //
 //    //----------
 //
+    /// clear array. optionally deleting all elements
     void clear(bool aErase=true)
       {
         mSize = 0;
@@ -88,6 +105,7 @@ class axArray
 
     //----------
 
+    /// append an item to the end of the array
     void append(const _T& aItem)
       {
         mSize++;
@@ -101,6 +119,7 @@ class axArray
 
     //----------
 
+    /// set new array size. re-allocates memory if needed
     void setSize(int aSize)
       {
         mSize = aSize;
@@ -118,6 +137,7 @@ class axArray
 
     //----------
 
+    /// remove an element from the array, at pos aPos
     void remove(int aPos)
       {
         if (mSize==1) clear();
@@ -130,6 +150,8 @@ class axArray
 
     //----------
 
+    /// push element to end of array
+    /// so you can use it like a stack
     void push(const _T& aItem)
       {
         append(aItem);
@@ -137,6 +159,8 @@ class axArray
 
     //----------
 
+    /// pops the last element off the array
+    /// like a stack
     _T& pop(void)
       {
         if (mSize>0)

@@ -34,10 +34,10 @@
 #define op_Label  3
 #define op_Int    4
 #define op_Float  5
-
 #define op_Exit   0xffff
 
-//
+// word  = call/return
+// label = jump
 
 // token types
 #define tty_Unknown 0
@@ -163,7 +163,9 @@ class axScript
         mCondPos = 0;
         mWords.clear();
         mLabels.clear();
+        #ifdef AX_SCRIPT_STDLIB
         append_stdlib();
+        #endif
         mCurToken = 0;
       }
 

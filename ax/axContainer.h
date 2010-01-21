@@ -343,11 +343,11 @@ class axContainer : public axWidget,
             if( hasFlag(wfl_Clip) ) aCanvas->setClipRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
             //if( hasFlag(wfl_Clip) ) aCanvas->pushClipRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
             axWidget::doPaint( aCanvas, aRect );
-#ifdef AX_PAINTERS
+            #ifdef AX_PAINTERS
             for( int i=mWidgets.size()-1; i>=0; i-- )
-#else
+            #else
             for( int i=0; i<mWidgets.size(); i++ )
-#endif
+            #endif
             {
               axWidget* W = mWidgets[i];
               if( W->intersects(aRect) ) W->doPaint( aCanvas, mRect );

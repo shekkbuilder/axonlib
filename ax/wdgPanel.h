@@ -9,7 +9,7 @@ class wdgPanel : public axContainer//Widget
   protected:
     axColor   mLightColor;
     axColor   mDarkColor;
-    axColor   mFillColor;
+    //axColor   mFillColor;
 
   public:
 

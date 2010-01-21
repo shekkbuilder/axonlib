@@ -326,12 +326,16 @@ class opPrintInt : public axOpcode
 };
 
 //----------------------------------------
+// to be sure there's no conflict with other parts of the library
 
-
-//----------------------------------------
-
-
-
+#undef PUSH
+#undef WRITE
+#undef POP
+#undef NEXT
+#undef NEXTSTR
+#undef CODE
+#undef CALL
+#undef RETURN
 
 //----------------------------------------------------------------------
 #endif

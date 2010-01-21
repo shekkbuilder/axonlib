@@ -49,9 +49,9 @@ class axCanvasBase
     int     mPenWidth;
     int     mXpos, mYpos;
 
-    axPen*    defaultPen;
-    axBrush*  defaultBrush;
-    axFont*   defaultFont;
+    axPen*    mDefaultPen;
+    axBrush*  mDefaultBrush;
+    axFont*   mDefaultFont;
 
     int mNumClipRects;
     axRect mClipRects[MAX_CLIPRECTS];
@@ -69,10 +69,17 @@ class axCanvasBase
         mPenWidth   = 0;
         mXpos=mYpos = 0;
         mNumClipRects = 0;
+        //
+        mDefaultPen = NULL;//createPen(AX_GREY_LIGHT,0,0);
+        mDefaultBrush = NULL;//createBrush(AX_GREY_DARK,0);
+        mDefaultFont = NULL;//createFont("arial",12,0);
       }
 
     virtual ~axCanvasBase()
       {
+        //if (mDefaultPen) delete mDefaultPen;
+        //if (mDefaultBrush) delete mDefaultBrush;
+        //if (mDefaultFont) delete mDefaultFont;
       }
 
     virtual int getHandle(void) { return mHandle; }
