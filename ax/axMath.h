@@ -21,6 +21,11 @@
  * \brief math approximations and routines
  */  
 
+/**
+ * \brief math approximations and routines
+ *
+ */
+
 #ifndef axMath_included
 #define axMath_included
 
