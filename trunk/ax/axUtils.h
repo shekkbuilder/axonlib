@@ -1,10 +1,40 @@
+/*
+ * This file is part of Axonlib.
+ *
+ * Axonlib is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3
+ * of the License, or (at your option) any later version.
+ *
+ * Axonlib is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with Axonlib.
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * @file
+ * \brief contains various utility scripts
+ */
+
+/**
+ * \brief contains various utility scripts
+ *
+ */
+
 #ifndef axUtils_included
 #define axUtils_included
 
-//----------------------------------------------------------------------
-// axBitReverse
-// http://www.jjj.de/fxt/fxtpage.html
-//----------------------------------------------------------------------
+/**
+ * fast bit reverse algorithm
+ * origin: http://www.jjj.de/fxt/fxtpage.html 
+ * @param[in] x int
+ * @return x int
+ */
 inline unsigned int axBitReverse(unsigned int x)
 {
 	__asm__ volatile
@@ -24,9 +54,13 @@ inline unsigned int axBitReverse(unsigned int x)
 	return x;
 }
 
-//----------------------------------------------------------------------
-// axRadix
-//----------------------------------------------------------------------
+/**
+ * radix algorithm
+ * @param[in] source long*
+ * @param[in] dest long*
+ * @param[in] N long  
+ * @param[in] byte int
+ */
 inline void axRadix (long *source, long *dest, long N, int byte)
 {
   int i;

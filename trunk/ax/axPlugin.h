@@ -1,6 +1,3 @@
-#ifndef axPlugin_included
-#define axPlugin_included
-//----------------------------------------------------------------------
 /*
  * This file is part of Axonlib.
  *
@@ -26,6 +23,10 @@
   \file axPlugin.h
   \brief main plugin class
 */
+
+#ifndef axPlugin_included
+#define axPlugin_included
+//----------------------------------------------------------------------
 
 #include "axDefines.h"
 #include "axString.h"

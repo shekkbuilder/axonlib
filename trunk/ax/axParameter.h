@@ -1,20 +1,43 @@
+/*
+ * This file is part of Axonlib.
+ *
+ * Axonlib is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3
+ * of the License, or (at your option) any later version.
+ *
+ * Axonlib is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with Axonlib.
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * @file
+ * \brief base class for handling vst-parameters
+ */
+
+/**
+ * \brief base class for handling vst-parameters
+ *  
+ * this class is the base class for handling vst-parameters
+ * it manages a floating point value from 0 to 1 (inclusive),
+ * with text name/label, and textual description of its value.
+ * also, sends notifications to the listener when the value is changed
+ *
+ * when the vst plugin class (axPluginVst) calls doSetParameter (as a
+ * response to setParameter), and we have set our editor as the listener,
+ * it will be notified when the parameter changes, and can redraw the
+ * corresponding widget to indicate the new value.
+ */
+
 #ifndef axParameter_included
 #define axParameter_included
 //----------------------------------------------------------------------
-
-/*
-
-this class is the base class for handling vst-parameters
-it manages a floating point value from 0 to 1 (inclusive),
-with text name/label, and textual description of its value.
-also, sends notifications to the listener when the value is changed
-
-when the vst plugin class (axPluginVst) calls doSetParameter (as a
-response to setParameter), and we have set our editor as the listener,
-it will be notified when the parameter changes, and can redraw the
-corresponding widget to indicate the new value.
-
-*/
 
 #include <stdio.h> // sprintf
 #include "axString.h"

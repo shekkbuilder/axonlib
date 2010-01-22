@@ -1,7 +1,3 @@
-#ifndef ax_included
-#define ax_included
-//----------------------------------------------------------------------
-
 /*
  * This file is part of Axonlib.
  *
@@ -31,6 +27,10 @@
  * use this as a starting point when creating new classes
  *
  */
+
+#ifndef ax_included
+#define ax_included
+//----------------------------------------------------------------------
 
 class ax// : public ax
 {

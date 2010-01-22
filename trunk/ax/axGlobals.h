@@ -1,7 +1,3 @@
-#ifndef axGlobals_included
-#define axGlobals_included
-//----------------------------------------------------------------------
-
 /*
  * This file is part of Axonlib.
  *
@@ -25,6 +21,16 @@
  * \brief global things
  */
 
+/**
+ * \brief global things
+ *
+ * long desc
+ *
+ */
+ 
+ 
+#ifndef axGlobals_included
+#define axGlobals_included
 //----------------------------------------------------------------------
 
 #define AX_EMBEDDED   1 ///< use embedded/reparented windows (plugins)

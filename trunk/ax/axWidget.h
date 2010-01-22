@@ -1,22 +1,43 @@
+/*
+ * This file is part of Axonlib.
+ *
+ * Axonlib is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3
+ * of the License, or (at your option) any later version.
+ *
+ * Axonlib is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with Axonlib.
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * @file
+ * \brief main widget classes
+ */
+
+/**
+ * \file axWidget.h
+ * \brief main widget classes
+ *
+ * base class for gui elements
+ * mainly contains a rect (pos/size), and some flags and data for reacting
+ * to events. all messages up/down the hierarchy is done with the handler
+ * and listener methods. a widget doesn't know anything about its owner /
+ * container, and can only react to commands with the data/info passed as
+ * parameters.
+ *
+ */
+
+
 #ifndef axWidget_included
 #define axWidget_included
 //----------------------------------------------------------------------
-
-/**
-  \file axWidget.h
-  \brief main widget classes
-*/
-
-/*
-
-base class for gui elements
-mainly contains a rect (pos/size), and some flags and data for reacting
-to events. all messages up/down the hierarchy is done with the handler
-and listener methods. a widget doesn't know anything about its owner /
-container, and can only react to commands with the data/info passed as
-parameters.
-
-*/
 
 //TODO: mSurface in here, from axWindow
 //  axWindow: double buffering
