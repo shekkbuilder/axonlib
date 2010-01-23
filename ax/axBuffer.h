@@ -18,7 +18,7 @@
 
 /**
  * @file
- * \brief desc
+ * \brief
  */
 
 /**
@@ -38,7 +38,8 @@
 template<class _T>
 class axBuffer
 {
-  public:
+  //public:
+  protected:
 
     _T*   mData;
     int   mWidth;

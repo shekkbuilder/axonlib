@@ -18,7 +18,7 @@
 
 /**
  * @file
- * \brief widget scroller 
+ * \brief widget scroller
  */
 
 /**
@@ -49,8 +49,8 @@ class wdgScroller : public axWidget
 
   public:
 
-    wdgScroller(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment /*axParameter* aParameter=NULL,*/)
-    : axWidget(aListener,aID,aRect,aAlignment/*,aParameter*/)
+    wdgScroller(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment)
+    : axWidget(aListener,aID,aRect,aAlignment)
       {
         //clearFlag( wfl_Active );
         //mText       = aText;
@@ -59,10 +59,15 @@ class wdgScroller : public axWidget
         //setBackground(true,AX_GREY_DARK);
         is_dragging = false;
         mThumbSize = 1;
+        if ( aRect.w > aRect.h   ) setFlag(wfl_Vertical);
+        else clearFlag(wfl_Vertical);
       }
 
     //inline void setPos(float aPos) { mPos = aPos; }
-    inline void setThumbSize(float aSize) { mThumbSize = aSize; }
+    inline void setThumbSize(float aSize)
+      {
+        mThumbSize = aSize;
+      }
 
     //inline void setThumb(float aValue, float aThumb)
     //  {
@@ -77,10 +82,10 @@ class wdgScroller : public axWidget
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
         axWidget::doPaint( aCanvas, aRect );
-
-        int thumb = (int)mThumbSize * mRect.h;
-        int ipos   = (int)mValue * (mRect.h - thumb);
-
+        //int thumb = mRect.h * mThumbSize;
+        //int ipos  = (mRect.h - thumb) * mValue;
+        int thumb = (int)((float)mRect.h*mThumbSize);
+        int ipos  = (int)((float)(mRect.h-thumb)*mValue);
         aCanvas->setBrushColor( AX_GREY_DARK );
         aCanvas->fillRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
         aCanvas->setBrushColor( AX_GREY_LIGHT );
@@ -100,12 +105,9 @@ class wdgScroller : public axWidget
       {
         is_dragging = true;
         int thumbsize = (int)((float)mRect.h*mThumbSize);
-        //TRACE("thumbsize: %i\n",thumbsize);
         int numpixels = mRect.h - thumbsize;
-        //TRACE("numpixels: %i\n",numpixels);
         if (numpixels<=0) numpixels = 1;  // HACK
         pixel_size = 1.0f/(float)numpixels;
-        //TRACE("pixel_size: %f\n",pixel_size);
         clickx = aX;
         clicky = aY;
       }

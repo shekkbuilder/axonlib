@@ -74,7 +74,7 @@ class wdgImgSwitch : public axWidget
       {
         if( mValue>0.5 ) mValue=0;
         else mValue=1;
-        if(mParameter) mParameter->mValue = mValue;
+        if(mParameter) mParameter->setValueDirect(mValue);
         mListener->onChange( this );
       }
 

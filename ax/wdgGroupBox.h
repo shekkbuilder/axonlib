@@ -106,7 +106,7 @@ class wdgGroupBox : public axContainer
           wContainer->clearFlag(wfl_Active);
           wContainer->clearFlag(wfl_Visible);
           mHeight = mRect.h;
-          mRect.h = wTitleBar->mRect.h + 1;
+          mRect.h = wTitleBar->getRect().h + 1;
         }
       }
 

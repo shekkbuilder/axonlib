@@ -35,6 +35,8 @@
 
 #include "axCanvas.h"
 
+#ifdef linux
+
 class axBrush
 {
   protected:
@@ -49,9 +51,23 @@ class axBrush
         mColor = aColor;
         mStyle = aStyle;
       }
+
     virtual ~axBrush() {}
 
+    //virtual void setBrushColor(axColor aColor)
+    //  {
+    //    mBrushColor = aColor;
+    //    setforecolor(mBrushColor.mColor);
+    //  };
+
+    //virtual void setBrushStyle(int aStyle)
+    //  {
+    //    XSetFillStyle(gDP,mGC,aStyle); // FillSolid
+    //  };
+
 };
+
+#endif
 
 //----------------------------------------------------------------------
 #endif

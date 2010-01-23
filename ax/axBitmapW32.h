@@ -37,7 +37,8 @@
 
 class axBitmapImpl : public axBitmapBase
 {
-  public:
+  protected:
+  //public:
     HBITMAP mBitmap;
     char*   mBuffer;
 

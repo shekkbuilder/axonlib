@@ -51,8 +51,8 @@
 
 class wdgScrollBox : public axContainer
 {
-  //protected:
-  public:
+  protected:
+  //public:
     //wdgPanel*     wTitleBar;
     axContainer*  wContainer;
     wdgScroller*  wScrollBar;
@@ -84,6 +84,8 @@ class wdgScrollBox : public axContainer
 
     //----------
 
+    inline axContainer* getContainer(void) { return wContainer; }
+
 //    void recalc_scroll(void)
 //      {
 //        int over = mContent.h - mRect.h;
@@ -112,10 +114,11 @@ class wdgScrollBox : public axContainer
 
     virtual void doScroll(int dX, int dY)
       {
-        //TRACE("wdgScrollBox.doScroll(%i,%i)\n",dX,dY);
-        for( int i=0;i<wContainer->mWidgets.size(); i++ ) // move sub-widgets only
+        //for( int i=0;i<wContainer->mWidgets.size(); i++ )
+        for( int i=0;i<wContainer->numWidgets(); i++ )
         {
-          wContainer->mWidgets[i]->doMove( wContainer->mWidgets[i]->mRect.x - dX, wContainer->mWidgets[i]->mRect.y - dY );
+          axWidget* wdg = wContainer->getWidget(i);
+          wdg->doMove( wdg->getRect().x - dX, wdg->getRect().y - dY );
         }
         mScrolledX += dX;
         mScrolledY += dY;
@@ -137,8 +140,8 @@ class wdgScrollBox : public axContainer
         unscroll();
         axContainer::doResize(aW,aH);
         //TRACE("- post doResize:  mContent: %i,%i,%i,%i\n",wContainer->mContent.x,wContainer->mContent.y,wContainer->mContent.w,wContainer->mContent.h);
-        float height = (float)wContainer->mRect.h;
-        float content = (float) wContainer->mContent.h;
+        float height = (float)wContainer->getRect().h;
+        float content = (float) wContainer->getContent().h;
         //TRACE("- height : %f\n",height);
         //TRACE("- content: %f\n",content);
         if (content>height)
@@ -175,7 +178,7 @@ class wdgScrollBox : public axContainer
         if (id==0)
         {
           //float scrollable = (float)wScrollBar->mRect.h * (1-mVisible);
-          float scrollable = (float)wContainer->mContent.h * (1-mVisible);
+          float scrollable = (float)wContainer->getContent().h * (1-mVisible);
           //TRACE("- scrollable: %f\n",scrollable);
           int i = (int)(scrollable*val);
           //TRACE("- pixels to scroll: %i\n",i);

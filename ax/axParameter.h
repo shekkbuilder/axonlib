@@ -23,7 +23,7 @@
 
 /**
  * \brief base class for handling vst-parameters
- *  
+ *
  * this class is the base class for handling vst-parameters
  * it manages a floating point value from 0 to 1 (inclusive),
  * with text name/label, and textual description of its value.
@@ -51,17 +51,17 @@
 class axParameterHandler
 {
   public:
-    // reset value to default, and notify listener
+    /// reset value to default, and notify listener
     virtual void  doReset(void)             {}
-    // set value to aValue (0..1), and notify listener
+    /// set value to aValue (0..1), and notify listener
     virtual void  doSetValue(float aValue)  {}
-    // get value (0..1)
+    /// get value (0..1)
     virtual float doGetValue(void)          {return 0;}
-    // get ptr to name text string ("lowpass", "distortion", etc)
+    /// get ptr to name text string ("lowpass", "distortion", etc)
     virtual void  doGetName(char* buf)      {}
-    // get ptr to label text string ("db","ms",..))
+    /// get ptr to label text string ("db","ms",..))
     virtual void  doGetLabel(char* buf)     {}
-    // get text representation of value (for gui, etc)
+    /// get text representation of value (for gui, etc)
     virtual void  doGetDisplay(char* buf)   {}
 };
 
@@ -71,7 +71,7 @@ class axParameter;
 class axParameterListener
 {
   public:
-    // value has changed
+    /// value has changed
     virtual void onChange(axParameter* aParameter) {}
 };
 
@@ -79,18 +79,18 @@ class axParameterListener
 
 class axParameter : public axParameterHandler
 {
-  //protected:
-  public:
+  protected:
     axParameterListener* mListener;
-    int       mID;
     axString  mName;
     axString  mLabel;
     float     mValue;   // 0..1
     float     mDefault;
-    void*     mUser;
     int       mCNum;
 
   public:
+
+    int       mID;
+    void*     mUser;
 
     // aListener  listener
     // aID        id (for your own use)
@@ -110,9 +110,21 @@ class axParameter : public axParameterHandler
         mCNum     = -1;
       }
 
-    // set value, with remapping/conversion
+    //----------
+
+    inline void setListener(axParameterListener* l) { mListener = l; }
+    inline axParameterListener* getListener(void) { return mListener; }
+    inline void setConnectNum(int num) { mCNum = num; }
+    inline void setValueDirect(float v) { mValue = v; }
+
+    inline int getConnectNum(void) { return mCNum; }
+    inline float getValueDirect(void) { return mValue; }
+
+    //----------
+
+    /// set value, with remapping/conversion
     virtual void  setValue(float aValue)    { mValue=aValue; }
-    // read value, with conversion/remapping
+    /// read value, with conversion/remapping
     virtual float getValue(void)            { return mValue; }
 
     // axParameterHandler

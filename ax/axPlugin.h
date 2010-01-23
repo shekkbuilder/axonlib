@@ -16,8 +16,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-//TODO: dirty parameters, ala widgets/editor?
-// så setParameter appender til dirtyList, og
+// programs & parameters
+
+//TODO: dirty parameters?
+
 
 /**
   \file axPlugin.h
@@ -31,17 +33,26 @@
 #include "axDefines.h"
 #include "axString.h"
 #include "axParameter.h"
-//#include "axWidget.h"
 
-//#include "axMutex.h"
+//----------
 
-//----------------------------------------------------------------------
+// plugin flags
+#define pfl_HasEditor 1
 
-//class axPluginBase
-//{
-//};
+// state
+#define pst_Open    1
+#define pst_Close   2
+#define pst_Suspend 3
+#define pst_Resume  4
 
-//----------------------------------------------------------------------
+// transport
+#define ptr_changed       1
+#define ptr_playing       2
+#define ptr_cycle         4
+#define ptr_recording     8
+#define ptr_autowriting   64
+#define ptr_auto reading  128
+
 
 //AX_NUMPROGS should a minimum of 1 ?,
 //otherwise zero-length arrays in axPluginVst.h
@@ -50,23 +61,152 @@
 	#define AX_NUMPROGS 1
 #endif
 
-#include "axPluginVst.h"
-//#include "axHostVst.h"
+//----------------------------------------------------------------------
 
+/// main plugin base
 /**
-  \class axPlugin
-  \brief main plugin class
+  if you are coding plugins, this is the major class to look at. just override the methods you need, and you're almost ready to go.
+*/
 
-  this class in the main clas you inherit from to make a plugin...
+class axPluginBase
+{
+  public:
 
-  \sa axPluginVst
+    /// setup plugin information
+    /**
+      descript your plugin to the host. do this once only, in your plugin constructor.
+      \param aEffect  the name of your plugin
+      \param aVendor  the author, plugin-writer
+      \param aProduct product string (haven't seen this being used by any host...)
+      \param aVersion plugin version number
+      \param aID      plugin unique id (for vst)
+    */
+    virtual void describe(axString aEffect, axString aVendor, axString aProduct, int aVersion, unsigned int aID) {}
+
+    /// gui?
+    /**
+      call this in your plugin constructor if your plugin has a gui.
+      \param aWidth the initial width of the editor
+      \param aHeight the initial height of the editor
+    */
+    virtual void hasEditor(int aWidth, int aHeight) {}
+    /// send midi out
+    /**
+      call this to send midi out of the plugin.
+      note that midi input 'swallows' the midi events, so you need to send them again if you need or want midi thru
+      call this in doProcessBlock or doProcessSample. they are cached and sent to the host after audio block processing.
+    */
+    virtual void sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3) {}
+
+    /// get host sync and tme info
+    /**
+      update the internal time, sync, .. variables.
+      if you #define AX_AUTOSYNC somewhere (and only then!), this is called automatically just before every audio block,
+      and the doProcessTransport is called if needed.
+    */
+    virtual void updateTimeInfo(void) {}
+
+    /// plugin state has changed
+    /**
+      \param aState one of pst_Open, pst_Close, pst_Suspend, pst_Resume
+    */
+    virtual void  doProcessState(int aState) {}
+
+    /// host transport has changed
+    /**
+      if you have #defined AX_AUTOSYNC, this will be called before every audio block if transport state has changed
+    */
+    virtual void  doProcessTransport(int aState) {}
+
+    /// midi input
+    /**
+      all midi input is processed at the start of each audio block.
+      for every midi event, this will be called
+      \param ofs the events offset into the upcoming audio block (doProcessBlock), in samples
+      \param msg1 midi message 1
+      \param msg2 midi message 2
+      \param msg3 midi message 3
+    */
+    virtual void  doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3) {}
+
+    /// parameter has changed
+    /**
+      called every time a parameter has changed, either from tweaking a knob on the gui, or from automation from the host.
+      note that this can be called anytime, even when you're in the middle of doProcessBlock, or somewhere inbetween
+      doProcessSample calls. so, yu might need soee caching, or mutexing, depending on what you do with the variables.
+      pointer juggling might be dangerous,
+      \param aParameter the parameter that has changed
+    */
+    virtual void  doProcessParameter(axParameter* aParameter) {}
+
+    /// process audio buffer
+    /**
+      process the given audio buffer.
+      \param inputs the input channels (usually 0 or 2)
+      \param outputs the outputs channels (usually 2)
+      \param sampleFrames number of samples to process
+      \return return true if you processed the block, and no other processing is necessary.
+              return false if doProcessSample should be called for every sample in the block
+    */
+    virtual bool  doProcessBlock(float** inputs, float** outputs, long sampleFrames) { return false; }
+
+    /// process one sample
+    /**
+      called for every sample if doProcessBlock returned false.
+      if you don't override this method, the default is to just copy the input to the output
+      \param ins read your sample to process from here
+      \param outs and write them here
+    */
+    virtual void  doProcessSample(float** ins, float** outs) { *outs[0]=*ins[0]; *outs[1]=*ins[1]; }
+
+    /// post process buffer
+    /**
+      called after all other processing is finished. your chance to do any post-processing, if necessary.
+      called with the same parameters as doProcessBlock got.
+      \param inputs the input channels
+      \param outputs the outputs channels now with processed samples
+      \param sampleFrames number of samples
+    */
+    virtual void  doPostProcess(float** inputs, float** outputs, long sampleFrames) {}
+
+    /// create editor
+    /**
+      if you called hasEditor in your constructor, this will be called th create the editor, before the plugin window is shown.
+      \return pointer to window. axWindow* or axEditor*, cast to void*
+    */
+    virtual void* doCreateEditor() { return NULL; }
+
+    /// destroy editor
+    /**
+      destroy the editor
+    */
+    virtual void  doDestroyEditor(void) {}
+
+    /// idle editor
+    /**
+      this is called 20-30 times per secind, depending on the host.
+      (if you have #define AX_DIRTYWIDGETS, you should redraw the dirty-widgets list here)
+    */
+    virtual void  doIdleEditor(void) {}
+};
+
+//----------------------------------------------------------------------
+
+//#ifdef AX_PLUGIN_VST
+  #include "axPluginVst.h"
+//#endif
+
+//----------------------------------------------------------------------
+
+/// axPlugin
+/**
 */
 
 class axPlugin  : public axPluginImpl,
-                  public axParameterListener//,
-                  //public axWidgetListener
+                  public axParameterListener
 {
-  public:
+  //public:
+  protected:
     //axMutex       mMutex_params;
     int           mPlugFlags;
     axParameters  mParameters;
@@ -76,25 +216,20 @@ class axPlugin  : public axPluginImpl,
 
     /// constructor
     /**
-      initializes the plugin to a workable state.
-      the default settings is a stereo in/out do-nothing effect
+      calls axInitialize(aPlugFlags)
       \param audioMaster audioMaster (vst)
       \param numProgs number of programs
       \param numParams number of parameters
-      \param aPlugFlags flags
-
+      \param aPlugFlags calls axInitialize with these flags
     */
-
     axPlugin(audioMasterCallback audioMaster,long numProgs,long numParams, int aPlugFlags=0)
     : axPluginImpl(audioMaster,numProgs,numParams)
-    //axPlugin(axHostVst* host,long numProgs,long numParams, int aPlugFlags=0)
-    //: axPluginImpl(host,numProgs,numParams)
       {
         mPlugFlags = aPlugFlags;
         axInitialize(mPlugFlags);   // os/platform specific initialization
-        canProcessReplacing();      // need this for vst sdk 2.4
-        setNumInputs(2);            // defaults to 2 inputs & outputs
-        setNumOutputs(2);           // aka stereo effect
+//        canProcessReplacing();      // need this for vst sdk 2.4
+//        setNumInputs(2);            // defaults to 2 inputs & outputs
+//        setNumOutputs(2);           // aka stereo effect
         mParameters.clear();
         mName = "?";
       }
@@ -103,8 +238,7 @@ class axPlugin  : public axPluginImpl,
 
     /// destructor
     /**
-      clean up memory and things...
-      parameters are automaticlly destroyed
+      parameters are automaticlly deleted. axCleanup is called.
     */
     virtual ~axPlugin()
       {
@@ -113,11 +247,14 @@ class axPlugin  : public axPluginImpl,
         //TRACE("axPlugin destructor ok\n");
       }
 
+    //--------------------------------------------------
+    // programs vs params
+    //--------------------------------------------------
+
     /// select a program
     /**
-      switches the current program (set of parameters)
-      copies the current parameters into the program memory,
-      and updates all parameters to their correct value from the new program
+      switches the current program (set of parameters).
+      copies the current parameters into the program memory, and updates all parameters from the new program.
       \param program  program to switch to
     */
 
@@ -155,36 +292,19 @@ class axPlugin  : public axPluginImpl,
       }
 
     //--------------------------------------------------
-    //
-    //--------------------------------------------------
-
-    /// parameter change handler
-    /**
-      called every time a parameter has been changed, either from tweaking a widget,
-      or from host automation. in your own plugin, overload this to grab the changed values.
-      .
-      \param aParameter the parameter that has been changed
-    */
-
-    virtual void doProcessParameter(axParameter* aParameter) {}
-
-    //--------------------------------------------------
     // plugin handler
     //--------------------------------------------------
 
     /// add parameter
     /**
-      append parameter to the end of the plugin parameter-list
-      (and set its listener to 'this')
+      append parameter to the end of the parameter-list.if listener is NULL, it is set to 'this'
       \param aParameter the parameter to append
     */
 
     void appendParameter( axParameter* aParameter )
       {
-        aParameter->mListener = this;
-        //mMutex_params.lock();
+        if (aParameter->getListener()==NULL) aParameter->setListener(this);
         mParameters.append( aParameter );
-        //mMutex_params.unlock();
       }
 
     //----------
@@ -197,18 +317,15 @@ class axPlugin  : public axPluginImpl,
 
     void deleteParameters(void)
       {
-        //TODO: crash-protection :-)
-        //mMutex_params.lock();
         for( int i=0; i<mParameters.size(); i++) delete mParameters[i];
         mParameters.clear();
-        //mMutex_params.unlock();
       }
 
     //----------
 
     /// process parameters
     /**
-      process all parameters, for initial setup
+      process all parameters (ex. for initial setup).
       will call doProcessParameter for all parameters
     */
 
@@ -216,39 +333,6 @@ class axPlugin  : public axPluginImpl,
       {
         for( int i=0; i<mParameters.size(); i++ ) doProcessParameter( mParameters[i] );
       }
-
-    //----------------------------------------
-    // dirty
-    //----------------------------------------
-    //
-    //void clearDirty(void)
-    //  {
-    //    mDirtyList.clear(false);
-    //  }
-    //
-    //----------
-    //
-    //void appendDirty(axWidget* aWidget)
-    //  {
-    //    for( int i=0; i<mDirtyList.size(); i++ ) if( mDirtyList[i]==aWidget ) return;
-    //    mDirtyList.append(aWidget);
-    //  }
-    //
-    //----------
-    //
-    //void redrawDirty(void)
-    //  {
-    //    TRACE("redrawDirty\n");
-    //    int num = mDirtyList.size();
-    //    for( int i=0; i<num; i++ )
-    //    {
-    //      axWidget* wdg = mDirtyList[i];
-    //      redrawWidget(wdg);
-    //    }
-    //    clearDirty();
-    //    TRACE("...redrawDirty ok\n");
-    //  }
-
 
     //--------------------------------------------------
     //
@@ -263,8 +347,7 @@ class axPlugin  : public axPluginImpl,
 
     virtual void getParameterName(VstInt32 index, char* text)
       {
-        //if (index>=0 && index<mParameters.size())
-          mParameters[index]->doGetName(text);
+        mParameters[index]->doGetName(text);
       }
 
     //----------
@@ -279,8 +362,7 @@ class axPlugin  : public axPluginImpl,
 
     virtual void getParameterLabel(VstInt32 index, char* label)
       {
-        //if (index>=0 && index<mParameters.size())
-          mParameters[index]->doGetLabel(label);
+        mParameters[index]->doGetLabel(label);
       }
 
     //----------
@@ -294,8 +376,7 @@ class axPlugin  : public axPluginImpl,
 
     virtual void getParameterDisplay(VstInt32 index, char* text)
       {
-        //if (index>=0 && index<mParameters.size())
-          mParameters[index]->doGetDisplay(text);
+        mParameters[index]->doGetDisplay(text);
       }
 
     //----------
@@ -310,8 +391,7 @@ class axPlugin  : public axPluginImpl,
 
     virtual void setParameter(VstInt32 index, float value)
       {
-        //if (index>=0 && index<mParameters.size())
-          mParameters[index]->doSetValue(value);
+        mParameters[index]->doSetValue(value);
       }
 
     //----------
@@ -326,9 +406,7 @@ class axPlugin  : public axPluginImpl,
 
     virtual float getParameter(VstInt32 index)
       {
-        //if (index>=0 && index<mParameters.size())
-          return mParameters[index]->doGetValue();
-        //else return 0;
+        return mParameters[index]->doGetValue();
       }
 
     //--------------------------------------------------
@@ -342,11 +420,8 @@ class axPlugin  : public axPluginImpl,
       \param aParameter the parameter that has changed
     */
 
-
     virtual void onChange(axParameter* aParameter)
       {
-        //TRACE("axPlugin.onChange (par)\n");
-        //if( mEditor ) mEditor->onChange(aParameter);
         doProcessParameter(aParameter);
       }
 

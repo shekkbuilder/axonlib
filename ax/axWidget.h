@@ -285,35 +285,31 @@ class axWidgetListener
 
 class axWidget : public axWidgetHandler
 {
-  //protected:
-  public:
-    axParameter *mParameter;
+  protected:
     axWidgetListener* mListener;
-    int       mID;
-    axRect    mRect;
-    int       mFlags;
-    axRect    mOrigin;
-    axColor   mFillColor;
-    int       mAlignment;
-    float     mValue;
-    void*     mUser;
-    int       mCNum;
+    axParameter *mParameter;
+    axRect mRect;
+    int mFlags;
+    axColor mFillColor;
+    int mAlignment;
+    float mValue;
+    int mCNum;
+  public:
+    void* mUser;
+    int mID;
 
   public:
 
-    //axWidget(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None, axParameter* aParameter=NULL)
-    axWidget(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None/*, axParameter* aParameter=NULL*/)
+    axWidget(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None)
       {
         mListener   = aListener;
         mID         = aID;
         mRect       = aRect;
-        mOrigin     = aRect;
-        mParameter  = NULL;//aParameter; // link to parameter (for painting only)
+        mParameter  = NULL;
         clearAllFlags();
         setFlag(wfl_Active);
         setFlag(wfl_Visible);
         setFlag(wfl_Capture);
-        //setFlag(wfl_Align);
         mFillColor  = AX_GREY;
         mAlignment  = aAlignment;
         mValue      = 0;
@@ -322,6 +318,20 @@ class axWidget : public axWidgetHandler
       }
 
     //virtual ~axWidget() {}
+
+    //--------------------------------------------------
+    // accessors
+
+    inline axParameter* getParameter(void) { return mParameter; }
+    inline void setParameter(axParameter* p) { mParameter = p; }
+
+    inline float getValueDirect(void) { return mValue; }
+    inline void setValueDirect(float v) { mValue = v; }
+
+    inline int getConnectNum(void) { return mCNum; }
+    inline void setConnectNum(int c) { mCNum = c; }
+
+    inline int getAlignment(void) { return mAlignment; }
 
     //--------------------------------------------------
 
@@ -344,7 +354,7 @@ class axWidget : public axWidgetHandler
     /**
       see: \ref widget_flags
     */
-    inline void setFlag(int aFlag) { /*if (aFlag==0) mFlags=0; else*/ mFlags|=aFlag; }
+    inline void setFlag(int aFlag) { mFlags|=aFlag; }
 
     /// clear (reset) a flag
     /**
@@ -373,7 +383,7 @@ class axWidget : public axWidgetHandler
     // widget handler
     //--------------------------------------------------
 
-    //virtual void      doReset(void)             { mValue = 0; }
+    //virtual void doReset(void) { mValue = 0; }
     /// set widget walue
     virtual void doSetValue(float aValue) { mValue = aValue; }
     /// get widget walue
@@ -388,10 +398,6 @@ class axWidget : public axWidgetHandler
     */
     virtual void doMove(int aX, int aY)
       {
-        //int dx = aX - mRect.x;
-        //int dy = aY - mRect.y;
-        //mRect.x += dx;
-        //mRect.y += dy;
         mRect.x = aX;
         mRect.y = aY;
       }
@@ -405,10 +411,6 @@ class axWidget : public axWidgetHandler
     */
     virtual void doScroll(int dX, int dY)
       {
-        //int dx = aX - mRect.x;
-        //int dy = aY - mRect.y;
-        //mRect.x += dx;
-        //mRect.y += dy;
         mRect.x += dX;
         mRect.y += dY;
       }
@@ -423,8 +425,6 @@ class axWidget : public axWidgetHandler
     */
     virtual void doResize(int aW, int aH)
       {
-        //mRect.w( aW );
-        //mRect.h( aH );
         mRect.w = aW;
         mRect.h = aH;
       }
@@ -445,7 +445,6 @@ class axWidget : public axWidgetHandler
           {
             aCanvas->setBrushColor( mFillColor );
             aCanvas->fillRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
-            //aCanvas->drawPanel( mRect.x, mRect.y, mRect.x2(), mRect.y2(), 0);
           }
         }
       }

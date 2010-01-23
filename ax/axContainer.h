@@ -39,8 +39,7 @@
 class axContainer : public axWidget,
                     public axWidgetListener
 {
-  //protected:
-  public:
+  protected:
     axWidgets mWidgets;
     //mouse
     axWidget* mCapturedWidget;
@@ -54,25 +53,24 @@ class axContainer : public axWidget,
     // runtime
     axRect    mClient;                // current Client area
     int       mStackedX, mStackedY;   // where to put next wal_Stacked widget
-    //int       mMinX,mMaxX,mMinY,mMaxY;
     axRect    mContent;
     int       mOffsetX,mOffsetY;
 
   public:
 
+    /// constructor
+    /**
+      \param aListener listener that will receive response-events from this
+      \param aID widget it, use for whatever
+      \param aRect position (relative to parent) and size
+      \param aAlignment alignment mode
+    */
+
     axContainer(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None)
     : axWidget(aListener, aID, aRect, aAlignment)
       {
-        //if (!aListener) aListener = this;
-        //clearAllFlags();
-        //setFlag(wfl_Active);
-        //setFlag(wfl_Visible);
-        //setFlag(wfl_Capture);
-        //setFlag(wfl_Align);
-        //mWidgets.clear();
         mCapturedWidget = NULL;
         mClickedWidget  = NULL;
-        //doRealign();
         mMarginX = 0;
         mMarginY = 0;
         mPaddingX = 0;
@@ -81,7 +79,6 @@ class axContainer : public axWidget,
         mStackedX = 0;
         mStackedY = 0;
         setFlag(wfl_Align);
-        //setFlag(wfl_Clip);
         mOffsetX = 0;
         mOffsetY = 0;
       }
@@ -95,6 +92,13 @@ class axContainer : public axWidget,
 
     //--------------------------------------------------
 
+    inline axWidget* getWidget(int i) { return mWidgets[i]; }
+    inline axRect getContent(void) { return mContent; }
+
+    //--------------------------------------------------
+
+    /// set alignment borders
+
     virtual void setAlign(int aMarginX, int aMarginY, int aPaddingX=0, int aPaddingY=0)
       {
         mMarginX = aMarginX;
@@ -102,6 +106,8 @@ class axContainer : public axWidget,
         mPaddingX = aPaddingX;
         mPaddingY = aPaddingY;
       }
+
+    /// reset mouse capture & click info
 
     virtual void initMouseState(void)
       {
@@ -111,12 +117,16 @@ class axContainer : public axWidget,
 
     //----------
 
+    /// clear subwidgets list
+
     virtual void clearWidgets(void)
       {
         mWidgets.clear();
       }
 
     //----------
+
+    /// number of subwidgets
 
     virtual int numWidgets(void)
       {
@@ -125,24 +135,32 @@ class axContainer : public axWidget,
 
     //----------
 
+    /// append widget
+    /**
+      append widget to subwidgets list
+      and move new widget to correct place inside the container
+      (widget position relative to container)
+    */
+
     virtual void appendWidget(axWidget* aWidget, bool aRealign=false)
       {
-        aWidget->doMove( mRect.x + aWidget->mRect.x, mRect.y + aWidget->mRect.y );
+        aWidget->doMove( mRect.x + aWidget->getRect().x, mRect.y + aWidget->getRect().y );
         mWidgets.append(aWidget);
-        //if(aRealign)
-        //{
-        //  aWidget->doMove( mRect.x + aWidget->mRect.x, mRect.y + aWidget->mRect.y );
-          //doRealign();
-        //}
       }
 
     //----------
 
+    /// remove specified widget
+    /**
+      [not implemented]
+    */
     virtual void removeWidget(int aIndex)
       {
       }
 
     //----------
+
+    /// delete all widgets
 
     virtual void deleteWidgets(void)
       {
@@ -152,6 +170,8 @@ class axContainer : public axWidget,
 
     //----------
 
+    /// return specified widget
+
     virtual axWidget* widget(int aIndex)
       {
         return mWidgets[aIndex];
@@ -159,10 +179,10 @@ class axContainer : public axWidget,
 
     //--------------------------------------------------
 
-    // return first (active) widget that contains aX,aY
+    /// return first (active) widget that contains aX,aY
+
     virtual axWidget* findWidget(int aX, int aY)
       {
-        //if( mHoverWidget && mHoverWidget->contains(aX,aY) ) return mHoverWidget;
         for( int i=0; i<mWidgets.size(); i++ )
         {
           axWidget* W = mWidgets[i];
@@ -184,6 +204,8 @@ class axContainer : public axWidget,
 
     //----------
 
+    /// move self & subwidgets
+
     virtual void doMove(int aX, int aY)
       {
         int dx = aX - mRect.x;                // how much we have moved
@@ -191,34 +213,41 @@ class axContainer : public axWidget,
         axWidget::doMove(aX,aY);              // move ourselves...
         for( int i=0;i<mWidgets.size(); i++ ) // ... and move sub-widgets same amount
         {
-          mWidgets[i]->doMove( mWidgets[i]->mRect.x + dx, mWidgets[i]->mRect.y + dy );
+          mWidgets[i]->doMove( mWidgets[i]->getRect().x + dx, mWidgets[i]->getRect().y + dy );
         }
       }
 
     //----------
+
+    /// scroll subwidgets
 
     virtual void doScroll(int dX, int dY)
       {
         for( int i=0;i<mWidgets.size(); i++ ) // move sub-widgets only
         {
-          mWidgets[i]->doMove( mWidgets[i]->mRect.x + dX, mWidgets[i]->mRect.y + dY );
+          mWidgets[i]->doMove( mWidgets[i]->getRect().x + dX, mWidgets[i]->getRect().y + dY );
         }
       }
 
     //----------
 
+    /// resize self & realign subwidgets
+
     virtual void doResize(int aW, int aH)
       {
-        //TRACE("axContainer doResize %i,%i\n",aW,aH);
         axWidget::doResize(aW,aH);
         //if( hasFlag(wfl_Align) )
         //{
-          //TRACE("doRealign\n");
           doRealign();
         //}
       }
 
     //----------
+
+    /**
+      realign sub-widgets according to their alignment setting.
+      also, it keeps track of a mContent rectangle, that encapsulates all the sub-widgets
+    */
 
     //TODO: clipping [hierarchial]
     //TODO: wal_Center
@@ -235,25 +264,19 @@ class axContainer : public axWidget,
           int largest = 0;//-1;
           int stackx = R.x + mPaddingX;
           int stacky = R.y + mPaddingY;
-          //mMinX = 999999;
-          //mMaxX = -1;
-          //mMinY = 999999;
-          //mMaxY = -1;
           for( int i=0; i<mWidgets.size(); i++ )
           {
             axWidget* wdg = mWidgets[i];
-            //int xx = wdg->mRect.x;// - mRect.x;
-            //int yy = wdg->mRect.y;// - mRect.y;
-            int ww = wdg->mRect.w;
-            int hh = wdg->mRect.h;
-            switch( wdg->mAlignment )
+            int ww = wdg->getRect().w;
+            int hh = wdg->getRect().h;
+            switch( wdg->getAlignment() )
             {
               //case wal_None:
               //  wdg->doMove( R.x + xx, R.y+yy );
               //  break;
-              case wal_Parent:
-                wdg->doMove( R.x + wdg->mOrigin.x, R.y + wdg->mOrigin.y );
-                break;
+//              case wal_Parent:
+//                wdg->doMove( R.x + wdg->getOrigin().x, R.y + wdg->getOrigin().y );
+//                break;
               //case wal_Fill:
               //  wdg->doMove( R.x, R.y );
               //  wdg->doResize( R.w, R.h );
@@ -352,26 +375,32 @@ class axContainer : public axWidget,
 
                 break;
             } //switch alignment
-            mContent.combine( wdg->mRect );
+            mContent.combine( wdg->getRect() );
             //wdg->doRealign();
           } //for widgets
-          //TRACE("minx:%i, miny:%i, maxx:%i, maxy:%i\n",mMinX,mMinY,mMaxX,mMaxY);
         } //wfl_Align
       }
 
     //----------
 
+    /**
+      paints the container, and its children
+      does some intersection testing, and skips widgets that are not visible,
+      or outside the update area (aRect)
+      if AX_PAINTERS is defined, paints the widgets from last to first,
+      else from first to last.
+      additionally, if wfl_CLip is set, before drawing, setup the clip rectangle
+
+    */
+
     //TODO: if w>0 && h>0
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-        //TRACE("axContainer.doPaint aRect %i,%i,%i,%i\n",aRect.x,aRect.y,aRect.w,aRect.h);
-        //TRACE("                    mRect %i,%i,%i,%i\n",aRect.x,aRect.y,mRect.w,mRect.h);
         if( hasFlag(wfl_Visible) )
         {
           if( mRect.intersects(aRect) )
           {
             if( hasFlag(wfl_Clip) ) aCanvas->setClipRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
-            //if( hasFlag(wfl_Clip) ) aCanvas->pushClipRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
             axWidget::doPaint( aCanvas, aRect );
             #ifdef AX_PAINTERS
             for( int i=mWidgets.size()-1; i>=0; i-- )
@@ -383,7 +412,6 @@ class axContainer : public axWidget,
               if( W->intersects(aRect) ) W->doPaint( aCanvas, mRect );
             }
             if( hasFlag(wfl_Clip) ) aCanvas->clearClipRect();
-            //if( hasFlag(wfl_Clip) ) aCanvas->popClipRect();
           } //intersect
         }
       }
@@ -395,6 +423,14 @@ class axContainer : public axWidget,
     //virtual void doTimer(void) {}
 
     //----------
+
+    /**
+      called (by owner/parent) when a mouse button is pressed,
+      finds which sub-widget the mouse is inside, and call doMouseDown for that widget.
+      also, if wfl_capture is set in this container,
+      it keeps track of that widget, and sends later mouse move and release events/calls
+      directly to that widget only.
+    */
 
     virtual void doMouseDown(int aX, int aY, int aB)
       {
@@ -415,6 +451,13 @@ class axContainer : public axWidget,
 
     //----------
 
+    /**
+      if any widget were 'captured' during an earlier mouse down event,
+      that widget is sent a mouse up event (doMouseUp is called),
+      and the capture is released
+      this function does nothing if wfl_Active flag is not set.
+    */
+
     virtual void doMouseUp(int aX, int aY, int aB)
       {
         if( hasFlag(wfl_Active) )
@@ -431,6 +474,12 @@ class axContainer : public axWidget,
       }
 
     //----------
+
+    /**
+      if any widget were 'captured' during an earlier mouse down event,
+      that widget's doMouseMouse is called.
+      this function does nothing if wfl_Active flag is not set.
+    */
 
     virtual void doMouseMove(int aX, int aY, int aB)
       {
