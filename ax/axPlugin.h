@@ -185,7 +185,7 @@ class axPluginBase
     /// idle editor
     /**
       this is called 20-30 times per secind, depending on the host.
-      (if you have #define AX_DIRTYWIDGETS, you should redraw the dirty-widgets list here)
+      (if you have not #define AX_NODIRTYWIDGETS, you should redraw the dirty-widgets list here)
     */
     virtual void  doIdleEditor(void) {}
 };
