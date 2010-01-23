@@ -2,7 +2,7 @@
 #define AX_NUMPROGS   1
 #define AX_NUMPARAMS  1
 //#define AX_AUTOSYNC
-#define AX_DIRTYWIDGETS
+//#define AX_NODIRTYWIDGETS
 #define AX_WIDTH      640
 #define AX_HEIGHT     480
 #define AX_FLAGS      (AX_EMBEDDED|AX_BUFFERED)

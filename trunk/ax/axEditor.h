@@ -35,7 +35,7 @@
 // - onChange(wdg/par) transfer mValue, widget <-> parameter (if mID>0)
 // - keep track of 'dirty widgets'
 
-//#define AX_DIRTYWIDGETS
+//#define AX_NODIRTYWIDGETS
 
 #include "axParameter.h"
 #include "axPlugin.h"
@@ -88,7 +88,8 @@ class axEditor : public axWindow,
   protected://public:
     axPlugin        *mPlugin;
     axWPConnections mConnections;
-    #ifdef AX_DIRTYWIDGETS
+    //#ifdef AX_DIRTYWIDGETS
+    #ifndef AX_NODIRTYWIDGETS
     axWidgets       mDirtyList;
     #endif
 
@@ -114,7 +115,8 @@ class axEditor : public axWindow,
     // dirty
     //----------------------------------------
 
-    #ifdef AX_DIRTYWIDGETS
+    //#ifdef AX_DIRTYWIDGETS
+    #ifndef AX_NODIRTYWIDGETS
 
     /// clear list of dirty widgets
 
@@ -248,7 +250,8 @@ class axEditor : public axWindow,
     /// called when parameter changed
     /**
       by default, if there is a connection between this parameter, and a widget, the widget is notified (doSetValue).
-      then, either appended to the dirty widgets list if AX_DIRTYWIDGETS is defined, or if not, called for redrawing (redrawWidget)
+      then, appended to the dirty widgets list, unless AX_NODIRTYWIDGETS is defined
+      (if so, the widget will just be called for redrawing (redrawWidget))
       \param aParameter the parameter that has just changed
     */
 
@@ -260,7 +263,8 @@ class axEditor : public axWindow,
           axWidget* wdg = mConnections[con]->mWidget;
           float val = aParameter->doGetValue();
           wdg->doSetValue(val);
-          #ifdef AX_DIRTYWIDGETS
+          //#ifdef AX_DIRTYWIDGETS
+          #ifndef AX_NODIRTYWIDGETS
           appendDirty(wdg);
           #else
           redrawWidget(wdg);
