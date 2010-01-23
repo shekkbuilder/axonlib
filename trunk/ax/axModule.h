@@ -61,7 +61,8 @@ class axModule;
 
 class axPin
 {
-  public:
+  protected:
+  //public:
     axModule* mOwner;
     axString  mName;
     int       mType;    // 0=data, 1=signal, 2=multi
@@ -146,11 +147,13 @@ class axModuleListener
 
 class axModule : public axModuleHandler
 {
-  public:
+  //public:
+  protected:
     axModuleListener* mOwner;
     int       mFlags;
     axString  mName;
     axPins    mPins;
+
   public:
 
     axModule(axModuleListener* aOwner, axString aName)

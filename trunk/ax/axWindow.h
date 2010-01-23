@@ -17,8 +17,8 @@
  */
 
 /**
- * @file
- * \brief desc
+ * @file axWindow.h
+ * \brief os/host window
  */
 
 /**
@@ -159,7 +159,7 @@ class axWindow : public axWindowImpl
 
     void redrawRect(int aX, int aY, int aW, int aH) { invalidate(aX,aY,aW,aH); }
     void redrawRect(axRect aRect)                   { redrawRect(aRect.x,aRect.y,aRect.w,aRect.h); }
-    void redrawWidget(axWidget* aWidget)            { redrawRect(aWidget->mRect); }
+    void redrawWidget(axWidget* aWidget)            { redrawRect(aWidget->getRect()); }
     void redraw(void)                               { redrawRect(mRect ); }
 
     //----------------------------------------

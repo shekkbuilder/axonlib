@@ -68,8 +68,8 @@
 
 class axCanvasBase
 {
-  //protected:
-  public:
+  protected:
+  //public:
 
     int mHandle;
     int mMode;
@@ -79,9 +79,9 @@ class axCanvasBase
     int     mPenWidth;
     int     mXpos, mYpos;
 
-    axPen*    mDefaultPen;
-    axBrush*  mDefaultBrush;
-    axFont*   mDefaultFont;
+//    axPen*    mDefaultPen;
+//    axBrush*  mDefaultBrush;
+//    axFont*   mDefaultFont;
 
     int mNumClipRects;
     axRect mClipRects[MAX_CLIPRECTS];
@@ -100,9 +100,9 @@ class axCanvasBase
         mXpos=mYpos = 0;
         mNumClipRects = 0;
         //
-        mDefaultPen = NULL;//createPen(AX_GREY_LIGHT,0,0);
-        mDefaultBrush = NULL;//createBrush(AX_GREY_DARK,0);
-        mDefaultFont = NULL;//createFont("arial",12,0);
+//        mDefaultPen = NULL;//createPen(AX_GREY_LIGHT,0,0);
+//        mDefaultBrush = NULL;//createBrush(AX_GREY_DARK,0);
+//        mDefaultFont = NULL;//createFont("arial",12,0);
       }
 
     virtual ~axCanvasBase()
@@ -117,15 +117,15 @@ class axCanvasBase
     //----------
 
     //TODO
-    virtual axPen*    createPen(axColor, int aWidth, int aStyle) { return NULL; }
-    virtual axBrush*  createBrush(axColor, int aStyle) { return NULL; }
-    virtual axFont*   createFont(axString aName, int aSize, int aStyle) { return NULL; }
-    virtual void      selectPen(axPen* aPen) {}
-    virtual void      selectBrush(axBrush* aBrush) {}
-    virtual void      selectFont(axFont* aFont) {}
-    virtual void      resetPen(void) {}
-    virtual void      resetBrush(void) {}
-    virtual void      resetFont(void) {}
+//    virtual axPen*    createPen(axColor, int aWidth, int aStyle) { return NULL; }
+//    virtual axBrush*  createBrush(axColor, int aStyle) { return NULL; }
+//    virtual axFont*   createFont(axString aName, int aSize, int aStyle) { return NULL; }
+//    virtual void      selectPen(axPen* aPen) {}
+//    virtual void      selectBrush(axBrush* aBrush) {}
+//    virtual void      selectFont(axFont* aFont) {}
+//    virtual void      resetPen(void) {}
+//    virtual void      resetBrush(void) {}
+//    virtual void      resetFont(void) {}
 
     virtual void setPenColor(axColor aColor) {}
     virtual void setBrushColor(axColor aColor) {}

@@ -42,6 +42,14 @@ class axBitmapBase
     int   mDepth;
 
   public:
+
+    /// constructor
+    /**
+      creates a bitmap
+      \param aWidth widht of bitmap (in pixels)
+      \param aHeight height of bitmap (in pixels)
+    */
+
     axBitmapBase(int aWidth, int aHeight)
       {
         mWidth  = aWidth;
@@ -49,11 +57,11 @@ class axBitmapBase
         mDepth  = 24;
         //mBuffer = NULL;
       }
-    virtual ~axBitmapBase() {}
-    virtual int   getHandle(void) { return 0; }
-    virtual char* getBuffer(void) { return NULL; }
-    virtual int   getWidth(void) { return mWidth; }
-    virtual int   getHeight(void) { return mHeight; }
+    virtual ~axBitmapBase() {} ///< destructor
+    virtual int   getHandle(void) { return 0; } ///< return bitmap handle
+    virtual char* getBuffer(void) { return NULL; } ///< return memory buffer
+    virtual int   getWidth(void) { return mWidth; } ///< return width
+    virtual int   getHeight(void) { return mHeight; } ///< return height
 };
 
 //----------------------------------------------------------------------
@@ -123,6 +131,14 @@ class axBitmap : public axBitmapImpl
 
     //----------------------------------------
 
+    /// convert pixels from RGBA to BGRA
+    /**
+
+      the pixel array returned by lodepng is rgba, while both gdi and xlib requires (i think) BGRA,
+      so we can use this to convert.
+
+    */
+
     void convertRgbaBgra(void)
       {
         if(mBuffer)
@@ -147,6 +163,12 @@ class axBitmap : public axBitmapImpl
 
     //----------------------------------------
 
+    /**
+      mre-multiplies a value (r,g, or b) with a (alpha)
+      this is in reality a 0.8 fixed point multiplication
+      (for making color mixing easier)
+    */
+
     inline unsigned char alpha(int c, int a)
       {
         int ret = (c*a) >> 8;
@@ -155,6 +177,10 @@ class axBitmap : public axBitmapImpl
 
     //----------
 
+    /// set background color
+    /**
+      set the background color of the bitmap, taking alpha into account
+    */
     void setBackground(unsigned char aR, unsigned char aG, unsigned char aB)
       {
         if(mBuffer)
@@ -177,11 +203,28 @@ class axBitmap : public axBitmapImpl
         } //mBuffer
       }
 
+    //----------
+
+    /**
+      same as alpha(c,n), but with a float parameter for alpha
+    */
+
     unsigned char scale(unsigned char c, float n )
       {
         float nc = n * (float)c;
         return (unsigned char)axMin(255,nc);
       }
+
+    //----------
+
+    /**
+      color matrix.
+      the convert RfbaBgra() could be done with:
+      swizzle(0,0,1,0,
+              0,1,0,0
+              1,0,0,0
+              0,0,0,1);
+    */
 
     void swizzle( float rr, float rg, float rb, float ra,
                   float gr, float gg, float gb, float ga,

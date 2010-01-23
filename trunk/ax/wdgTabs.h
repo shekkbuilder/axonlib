@@ -72,9 +72,9 @@ class wdgTabs : public axContainer
       {
         //if( aPage!=mActivePage)
         //{
-          for( int i=0; i<mPages->mWidgets.size(); i++ )
+          for( int i=0; i<mPages->numWidgets(); i++ )
           {
-            axWidget* wdg = mPages->mWidgets[i];
+            axWidget* wdg = mPages->getWidget(i);
             if (i==aPage)
             {
               wdg->setFlag(wfl_Active);

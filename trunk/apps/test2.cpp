@@ -1,5 +1,5 @@
 #define AX_APPLICATION  myApp
-#define AX_SCRIPT_STDLIB
+//#define AX_SCRIPT_STDLIB
 #define AX_FLAGS 0
 #define AX_DEBUG
 

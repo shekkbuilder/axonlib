@@ -27,7 +27,7 @@
  * long desc
  *
  */
- 
+
 #ifndef axEditor_included
 #define axEditor_included
 //----------------------------------------------------------------------
@@ -47,12 +47,13 @@
 
 // widget <-> parameter connection
 
-class axWPConnection
+//class axWPConnection
+struct axWPConnection
 {
-  public:
+  //public:
     axWidget    *mWidget;
     axParameter *mParameter;
-  public:
+  //public:
     axWPConnection(axWidget *aWidget, axParameter *aParameter)
       {
         mWidget = aWidget;
@@ -71,12 +72,20 @@ typedef axArray<axWPConnection*> axWPConnections;
 //
 //----------------------------------------------------------------------
 
+/// plugin editor
+/**
+  the editor does mainly three things:
+  - keep track of a dirty widgets list
+  - keep track of connections between widgets and parameters
+  - can resize plugin window
+*/
+
 class axEditor : public axWindow,
                  public axParameterListener
 {
   private:
     //axMutex   mutex_dirty;
-  public:
+  protected://public:
     axPlugin        *mPlugin;
     axWPConnections mConnections;
     #ifdef AX_DIRTYWIDGETS
@@ -107,6 +116,8 @@ class axEditor : public axWindow,
 
     #ifdef AX_DIRTYWIDGETS
 
+    /// clear list of dirty widgets
+
     void clearDirty(void)
       {
         //mutex_dirty.lock();
@@ -115,6 +126,11 @@ class axEditor : public axWindow,
       }
 
     //----------
+
+    /// append to dirty-widgets list
+    /**
+      if it isn't already in the list
+    */
 
     void appendDirty(axWidget* aWidget)
       {
@@ -132,10 +148,11 @@ class axEditor : public axWindow,
     //
     // we might need a redrawLock here
 
+    /// paint all widgets in dirty-widgets list
+
     void redrawDirty(void)
       {
         //mutex_dirty.lock();
-        //TRACE("redrawDirty\n");
         int num = mDirtyList.size();
         for( int i=0; i<num; i++ )
         {
@@ -143,7 +160,6 @@ class axEditor : public axWindow,
           redrawWidget(wdg);
         }
         clearDirty();
-        //TRACE("...redrawDirty ok\n");
         //mutex_dirty.unlock();
         //flush();
 
@@ -155,12 +171,19 @@ class axEditor : public axWindow,
     // connections
     //----------------------------------------
 
+    /// connect widget to parameter
+    /**
+      for automatic updating of values from one to the another
+    */
+
     void connect(axWidget* aWidget, axParameter* aParameter)
       {
-        aWidget->mParameter = aParameter;
+        //aWidget->mParameter = aParameter;
+        aWidget->setParameter(aParameter);
         int num = mConnections.size();
-        aWidget->mCNum = num;
-        aParameter->mCNum = num;
+        aWidget->setConnectNum(num);
+        aParameter->setConnectNum(num);
+        //aParameter->connection(num);
         aWidget->doSetValue( aParameter->doGetValue() );
         //lock
         mConnections.append( new axWPConnection(aWidget,aParameter) );
@@ -169,11 +192,15 @@ class axEditor : public axWindow,
 
     //----------
 
+    /// todo
+
     void connectAll(void)
       {
       }
 
     //----------
+
+    /// delete & clear the connections list
 
     void deleteConnections(void)
       {
@@ -198,11 +225,12 @@ class axEditor : public axWindow,
     // widget listener
     //----------------------------------------
 
-    // called from gui when tweaking widget
+    /// called from gui when tweaking widget
+
     virtual void onChange(axWidget* aWidget)
       {
         //TRACE("- axEditor: onChange(wdg)... id=%i\n",aWidget->mID);
-        int con = aWidget->mCNum;
+        int con = aWidget->getConnectNum();
         //TRACE("wdg.con: %i\n",con);
         if( con>=0 )
         {
@@ -217,18 +245,21 @@ class axEditor : public axWindow,
 
     //----------
 
+    /// called when parameter changed
+    /**
+      by default, if there is a connection between this parameter, and a widget, the widget is notified (doSetValue).
+      then, either appended to the dirty widgets list if AX_DIRTYWIDGETS is defined, or if not, called for redrawing (redrawWidget)
+      \param aParameter the parameter that has just changed
+    */
+
     virtual void onChange(axParameter* aParameter)
       {
-        //TRACE("- axEditor: onChange(par)... par=%x\n",(int)aParameter);
-        int con = aParameter->mCNum;
-        //TRACE("par.con: %i\n",con);
+        int con = aParameter->getConnectNum();
         if( con>=0 )
         {
           axWidget* wdg = mConnections[con]->mWidget;
-          //TRACE("  wdg=%x\n",(int)wdg);
           float val = aParameter->doGetValue();
-          //wdg->doSetValue(val);
-          wdg->mValue = val;
+          wdg->doSetValue(val);
           #ifdef AX_DIRTYWIDGETS
           appendDirty(wdg);
           #else
@@ -237,11 +268,17 @@ class axEditor : public axWindow,
         }
       }
 
-    //TODO: clear dirtyList??
+    /// resize window
+    /**
+      this one needs more work. specific hosts might need specific actions...
+      calls axWIndow.setSize, set size of rect that will be returned in effEditGetRect, and the vst function sizeWindow is called.
+      various hosts react differently to these, and we need to do a host-check at startup, and do more testing to see which host require what.
+      \param aWidth new width of plugin window
+      \param aHeight new height
+    */
 
     void resizeWindow(int aWidth, int aHeight)
       {
-        //TRACE("dirtyList size : %i\n",mDirtyList.size());
         mRect.w = aWidth;
         mRect.h = aHeight;
         setSize(aWidth,aHeight);  // resize os window

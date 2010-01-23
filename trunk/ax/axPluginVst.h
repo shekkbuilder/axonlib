@@ -17,8 +17,8 @@
  */
 
 /**
- * @file
- * \brief desc
+ * @file axPluginVst.h
+ * \brief vst plugin implementation
  */
 
 /**
@@ -47,23 +47,8 @@
 //#define MAX_CHANS 64
 #define MAX_MIDI_SEND 1024
 
-// plugin flags
-#define pfl_HasEditor 1
-
-// state
-#define pst_Open    1
-#define pst_Close   2
-#define pst_Suspend 3
-#define pst_Resume  4
-
 //----------------------------------------------------------------------
 
-//struct VstEvents
-//{
-//	VstInt32 numEvents;		///< number of Events in array
-//	VstIntPtr reserved;		///< zero (Reserved for future use)
-//	VstEvent* events[2];	///< event pointer array, variable size
-//};
 struct axVstEvents
 {
   VstInt32  numEvents;
@@ -73,7 +58,9 @@ struct axVstEvents
 
 //----------------------------------------------------------------------
 
-class axPluginImpl :  public AudioEffectX
+//class axPluginImpl :  public AudioEffectX
+class axPluginImpl :  public AudioEffectX,
+                     public axPluginBase
 {
   public:
   //private:
@@ -103,38 +90,18 @@ class axPluginImpl :  public AudioEffectX
     float         mPrograms[AX_NUMPROGS][AX_NUMPARAMS];
     char          mProgramNames[AX_NUMPROGS][kVstMaxProgNameLen+1];        // !!!!!
 
+
+    //----------------------------------------------------------------------
+
+  private:
+
+
+    //----------------------------------------------------------------------
+
   public:
-
-    //----------------------------------------------------------------------
-
-    // #ifdef AX_AUTOSYNC
-    //  updateTimeInfo();
-    //  if( mPlayState&1 ) doProcessTransport(mPlayState);
-
-    //void describe(axString aEffect, axString aVendor, axString aProduct, int aVersion, unsigned int aID)
-    //void hasEditor(int aWidth, int aHeight/*, bool aState=true*/)
-    //void sendMidi_clear(void)
-    //void sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3)
-    //void sendMidi_all(void)
-    //void updateTimeInfo(void)
-
-    //virtual axWindow* doCreateEditor(void) { return NULL; }
-    virtual axWindow* doCreateEditor(/*int aWidth, int aHeight*/) { return NULL; }
-    virtual void      doDestroyEditor(void) {}
-    virtual void      doIdleEditor(void) {}
-    virtual void      doProcessState(int aState) {}
-    virtual void      doProcessTransport(int aState) {}
-    virtual void      doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3) {}
-    virtual bool      doProcessBlock(float** inputs, float** outputs, long sampleFrames) { return false; }
-    virtual void      doProcessSample(float** ins, float** outs) { *outs[0]=*ins[0]; *outs[1]=*ins[1]; }
-    virtual void      doPostProcess(float** inputs, float** outputs, long sampleFrames) {}
-
-    //----------------------------------------------------------------------
 
     axPluginImpl(audioMasterCallback audioMaster,long numProgs,long numParams)
     : AudioEffectX(audioMaster,numProgs,numParams)
-    //axPluginImpl(axHostVst* host,long numProgs,long numParams)
-    //: AudioEffectX(host->getAudioMaster(),numProgs,numParams)
       {
 
         mCurProg = 0;
@@ -151,6 +118,9 @@ class axPluginImpl :  public AudioEffectX
         mMidiEventList.reserved  = 0;
         for( int i=0; i<MAX_MIDI_SEND; i++ ) mMidiEventList.events[i] = &mMidiEvents[i];
         mEditorIsOpen = false;
+        canProcessReplacing();      // need this for vst sdk 2.4
+        setNumInputs(2);            // defaults to 2 inputs & outputs
+        setNumOutputs(2);           // aka stereo effect
       }
 
     virtual ~axPluginImpl()
@@ -165,7 +135,7 @@ class axPluginImpl :  public AudioEffectX
     //
     //----------------------------------------------------------------------
 
-    void describe(axString aEffect, axString aVendor, axString aProduct, int aVersion, unsigned int aID)
+    virtual void describe(axString aEffect, axString aVendor, axString aProduct, int aVersion, unsigned int aID)
       {
         mEffectName     = aEffect;
         mVendorString   = aVendor;
@@ -281,45 +251,33 @@ class axPluginImpl :  public AudioEffectX
 
     //----------------------------------------------------------------------
     //
-    // parameters
-    //
-    //----------------------------------------------------------------------
-    // (handled in axPlugin)
-
-    //    virtual void getParameterName(VstInt32 index, char* text)
-    //    virtual void getParameterLabel(VstInt32 index, char* label)
-    //    virtual void getParameterDisplay(VstInt32 index, char* text)
-    //    virtual void setParameter(VstInt32 index, float value)
-    //    virtual float getParameter(VstInt32 index)
-
-    // host->plugin
-    //virtual bool canParameterBeAutomated (VstInt32 index) { return true; }
-    // plug->host
-    //VstInt32 AudioEffectX::getAutomationState ()
-    //virtual void setParameterAutomated(VstInt32 index, float value) {}
-
-    //----------------------------------------------------------------------
-    //
     // programs
     //
     //----------------------------------------------------------------------
-    // AudioEffectX
-    //TODO:
+
+    //TODO: the programs/banks stuff is too primitive
+    // chunks?
 
     virtual void setProgramName(char* name)
       {
         strcpy( mProgramNames[mCurProg], name );
       }
 
+    //----------
+
     virtual void  getProgramName(char* name)
       {
         strcpy(name,mProgramNames[mCurProg]);
       }
 
+    //----------
+
     virtual VstInt32 getProgram(void)
       {
         return mCurProg;
       }
+
+    //----------
 
     virtual void setProgram(VstInt32 program)
       {
@@ -334,19 +292,7 @@ class axPluginImpl :  public AudioEffectX
     //
     //----------------------------------------------------------------------
 
-    // plug->host
-    //bool AudioEffectX::sizeWindow(VstInt32 width, VstInt32 height)
-
-    void hasEditor(int aWidth, int aHeight)
-      {
-        cEffect.flags |= effFlagsHasEditor;
-        mFlags |= pfl_HasEditor;
-        mWidth = aWidth;
-        mHeight = aHeight;
-      }
-
-    //----------
-
+    // [internal]
     void openEditor(void* ptr,long value)
       {
         //#ifdef linux
@@ -354,7 +300,7 @@ class axPluginImpl :  public AudioEffectX
         //#endif
         //if( mWindow ) doDestroyEditor();
         //if( mWindow ) TRACE("oops! mWindo is not NULL (axPluginVst::openEditor)\n"); // meaning we could be executing 'inside' it in another thread?????
-        axWindow* win = doCreateEditor(/*mWidth,mHeight*/);
+        axWindow* win = (axWindow*)doCreateEditor(/*mWidth,mHeight*/);
         if (win)
         {
           win->reparent((int)ptr);
@@ -367,6 +313,7 @@ class axPluginImpl :  public AudioEffectX
 
     //----------
 
+    // [internal]
     void closeEditor(void)
       {
         if(mWindow)
@@ -381,6 +328,7 @@ class axPluginImpl :  public AudioEffectX
 
     //----------
 
+    // [internal]
     void idleEditor(void)
       {
         //if dirtylist not empty, update all widgets in dirtylst
@@ -390,12 +338,23 @@ class axPluginImpl :  public AudioEffectX
         //unlock
       }
 
+    //----------
+
+    virtual void hasEditor(int aWidth, int aHeight)
+      {
+        cEffect.flags |= effFlagsHasEditor;
+        mFlags |= pfl_HasEditor;
+        mWidth = aWidth;
+        mHeight = aHeight;
+      }
+
     //----------------------------------------------------------------------
     //
     // midi
     //
     //----------------------------------------------------------------------
 
+    // [internal]
     void sendMidiClear(void)
       {
         mMidiEventList.numEvents = 0;
@@ -403,7 +362,21 @@ class axPluginImpl :  public AudioEffectX
 
     //----------
 
-    void sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3)
+    // [internal]
+    void sendMidiAll(void)
+      {
+        int num = mMidiEventList.numEvents;
+        if( num>0 )
+        {
+          sendVstEventsToHost( (VstEvents*)&mMidiEventList );
+          sendMidiClear();
+          //mMidiEventList.numEvents = 0;
+        }
+      }
+
+    //----------
+
+    virtual void sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3)
       {
         int num = mMidiEventList.numEvents;
         VstMidiEvent* event = (VstMidiEvent*)( mMidiEventList.events[ num ] );
@@ -419,19 +392,6 @@ class axPluginImpl :  public AudioEffectX
         event->noteOffset   = 0;
         event->detune       = 0;
         mMidiEventList.numEvents+=1;
-      }
-
-    //----------
-
-    void sendMidiAll(void)
-      {
-        int num = mMidiEventList.numEvents;
-        if( num>0 )
-        {
-          sendVstEventsToHost( (VstEvents*)&mMidiEventList );
-          sendMidiClear();
-          //mMidiEventList.numEvents = 0;
-        }
       }
 
     //----------------------------------------
@@ -488,7 +448,7 @@ class axPluginImpl :  public AudioEffectX
     //};
     //
 
-    void updateTimeInfo(void)
+    virtual void updateTimeInfo(void)
       {
         mTimeInfo   = getTimeInfo( kVstPpqPosValid + kVstTempoValid );
         mPlayState  = mTimeInfo->flags & 0xff;

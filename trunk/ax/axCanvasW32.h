@@ -41,8 +41,8 @@
 
 class axCanvasImpl : public axCanvasBase
 {
-  //protected:
-  public:
+  protected:
+  //public:
 		HDC     mDC;
     HFONT   mFont;
 		HPEN    mPen, mOldPen;

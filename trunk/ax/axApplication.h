@@ -33,6 +33,11 @@
 //----------------------------------------------------------------------
 #include "axGlobals.h"
 
+/// brief description
+/**
+  detailed description
+*/
+
 class axApplication
 {
   public:

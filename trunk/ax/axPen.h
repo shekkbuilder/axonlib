@@ -32,30 +32,32 @@
 #define axPen_included
 //----------------------------------------------------------------------
 //TODO
-
 #include "axCanvas.h"
-
 #define DEF_PENWIDTH 0
 
-class axPen
+class axPenBase
 {
-  protected:
-
-    axColor mColor;
-    int     mWidth;
-    int     mStyle;
-
   public:
-
-    axPen( axColor aColor=AX_GREY_LIGHT, int aWidth=DEF_PENWIDTH, int aStyle=0 )
-      {
-        mColor = aColor;
-        mWidth = aWidth;
-        mStyle = aStyle;
-      }
-    virtual ~axPen() {}
-
+    axPenBase(axColor aColor, int aSize, int aStyle) {}
+    virtual ~axPenBase() {}
 };
+
+// in canvas:
+// pen = canvas.createPen(AX_WHITE,1,0);
+// canvas.usePen(pen);
+// canvas.deletePen(pen);
+//
+//
+
+//----------------------------------------------------------------------
+
+#ifdef linux
+
+class axPen : public axPenBase
+{
+};
+
+#endif
 
 //----------------------------------------------------------------------
 #endif

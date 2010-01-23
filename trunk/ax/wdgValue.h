@@ -141,7 +141,7 @@ class wdgValue : public axWidget
           prev = cur;
           mValue -= delta;
           mValue = axMin(1,axMax(0,mValue));
-          if(mParameter) mParameter->mValue = mValue;
+          if(mParameter) mParameter->setValue(mValue);
           mListener->onChange( this );
           sprintf(hint," %.3f",mValue);
           mListener->onHint(hint);

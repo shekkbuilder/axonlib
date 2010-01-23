@@ -2,10 +2,12 @@
 #define AX_NUMPROGS   1
 #define AX_NUMPARAMS  1
 //#define AX_AUTOSYNC
+#define AX_DIRTYWIDGETS
 #define AX_WIDTH      640
 #define AX_HEIGHT     480
 #define AX_FLAGS      (AX_EMBEDDED|AX_BUFFERED)
 #define AX_DEBUG
+
 #include "axDebug.h"
 #include "axPlugin.h"
 //---parameters---
@@ -42,7 +44,7 @@
 //  #include "../../extern/tcc/libtcc.h"
 //}
 //
-///* this function is called by the generated code */
+// this function is called by the generated code */
 //int add(int a, int b)
 //  {
 //    return a + b;
@@ -195,7 +197,8 @@ class myPlugin : public axPlugin,
 
     */
 
-    virtual axWindow* doCreateEditor(void)
+    //virtual axWindow* doCreateEditor(void)
+    virtual void* doCreateEditor(void)
       {
 
         //thread1.startThread(100);
@@ -247,7 +250,7 @@ class myPlugin : public axPlugin,
 
           wLeft->appendWidget( wScrollBox1 = new wdgScrollBox(this,401,NULL_RECT,wal_Client) );
           append_lots_of_knobs(wScrollBox1,this,50);
-          wScrollBox1->wContainer->setAlign(5,5,16,8);
+          wScrollBox1->getContainer()->setAlign(5,5,16,8);
 
           // right
 
@@ -274,7 +277,7 @@ class myPlugin : public axPlugin,
           for (int i=0; i<11; i++)
           {
             wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 128,32),wal_Stacked,1 ) );
-            wPage1->mWidgets[i]->doSetValue((float)i*0.1);
+            wPage1->widget(i)->doSetValue((float)i*0.1);
           }
 
           // -- page 2
@@ -319,7 +322,7 @@ class myPlugin : public axPlugin,
           ed->doRealign();
           ed->connect(wKnob1,mParameters[0]);
         mEditor = ed;
-        return mEditor;
+        return (void*)mEditor;
       }
 
     //----------
@@ -502,8 +505,8 @@ class myPlugin : public axPlugin,
         {
           case 1000: // left
             {
-              int w = wLeft->mRect.w + dX;
-              int h = wLeft->mRect.h;// + dY;
+              int w = wLeft->getRect().w + dX;
+              int h = wLeft->getRect().h;// + dY;
               wLeft->doResize(w,h);
               mEditor->doRealign();
               mEditor->redraw();
@@ -511,8 +514,8 @@ class myPlugin : public axPlugin,
             break;
           case 1001: // top
             {
-              int w = wTop->mRect.w;// + dY;
-              int h = wTop->mRect.h + dY;
+              int w = wTop->getRect().w;// + dY;
+              int h = wTop->getRect().h + dY;
               wTop->doResize(w,h);
               mEditor->doRealign();
               mEditor->redraw();
@@ -520,8 +523,8 @@ class myPlugin : public axPlugin,
             break;
           case 1002: // right
             {
-              int w = wRight->mRect.w - dX;
-              int h = wRight->mRect.h;// + dY;
+              int w = wRight->getRect().w - dX;
+              int h = wRight->getRect().h;// + dY;
               wRight->doResize(w,h);
               mEditor->doRealign();
               mEditor->redraw();
@@ -529,8 +532,8 @@ class myPlugin : public axPlugin,
             break;
           case 1003: // window resizer
             {
-              int w = mEditor->mRect.w + dX;
-              int h = mEditor->mRect.h + dY;
+              int w = mEditor->getRect().w + dX;
+              int h = mEditor->getRect().h + dY;
               mEditor->resizeWindow(w,h);
             }
             break;

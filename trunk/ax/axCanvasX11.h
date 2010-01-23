@@ -45,8 +45,8 @@
 
 class axCanvasImpl : public axCanvasBase
 {
-  //protected:
-  public:
+  protected:
+  //public:
     GC            mGC;
     XGCValues     gcvalues;
     XFontStruct*  mFont;

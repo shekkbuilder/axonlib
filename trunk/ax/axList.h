@@ -35,7 +35,8 @@
 
 class axListNode
 {
-  public:
+  protected:
+  //public:
     axListNode* mPrev;
     axListNode* mNext;
 };
@@ -45,7 +46,8 @@ class axListNode
 class axList
 {
 
-  public:
+  protected:
+  //public:
 
     int mSize;
     axListNode* mHead;
