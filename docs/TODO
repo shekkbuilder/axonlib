@@ -1,23 +1,37 @@
-axContainer
-- widget hover
+- cleanup api
+  
+  there were a lot of haphazard and impulsive coding in the beginning.
+  cleanup and keep to one coding style, and keep to it..
+  specialize, and take advantage of that
 
-axWindow X11/W32
-- mouse cursor
-- mouse setpos/lockpos/restict
+- subdirectories
 
-axCanvas
-- createPen, Brush, Font
-- usePen
+  /mod, modules, aka dsp...
+  /op, operators, for script
+  /par, parameters
+  /wdg, widgets
 
+- axContainer, widget hover
+- axWindow X11/W32
+  - mouse cursor constants
+  - setMousePos(point), restrictMouse(rect)
+  
+  to change mouse cursor when hovering over widgets
+  
+- axCanvas, createPen/Brush/Font. select or usePen/Brush/..
+  
+  currently we delete and recreate pen, brush, etc, every time we change pen color.
+  ineffective, and more prone to memory leaks, and os problems.
+  create tthe needed pens and brushes in constructor, and use/select in doPaint()
 
+-
 
-----------
-
-TODO:
-  axProgram
-  axBank
   axPen
   axBrush
   axFont
-  [axMouseCursor]
 
+  axProgram
+  axBank
+
+axModule/axGraph
+operator <-> module
