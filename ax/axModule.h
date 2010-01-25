@@ -27,7 +27,7 @@
  * long desc
  *
  */
- 
+
 
 #ifndef axModule_included
 #define axModule_included
@@ -105,7 +105,7 @@ typedef axArray<axPin*> axPins;
 
 //----------
 
-class axModuleHandler
+class axModuleBase
 {
   public:
     virtual void doSignal(int aIndex, int aType, int aNum=0, float aVal=0/*, void* aPtr*/) {}
@@ -145,14 +145,14 @@ class axModuleListener
 #define mfl_None    0
 #define mfl_Hover   1
 
-class axModule : public axModuleHandler
+class axModule : public axModuleBase
 {
   //public:
   protected:
     axModuleListener* mOwner;
     int       mFlags;
     axString  mName;
-    axPins    mPins;
+    axPins    mPins; //TODO: inputpins, outputpins
 
   public:
 

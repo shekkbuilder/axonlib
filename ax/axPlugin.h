@@ -93,16 +93,16 @@ class axPluginBase
     /// send midi out
     /**
       call this to send midi out of the plugin.
-      note that midi input 'swallows' the midi events, so you need to send them again if you need or want midi thru
-      call this in doProcessBlock or doProcessSample. they are cached and sent to the host after audio block processing.
+      note that midi input 'swallows' the midi events, so you need to send them out again if you need or want midi thru.
+      call this in doProcessBlock or doProcessSample. events are cached and sent all at once to the host after audio block processing.
     */
     virtual void sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3) {}
 
     /// get host sync and tme info
     /**
       update the internal time, sync, .. variables.
-      if you #define AX_AUTOSYNC somewhere (and only then!), this is called automatically just before every audio block,
-      and the doProcessTransport is called if needed.
+      if you #define AX_AUTOSYNC somewhere, this will be called automatically just before every audio block
+      (and the doProcessTransport is called if needed).
     */
     virtual void updateTimeInfo(void) {}
 
@@ -114,14 +114,13 @@ class axPluginBase
 
     /// host transport has changed
     /**
-      if you have #defined AX_AUTOSYNC, this will be called before every audio block if transport state has changed
+      if you have #defined AX_AUTOSYNC, this will be called before every audio block if transport state has changed.
     */
     virtual void  doProcessTransport(int aState) {}
 
     /// midi input
     /**
-      all midi input is processed at the start of each audio block.
-      for every midi event, this will be called
+      all midi input is processed at the start of each audio block. for every midi event, this will be called
       \param ofs the events offset into the upcoming audio block (doProcessBlock), in samples
       \param msg1 midi message 1
       \param msg2 midi message 2
@@ -131,7 +130,7 @@ class axPluginBase
 
     /// parameter has changed
     /**
-      called every time a parameter has changed, either from tweaking a knob on the gui, or from automation from the host.
+      called every time a parameter has changed, either from tweaking a widget, or from automation from the host.
       note that this can be called anytime, even when you're in the middle of doProcessBlock, or somewhere inbetween
       doProcessSample calls. so, yu might need soee caching, or mutexing, depending on what you do with the variables.
       pointer juggling might be dangerous,
@@ -162,7 +161,7 @@ class axPluginBase
     /// post process buffer
     /**
       called after all other processing is finished. your chance to do any post-processing, if necessary.
-      called with the same parameters as doProcessBlock got.
+      called with the same parameters as doProcessBlock.
       \param inputs the input channels
       \param outputs the outputs channels now with processed samples
       \param sampleFrames number of samples
@@ -172,7 +171,7 @@ class axPluginBase
     /// create editor
     /**
       if you called hasEditor in your constructor, this will be called th create the editor, before the plugin window is shown.
-      \return pointer to window. axWindow* or axEditor*, cast to void*
+      \return pointer to window (cast to void*)
     */
     virtual void* doCreateEditor() { return NULL; }
 
@@ -184,7 +183,7 @@ class axPluginBase
 
     /// idle editor
     /**
-      this is called 20-30 times per secind, depending on the host.
+      this is called 20-30 times per second, depending on the host.
       (if you have not #define AX_NODIRTYWIDGETS, you should redraw the dirty-widgets list here)
     */
     virtual void  doIdleEditor(void) {}
@@ -325,8 +324,9 @@ class axPlugin  : public axPluginImpl,
 
     /// process parameters
     /**
-      process all parameters (ex. for initial setup).
-      will call doProcessParameter for all parameters
+      process all parameters (ex. for initial setup). will call doProcessParameter for all parameters.
+      do this after you have created and appended all parameters, to feed-forward the parameter values
+      to your internal variables.
     */
 
     void processParameters(void)
@@ -415,8 +415,8 @@ class axPlugin  : public axPluginImpl,
 
     /// onChange handler
     /**
-      called when parameter has changed.
-      default action is to just call doProcessParameter
+      called when parameter has changed. default action is to just call doProcessParameter.
+      if you have a gui/editor, you need to override this one, to redraw the affected widgets.
       \param aParameter the parameter that has changed
     */
 

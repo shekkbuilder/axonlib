@@ -27,7 +27,7 @@
  * long desc
  *
  */
- 
+
 #ifndef axCanvas_included
 #define axCanvas_included
 //----------------------------------------------------------------------

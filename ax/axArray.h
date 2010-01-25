@@ -17,20 +17,14 @@
  */
 
 /**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
- */
+  \file axArray.h
+  \brief dynamically sized array, templated
+*/
 
 #ifndef axArray_included
 #define axArray_included
 //----------------------------------------------------------------------
+
 #include <stdlib.h>
 
 #define SIZE_INIT 16  ///< initial size of array
@@ -49,7 +43,10 @@ class axArray
 
   public:
 
-    /// empty constructor. initializes the array to a defined size (SIZE_INIT)
+    /// empty constructor.
+    /**
+      initializes the array to a defined size (SIZE_INIT, default 16)
+    */
 
 		axArray()
 			{
@@ -58,9 +55,11 @@ class axArray
 			  mArray = (_T*)malloc(mRealSize*sizeof(_T));
 			}
 
-    //----------
-
-    /// copy constructor. initializes array from another array (copies data)
+    /// copy constructor.
+    /**
+      initializes array from another array (copies data)
+      \param aArray the other array you want to copy
+    */
 
     axArray(const axArray& aArray)
       {
@@ -70,9 +69,10 @@ class axArray
         mSize = aArray.mSize;
       }
 
-    //----------
-
     /// destructor
+    /**
+      (deletes the buffer)
+    */
 
     ~axArray()
       {
@@ -83,25 +83,49 @@ class axArray
         }
       }
 
-    //----------
+    /// [] operator
+    /**
+      so that you can do things like int a = mArray[3] to get the 4th item
+    */
+    _T& operator [] (int aIndex)
+      {
+        return mArray[aIndex];
+      }
 
-    /// [] operator, so that you can do things like
-    /// int a = mArray[3] to get the 3rd element
-    _T& operator [] (int aIndex) { return mArray[aIndex]; }
+    /// get item
+    /**
+      returns specified item.
+      \param aIndex index of item you want (starting from 0)
+      \return the item
+    */
+    _T& item(int aIndex)
+      {
+        return mArray[aIndex];
+      }
 
-    /// direct access to elements, with index
-    _T& item(int aIndex) { return mArray[aIndex]; }
+    /// size of array
+    /**
+      returns size of array
+      \return number of items in array
+    */
+    int size()
+      {
+        return mSize;
+      }
 
-    /// resutns size of array (number of elements in array)
-    int size() { return mSize; }
+    /// return pointer
+    /**
+      \return pointer to first item [0]
+    */
+    void* ptr()
+      {
+        return mArray;
+      }
 
-    /// pointer to first element [0]
-    void* ptr() { return mArray; }
-
-
-    //----------
-
-    /// ini/copy array from another array
+    /// = operator
+    /**
+      ini/copy array from another array
+    */
     axArray& operator = (const axArray &aArray)
       {
         if (this==&aArray) return *this;
@@ -111,18 +135,19 @@ class axArray
         return *this;
       }
 
-    //----------
+    //void clear()
+    //  {
+    //    mSize = 0;
+    //    mArray = (_T*)realloc(mArray, sizeof(_T)*SIZE_INIT);
+    //    mRealSize = SIZE_INIT;
+    //  }
 
-//    void clear()
-//      {
-//        mSize = 0;
-//        mArray = (_T*)realloc(mArray, sizeof(_T)*SIZE_INIT);
-//        mRealSize = SIZE_INIT;
-//      }
-//
-//    //----------
-//
-    /// clear array. optionally deleting all elements
+    /// clear array.
+    /**
+      optionally deleting all items
+      \param aErase if true, also resize the array (reallocate the array memory).
+      default is true.
+    */
     void clear(bool aErase=true)
       {
         mSize = 0;
@@ -133,9 +158,11 @@ class axArray
         }
       }
 
-    //----------
-
-    /// append an item to the end of the array
+    /// append item
+    /**
+      append an item to the end of the array
+      \param aItem item to append
+    */
     void append(const _T& aItem)
       {
         mSize++;
@@ -147,9 +174,10 @@ class axArray
         mArray[mSize-1] = aItem;
       }
 
-    //----------
-
-    /// set new array size. re-allocates memory if needed
+    /// resize array
+    /**
+      set new array size. re-allocates memory if needed
+    */
     void setSize(int aSize)
       {
         mSize = aSize;
@@ -165,9 +193,11 @@ class axArray
         else clear();
       }
 
-    //----------
-
-    /// remove an element from the array, at pos aPos
+    /// remove item
+    /**
+      remove an item from the array. (no realloc)
+      \param aPos index of item to remove
+    */
     void remove(int aPos)
       {
         if (mSize==1) clear();
@@ -178,19 +208,19 @@ class axArray
         }
       }
 
-    //----------
-
-    /// push element to end of array
-    /// so you can use it like a stack
+    /// push item
+    /**
+      push item to the end of the array, so you can use it like a stack
+    */
     void push(const _T& aItem)
       {
         append(aItem);
       }
 
-    //----------
-
-    /// pops the last element off the array
-    /// like a stack
+    /// pop item
+    /**
+      pops the last item off the array, like a stack
+    */
     _T& pop(void)
       {
         if (mSize>0)

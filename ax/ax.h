@@ -17,66 +17,44 @@
  */
 
 /**
- * @file
- * \brief test template class
- */
-
-/**
- * \brief test template class
- *
- * use this as a starting point when creating new classes
- *
- */
+  \file ax.h
+  \brief ...
+*/
 
 #ifndef ax_included
 #define ax_included
 //----------------------------------------------------------------------
 
+/**
+  \brief test template class
+
+  use this as a starting point when creating new classes
+*/
+
 class ax// : public ax
 {
   private:
 
-    float priv_var; ///< description..
+    float priv_var; ///< description
 
   protected:
 
-    /** longer sentence here blablabladsg afgb sdfg
-        longer sentence here blablabladsg afgb sdfg
-        longer sentence here blablabladsg afgb sdfg */
-
-    float prot_var; ///< protvar
+    float prot_var; ///< description
 
   public:
 
+    /// constructor
     /**
-     * constructor
-     */
+      more description
+    */
 
     ax() {}
 
+    /// destructor
     /**
-     * destructor
-     */
+    */
 
     virtual ~ax() {}
-
-    /**
-     * test function
-     * blablabla...
-     * ...
-     *
-     * @param[in] arg1 int
-     */
-
-    virtual void func1(int arg1) {}
-
-    /**
-     * test function 2
-     * @param[in] arg1 int
-     * @param[out] result int
-     */
-
-    virtual int func2(int arg1) { return 0; }
 
 };
 

@@ -16,26 +16,26 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file
- * \brief desc
- */
+
+// - /**
+// - * @file
+// - * \brief desc
+// - */
 
 /**
- * \brief desc
- *
- * long desc
- *
- */
- 
+  \file axApplication.h
+  \brief standalone application
+*/
+
 #ifndef axApplication_included
 #define axApplication_included
 //----------------------------------------------------------------------
 #include "axGlobals.h"
 
-/// brief description
+/// standalone application base
 /**
-  detailed description
+  inherit from this one, and override the main() method if you ant to create a standalone application.
+  \todo command line argument parsing
 */
 
 class axApplication
@@ -43,6 +43,7 @@ class axApplication
   public:
     axApplication() {}
     virtual ~axApplication() {}
+    virtual void main(void) {}
 };
 
 
