@@ -86,7 +86,11 @@ class axBitmapImpl : public axBitmapBase
         //((XImage*)mImage)->data = NULL;    // we want to delete it ourselves...
         mImage->data = NULL;    // we want to delete it ourselves...
         XDestroyImage(mImage);  // frees data too
-        if (mBuffer) delete[] mBuffer;
+        if (mBuffer)
+        {
+          delete[] mBuffer;
+          mBuffer = NULL;
+        }
       }
 
     //----------

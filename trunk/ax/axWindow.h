@@ -142,8 +142,8 @@ class axWindow : public axWindowImpl
     virtual ~axWindow()
       {
         if (mSurface)
-        {
           //mSurfaceMutex.lock();
+        {
           delete mSurface;
           //mSurfaceMutex.unlock();
         }

@@ -17,23 +17,9 @@
  */
 
 /**
- * @file
- * \brief base class for handling vst-parameters
- */
-
-/**
- * \brief base class for handling vst-parameters
- *
- * this class is the base class for handling vst-parameters
- * it manages a floating point value from 0 to 1 (inclusive),
- * with text name/label, and textual description of its value.
- * also, sends notifications to the listener when the value is changed
- *
- * when the vst plugin class (axPluginVst) calls doSetParameter (as a
- * response to setParameter), and we have set our editor as the listener,
- * it will be notified when the parameter changes, and can redraw the
- * corresponding widget to indicate the new value.
- */
+  \file axParameter.h
+  \brief vst-parameter handling
+*/
 
 #ifndef axParameter_included
 #define axParameter_included
@@ -76,6 +62,23 @@ class axParameterListener
 };
 
 //----------------------------------------------------------------------
+
+/**
+  \brief parameter
+
+  a parameter is a value that can be automated by the plugin host,
+  and tweaked with a knob or other widget.
+  the internal range of the value is always from 0 to 1.
+  subclasses of axParameter (like parFloat and parInteger) add different ranges and intervals.
+  the parameter has a name ("lowpass", "gain" ..), a label ("db", "%", "ms" ..),
+  and a text description of the internal value ("-32", "off", "2:1" ..).
+
+  when the parameter is changed (from host automation or knob-tweaking), the parameter's listener is notified
+  (calling mListener->onChange(parameter)).
+
+  add a parameter to a plugin by calling axPlugin::appendParameter
+
+ */
 
 class axParameter : public axParameterBase
 {
