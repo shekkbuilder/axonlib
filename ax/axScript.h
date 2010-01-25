@@ -204,7 +204,11 @@ class axScript
     virtual ~axScript()
       {
         delete[] mCode;
-        if (mSource) delete[] mSource;
+        if (mSource)
+        {
+          delete[] mSource;
+          mSOurce = NULL;
+        }
         deleteTokens();
         deleteOpcodes();
       }
