@@ -17,21 +17,16 @@
  */
 
 /**
- * @file
- * \brief desc
- */
+  \file axBitmap.h
+  \brief bitmaps (client/ram)
+*/
 
-/**
- * \brief desc
- *
- * long desc
- *
- */
- 
 #ifndef axBitmap_included
 #define axBitmap_included
 //----------------------------------------------------------------------
 //#include "axBitmapBase.h"
+
+/// bitmap base
 
 class axBitmapBase
 {
@@ -78,28 +73,28 @@ class axBitmapBase
 
 //----------------------------------------------------------------------
 
-//class axMemBitmap : public axBitmapBase
-//{
-//  public:
-//    char* mBuffer;
-//  public:
-//    axMemBitmap(int aWidth, int aHeight)
-//    : axBitmapBase(aWidth, aHeight)
-//      {
-//        mDepth  = DefaultDepth(gDP,DefaultScreen(gDP)); // 32?
-//        mBuffer = new char[mWidth*mHeight*4];
-//      }
-//    axMemBitmap(int aWidth, int aHeight, unsigned char* aData)
-//    : axBitmapBase(aWidth, aHeight)
-//      {
-//        if(mBuffer) memcpy(mBuffer,aData,mWidth*mHeight*4);
-//        //convert_rgba_bgra(aData);
-//      }
-//    virtual ~axMemBitmap()
-//      {
-//      }
-//
-//};
+class axBitmapMem : public axBitmapBase
+{
+  public:
+    char* mBuffer;
+  public:
+    axBitmapMem(int aWidth, int aHeight)
+    : axBitmapBase(aWidth, aHeight)
+      {
+        mDepth  = DefaultDepth(gDP,DefaultScreen(gDP)); // 32?
+        mBuffer = new char[mWidth*mHeight*4];
+      }
+    axBitmapMem(int aWidth, int aHeight, unsigned char* aData)
+    : axBitmapBase(aWidth, aHeight)
+      {
+        if(mBuffer) memcpy(mBuffer,aData,mWidth*mHeight*4);
+        //convert_rgba_bgra(aData);
+      }
+    virtual ~axBitmapMem()
+      {
+      }
+
+};
 
 //----------------------------------------------------------------------
 

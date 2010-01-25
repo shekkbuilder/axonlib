@@ -17,17 +17,9 @@
  */
 
 /**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
- */
- 
+  \file axMutex.h
+  \brief mutex/critical sections
+*/
 
 #ifndef axMutex_included
 #define axMutex_included
@@ -38,6 +30,8 @@
 //----------------------------------------------------------------------
 // mutex
 //----------------------------------------------------------------------
+
+/// mutex base
 
 class axMutexBase
 {
@@ -52,6 +46,8 @@ class axMutexBase
 //----------------------------------------------------------------------
 #ifdef WIN32
 #include <windows.h>
+
+/// win32, critical sections
 
 class axMutex : public axMutexBase
 {
@@ -69,6 +65,8 @@ class axMutex : public axMutexBase
 //----------------------------------------------------------------------
 #ifdef linux
 #include <pthread.h>
+
+/// linux, pthread_mutex
 
 class axMutex : public axMutexBase
 {

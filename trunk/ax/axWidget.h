@@ -91,13 +91,13 @@ typedef axArray<axWidget*> axWidgets;
 
 //----------------------------------------------------------------------
 //
-// axWidgetHandler
+// axWidgetBase
 //
 //----------------------------------------------------------------------
 
 /**
-  \class axWidgetHandler
-  \brief widget handler
+  \class axWidgetBase
+  \brief widget base
 
   the base class for all widgets (and containers). it contains of a set of (do-nothing) methods,
   that defines what a widget can (or is supposed to) do, and how to use these capabilities.
@@ -105,7 +105,7 @@ typedef axArray<axWidget*> axWidgets;
 */
 
 // Listener -> widget
-class axWidgetHandler
+class axWidgetBase
 {
   public:
     /// reset to default
@@ -283,17 +283,17 @@ class axWidgetListener
 
 */
 
-class axWidget : public axWidgetHandler
+class axWidget : public axWidgetBase
 {
   protected:
     axWidgetListener* mListener;
-    axParameter *mParameter;
     axRect mRect;
+    int mAlignment;
     int mFlags;
     axColor mFillColor;
-    int mAlignment;
     float mValue;
-    int mCNum;
+    int mConIndex;              // hmmm..
+    axParameter *mParameter;    // dobbelt opp?
   public:
     void* mUser;
     int mID;
@@ -314,7 +314,7 @@ class axWidget : public axWidgetHandler
         mAlignment  = aAlignment;
         mValue      = 0;
         mUser       = NULL;
-        mCNum       = -1;
+        mConIndex   = -1;
       }
 
     //virtual ~axWidget() {}
@@ -328,8 +328,8 @@ class axWidget : public axWidgetHandler
     inline float getValueDirect(void) { return mValue; }
     inline void setValueDirect(float v) { mValue = v; }
 
-    inline int getConnectNum(void) { return mCNum; }
-    inline void setConnectNum(int c) { mCNum = c; }
+    inline int getConnectionIndex(void) { return mConIndex; }
+    inline void setConnectionIndex(int c) { mConIndex = c; }
 
     inline int getAlignment(void) { return mAlignment; }
 

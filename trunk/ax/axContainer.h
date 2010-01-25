@@ -17,17 +17,10 @@
  */
 
 /**
- * @file
- * \brief desc
- */
+  \file axContainer.h
+  \brief container widget
+*/
 
-/**
- * \brief desc
- *
- * long desc
- *
- */
-  
 #ifndef axContainer_included
 #define axContainer_included
 //----------------------------------------------------------------------

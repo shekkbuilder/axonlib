@@ -48,7 +48,7 @@
 
 //----------------------------------------------------------------------
 
-class axParameterHandler
+class axParameterBase
 {
   public:
     /// reset value to default, and notify listener
@@ -77,7 +77,7 @@ class axParameterListener
 
 //----------------------------------------------------------------------
 
-class axParameter : public axParameterHandler
+class axParameter : public axParameterBase
 {
   protected:
     axParameterListener* mListener;
@@ -85,7 +85,7 @@ class axParameter : public axParameterHandler
     axString  mLabel;
     float     mValue;   // 0..1
     float     mDefault;
-    int       mCNum;
+    int       mConIndex; // mCNum
 
   public:
 
@@ -107,17 +107,17 @@ class axParameter : public axParameterHandler
         mValue    = 0;
         mDefault  = mValue;
         mUser     = NULL;
-        mCNum     = -1;
+        mConIndex = -1;
       }
 
     //----------
 
     inline void setListener(axParameterListener* l) { mListener = l; }
     inline axParameterListener* getListener(void) { return mListener; }
-    inline void setConnectNum(int num) { mCNum = num; }
+    inline void setConnectionIndex(int num) { mConIndex = num; }
     inline void setValueDirect(float v) { mValue = v; }
 
-    inline int getConnectNum(void) { return mCNum; }
+    inline int getConnectionIndex(void) { return mConIndex; }
     inline float getValueDirect(void) { return mValue; }
 
     //----------
@@ -127,7 +127,7 @@ class axParameter : public axParameterHandler
     /// read value, with conversion/remapping
     virtual float getValue(void)            { return mValue; }
 
-    // axParameterHandler
+    // axParameterBase
 
     virtual void  doReset(void)             { mValue=mDefault; if(mListener) mListener->onChange(this); }
     virtual void  doSetValue(float aValue)  { mValue=aValue;   if(mListener) mListener->onChange(this); }

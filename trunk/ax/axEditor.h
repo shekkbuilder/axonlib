@@ -183,8 +183,8 @@ class axEditor : public axWindow,
         //aWidget->mParameter = aParameter;
         aWidget->setParameter(aParameter);
         int num = mConnections.size();
-        aWidget->setConnectNum(num);
-        aParameter->setConnectNum(num);
+        aWidget->setConnectionIndex(num);
+        aParameter->setConnectionIndex(num);
         //aParameter->connection(num);
         aWidget->doSetValue( aParameter->doGetValue() );
         //lock
@@ -232,7 +232,7 @@ class axEditor : public axWindow,
     virtual void onChange(axWidget* aWidget)
       {
         //TRACE("- axEditor: onChange(wdg)... id=%i\n",aWidget->mID);
-        int con = aWidget->getConnectNum();
+        int con = aWidget->getConnectionIndex();
         //TRACE("wdg.con: %i\n",con);
         if( con>=0 )
         {
@@ -257,7 +257,7 @@ class axEditor : public axWindow,
 
     virtual void onChange(axParameter* aParameter)
       {
-        int con = aParameter->getConnectNum();
+        int con = aParameter->getConnectionIndex();
         if( con>=0 )
         {
           axWidget* wdg = mConnections[con]->mWidget;
