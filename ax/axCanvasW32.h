@@ -27,7 +27,7 @@
  * long desc
  *
  */
- 
+
 #ifndef axCanvasW32_included
 #define axCanvasW32_included
 //----------------------------------------------------------------------
@@ -87,6 +87,23 @@ class axCanvasImpl : public axCanvasBase
 
     //--------------------------------------------------
     // get / set
+    //--------------------------------------------------
+
+    virtual void selectPen(axPen* aPen)
+      {
+        /*mOldPen = (HPEN)*/SelectObject((HDC)mDC, aPen->handle());
+      }
+
+    virtual void selectBrush(axBrush* aBrush)
+      {
+        /*mOldBrush = (HBRUSH)*/SelectObject((HDC)mDC, mBrush->handle());
+      }
+
+    virtual void selectFont(axFont* aFont)
+      {
+        SetTextColor(mDC,mTextColor.mColor);
+      }
+
     //--------------------------------------------------
 
     // internal

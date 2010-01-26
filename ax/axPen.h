@@ -17,16 +17,9 @@
  */
 
 /**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
- */
+  \file axPen.h
+  \brief pen
+*/
 
 #ifndef axPen_included
 #define axPen_included
@@ -37,25 +30,68 @@
 
 class axPenBase
 {
+  protected:
+    axColor mColor;
+    int     mSize;
+    int     mStyle;
   public:
-    axPenBase(axColor aColor, int aSize, int aStyle) {}
-    virtual ~axPenBase() {}
+    axPenBase(axColor aColor, int aSize, int aStyle)
+      {
+        mColor = aColor;
+        mSize = aSize;
+        mStyle = aStyle;
+      }
+    virtual ~axPenBase()
+      {
+      }
+    virtual int handle(void)
+      {
+        return 0;
+      }
+    inline axColor color(void)  { return mColor; }
+    inline int size(void)       { return mSize; }
+    inline int style(void)      { return mStyle; }
 };
-
-// in canvas:
-// pen = canvas.createPen(AX_WHITE,1,0);
-// canvas.usePen(pen);
-// canvas.deletePen(pen);
-//
-//
 
 //----------------------------------------------------------------------
 
 #ifdef linux
 
-class axPen : public axPenBase
-{
-};
+  class axPen : public axPenBase
+  {
+    public:
+      axPen(axColor aColor=AX_GREY_LIGHT, int aSize=DEF_PENWIDTH, int aStyle=0)
+      : axPenBase(aColor,aSize,aStyle)
+        {
+        }
+  };
+
+#endif
+
+//----------------------------------------------------------------------
+
+#ifdef WIN32
+
+  class axPen : public axPenBase
+  {
+    private:
+      HPEN  mPen
+      //HPEN  mOldPen;
+    public:
+      axPen(axColor aColor, int aSize, int aStyle)
+      : axPenBase(aColor,aSize,aStyle)
+        {
+          mPen = CreatePen(PS_SOLID,aSize,aColor);
+        }
+      virtual ~axPen()
+        {
+          DeleteObject(mPen);
+        }
+      virtual int handle(void)
+        {
+          return mPen;
+        }
+  };
 
 #endif
 

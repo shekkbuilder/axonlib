@@ -320,7 +320,7 @@ class myPlugin : public axPlugin,
           wTabs->setPage(0);
           // ---
           ed->doRealign();
-          ed->connect(wKnob1,mParameters[0]);
+          //ed->connect(wKnob1,mParameters[0]);
         mEditor = ed;
         return (void*)mEditor;
       }

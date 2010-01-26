@@ -16,18 +16,6 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
- */
-
 #ifndef axBitmapW32_included
 #define axBitmapW32_included
 //----------------------------------------------------------------------

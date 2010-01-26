@@ -27,8 +27,8 @@
  * long desc
  *
  */
- 
- 
+
+
 #ifndef axGlobals_included
 #define axGlobals_included
 //----------------------------------------------------------------------
@@ -42,6 +42,8 @@ static char base_path[1024];
 //----------------------------------------------------------------------
 
 #ifdef linux
+
+  #define AX_LINUX
 
   #include <X11/Xlib.h>
   #include <X11/Xutil.h>
@@ -108,6 +110,8 @@ static char base_path[1024];
 //----------------------------------------------------------------------
 
 #ifdef WIN32
+
+  #define AX_WIN32
 
   #include <windows.h>
 

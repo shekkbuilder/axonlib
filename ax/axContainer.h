@@ -135,7 +135,7 @@ class axContainer : public axWidget,
       (widget position relative to container)
     */
 
-    virtual void appendWidget(axWidget* aWidget, bool aRealign=false)
+    virtual void appendWidget(axWidget* aWidget/*, bool aRealign=false*/)
       {
         aWidget->doMove( mRect.x + aWidget->getRect().x, mRect.y + aWidget->getRect().y );
         mWidgets.append(aWidget);

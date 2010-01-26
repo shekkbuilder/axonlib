@@ -105,7 +105,7 @@ class wdgScrollBox : public axContainer
 
     //----------
 
-    virtual void appendWidget(axWidget* aWidget, bool aRealign=false)
+    virtual void appendWidget(axWidget* aWidget/*, bool aRealign=false*/)
       {
         wContainer->appendWidget(aWidget);
       }

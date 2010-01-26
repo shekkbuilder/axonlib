@@ -572,7 +572,7 @@ class axWindowImpl : public axWindowBase
         switch (ev->type)
         {
           case ConfigureNotify:
-            TRACE("ConfigureNotify\n");
+            //TRACE("ConfigureNotify\n");
             //TODO: resize surface, if any
             w = ev->xconfigure.width;
             h = ev->xconfigure.height;

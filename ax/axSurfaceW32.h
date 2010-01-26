@@ -55,14 +55,15 @@ class axSurfaceImpl : public axSurfaceBase
         mHandle = CreateCompatibleBitmap(tempdc,mWidth,mHeight);  // creates a bitmap compatible with the device associated with the specified device context.
         ReleaseDC(0,tempdc);                                      // releases a device context (DC), freeing it for use by other applications.
         mCanvas = new axCanvas(0,cmo_buffer);
-        mOldHandle = (HBITMAP)SelectObject(mCanvas->mDC,mHandle);
+        //mOldHandle = (HBITMAP)SelectObject(mCanvas->mDC,mHandle);
+        mOldHandle = (HBITMAP)SelectObject(mCanvas->getDC(),mHandle);
       }
 
     //----------
 
     virtual ~axSurfaceImpl()
       {
-        SelectObject(mCanvas->mDC,mOldHandle);
+        SelectObject(mCanvas->getDC(),mOldHandle);
         delete mCanvas;
         DeleteObject(mHandle);
       }

@@ -117,23 +117,18 @@ class axCanvasBase
     //----------
 
     //TODO
-//    virtual axPen*    createPen(axColor, int aWidth, int aStyle) { return NULL; }
-//    virtual axBrush*  createBrush(axColor, int aStyle) { return NULL; }
-//    virtual axFont*   createFont(axString aName, int aSize, int aStyle) { return NULL; }
-//    virtual void      selectPen(axPen* aPen) {}
-//    virtual void      selectBrush(axBrush* aBrush) {}
-//    virtual void      selectFont(axFont* aFont) {}
-//    virtual void      resetPen(void) {}
-//    virtual void      resetBrush(void) {}
-//    virtual void      resetFont(void) {}
+    virtual void selectPen(axPen* aPen) {}
+    virtual void selectBrush(axBrush* aBrush) {}
+    virtual void selectFont(axFont* aFont) {}
 
-    virtual void setPenColor(axColor aColor) {}
-    virtual void setBrushColor(axColor aColor) {}
-    virtual void setTextColor(axColor aColor) {}
-    virtual void setPenWidth(int aWidth) {}
-    virtual void resetPenWidth(void) {}
-    virtual void setPenStyle(int aStyle) {}
-    virtual void setBrushStyle(int aStyle) {}
+    //TODO: deprecate the following...
+        virtual void setPenColor(axColor aColor) {}
+        virtual void setBrushColor(axColor aColor) {}
+        virtual void setTextColor(axColor aColor) {}
+        virtual void setPenWidth(int aWidth) {}
+        virtual void resetPenWidth(void) {}
+        virtual void setPenStyle(int aStyle) {}
+        virtual void setBrushStyle(int aStyle) {}
 
     virtual void setPos(int aX, int aY) {}
     virtual void setClipRect(int aX1, int aY1, int aX2, int aY2) {}

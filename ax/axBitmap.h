@@ -81,7 +81,7 @@ class axBitmapMem : public axBitmapBase
     axBitmapMem(int aWidth, int aHeight)
     : axBitmapBase(aWidth, aHeight)
       {
-        mDepth  = DefaultDepth(gDP,DefaultScreen(gDP)); // 32?
+        mDepth  = 32;
         mBuffer = new char[mWidth*mHeight*4];
       }
     axBitmapMem(int aWidth, int aHeight, unsigned char* aData)
