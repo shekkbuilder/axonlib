@@ -17,55 +17,77 @@
  */
 
 /**
- * @file
- * \brief desc
- */
+  \file axBrush.h
+  \brief brush
+*/
 
-/**
- * \brief desc
- *
- * long desc
- *
- */
- 
 #ifndef axBrush_included
 #define axBrush_included
 //----------------------------------------------------------------------
-//TODO
 
 #include "axCanvas.h"
 
-#ifdef linux
-
-class axBrush
+class axBrushBase
 {
   protected:
-
     axColor mColor;
     int     mStyle;
-
   public:
-
-    axBrush( axColor aColor=AX_GREY, int aStyle=0 )
+    axBrushBase( axColor aColor=AX_GREY_DARK, int aStyle=0 )
       {
         mColor = aColor;
         mStyle = aStyle;
       }
-
-    virtual ~axBrush() {}
-
-    //virtual void setBrushColor(axColor aColor)
-    //  {
-    //    mBrushColor = aColor;
-    //    setforecolor(mBrushColor.mColor);
-    //  };
-
-    //virtual void setBrushStyle(int aStyle)
-    //  {
-    //    XSetFillStyle(gDP,mGC,aStyle); // FillSolid
-    //  };
-
+    virtual ~axBrushBase()
+      {
+      }
+    virtual int handle(void)
+      {
+        return 0;
+      }
+    inline axColor color(void)  { return mColor; }
+    inline int style(void)      { return mStyle; }
 };
+
+//----------------------------------------------------------------------
+
+#ifdef linux
+
+  class axBrush : public axBrushBase
+  {
+    public:
+      axBrush(axColor aColor, int aStyle)
+      : axBrushBase(aColor,aStyle)
+        {
+        }
+  };
+
+#endif
+
+//----------------------------------------------------------------------
+
+#ifdef WIN32
+
+  class axBrush : public axBrushBase
+  {
+    private:
+      HBRUSH  mBrush;
+      //HBRUSH  mOldBrush;
+    public:
+      axBrush(axColor aColor, int aStyle)
+      : axBrushBase(aColor,aStyle)
+        {
+          mBrush = CreateSolidBrush(aColor);
+        }
+      virtual ~axBrush()
+        {
+          DeleteObject(mBrush);
+        }
+      virtual int handle(void)
+        {
+          return mBrush;
+        }
+  };
 
 #endif
 

@@ -17,28 +17,85 @@
  */
 
 /**
- * @file
- * \brief desc
- */
+  \file axFont.h
+  \brief font
+*/
 
-/**
- * \brief desc
- *
- * long desc
- *
- */
- 
 #ifndef axFont_included
 #define axFont_included
 //----------------------------------------------------------------------
 //TODO
+#include "axCanvas.h"
+#define DEF_PENWIDTH 0
 
-class axFont
+class axFontBase
 {
+  protected:
+    axString  mName;
+    axColor   mColor;
+    int       mSize;
+    int       mStyle;
   public:
-    axFont() {}
-    virtual ~axFont() {}
+    axFontBase(axString aName, axColor aColor, int aSize, int aStyle)
+      {
+        mName  = "default";//aName;
+        mColor = aColor;
+        mSize = aSize;
+        mStyle = aStyle;
+      }
+    virtual ~axFontBase() {}
+    inline axString name(void) { return mName; }
+    inline axColor color(void) { return mColor; }
+    inline int size(void)     { return mSize; }
+    inline int style(void)    { return mStyle; }
+    virtual int handle(void)  { return 0; }
 };
+
+//----------------------------------------------------------------------
+
+#ifdef linux
+
+  class axFont : public axFontBase
+  {
+    public:
+
+      axFont(axString aName, axColor aColor=AX_GREY_LIGHT, int aSize=DEF_PENWIDTH, int aStyle=0)
+      : axFontBase(aName,aColor,aSize,aStyle)
+        {
+        }
+
+      virtual ~axFont()
+        {
+        }
+  };
+
+#endif
+
+//----------------------------------------------------------------------
+
+#ifdef WIN32
+
+  class axFont : public axFontBase
+  {
+    public:
+
+      axFont(axColor aColor, int aSize, int aStyle)
+      : axFontBase(aColor,aSize,aStyle)
+        {
+        }
+
+      virtual ~axFont()
+        {
+        }
+
+      virtual int handle(void)
+        {
+          return 0;
+        }
+
+  };
+
+#endif
 
 //----------------------------------------------------------------------
 #endif

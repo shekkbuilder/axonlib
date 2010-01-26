@@ -27,7 +27,7 @@
  * long desc
  *
  */
- 
+
 #ifndef axCanvasX11_included
 #define axCanvasX11_included
 //----------------------------------------------------------------------
@@ -79,6 +79,25 @@ class axCanvasImpl : public axCanvasBase
 
     //--------------------------------------------------
     // get / set
+    //--------------------------------------------------
+
+    virtual void selectPen(axPen* aPen)
+      {
+        XSetForeground(gDP,mGC,aPen->color().mColor);
+        XSetLineAttributes(gDP,mGC,aPen->size(),LineSolid,CapButt,JoinBevel);
+      }
+
+    virtual void selectBrush(axBrush* aBrush)
+      {
+        XSetForeground(gDP,mGC,aBrush->color().mColor);
+        XSetFillStyle(gDP,mGC,aBrush->style()); // FillSolid
+      }
+
+    virtual void selectFont(axFont* aFont)
+      {
+        XSetForeground(gDP,mGC,aFont->color().mColor);
+      }
+
     //--------------------------------------------------
 
     // internal
