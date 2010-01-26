@@ -79,8 +79,8 @@ class axFontBase
   {
     public:
 
-      axFont(axColor aColor, int aSize, int aStyle)
-      : axFontBase(aColor,aSize,aStyle)
+      axFont(axString aName, axColor aColor, int aSize, int aStyle)
+      : axFontBase(aName,aColor,aSize,aStyle)
         {
         }
 

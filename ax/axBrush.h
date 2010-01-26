@@ -77,7 +77,7 @@ class axBrushBase
       axBrush(axColor aColor, int aStyle)
       : axBrushBase(aColor,aStyle)
         {
-          mBrush = CreateSolidBrush(aColor);
+          mBrush = CreateSolidBrush(aColor.mColor);
         }
       virtual ~axBrush()
         {
@@ -85,7 +85,7 @@ class axBrushBase
         }
       virtual int handle(void)
         {
-          return mBrush;
+          return (int)mBrush;
         }
   };
 

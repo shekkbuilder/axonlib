@@ -10,16 +10,16 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with Axonlib.
- * If not, see <http://www.gnu.org/licenses/>. 
+ * If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  * @file
  * \brief math approximations and routines
- */  
+ */
 
 /**
  * \brief math approximations and routines
@@ -32,6 +32,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include "axDebug.h"
+#include "axDefines.h"
 
 /**
  * returns the floor of a floating point number
@@ -131,7 +132,7 @@ inline float axSign(const float value)
 /**
  * returns the smaller of two floating point numbers
  * @param[in] a float
- * @param[in] b float  
+ * @param[in] b float
  * @return result float
  */
 inline float axMin(const float a, const float b)
@@ -142,7 +143,7 @@ inline float axMin(const float a, const float b)
 /**
  * returns the larger of two floating point numbers
  * @param[in] a float
- * @param[in] b float  
+ * @param[in] b float
  * @return result float
  */
 inline float axMax(const float a, const float b)
@@ -151,9 +152,9 @@ inline float axMax(const float a, const float b)
 }
 
 /**
- * limits a floating point number to [-limit, limit]  
+ * limits a floating point number to [-limit, limit]
  * @param[in] input float
- * @param[in] limit float  
+ * @param[in] limit float
  * @return result float
  */
 inline float axLimit(const float input, const float limit)
@@ -164,7 +165,7 @@ inline float axLimit(const float input, const float limit)
 /**
  * returns the smaller of two integer numbers
  * @param[in] a int
- * @param[in] b int  
+ * @param[in] b int
  * @return result float
  */
 inline int axMinInt(const int a, const int b)
@@ -175,7 +176,7 @@ inline int axMinInt(const int a, const int b)
 /**
  * returns the larger of two integer numbers
  * @param[in] a int
- * @param[in] b int  
+ * @param[in] b int
  * @return result float
  */
 inline int axMaxInt(const int a, const int b)
@@ -186,7 +187,7 @@ inline int axMaxInt(const int a, const int b)
 /**
  * limits an integer number to [-limit, limit]
  * @param[in] input int
- * @param[in] limit int  
+ * @param[in] limit int
  * @return a_or_b float
  */
 inline int axLimitInt(const int input, const int limit)
@@ -198,7 +199,7 @@ inline int axLimitInt(const int input, const int limit)
  * calculates min(floor(a*b), c - 1)
  * @param[in] a float
  * @param[in] b float
- * @param[in] c float   
+ * @param[in] c float
  * @return result float
  */
 inline float axCalcStep(const float a, const float b, const float c)
@@ -209,8 +210,8 @@ inline float axCalcStep(const float a, const float b, const float c)
 /**
  * calculates (a*b + c)
  * @param[in] a float
- * @param[in] b float  
- * @param[in] c float  
+ * @param[in] b float
+ * @param[in] c float
  * @return result float
  */
 inline float axCalcValuep(const float a, const float b, const float c)
@@ -220,7 +221,7 @@ inline float axCalcValuep(const float a, const float b, const float c)
 
 /**
  * passes a seed to the random number generator
- * @param[in] aSeed int default value (19)  
+ * @param[in] aSeed int default value (19)
  */
 inline void axRandomize(const int aSeed = 19)
 {
@@ -229,7 +230,7 @@ inline void axRandomize(const int aSeed = 19)
 
 /**
  * returns a random float number between [0..f]
- * @param[in] f float default value (1)    
+ * @param[in] f float default value (1)
  * @return result float
  */
 inline float axRandom(const float f = 1)
@@ -239,7 +240,7 @@ inline float axRandom(const float f = 1)
 
 /**
  * returns a random integer between [0..i]
- * @param[in] i int   
+ * @param[in] i int
  * @return result int
  */
 inline int axRandomInt(const int i)
@@ -249,7 +250,7 @@ inline int axRandomInt(const int i)
 }
 
 /**
- * returns a random floating point number between [-1..1]        
+ * returns a random floating point number between [-1..1]
  * @return result float
  */
 inline float axRandomSigned(void)
@@ -260,7 +261,7 @@ inline float axRandomSigned(void)
 /**
  * returns a random float number between [aLow..aHigh]
  * @param[in] aLow float
- * @param[in] aHigh float  
+ * @param[in] aHigh float
  * @return result float
  */
 inline float axRandom(const float aLow, const float aHigh)
@@ -272,7 +273,7 @@ inline float axRandom(const float aLow, const float aHigh)
 
 /**
  * calculates the natural logarithm of a floating point number
- * @param[in] value float    
+ * @param[in] value float
  * @return value float
  */
 inline float axLogf(float value)
@@ -288,7 +289,7 @@ inline float axLogf(float value)
 
 /**
  * calculates the logarithm base 2 of a floating point number
- * @param[in] value float    
+ * @param[in] value float
  * @return value float
  */
 inline float axLog2f(float value)
@@ -304,7 +305,7 @@ inline float axLog2f(float value)
 
 /**
  * calculates the sine of a floating point number
- * @param[in] value float    
+ * @param[in] value float
  * @return value float
  */
 inline float axSinf(float value)
@@ -320,7 +321,7 @@ inline float axSinf(float value)
 
 /**
  * calculates the cosine of a floating point number
- * @param[in] value float    
+ * @param[in] value float
  * @return value float
  */
 inline float axCosf(float value)
@@ -409,7 +410,7 @@ inline float axAtanf(float value)
 /**
  * fast approximation of a N-th root function
  * @param[in] value float
- * @param[in] root long  
+ * @param[in] root long
  * @return value float
  */
 inline float axNrt(float value, long root)
@@ -433,7 +434,7 @@ inline float axSqrt(float value)
 {
   __asm__ volatile
   (
-    "subl $0x3f800000, %0;"    "shrl $1, %0;"    "addl $0x3f800000, %0;"    
+    "subl $0x3f800000, %0;"    "shrl $1, %0;"    "addl $0x3f800000, %0;"
     : "=r" (value)
     : "0" (value)
   );
@@ -442,7 +443,7 @@ inline float axSqrt(float value)
 
 /**
  * fast approximation of the invert squre root function
- * based on code found in 'quake 3 arena' by 'id software'  
+ * based on code found in 'quake 3 arena' by 'id software'
  * @param[in] x float
  * @return result float
  */
@@ -459,7 +460,7 @@ inline float axInvSqrt(float x)
  * performs fast and accurate pow(float, integer) approximation
  * @param[in] x float
  * @param[in] n int
- * @return   
+ * @return
  */
 inline float axPow(float x, int n)
 {
@@ -476,8 +477,8 @@ inline float axPow(float x, int n)
 /**
  * fast approximation of [e] to the power of a number
  * based on code found in http://theoval.sys.uea.ac.uk/publications/pdf/nc2000a.pdf
- * @param[in] exponent float  
- * @return result float  
+ * @param[in] exponent float
+ * @return result float
  */
 inline float axExp(const float exponent)
 {
@@ -500,9 +501,9 @@ inline float axExp(const float exponent)
 
 /**
  * fast approximation of the logarithm base 2 function
- * based on code from http://www.flipcode.com/archives/Fast_log_Function.shtml    
- * @param[in] val float  
- * @return result float  
+ * based on code from http://www.flipcode.com/archives/Fast_log_Function.shtml
+ * @param[in] val float
+ * @return result float
  */
 inline float axLog2(float val)
 {
@@ -519,8 +520,8 @@ inline float axLog2(float val)
 /**
  * fast approximation of the natural logarithm
  * based on code from http://www.flipcode.com/archives/Fast_log_Function.shtml
- * @param[in] val float  
- * @return result float  
+ * @param[in] val float
+ * @return result float
  */
 inline float axLog(const float &val)
 {
@@ -528,9 +529,9 @@ inline float axLog(const float &val)
 }
 
 /**
- * fast approximation of the sine function for range [-pi, pi]  
+ * fast approximation of the sine function for range [-pi, pi]
  * @param[in] x float
- * @return result float  
+ * @return result float
  */
 inline float axSin(float x)
 {
@@ -539,9 +540,9 @@ inline float axSin(float x)
 }
 
 /**
- * fast approximation of the cosine function for range [-pi, pi]  
+ * fast approximation of the cosine function for range [-pi, pi]
  * @param[in] x float
- * @return result float  
+ * @return result float
  */
 inline float axCos(float x)
 {
@@ -550,9 +551,9 @@ inline float axCos(float x)
 }
 
 /**
- * fast approximation of the tangens function for range [-pi, pi]  
+ * fast approximation of the tangens function for range [-pi, pi]
  * @param[in] x float
- * @return result float  
+ * @return result float
  */
 inline float axTan(float x)
 {
@@ -561,9 +562,9 @@ inline float axTan(float x)
 }
 
 /**
- * fast approximation of the arc-sine function for range [-1, 1]  
+ * fast approximation of the arc-sine function for range [-1, 1]
  * @param[in] x float
- * @return result float  
+ * @return result float
  */
 inline float axAsin(const float x)
 {
@@ -572,9 +573,9 @@ inline float axAsin(const float x)
 }
 
 /**
- * fast approximation of the arc-cosine function for range [-1, 1]  
+ * fast approximation of the arc-cosine function for range [-1, 1]
  * @param[in] x float
- * @return result float  
+ * @return result float
  */
 inline float axAcos(const float x)
 {
@@ -585,7 +586,7 @@ inline float axAcos(const float x)
 /**
  * fast approximation of the arc-tangens function for range [-2, 2]
  * @param[in] x float
- * @return result float  
+ * @return result float
  */
 inline float axAtan(const float x)
 {
@@ -594,7 +595,7 @@ inline float axAtan(const float x)
 }
 
 /**
- * fast approximation of the hyperbolic-sine function for range [-3.5, 3.5]  
+ * fast approximation of the hyperbolic-sine function for range [-3.5, 3.5]
  * @param[in] x float
  * @return result float
  */
@@ -605,9 +606,9 @@ inline float axSinh(const float x)
 }
 
 /**
- * fast approximation of the hyperbolic-cosine function for range [-3.5, 3.5]  
+ * fast approximation of the hyperbolic-cosine function for range [-3.5, 3.5]
  * @param[in] x float
- * @return result float  
+ * @return result float
  */
 inline float axCosh(const float x)
 {
@@ -616,9 +617,9 @@ inline float axCosh(const float x)
 }
 
 /**
- * fast approximation of the hyperbolic-tangens function for range [-4.2, 4.2]  
+ * fast approximation of the hyperbolic-tangens function for range [-4.2, 4.2]
  * @param[in] x float
- * @return result float  
+ * @return result float
  */
 inline float axTanh(const float x)
 {
@@ -629,7 +630,7 @@ inline float axTanh(const float x)
 /**
  * converts linear value to decibel
  * @param[in] lin float
- * @return result float  
+ * @return result float
  */
 inline float lin2dB(const float lin)
 {
@@ -639,7 +640,7 @@ inline float lin2dB(const float lin)
 /**
  * converts decibel value to linear
  * @param[in] dB float
- * @return result float  
+ * @return result float
  */
 inline float dB2lin(const float dB)
 {
