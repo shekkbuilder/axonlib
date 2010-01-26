@@ -105,6 +105,14 @@ class axWindowBase : public axContainer
 
     //
 
+//    int         mParent;
+//    int         mWinFlags;
+//    axCanvas*   mCanvas;
+//    axSurface*  mSurface;
+
+  inline axCanvas* getCanvas(void) { return mCanvas; }
+
+
 };
 
 //----------------------------------------------------------------------

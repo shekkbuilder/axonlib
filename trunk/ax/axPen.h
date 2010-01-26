@@ -75,13 +75,13 @@ class axPenBase
   class axPen : public axPenBase
   {
     private:
-      HPEN  mPen
+      HPEN  mPen;
       //HPEN  mOldPen;
     public:
       axPen(axColor aColor, int aSize, int aStyle)
       : axPenBase(aColor,aSize,aStyle)
         {
-          mPen = CreatePen(PS_SOLID,aSize,aColor);
+          mPen = CreatePen(PS_SOLID,aSize,aColor.mColor);
         }
       virtual ~axPen()
         {
@@ -89,7 +89,7 @@ class axPenBase
         }
       virtual int handle(void)
         {
-          return mPen;
+          return (int)mPen;
         }
   };
 

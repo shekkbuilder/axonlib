@@ -1,77 +1,68 @@
 #define AX_APPLICATION  myApp
-//#define AX_SCRIPT_STDLIB
-#define AX_FLAGS 0
+#define AX_FLAGS (AX_WINDOWED|AX_BUFFERED)
 #define AX_DEBUG
 
 #include "axDebug.h"
 #include "axApplication.h"
-#include "axScript.h"
 
-//#include "ax.h"
-
-//----------------------------------------------------------------------
-
-//char* myScript = (char*)
-//  ": test 10 5 + ; "      // 15
-//  ": test2 3 4 6 + + ; "  // 13
-//  ": main "
-//  "    test test2 + . "   // 13+15 =  28
-//  "    3 test * . "       // 15*3  =  45
-//  "    test2 2 - . "      // 2-13  = -11
-//  "    2 10 / . EXIT "    // 10/2  =  5
-//  ": main2 "
-//  "    16 DUP 5 DROP + . EXIT ";
-
-//char* myScript = (char*)
-//  ": SQUARE DUP * ; "
-//  "$ label "
-//  ""
-//  ": main "
-//  "  5 2 10 + + 10 > IF 3 SQUARE . ENDIF "
-//  " EXIT ";
-
-//char* myScript = (char*)
-//  ": func1 10 8 > IF 1 . ENDIF ; "
-//  "$ label2 5 DUP * . EXIT "
-//  "$ main func1 label2 EXIT ";
-
-char* myScript = (char*)
-" : dump DUP . ; "
-" $ main "
-"   10 "
-" $ loop1 "
-"   dump "
-"   1- "
-"   DUP -1 > IF loop1 ELSE 666 . ENDIF "
-" EXIT ";
-
-// " : dump DUP . ; $ main 10 $ loop1 dump 1- DUP -1 > IF loop1 ELSE 666 . ENDIF EXIT ";
-
+#include "axWindow.h"
+#include "axPen.h"
 
 //----------------------------------------------------------------------
 
-class myApp : public axApplication
+class myWin : public axWindow
 {
   private:
-    axScript* mScript;
-    int word,label,pos;
+    axPen* pen_white;
+    axPen* pen_yellow;
+  public:
+    myWin(axString aWinName, axWidgetListener* aListener, int aID, axRect aRect, int aWinFlags=0)
+    : axWindow(aWinName, aListener,aID,aRect,aWinFlags)
+      {
+        pen_white  = new axPen(AX_WHITE,1,0);
+        pen_yellow = new axPen(AX_YELLOW,5,0);
+      }
+    virtual ~myWin()
+      {
+        delete pen_white;
+        delete pen_yellow;
+      }
+    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
+      {
+        axWindow::doPaint(aCanvas,aRect);
+        aCanvas->selectPen(pen_white);
+        aCanvas->drawLine(10,10,100,100);
+        aCanvas->selectPen(pen_yellow);
+        aCanvas->drawLine(100,30,20,150);
+      }
+};
+
+//----------------------------------------------------------------------
+
+class myApp : public axApplication,
+              public axWidgetListener
+{
+  private:
+    myWin* win;
   public:
 
-    myApp() : axApplication() {}
-    virtual ~myApp() {}
-
-    virtual void main(void)
+    myApp()
+    : axApplication()
       {
         axInitialize(AX_FLAGS);
-        mScript = new axScript();
-        mScript->compile(myScript);
-        label = mScript->findLabel((char*)"main");
-        if (label>=0) mScript->execute( mScript->labelPos(label) );
-
-        delete mScript;
-        axCleanup(AX_FLAGS);
       }
-
+    virtual ~myApp()
+      {
+        axInitialize(AX_FLAGS);
+      }
+    virtual void main(void)
+      {
+        win = new myWin("my_window",this,0,axRect(0,0,640,480),AX_FLAGS);
+        win->show();
+        win->eventLoop();
+        win->hide();
+        delete win;
+      }
 };
 
 //----------------------------------------------------------------------

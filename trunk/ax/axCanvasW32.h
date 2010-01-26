@@ -91,12 +91,12 @@ class axCanvasImpl : public axCanvasBase
 
     virtual void selectPen(axPen* aPen)
       {
-        /*mOldPen = (HPEN)*/SelectObject((HDC)mDC, aPen->handle());
+        /*mOldPen = (HPEN)*/SelectObject((HDC)mDC, (HPEN)aPen->handle());
       }
 
     virtual void selectBrush(axBrush* aBrush)
       {
-        /*mOldBrush = (HBRUSH)*/SelectObject((HDC)mDC, mBrush->handle());
+        /*mOldBrush = (HBRUSH)*/SelectObject((HDC)mDC, (HBRUSH)aBrush->handle());
       }
 
     virtual void selectFont(axFont* aFont)
