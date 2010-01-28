@@ -19,11 +19,13 @@
 #ifndef axBitmapW32_included
 #define axBitmapW32_included
 //----------------------------------------------------------------------
+#ifdef WIN32
+//to remove this from doxygene
 
 //#include "axGlobals.h"
 //#include "axBitmapBase.h"
 
-class axBitmapImpl : public axBitmapBase
+class axBitmapW32 : public axBitmapBase
 {
   protected:
   //public:
@@ -32,7 +34,7 @@ class axBitmapImpl : public axBitmapBase
 
   public:
 
-    axBitmapImpl(int aWidth, int aHeight)
+    axBitmapW32(int aWidth, int aHeight)
     : axBitmapBase(aWidth,aHeight)
       {
         // http://msdn.microsoft.com/en-us/library/dd183375%28VS.85%29.aspx
@@ -57,7 +59,7 @@ class axBitmapImpl : public axBitmapBase
 
     //----------
 
-    virtual ~axBitmapImpl()
+    virtual ~axBitmapW32()
       {
         DeleteObject(mBitmap); // deletes allocated buffer
       }
@@ -69,6 +71,8 @@ class axBitmapImpl : public axBitmapBase
 
 };
 
+typedef axBitmapW32 axBitmapImpl;
 
+#endif //WIN32
 //----------------------------------------------------------------------
 #endif

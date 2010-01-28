@@ -31,11 +31,12 @@
 #ifndef axBitmapX11_included
 #define axBitmapX11_included
 //----------------------------------------------------------------------
-// client-side bitmap
+#ifdef linux
+//to remove this from doxygene
 
 #include "axGlobals.h"
 
-class axBitmapImpl : public axBitmapBase
+class axBitmapX11 : public axBitmapBase
 {
   //public:
   protected:
@@ -43,7 +44,7 @@ class axBitmapImpl : public axBitmapBase
     char*   mBuffer;
   public:
 
-    axBitmapImpl(int aWidth, int aHeight)
+    axBitmapX11(int aWidth, int aHeight)
     : axBitmapBase(aWidth,aHeight)
       {
         mDepth  = DefaultDepth(gDP,DefaultScreen(gDP)); // 32?
@@ -81,7 +82,7 @@ class axBitmapImpl : public axBitmapBase
 
       }
 
-    virtual ~axBitmapImpl()
+    virtual ~axBitmapX11()
       {
         //((XImage*)mImage)->data = NULL;    // we want to delete it ourselves...
         mImage->data = NULL;    // we want to delete it ourselves...
@@ -99,6 +100,8 @@ class axBitmapImpl : public axBitmapBase
     virtual char* getBuffer(void) { return (char*)mBuffer; }
 
 };
+
+typedef axBitmapX11 axBitmapImpl;
 
         // http://www.sbin.org/doc/Xlib/chapt_06.html
         //
@@ -162,6 +165,7 @@ class axBitmapImpl : public axBitmapBase
 //    virtual bool  load(axString aFilename) {return false;}
 //    virtual bool  save(axString aFilename) {return false;}
 
+#endif //linux
 //----------------------------------------------------------------------
 #endif
 

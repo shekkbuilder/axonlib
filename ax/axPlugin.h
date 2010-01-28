@@ -16,10 +16,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+//hardcoded, until we can be sure it is setup everywhere else (plugins)
+#define AX_PLUGIN_VST
+
 // programs & parameters
-
 //TODO: dirty parameters?
-
 
 /**
   \file axPlugin.h
@@ -191,9 +192,9 @@ class axPluginBase
 
 //----------------------------------------------------------------------
 
-//#ifdef AX_PLUGIN_VST
+#ifdef AX_PLUGIN_VST
   #include "axPluginVst.h"
-//#endif
+#endif
 
 //----------------------------------------------------------------------
 

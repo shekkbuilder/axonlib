@@ -33,7 +33,7 @@ class axBrushBase
     axColor mColor;
     int     mStyle;
   public:
-    axBrushBase( axColor aColor, int aStyle )
+    axBrushBase(axColor aColor, int aStyle)
       {
         mColor = aColor;
         mStyle = aStyle;
@@ -53,14 +53,16 @@ class axBrushBase
 
 #ifdef linux
 
-  class axBrush : public axBrushBase
+  class axBrushX11 : public axBrushBase
   {
     public:
-      axBrush(axColor aColor, int aStyle=0)
+      axBrushX11(axColor aColor, int aStyle)
       : axBrushBase(aColor,aStyle)
         {
         }
   };
+
+  typedef axBrushX11 axBrushImpl;
 
 #endif
 
@@ -68,18 +70,18 @@ class axBrushBase
 
 #ifdef WIN32
 
-  class axBrush : public axBrushBase
+  class axBrushW32 : public axBrushBase
   {
     private:
       HBRUSH  mBrush;
       //HBRUSH  mOldBrush;
     public:
-      axBrush(axColor aColor, int aStyle=0)
+      axBrushW32(axColor aColor, int aStyle=0)
       : axBrushBase(aColor,aStyle)
         {
           mBrush = CreateSolidBrush(aColor.mColor);
         }
-      virtual ~axBrush()
+      virtual ~axBrushW32()
         {
           DeleteObject(mBrush);
         }
@@ -89,7 +91,17 @@ class axBrushBase
         }
   };
 
+  typedef axBrushW32 axBrushImpl;
+
 #endif
+
+//----------------------------------------------------------------------
+
+class axBrush : public axBrushImpl
+{
+  public:
+    axBrush(axColor aColor, int aStyle=0) : axBrushImpl(aColor,aStyle) {}
+};
 
 //----------------------------------------------------------------------
 
