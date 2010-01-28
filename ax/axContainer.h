@@ -29,6 +29,7 @@
 
 #include "axWidget.h"
 
+/// container widget
 class axContainer : public axWidget,
                     public axWidgetListener
 {

@@ -17,15 +17,8 @@
  */
 
 /**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
+ * \file axCanvas.h
+ * \brief canvas class
  */
 
 #ifndef axCanvas_included
@@ -40,6 +33,7 @@
 #include "axBrush.h"
 #include "axFont.h"
 
+/// canvas definitions
 // text align
 #define tal_Center        0
 #define tal_Left          1
@@ -66,6 +60,7 @@
 
 //----------------------------------------------------------------------
 
+/// canvas base
 class axCanvasBase
 {
   protected:
@@ -88,7 +83,7 @@ class axCanvasBase
     //axArray<axRect*> mClipRects;
 
   public:
-
+    /// canvas base constructor
     axCanvasBase(int aHandle, int aMode=cmo_window)
       {
         mHandle     = aHandle;
@@ -116,6 +111,8 @@ class axCanvasBase
 
     //----------
 
+    /// methods
+    
     //TODO
     virtual void selectPen(axPen* aPen) {}
     virtual void selectBrush(axBrush* aBrush) {}
@@ -170,7 +167,7 @@ class axCanvasBase
 };
 
 //----------------------------------------------------------------------
-
+/// platform specific canvas
 #ifdef linux
   #include "axCanvasX11.h"
 #endif
@@ -180,11 +177,11 @@ class axCanvasBase
 #endif
 
 //----------------------------------------------------------------------
-
+/// canvas class
 class axCanvas : public axCanvasImpl
 {
   public:
-
+    /// canvas constructor
     axCanvas(int aHandle, int aMode=cmo_window)
     : axCanvasImpl(aHandle,aMode)
       {
@@ -213,7 +210,8 @@ class axCanvas : public axCanvasImpl
 //        setTextColor( AX_GREY_DARK );
 //        drawText(x+22,y,x+w-1,y+15,buf,tal_Left);
 //      }
-
+    
+    /// draw panel method
     void drawPanel(int x, int y, int w, int h, int mode)
       {
         int x2 = x+w-1;

@@ -17,23 +17,23 @@
  */
 
 /**
- * @file
- * \brief platform/device dependent color
+ * \file axColor.h
+ * \brief color class
  */
 
 /**
- * \brief platform/device dependent color
+ * \brief color class 
  */
  
 #ifndef axColor_included
 #define axColor_included
 //----------------------------------------------------------------------
 
-/// platform/device dependent color
+/// color class
 
 #include "axGlobals.h"
 
-/// some pre-defined colors
+/// pre-defined colors
 
   #define AX_BLACK        axColor(   0,   0,   0 )
   #define AX_GREY_DARK    axColor(  64,  64,  64 )
