@@ -18,14 +18,11 @@
 
 /**
  * @file
- * \brief desc
+ * \brief platform/device dependent color
  */
 
 /**
- * \brief desc
- *
- * long desc
- *
+ * \brief platform/device dependent color
  */
  
 #ifndef axColor_included
@@ -36,7 +33,7 @@
 
 #include "axGlobals.h"
 
-// some pre-defined colors
+/// some pre-defined colors
 
   #define AX_BLACK        axColor(   0,   0,   0 )
   #define AX_GREY_DARK    axColor(  64,  64,  64 )
@@ -66,8 +63,6 @@ struct axColor
 
     int mColor;
 
-  //public:
-
     /// empty constructor
 
     axColor() { mColor=0; }
@@ -83,7 +78,6 @@ struct axColor
     //void  operator = (const int i)   { mColor = i; }
 
     /// create/set color
-
     void set(int aR, int aG, int aB)
       {
 
@@ -101,8 +95,51 @@ struct axColor
           mColor = xcol.pixel;
         #endif
 
-      };
-
+      }
+    
+    /**
+     * get random color and set
+     * @param[in] flag int 0=normal, 1=light, 2=dark
+     * @param[in] thd int threshold [0..255]
+     */
+    void random(const int flag=0, int thd=0)
+      {
+        unsigned int r,g,b;
+        switch(flag)
+        {
+          // normal
+          case 0:
+            r = axRandomInt(255);
+            g = axRandomInt(255);
+            b = axRandomInt(255);
+          break;
+          // light
+          case 1:
+            r = g = b = 0;
+            if (thd == 0) thd = 192;
+            while (true)
+            {
+              if (r < thd) r = axRandomInt(255);
+              if (g < thd) g = axRandomInt(255);
+              if (b < thd) b = axRandomInt(255);
+              if (r > thd || g > thd || b > thd) break;
+            }
+          break;
+          // dark 
+          case 2:            
+            r = g = b = 255;
+            if (thd == 0) thd = 96;
+            while (r > thd || g > thd || b > thd)
+            {
+              if (r > thd) r = axRandomInt(255);
+              if (g > thd) g = axRandomInt(255);
+              if (b > thd) b = axRandomInt(255);
+            }
+          break;
+        }
+        // set
+        set(r, g, b);
+      }
 };
 
 //----------------------------------------------------------------------

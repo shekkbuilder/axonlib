@@ -18,13 +18,13 @@
 
 /**
  * @file
- * \brief desc
+ * \brief rectangle class
  */
 
 /**
- * \brief desc
+ * \brief rectangle class
  *
- * long desc
+ * \long has methods to combine rectangles and find intersections 
  *
  */
 
