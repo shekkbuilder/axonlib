@@ -254,10 +254,10 @@ class axCanvasImpl : public axCanvasBase
     // shapes
     //--------------------------------------------------
 
-    virtual void drawPoint(int aX, int aY)
-      {
-        SetPixel(mDC,aX,aY,mPenColor.mColor);
-      }
+//    virtual void drawPoint(int aX, int aY)
+//      {
+//        SetPixel(mDC,aX,aY,mPenColor.mColor);
+//      }
 
     virtual void drawLine(int aX1, int aY1, int aX2, int aY2)
       {

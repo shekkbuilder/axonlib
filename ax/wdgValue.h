@@ -141,6 +141,8 @@ class wdgValue : public axWidget
           prev = cur;
           mValue -= delta;
           mValue = axMin(1,axMax(0,mValue));
+          //TRACE("value:%f\n",mValue);
+          //if (mParameter) mParameter->doSetValue(mValue);
           //if (mParameter) mParameter->setValue(mValue);
           if (mParameter) mParameter->setValueDirect(mValue);
           mListener->onChange(this);
