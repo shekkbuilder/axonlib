@@ -163,12 +163,12 @@ class axContainer : public axWidget,
 
     //----------
 
-    /// return specified widget
-
-    virtual axWidget* widget(int aIndex)
-      {
-        return mWidgets[aIndex];
-      }
+    ///// return specified widget
+    //
+    //virtual axWidget* widget(int aIndex)
+    //  {
+    //    return mWidgets[aIndex];
+    //  }
 
     //--------------------------------------------------
 

@@ -34,22 +34,38 @@
 #include "axDebug.h"
 #include "axDefines.h"
 
+
 /**
  * returns the floor of a floating point number
  * @param[in] value float
  * @return j float
  */
+
+//inline float axFloor(float value)
+//{
+//  int j;
+//  __asm__
+//  (
+//    "flds %1;"    "fistpl %0;"
+//    : "=m" (j)
+//    : "m" (value)
+//  );
+//  return j;
+//}
+
+//TRACE("axFloor( 1.4) = %f\n",axFloor( 1.4)); // returns  1
+//TRACE("axFloor( 1.6) = %f\n",axFloor( 1.6)); // returns  2, should return 1
+//TRACE("axFloor(-1.4) = %f\n",axFloor(-1.4)); // returns -1
+//TRACE("axFloor(-1.6) = %f\n",axFloor(-1.6)); // returns -2  (should it floor towards zero, or floor always down?)
+//  so, this looks rounding, not flooring
+//  quick fix: (returns 1,1,-2,-2)
+//  TODO: look into how we're using this throughout the library
+
 inline float axFloor(float value)
-{
-  int j;
-  __asm__ 
-  (
-    "flds %1;"    "fistpl %0;"
-    : "=m" (j)
-    : "m" (value)
-  );
-  return j;
-}
+  {
+    return floorf(value);
+  }
+
 
 /**
  * returns the ceil of a floating point number
@@ -60,7 +76,7 @@ inline float axCeil(float value)
 {
   int j;
   float im = 1.0f;
-  __asm__ 
+  __asm__
   (
     "flds %1;"    "flds %2;"    "faddp;"    "fistpl %0;"
     : "=m" (j)
@@ -78,7 +94,7 @@ inline float axRound(float value)
 {
   int j;
   float im = 0.5f;
-  __asm__ 
+  __asm__
   (
     "flds %1;"    "fistpl %0;"    "flds %2;"    "faddp;"
     : "=m" (j)
@@ -94,7 +110,7 @@ inline float axRound(float value)
 */
 inline float axAbs(float value)
 {
-  __asm__ 
+  __asm__
   (
     "andl $0x7fffffff, %0;"
     : "=r" (value)
@@ -110,7 +126,7 @@ inline float axAbs(float value)
 */
 inline float axNeg(float value)
 {
-  __asm__ 
+  __asm__
   (
     "xorl $0x80000000, %0;"
     : "=r" (value)
@@ -278,7 +294,7 @@ inline float axRandom(const float aLow, const float aHigh)
  */
 inline float axLogf(float value)
 {
-  __asm__ 
+  __asm__
   (
     "fld %0;"    "fldln2;"    "fxch;"    "fyl2x;"    "fst %0;"
     : "=m" (value)
@@ -354,7 +370,7 @@ inline float axAsinf(float value)
 {
   // asin(x)=atan(sqrt(x*x/(1-x*x)))
   float tmp;
-  __asm__ 
+  __asm__
   (
     "fld %0;"    "fld %0;"    "fmulp;"    "fst %1;"    "fld1;"    "fsubp;"
     "fld %1;"    "fdivp;"    "fsqrt;"    "fld1;"    "fpatan;"    "fst %0;"
@@ -374,7 +390,7 @@ inline float axAcosf(float value)
 {
   // acos(x) = atan(sqrt((1-x*x)/(x*x)))
   float tmp;
-  __asm__ 
+  __asm__
   (
     "fld %0;"    "fld %0;"    "fmulp;"    "fst %1;"    "fld1;"    "fsubp;"
     "fld %1;"    "fdivrp;"    "fsqrt;"    "fld1;"    "fpatan;"    "fst %0;"
@@ -392,7 +408,7 @@ inline float axAcosf(float value)
  */
 inline float axAtanf(float value)
 {
-  __asm__ 
+  __asm__
   (
     "fld %0;"    "fld1;"    "fpatan;"    "fst %0;"
     : "=m" (value)
@@ -409,7 +425,7 @@ inline float axAtanf(float value)
  */
 inline float axNrt(float value, long root)
 {
-  __asm__ 
+  __asm__
   (
     "subl $0x3f800000, %0;"    "subl $1, %2;"
     "shrl %b2, %0;"    "addl $0x3f800000, %0;"
