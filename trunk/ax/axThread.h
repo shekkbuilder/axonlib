@@ -53,77 +53,55 @@ class axThreadBase
 
 #ifdef linux
 
-#include <pthread.h>
-#include <unistd.h> // sleep
-
-class axThread : public axThreadBase
-{
-  private:
-
-    pthread_t mThreadHandle;
-    //bool      mThreadRunning;
-    //int       mThreadSleep;
-
-  private:
-
-    static void* threadProc(void* data)
-      {
-        axThread* thr = (axThread*)data;
-        if (thr)
+  #include <pthread.h>
+  #include <unistd.h> // sleep
+  class axThreadX11 : public axThreadBase
+  {
+    private:
+      pthread_t mThreadHandle;
+    private:
+      static void* threadProc(void* data)
         {
-          if (thr->mThreadSleep>=0)
+          axThread* thr = (axThread*)data;
+          if (thr)
           {
-            while (thr->mThreadRunning) //==true)
+            if (thr->mThreadSleep>=0)
             {
-              thr->doThreadFunc();
-              usleep(thr->mThreadSleep*1000); //ms*1000;
-            }
-          } else thr->doThreadFunc();
+              while (thr->mThreadRunning) //==true)
+              {
+                thr->doThreadFunc();
+                usleep(thr->mThreadSleep*1000); //ms*1000;
+              }
+            } else thr->doThreadFunc();
+          }
+          return NULL;
         }
-        return NULL;
-      }
+    public:
+      axThreadX11()
+      : axThreadBase()
+        {
+          mThreadHandle = 0;
+        }
+      //virtual ~axThreadX11()
+      //  {
+      //    if (mThreadRunning) stopThread();
+      //  }
+      virtual void doThreadFunc(void) {} // overload this one...
+      virtual void startThread(int ms)
+        {
+          mThreadSleep   = ms;
+          mThreadRunning = true;
+          /*int result =*/ pthread_create(&mThreadHandle,NULL,&threadProc,this);
+        }
+      virtual void stopThread(void)
+        {
+          void* ret;
+          mThreadRunning = false;
+          /*int result =*/ pthread_join(mThreadHandle,&ret);
+        }
+  };
 
-  public:
-
-    axThread()
-    : axThreadBase()
-      {
-        mThreadHandle = 0;
-        //mThreadRunning = false;
-        //mThreadSleep = 10;
-      }
-
-    //----------
-
-    //virtual ~axThread()
-    //  {
-    //    if (mThreadRunning) stopThread();
-    //  }
-
-    //--------------------------------------------------
-
-    // overload this one...
-    virtual void doThreadFunc(void) {}
-
-    //--------------------------------------------------
-
-    virtual void startThread(int ms)
-      {
-        mThreadSleep   = ms;
-        mThreadRunning = true;
-        /*int result =*/ pthread_create(&mThreadHandle,NULL,&threadProc,this);
-      }
-
-    //--------------------------------------------------
-
-    virtual void stopThread(void)
-      {
-        void* ret;
-        mThreadRunning = false;
-        /*int result =*/ pthread_join(mThreadHandle,&ret);
-      }
-
-};
+  typedef axThreadX11 axThreadImpl;
 
 #endif
 
@@ -131,89 +109,68 @@ class axThread : public axThreadBase
 
 #ifdef WIN32
 
-#include <windows.h>
-//#include <unistd.h> // sleep
-
-class axThread : public axThreadBase
-{
-  private:
-
-    //pthread_t mThreadHandle;
-    HANDLE    mThreadHandle;
-    DWORD     mThreadID;
-    //bool      mThreadRunning;
-    //int       mThreadSleep;
-
-  private:
-
-    //static void* threadProc(void* data)
-    static DWORD WINAPI threadProc(LPVOID data)
-      {
-        //axThread* thr = (axThread*)data;
-        axThread* thr = (axThread*)data;
-        if (thr)
+  #include <windows.h>
+  //#include <unistd.h> // sleep
+  class axThreadW32 : public axThreadBase
+  {
+    private:
+      HANDLE    mThreadHandle;
+      DWORD     mThreadID;
+    private:
+      static DWORD WINAPI threadProc(LPVOID data)
         {
-          if (thr->mThreadSleep>=0)
+          axThread* thr = (axThread*)data;
+          if (thr)
           {
-            while (thr->mThreadRunning) //==true)
+            if (thr->mThreadSleep>=0)
             {
-              thr->doThreadFunc();
-              Sleep(thr->mThreadSleep); //ms*1000;
-            }
-          } else thr->doThreadFunc();
+              while (thr->mThreadRunning)
+              {
+                thr->doThreadFunc();
+                Sleep(thr->mThreadSleep);
+              }
+            } else thr->doThreadFunc();
+          }
+          return NULL;
         }
-        return NULL;
-      }
+    public:
+      axThreadW32()
+      : axThreadBase()
+        {
+          mThreadHandle = 0;
+          mThreadID = 0;
+        }
+      //virtual ~axThreadW32()
+      //  {
+      //    if (mThreadRunning) stopThread();
+      //  }
+      virtual void doThreadFunc(void) {} // overload this one...
+      virtual void startThread(int ms)
+        {
+          mThreadSleep   = ms;
+          mThreadRunning = true;
+          mThreadHandle = CreateThread(NULL,0,&threadProc,(LPVOID)this,NULL,&mThreadID);
+        }
+      virtual void stopThread(void)
+        {
+          void* ret;
+          mThreadRunning = false;
+          DWORD waiter = WaitForSingleObject(mThreadHandle,INFINITE);
+          CloseHandle(mThreadHandle);
+        }
+    };
 
-  public:
-
-    axThread()
-    : axThreadBase()
-      {
-        mThreadHandle = 0;
-        mThreadID = 0;
-        //mThreadRunning = false;
-        //mThreadSleep = 10;
-      }
-
-    //----------
-
-    //virtual ~axThread()
-    //  {
-    //    if (mThreadRunning) stopThread();
-    //  }
-
-    //--------------------------------------------------
-
-    // overload this one...
-    virtual void doThreadFunc(void) {}
-
-    //--------------------------------------------------
-
-    virtual void startThread(int ms)
-      {
-        mThreadSleep   = ms;
-        mThreadRunning = true;
-        // /*int result =*/ pthread_create(&mThreadHandle,NULL,&threadProc,this);
-      	mThreadHandle = CreateThread(NULL,0,&threadProc,(LPVOID)this,NULL,&mThreadID);
-      }
-
-    //--------------------------------------------------
-
-    virtual void stopThread(void)
-      {
-        void* ret;
-        mThreadRunning = false;
-        // /*int result =*/ pthread_join(mThreadHandle,&ret);
-        //DWORD waiter = WaitForMultipleObjects(MAX_THREADS,hThreads,TRUE,INFINITE);
-        DWORD waiter = WaitForSingleObject(mThreadHandle,INFINITE);
-        CloseHandle(mThreadHandle);
-      }
-
-};
-
+    typedef axThreadW32 axThreadImpl
 
 #endif
+
+//----------------------------------------------------------------------
+
+class axThread : public axThreadImpl
+{
+  public:
+    axThread() : axThreadImpl() {}
+};
 
 //----------------------------------------------------------------------
 #endif

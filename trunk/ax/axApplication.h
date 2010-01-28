@@ -25,6 +25,9 @@
 /**
   \file axApplication.h
   \brief standalone application
+
+  can we have more detailed file descriptions here?
+
 */
 
 #ifndef axApplication_included

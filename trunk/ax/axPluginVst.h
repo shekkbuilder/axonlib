@@ -31,7 +31,8 @@
 #ifndef axPluginVst_included
 #define axPluginVst_included
 //----------------------------------------------------------------------
-// implements the methods in axPlugin
+#ifdef AX_PLUGIN_VST
+//TODO: make doxygen not include this (ala axBitmapW32, etc)
 
 #include "pluginterfaces/vst2.x/aeffect.h"
 #include "pluginterfaces/vst2.x/aeffectx.h"
@@ -59,7 +60,7 @@ struct axVstEvents
 //----------------------------------------------------------------------
 
 //class axPluginImpl :  public AudioEffectX
-class axPluginImpl :  public AudioEffectX,
+class axPluginVst :  public AudioEffectX,
                      public axPluginBase
 {
   public:
@@ -100,7 +101,7 @@ class axPluginImpl :  public AudioEffectX,
 
   public:
 
-    axPluginImpl(audioMasterCallback audioMaster,long numProgs,long numParams)
+    axPluginVst(audioMasterCallback audioMaster,long numProgs,long numParams)
     : AudioEffectX(audioMaster,numProgs,numParams)
       {
 
@@ -123,7 +124,7 @@ class axPluginImpl :  public AudioEffectX,
         setNumOutputs(2);           // aka stereo effect
       }
 
-    virtual ~axPluginImpl()
+    virtual ~axPluginVst()
       {
         //TRACE("destroying: %s\n",mEffectName.ptr());
         if (mFlags&pfl_HasEditor && mEditorIsOpen) closeEditor();
@@ -648,5 +649,8 @@ class axPluginImpl :  public AudioEffectX,
 
 };
 
+typedef axPluginVst axPluginImpl;
+
+#endif //AX_PLUGIN_VST
 //----------------------------------------------------------------------
 #endif

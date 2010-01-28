@@ -57,18 +57,20 @@ class axPenBase
 
 #ifdef linux
 
-  class axPen : public axPenBase
+  class axPenX11 : public axPenBase
   {
     public:
-      axPen()
+      axPenX11()
       : axPenBase(AX_BLACK,0,0)
         {
         }
-      axPen(axColor aColor, int aSize=DEF_PENWIDTH, int aStyle=0)
+      axPenX11(axColor aColor, int aSize, int aStyle)
       : axPenBase(aColor,aSize,aStyle)
         {
         }
   };
+
+  typedef axPenX11 axPenImpl;
 
 #endif
 
@@ -76,22 +78,22 @@ class axPenBase
 
 #ifdef WIN32
 
-  class axPen : public axPenBase
+  class axPenW32 : public axPenBase
   {
     private:
       HPEN  mPen;
     public:
-      axPen()
+      axPenW32()
       : axPenBase(AX_BLACK,0,0)
         {
           mPen = CreatePen(PS_NULL,0,0);
         }
-      axPen(axColor aColor, int aSize=DEF_PENWIDTH, int aStyle=0)
+      axPenW32(axColor aColor, int aSize, int aStyle)
       : axPenBase(aColor,aSize,aStyle)
         {
           mPen = CreatePen(PS_SOLID,aSize,aColor.mColor);
         }
-      virtual ~axPen()
+      virtual ~axPenW32()
         {
           DeleteObject(mPen);
         }
@@ -101,7 +103,18 @@ class axPenBase
         }
   };
 
+  typedef axPenW32 axPenImpl;
+
 #endif
+
+//----------------------------------------------------------------------
+
+class axPen : public axPenImpl
+{
+  public:
+    axPen() : axPenImpl() {}
+    axPen(axColor aColor, int aSize=DEF_PENWIDTH, int aStyle=0) : axPenImpl(aColor,aSize,aStyle) {}
+};
 
 //----------------------------------------------------------------------
 #endif

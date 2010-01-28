@@ -55,19 +55,21 @@ class axFontBase
 
 #ifdef linux
 
-  class axFont : public axFontBase
+  class axFontX11 : public axFontBase
   {
     public:
 
-      axFont(axColor aColor, axString aName="default", int aSize=-1, int aStyle=0)
+      axFontX11(axColor aColor, axString aName="default", int aSize=-1, int aStyle=0)
       : axFontBase(aColor,aName,aSize,aStyle)
         {
         }
 
-      virtual ~axFont()
+      virtual ~axFontX11()
         {
         }
   };
+
+  typedef axFontX11 axFontImpl;
 
 #endif
 
@@ -75,16 +77,16 @@ class axFontBase
 
 #ifdef WIN32
 
-  class axFont : public axFontBase
+  class axFontW32 : public axFontBase
   {
     public:
 
-      axFont(axColor aColor, axString aName="default", int aSize=-1, int aStyle=0)
+      axFontW32(axColor aColor, axString aName="default", int aSize=-1, int aStyle=0)
       : axFontBase(aColor,aName,aSize,aStyle)
         {
         }
 
-      virtual ~axFont()
+      virtual ~axFontW32()
         {
         }
 
@@ -95,7 +97,19 @@ class axFontBase
 
   };
 
+  typedef axFontW32 axFontImpl;
+
 #endif
+
+//----------------------------------------------------------------------
+
+class axFont : public axFontImpl
+{
+  public:
+    axFont(axColor aColor, axString aName="default", int aSize=-1, int aStyle=0)
+    : axFontImpl(aColor,aName,aSize,aStyle)
+      {}
+};
 
 //----------------------------------------------------------------------
 #endif
