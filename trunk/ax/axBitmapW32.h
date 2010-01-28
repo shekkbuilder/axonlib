@@ -16,12 +16,24 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * \file axBitmapW32.h
+ * \brief bitmap class for windows
+ */
+
 #ifndef axBitmapW32_included
 #define axBitmapW32_included
 //----------------------------------------------------------------------
 
 //#include "axGlobals.h"
 //#include "axBitmapBase.h"
+
+/**
+ * \brief bitmap class for windows
+ *
+ * \long provides support for bitmaps under win32
+ *
+ */
 
 class axBitmapImpl : public axBitmapBase
 {

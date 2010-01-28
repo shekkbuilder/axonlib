@@ -17,20 +17,18 @@
  */
 
 /**
- * @file
- * \brief desc
+ * \file axDefines.h
+ * \brief a list of definitions
  */
 
-/**
- * \brief desc
- *
- * long desc
- *
- */
- 
 #ifndef axDefines_included
 #define axDefines_included
 //----------------------------------------------------------------------
+
+/**
+ * \brief a list of definitions
+ *
+ */
 
 // ascii 'AX', 0x4158
 // AX_MAGIC+05 -> 41580005,
