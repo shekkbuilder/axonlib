@@ -24,8 +24,7 @@ plugins made with axonlib reportedly working in: (with eventual comments)
 buggy hosts:
 
 *linux:*
-  * jost (mouse/painting event bugs, patch available [http://www.anticore.org/jucetice/forums/viewtopic.php?pid=612#p612 here] )
-  * cakewalk vst adapter 4 (vst -> dx wrapper)
+  * jost (mouse/painting event bugs, patch available [http://www.anticore.org/jucetice/forums/viewtopic.php?pid=612#p612 here] )  
 
 *win32:*
-  * 
+  * cakewalk vst adapter 4 (vst -> dx wrapper) - plugins cannot be found with the normal search function.
