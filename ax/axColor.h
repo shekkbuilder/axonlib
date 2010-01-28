@@ -17,23 +17,23 @@
  */
 
 /**
- * \file axColor.h
- * \brief color class
+ * @file
+ * \brief platform/device dependent color
  */
 
 /**
- * \brief color class 
+ * \brief platform/device dependent color
  */
- 
+
 #ifndef axColor_included
 #define axColor_included
 //----------------------------------------------------------------------
 
-/// color class
+/// platform/device dependent color
 
 #include "axGlobals.h"
 
-/// pre-defined colors
+/// some pre-defined colors
 
   #define AX_BLACK        axColor(   0,   0,   0 )
   #define AX_GREY_DARK    axColor(  64,  64,  64 )
@@ -96,13 +96,15 @@ struct axColor
         #endif
 
       }
-    
+
     /**
      * get random color and set
      * @param[in] flag int 0=normal, 1=light, 2=dark
      * @param[in] thd int threshold [0..255]
      */
-    void random(const int flag=0, int thd=0)
+    // fixes "warning: comparison between signed and unsigned integer expression"
+    //void random(const int flag=0, int thd=0)
+    void random(const int flag=0, unsigned int thd=0)
       {
         unsigned int r,g,b;
         switch(flag)
@@ -125,8 +127,8 @@ struct axColor
               if (r > thd || g > thd || b > thd) break;
             }
           break;
-          // dark 
-          case 2:            
+          // dark
+          case 2:
             r = g = b = 255;
             if (thd == 0) thd = 96;
             while (r > thd || g > thd || b > thd)

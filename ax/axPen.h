@@ -60,7 +60,11 @@ class axPenBase
   class axPen : public axPenBase
   {
     public:
-      axPen(axColor aColor=AX_GREY_LIGHT, int aSize=DEF_PENWIDTH, int aStyle=0)
+      axPen()
+      : axPenBase(AX_BLACK,0,0)
+        {
+        }
+      axPen(axColor aColor, int aSize=DEF_PENWIDTH, int aStyle=0)
       : axPenBase(aColor,aSize,aStyle)
         {
         }
@@ -76,9 +80,13 @@ class axPenBase
   {
     private:
       HPEN  mPen;
-      //HPEN  mOldPen;
     public:
-      axPen(axColor aColor, int aSize, int aStyle)
+      axPen()
+      : axPenBase(AX_BLACK,0,0)
+        {
+          mPen = CreatePen(PS_NULL,0,0);
+        }
+      axPen(axColor aColor, int aSize=DEF_PENWIDTH, int aStyle=0)
       : axPenBase(aColor,aSize,aStyle)
         {
           mPen = CreatePen(PS_SOLID,aSize,aColor.mColor);

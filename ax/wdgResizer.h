@@ -40,6 +40,7 @@ class wdgResizer : public axWidget
 {
   private:
     char    hint[256];
+    axBrush*  mFillBrush;
 
   protected:
     //axSurface* mSurface;
@@ -56,6 +57,12 @@ class wdgResizer : public axWidget
         // assume lower right corner
         //clearFlag(wfl_Active);
         //mSurface = aSurface;
+        mFillBrush = new axBrush(AX_GREY_DARK);
+      }
+
+    virtual ~wdgResizer()
+      {
+        delete mFillBrush;
       }
 
     //--------------------------------------------------
@@ -67,7 +74,8 @@ class wdgResizer : public axWidget
         //TRACE("wdgResizer.doPaint\n");
         if(hasFlag(wfl_Visible))
         {
-          aCanvas->setBrushColor( AX_GREY_DARK );
+          //aCanvas->setBrushColor( AX_GREY_DARK );
+          aCanvas->selectBrush(mFillBrush);
           aCanvas->fillRect( mRect.x,mRect.y,mRect.x2(),mRect.y2());
         }
       }

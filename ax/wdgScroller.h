@@ -40,6 +40,9 @@ class wdgScroller : public axWidget
     bool is_dragging;
     float pixel_size;
     int clickx,clicky;
+    axBrush*  brush_back;
+    axBrush*  brush_thumb;
+
   protected:
     //axString  mText;
     //axColor   mTextColor;
@@ -59,8 +62,16 @@ class wdgScroller : public axWidget
         //setBackground(true,AX_GREY_DARK);
         is_dragging = false;
         mThumbSize = 1;
-        if ( aRect.w > aRect.h   ) setFlag(wfl_Vertical);
+        if ( aRect.w < aRect.h   ) setFlag(wfl_Vertical);
         else clearFlag(wfl_Vertical);
+        brush_back = new axBrush(AX_GREY_DARK);
+        brush_thumb = new axBrush(AX_GREEN_DARK);
+      }
+
+    virtual ~wdgScroller()
+      {
+        delete brush_back;
+        delete brush_thumb;
       }
 
     //inline void setPos(float aPos) { mPos = aPos; }
@@ -82,30 +93,41 @@ class wdgScroller : public axWidget
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
         axWidget::doPaint( aCanvas, aRect );
-        //int thumb = mRect.h * mThumbSize;
-        //int ipos  = (mRect.h - thumb) * mValue;
-        int thumb = (int)((float)mRect.h*mThumbSize);
-        int ipos  = (int)((float)(mRect.h-thumb)*mValue);
-        aCanvas->setBrushColor( AX_GREY_DARK );
+
+        aCanvas->selectBrush(brush_back);
         aCanvas->fillRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
-        aCanvas->setBrushColor( AX_GREY_LIGHT );
+
+        aCanvas->selectBrush(brush_thumb);
         if (hasFlag(wfl_Vertical))
         {
+          int thumb = (int)((float)mRect.h*mThumbSize);
+          int ipos  = (int)((float)(mRect.h-thumb)*mValue);
           int y = mRect.y+ipos;
           aCanvas->fillRect( mRect.x, y, mRect.x2(), y+thumb );
         }
         else
         {
+          int thumb = (int)((float)mRect.w*mThumbSize);
+          int ipos  = (int)((float)(mRect.w-thumb)*mValue);
           int x = mRect.x+ipos;
-          aCanvas->fillRect( x, mRect.y, mRect.x+thumb, mRect.y2() );
+          aCanvas->fillRect( x, mRect.y, x+thumb, mRect.y2() );
         }
       }
 
     virtual void doMouseDown(int aX, int aY, int aB)
       {
         is_dragging = true;
-        int thumbsize = (int)((float)mRect.h*mThumbSize);
-        int numpixels = mRect.h - thumbsize;
+        int thumbsize,numpixels;
+        if (hasFlag(wfl_Vertical))
+        {
+          thumbsize = (int)((float)mRect.h*mThumbSize);
+          numpixels = mRect.h - thumbsize;
+        }
+        else
+        {
+          thumbsize = (int)((float)mRect.w*mThumbSize);
+          numpixels = mRect.w - thumbsize;
+        }
         if (numpixels<=0) numpixels = 1;  // HACK
         pixel_size = 1.0f/(float)numpixels;
         clickx = aX;

@@ -200,10 +200,10 @@ class myPlugin : public axPlugin,
 
     virtual void onResize(int dX, int dY)   // delta x,y
       {
-        int w = wScope->mRect.w + dX;
-        int h = wScope->mRect.h + dY;
+        int w = wScope->getRect().w + dX;
+        int h = wScope->getRect().h + dY;
         wScope->doResize( w,h );
-        mEditor->onResize(dX,dY);
+        mEditor->onResize(wScope,dX,dY);
       }
 
     //----------------------------------------------------------------------
@@ -211,29 +211,29 @@ class myPlugin : public axPlugin,
     //----------------------------------------------------------------------
 
     // can this one die because of some threading issues? (ala close editor) think,think..
-    virtual axWindow* doCreateEditor(void)
+    virtual void* doCreateEditor(void)
       {
-        axEditor* E = new axEditor("ana_sigview_editor",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
-        E->appendWidget( wScale     = new wdgKnob(    E,   0,axRect( 10,10,128, 32),wal_None/*, pScale */ ) );
-        E->appendWidget( wLength    = new wdgKnob(    E,   1,axRect(140,10,128, 32),wal_None/*, pLength*/ ) );
-        E->appendWidget( wViewMode  = new wdgSwitches(this,2,axRect( 10,50,266, 16),wal_None ) );
-        E->appendWidget( wScope     = new wdgScope(   this,3,axRect( 10,70,266,200),wal_None ) );
+        axEditor* EDIT = new axEditor("ana_sigview_editor",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
+        EDIT->appendWidget( wScale     = new wdgKnob(    EDIT,0,axRect( 10,10,128, 32),wal_None/*, pScale */ ) );
+        EDIT->appendWidget( wLength    = new wdgKnob(    EDIT,1,axRect(140,10,128, 32),wal_None/*, pLength*/ ) );
+        EDIT->appendWidget( wViewMode  = new wdgSwitches(this,2,axRect( 10,50,266, 16),wal_None ) );
+        EDIT->appendWidget( wScope     = new wdgScope(   this,3,axRect( 10,70,266,200),wal_None ) );
           wViewMode->setup(2,str_viewmode);
           wScope->mSize = mLength;
           wScope->mBuffer = mViewBuffer;
           wScope->mDrawFlags = wbf_Wave | wbf_Slices;
-          wScope->mWaveColor = AX_YELLOW;
+          //wScope->mWaveColor = AX_YELLOW;
           wScope->mNumSlices = 8;
-          wScope->mSlicesColor = AX_WHITE;
+          //wScope->mSlicesColor = AX_WHITE;
 
         //E->appendWidget( wSizer = new wdgResizer( this,99,axRect(276,270,10,10),wal_None ) );
 
-        E->connect( wScale, pScale  );
-        E->connect( wLength,pLength );
+        EDIT->connect( wScale, pScale  );
+        EDIT->connect( wLength,pLength );
         // could mEditor be in use from another thread? gui? audio? setParameter?
         // it shouldn't (we are creating the editor), but, ...
-        mEditor = E;
-        return E;
+        mEditor = EDIT;
+        return EDIT;
       }
 
     //----------
@@ -241,9 +241,9 @@ class myPlugin : public axPlugin,
     // see below (idle)
     virtual void doDestroyEditor(void)
       {
-        axEditor* E = mEditor;
+        axEditor* EDIT = mEditor;
         mEditor = NULL;
-        delete E;
+        delete EDIT;
       }
 
     //----------

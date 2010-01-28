@@ -52,7 +52,7 @@ class wdgImgKnob : public wdgValue
 
   public:
 
-    wdgImgKnob(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment, /*axParameter* aParameter=NULL,*/
+    wdgImgKnob(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment,
                int aNumImages=0, axSurface* aSurface=NULL)
     : wdgValue(aListener,aID,aRect,aAlignment/*,aParameter*/)
       {

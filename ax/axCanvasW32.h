@@ -17,8 +17,15 @@
  */
 
 /**
- * \file axCanvasW32.h
- * \brief canvas for win32
+ * @file
+ * \brief desc
+ */
+
+/**
+ * \brief desc
+ *
+ * long desc
+ *
  */
 
 #ifndef axCanvasW32_included
@@ -31,9 +38,13 @@
 #include "axCanvas.h"
 
 //----------------------------------------------------------------------
-/// canvas for win32
+
 class axCanvasImpl : public axCanvasBase
 {
+  private:
+    HPEN    mOldPen2;
+    HBRUSH  mOldBrush2;
+
   protected:
   //public:
 		HDC     mDC;
@@ -42,11 +53,11 @@ class axCanvasImpl : public axCanvasBase
 		HBRUSH  mBrush, mOldBrush;
     RECT    R;
 		int     mWinHandle;
+		axPen*  mNullPen;
 
   public:
 
-    /// constructor
-    // aHandle = owner (HWND or NULL)    
+    // aHandle = owner (HWND or NULL)
     axCanvasImpl(int aHandle, int aMode=cmo_window)
     : axCanvasBase(aHandle,aMode)
       {
@@ -63,6 +74,7 @@ class axCanvasImpl : public axCanvasBase
         mFont = CreateFontIndirect(&LFont);
         SelectObject(mDC,mFont);
         ReleaseDC(0,tempdc);
+        mNullPen = new axPen();
       }
 
     virtual ~axCanvasImpl()
@@ -72,6 +84,7 @@ class axCanvasImpl : public axCanvasBase
         if (mFont)  DeleteObject(mFont);
         if (mMode==cmo_window) ReleaseDC((HWND)mWinHandle,mDC);
         else DeleteDC(mDC);
+        delete mNullPen;
       }
 
     //----------
@@ -83,109 +96,123 @@ class axCanvasImpl : public axCanvasBase
     // get / set
     //--------------------------------------------------
 
-    /// pen selection
+
+
+    virtual void clearPen(void)
+      {
+        // use pre-defined null pen
+        selectPen(mNullPen);
+      }
+
     virtual void selectPen(axPen* aPen)
       {
-        /*mOldPen = (HPEN)*/SelectObject((HDC)mDC, (HPEN)aPen->handle());
+        mOldPen2 = (HPEN)SelectObject( (HDC)mDC, (HPEN)aPen->handle() );
+        //TODO: set null brush?
       }
 
-    /// brush selection
+    virtual void resetPen(void)
+      {
+        SelectObject(mDC,mOldPen2);
+      }
+
     virtual void selectBrush(axBrush* aBrush)
       {
-        /*mOldBrush = (HBRUSH)*/SelectObject((HDC)mDC, (HBRUSH)aBrush->handle());
+        mOldBrush2 = (HBRUSH)SelectObject((HDC)mDC, (HBRUSH)aBrush->handle());
+        //TODO: set null pen?
       }
-    
-    /// font selection
+
+    virtual void resetBrush(void)
+      {
+        SelectObject(mDC,mOldBrush2);
+      }
+
     virtual void selectFont(axFont* aFont)
       {
-        SetTextColor(mDC,mTextColor.mColor);
+        //SetTextColor(mDC,mTextColor.mColor);
+        SetTextColor(mDC,aFont->color().mColor);
       }
 
     //--------------------------------------------------
 
-    // internal
-    /// set pen to color / width   
-    void setpen(int aColor, int aWidth=DEF_PENWIDTH)
-      {
-        if (mPen)
-        {
-          SelectObject(mDC,mOldPen);
-          DeleteObject(mPen);
-        }
-        mPen = CreatePen(PS_SOLID,aWidth,aColor);
-        mOldPen = (HPEN)SelectObject((HDC)mDC, mPen);
-      }
+//    // internal
+//    void setpen(int aColor, int aWidth=DEF_PENWIDTH)
+//      {
+//        if (mPen)
+//        {
+//          SelectObject(mDC,mOldPen);
+//          DeleteObject(mPen);
+//        }
+//        mPen = CreatePen(PS_SOLID,aWidth,aColor);
+//        mOldPen = (HPEN)SelectObject((HDC)mDC, mPen);
+//      }
+//
+//    //----------
+//
+//    // internal
+//    void setbrush(int aColor)
+//      {
+//        if (mBrush)
+//        {
+//          SelectObject(mDC,mOldBrush);
+//          DeleteObject(mBrush);
+//        }
+//        mBrush = CreateSolidBrush(aColor);
+//        mOldBrush = (HBRUSH)SelectObject((HDC)mDC, mBrush);
+//      }
+//
+//    //--------------------------------------------------
+//
+//    virtual void setPenColor(axColor aColor)
+//      {
+//        mPenColor = aColor;
+//        setpen(mPenColor.mColor,mPenWidth);
+//        //SetDCPenColor(mDC,mPenColor.mColor);
+//      }
+//
+//    //----------
+//
+//    virtual void setBrushColor(axColor aColor)
+//      {
+//        mBrushColor = aColor;
+//        setbrush(mBrushColor.mColor);
+//      }
+//
+//    //----------
+//
+//    virtual void setTextColor(axColor aColor)
+//      {
+//        mTextColor = aColor;
+//        SetTextColor(mDC,mTextColor.mColor);
+//      }
+//
+//    //----------
+//
+//    virtual void setPenWidth(int aWidth)
+//      {
+//        mPenWidth = aWidth;
+//        setpen(mPenColor.mColor,mPenWidth);
+//      }
+//
+//    virtual void resetPenWidth(void)
+//      {
+//        mPenWidth = DEF_PENWIDTH;
+//        setpen(mPenColor.mColor,mPenWidth);
+//      }
+//
+//    //----------
+//
+//    //virtual void setPenStyle(int aStyle)
+//    //  {
+//    //  };
+//
+//    //----------
+//
+//    //virtual void setBrushStyle(int aStyle)
+//    //  {
+//    //  };
 
     //----------
 
-    /// set brush with color
-    // internal
-    void setbrush(int aColor)
-      {
-        if (mBrush)
-        {
-          SelectObject(mDC,mOldBrush);
-          DeleteObject(mBrush);
-        }
-        mBrush = CreateSolidBrush(aColor);
-        mOldBrush = (HBRUSH)SelectObject((HDC)mDC, mBrush);
-      }
-
-    //--------------------------------------------------
-    /// set pen to color
-    virtual void setPenColor(axColor aColor)
-      {
-        mPenColor = aColor;
-        setpen(mPenColor.mColor,mPenWidth);
-        //SetDCPenColor(mDC,mPenColor.mColor);
-      }
-
-    //----------
-    /// set brush to color
-    virtual void setBrushColor(axColor aColor)
-      {
-        mBrushColor = aColor;
-        setbrush(mBrushColor.mColor);
-      }
-
-    //----------
-    /// set the text color
-    virtual void setTextColor(axColor aColor)
-      {
-        mTextColor = aColor;
-        SetTextColor(mDC,mTextColor.mColor);
-      }
-
-    //----------
-    /// set pen width
-    virtual void setPenWidth(int aWidth)
-      {
-        mPenWidth = aWidth;
-        setpen(mPenColor.mColor,mPenWidth);
-      }
-    
-    /// reset pen width to default
-    virtual void resetPenWidth(void)
-      {
-        mPenWidth = DEF_PENWIDTH;
-        setpen(mPenColor.mColor,mPenWidth);
-      }
-
-    //----------
-
-    //virtual void setPenStyle(int aStyle)
-    //  {
-    //  };
-
-    //----------
-
-    //virtual void setBrushStyle(int aStyle)
-    //  {
-    //  };
-
-    //----------
-    
-    /// move to position [x, y]
     virtual void setPos(int aX, int aY)
       {
         MoveToEx(mDC,aX,aY,0);
@@ -196,7 +223,7 @@ class axCanvasImpl : public axCanvasBase
     //--------------------------------------------------
     // clip rect
     //--------------------------------------------------
-    /// sets a rectangle region
+
     virtual void setClipRect(int aX1, int aY1, int aX2, int aY2)
       {
         HRGN hrgn = /*hrgn = */CreateRectRgn( aX1, aY1, aX2, aY2 );
@@ -204,7 +231,7 @@ class axCanvasImpl : public axCanvasBase
       }
 
     //----------
-    /// clears rectangle region
+
     virtual void clearClipRect(void)
       {
         SelectClipRgn(mDC,NULL);
@@ -226,13 +253,12 @@ class axCanvasImpl : public axCanvasBase
     //--------------------------------------------------
     // shapes
     //--------------------------------------------------
-    /// draw a point at coordinates x, y
+
     virtual void drawPoint(int aX, int aY)
       {
         SetPixel(mDC,aX,aY,mPenColor.mColor);
       }
-    
-    /// draw line from point A[x,y] to B[x,y]
+
     virtual void drawLine(int aX1, int aY1, int aX2, int aY2)
       {
         setPos(aX1,aY1);
@@ -240,7 +266,6 @@ class axCanvasImpl : public axCanvasBase
         drawPoint(aX2,aY2);         // !!!
       }
 
-    /// draw a rectangle A{x,y] to B[x,y]
     virtual void drawRect(int aX1, int aY1, int aX2, int aY2)
       {
         // todo setpos + 4 lineto
@@ -250,7 +275,6 @@ class axCanvasImpl : public axCanvasBase
         drawLine(aX2, aY1, aX2, aY2);
       }
 
-    /// fill rectangle A{x,y] to B[x,y]
     virtual void fillRect(int aX1, int aY1, int aX2, int aY2)
       {
         R.left    = aX1;
@@ -259,23 +283,18 @@ class axCanvasImpl : public axCanvasBase
         R.bottom  = aY2+1;           // !!!
         FillRect(mDC,&R,mBrush);
       }
-    
-    /// draw a circle from A{x,y] to B[x,y] 
+
     virtual void drawCircle(int aX1, int aY1, int aX2, int aY2)
       {
         //Ellipse(mDC, aX1,aY1,aX2,aY2 );
         Arc( mDC,aX1,aY1,aX2+1,aY2+1,0,0,0,0);
       }
 
-    /// fill circle from A{x,y] to B[x,y]
     virtual void fillCircle(int aX1, int aY1, int aX2, int aY2)
       {
         Ellipse( mDC,aX1,aY1,aX2,aY2);
       }
 
-    /// draw an arch
-    /// angle 1 = start angle, relative to 3 o'clock
-    /// angle 2 = 'distance' 0..1, counter-clockwise
     virtual void drawArc(int aX1, int aY1, int aX2, int aY2, float aAngle1, float aAngle2)
       {
         if( fabs(aAngle2) >= 0.01/*EPSILON*/ )
@@ -300,9 +319,7 @@ class axCanvasImpl : public axCanvasBase
           Arc(mDC,aX1,aY1,aX2,aY2,(int)x1,(int)y1,(int)x2,(int)y2);
         }
       }
-    
 
-    /// fill arch
     virtual void fillArc(int aX1, int aY1, int aX2, int aY2, float aAngle1, float aAngle2)
       {
         if( fabs(aAngle2) >= 0.01/*EPSILON*/ )
@@ -331,9 +348,7 @@ class axCanvasImpl : public axCanvasBase
     //--------------------------------------------------
     // text
     //--------------------------------------------------
-    
-    /// get text width
-    /// \param aText axString input text
+
     virtual int textWidth(axString aText)
       {
         SIZE S;
@@ -342,8 +357,7 @@ class axCanvasImpl : public axCanvasBase
       }
 
     //----------
-    
-    /// get text height
+
     virtual int textHeight(axString aText)
       {
         SIZE S;
@@ -352,9 +366,7 @@ class axCanvasImpl : public axCanvasBase
       }
 
     //----------
-    
 
-    /// draw text at [x,y]  
     virtual void drawText(int aX, int aY, axString aText)
       {
         //SetBkMode(mDC,TRANSPARENT);
@@ -363,8 +375,7 @@ class axCanvasImpl : public axCanvasBase
       }
 
     //--------
-    
-    /// draw text at [x,y] with background and alignment
+
     virtual void drawText(int aX1, int aY1, int aX2, int aY2, axString aText, int aAlign)
       {
         SetBkMode(mDC,TRANSPARENT);
@@ -387,7 +398,7 @@ class axCanvasImpl : public axCanvasBase
     //--------------------------------------------------
     // bitmap
     //--------------------------------------------------
-    /// draw bitmap
+
     virtual void drawBitmap(axBitmapBase* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
         HDC tempdc = CreateCompatibleDC(mDC);
@@ -399,7 +410,7 @@ class axCanvasImpl : public axCanvasBase
     //--------------------------------------------------
     // canvas (surface[drawable])
     //--------------------------------------------------
-    /// blit canvas
+
     virtual void blit(axCanvasBase* aCanvas, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
         //HDC tempdc = (HBITMAP)mHandle->mDC;

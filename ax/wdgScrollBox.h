@@ -67,9 +67,9 @@ class wdgScrollBox : public axContainer
     wdgScrollBox(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None)
     : axContainer(aListener, aID, aRect, aAlignment)
       {
-        axContainer::appendWidget( wScrollBar = new wdgScroller(this,0,axRect(0,0,10,0),wal_Left ) );
-        axContainer::appendWidget( wContainer = new axContainer(this,1,NULL_RECT,       wal_Client ) );
-        wContainer->setBackground(true, axColor(112,112,112) );
+        axContainer::appendWidget( wScrollBar = new wdgScroller(this,-1,axRect(0,0,10,0),wal_Right ) );
+        axContainer::appendWidget( wContainer = new axContainer(this,-1,NULL_RECT,       wal_Client ) );
+        //wContainer->setBackground(true, axColor(112,112,112) );
         mPrevScroll = 0;
         mVisible = 1;
         wScrollBar->setFlag(wfl_Vertical);
@@ -85,6 +85,7 @@ class wdgScrollBox : public axContainer
     //----------
 
     inline axContainer* getContainer(void) { return wContainer; }
+    inline wdgScroller* getScrollBar(void) { return wScrollBar; }
 
 //    void recalc_scroll(void)
 //      {
@@ -173,9 +174,10 @@ class wdgScrollBox : public axContainer
     virtual void onChange(axWidget* aWidget)
       {
         //TRACE("wdgScrollBox.onChange\n");
-        int id = aWidget->mID;
+//        int id = aWidget->mID;
         float val = aWidget->doGetValue();
-        if (id==0)
+//        if (id==0)
+        if (aWidget==wScrollBar)
         {
           //float scrollable = (float)wScrollBar->mRect.h * (1-mVisible);
           float scrollable = (float)wContainer->getContent().h * (1-mVisible);

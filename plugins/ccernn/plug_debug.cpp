@@ -212,16 +212,16 @@ class myPlugin : public axPlugin,
       {
         if (aWidget->mID == 314) // wdgSplitter, window resizer
         {
-          int w = mEditor->mRect.w + dX;
-          int h = mEditor->mRect.h + dY;
+          int w = mEditor->getRect().w + dX;
+          int h = mEditor->getRect().h + dY;
           mEditor->resizeWindow(w,h);
           //recalc_scroller();
           //mEditor->onChange(scr);
         }
         if (aWidget->mID == 315) // wdgSplitter, left splitter
         {
-          int w = wLeft->mRect.w + dX;
-          int h = wLeft->mRect.h;// + dY;
+          int w = wLeft->getRect().w + dX;
+          int h = wLeft->getRect().h;// + dY;
           wLeft->doResize(w,h);
           mEditor->doRealign();
           //recalc_scroller();
@@ -307,7 +307,8 @@ class myPlugin : public axPlugin,
     // editor
     //--------------------------------------------------
 
-    virtual axWindow* doCreateEditor(void)
+    //virtual axWindow* doCreateEditor(void)
+    virtual void* doCreateEditor(void)
       {
         axEditor* ed = new axEditor("plug_debug_win",this,-1,axRect(0,0,mWidth,mHeight),AX_FLAGS);
         if(!is_gui_initialized)
@@ -321,7 +322,7 @@ class myPlugin : public axPlugin,
 
         // the 5 main panels & splitter
 
-        ed->setBackground(false);
+        //ed->setBackground(false);
         ed->appendWidget(    wLeft      = new wdgPanel(   this,-1,   axRect( 0,0,200,0  ),wal_Left    ) );
         ed->appendWidget( wSplitter     = new wdgResizer( this, 315, axRect( 0,0,5,5    ),wal_Left ) );
         ed->appendWidget(     wTop      = new wdgPanel(   this,-1,   axRect( 0,0,0,  40 ),wal_Top     ) );
@@ -384,7 +385,7 @@ class myPlugin : public axPlugin,
         wRight->appendWidget( wKnob2  = new wdgKnob(    this,-199, axRect( 10, 30, 80,16),wal_None,0 ) );
         wRight->appendWidget( wKnob3  = new wdgKnob(    this,-299, axRect( 10, 50, 80,16),wal_None,0 ) );
         wRight->appendWidget( slid    = new wdgImgKnob( this,-1,   axRect( 10,100,20,100),wal_None,65,mSrfSlider ));
-        slid->mSens1 = 0.01;
+        //slid->mSens1 = 0.01;
 
         // client area: tabs
 
@@ -395,9 +396,9 @@ class myPlugin : public axPlugin,
         wTabs->appendPage( wPage2 = new axContainer(this, -1,NULL_RECT,wal_Client) );
         wTabs->appendPage( wPage3 = new axContainer(this, -1,NULL_RECT,wal_Client) );
 
-        wPage1->setBackground(true);
-        wPage2->setBackground(true);
-        wPage3->setBackground(true);
+        //wPage1->setBackground(true);
+        //wPage2->setBackground(true);
+        //wPage3->setBackground(true);
 
         wPage1->setAlign(10,10,5, 15);
         wPage2->setAlign(10,10,20,20);
@@ -417,7 +418,7 @@ class myPlugin : public axPlugin,
         wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
         wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
 
-        for (int i=0; i<11; i++) wPage1->mWidgets[i]->doSetValue((float)i*0.1);
+        //for (int i=0; i<11; i++) wPage1->mWidgets[i]->doSetValue((float)i*0.1);
 
         wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,1 ) );
         wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,1 ) );

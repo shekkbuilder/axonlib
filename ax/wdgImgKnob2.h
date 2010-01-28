@@ -51,15 +51,21 @@ class wdgImgKnob2 : public axContainer
                int aNumImages=0, axSurface* aSurface=NULL)
     : axContainer(aListener,aID,aRect,aAlignment/*,aParameter*/)
       {
-        appendWidget( name    = new wdgLabel(   this,-1,axRect(aRect.x,aRect.y,    32,16),wal_None, "label", AX_GREY_LIGHT, tal_Center|tal_Top )  );
-        appendWidget( knob    = new wdgImgKnob( this,-2,axRect(aRect.x,aRect.y+16, 32,32),wal_None, aNumImages, aSurface )  );
-        appendWidget( display = new wdgLabel(   this,-3,axRect(aRect.x,aRect.y+48, 32,16),wal_None, "-", AX_GREY_LIGHT, tal_Center|tal_Bottom )  );
+//        appendWidget( name    = new wdgLabel(   this,-1,axRect(aRect.x,aRect.y,    32,16),wal_None, "label", AX_GREY_LIGHT, tal_Center|tal_Top )  );
+//        appendWidget( knob    = new wdgImgKnob( this,-2,axRect(aRect.x,aRect.y+16, 32,32),wal_None, aNumImages, aSurface )  );
+//        appendWidget( display = new wdgLabel(   this,-3,axRect(aRect.x,aRect.y+48, 32,16),wal_None, "-", AX_GREY_LIGHT, tal_Center|tal_Bottom )  );
+//        //doRealign();
+        appendWidget( name    = new wdgLabel(   this,-1,axRect(0,0,  32,16),wal_None, "label", AX_GREY_LIGHT, tal_Center|tal_Top )  );
+        appendWidget( knob    = new wdgImgKnob( this,-2,axRect(0,16, 32,32),wal_None, aNumImages, aSurface )  );
+        appendWidget( display = new wdgLabel(   this,-3,axRect(0,48, 32,16),wal_None, "-", AX_GREY_LIGHT, tal_Center|tal_Bottom )  );
+        //doRealign();
       }
     virtual void onChange(axWidget* aWidget)
       {
-        if (aWidget->mID == -2)
+        if (aWidget->mID==-2)
         {
-          knob->mParameter->doGetDisplay(buf);
+          buf[0] = 0;
+          if (knob->getParameter()) knob->getParameter()->doGetDisplay(buf);
           display->setText( buf );
           mListener->onChange(knob);
           mListener->onChange(display);

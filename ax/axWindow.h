@@ -144,7 +144,7 @@ class axWindow : public axWindowImpl
           mSurface = new axSurface(aRect.w,aRect.h/*,cmo_buffer*/);
           //mSurfaceMutex.unlock();
         }
-        setBackground( true, AX_GREY );
+        //setFlag(wfl_DefaultDraw);
       }
 
     virtual ~axWindow()
@@ -183,6 +183,10 @@ class axWindow : public axWindowImpl
     virtual void onRedraw(axRect aRect)       { redrawRect(aRect); }
     virtual void onRedrawAll(void)            { redraw(); }
     virtual void onCursor(int aCursor)        { setCursor(aCursor); }
+
+    virtual void onMove(axWidget* aWidget, int dX,int dY) {}
+    virtual void onResize(axWidget* aWidget, int dX,int dY) {}
+
 
 };
 

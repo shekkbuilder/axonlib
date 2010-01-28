@@ -17,16 +17,9 @@
  */
 
 /**
- * @file
- * \brief group box widget
- */
-
-/**
- * \brief group box widget
- *
- * long desc
- *
- */
+  \file wdgGroupBox.h
+  \brief group box container
+*/
 
 #ifndef wdgGroupBox_included
 #define wdgGroupBox_included
@@ -49,27 +42,28 @@ class wdgGroupHeader : public wdgPanel
       }
 };
 
+//----------
+
 class wdgGroupBox : public axContainer
 {
   //protected:
   public:
-    //wdgPanel*     wTitleBar;
     wdgGroupHeader* wTitleBar;
-    axContainer*  wContainer;
-    bool mClosed;
-    bool mClosable;
-    int mHeight;
-
+    axContainer*    wContainer;
+    bool            mClosed;
+    bool            mClosable;
+    int             mHeight;
+    axBrush*  mFillBrush;
 
   public:
 
     wdgGroupBox(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None)
     : axContainer(aListener, aID, aRect, aAlignment)
       {
-        axContainer::appendWidget( wTitleBar   = new wdgGroupHeader(   this,0,axRect(0,0,0,20), wal_Top ) );
-        axContainer::appendWidget( wContainer  = new axContainer(this,1,NULL_RECT,        wal_Client ) );
-        wContainer->setBackground(true, axColor(112,112,112) );
-        //doRealign();
+        axContainer::appendWidget( wTitleBar   = new wdgGroupHeader(this,-1,axRect(0,0,0,20), wal_Top ) );
+        axContainer::appendWidget( wContainer  = new axContainer(   this,-1,NULL_RECT,        wal_Client ) );
+        //wContainer->setBackground(true,axColor(112,112,112));
+        doRealign();
         mClosed = false;
         mClosable = false;
         mHeight = mRect.h;
@@ -79,14 +73,14 @@ class wdgGroupBox : public axContainer
     //  {
     //  }
 
-    virtual void appendWidget(axWidget* aWidget/*, bool aRealign=false*/)
+    virtual void appendWidget(axWidget* aWidget)
       {
         wContainer->appendWidget(aWidget);
       }
 
     void setup(axString aTitle, bool aClosed=false, bool aClosable=false)
       {
-        //mTitleText = aTitle;
+        //wTitleBar->appendWidget( new wdgLabel( this,-1,NULL_RECT,wal_Left,"title"));
         mClosed = aClosed;
         mClosable = aClosable;
       }
@@ -121,12 +115,18 @@ class wdgGroupBox : public axContainer
 
     //----------
 
-    //----------
-
     virtual void onChange(axWidget* aWidget)
       {
-        if( aWidget->mID == 0 ) toggle_closed();
+        //if (aWidget->mID==0) toggle_closed();
+        if (aWidget==wTitleBar) toggle_closed();
         mListener->onResize(this,0,0);
+//        if (aWidget->mID==0)
+//        {
+//          toggle_closed();
+//          mListener->onResize(aWidget,0,0);
+//        }
+//        //else
+//        mListener->onChange(aWidget);
       }
 
 };

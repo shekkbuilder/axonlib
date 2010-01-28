@@ -21,10 +21,14 @@
  * \brief math approximations and routines
  */
 
+/**
+ * \brief math approximations and routines
+ *
+ */
+
 #ifndef axMath_included
 #define axMath_included
 
-#include <time.h>
 #include <math.h>
 #include <stdlib.h>
 #include "axDebug.h"
@@ -76,9 +80,9 @@ inline float axRound(float value)
   float im = 0.5f;
   __asm__ 
   (
-    "flds %1;"  "flds %2;"  "faddp;"  "fistpl %0;"
-    : "=t" (j)
-    : "0" (value), "m" (im)
+    "flds %1;"    "fistpl %0;"    "flds %2;"    "faddp;"
+    : "=m" (j)
+    : "m" (value), "m" (im)
   );
   return j;
 }
@@ -92,7 +96,9 @@ inline float axAbs(float value)
 {
   __asm__ 
   (
-    "andl $0x7fffffff, %0;"    : "=r" (value)    : "0" (value)
+    "andl $0x7fffffff, %0;"
+    : "=r" (value)
+    : "0" (value)
   );
   return value;
 }
@@ -106,7 +112,9 @@ inline float axNeg(float value)
 {
   __asm__ 
   (
-    "xorl $0x80000000, %0;"    : "=r" (value)    : "0" (value)
+    "xorl $0x80000000, %0;"
+    : "=r" (value)
+    : "0" (value)
   );
   return value;
 }
@@ -213,11 +221,11 @@ inline float axCalcValuep(const float a, const float b, const float c)
 
 /**
  * passes a seed to the random number generator
- * @param[in] aSeed int default value -> use ctime
+ * @param[in] aSeed int default value (19)
  */
-inline void axRandomize(const int aSeed = (unsigned)time(0))
+inline void axRandomize(const int aSeed = 19)
 {
-  srand(aSeed);
+    srand(aSeed);
 }
 
 /**
@@ -264,20 +272,6 @@ inline float axRandom(const float aLow, const float aHigh)
 }
 
 /**
- * returns the square root of a floating point number using FPU
- * @param[in] value float
- * @return value float
- */
-inline float axSqrtf(float value)
-{
-  __asm__
-  (
-    "fsqrt;"  : "=t" (value)    : "0" (value)
-  );
-  return value;
-}
-
-/**
  * calculates the natural logarithm of a floating point number
  * @param[in] value float
  * @return value float
@@ -302,9 +296,9 @@ inline float axLog2f(float value)
 {
   __asm__
   (
-    "fld1;"    "fld %0;"    "fyl2x;"
-    : "=f" (value)
-    : "0" (value)
+    "fld1;"    "fld %0;"    "fyl2x;"    "fst %0;"
+    : "=m" (value)
+    : "m" (value)
   );
   return value;
 }
@@ -366,6 +360,7 @@ inline float axAsinf(float value)
     "fld %1;"    "fdivp;"    "fsqrt;"    "fld1;"    "fpatan;"    "fst %0;"
     : "=m" (value)
     : "m" (tmp)
+    : "eax"
   );
   return value;
 }
@@ -384,7 +379,8 @@ inline float axAcosf(float value)
     "fld %0;"    "fld %0;"    "fmulp;"    "fst %1;"    "fld1;"    "fsubp;"
     "fld %1;"    "fdivrp;"    "fsqrt;"    "fld1;"    "fpatan;"    "fst %0;"
     : "=m" (value)
-    : "m" (tmp)   
+    : "m" (tmp)
+    : "eax"
   );
   return value;
 }
@@ -398,7 +394,9 @@ inline float axAtanf(float value)
 {
   __asm__ 
   (
-    "fld1;"    "fpatan;"    : "=t" (value)    : "0" (value)
+    "fld %0;"    "fld1;"    "fpatan;"    "fst %0;"
+    : "=m" (value)
+    : "m" (value)
   );
   return value;
 }

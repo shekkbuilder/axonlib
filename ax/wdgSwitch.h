@@ -17,16 +17,9 @@
  */
 
 /**
- * @file
- * \brief switch widget 
- */
-
-/**
- * \brief switch widget 
- *
- * long desc
- *
- */
+  \file wdgSwitch,h
+  \brief switch (or button) widget
+*/
 
 #ifndef wdgSwitch_included
 #define wdgSwitch_included
@@ -38,29 +31,38 @@
 class wdgSwitch : public axWidget
 {
   public:
-    //bool      mState;
     int       mAlign;
-    axColor   mOffColor;
-    axColor   mOnColor;
     axString  mTextOff;
     axString  mTextOn;
+    axFont*   mFontOff;
+    axFont*   mFontOn;
+    axBrush*  mFillBrush;
 
   public:
 
-    wdgSwitch(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None, /*axParameter* aParameter=NULL,*/
+    wdgSwitch(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None,
               float aValue=0)
-    : axWidget(aListener,aID,aRect,aAlignment/*,aParameter*/)
+    : axWidget(aListener,aID,aRect,aAlignment)
       {
-        setBackground(true,AX_GREY_DARK);
+        //setBackground(true,AX_GREY_DARK);
+        mFillBrush = new axBrush(AX_GREY_DARK);
+        //setFillBrush(mFillBrush);
+        //setFlag(wfl_DefaultDraw);
         mAlign    = tal_Center;
-        mOffColor = AX_GREY;
-        mOnColor  = AX_GREY_LIGHT;
+        mFontOff  = new axFont(AX_GREY);
+        mFontOn   = new axFont(AX_GREY_LIGHT);
         mTextOff  = "off";
         mTextOn   = "on";
         mValue    = aValue;
-        if(mParameter) mValue = mParameter->doGetValue();
+        if (mParameter) mValue = mParameter->doGetValue();
         else mValue = aValue;
+      }
 
+    virtual ~wdgSwitch()
+      {
+        delete mFontOff;
+        delete mFontOn;
+        delete mFillBrush;
       }
 
     //--------------------------------------------------
@@ -83,40 +85,35 @@ class wdgSwitch : public axWidget
 
     virtual void doSetValue(float aValue)
       {
-        //axWidget::doSetValue(aValue);
         mValue = aValue;
-        if(mParameter) mParameter->doSetValue(aValue);
-        //if( mValue >= 0.5 ) mState=true;
-        //else mState=false;
+        if (mParameter) mParameter->doSetValue(aValue);
       }
 
     //----------
 
     virtual float doGetValue(void)
       {
-        if(mParameter) return mParameter->doGetValue();
+        if (mParameter) return mParameter->doGetValue();
         else return mValue;
-        //{
-        //  if( mState) return 1;
-        //  else return 0;
-        //}
-
       }
 
     //----------
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-        axWidget::doPaint(aCanvas,aRect);
-        if( mValue>0.5 )
+        //axWidget::doPaint(aCanvas,aRect);
+        aCanvas->clearPen();
+        aCanvas->selectBrush(mFillBrush);
+        aCanvas->fillRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
+        if (mValue>0.5)
         {
-          aCanvas->setTextColor( mOnColor );
-          aCanvas->drawText( mRect.x,mRect.y,mRect.x2()-5,mRect.y2(),mTextOn,mAlign);
+          aCanvas->selectFont(mFontOn);
+          aCanvas->drawText(mRect.x,mRect.y,mRect.x2()-5,mRect.y2(),mTextOn,mAlign);
         }
         else
         {
-          aCanvas->setTextColor( mOffColor );
-          aCanvas->drawText( mRect.x,mRect.y,mRect.x2()-5,mRect.y2(),mTextOff,mAlign);
+          aCanvas->selectFont(mFontOff);
+          aCanvas->drawText(mRect.x,mRect.y,mRect.x2()-5,mRect.y2(),mTextOff,mAlign);
         }
       }
 
@@ -124,10 +121,10 @@ class wdgSwitch : public axWidget
 
     virtual void doMouseDown(int aX, int aY, int aB)
       {
-        if( mValue>0.5 ) mValue=0;
+        if (mValue>0.5) mValue=0;
         else mValue=1;
-        if(mParameter) mParameter->mValue = mValue;
-        mListener->onChange( this );
+        if (mParameter) mParameter->setValueDirect(mValue);
+        mListener->onChange(this);
       }
 
 };

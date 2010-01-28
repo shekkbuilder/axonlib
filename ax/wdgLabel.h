@@ -17,16 +17,9 @@
  */
 
 /**
- * @file
- * \brief label widget
- */
-
-/**
- * \brief label widget
- *
- * long desc
- *
- */
+  \file wdgLabel.h
+  \brief label widget
+*/
 
 #ifndef wdgLabel_included
 #define wdgLabel_included
@@ -38,21 +31,29 @@ class wdgLabel : public axWidget
 {
   protected:
     axString  mText;
-    axColor   mTextColor;
+    axFont*   mFont;
     int       mTextAlign;
     char      txt[32];
+    //axBrush*  mBackBrush;
 
   public:
 
-    wdgLabel(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment, /*axParameter* aParameter=NULL,*/
+    wdgLabel(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment,
              axString aText="", axColor aColor=AX_GREY_DARK, int aAlign=tal_Left)
-    : axWidget(aListener,aID,aRect,aAlignment/*,aParameter*/)
+    : axWidget(aListener,aID,aRect,aAlignment)
       {
         clearFlag( wfl_Active );
-        mText       = aText;
-        mTextColor  = aColor;
-        mTextAlign  = aAlign;//tal_Center;
-        //setBackground(true,AX_GREY_DARK);
+        mText = aText;
+        mFont = new axFont( aColor );
+        mTextAlign  = aAlign;
+        //mBackBrush = new axBrush(AX_GREY_DARK);
+        //setFillBrush(mBackBrush);
+        //setFlag(wfl_DefaultDraw);
+      }
+
+    virtual ~wdgLabel()
+      {
+        //delete mBackBrush;
       }
 
     inline void setText(axString aText)
@@ -66,20 +67,15 @@ class wdgLabel : public axWidget
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-        axWidget::doPaint( aCanvas, aRect );
-        aCanvas->setTextColor( mTextColor );
-        if( mParameter )
+        axWidget::doPaint(aCanvas,aRect);
+        aCanvas->selectFont(mFont);
+        if (mParameter)
         {
           mParameter->doGetDisplay(txt);
-          aCanvas->drawText( mRect.x, mRect.y, mRect.x2(), mRect.y2(), txt, mTextAlign );
+          aCanvas->drawText(mRect.x,mRect.y,mRect.x2(),mRect.y2(),txt,mTextAlign);
         }
-        else aCanvas->drawText( mRect.x, mRect.y, mRect.x2(), mRect.y2(), mText, mTextAlign );
+        else aCanvas->drawText(mRect.x,mRect.y,mRect.x2(),mRect.y2(),mText,mTextAlign);
       }
-
-    //virtual void doMouseDown(int aX, int aY, int aB) { wdgValue::doMouseDown(aX,aY,aB); }
-    //virtual void doMouseUp(int aX, int aY, int aB) { wdgValue::doMouseUp(aX,aY,aB); }
-    //virtual void doMouseMove(int aX, int aY, int aB) { wdgValue::doMouseMove(aX,aY,aB); }
-
 
 };
 

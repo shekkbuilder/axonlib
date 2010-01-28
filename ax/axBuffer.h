@@ -17,8 +17,15 @@
  */
 
 /**
- * \file axBuffer.h
- * \brief buffer class
+ * @file
+ * \brief
+ */
+
+/**
+ * \brief desc
+ *
+ * long desc
+ *
  */
 
 #ifndef axBuffer_included
@@ -27,11 +34,6 @@
 //TODO: consider lock/mutex stuff
 
 #include <stdlib.h>
-
-/**
- * \brief buffer class
- *
- */
 
 template<class _T>
 class axBuffer
@@ -84,8 +86,7 @@ class axBuffer
     inline _T& item(int aIndex)              { return mData[aIndex]; }
 
     //----------------------------------------
-    
-    /// buffer create
+
     bool create(int aWidth, int aHeight=1)
       {
         mWidth  = aWidth;
@@ -97,7 +98,7 @@ class axBuffer
       }
 
     //----------
-    /// buffer destroy
+
     void destroy(void)
       {
         if (mData) free(mData);// delete mData;
@@ -107,7 +108,7 @@ class axBuffer
       }
 
     //----------------------------------------
-    /// clear buffer
+
     inline void clear(char aValue=0)
       {
         memset(mData,aValue,dataSize());
@@ -116,7 +117,7 @@ class axBuffer
       }
 
     //----------
-    /// buffer resize
+
     bool resize(int aWidth, int aHeight=1)
       {
         if(aWidth!=mWidth || aHeight!=mHeight )
@@ -132,14 +133,14 @@ class axBuffer
       }
 
     //----------------------------------------
-    /// check if readable
+
     inline int readable(void)
       {
         int res = mWritePos - mReadPos;
         if( res<0 ) res += mWidth;
         return res;
-      }    
-    /// check if writeable
+      }
+
     inline int writeable(void)
       {
         int res = mReadPos - mWritePos;
@@ -148,7 +149,7 @@ class axBuffer
       }
 
     //----------
-    /// read buffer
+
     inline _T read(void)
       {
         int rp = mReadPos+1;
@@ -159,7 +160,7 @@ class axBuffer
       }
 
     //----------
-    /// write to buffer
+
     inline void write(_T aItem)
       {
         int wp = mWritePos+1;

@@ -29,7 +29,9 @@
 
 #define MAXEVT 65536
 
-class myPlugin : public axPlugin
+class myPlugin : public axPlugin,
+                 public axWidgetListener
+
 {
   private:
     bool is_gui_initialized;
@@ -83,84 +85,6 @@ class myPlugin : public axPlugin
 
     //--------------------------------------------------
 
-    virtual void onChange(axParameter* aParameter)
-      {
-        //lock();
-        if( mEditor ) mEditor->onChange( aParameter );
-        //unlock();
-        doProcessParameter(aParameter);
-      }
-
-    //--------------------------------------------------
-
-    virtual axWindow* doCreateEditor(void)
-      {
-        axEditor* E = new axEditor( "syn_binaural_gui",this, -1, axRect(0,0,AX_WIDTH-1,AX_HEIGHT-1), AX_FLAGS );
-
-        if(!is_gui_initialized)
-        {
-          unsigned char*  buffer;
-          unsigned char*  image;
-          unsigned int    buffersize;
-          unsigned int    imagesize;
-          LodePNG_Decoder decoder;
-          //LodePNG_loadFile(&buffer, &buffersize, filename);
-          buffer     =  binaural_back;
-          buffersize =  41373;
-          LodePNG_Decoder_init(&decoder);
-          LodePNG_decode(&decoder,&image,&imagesize,buffer,buffersize);
-          if (!decoder.error)
-          {
-            int width = decoder.infoPng.width;
-            int height = decoder.infoPng.height;
-            //int depth = decoder.infoPng.color.bitDepth;
-            //int bpp = LodePNG_InfoColor_getBpp(&decoder.infoPng.color);
-            back_bmp = new axBitmap(width,height,image);
-            back_bmp->convertRgbaBgra();
-            back_bmp->setBackground(128,128,128);
-            back_srf = new axSurface(width,height,0);
-            back_srf->mCanvas->drawBitmap(back_bmp, 0,0, 0,0,width,height);
-            free(image);
-          }
-          //free(buffer);
-          LodePNG_Decoder_cleanup(&decoder);
-          is_gui_initialized=true;
-        }
-
-        //E->setLayout(0,0,10,10);
-        //E->setFlag(wfl_Vertical);
-
-        E->appendWidget( new wdgImage(     E, 2, axRect(  0,  0, 286,410), wal_None/*, NULL,*/, back_srf ) );
-        E->appendWidget( k1 = new wdgKnob( E, 0, axRect( 10,365, 128, 32), wal_None/*, mParameters[0]*/ ) );
-        E->appendWidget( k2 = new wdgKnob( E, 1, axRect(148,365, 128, 32), wal_None/*, mParameters[1]*/ ) );
-        //E->updateWidgetValues(); // connect by wdg/par.mID !!
-        E->connect( k1, mParameters[0] );
-        E->connect( k2, mParameters[1] );
-        mEditor = E;
-        //TRACE("syn_binaural = %x\n",(int)mEditor);
-        //TRACE("  k1 = %x\n",(int)k1);
-        //TRACE("  k1 = %x\n",(int)k2);
-        return mEditor;
-      }
-
-    //----------
-
-    virtual void doDestroyEditor(void)
-      {
-        axEditor* E = mEditor;
-        mEditor = NULL;
-        delete E;
-      }
-
-    //----------
-
-    virtual void doIdleEditor(void)
-      {
-        if( mEditor ) mEditor->redrawDirty();
-      }
-
-    //--------------------------------------------------
-
     //virtual void doProcessState(int aState)
     //  {
     //    TRACE("DoProcessState: %i\n",aState);
@@ -207,6 +131,7 @@ class myPlugin : public axPlugin
         //TODO: do something better...
         int  id = aParameter->mID;
         float f = aParameter->getValue();
+        TRACE("id:%i, f:%f\n",id,f);
         switch(id)
         {
           case 0: diff  = f;  break;
@@ -250,6 +175,90 @@ class myPlugin : public axPlugin
         //------------------------------
         *outs[0] = spl0;
         *outs[1] = spl1;
+      }
+
+    //--------------------------------------------------
+
+    //--------------------------------------------------
+
+    virtual void* doCreateEditor(void)
+      {
+        axEditor* EDIT = new axEditor( "syn_binaural_gui",this, -1, axRect(0,0,AX_WIDTH,AX_HEIGHT), AX_FLAGS );
+
+        if(!is_gui_initialized)
+        {
+          unsigned char*  buffer;
+          unsigned char*  image;
+          unsigned int    buffersize;
+          unsigned int    imagesize;
+          LodePNG_Decoder decoder;
+          //LodePNG_loadFile(&buffer, &buffersize, filename);
+          buffer     =  binaural_back;
+          buffersize =  41373;
+          LodePNG_Decoder_init(&decoder);
+          LodePNG_decode(&decoder,&image,&imagesize,buffer,buffersize);
+          if (!decoder.error)
+          {
+            int width = decoder.infoPng.width;
+            int height = decoder.infoPng.height;
+            //int depth = decoder.infoPng.color.bitDepth;
+            //int bpp = LodePNG_InfoColor_getBpp(&decoder.infoPng.color);
+            back_bmp = new axBitmap(width,height,image);
+            back_bmp->convertRgbaBgra();
+            back_bmp->setBackground(128,128,128);
+            back_srf = new axSurface(width,height/*,0*/);
+            back_srf->mCanvas->drawBitmap(back_bmp, 0,0, 0,0,width,height);
+            free(image);
+          }
+          //free(buffer);
+          LodePNG_Decoder_cleanup(&decoder);
+          is_gui_initialized=true;
+        }
+
+        //E->setLayout(0,0,10,10);
+        //E->setFlag(wfl_Vertical);
+        EDIT->appendWidget( new wdgImage(     this, 2, axRect(  0,  0, 286,410), wal_None/*, NULL,*/, back_srf ) );
+        EDIT->appendWidget( k1 = new wdgKnob( this, 0, axRect( 10,365, 128, 32), wal_None/*, mParameters[0]*/ ) );
+        EDIT->appendWidget( k2 = new wdgKnob( this, 1, axRect(148,365, 128, 32), wal_None/*, mParameters[1]*/ ) );
+        //E->updateWidgetValues(); // connect by wdg/par.mID !!
+        EDIT->connect( k1, mParameters[0] );
+        EDIT->connect( k2, mParameters[1] );
+        mEditor = EDIT;
+        //TRACE("syn_binaural = %x\n",(int)mEditor);
+        //TRACE("  k1 = %x\n",(int)k1);
+        //TRACE("  k1 = %x\n",(int)k2);
+        return mEditor;
+      }
+
+    //----------
+
+    virtual void doDestroyEditor(void)
+      {
+        axEditor* EDIT = mEditor;
+        mEditor = NULL;
+        delete EDIT;
+      }
+
+    //----------
+
+    virtual void doIdleEditor(void)
+      {
+        if (mEditor) mEditor->redrawDirty();
+      }
+
+    //--------------------------------------------------
+
+    virtual void onChange(axParameter* aParameter)
+      {
+        //lock();
+        if (mEditor) mEditor->onChange(aParameter);
+        //unlock();
+        doProcessParameter(aParameter);
+      }
+
+    virtual void onChange(axWidget* aWidget)
+      {
+        if (mEditor) mEditor->onChange(aWidget);
       }
 
 };

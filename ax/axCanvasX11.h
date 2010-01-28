@@ -17,8 +17,15 @@
  */
 
 /**
- * \file axCanvasX11.h
- * \brief canvas for X11
+ * @file
+ * \brief desc
+ */
+
+/**
+ * \brief desc
+ *
+ * long desc
+ *
  */
 
 #ifndef axCanvasX11_included
@@ -36,7 +43,6 @@
 
 //----------------------------------------------------------------------
 
-/// canvas for X11
 class axCanvasImpl : public axCanvasBase
 {
   protected:
@@ -51,7 +57,7 @@ class axCanvasImpl : public axCanvasBase
     // aHandle from:
     // - Window - axWindow
     // - Pixmap - axSurface
-    /// constructor
+
     axCanvasImpl(int aHandle, int aMode=cmo_window)
     : axCanvasBase(aHandle,aMode)
       {
@@ -75,21 +81,22 @@ class axCanvasImpl : public axCanvasBase
     // get / set
     //--------------------------------------------------
 
-    /// pen selection
+    virtual void clearPen(void)
+      {
+      }
+
     virtual void selectPen(axPen* aPen)
       {
         XSetForeground(gDP,mGC,aPen->color().mColor);
         XSetLineAttributes(gDP,mGC,aPen->size(),LineSolid,CapButt,JoinBevel);
       }
-      
-    /// brush selection
+
     virtual void selectBrush(axBrush* aBrush)
       {
         XSetForeground(gDP,mGC,aBrush->color().mColor);
         XSetFillStyle(gDP,mGC,aBrush->style()); // FillSolid
       }
-      
-    /// font selection
+
     virtual void selectFont(axFont* aFont)
       {
         XSetForeground(gDP,mGC,aFont->color().mColor);
@@ -97,68 +104,64 @@ class axCanvasImpl : public axCanvasBase
 
     //--------------------------------------------------
 
-    // internal
-    /// set foreground color 
-    void setforecolor(int aColor) { XSetForeground(gDP,mGC,aColor); };
-    /// set background color
-    void setbackcolor(int aColor) { XSetBackground(gDP,mGC,aColor); };
-
-    //--------------------------------------------------
-    /// set pen to color
-    virtual void setPenColor(axColor aColor)
-      {
-        mPenColor = aColor;
-        XSetForeground(gDP,mGC,aColor.mColor);
-      };
-
-    //----------
-    /// set brush color
-    virtual void setBrushColor(axColor aColor)
-      {
-        mBrushColor = aColor;
-        setforecolor(mBrushColor.mColor);
-      };
-
-    //----------
-    /// set text color
-    virtual void setTextColor(axColor aColor)
-      {
-        mTextColor = aColor;
-        setforecolor(mTextColor.mColor);
-      };
-
-    //----------
-    /// set pen width
-    virtual void setPenWidth(int aWidth)
-      {
-        mPenWidth = aWidth;
-        XSetLineAttributes(gDP,mGC,aWidth,LineSolid,CapButt,JoinBevel);
-      };
-      
-    /// reset pen width
-    virtual void resetPenWidth(void)
-      {
-        mPenWidth = DEF_PENWIDTH;
-        XSetLineAttributes(gDP,mGC,mPenWidth,LineSolid,CapButt,JoinBevel);
-      };
-
-    //----------
-    /// set pen style
-    virtual void setPenStyle(int aStyle)
-      {
-        //TODO
-      };
-
-    //----------
-    /// set brush style
-    virtual void setBrushStyle(int aStyle)
-      {
-        XSetFillStyle(gDP,mGC,aStyle); // FillSolid
-      };
+//    // internal
+//    void setforecolor(int aColor) { XSetForeground(gDP,mGC,aColor); };
+//    void setbackcolor(int aColor) { XSetBackground(gDP,mGC,aColor); };
+//
+//    //--------------------------------------------------
+//
+//    virtual void setPenColor(axColor aColor)
+//      {
+//        mPenColor = aColor;
+//        XSetForeground(gDP,mGC,aColor.mColor);
+//      };
+//
+//    //----------
+//
+//    virtual void setBrushColor(axColor aColor)
+//      {
+//        mBrushColor = aColor;
+//        setforecolor(mBrushColor.mColor);
+//      };
+//
+//    //----------
+//
+//    virtual void setTextColor(axColor aColor)
+//      {
+//        mTextColor = aColor;
+//        setforecolor(mTextColor.mColor);
+//      };
+//
+//    //----------
+//
+//    virtual void setPenWidth(int aWidth)
+//      {
+//        mPenWidth = aWidth;
+//        XSetLineAttributes(gDP,mGC,aWidth,LineSolid,CapButt,JoinBevel);
+//      };
+//
+//    virtual void resetPenWidth(void)
+//      {
+//        mPenWidth = DEF_PENWIDTH;
+//        XSetLineAttributes(gDP,mGC,mPenWidth,LineSolid,CapButt,JoinBevel);
+//      };
+//
+//    //----------
+//
+//    virtual void setPenStyle(int aStyle)
+//      {
+//        //TODO
+//      };
+//
+//    //----------
+//
+//    virtual void setBrushStyle(int aStyle)
+//      {
+//        XSetFillStyle(gDP,mGC,aStyle); // FillSolid
+//      };
 
     //----------
-    
-    /// move to position [x, y]
+
     virtual void setPos(int aX, int aY)
       {
         mXpos = aX;
@@ -168,7 +171,7 @@ class axCanvasImpl : public axCanvasBase
     //--------------------------------------------------
     // clip rect
     //--------------------------------------------------
-    /// sets a rectangle region
+
     virtual void setClipRect(int aX1, int aY1, int aX2, int aY2)
       {
         XRectangle r;
@@ -180,54 +183,62 @@ class axCanvasImpl : public axCanvasBase
       };
 
     //----------
-    /// clears rectangle region
+
     virtual void clearClipRect(void)
       {
         XSetClipMask(gDP,mGC,None);
       };
 
+    //virtual void pushClipRect(axRect aRect)
+    //  {
+    //    axRect* R = new axRect(aRect);
+    //    mClipRects.push(R);
+    //    setClipRect(aRect.x,aRect.y,aRect.x2(),aRect.y2());
+    //  }
+
+    //virtual void popClipRect(void)
+    //  {
+    //    axRect* R = mClipRects.pop();
+    //    setClipRect(R->x,R->y,R->x2(),R->y2());
+    //    delete R;
+    //  }
+
     //--------------------------------------------------
     // shapes
     //--------------------------------------------------
-    /// draws a point at [x,y]
+
     virtual void drawPoint(int aX, int aY)
       {
         XDrawPoint(gDP,mHandle,mGC,aX,aY);
       };
 
-    /// draws a line from [x1,y1] to [x2,y2]
     virtual void drawLine(int aX1, int aY1, int aX2, int aY2)
       {
         XDrawLine(gDP,mHandle,mGC,aX1,aY1,aX2,aY2);
       };
 
-    /// draws a rectangle from [x1,y1] to [x2,y2]
     virtual void drawRect(int aX1, int aY1, int aX2, int aY2)
       {
         XDrawRectangle(gDP,mHandle,mGC,aX1,aY1,aX2-aX1,aY2-aY1);
       };
-      
-    /// fills a rectangle from [x1,y1] to [x2,y2]
+
     virtual void fillRect(int aX1, int aY1, int aX2, int aY2)
       {
         XFillRectangle(gDP,mHandle,mGC,aX1,aY1,aX2-aX1+1,aY2-aY1+1);
       };
 
-    /// draws a circle from [x1,y1] to [x2,y2]
     virtual void drawCircle(int aX1, int aY1, int aX2, int aY2)
       {
         XDrawArc(gDP,mHandle,mGC,aX1,aY1,aX2-aX1,aY2-aY1,0*64,360*64);
       };
-      
-    /// fills a circle from [x1,y1] to [x2,y2]
+
     virtual void fillCircle(int aX1, int aY1, int aX2, int aY2)
       {
         XFillArc(gDP,mHandle,mGC,aX1,aY1,aX2-aX1,aY2-aY1,0*64,360*64);
       };
 
-    /// draws an arc    
-    /// angle 1 = start angle, relative to 3 o'clock
-    /// angle 2 = 'distance' 0..1, counter-clockwise    
+    // angle 1 = start angle, relative to 3 o'clock
+    // angle 2 = 'distance' 0..1, counter-clockwise
     virtual void drawArc(int aX1, int aY1, int aX2, int aY2, float aAngle1, float aAngle2)
       {
         if( fabs(aAngle2) >= 0.01/*EPSILON*/ )
@@ -239,9 +250,9 @@ class axCanvasImpl : public axCanvasBase
           XDrawArc(gDP, mHandle,mGC, aX1,aY1,(aX2-aX1+1),(aY2-aY1+1),a1*(360*64),a2*(360*64));
         }
       }
-    /// fills an arc 
-    /// angle 1 = start angle, relative to 3 o'clock
-    /// angle 2 = 'distance' 0..1, counter-clockwise
+
+    // angle 1 = start angle, relative to 3 o'clock
+    // angle 2 = 'distance' 0..1, counter-clockwise
     virtual void fillArc(int aX1, int aY1, int aX2, int aY2, float aAngle1, float aAngle2)
       {
         if( fabs(aAngle2) >= 0.01/*EPSILON*/ )
@@ -258,29 +269,27 @@ class axCanvasImpl : public axCanvasBase
     // text
     //--------------------------------------------------
 
-    /// get text width
     virtual int textWidth(axString aText)
       {
         return XTextWidth(mFont, aText.ptr(), aText.length());
       };
 
     //----------
-    
-    /// get text height
+
     virtual int textHeight(axString aText)
       {
         return mFont->ascent + mFont->descent;
       };
 
     //----------
-    /// draw text at [x,y]
+
     virtual void drawText(int aX, int aY, axString aText)
       {
         XDrawString(gDP,mHandle,mGC,aX,aY+mFont->ascent,aText.ptr(),aText.length());
       };
 
     //--------
-    /// draw text at [x,y] with background and alignment
+
     virtual void drawText(int aX1, int aY1, int aX2, int aY2, axString aText, int aAlign)
       {
         int x,y;
@@ -316,7 +325,6 @@ class axCanvasImpl : public axCanvasBase
     //dest_x, dest_y  Specify the x and y coordinates, which are relative to the origin of the drawable and are the coordinates of the subimage.
     //width, height 	Specify the width and height of the subimage, which define the dimensions of the rectangle.
 
-    /// draw bitmap
     virtual void drawBitmap(axBitmapBase* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
         XPutImage(gDP,mHandle,mGC,(XImage*)aBitmap->getHandle(),aSrcX,aSrcY,aX,aY,aSrcW,aSrcH);
@@ -340,9 +348,8 @@ class axCanvasImpl : public axCanvasBase
     //--------------------------------------------------
     // canvas (surface[drawable])
     //--------------------------------------------------
-        
+
     //virtual void blit(int aHandle, axPoint aDst, axRect aSrc)
-    /// blit canvas
     virtual void blit(axCanvasBase* aCanvas, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
         XCopyArea(gDP,aCanvas->getHandle(),mHandle,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst

@@ -483,25 +483,36 @@ class axPluginImpl :  public AudioEffectX,
 
     //----------
 
-    //    // multi
-    //    virtual void processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames)
-    //      {
-    //        mBlockSize = sampleFrames;
-    //        if ( !process_block(inputs,outputs,sampleFrames) )
-    //        {
-    //          int i;
-    //          float*  ins[NUM_INPUTS];
-    //          float* outs[NUM_OUTPUTS];
-    //          for( i=0; i<NUM_INPUTS;  i++ ) ins[i]  = inputs[i];
-    //          for( i=0; i<NUM_OUTPUTS; i++ ) outs[i] = outputs[i];
-    //          while (--sampleFrames >= 0)
-    //          {
-    //            process_sample(ins,outs);
-    //            for( i=0; i<NUM_INPUTS;  i++ ) ins[i]++;
-    //            for( i=0; i<NUM_OUTPUTS; i++ ) outs[i]++;
-    //          } //sampleflrames
-    //        } //process_block
-    //      }
+#ifdef AX_PLUGIN_MULTI
+
+    // multi
+    virtual void processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames)
+      {
+        //sendMidiClear();
+        #ifdef AX_AUTOSYNC
+          updateTimeInfo();
+          if( mPlayState&1 ) doProcessTransport(mPlayState);
+        #endif
+        mBlockSize = sampleFrames;
+        if ( !doProcessBlock(inputs,outputs,sampleFrames) )
+        {
+          int i;
+          float*  ins[AX_NUMINPUTS];
+          float* outs[AX_NUMOUTPUTS];
+          for( i=0; i<AX_NUMINPUTS;  i++ ) ins[i]  = inputs[i];
+          for( i=0; i<AX_NUMOUTPUTS; i++ ) outs[i] = outputs[i];
+          while (--sampleFrames >= 0)
+          {
+            doProcessSample(ins,outs);
+            for( i=0; i<AX_NUMINPUTS;  i++ ) ins[i]++;
+            for( i=0; i<AX_NUMOUTPUTS; i++ ) outs[i]++;
+          } //sampleflrames
+        } //process_block
+        doPostProcess(inputs,outputs,sampleFrames);
+        sendMidiAll();
+      }
+
+#else
 
     // stereo
     virtual void processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames)
@@ -516,26 +527,24 @@ class axPluginImpl :  public AudioEffectX,
         {
           float* ins[2];
           float* outs[2];
-          ins[0] = inputs[0];
-          ins[1] = inputs[1];
-          outs[0] = outputs[0];
-          outs[1] = outputs[1];
+          ins[0]=inputs[0];   ins[1]=inputs[1];
+          outs[0]=outputs[0]; outs[1]=outputs[1];
           while (--sampleFrames >= 0)
           {
             doProcessSample(ins,outs);
-            ins[0]++;
-            ins[1]++;
-            outs[0]++;
-            outs[1]++;
+            ins[0]++;   ins[1]++;
+            outs[0]++;  outs[1]++;
           } //sampleflrames
         } //process_block
         doPostProcess(inputs,outputs,sampleFrames);
         sendMidiAll();
       }
 
+#endif
+
     //----------
 
-    //    // multi
+    // multi
     //    virtual void  processDoubleReplacing(double** inputs, double** outputs, VstInt32 sampleFrames)
     //      {
     //        mBlockSize = sampleFrames;

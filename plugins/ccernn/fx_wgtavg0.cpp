@@ -13,6 +13,7 @@
 #include "parInteger.h"
 
 #include "axEditor.h"
+#include "wdgPanel.h"
 #include "wdgValue.h"
 #include "wdgSwitch.h"
 
@@ -22,7 +23,8 @@ char* flt_txt[] = { (char*)"LP", (char*)"HP" };
 
 //----------
 
-class myPlugin : public axPlugin
+class myPlugin : public axPlugin,
+                 public axWidgetListener
 {
   public:
     float       z0,z1;
@@ -70,19 +72,27 @@ class myPlugin : public axPlugin
         doProcessParameter(aParameter);
       }
 
+    virtual void onChange(axWidget* aWidget)
+      {
+        if (mEditor) mEditor->onChange(aWidget);
+      }
+
     //--------------------------------------------------
 
-    virtual axWindow* doCreateEditor(void)
+    virtual void* doCreateEditor(void)
       {
-        axEditor* E = new axEditor( "fx_wgtavg_gui", this, -1, axRect(0,0,AX_WIDTH-1,AX_HEIGHT-1), AX_FLAGS );
-        E->appendWidget( wMode   = new wdgSwitch( E, 0, axRect(10,10,50,20), wal_None/*, pMode*/ ) );
-        E->appendWidget( wWeight = new wdgValue(  E, 1, axRect(10,40,50,20), wal_None/*, pWeight*/ ) );
+        axEditor* EDIT = new axEditor( "fx_wgtavg_gui", this, -1, axRect(0,0,AX_WIDTH-1,AX_HEIGHT-1), AX_FLAGS );
+        wdgPanel *P;
+        EDIT->appendWidget( P = new wdgPanel(this,-1,NULL_RECT,wal_Client) );
+        P->appendWidget( wMode   = new wdgSwitch( this, 0, axRect(10,10,50,20), wal_None/*, pMode*/ ) );
+        P->appendWidget( wWeight = new wdgValue(  this, 1, axRect(10,40,50,20), wal_None/*, pWeight*/ ) );
+        EDIT->doRealign();
         //wMode->setup("off","on");
         wMode->setup(flt_txt);
         //E->updateWidgetValues(); // connect by wdg/par.mID !!
-        E->connect( wMode, pMode );
-        E->connect( wWeight, pWeight );
-        mEditor = E;
+        EDIT->connect( wMode, pMode );
+        EDIT->connect( wWeight, pWeight );
+        mEditor = EDIT;
         //TRACE("fx_wgtavg.mEditor = %x\n",(int)mEditor);
         return mEditor;
       }
@@ -91,9 +101,9 @@ class myPlugin : public axPlugin
 
     virtual void doDestroyEditor(void)
       {
-        axEditor* E = mEditor;
+        axEditor* EDIT = mEditor;
         mEditor = NULL;
-        delete E;
+        delete EDIT;
       }
 
     virtual void doIdleEditor(void)

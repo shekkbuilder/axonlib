@@ -17,20 +17,14 @@
  */
 
 /**
- * @file
- * \brief switches widget
- */
-
-/**
- * \brief switches widget
- *
- * long desc
- *
- */
+  \file wdgSwitches.h
+  \brief switches widget
+*/
 
 #ifndef wdgSwitches_included
 #define wdgSwitches_included
 //----------------------------------------------------------------------
+//TODO: there is something wrong! mouse-clicks
 
 #include "axString.h"
 #include "axWidget.h"
@@ -41,23 +35,32 @@ class wdgSwitches : public axWidget
     int       mNum;
     char**    mStrings;
     int       mSelected;
-    axColor   mOffColor;
-    axColor   mOnColor;
+    axFont*   mFontOff;
+    axFont*   mFontOn;
+    axBrush*  mFillBrush;
 
   public:
 
-    wdgSwitches(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None/*, axParameter* aParameter=NULL*/)
-    : axWidget(aListener,aID,aRect,aAlignment/*,aParameter*/)
+    wdgSwitches(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None)
+    : axWidget(aListener,aID,aRect,aAlignment)
       {
-        setBackground(true,AX_GREY_DARK);
+        //setBackground(true,AX_GREY_DARK);
+        mFillBrush = new axBrush(AX_GREY_DARK);
+        //setFillBrush(mFillBrush);
+        //setFlag(wfl_DefaultDraw);
         mNum      = 0;
         mStrings  = NULL;
         mSelected = 0;
-        mOffColor = AX_GREY;
-        mOnColor  = AX_GREY_LIGHT;
+        mFontOff  = new axFont(AX_GREY);
+        mFontOn   = new axFont(AX_GREY_LIGHT);
       }
 
-    //virtual ~wdgSwitches() {}
+    virtual ~wdgSwitches()
+      {
+        delete mFontOff;
+        delete mFontOn;
+        delete mFillBrush;
+      }
 
     //--------------------------------------------------
 
@@ -71,7 +74,7 @@ class wdgSwitches : public axWidget
       {
         mSelected = i;
         float siz = 1.0f/(float)mNum;
-        mValue = (float)mSelected *siz + (siz*0.5);
+        mValue = (float)mSelected * siz + (siz*0.5);
       }
 
     //--------------------------------------------------
@@ -81,10 +84,9 @@ class wdgSwitches : public axWidget
     virtual void doSetValue(float aValue)
       {
         mValue = aValue;
-        //if( aValue >= 0.5 ) mState=true;
-        //else mState=false;
         int n = (int)axFloor( aValue * (float)mNum );
         mSelected = axMinInt( mNum-1, n );
+        TRACE("- n=%i\n",mSelected);
       }
 
     //----------
@@ -98,13 +100,16 @@ class wdgSwitches : public axWidget
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-        axWidget::doPaint(aCanvas,aRect);
+        //axWidget::doPaint(aCanvas,aRect);
+        aCanvas->clearPen();
+        aCanvas->selectBrush(mFillBrush);
+        aCanvas->fillRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
         int x = mRect.x;
-        int w = mRect.w / mNum;
+        int w = (int)(mRect.w / mNum);
         for( int i=0; i<mNum; i++ )
         {
-          if( i==mSelected ) aCanvas->setTextColor( mOnColor);
-          else aCanvas->setTextColor( mOffColor);
+          if( i==mSelected ) aCanvas->selectFont(mFontOn);
+          else aCanvas->selectFont(mFontOff);
           aCanvas->drawText( x, mRect.y, x+w-1, mRect.y2(), mStrings[i],tal_Center);
           x += w;
         }
@@ -114,8 +119,9 @@ class wdgSwitches : public axWidget
 
     virtual void doMouseDown(int aX, int aY, int aB)
       {
-        int x = aX - mRect.x;   // x = 0..mRect.w
-        doSetValue( (float)x / (float)mRect.w );
+        int x = aX - mRect.x;
+        float v = (float)x / (float)mRect.w;
+        doSetValue(v);
         mListener->onChange( this );
       }
 

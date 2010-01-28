@@ -17,12 +17,14 @@
  */
 
 /**
- * \file axBitmapLoader.h
- * \brief bitmap loader methods
+ * @file
+ * \brief desc
  */
 
 /**
- * \brief bitmap loader methods
+ * \brief desc
+ *
+ * long desc
  *
  */
 
@@ -38,7 +40,6 @@
 
 //TODO: split decoding & buffer preparation into separate function
 
-/// load a png file from buffer
 axSurface* loadPng(unsigned char* buffer, unsigned int buffersize)
   {
     axBitmap* bmp = NULL;
@@ -72,7 +73,7 @@ axSurface* loadPng(unsigned char* buffer, unsigned int buffersize)
   }
 
 //----------
-/// decode a png from buffer
+
 axBitmap* decodePng(unsigned char* buffer, unsigned int buffersize)
   {
     unsigned char*  image;
@@ -94,7 +95,7 @@ axBitmap* decodePng(unsigned char* buffer, unsigned int buffersize)
   }
 
 //----------
-/// upload bitmap
+
 axSurface* uploadBitmap(axBitmap* bmp)
 {
   axSurface* srf = new axSurface(bmp->getWidth(),bmp->getHeight()/*,0*/);
