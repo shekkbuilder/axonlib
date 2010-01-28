@@ -36,6 +36,9 @@
 
 class wdgVuMeter : public axWidget
 {
+  private:
+    axPen* mRectPen;
+    axBrush* mBarBrush;
   public:
     float mLevel;
   public:
@@ -46,15 +49,21 @@ class wdgVuMeter : public axWidget
         mLevel = 0;
         clearFlag(wfl_Active);
         setFlag(wfl_Vertical);
+        mRectPen = new axPen(AX_GREY_LIGHT);
+        mBarBrush = new axBrush(AX_GREY_LIGHT);
       }
     virtual ~wdgVuMeter()
       {
+        delete mRectPen;
+        delete mBarBrush;
       }
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-        aCanvas->setPenColor( AX_GREY_LIGHT );
+//aCanvas->setPenColor( AX_GREY_LIGHT );
+aCanvas->selectPen(mRectPen);
         aCanvas->drawRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
-        aCanvas->setBrushColor( AX_GREY_LIGHT );
+//aCanvas->setBrushColor( AX_GREY_LIGHT );
+aCanvas->selectBrush(mBarBrush);
         if (hasFlag(wfl_Vertical))
         {
           float h = (float)(mRect.h-4) * mLevel;

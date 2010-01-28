@@ -231,18 +231,23 @@ class axEditor : public axWindow,
 
     virtual void onChange(axWidget* aWidget)
       {
-        //TRACE("- axEditor: onChange(wdg)... id=%i\n",aWidget->mID);
+        TRACE("- axEditor: onChange(wdg)... id=%i\n",aWidget->mID);
         int con = aWidget->getConnectionIndex();
-        //TRACE("wdg.con: %i\n",con);
+        TRACE("wdg.con: %i\n",con);
         if( con>=0 )
         {
           axParameter* par = mConnections[con]->mParameter;
+          TRACE("  par: %x\n",(int)par);
           float val = aWidget->doGetValue();
+          TRACE("  val: %f\n",val);
           //TRACE("  plugin=%x\n",(int)mPlugin);
           //mPlugin->setParameterAutomated(con,val); // will call back to onChange below (to be redrawn)
           mPlugin->setParameterAutomated(par->mID,val); // will call back to onChange below (to be redrawn)
+          TRACE("  ...\n");
         }
-        else axWindow::onChange(aWidget);//redrawWidget(aWidget);
+        else
+          axWindow::onChange(aWidget);
+          //redrawWidget(aWidget);
       }
 
     //----------
@@ -257,18 +262,24 @@ class axEditor : public axWindow,
 
     virtual void onChange(axParameter* aParameter)
       {
+        TRACE("- axEditor: onChange(par)... id=%i\n",aParameter->mID);
         int con = aParameter->getConnectionIndex();
+        TRACE("wdg.con: %i\n",con);
         if( con>=0 )
         {
           axWidget* wdg = mConnections[con]->mWidget;
+          TRACE("  wdg: %x\n",(int)wdg);
           float val = aParameter->doGetValue();
-          wdg->doSetValue(val);
+          TRACE("  val: %f\n",val);
+          //wdg->setValueDirect(val);//  doSetValue(val);
+          wdg->setValueDirect(val);//  doSetValue(val);
           //#ifdef AX_DIRTYWIDGETS
           #ifndef AX_NODIRTYWIDGETS
           appendDirty(wdg);
           #else
           redrawWidget(wdg);
           #endif
+          TRACE("  ...\n");
         }
       }
 

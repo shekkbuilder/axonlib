@@ -49,7 +49,7 @@ struct axPoint
 
   void clear(void)          { }
   void set(int i)           { x=i; y=i; }
-  void set(int aX, int aY)  { x=aX; y=aY; w=aW; h=aH; }
+  void set(int aX, int aY)  { x=aX; y=aY; }
 
   //----------------------------------------
 

@@ -43,8 +43,8 @@ class wdgImage : public axWidget
 
   public:
 
-    wdgImage(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment, /*axParameter* aParameter=NULL,*/ axSurface* aSurface=NULL)
-    : axWidget(aListener,aID,aRect,aAlignment/*,aParameter*/)
+    wdgImage(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment, axSurface* aSurface=NULL)
+    : axWidget(aListener,aID,aRect,aAlignment)
       {
         clearFlag(wfl_Active);
         mSurface = aSurface;
@@ -58,10 +58,7 @@ class wdgImage : public axWidget
       {
         if(hasFlag(wfl_Visible))
         {
-          axRect R = mRect;
-          R.crop( aRect.x, aRect.y, aRect.w, aRect.h );
-          //TRACE("x:%i  y:%i  w:%i  h:%i\n",R.x,R.y,R.w,R.h);
-          if(R.w>0 && R.h>0) aCanvas->blit( mSurface->mCanvas, R.x,R.y, R.x,R.y,R.w,R.h );
+          if (mRect.w>0 && mRect.h>0) aCanvas->blit( mSurface->mCanvas, mRect.x,mRect.y,0,0, mRect.w,mRect.h);
         }
       }
 

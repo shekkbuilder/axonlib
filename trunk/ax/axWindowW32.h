@@ -487,7 +487,7 @@ class axWindowImpl : public axWindowBase
 
     LRESULT eventHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
       {
-        MSG msg2;
+        //MSG msg2;
         //HDC dc;
         LRESULT result = 0;
         int btn;
@@ -566,7 +566,7 @@ class axWindowImpl : public axWindowBase
             doKeyDown(wParam,lParam);
             break;
           case WM_SIZE:
-            TRACE("WM_SIZE\n");
+            //TRACE("WM_SIZE\n");
 
             //lParam:
             //  The low-order word of lParam specifies the new width of the client area.

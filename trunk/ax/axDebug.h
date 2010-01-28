@@ -17,18 +17,20 @@
  */
 
 /**
- * \file axDebug.h
- * \brief provides debug routines
+ * @file
+ * \brief desc
  */
 
+/**
+ * \brief desc
+ *
+ * long desc
+ *
+ */
+ 
 #ifndef axDebug_included
 #define axDebug_included
 //----------------------------------------------------------------------
-
-/**
- * \brief provides debug routines
- *
- */
 
 #ifdef AX_DEBUG
 

@@ -113,7 +113,7 @@ class myPlugin : public axPlugin
 
     //--------------------------------------------------
 
-    virtual axWindow* doCreateEditor(void)
+    virtual void* doCreateEditor(void)
       {
         //TRACE("creating editor (midi_fibonacci)\n");
         //TRACE("- is_gui_initialized = %i\n",(int)is_gui_initialized);
@@ -154,20 +154,20 @@ class myPlugin : public axPlugin
 //          free(buffer);
 //          //----------
 //        }
-        axEditor* E = new axEditor( "midi_fibonacci_editor",this, -1, axRect(0,0,AX_WIDTH,AX_HEIGHT), AX_FLAGS );
+        axEditor* EDIT = new axEditor( "midi_fibonacci_editor",this, -1, axRect(0,0,AX_WIDTH,AX_HEIGHT), AX_FLAGS );
 //        E->appendWidget( new wdgImage( E, -1, axRect(0,0,AX_WIDTH,AX_HEIGHT), wal_None, NULL, back_srf ) );
         for( int i=0; i<mParameters.size(); i++ )
         {
           axParameter* par = mParameters[i]; // skip background
 //          axWidget* wdg = new wdgImgKnob(E,i,axRect(10,10+i*40,32,32),wal_None,par,20,knob_srf);
-          axWidget* wdg = new wdgKnob(E,i,axRect(10,10+i*40,128,32),wal_None/*,par*/);
-          E->appendWidget(wdg);
-          E->connect(wdg,par);
+          axWidget* wdg = new wdgKnob(EDIT,i,axRect(10,10+i*40,128,32),wal_None/*,par*/);
+          EDIT->appendWidget(wdg);
+          EDIT->connect(wdg,par);
         }
         //E->updateWidgetValues();
         //E->doRealign();
         //TRACE("....ok (midi_fibonacci)\n");
-        mEditor = E;
+        mEditor = EDIT;
         return mEditor;
       }
 
@@ -176,9 +176,9 @@ class myPlugin : public axPlugin
     virtual void doDestroyEditor(void)
       {
         //TODO: lock?
-        axEditor* E = mEditor;
+        axEditor* EDIT = mEditor;
         mEditor = NULL;
-        delete E;
+        delete EDIT;
       }
 
     //----------

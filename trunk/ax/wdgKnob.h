@@ -17,40 +17,77 @@
  */
 
 /**
- * @file
- * \brief knob widget
- */
-
-/**
- * \brief knob widget
- *
- * long desc
- *
- */
+  \file wdgKnob.h
+  \brief knob widget
+*/
 
 #ifndef wdgKnob_included
 #define wdgKnob_included
 //----------------------------------------------------------------------
 
-//#include "axWidget.h"
 #include "wdgValue.h"
+
+#define NAME_SIZE 32
+#define DISP_SIZE 32
 
 class wdgKnob : public wdgValue
 {
   private:
-    //char buf[32];
-    float val;
-    char  name[32];
-    char  display[32];
-  public:
-    int mKnobSize;
+    float     val;
+    char      name[NAME_SIZE];
+    char      display[DISP_SIZE];
+    int       mKnobSize;
+    axBrush*  brush_name_back;
+    axBrush*  brush_disp_back;
+    axBrush*  brush_knob_back_outer;
+    axBrush*  brush_knob_back_inner;
+    axBrush*  brush_knob_pie;
+    axFont*   font_name;
+    axFont*   font_disp;
+    axPen*    pen_knob_arc_full;
+    axPen*    pen_knob_arc_outer;
+    // small knob
+    axPen*    sm_pen_knob_arc_full;
+    axPen*    sm_pen_knob_arc_outer;
+    axBrush*  sm_brush_knob_pie;
+    axFont*   sm_font_disp;
 
   public:
 
-    wdgKnob(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None, /*axParameter* aParameter=NULL,*/ int aSize=1)
-    : wdgValue(aListener,aID,aRect,aAlignment/*,aParameter*/)
+    wdgKnob(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None, int aSize=1)
+    : wdgValue(aListener,aID,aRect,aAlignment)
       {
-        mKnobSize = aSize;
+        mKnobSize             = aSize;
+        brush_name_back       = new axBrush(AX_GREY_DARK);
+        brush_disp_back       = new axBrush(axColor(96,96,96));
+        brush_knob_back_outer = new axBrush(AX_GREY);
+        brush_knob_back_inner = new axBrush(axColor(112,112,112));
+        brush_knob_pie        = new axBrush(AX_GREY_LIGHT);
+        font_name             = new axFont(AX_GREY);
+        font_disp             = new axFont(AX_GREY_LIGHT);
+        pen_knob_arc_full     = new axPen(AX_GREY_DARK,4);
+        pen_knob_arc_outer    = new axPen(AX_YELLOW,4);
+        sm_pen_knob_arc_full  = new axPen(AX_GREY_DARK,3);
+        sm_pen_knob_arc_outer = new axPen(AX_WHITE,3);
+        sm_brush_knob_pie     = new axBrush(AX_GREY_LIGHT);
+        sm_font_disp          = new axFont(AX_GREY_DARK);
+      }
+
+    virtual ~wdgKnob()
+      {
+        delete brush_name_back;
+        delete brush_disp_back;
+        delete brush_knob_back_outer;
+        delete brush_knob_back_inner;
+        delete brush_knob_pie;
+        delete font_name;
+        delete font_disp;
+        delete pen_knob_arc_full;
+        delete pen_knob_arc_outer;
+        delete sm_pen_knob_arc_full;
+        delete sm_pen_knob_arc_outer;
+        delete sm_brush_knob_pie;
+        delete sm_font_disp;
       }
 
     //--------------------------------------------------
@@ -60,58 +97,49 @@ class wdgKnob : public wdgValue
         int x = mRect.x;
         int y = mRect.y;
         // text rectangles
-        aCanvas->setPenColor( AX_GREY_DARK );
-        aCanvas->setBrushColor( AX_GREY_DARK );
-        aCanvas->fillRect( x+16,y,   x+127,y+14 );
-        aCanvas->setBrushColor( axColor(96,96,96) );
-        aCanvas->fillRect( x+16,y+17,x+127,y+31 );
-        aCanvas->setTextColor( AX_GREY );
-        aCanvas->drawText( x+40,y,   x+127,y+14, aName, tal_Left );
-        aCanvas->setTextColor( AX_GREY_LIGHT );
-        aCanvas->drawText( x+40,y+17,x+127,y+31, aDisplay, tal_Left );
+        aCanvas->clearPen();
+        aCanvas->selectBrush(brush_name_back);
+        aCanvas->fillRect(x+16,y,x+127,y+14);
+        aCanvas->selectBrush(brush_disp_back);
+        aCanvas->fillRect(x+16,y+17,x+127,y+31);
+        aCanvas->selectFont(font_name);
+        aCanvas->drawText(x+40,y,x+127,y+14,aName,tal_Left);
+        aCanvas->selectFont(font_disp);
+        aCanvas->drawText(x+40,y+17,x+127,y+31,aDisplay,tal_Left);
         // erase circle behind knob
-        aCanvas->setPenColor( AX_GREY ); // get rid of win32 border
-        aCanvas->setBrushColor( AX_GREY );
-        aCanvas->fillCircle( x-4,y-4,x+35,y+35 );
-        aCanvas->setBrushColor( axColor(112,112,112) );
-        aCanvas->fillCircle( x,y,x+31,y+31 );
+        aCanvas->selectBrush(brush_knob_back_outer);
+        aCanvas->fillCircle(x-4,y-4,x+35,y+35);
+        aCanvas->selectBrush(brush_knob_back_inner);
+        aCanvas->fillCircle(x,y,x+31,y+31);
         // draw full outer arc
-        aCanvas->setPenColor( AX_GREY_DARK );
-        aCanvas->setPenWidth(4);
-        aCanvas->drawArc( x+2,y+2,x+29,y+29, 0.6, 0.8 );
-        //aCanvas->resetPenWidth();
+        aCanvas->selectPen(pen_knob_arc_full);
+        aCanvas->drawArc(x+2,y+2,x+29,y+29,0.6,0.8);
         // outer arc
-        aCanvas->setPenColor( AX_WHITE );
-        //aCanvas->setPenWidth(4);
-        aCanvas->drawArc( x+2,y+2,x+29,y+29, 0.6, aValue*0.8 );
-        aCanvas->resetPenWidth();
+        aCanvas->selectPen(pen_knob_arc_outer);
+        aCanvas->drawArc(x+2,y+2,x+29,y+29,0.6,aValue*0.8);
         // draw pie (value)
-        aCanvas->setPenColor( AX_GREY ); // get rid of win32 border
-        aCanvas->setBrushColor( AX_GREY_LIGHT );
-        aCanvas->fillArc( x+6,y+6,x+25,y+25, 0.6, aValue*0.8 );
+        aCanvas->clearPen();
+        aCanvas->selectBrush(brush_knob_pie);
+        aCanvas->fillArc(x+6,y+6,x+25,y+25,0.6,aValue*0.8);
       }
 
     void drawKnobSmall(axCanvas* aCanvas, axRect aRect, float aValue, axString aName, axString aDisplay, int aFlags)
       {
         int x  = mRect.x;
         int y  = mRect.y;
-        //aCanvas->setBrushColor( axColor(96,96,96) );
-        //aCanvas->fillRect(x+20,y,x+63,y+15);
-        aCanvas->setPenColor( AX_GREY_DARK );
-        aCanvas->setPenWidth( 3 );
+        aCanvas->selectPen(sm_pen_knob_arc_full);
         aCanvas->drawArc(x+1,y+1,x+15,y+15,0.6,0.8);
-        aCanvas->setPenColor( AX_WHITE );
+        aCanvas->selectPen(sm_pen_knob_arc_outer);
         aCanvas->drawArc(x+1,y+1,x+15,y+15,0.6,aValue*0.8);
-        aCanvas->resetPenWidth();
-        aCanvas->setBrushColor( axColor(192,192,192) );
+        aCanvas->clearPen();
+        aCanvas->selectBrush(sm_brush_knob_pie);
         aCanvas->fillArc(x+4,y+4,x+12,y+12,0.6,aValue*0.8);
-        //aCanvas->setTextColor( AX_GREY_LIGHT );
-        aCanvas->setTextColor( AX_GREY_DARK );
+        aCanvas->selectFont(sm_font_disp);
         aCanvas->drawText(x+22,y,x+63,y+15,aDisplay,tal_Left);
       }
 
     //--------------------------------------------------
-    // widget handler
+    // widget base
     //--------------------------------------------------
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
@@ -120,17 +148,15 @@ class wdgKnob : public wdgValue
         {
           name[0] = '\0';
           display[0] = '\0';
-          //val = 0.8 * mParameter->mValue;
           val = mParameter->doGetValue();
-          mParameter->doGetName( name );
-          mParameter->doGetDisplay( display );
+          mParameter->doGetName(name);
+          mParameter->doGetDisplay(display);
         }
         else
         {
-          //axWidget::doPaint( aCanvas, aRect );
-          val = mValue;// * 0.8;
-          strcpy( name, "[name]" );
-          sprintf( display, "%f", val );
+          val = mValue;
+          strcpy(name,"[name]");
+          sprintf(display,"%f",val);
         }
         switch(mKnobSize)
         {
@@ -140,8 +166,8 @@ class wdgKnob : public wdgValue
       }
 };
 
+#undef NAME_SIZE
+#undef DISP_SIZE
+
 //----------------------------------------------------------------------
 #endif
-
-
-

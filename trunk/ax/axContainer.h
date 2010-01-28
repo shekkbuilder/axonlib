@@ -29,7 +29,6 @@
 
 #include "axWidget.h"
 
-/// container widget
 class axContainer : public axWidget,
                     public axWidgetListener
 {
@@ -249,83 +248,80 @@ class axContainer : public axWidget,
       {
         if( hasFlag(wfl_Align ) )
         {
-          //bool empty = false;
-          axRect R = mRect;
-          //mContent = R;
-          mContent.set(R.x,R.y,0,0);
-          R.add( mMarginX, mMarginY, -(mMarginX*2), -(mMarginY*2) ); // spacing (outer border)
-          axRect C = R;
-          int largest = 0;//-1;
-          int stackx = R.x + mPaddingX;
-          int stacky = R.y + mPaddingY;
+          axRect parent = mRect;
+          mContent.set(parent.x,parent.y,0,0);
+          parent.add( mMarginX, mMarginY, -(mMarginX*2), -(mMarginY*2) ); // spacing (outer border)
+          axRect client = parent;
+          int largest = 0;
+          int stackx = parent.x + mPaddingX;
+          int stacky = parent.y + mPaddingY;
           for( int i=0; i<mWidgets.size(); i++ )
           {
             axWidget* wdg = mWidgets[i];
+            int xx = wdg->getOrig().x;//wdg->getRect().x;
+            int yy = wdg->getOrig().y;//wdg->getRect().y;
             int ww = wdg->getRect().w;
             int hh = wdg->getRect().h;
             switch( wdg->getAlignment() )
             {
-              //case wal_None:
-              //  wdg->doMove( R.x + xx, R.y+yy );
-              //  break;
-//              case wal_Parent:
-//                wdg->doMove( R.x + wdg->getOrigin().x, R.y + wdg->getOrigin().y );
-//                break;
+              case wal_None:
+                wdg->doMove(parent.x+xx,parent.y+yy);
+                break;
               //case wal_Fill:
-              //  wdg->doMove( R.x, R.y );
-              //  wdg->doResize( R.w, R.h );
+              //  wdg->doMove( parent.x, parent.y );
+              //  wdg->doResize( parent.w, parent.h );
               //  break;
               case wal_Client:
-                wdg->doMove( C.x, C.y );
-                wdg->doResize( C.w, C.h );
+                wdg->doMove( client.x, client.y );
+                wdg->doResize( client.w, client.h );
                 //empty = true;
                 break;
               case wal_Left:
-                wdg->doMove( C.x, C.y );
-                wdg->doResize( ww, C.h );
-                C.x += (ww + mPaddingX);
-                C.w -= (ww + mPaddingX);
+                wdg->doMove( client.x, client.y );
+                wdg->doResize( ww, client.h );
+                client.x += (ww + mPaddingX);
+                client.w -= (ww + mPaddingX);
                 break;
               case wal_Right:
-                wdg->doMove( C.x2()-ww+1, C.y );
-                wdg->doResize( ww, C.h );
-                C.w -= (ww + mPaddingX);
+                wdg->doMove( client.x2()-ww+1, client.y );
+                wdg->doResize( ww, client.h );
+                client.w -= (ww + mPaddingX);
                 break;
               case wal_Top:
-                wdg->doMove( C.x, C.y );
-                wdg->doResize( C.w, hh );
-                C.y += (hh + mPaddingY);
-                C.h -= (hh + mPaddingY);
+                wdg->doMove( client.x, client.y );
+                wdg->doResize( client.w, hh );
+                client.y += (hh + mPaddingY);
+                client.h -= (hh + mPaddingY);
                 break;
               case wal_Bottom:
-                wdg->doMove( C.x, C.y2()-hh+1 );
-                wdg->doResize( C.w, hh );
-                C.h -= (hh + mPaddingY);
+                wdg->doMove( client.x, client.y2()-hh+1 );
+                wdg->doResize( client.w, hh );
+                client.h -= (hh + mPaddingY);
                 break;
               case wal_LeftTop:
-                wdg->doMove( C.x, C.y );
+                wdg->doMove( client.x, client.y );
                 //wdg->doResize( ww, C.h );
-                C.x += (ww + mPaddingX);
-                C.w -= (ww + mPaddingX);
+                client.x += (ww + mPaddingX);
+                client.w -= (ww + mPaddingX);
                 break;
               case wal_RightTop:
-                wdg->doMove( C.x2()-ww+1, C.y );
+                wdg->doMove( client.x2()-ww+1, client.y );
                 //wdg->doResize( ww, C.h );
-                C.w -= (ww + mPaddingX);
+                client.w -= (ww + mPaddingX);
                 break;
               case wal_LeftBottom:
-                wdg->doMove( C.x, C.y2()-hh+1 );
+                wdg->doMove( client.x, client.y2()-hh+1 );
                 //wdg->doResize( C.w, hh );
                 //C.y += hh;
-                C.h -= (hh + mPaddingY);
+                client.h -= (hh+mPaddingY);
                 break;
               case wal_RightBottom:
-                wdg->doMove( C.x2()-ww+1, C.y2()-hh+1 );
+                wdg->doMove( client.x2()-ww+1, client.y2()-hh+1 );
                 //wdg->doResize( C.w, hh );
-                C.h -= (hh + mPaddingY);
+                client.h -= (hh+mPaddingY);
                 break;
               case wal_Stacked:
-                wdg->doMove( stackx, stacky );
+                wdg->doMove(stackx,stacky);
                 //TODO: fix
                 int w = ww + mPaddingX;
                 int h = hh + mPaddingY;
@@ -333,18 +329,18 @@ class axContainer : public axWidget,
                 // denne er feil
                 // wrapper til neste linje/row, hvis current widget ikke får plass,
 
-                if( mFlags&wfl_Vertical )
+                if ( hasFlag(wfl_Vertical))
                 {
-                  int remain = R.y2() - stacky + 1 - hh;
-                  if( remain>=h )
+                  int remain = parent.y2() - stacky + 1 - hh;
+                  if (remain>=h)
                   {
                     stacky+=h;
                     if(w>largest) largest=w;
                   }
                   else
                   {
-                    stacky=R.y+mPaddingY;
-                    if (largest>0) stackx+=largest;//w;                                        // largest
+                    stacky = parent.y + mPaddingY;
+                    if (largest>0) stackx += largest;//w;                                        // largest
                     else stackx+=w;
                     largest = 0;//-1;
                   }
@@ -352,7 +348,7 @@ class axContainer : public axWidget,
 
                 else
                 {
-                  int remain = R.x2() - stackx + 1 - ww;
+                  int remain = parent.x2() - stackx + 1 - ww;
                   if( remain>=w )
                   {
                     stackx+=w;
@@ -360,9 +356,9 @@ class axContainer : public axWidget,
                   }
                   else
                   {
-                    stackx=R.x+mPaddingX;
-                    if (largest>0) stacky+=largest;//h;                                        // largest
-                    else stacky+=h;
+                    stackx = parent.x + mPaddingX;
+                    if (largest>0) stacky += largest;//h;                                        // largest
+                    else stacky += h;
                     largest = 0;//-1;
                   }
                 } //horizontal
@@ -394,8 +390,8 @@ class axContainer : public axWidget,
         {
           if( mRect.intersects(aRect) )
           {
-            if( hasFlag(wfl_Clip) ) aCanvas->setClipRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
-            axWidget::doPaint( aCanvas, aRect );
+            if (hasFlag(wfl_Clip)) aCanvas->setClipRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
+            //axWidget::doPaint( aCanvas, aRect );
             #ifdef AX_PAINTERS
             for( int i=mWidgets.size()-1; i>=0; i-- )
             #else
@@ -403,7 +399,7 @@ class axContainer : public axWidget,
             #endif
             {
               axWidget* W = mWidgets[i];
-              if( W->intersects(aRect) ) W->doPaint( aCanvas, mRect );
+              if (W->intersects(aRect)) W->doPaint(aCanvas, mRect);
             }
             if( hasFlag(wfl_Clip) ) aCanvas->clearClipRect();
           } //intersect

@@ -27,15 +27,13 @@
 
 #include "axCanvas.h"
 
-/// define brush base
 class axBrushBase
 {
   protected:
     axColor mColor;
     int     mStyle;
   public:
-    /// brush base constructor
-    axBrushBase( axColor aColor=AX_GREY_DARK, int aStyle=0 )
+    axBrushBase( axColor aColor, int aStyle )
       {
         mColor = aColor;
         mStyle = aStyle;
@@ -52,14 +50,13 @@ class axBrushBase
 };
 
 //----------------------------------------------------------------------
-/// brush for linux
+
 #ifdef linux
 
   class axBrush : public axBrushBase
   {
     public:
-      /// brush constructor for linux
-      axBrush(axColor aColor, int aStyle)
+      axBrush(axColor aColor, int aStyle=0)
       : axBrushBase(aColor,aStyle)
         {
         }
@@ -68,7 +65,7 @@ class axBrushBase
 #endif
 
 //----------------------------------------------------------------------
-/// brush for win32
+
 #ifdef WIN32
 
   class axBrush : public axBrushBase
@@ -77,8 +74,7 @@ class axBrushBase
       HBRUSH  mBrush;
       //HBRUSH  mOldBrush;
     public:
-      /// brush constructor for win32
-      axBrush(axColor aColor, int aStyle)
+      axBrush(axColor aColor, int aStyle=0)
       : axBrushBase(aColor,aStyle)
         {
           mBrush = CreateSolidBrush(aColor.mColor);
@@ -94,6 +90,11 @@ class axBrushBase
   };
 
 #endif
+
+//----------------------------------------------------------------------
+
+#define DEF_BRUSH_BLACK axBrush(AX_BLACK)
+#define DEF_BRUSH_DARK  axBrush(AX_GREY_DARK)
 
 //----------------------------------------------------------------------
 #endif

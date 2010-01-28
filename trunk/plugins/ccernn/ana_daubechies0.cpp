@@ -219,15 +219,15 @@ class myPlugin : public axPlugin,
     //----------------------------------------------------------------------
 
     // can this one die because of some threading issues? (ala close editor) think,think..
-    virtual axWindow* doCreateEditor(void)
+    virtual void* doCreateEditor(void)
       {
-        axEditor* E = new axEditor("ana_sigview_editor",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
-        E->appendWidget( wScope     = new wdgScope(   this,3,axRect( 10,70,266,200),wal_None ) );
+        axEditor* EDIT = new axEditor("ana_sigview_editor",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
+        EDIT->appendWidget( wScope     = new wdgScope(   this,3,axRect( 10,70,266,200),wal_None ) );
           //wViewMode->setup(2,str_viewmode);
           wScope->mSize = mLength;
           wScope->mBuffer = mViewBuffer;
           wScope->mDrawFlags = wbf_Wave;// | wbf_Slices;
-          wScope->mWaveColor = AX_YELLOW;
+          //wScope->mWaveColor = AX_YELLOW;
           //wScope->mNumSlices = 8;
           //wScope->mSlicesColor = AX_WHITE;
 
@@ -237,8 +237,8 @@ class myPlugin : public axPlugin,
 //        E->connect( wLength,pLength );
         // could mEditor be in use from another thread? gui? audio? setParameter?
         // it shouldn't (we are creating the editor), but, ...
-        mEditor = E;
-        return E;
+        mEditor = EDIT;
+        return EDIT;
       }
 
     //----------
@@ -246,9 +246,9 @@ class myPlugin : public axPlugin,
     // see below (idle)
     virtual void doDestroyEditor(void)
       {
-        axEditor* E = mEditor;
+        axEditor* EDIT = mEditor;
         mEditor = NULL;
-        delete E;
+        delete EDIT;
       }
 
     //----------

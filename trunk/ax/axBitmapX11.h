@@ -17,8 +17,15 @@
  */
 
 /**
- * \file axBitmapX11.h
- * \brief bitmap class for linux
+ * @file
+ * \brief desc
+ */
+
+/**
+ * \brief desc
+ *
+ * long desc
+ *
  */
 
 #ifndef axBitmapX11_included
@@ -27,13 +34,6 @@
 // client-side bitmap
 
 #include "axGlobals.h"
-
-/**
- * \brief bitmap class for linux
- *
- * \long provides support for bitmaps under x11
- *
- */
 
 class axBitmapImpl : public axBitmapBase
 {

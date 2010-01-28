@@ -23,7 +23,7 @@
 // @ define
 // ---------------------------------------------------
 #define AX_PLUGIN     myPlugin
-#define AX_NUMPROGS   0
+#define AX_NUMPROGS   1
 #define AX_NUMPARAMS  7
 #define AX_WIDTH      128 + 100
 #define AX_HEIGHT     20 + AX_NUMPARAMS*(32 + 5)
@@ -135,10 +135,11 @@ class myPlugin : public axPlugin
     // ------------------------------------
 	  // @ create editor
 		// ------------------------------------
-    virtual axWindow* doCreateEditor(void)
+    //virtual axWindow* doCreateEditor(void)
+    virtual void* doCreateEditor(void)
     {
     	// @ new editor
-      axEditor* E = new axEditor( "lofi_gui", this, -1, axRect(0,0,AX_WIDTH-1,AX_HEIGHT-1), AX_FLAGS );
+      axEditor* EDIT = new axEditor( "lofi_gui", this, -1, axRect(0,0,AX_WIDTH-1,AX_HEIGHT-1), AX_FLAGS );
       // --------------------------------------
       // @ decode bitmap and attach as convas
       // --------------------------------------
@@ -163,7 +164,7 @@ class myPlugin : public axPlugin
           back_bmp = new axBitmap(width,height,image);
           back_bmp->convertRgbaBgra();
           back_bmp->setBackground(128,128,128);
-          back_srf = new axSurface(width,height,0);
+          back_srf = new axSurface(width,height/*,0*/);
           back_srf->mCanvas->drawBitmap(back_bmp, 0,0, 0,0,width,height);
           free(image);
         }
@@ -175,21 +176,21 @@ class myPlugin : public axPlugin
       // @ append widgets
       // ------------------
       // @ image
-      E->appendWidget( new wdgImage( E, 7, axRect(  0,  0, AX_WIDTH,AX_HEIGHT), wal_None, /*NULL,*/ back_srf ) );
+      EDIT->appendWidget( new wdgImage( EDIT, 7, axRect(  0,  0, AX_WIDTH,AX_HEIGHT), wal_None, /*NULL,*/ back_srf ) );
       // @ switch
-      E->appendWidget( swch = new wdgSwitch( E, 0, axRect( 50, 10, 128, 32), wal_None/*, mParameters[0]*/ ) );
+      EDIT->appendWidget( swch = new wdgSwitch( EDIT, 0, axRect( 50, 10, 128, 32), wal_None/*, mParameters[0]*/ ) );
       swch->setup(str_processing);
-      E->connect( swch, mParameters[0] );
-      E->appendWidget( swch = new wdgSwitch( E, 1, axRect( 50, 10 + 32 + 5, 128, 32), wal_None/*, mParameters[1]*/ ) );
+      EDIT->connect( swch, mParameters[0] );
+      EDIT->appendWidget( swch = new wdgSwitch( EDIT, 1, axRect( 50, 10 + 32 + 5, 128, 32), wal_None/*, mParameters[1]*/ ) );
       swch->setup(str_interpolation);
-      E->connect( swch, mParameters[1] );
+      EDIT->connect( swch, mParameters[1] );
       // @ knobs
       for (int kni=2; kni<7; kni++)
       {
-      	E->appendWidget( knb = new wdgKnob( E, kni, axRect( 50, 10 +(kni*(32+5)), 128, 32), wal_None/*, mParameters[kni]*/ ) );
-				E->connect( knb, mParameters[kni] );
+      	EDIT->appendWidget( knb = new wdgKnob( EDIT, kni, axRect( 50, 10 +(kni*(32+5)), 128, 32), wal_None/*, mParameters[kni]*/ ) );
+				EDIT->connect( knb, mParameters[kni] );
 			}
-      mEditor = E;
+      mEditor = EDIT;
       return mEditor;
     }
    	// ------------------------------------
@@ -197,9 +198,9 @@ class myPlugin : public axPlugin
 		// ------------------------------------
     virtual void doDestroyEditor(void)
     {
-			axEditor* E = mEditor;
+			axEditor* EDIT = mEditor;
 			mEditor = NULL;
-			delete E;
+			delete EDIT;
     }
 		// ------------------------------------
     // @ idle editor

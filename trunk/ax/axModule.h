@@ -56,13 +56,12 @@
 // axPin
 //
 //----------------------------------------------------------------------
-
 class axModule;
 
 class axPin
 {
-  protected:
-  //public:
+  //protected:
+  public:
     axModule* mOwner;
     axString  mName;
     int       mType;    // 0=data, 1=signal, 2=multi
@@ -206,7 +205,7 @@ class axModule : public axModuleBase
       }
 
     //----------------------------------------
-    // module handler
+    // module base
     //----------------------------------------
 
     //virtual void process(void) {}

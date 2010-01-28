@@ -76,7 +76,7 @@ class myPlugin : public axPlugin//,
 
     //----------
 
-    virtual axWindow* doCreateEditor(void)
+    virtual void* doCreateEditor(void)
       {
         if(!editor_initialized)
         {
@@ -85,16 +85,16 @@ class myPlugin : public axPlugin//,
           swSrf = loadPng(buffer,size);
           editor_initialized = true;
         }
-        axEditor* E = new axEditor("ana_vu_window",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
-        E->appendWidget( wSpeed = new wdgKnob(     E,0,axRect(10, 10, 128,32 ), wal_None/*, pSpeed*/ ));
-        E->appendWidget( sw     = new wdgImgSwitch(E,1,axRect(100,100,30, 30 ), wal_None/*, psw*/, 0, swSrf ));
-        E->appendWidget( wMeter = new wdgVuMeter(  E,2,axRect(10, 50, 10, 128), wal_None/*, NULL*/));
-        E->connect( wSpeed, pSpeed );
-        E->connect( sw,     psw );
+        axEditor* EDIT = new axEditor("ana_vu_window",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
+        EDIT->appendWidget( wSpeed = new wdgKnob(     EDIT,0,axRect(10, 10, 128,32 ), wal_None/*, pSpeed*/ ));
+        EDIT->appendWidget( sw     = new wdgImgSwitch(EDIT,1,axRect(100,100,30, 30 ), wal_None/*, psw*/, 0, swSrf ));
+        EDIT->appendWidget( wMeter = new wdgVuMeter(  EDIT,2,axRect(10, 50, 10, 128), wal_None/*, NULL*/));
+        EDIT->connect( wSpeed, pSpeed );
+        EDIT->connect( sw,     psw );
         //wMeter->mValue = 0.66;
         left = 0;
         right = 0;
-        mEditor = E;
+        mEditor = EDIT;
         return mEditor;
       }
 
@@ -102,9 +102,9 @@ class myPlugin : public axPlugin//,
 
     virtual void doDestroyEditor(void)
       {
-        axEditor* tempeditor = mEditor;
+        axEditor* EDIT = mEditor;
         mEditor = NULL;
-        delete tempeditor;
+        delete EDIT;
       }
 
     //----------

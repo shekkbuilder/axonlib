@@ -36,10 +36,10 @@ class axFontBase
     int       mSize;
     int       mStyle;
   public:
-    axFontBase(axString aName, axColor aColor, int aSize, int aStyle)
+    axFontBase(axColor aColor, axString aName, int aSize, int aStyle)
       {
-        mName  = "default";//aName;
         mColor = aColor;
+        mName  = aName;//"default";
         mSize = aSize;
         mStyle = aStyle;
       }
@@ -59,8 +59,8 @@ class axFontBase
   {
     public:
 
-      axFont(axString aName, axColor aColor=AX_GREY_LIGHT, int aSize=DEF_PENWIDTH, int aStyle=0)
-      : axFontBase(aName,aColor,aSize,aStyle)
+      axFont(axColor aColor, axString aName="default", int aSize=-1, int aStyle=0)
+      : axFontBase(aColor,aName,aSize,aStyle)
         {
         }
 
@@ -79,8 +79,8 @@ class axFontBase
   {
     public:
 
-      axFont(axString aName, axColor aColor, int aSize, int aStyle)
-      : axFontBase(aName,aColor,aSize,aStyle)
+      axFont(axColor aColor, axString aName="default", int aSize=-1, int aStyle=0)
+      : axFontBase(aColor,aName,aSize,aStyle)
         {
         }
 

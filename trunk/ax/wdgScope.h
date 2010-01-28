@@ -44,8 +44,13 @@
 
 #include "axWidget.h"
 
-#define MAX_CURSORS 256
-#define MAX_AREAS   16
+#ifndef MAX_CURSORS
+  #define MAX_CURSORS 16
+#endif
+
+#ifndef MAX_AREAS
+  #define MAX_AREAS   16
+#endif
 
 #define wbf_Wave    1
 #define wbf_Slices  2
@@ -56,20 +61,24 @@
 struct bufCursor
 {
   float   pos;
-  axColor color;
+  //axColor color;
+  axPen*  pen;
 };
 
 struct bufArea
 {
   float   start;
   float   end;
-  axColor color;
+  //axColor color;
+  axBrush* brush;
 };
 
 //----------
 
 class wdgScope : public axWidget
 {
+  private:
+    axBrush* mFillBrush;
   public:
     int       mSize;    // num samples
     float*    mBuffer;  // mSize*2 samples (stereo)
@@ -83,8 +92,11 @@ class wdgScope : public axWidget
     bufCursor mCursors[MAX_CURSORS];
     bufArea   mAreas[MAX_AREAS];
 
-    axColor mWaveColor;
-    axColor mSlicesColor;
+    //axColor mWaveColor;
+    //axColor mSlicesColor;
+    axPen* mWavePen;
+    axPen* mSlicesPen;
+    axPen* mRectPen;
 
   public:
 
@@ -92,7 +104,6 @@ class wdgScope : public axWidget
     : axWidget(aListener,aID,aRect,aAlignment/*,aParameter*/)
       {
         clearFlag(wfl_Active);
-        setBackground(true,AX_GREY_DARK);
         mSize   = 0;
         mBuffer = NULL;
         mMode   = 0;
@@ -102,25 +113,33 @@ class wdgScope : public axWidget
         mNumSlices        = 0;
         mNumCursors       = 0;
         mNumAreas         = 0;
-        mWaveColor        = AX_GREY_LIGHT;
-        mSlicesColor      = AX_GREY_DARK;
+        mFillBrush  = new axBrush(AX_GREY_DARK);
+        //mWaveColor        = AX_GREY_LIGHT;
+        //mSlicesColor      = AX_GREY_DARK;
+        mWavePen = new axPen( AX_GREY_LIGHT );
+        mSlicesPen = new axPen( AX_GREY_DARK );
+        mRectPen = new axPen( AX_GREY_DARK );
         int i;
         for( i=0; i<MAX_CURSORS; i++)
         {
           mCursors[i].pos = 0;
-          mCursors[i].color = axColor(255,255,255);
+          //mCursors[i].color = axColor(255,255,255);
+          mCursors[i].pen = new axPen(AX_WHITE);
         }
         for( i=0; i<MAX_AREAS; i++)
         {
           mAreas[i].start = 0;
           mAreas[i].end = 0;
-          mAreas[i].color = axColor(96,96,96);
+          //mAreas[i].color = axColor(96,96,96);
+          mAreas[i].brush = new axBrush( axColor(96,96,96));
         }
 
 
       }
     virtual ~wdgScope()
       {
+        //TODO delete everything
+        delete mFillBrush;
       }
 
     //----------
@@ -165,7 +184,8 @@ class wdgScope : public axWidget
           {
             int ss = mAreas[i].start * mRect.w + mRect.x;
             int se = mAreas[i].end   * mRect.w + mRect.x;
-            aCanvas->setBrushColor( mAreas[i].color );
+//aCanvas->setBrushColor( mAreas[i].color );
+aCanvas->selectBrush( mAreas[i].brush );
             aCanvas->fillRect( ss, mRect.y, se, mRect.y2() );
           }
         } //areas
@@ -174,7 +194,8 @@ class wdgScope : public axWidget
         {
           if( mBuffer && mSize>0 )
           {
-            aCanvas->setPenColor( mWaveColor );
+//aCanvas->setPenColor( mWaveColor );
+aCanvas->selectPen( mWavePen );
             int h2 = mRect.h * 0.5;
             int x   = mRect.x;
             int y1,y2;
@@ -198,7 +219,8 @@ class wdgScope : public axWidget
         {
           if( mNumSlices>1 )
           {
-            aCanvas->setPenColor( mSlicesColor );
+//aCanvas->setPenColor( mSlicesColor );
+aCanvas->selectPen( mSlicesPen );
             float xadd = (float)mRect.w / (float)mNumSlices;
             float x = mRect.x + xadd;
             for( int i=1; i<mNumSlices; i++ )
@@ -213,13 +235,15 @@ class wdgScope : public axWidget
         {
           for( int i=0; i<mNumCursors; i++ )
           {
-            aCanvas->setPenColor( mCursors[i].color );
+//aCanvas->setPenColor( mCursors[i].color );
+aCanvas->selectPen( mCursors[i].pen );
             int rp = mCursors[i].pos * mRect.w + mRect.x;
             aCanvas->drawLine( rp, mRect.y, rp, mRect.y2() );
           }
         } //wbf_Cursors
 
-        aCanvas->setPenColor(AX_GREY_DARK);
+//aCanvas->setPenColor(AX_GREY_DARK);
+aCanvas->selectPen( mRectPen );
         aCanvas->drawRect(mRect.x, mRect.y,mRect.x2(),mRect.y2());
 
       }

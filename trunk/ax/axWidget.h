@@ -46,6 +46,7 @@
 
 #include "axString.h"
 #include "axRect.h"
+#include "axPoint.h"
 #include "axMath.h"
 #include "axCanvas.h"
 
@@ -53,14 +54,14 @@
 
 /** \defgroup widget_flags widget flags */
 /* @{ */
-#define wfl_Active    1       ///< is widget active and reacts to (mouse) events?
-#define wfl_Visible   2       ///< is widget visible, and will be painteed?
-#define wfl_Clear     4       ///< clear background if set
-#define wfl_Clip      8       ///< set cliprect before painting
-#define wfl_Capture   16      ///< captures mouse events?
-#define wfl_Vertical  32      ///< vertical instead of horizontal (layout, drag direction, ..)
-#define wfl_Align     64      ///< set if auto-align/size/pos
-#define wfl_All       0xffff  ///< set if auto-align/size/pos
+#define wfl_Active      1       ///< is widget active and reacts to (mouse) events?
+#define wfl_Visible     2       ///< is widget visible, and will be painteed?
+//#define wfl_DefaultDraw 4       ///< do default drawing
+#define wfl_Clip        8       ///< set cliprect before painting
+#define wfl_Capture     16      ///< captures mouse events?
+#define wfl_Vertical    32      ///< vertical instead of horizontal (layout, drag direction, ..)
+#define wfl_Align       64      ///< set if auto-align/size/pos
+#define wfl_All         0xffff  ///< set if auto-align/size/pos
 /* @} */
 
 //widget alignment
@@ -285,18 +286,21 @@ class axWidgetListener
 
 class axWidget : public axWidgetBase
 {
+  private:
+    //axBrush*          mWdgBrush;
+    //axBrush*          mFillBrush;
   protected:
     axWidgetListener* mListener;
-    axRect mRect;
-    int mAlignment;
-    int mFlags;
-    axColor mFillColor;
-    float mValue;
-    int mConIndex;              // hmmm..
-    axParameter *mParameter;    // dobbelt opp?
+    axParameter*      mParameter;    // dobbelt opp?
+    int               mConIndex;              // hmmm..
+    axRect            mRect;
+    axPoint           mOrig;
+    int               mAlignment;
+    int               mFlags;
+    float             mValue;
   public:
-    void* mUser;
-    int mID;
+    void*             mUser;
+    int               mID;
 
   public:
 
@@ -310,40 +314,49 @@ class axWidget : public axWidgetBase
         setFlag(wfl_Active);
         setFlag(wfl_Visible);
         setFlag(wfl_Capture);
-        mFillColor  = AX_GREY;
         mAlignment  = aAlignment;
         mValue      = 0;
         mUser       = NULL;
         mConIndex   = -1;
+        //mWdgBrush   = new axBrush(AX_GREY);
+        //mFillBrush  = mWdgBrush;
+        mOrig.set(mRect.x,mRect.y);
       }
 
-    //virtual ~axWidget() {}
+    virtual ~axWidget()
+      {
+        //delete mWdgBrush;
+      }
 
     //--------------------------------------------------
     // accessors
 
-    inline axParameter* getParameter(void) { return mParameter; }
-    inline void setParameter(axParameter* p) { mParameter = p; }
+    inline int          getAlignment(void)        { return mAlignment; }
+    inline int          getConnectionIndex(void)  { return mConIndex; }
+    inline axPoint      getOrig(void)             { return mOrig; }
+    inline axParameter* getParameter(void)        { return mParameter; }
+    inline axRect       getRect(void)             { return mRect; }
+    inline float        getValueDirect(void)      { return mValue; }
 
-    inline float getValueDirect(void) { return mValue; }
-    inline void setValueDirect(float v) { mValue = v; }
-
-    inline int getConnectionIndex(void) { return mConIndex; }
-    inline void setConnectionIndex(int c) { mConIndex = c; }
-
-    inline int getAlignment(void) { return mAlignment; }
+    inline void setConnectionIndex(int c)     { mConIndex = c; }
+    //inline void setFillBrush(axBrush* aBrush) { mFillBrush = aBrush; }
+    inline void setParameter(axParameter* p)  { mParameter = p; }
+    inline void setValueDirect(float v)       { mValue = v; }
 
     //--------------------------------------------------
 
-    /// switch background fill on/off, and color
-    /**
-    */
-    virtual void setBackground(bool aFill, axColor aColor=AX_GREY)
-      {
-        if( aFill) setFlag(wfl_Clear);
-        else clearFlag(wfl_Clear);
-        mFillColor = aColor;
-      }
+//    /// switch background fill on/off, and color
+//    /**
+//    */
+//    virtual void setBackground(bool aFill, axColor aColor=AX_GREY)
+//      {
+//        if (aFill) setFlag(wfl_DefaultDraw);
+//        else clearFlag(wfl_DefaultDraw);
+//        //mFillColor = aColor;
+//        if (mFillBrush) delete mFillBrush;
+//        mFillBrush = new axBrush(aColor);
+//      }
+
 
     // --- flags ---
 
@@ -369,9 +382,6 @@ class axWidget : public axWidgetBase
     inline bool hasFlag(int aFlag) { return (mFlags&aFlag); }
 
     // --- rect ---
-
-    /// the widgets area, relative to window/editor
-    inline axRect getRect(void) { return mRect; }
 
     /// return true if widget intersects (touches/overlaps) specified rect
     inline bool intersects(axRect aRect) { return (mRect.intersects(aRect)); }
@@ -433,21 +443,23 @@ class axWidget : public axWidgetBase
 
     //----------
 
-    /// paint widget
-    /**
-      background is filled (with mFillColor) if the widget has the wfl_Visible and wfl_Clear flags set
-    */
-    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
-      {
-        if( hasFlag(wfl_Visible) )
-        {
-          if( hasFlag(wfl_Clear) )
-          {
-            aCanvas->setBrushColor( mFillColor );
-            aCanvas->fillRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
-          }
-        }
-      }
+//    /// paint widget
+//    /**
+//      background is filled (with mFillColor) if the widget has the wfl_Visible and wfl_DefaultDraw flags set
+//    */
+//    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
+//      {
+//        if( hasFlag(wfl_Visible) )
+//        {
+//          if( hasFlag(wfl_DefaultDraw) )
+//          {
+//            //aCanvas->setBrushColor( mFillColor );
+//            aCanvas->clearPen();
+//            aCanvas->selectBrush(mFillBrush);
+//            aCanvas->fillRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
+//          }
+//        }
+//      }
 
 };
 

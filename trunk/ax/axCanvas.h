@@ -17,8 +17,15 @@
  */
 
 /**
- * \file axCanvas.h
- * \brief canvas class
+ * @file
+ * \brief desc
+ */
+
+/**
+ * \brief desc
+ *
+ * long desc
+ *
  */
 
 #ifndef axCanvas_included
@@ -33,7 +40,6 @@
 #include "axBrush.h"
 #include "axFont.h"
 
-/// canvas definitions
 // text align
 #define tal_Center        0
 #define tal_Left          1
@@ -60,44 +66,40 @@
 
 //----------------------------------------------------------------------
 
-/// canvas base
 class axCanvasBase
 {
   protected:
   //public:
 
-    int mHandle;
-    int mMode;
-    axColor mPenColor;
-    axColor mBrushColor;
-    axColor mTextColor;
-    int     mPenWidth;
-    int     mXpos, mYpos;
-
-//    axPen*    mDefaultPen;
-//    axBrush*  mDefaultBrush;
-//    axFont*   mDefaultFont;
-
-    int mNumClipRects;
-    axRect mClipRects[MAX_CLIPRECTS];
-    //axArray<axRect*> mClipRects;
+    int       mHandle;
+    int       mMode;
+    //axColor   mPenColor;
+    //axColor   mBrushColor;
+    //axColor   mTextColor;
+    int       mPenWidth;
+    int       mXpos;
+    int       mYpos;
+    //axPen*    mDefaultPen;
+    //axBrush*  mDefaultBrush;
+    //axFont*   mDefaultFont;
+    int       mNumClipRects;
+    axRect    mClipRects[MAX_CLIPRECTS];
 
   public:
-    /// canvas base constructor
+
     axCanvasBase(int aHandle, int aMode=cmo_window)
       {
         mHandle     = aHandle;
         mMode       = aMode;
-        mPenColor   = axColor(192,192,192);
-        mBrushColor = axColor(128,128,128);
-        mTextColor  = axColor(255,255,255);
+        //mPenColor   = axColor(192,192,192);
+        //mBrushColor = axColor(128,128,128);
+        //mTextColor  = axColor(255,255,255);
         mPenWidth   = 0;
         mXpos=mYpos = 0;
         mNumClipRects = 0;
-        //
-//        mDefaultPen = NULL;//createPen(AX_GREY_LIGHT,0,0);
-//        mDefaultBrush = NULL;//createBrush(AX_GREY_DARK,0);
-//        mDefaultFont = NULL;//createFont("arial",12,0);
+        //mDefaultPen = NULL;//createPen(AX_GREY_LIGHT,0,0);
+        //mDefaultBrush = NULL;//createBrush(AX_GREY_DARK,0);
+        //mDefaultFont = NULL;//createFont("arial",12,0);
       }
 
     virtual ~axCanvasBase()
@@ -111,25 +113,30 @@ class axCanvasBase
 
     //----------
 
-    /// methods
-    
     //TODO
+    virtual void clearPen(void) {}
     virtual void selectPen(axPen* aPen) {}
+    virtual void resetPen(void) {}
     virtual void selectBrush(axBrush* aBrush) {}
+    virtual void resetBrush(void) {}
     virtual void selectFont(axFont* aFont) {}
+    virtual void resetFont(void) {}
 
-    //TODO: deprecate the following...
-        virtual void setPenColor(axColor aColor) {}
-        virtual void setBrushColor(axColor aColor) {}
-        virtual void setTextColor(axColor aColor) {}
-        virtual void setPenWidth(int aWidth) {}
-        virtual void resetPenWidth(void) {}
-        virtual void setPenStyle(int aStyle) {}
-        virtual void setBrushStyle(int aStyle) {}
+//    //TODO: deprecate the following...
+//        virtual void setPenColor(axColor aColor) {}
+//        virtual void setBrushColor(axColor aColor) {}
+//        virtual void setTextColor(axColor aColor) {}
+//        virtual void setPenWidth(int aWidth) {}
+//        virtual void resetPenWidth(void) {}
+//        virtual void setPenStyle(int aStyle) {}
+//        virtual void setBrushStyle(int aStyle) {}
 
     virtual void setPos(int aX, int aY) {}
     virtual void setClipRect(int aX1, int aY1, int aX2, int aY2) {}
     virtual void clearClipRect(void) {}
+
+    //virtual void pushClipRect(axRect aRect) {}
+    //virtual void popClipRect(void) {}
 
     virtual void drawPoint(int aX, int aY) {}
     virtual void drawLine(int aX1, int aY1, int aX2, int aY2) {}
@@ -167,7 +174,7 @@ class axCanvasBase
 };
 
 //----------------------------------------------------------------------
-/// platform specific canvas
+
 #ifdef linux
   #include "axCanvasX11.h"
 #endif
@@ -177,11 +184,11 @@ class axCanvasBase
 #endif
 
 //----------------------------------------------------------------------
-/// canvas class
+
 class axCanvas : public axCanvasImpl
 {
   public:
-    /// canvas constructor
+
     axCanvas(int aHandle, int aMode=cmo_window)
     : axCanvasImpl(aHandle,aMode)
       {
@@ -190,6 +197,19 @@ class axCanvas : public axCanvasImpl
     virtual ~axCanvas()
       {
       }
+
+//    virtual void setClipRect(axRect aRect) { axCanvasImpl::setClipRect(aRect.x, aRect.y, aRect.x2(), aRect.y2() ); }
+//    virtual void drawLine(axPoint aP1, axPoint aP2) {}
+//    virtual void drawRect(axRect aRect) {}
+//    virtual void fillRect(axRect aRect) { fillRect( aRect.x, aRect.y, aRect.x+aRect.w-1, aRect.y+aRect.h-1 ); }
+//    virtual void drawCircle(axRect aRect) {}
+//    virtual void fillCircle(axRect aRect) {}
+//    virtual void drawText(axPoint aPoint,axString aText) {}
+//    virtual void drawText(axRect aRect,axString aText, int aAlign=tal_Center) {}
+//    virtual void drawBitmap(axBitmapBase* aBitmap, int aX, int aY, axRect aSrc) {}
+//    virtual void blit(int aHandle, int aX, int aY, axRect aSrc) {}
+//    virtual void blit(axCanvasBase* aCanvas, int aX, int aY, axRect aSrc) {}
+
 
     //void drawAngle(int x, int y, int w, int h, float a)
     //  {
@@ -210,21 +230,20 @@ class axCanvas : public axCanvasImpl
 //        setTextColor( AX_GREY_DARK );
 //        drawText(x+22,y,x+w-1,y+15,buf,tal_Left);
 //      }
-    
-    /// draw panel method
-    void drawPanel(int x, int y, int w, int h, int mode)
-      {
-        int x2 = x+w-1;
-        int y2 = y+h-1;
-        setPenColor( AX_GREY_LIGHT );
-        drawLine(x,y,x2,y);
-        drawLine(x,y,x,y2);
-        setPenColor( AX_GREY_DARK );
-        drawLine(x2,y,x2,y2);
-        drawLine(x,y2,x2,y2);
-        setBrushColor( AX_GREY );
-        fillRect(x+1,y+1,x2-1,y2-1);
-      }
+
+//    void drawPanel(int x, int y, int w, int h, int mode)
+//      {
+//        int x2 = x+w-1;
+//        int y2 = y+h-1;
+//        setPenColor( AX_GREY_LIGHT );
+//        drawLine(x,y,x2,y);
+//        drawLine(x,y,x,y2);
+//        setPenColor( AX_GREY_DARK );
+//        drawLine(x2,y,x2,y2);
+//        drawLine(x,y2,x2,y2);
+//        setBrushColor( AX_GREY );
+//        fillRect(x+1,y+1,x2-1,y2-1);
+//      }
 
     //----------
 

@@ -17,75 +17,72 @@
  */
 
 /**
- * @file
- * \brief value widget
- */
-
-/**
- * \brief value widget
- *
- * long desc
- *
- */
+  \file wdgValue.h
+  \brief value widget
+*/
 
 #ifndef wdgValue_included
 #define wdgValue_included
 //----------------------------------------------------------------------
 
-#include "axWidget.h"
+#define BUF_SIZE  256
+#define HINT_SIZE 256
 
-#define MAX_TEXT 32
+#include "axWidget.h"
 
 class wdgValue : public axWidget
 {
   private:
-    bool    is_dragging;
-    int     prev;
-    char    buf[MAX_TEXT];
-    char    hint[256];
-  public:
-    //float   mValue;
-    axColor mTextColor;
+    bool      is_dragging;
+    int       prev;
+    char      buf[BUF_SIZE];
+    char      hint[HINT_SIZE];
+    axBrush*  mFillBrush;
+    axFont*   mFont;
+
+  //public:
     int     mTextAlign;
     float   mSens1, mSens2;
 
   public:
 
-    wdgValue(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None/*, axParameter* aParameter=NULL*/)
-    : axWidget(aListener,aID,aRect,aAlignment/*,aParameter*/)
+    wdgValue(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None)
+    : axWidget(aListener,aID,aRect,aAlignment)
       {
         setFlag(wfl_Vertical);
-        setBackground(true,AX_GREY_DARK);
-        memset(buf,0,MAX_TEXT);
+        memset(buf,0,BUF_SIZE);
         is_dragging = false;
-        mTextAlign      = tal_Center;
+        mTextAlign  = tal_Center;
         prev        = 0;
-        mTextColor  = AX_GREY_LIGHT;
+        mFillBrush  = new axBrush(AX_GREY_DARK);
+        mFont       = new axFont(AX_GREY_LIGHT);
         mSens1      = 0.005;
         mSens2      = 0.1;
-        if(mParameter) mValue = mParameter->doGetValue();
+        if (mParameter) mValue = mParameter->doGetValue();
         else mValue = 0;
+      }
+
+    virtual ~wdgValue()
+      {
+        delete mFont;
+        //delete mFillBrush;
       }
 
     //--------------------------------------------------
     // widget handler
     //--------------------------------------------------
 
-
-    // do we need to inherit these?
-
-
     virtual void doSetValue(float aValue)
       {
         mValue = aValue;
-        if(mParameter) mParameter->doSetValue(aValue);
+        if (mParameter) mParameter->doSetValue(aValue);
       }
 
     //----------
 
     virtual float doGetValue(void)
       {
-        if(mParameter) return mParameter->doGetValue();
+        if (mParameter) return mParameter->doGetValue();
         else return mValue;
       }
 
@@ -93,11 +90,14 @@ class wdgValue : public axWidget
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-        axWidget::doPaint(aCanvas,aRect);
-        aCanvas->setTextColor( mTextColor );
-        if(mParameter) mParameter->doGetDisplay(buf);
+        //axWidget::doPaint(aCanvas,aRect);
+        aCanvas->clearPen();
+        aCanvas->selectBrush(mFillBrush);
+        aCanvas->fillRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
+        aCanvas->selectFont(mFont);
+        if (mParameter) mParameter->doGetDisplay(buf);
         else sprintf(buf,"%.2f",mValue);
-        aCanvas->drawText( mRect.x, mRect.y,mRect.x2()/*-5*/,mRect.y2(),buf,mTextAlign);
+        aCanvas->drawText(mRect.x,mRect.y,mRect.x2()/*-5*/,mRect.y2(),buf,mTextAlign);
       }
 
     //----------
@@ -122,7 +122,7 @@ class wdgValue : public axWidget
     virtual void doMouseUp(int aX, int aY, int aB)
       {
         is_dragging = false;
-          mListener->onCursor(DEF_CURSOR);
+        mListener->onCursor(DEF_CURSOR);
       }
 
     //----------
@@ -132,27 +132,27 @@ class wdgValue : public axWidget
         if( is_dragging )
         {
           int cur;
-          if( mFlags&wfl_Vertical) cur = aY;
+          if (hasFlag(wfl_Vertical)) cur = aY;
           else cur = -aX;
           int dist = cur - prev;
           float s = mSens1;
-          if( aB&but_Ctrl ) s*=mSens2;
+          if (aB&but_Ctrl) s*=mSens2;
           float delta = s * (float)dist;
           prev = cur;
           mValue -= delta;
           mValue = axMin(1,axMax(0,mValue));
-          if(mParameter) mParameter->setValue(mValue);
-          mListener->onChange( this );
+          //if (mParameter) mParameter->setValue(mValue);
+          if (mParameter) mParameter->setValueDirect(mValue);
+          mListener->onChange(this);
           sprintf(hint," %.3f",mValue);
           mListener->onHint(hint);
         }
       }
 
-    //----------
-
 };
 
-#undef MAX_TEXT
+#undef BUF_SIZE
+#undef HINT_SIZE
 
 //----------------------------------------------------------------------
 #endif
