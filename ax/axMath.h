@@ -42,7 +42,7 @@
 inline float axFloor(float value)
 {
   int j;
-  __asm__ volatile
+  __asm__ 
   (
     "flds %1;"    "fistpl %0;"
     : "=m" (j)
@@ -60,7 +60,7 @@ inline float axCeil(float value)
 {
   int j;
   float im = 1.0f;
-  __asm__ volatile
+  __asm__ 
   (
     "flds %1;"    "flds %2;"    "faddp;"    "fistpl %0;"
     : "=m" (j)
@@ -78,7 +78,7 @@ inline float axRound(float value)
 {
   int j;
   float im = 0.5f;
-  __asm__ volatile
+  __asm__ 
   (
     "flds %1;"    "fistpl %0;"    "flds %2;"    "faddp;"
     : "=m" (j)
@@ -94,7 +94,7 @@ inline float axRound(float value)
 */
 inline float axAbs(float value)
 {
-  __asm__ volatile
+  __asm__ 
   (
     "andl $0x7fffffff, %0;"
     : "=r" (value)
@@ -110,7 +110,7 @@ inline float axAbs(float value)
 */
 inline float axNeg(float value)
 {
-  __asm__ volatile
+  __asm__ 
   (
     "xorl $0x80000000, %0;"
     : "=r" (value)
@@ -278,7 +278,7 @@ inline float axRandom(const float aLow, const float aHigh)
  */
 inline float axLogf(float value)
 {
-  __asm__ volatile
+  __asm__ 
   (
     "fld %0;"    "fldln2;"    "fxch;"    "fyl2x;"    "fst %0;"
     : "=m" (value)
@@ -294,7 +294,7 @@ inline float axLogf(float value)
  */
 inline float axLog2f(float value)
 {
-  __asm__ volatile
+  __asm__
   (
     "fld1;"    "fld %0;"    "fyl2x;"    "fst %0;"
     : "=m" (value)
@@ -310,11 +310,9 @@ inline float axLog2f(float value)
  */
 inline float axSinf(float value)
 {
-  __asm__ volatile
+  __asm__
   (
-    "fsin %1, %0;"
-    : "=f" (value)
-    : "f" (value)
+    "fsin;"    : "=t" (value)    : "0" (value)
   );
   return value;
 }
@@ -326,11 +324,9 @@ inline float axSinf(float value)
  */
 inline float axCosf(float value)
 {
-  __asm__ volatile
+  __asm__
   (
-    "fcos %1, %0;"
-    : "=f" (value)
-    : "f" (value)
+    "fcos;"    : "=t" (value)    : "0" (value)
   );
   return value;
 }
@@ -342,11 +338,9 @@ inline float axCosf(float value)
  */
 inline float axTanf(float value)
 {
-  __asm__ volatile
+  __asm__
   (
-    "fld %0;"    "fsincos;"    "fdivrp;"    "fst %0;"
-    : "=m" (value)
-    : "m" (value)
+    "fsincos;"    "fdivrp;"    : "=t" (value)    : "0" (value)
   );
   return value;
 }
@@ -360,7 +354,7 @@ inline float axAsinf(float value)
 {
   // asin(x)=atan(sqrt(x*x/(1-x*x)))
   float tmp;
-  __asm__ volatile
+  __asm__ 
   (
     "fld %0;"    "fld %0;"    "fmulp;"    "fst %1;"    "fld1;"    "fsubp;"
     "fld %1;"    "fdivp;"    "fsqrt;"    "fld1;"    "fpatan;"    "fst %0;"
@@ -380,7 +374,7 @@ inline float axAcosf(float value)
 {
   // acos(x) = atan(sqrt((1-x*x)/(x*x)))
   float tmp;
-  __asm__ volatile
+  __asm__ 
   (
     "fld %0;"    "fld %0;"    "fmulp;"    "fst %1;"    "fld1;"    "fsubp;"
     "fld %1;"    "fdivrp;"    "fsqrt;"    "fld1;"    "fpatan;"    "fst %0;"
@@ -398,7 +392,7 @@ inline float axAcosf(float value)
  */
 inline float axAtanf(float value)
 {
-  __asm__ volatile
+  __asm__ 
   (
     "fld %0;"    "fld1;"    "fpatan;"    "fst %0;"
     : "=m" (value)
@@ -415,7 +409,7 @@ inline float axAtanf(float value)
  */
 inline float axNrt(float value, long root)
 {
-  __asm__ volatile
+  __asm__ 
   (
     "subl $0x3f800000, %0;"    "subl $1, %2;"
     "shrl %b2, %0;"    "addl $0x3f800000, %0;"
@@ -432,7 +426,7 @@ inline float axNrt(float value, long root)
  */
 inline float axSqrt(float value)
 {
-  __asm__ volatile
+  __asm__
   (
     "subl $0x3f800000, %0;"    "shrl $1, %0;"    "addl $0x3f800000, %0;"
     : "=r" (value)

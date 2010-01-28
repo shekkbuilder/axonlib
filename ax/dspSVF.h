@@ -21,14 +21,6 @@
  * \brief state variable filter
  */
 
-/**
- * \brief state variable filter
- *   
- * state variable filter based on hal chamberlin's book
- * 'Musical Applications of Microprocessors: '
- * http://www.earlevel.com/Digital%20Audio/StateVar.html
- */
-
 #ifndef dspSVF_included
 #define dspSVF_included
 //----------------------------------------------------------------------
@@ -40,6 +32,14 @@
 #define svf_mode_hp   2
 #define svf_mode_bp   3
 #define svf_mode_n    4
+
+/**
+ * \brief state variable filter
+ *   
+ * based on hal chamberlin's book
+ * 'Musical Applications of Microprocessors: '
+ * http://www.earlevel.com/Digital%20Audio/StateVar.html
+ */
 
 class dspSVF
 {
