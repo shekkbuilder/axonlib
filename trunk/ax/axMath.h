@@ -26,81 +26,66 @@
  *
  */
 
+// ---------------------------------------------------------------------------
+// NOTES:
+// apparently the following set of compiler flags is pretty much 'owning' some
+// of the more basic inline asm optimizations:
+// -O3 -msse -mfpmath=sse -funroll-loops
+// and renders them times slower in comparison..
+// furthermore, writing the exact same sse optimizations as the gas generated
+// code (-S) as inline, still performs slower.
+// this leaves a simplified conclusion that its unlikely that
+// inline assembly can outperform the gas generated code with the given set
+// of compiler flags.
+// well, unless some sort of an approximation/shortcut is in action:
+// for example the axLog2f outperforms the log2f 6 times.
+// so this header needs a bit of general rework.. and more testing to check
+// what is redundant and what is genuine.
+//
+// overall the GCC levels of optimization are quite impressive! 
+// ---------------------------------------------------------------------------
+
 #ifndef axMath_included
 #define axMath_included
 
 #include <math.h>
+#include <time.h>
 #include <stdlib.h>
 #include "axDebug.h"
 #include "axDefines.h"
 
-
 /**
  * returns the floor of a floating point number
  * @param[in] value float
- * @return j float
+ * @return result float
  */
-
-//inline float axFloor(float value)
-//{
-//  int j;
-//  __asm__
-//  (
-//    "flds %1;"    "fistpl %0;"
-//    : "=m" (j)
-//    : "m" (value)
-//  );
-//  return j;
-//}
-
-//TRACE("axFloor( 1.4) = %f\n",axFloor( 1.4)); // returns  1
-//TRACE("axFloor( 1.6) = %f\n",axFloor( 1.6)); // returns  2, should return 1
-//TRACE("axFloor(-1.4) = %f\n",axFloor(-1.4)); // returns -1
-//TRACE("axFloor(-1.6) = %f\n",axFloor(-1.6)); // returns -2  (should it floor towards zero, or floor always down?)
-//  so, this looks rounding, not flooring
-//  quick fix: (returns 1,1,-2,-2)
-//  TODO: look into how we're using this throughout the library
-
-inline float axFloor(float value)
-  {
-    return floorf(value);
-  }
-
+inline float axFloor(const float value)
+{
+  // -1.6 -> -1
+  // -1.1 -> -1
+  // 1.6 -> 1
+  // 1.1 -> 1
+  return (float)(int)(value);
+}
 
 /**
  * returns the ceil of a floating point number
  * @param[in] value float
- * @return j float
+ * @return result float
  */
-inline float axCeil(float value)
+inline float axCeil(const float value)
 {
-  int j;
-  float im = 1.0f;
-  __asm__
-  (
-    "flds %1;"    "flds %2;"    "faddp;"    "fistpl %0;"
-    : "=m" (j)
-    : "m" (value), "m" (im)
-  );
-  return j;
+  return (float)(int)(value + 1);
 }
 
 /**
  * rounds a floating point number
  * @param[in] value float
- * @return j float
+ * @return result float
 */
-inline float axRound(float value)
+inline float axRound(const float value)
 {
-  int j;
-  float im = 0.5f;
-  __asm__
-  (
-    "flds %1;"    "fistpl %0;"    "flds %2;"    "faddp;"
-    : "=m" (j)
-    : "m" (value), "m" (im)
-  );
-  return j;
+  return (float)(int)(value + 0.5);
 }
 
 /**
@@ -108,15 +93,10 @@ inline float axRound(float value)
  * @param[in] value float
  * @return value float
 */
-inline float axAbs(float value)
+inline float axAbs(const float value)
 {
-  __asm__
-  (
-    "andl $0x7fffffff, %0;"
-    : "=r" (value)
-    : "0" (value)
-  );
-  return value;
+  int i=((*(int*)&value)&0x7fffffff);
+  return (*(float*)&i);
 }
 
 /**
@@ -128,9 +108,7 @@ inline float axNeg(float value)
 {
   __asm__
   (
-    "xorl $0x80000000, %0;"
-    : "=r" (value)
-    : "0" (value)
+    "xorl $0x80000000, %0;"    : "=r" (value)    : "0" (value)
   );
   return value;
 }
@@ -237,9 +215,9 @@ inline float axCalcValuep(const float a, const float b, const float c)
 
 /**
  * passes a seed to the random number generator
- * @param[in] aSeed int default value (19)
+ * @param[in] aSeed int default value -> use ctime
  */
-inline void axRandomize(const int aSeed = 19)
+inline void axRandomize(const int aSeed = (unsigned)time(0))
 {
     srand(aSeed);
 }
