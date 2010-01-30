@@ -52,20 +52,19 @@
   
   <b>compilers and requirments: </b> <br>
   
-  for linux download & install:: <br>
-  
+  -- for linux download & install:: <br>  
   mingw32 - to cross-compile for win32 <br>
   g++ - to compile c++ code for linux <br>
   xorg-dev - required for gui-s. <br>
   
-  win32:: <br>
+  -- win32:: <br>
   get mingw32 (the one with <br>
   set path to '[mingw32dir]\bin\g++.exe' <br>
 
-  to compile with cygwin for windows:: <br>
+  -- to compile with cygwin for windows:: <br>
   download & install the standard mingw32, g++ packages <br>
   
-  to compile with cygwin for linux:: <br>
+  -- to compile with cygwin for linux:: <br>
   see bottom of 'axonlib\plugins\compile-cygwin' for instructions <br>
   
   \section usage_section # usage
@@ -293,7 +292,7 @@
   the compile scripts will move the resulted binaries to '../bin'
   edit them suit your needs.
    
-  \note under win32 if you have an source file in a subfolder relative to 'compile.cmd'
+  \note under win32 if you have a source file in a subfolder relative to 'compile.cmd'
   you should call the compile script like:
   \code
   cd mysubfolder
@@ -317,9 +316,9 @@
   suggested optimization flags:
   \code
   -O3 -Os -fdata-sections -ffunction-sections -funroll-loops
-  \encode
+  \endcode
   
-  for monitoring warnings use (note that the vst sdk 2.4 may pop an warning or two):
+  for monitoring warnings use (note that the vst sdk 2.4 may pop a warning or two):
   \code
   -pedantic -fpermissive -W -Wall
   \endcode
