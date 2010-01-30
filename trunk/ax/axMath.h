@@ -43,6 +43,7 @@
 // what is redundant and what is genuine.
 //
 // overall the GCC levels of optimization are quite impressive! 
+// the -ffast-math is perhaps the biggest booster but it reduces accuracy.
 // ---------------------------------------------------------------------------
 
 #ifndef axMath_included
@@ -334,7 +335,7 @@ inline float axTanf(float value)
 {
   __asm__
   (
-    "fsincos;"    "fdivrp;"    : "=t" (value)    : "0" (value)
+    "fptan;"    : "=t" (value)    : "0" (value)
   );
   return value;
 }
