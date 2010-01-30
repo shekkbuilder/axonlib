@@ -29,9 +29,32 @@
 //----------------------------------------------------------------------
 
 /**
+  \image html logo.png
+  
   \mainpage axonlib mainpage
   \section introduction_section # introduction
-  introduction.
+  <b>---todo: edit introduction---</b>  
+  
+  <b>axonlib</b> is a standalone multiplatform (win32/linux) vst plugin library which focuses on 
+  the ease of use while rataining 'low-level' control. it is realeased under the gnu lgpl license.
+  <br>
+  
+  feature highlights:
+  - gui widgets <br>
+  - loading of external png images <br>
+  - resizeable windows <br>
+  - optimized math methods <br>
+  - dsp classes <br>
+  - a lot of example plugins <br>
+  - <br>
+  - <br>
+  - <br>  
+  <br>
+  
+  uses third party code:
+  - lodepng <br>
+  -  <br>
+  -  <br>
   
   \section install_section # installation   
   get the latest revisions from the svn reposotory at: <br>    
@@ -58,14 +81,14 @@
   xorg-dev - required for gui-s. <br>
   
   -- win32:: <br>
-  get mingw32 (the one with <br>
-  set path to '[mingw32dir]\bin\g++.exe' <br>
+  get mingw32 (the one included with dev-c++ will suffice) <br>
+  set path to '[mingw32dir]/bin/g++.exe' <br>
 
   -- to compile with cygwin for windows:: <br>
   download & install the standard mingw32, g++ packages <br>
   
   -- to compile with cygwin for linux:: <br>
-  see bottom of 'axonlib\plugins\compile-cygwin' for instructions <br>
+  see bottom of 'axonlib/plugins/compile-cygwin' for instructions <br>
   
   \section usage_section # usage
 
@@ -288,7 +311,7 @@
 
   \section compile_section # compilation
   
-  there ready to use compile scripts in the 'axonlib/plugins' folder.
+  there are ready to use compile scripts in the 'axonlib/plugins' folder.
   the compile scripts will move the resulted binaries to '../bin'
   edit them suit your needs.
    
@@ -296,20 +319,20 @@
   you should call the compile script like:
   \code
   cd mysubfolder
-  ..\compile.cmd myfx.cpp
+  ../compile.cmd myfx.cpp
   \endcode  
   
   (see 'man gcc' for more info) <br>
   
   default compiler lines: <br>
   \code
-  cygwin for win32::
+  //cygwin for win32::
   g++ -I../ax -I../../vstsdk24 -shared -mwindows -mno-cygwin -lpthread [inputfile.cpp] -s -o [outputfile.cpp] -Wl,-gc-sections
-  win32::
+  //win32::
   g++.exe -I../ax -I../../vstsdk24 -shared -mwindows -lpthread [inputfile.cpp] -s -o [outputfile.cpp] -Wl,-gc-sections
-  linux for linux::
+  //linux for linux::
   g++ -I../ax -I../../vstsdk24 -lX11 -lpthread -shared [inputfile.cpp] -s -o [outputfile.cpp] -Wl,-gc-sections
-  linux for win32::  
+  //linux for win32::  
   i586-mingw32msvc-g++ -I../ax -I../../vstsdk24 -mwindows -shared [inputfile.cpp] -s -o [outputfile.cpp] -Wl,-gc-sections
   \endcode
       
