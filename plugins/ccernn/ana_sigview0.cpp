@@ -17,6 +17,7 @@
 #include "wdgKnob.h"
 #include "wdgSwitches.h"
 #include "wdgScope.h"
+#include "wdgPanel.h"
 
 //#include "wdgResizer.h"
 
@@ -214,10 +215,14 @@ class myPlugin : public axPlugin,
     virtual void* doCreateEditor(void)
       {
         axEditor* EDIT = new axEditor("ana_sigview_editor",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
-        EDIT->appendWidget( wScale     = new wdgKnob(    EDIT,0,axRect( 10,10,128, 32),wal_None/*, pScale */ ) );
-        EDIT->appendWidget( wLength    = new wdgKnob(    EDIT,1,axRect(140,10,128, 32),wal_None/*, pLength*/ ) );
-        EDIT->appendWidget( wViewMode  = new wdgSwitches(this,2,axRect( 10,50,266, 16),wal_None ) );
-        EDIT->appendWidget( wScope     = new wdgScope(   this,3,axRect( 10,70,266,200),wal_None ) );
+        wdgPanel* panel;
+        EDIT->appendWidget( panel = new wdgPanel(this,-1,NULL_RECT,wal_Client));
+
+
+        panel->appendWidget( wScale     = new wdgKnob(    this,0,axRect( 10,10,128, 32),wal_None/*, pScale */ ) );
+        panel->appendWidget( wLength    = new wdgKnob(    this,1,axRect(140,10,128, 32),wal_None/*, pLength*/ ) );
+        panel->appendWidget( wViewMode  = new wdgSwitches(this,2,axRect( 10,50,266, 16),wal_None ) );
+        panel->appendWidget( wScope     = new wdgScope(   this,3,axRect( 10,70,266,200),wal_None ) );
           wViewMode->setup(2,str_viewmode);
           wScope->mSize = mLength;
           wScope->mBuffer = mViewBuffer;
@@ -232,6 +237,7 @@ class myPlugin : public axPlugin,
         EDIT->connect( wLength,pLength );
         // could mEditor be in use from another thread? gui? audio? setParameter?
         // it shouldn't (we are creating the editor), but, ...
+        EDIT->doRealign();
         mEditor = EDIT;
         return EDIT;
       }
@@ -265,6 +271,7 @@ class myPlugin : public axPlugin,
           mEditor->redrawDirty();
         }
       }
+
 
 };
 

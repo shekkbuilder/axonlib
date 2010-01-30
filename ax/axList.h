@@ -55,11 +55,26 @@ class axList
 
   public:
 
-    axList() { clear(); }
-    ~axList() {}
+    axList()
+      {
+        clear();
+      }
 
-    void clear() { mSize=0; mHead=NULL; mTail=NULL; }
-    axListNode* next(axListNode* aNode) { return aNode->mNext; }
+    ~axList()
+      {
+      }
+
+    void clear()
+      {
+        mSize=0;
+        mHead=NULL;
+        mTail=NULL;
+      }
+
+    axListNode* next(axListNode* aNode)
+      {
+        return aNode->mNext;
+      }
 
     void insertHead(axListNode* aNode)
       {

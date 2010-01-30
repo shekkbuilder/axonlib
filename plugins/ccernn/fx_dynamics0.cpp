@@ -16,6 +16,7 @@
 #include "wdgImgKnob.h"
 #include "wdgVuMeter.h"
 #include "wdgLabel.h"
+#include "wdgPanel.h"
 
 #include "axBitmapLoader.h"
 #include "images/knob1.h"   // 20*20, 65, 6668
@@ -24,7 +25,8 @@
 
 //----------------------------------------------------------------------
 
-class myPlugin : public axPlugin
+class myPlugin : public axPlugin,
+                 public axWidgetListener
 {
   public:
     // --- parameters
@@ -91,34 +93,43 @@ class myPlugin : public axPlugin
         doProcessParameter(aParameter);
       }
 
+    virtual void onChange(axWidget* aWidget)
+      {
+        if (mEditor) mEditor->onChange(aWidget);
+      }
+
     //--------------------------------------------------
 
     virtual void* doCreateEditor(void)
       {
         axEditor* EDIT = new axEditor("fx_dynamics0_window",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
+        wdgPanel* panel;
+        EDIT->appendWidget( panel = new wdgPanel(this,-1,NULL_RECT,wal_Client));
+
         if(!is_gui_initialized)
         {
           mSrfKnob = loadPng( knob2, 15255 );
           is_gui_initialized=true;
         }
         // knobs
-        EDIT->appendWidget(new wdgImgKnob(EDIT,0,axRect(  30, 70, 32, 32),wal_None,/*mParameters[ 0],*/ 65, mSrfKnob ));
-        EDIT->appendWidget(new wdgImgKnob(EDIT,1,axRect(  30,125, 32, 32),wal_None,/*mParameters[ 1],*/ 65, mSrfKnob ));
-        EDIT->appendWidget(new wdgImgKnob(EDIT,2,axRect( 100, 70, 32, 32),wal_None,/*mParameters[ 2],*/ 65, mSrfKnob ));
-        EDIT->appendWidget(new wdgImgKnob(EDIT,3,axRect( 100,125, 32, 32),wal_None,/*mParameters[ 3],*/ 65, mSrfKnob ));
-        EDIT->appendWidget(new wdgImgKnob(EDIT,4,axRect( 170, 70, 32, 32),wal_None,/*mParameters[ 4],*/ 65, mSrfKnob ));
-        EDIT->appendWidget(new wdgImgKnob(EDIT,5,axRect( 170,125, 32, 32),wal_None,/*mParameters[ 5],*/ 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,0,axRect(  30, 70, 32, 32),wal_None,/*mParameters[ 0],*/ 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,1,axRect(  30,125, 32, 32),wal_None,/*mParameters[ 1],*/ 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,2,axRect( 100, 70, 32, 32),wal_None,/*mParameters[ 2],*/ 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,3,axRect( 100,125, 32, 32),wal_None,/*mParameters[ 3],*/ 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,4,axRect( 170, 70, 32, 32),wal_None,/*mParameters[ 4],*/ 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,5,axRect( 170,125, 32, 32),wal_None,/*mParameters[ 5],*/ 65, mSrfKnob ));
         //for (int i=0;i<AX_NUMPARAMS; i++) EDIT->connect( EDIT->mWidgets[i], mParameters[i] );
         // gain reduction meter
-        EDIT->appendWidget(meter = new wdgVuMeter(EDIT,-1,axRect(10,10,210,8),wal_None/*,NULL*/ ));
+        panel->appendWidget(meter = new wdgVuMeter(this,-1,axRect(10,10,210,8),wal_None/*,NULL*/ ));
         meter->clearFlag(wfl_Vertical);
         // labels
-        EDIT->appendWidget(new wdgLabel(EDIT,-1,axRect(   30, 55, 32,15 ),wal_None,/*NULL,*/"thresh",  AX_GREY_LIGHT, tal_Center|tal_Top ));
-        EDIT->appendWidget(new wdgLabel(EDIT,-1,axRect(   30,110, 32,15 ),wal_None,/*NULL,*/"ratio",   AX_GREY_LIGHT, tal_Center|tal_Top  ));
-        EDIT->appendWidget(new wdgLabel(EDIT,-1,axRect(  100, 55, 32,15 ),wal_None,/*NULL,*/"attack",  AX_GREY_LIGHT, tal_Center|tal_Top  ));
-        EDIT->appendWidget(new wdgLabel(EDIT,-1,axRect(  100,110, 32,15 ),wal_None,/*NULL,*/"release", AX_GREY_LIGHT, tal_Center|tal_Top ));
-        EDIT->appendWidget(new wdgLabel(EDIT,-1,axRect(  170, 55, 32,15 ),wal_None,/*NULL,*/"pre",     AX_GREY_LIGHT, tal_Center|tal_Top  ));
-        EDIT->appendWidget(new wdgLabel(EDIT,-1,axRect(  170,110, 32,15 ),wal_None,/*NULL,*/"post",    AX_GREY_LIGHT, tal_Center|tal_Top  ));
+        panel->appendWidget(new wdgLabel(this,-1,axRect(   30, 55, 32,15 ),wal_None,/*NULL,*/"thresh",  AX_GREY_LIGHT, tal_Center|tal_Top ));
+        panel->appendWidget(new wdgLabel(this,-1,axRect(   30,110, 32,15 ),wal_None,/*NULL,*/"ratio",   AX_GREY_LIGHT, tal_Center|tal_Top  ));
+        panel->appendWidget(new wdgLabel(this,-1,axRect(  100, 55, 32,15 ),wal_None,/*NULL,*/"attack",  AX_GREY_LIGHT, tal_Center|tal_Top  ));
+        panel->appendWidget(new wdgLabel(this,-1,axRect(  100,110, 32,15 ),wal_None,/*NULL,*/"release", AX_GREY_LIGHT, tal_Center|tal_Top ));
+        panel->appendWidget(new wdgLabel(this,-1,axRect(  170, 55, 32,15 ),wal_None,/*NULL,*/"pre",     AX_GREY_LIGHT, tal_Center|tal_Top  ));
+        panel->appendWidget(new wdgLabel(this,-1,axRect(  170,110, 32,15 ),wal_None,/*NULL,*/"post",    AX_GREY_LIGHT, tal_Center|tal_Top  ));
+        EDIT->doRealign();
         mEditor = EDIT;
         return mEditor;
       }

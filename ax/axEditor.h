@@ -45,26 +45,21 @@
 
 //----------------------------------------------------------------------
 
-// widget <-> parameter connection
-
-//class axWPConnection
-struct axWPConnection
-{
-  //public:
-    axWidget    *mWidget;
-    axParameter *mParameter;
-  //public:
-    axWPConnection(axWidget *aWidget, axParameter *aParameter)
-      {
-        mWidget = aWidget;
-        mParameter = aParameter;
-        //TODO: transfer mValue
-      }
-};
-
-//----------
-
-typedef axArray<axWPConnection*> axWPConnections;
+////class axWPConnection
+//struct axWPConnection
+//{
+//  //public:
+//    axWidget    *mWidget;
+//    axParameter *mParameter;
+//  //public:
+//    axWPConnection(axWidget *aWidget, axParameter *aParameter)
+//      {
+//        mWidget = aWidget;
+//        mParameter = aParameter;
+//        //TODO: transfer mValue
+//      }
+//};
+//typedef axArray<axWPConnection*> axWPConnections;
 
 //----------------------------------------------------------------------
 //
@@ -84,10 +79,27 @@ class axEditor : public axWindow,
                  public axParameterListener
 {
   private:
-    //axMutex   mutex_dirty;
-  protected://public:
-    axPlugin        *mPlugin;
+
+    //class axWPConnection
+    struct axWPConnection
+    {
+      //public:
+        axWidget    *mWidget;
+        axParameter *mParameter;
+      //public:
+        axWPConnection(axWidget *aWidget, axParameter *aParameter)
+          {
+            mWidget = aWidget;
+            mParameter = aParameter;
+            //TODO: transfer mValue
+          }
+    };
+    typedef axArray<axWPConnection*> axWPConnections;
     axWPConnections mConnections;
+
+    //axMutex   mutex_dirty;
+  //protected://public:
+    axPlugin        *mPlugin;
     //#ifdef AX_DIRTYWIDGETS
     #ifndef AX_NODIRTYWIDGETS
     axWidgets       mDirtyList;
@@ -181,10 +193,10 @@ class axEditor : public axWindow,
     void connect(axWidget* aWidget, axParameter* aParameter)
       {
         //aWidget->mParameter = aParameter;
-        aWidget->setParameter(aParameter);
+//        aWidget->mParameter = aParameter;//setParameter(aParameter);
         int num = mConnections.size();
-        aWidget->setConnectionIndex(num);
-        aParameter->setConnectionIndex(num);
+        aWidget->mConnection = num;   //setConnectionIndex(num);
+        aParameter->mConnection = num;//setConnectionIndex(num);
         //aParameter->connection(num);
         aWidget->doSetValue( aParameter->doGetValue() );
         //lock
@@ -194,11 +206,11 @@ class axEditor : public axWindow,
 
     //----------
 
-    /// todo
-
-    void connectAll(void)
-      {
-      }
+//    /// todo
+//
+//    void connectAll(void)
+//      {
+//      }
 
     //----------
 
@@ -215,73 +227,6 @@ class axEditor : public axWindow,
       }
 
     //----------------------------------------
-    // widget handler
-    //----------------------------------------
-
-//    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
-//      {
-//        if (mPlugin->mEditorIsOpen) axWindow::doPaint(aCanvas,aRect);
-//      }
-
-    //----------------------------------------
-    // widget listener
-    //----------------------------------------
-
-    /// called from gui when tweaking widget
-
-    virtual void onChange(axWidget* aWidget)
-      {
-        //TRACE("- axEditor: onChange(wdg)... id=%i\n",aWidget->mID);
-        int con = aWidget->getConnectionIndex();
-        //TRACE("wdg.con: %i\n",con);
-        if( con>=0 )
-        {
-          axParameter* par = mConnections[con]->mParameter;
-          //TRACE("  par: %x\n",(int)par);
-          float val = aWidget->doGetValue();
-          //TRACE("  val: %f\n",val);
-          //TRACE("  plugin=%x\n",(int)mPlugin);
-          //mPlugin->setParameterAutomated(con,val); // will call back to onChange below (to be redrawn)
-          mPlugin->setParameterAutomated(par->mID,val); // will call back to onChange below (to be redrawn)
-          //TRACE("  ...\n");
-        }
-        else
-          axWindow::onChange(aWidget);
-          //redrawWidget(aWidget);
-      }
-
-    //----------
-
-    /// called when parameter changed
-    /**
-      by default, if there is a connection between this parameter, and a widget, the widget is notified (doSetValue).
-      then, appended to the dirty widgets list, unless AX_NODIRTYWIDGETS is defined
-      (if so, the widget will just be called for redrawing (redrawWidget))
-      \param aParameter the parameter that has just changed
-    */
-
-    virtual void onChange(axParameter* aParameter)
-      {
-        //TRACE("- axEditor: onChange(par)... id=%i\n",aParameter->mID);
-        int con = aParameter->getConnectionIndex();
-        //TRACE("wdg.con: %i\n",con);
-        if( con>=0 )
-        {
-          axWidget* wdg = mConnections[con]->mWidget;
-          //TRACE("  wdg: %x\n",(int)wdg);
-          float val = aParameter->doGetValue();
-          //TRACE("  val: %f\n",val);
-          //wdg->setValueDirect(val);//  doSetValue(val);
-          wdg->setValueDirect(val);//  doSetValue(val);
-          //#ifdef AX_DIRTYWIDGETS
-          #ifndef AX_NODIRTYWIDGETS
-          appendDirty(wdg);
-          #else
-          redrawWidget(wdg);
-          #endif
-          //TRACE("  ...\n");
-        }
-      }
 
     /// resize window
     /**
@@ -302,6 +247,66 @@ class axEditor : public axWindow,
         mPlugin->mWidth = aWidth;
         mPlugin->mHeight = aHeight;
         mPlugin->sizeWindow(aWidth, aHeight);  // let vst host know (request to resize window), Expose
+      }
+
+    //----------------------------------------
+    // widget base
+    //----------------------------------------
+
+//    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
+//      {
+//        if (mPlugin->mEditorIsOpen) axWindow::doPaint(aCanvas,aRect);
+//      }
+
+    //----------------------------------------
+    // widget listener
+    //----------------------------------------
+
+//protected:
+
+    /// called from gui when tweaking widget
+
+    virtual void onChange(axWidget* aWidget)
+      {
+        //TRACE("- axEditor: onChange(wdg)... id=%i\n",aWidget->mID);
+        int con = aWidget->mConnection;//getConnectionIndex();
+        //TRACE("wdg.con: %i\n",con);
+        if( con>=0 )
+        {
+          axParameter* par = mConnections[con]->mParameter;
+          //TRACE("  par: %x\n",(int)par);
+          float val = aWidget->doGetValue();
+          mPlugin->setParameterAutomated(par->mID,val);
+          // vst will call back to us with setParameter, which ends up in onChange below (to be redrawn)
+        }
+        else
+          axWindow::onChange(aWidget);
+      }
+
+    //----------
+
+    /// called when parameter changed
+    /**
+      by default, if there is a connection between this parameter, and a widget, the widget is notified (doSetValue).
+      then, appended to the dirty widgets list, unless AX_NODIRTYWIDGETS is defined
+      (if so, the widget will just be called for redrawing (redrawWidget))
+      \param aParameter the parameter that has just changed
+    */
+
+    virtual void onChange(axParameter* aParameter)
+      {
+        int con = aParameter->mConnection;//getConnectionIndex();
+        if( con>=0 )
+        {
+          axWidget* wdg = mConnections[con]->mWidget;
+          float val = aParameter->doGetValue();
+          wdg->mValue = val;// setValueDirect(val);//  doSetValue(val);
+          #ifndef AX_NODIRTYWIDGETS
+          appendDirty(wdg);
+          #else
+          redrawWidget(wdg);
+          #endif
+        }
       }
 
     //virtual void onCursor(int aCursor)

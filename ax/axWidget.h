@@ -236,6 +236,7 @@ class axWidgetBase
 
 class axWidgetListener
 {
+  //friend class axContainer;
   public:
 
     /// widget value/state changed
@@ -286,17 +287,15 @@ class axWidgetListener
 
 class axWidget : public axWidgetBase
 {
-  private:
-    //axBrush*          mWdgBrush;
-    //axBrush*          mFillBrush;
+  friend class axContainer;
+  friend class axEditor;
   protected:
     axWidgetListener* mListener;
-    axParameter*      mParameter;    // dobbelt opp?
-    int               mConIndex;              // hmmm..
     axRect            mRect;
     axPoint           mOrig;
     int               mAlignment;
     int               mFlags;
+    int               mConnection;
     float             mValue;
   public:
     void*             mUser;
@@ -307,99 +306,103 @@ class axWidget : public axWidgetBase
     axWidget(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None)
       {
         mListener   = aListener;
-        mID         = aID;
         mRect       = aRect;
-        mParameter  = NULL;
+        mAlignment  = aAlignment;
+        mValue      = 0;
+        mConnection = -1;
+        mUser       = NULL;
+        mID         = aID;
         clearAllFlags();
         setFlag(wfl_Active);
         setFlag(wfl_Visible);
         setFlag(wfl_Capture);
-        mAlignment  = aAlignment;
-        mValue      = 0;
-        mUser       = NULL;
-        mConIndex   = -1;
-        //mWdgBrush   = new axBrush(AX_GREY);
-        //mFillBrush  = mWdgBrush;
         mOrig.set(mRect.x,mRect.y);
       }
 
-    virtual ~axWidget()
+    //virtual ~axWidget()
+    //  {
+    //  }
+
+    //--------------------------------------------------
+    // inline
+    //--------------------------------------------------
+
+    inline axRect getRect(void)
       {
-        //delete mWdgBrush;
+        return mRect;
       }
-
-    //--------------------------------------------------
-    // accessors
-
-    inline int          getAlignment(void)        { return mAlignment; }
-    inline int          getConnectionIndex(void)  { return mConIndex; }
-    inline axPoint      getOrig(void)             { return mOrig; }
-    inline axParameter* getParameter(void)        { return mParameter; }
-    inline axRect       getRect(void)             { return mRect; }
-    inline float        getValueDirect(void)      { return mValue; }
-
-    inline void setConnectionIndex(int c)     { mConIndex = c; }
-    //inline void setFillBrush(axBrush* aBrush) { mFillBrush = aBrush; }
-    inline void setParameter(axParameter* p)  { mParameter = p; }
-    inline void setValueDirect(float v)       { mValue = v; }
-
-    //--------------------------------------------------
-
-//    /// switch background fill on/off, and color
-//    /**
-//    */
-//    virtual void setBackground(bool aFill, axColor aColor=AX_GREY)
-//      {
-//        if (aFill) setFlag(wfl_DefaultDraw);
-//        else clearFlag(wfl_DefaultDraw);
-//        //mFillColor = aColor;
-//        if (mFillBrush) delete mFillBrush;
-//        mFillBrush = new axBrush(aColor);
-//      }
-
 
     // --- flags ---
 
     /// clear all widget flags
-    inline void clearAllFlags(void) { mFlags=0; }
+    inline void clearAllFlags(void)
+      {
+        mFlags=0;
+      }
 
     /// set one specific flag
     /**
       see: \ref widget_flags
     */
-    inline void setFlag(int aFlag) { mFlags|=aFlag; }
+    inline void setFlag(int aFlag)
+      {
+        mFlags|=aFlag;
+      }
 
     /// clear (reset) a flag
     /**
       see: \ref widget_flags
     */
-    inline void clearFlag(int aFlag) { mFlags &= ~aFlag; }
+    inline void clearFlag(int aFlag)
+      {
+        mFlags &= ~aFlag;
+      }
 
     /// return true if flag is set
     /**
       see: \ref widget_flags
     */
-    inline bool hasFlag(int aFlag) { return (mFlags&aFlag); }
+    inline bool hasFlag(int aFlag)
+      {
+        return (mFlags&aFlag);
+      }
 
     // --- rect ---
 
     /// return true if widget intersects (touches/overlaps) specified rect
-    inline bool intersects(axRect aRect) { return (mRect.intersects(aRect)); }
+    inline bool intersects(axRect aRect)
+      {
+        return (mRect.intersects(aRect));
+      }
 
     /// return true if specified point is inside widget
-    inline bool contains(int aX, int aY) { return (mRect.contains(aX,aY));  }
+    inline bool contains(int aX, int aY)
+      {
+        return (mRect.contains(aX,aY));
+      }
 
     //--------------------------------------------------
-    // widget handler
+    // widget base
     //--------------------------------------------------
 
     //virtual void doReset(void) { mValue = 0; }
     /// set widget walue
-    virtual void doSetValue(float aValue) { mValue = aValue; }
+    virtual void doSetValue(float aValue)
+      {
+        mValue = aValue;
+      }
+
     /// get widget walue
-    virtual float doGetValue(void) { return mValue; }
+    virtual float doGetValue(void)
+      {
+        return mValue;
+      }
+
     /// get widget name
-    virtual axString doGetName(void) { return STR_EMPTY; }
+    virtual axString doGetName(void)
+      {
+        return STR_EMPTY;
+      }
 
     /// move widget
     /**
@@ -438,28 +441,6 @@ class axWidget : public axWidgetBase
         mRect.w = aW;
         mRect.h = aH;
       }
-
-    //virtual void doRealign(void) {}
-
-    //----------
-
-//    /// paint widget
-//    /**
-//      background is filled (with mFillColor) if the widget has the wfl_Visible and wfl_DefaultDraw flags set
-//    */
-//    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
-//      {
-//        if( hasFlag(wfl_Visible) )
-//        {
-//          if( hasFlag(wfl_DefaultDraw) )
-//          {
-//            //aCanvas->setBrushColor( mFillColor );
-//            aCanvas->clearPen();
-//            aCanvas->selectBrush(mFillBrush);
-//            aCanvas->fillRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
-//          }
-//        }
-//      }
 
 };
 

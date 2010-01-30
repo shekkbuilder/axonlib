@@ -107,6 +107,8 @@ class axPluginBase
     */
     virtual void updateTimeInfo(void) {}
 
+    //----------
+
     /// plugin state has changed
     /**
       \param aState one of pst_Open, pst_Close, pst_Suspend, pst_Resume
@@ -207,7 +209,7 @@ class axPlugin  : public axPluginImpl,
 {
   //public:
   protected:
-    //axMutex       mMutex_params;
+  //axMutex       mMutex_params;
     int           mPlugFlags;
     axParameters  mParameters;
     axString      mName;
@@ -227,6 +229,7 @@ class axPlugin  : public axPluginImpl,
       {
         mPlugFlags = aPlugFlags;
         axInitialize(mPlugFlags);   // os/platform specific initialization
+// move to vst
 //        canProcessReplacing();      // need this for vst sdk 2.4
 //        setNumInputs(2);            // defaults to 2 inputs & outputs
 //        setNumOutputs(2);           // aka stereo effect

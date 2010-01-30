@@ -17,6 +17,7 @@
 #include "axEditor.h"
 //#include "wdgKnob.h"
 //#include "wdgSwitches.h"
+#include "wdgPanel.h"
 #include "wdgScope.h"
 
 //#include "wdgResizer.h"
@@ -233,7 +234,11 @@ class myPlugin : public axPlugin,
     virtual void* doCreateEditor(void)
       {
         axEditor* EDIT = new axEditor("ana_sigview_editor",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
-        EDIT->appendWidget( wScope     = new wdgScope(   this,3,axRect( 10,70,266,200),wal_None ) );
+        wdgPanel* panel;
+        EDIT->appendWidget( panel = new wdgPanel(this,-1,NULL_RECT,wal_Client));
+
+
+        panel->appendWidget( wScope     = new wdgScope(   this,3,axRect( 10,70,266,200),wal_None ) );
           //wViewMode->setup(2,str_viewmode);
           wScope->mSize = mLength / 2;
           wScope->mBuffer = mViewBuffer;
@@ -249,6 +254,7 @@ class myPlugin : public axPlugin,
 //        E->connect( wLength,pLength );
         // could mEditor be in use from another thread? gui? audio? setParameter?
         // it shouldn't (we are creating the editor), but, ...
+        EDIT->doRealign();
         mEditor = EDIT;
         return EDIT;
       }

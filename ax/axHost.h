@@ -17,43 +17,22 @@
  */
 
 /**
- * @file
- * \brief desc
+  \file axHost.h
  */
 
-/**
- * \brief desc
- *
- * long desc
- *
- */
+#ifndef axHost_included
+#define axHost_included
+//----------------------------------------------------------------------
 
-//#ifndef axHost_included
-//#define axHost_included
-////----------------------------------------------------------------------
-//
-//class axHostBase
-//{
-//  protected:
-//  public:
-//    axHostBase() {}
-//    virtual ~axHostBase() {}
-//};
-//
-////#ifdef AX_PLUGIN_VST
-//  #include "axHostVst.h"
-//  typedef axHostVst axHostImpl;
-////#endif
-//
-//class axHost : public axHostImpl
-//{
-//  protected:
-//  public:
-//    axHost() {}
-//    virtual ~axHost() {}
-//};
-//
-////----------------------------------------------------------------------
-//#endif
-//
-//
+/*
+  this class should define what a plugin can expect from a host,
+  to abstract away the vst host specifics.
+  - host detection
+  - ? system info? (msb/lsb, cputype, display-format..
+      use this for a standalone plugin wrapper too?
+  - host extensions (especially reaper)
+  - -> host: resize window
+*/
+
+//----------------------------------------------------------------------
+#endif
