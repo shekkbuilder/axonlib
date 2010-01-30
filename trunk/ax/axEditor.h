@@ -192,16 +192,12 @@ class axEditor : public axWindow,
 
     void connect(axWidget* aWidget, axParameter* aParameter)
       {
-        //aWidget->mParameter = aParameter;
-//        aWidget->mParameter = aParameter;//setParameter(aParameter);
+        aWidget->mParameter = aParameter;
         int num = mConnections.size();
-        aWidget->mConnection = num;   //setConnectionIndex(num);
-        aParameter->mConnection = num;//setConnectionIndex(num);
-        //aParameter->connection(num);
-        aWidget->doSetValue( aParameter->doGetValue() );
-        //lock
+        aWidget->mConnection = num;
+        aParameter->mConnection = num;
         mConnections.append( new axWPConnection(aWidget,aParameter) );
-        //unlock
+        aWidget->doSetValue( aParameter->doGetValue() );
       }
 
     //----------
