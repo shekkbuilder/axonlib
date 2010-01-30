@@ -27,6 +27,10 @@
 //#include "ccernn/midi_transpose0.cpp"
 //#include "ccernn/syn_plucked0.cpp"
 
+// gui
+
+#include "ccernn/fx_cutter0.cpp"
+
 // ports
 
 //#include "ports/mda_ambience.cpp"
@@ -57,7 +61,7 @@
 
 //#include "ccernn/ana_vu0.cpp"
 //#include "ccernn/fx_dynamics0.cpp"
-#include "ccernn/fx_tempodelay0.cpp"
+//#include "ccernn/fx_tempodelay0.cpp"
 //#include "ccernn/fx_wgtavg0.cpp"
 //#include "ccernn/midi_fibonacci0.cpp"
 //#include "ccernn/syn_binaural0.cpp"

@@ -297,6 +297,7 @@ class axWidget : public axWidgetBase
     int               mFlags;
     int               mConnection;
     float             mValue;
+    axParameter*      mParameter; // for displaying
   public:
     void*             mUser;
     int               mID;
@@ -317,6 +318,7 @@ class axWidget : public axWidgetBase
         setFlag(wfl_Visible);
         setFlag(wfl_Capture);
         mOrig.set(mRect.x,mRect.y);
+        mParameter = NULL;
       }
 
     //virtual ~axWidget()
