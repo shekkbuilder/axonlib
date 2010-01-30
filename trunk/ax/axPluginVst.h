@@ -112,8 +112,6 @@ class axPluginVst :  public AudioEffectX,
           for (int j=0; j<AX_NUMPARAMS; j++) mPrograms[i][j] = 0;
         }
         mFlags  = 0;
-        //mWidth  = 256;
-        //mHeight = 256;
         mWindow = NULL;
         mMidiEventList.numEvents = 0;
         mMidiEventList.reserved  = 0;
@@ -285,68 +283,6 @@ class axPluginVst :  public AudioEffectX,
         //for (int i=0; i<AX_NUMPARAMS; i++) mPrograms[mCurProg][i] = mParameters[i]->doGetValue();
         mCurProg = program;
         //for (int i=0; i<AX_NUMPARAMS; i++) mParameters[i]->doSetValue( mPrograms[mCurProg][i] );
-      }
-
-    //----------------------------------------------------------------------
-    //
-    // editor
-    //
-    //----------------------------------------------------------------------
-
-    // [internal]
-    void openEditor(void* ptr,long value)
-      {
-        //#ifdef linux
-        //  if (gDP==NULL) gDP = (Display*)value; // gDP = (Display*)value;
-        //#endif
-        //if( mWindow ) doDestroyEditor();
-        //if( mWindow ) TRACE("oops! mWindo is not NULL (axPluginVst::openEditor)\n"); // meaning we could be executing 'inside' it in another thread?????
-        axWindow* win = (axWindow*)doCreateEditor(/*mWidth,mHeight*/);
-        if (win)
-        {
-          win->reparent((int)ptr);
-          win->show();
-          //lock
-          mWindow = win;
-          //unlock
-        }
-      }
-
-    //----------
-
-    // [internal]
-    void closeEditor(void)
-      {
-        if(mWindow)
-        {
-          mWindow->hide();
-          //lock
-          mWindow = NULL;
-          doDestroyEditor();
-          //unlock
-        }
-      }
-
-    //----------
-
-    // [internal]
-    void idleEditor(void)
-      {
-        //if dirtylist not empty, update all widgets in dirtylst
-        // clear dirtylist (not delete)
-        //lock
-        if (mWindow) { doIdleEditor(); }
-        //unlock
-      }
-
-    //----------
-
-    virtual void hasEditor(int aWidth, int aHeight)
-      {
-        cEffect.flags |= effFlagsHasEditor;
-        mFlags |= pfl_HasEditor;
-        mWidth = aWidth;
-        mHeight = aHeight;
       }
 
     //----------------------------------------------------------------------
@@ -587,6 +523,68 @@ class axPluginVst :  public AudioEffectX,
     //          } //sampleflrames
     //        } //process_block
     //      }
+
+    //----------------------------------------------------------------------
+    //
+    // editor
+    //
+    //----------------------------------------------------------------------
+
+    // [internal]
+    void openEditor(void* ptr,long value)
+      {
+        //#ifdef linux
+        //  if (gDP==NULL) gDP = (Display*)value; // gDP = (Display*)value;
+        //#endif
+        //if( mWindow ) doDestroyEditor();
+        //if( mWindow ) TRACE("oops! mWindo is not NULL (axPluginVst::openEditor)\n"); // meaning we could be executing 'inside' it in another thread?????
+        axWindow* win = (axWindow*)doCreateEditor(/*mWidth,mHeight*/);
+        if (win)
+        {
+          win->reparent((int)ptr);
+          win->show();
+          //lock
+          mWindow = win;
+          //unlock
+        }
+      }
+
+    //----------
+
+    // [internal]
+    void closeEditor(void)
+      {
+        if(mWindow)
+        {
+          mWindow->hide();
+          //lock
+          mWindow = NULL;
+          doDestroyEditor();
+          //unlock
+        }
+      }
+
+    //----------
+
+    // [internal]
+    void idleEditor(void)
+      {
+        //if dirtylist not empty, update all widgets in dirtylst
+        // clear dirtylist (not delete)
+        //lock
+        if (mWindow) { doIdleEditor(); }
+        //unlock
+      }
+
+    //----------
+
+    virtual void hasEditor(int aWidth, int aHeight)
+      {
+        cEffect.flags |= effFlagsHasEditor;
+        mFlags |= pfl_HasEditor;
+        mWidth = aWidth;
+        mHeight = aHeight;
+      }
 
     //----------------------------------------------------------------------
     //

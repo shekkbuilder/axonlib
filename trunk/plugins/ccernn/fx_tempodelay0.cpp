@@ -134,9 +134,9 @@ class myPlugin : public axPlugin,
     virtual void* doCreateEditor(void)
       {
         axEditor* EDIT = new axEditor( "fx_tempodelay_editor", this, -1, axRect(0,0,AX_WIDTH,AX_HEIGHT), AX_FLAGS );
-        wdgPanel* P;
         //E->setLayout(0,0,10,10);
         //E->setFlag(wfl_Vertical);
+        wdgPanel* P;
         EDIT->appendWidget( P = new wdgPanel(this, -1, NULL_RECT,wal_Client) );
           P->appendWidget( k1 = new wdgKnob( this, -1, axRect( 10, 10, 128,32 ), wal_None ) );
           P->appendWidget( k2 = new wdgKnob( this, -1, axRect( 10, 50, 128,32 ), wal_None ) );

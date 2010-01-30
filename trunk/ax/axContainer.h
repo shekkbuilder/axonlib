@@ -32,6 +32,11 @@
 class axContainer : public axWidget,
                     public axWidgetListener
 {
+  private:
+    axRect    mClient;                // current Client area
+    int       mStackedX, mStackedY;   // where to put next wal_Stacked widget
+    axRect    mContent;
+    int       mOffsetX,mOffsetY;
   protected:
     axWidgets mWidgets;
     //mouse
@@ -43,11 +48,6 @@ class axContainer : public axWidget,
     //layout
     int       mMarginX,  mMarginY;      // container inner space (between outer border & widgets)
     int       mPaddingX, mPaddingY;   // space between wal_Stacked widgets
-    // runtime
-    axRect    mClient;                // current Client area
-    int       mStackedX, mStackedY;   // where to put next wal_Stacked widget
-    axRect    mContent;
-    int       mOffsetX,mOffsetY;
 
   public:
 
@@ -86,7 +86,7 @@ class axContainer : public axWidget,
     //--------------------------------------------------
 
     inline axWidget* getWidget(int i) { return mWidgets[i]; }
-    inline axRect getContent(void) { return mContent; }
+    inline axRect getContent(void) { return mContent; } // set up in doRealign
 
     //--------------------------------------------------
 
@@ -130,8 +130,8 @@ class axContainer : public axWidget,
 
     /// append widget
     /**
-      append widget to subwidgets list
-      and move new widget to correct place inside the container
+      append widget to subwidgets list,
+      and move new widget to correct place inside the container.
       (widget position relative to container)
     */
 
@@ -186,9 +186,12 @@ class axContainer : public axWidget,
         return NULL;
       }
 
+  //protected:
+
     //--------------------------------------------------
-    // widget handler
+    // widget base
     //--------------------------------------------------
+
 
     //virtual void      doReset(void) {}
     //virtual void      doSetValue(float aValue) {} // 0..1
@@ -242,6 +245,10 @@ class axContainer : public axWidget,
       also, it keeps track of a mContent rectangle, that encapsulates all the sub-widgets
     */
 
+    //TODO:
+    // class wdgLayout : public axContainer
+    // -> doRealign
+
     //TODO: clipping [hierarchial]
     //TODO: wal_Center
     virtual void doRealign(void)
@@ -258,14 +265,14 @@ class axContainer : public axWidget,
           for( int i=0; i<mWidgets.size(); i++ )
           {
             axWidget* wdg = mWidgets[i];
-            int xx = wdg->getOrig().x;//wdg->getRect().x;
-            int yy = wdg->getOrig().y;//wdg->getRect().y;
+            int ox = wdg->mOrig.x;// getOrig().x;//wdg->getRect().x;
+            int oy = wdg->mOrig.y;//getOrig().y;//wdg->getRect().y;
             int ww = wdg->getRect().w;
-            int hh = wdg->getRect().h;
-            switch( wdg->getAlignment() )
+            int wh = wdg->getRect().h;
+            switch (wdg->mAlignment)//getAlignment() )
             {
               case wal_None:
-                wdg->doMove(parent.x+xx,parent.y+yy);
+                wdg->doMove(parent.x+ox,parent.y+oy);
                 break;
               //case wal_Fill:
               //  wdg->doMove( parent.x, parent.y );
@@ -289,14 +296,14 @@ class axContainer : public axWidget,
                 break;
               case wal_Top:
                 wdg->doMove( client.x, client.y );
-                wdg->doResize( client.w, hh );
-                client.y += (hh + mPaddingY);
-                client.h -= (hh + mPaddingY);
+                wdg->doResize( client.w, wh );
+                client.y += (wh + mPaddingY);
+                client.h -= (wh + mPaddingY);
                 break;
               case wal_Bottom:
-                wdg->doMove( client.x, client.y2()-hh+1 );
-                wdg->doResize( client.w, hh );
-                client.h -= (hh + mPaddingY);
+                wdg->doMove( client.x, client.y2()-wh+1 );
+                wdg->doResize( client.w, wh );
+                client.h -= (wh + mPaddingY);
                 break;
               case wal_LeftTop:
                 wdg->doMove( client.x, client.y );
@@ -310,28 +317,25 @@ class axContainer : public axWidget,
                 client.w -= (ww + mPaddingX);
                 break;
               case wal_LeftBottom:
-                wdg->doMove( client.x, client.y2()-hh+1 );
-                //wdg->doResize( C.w, hh );
-                //C.y += hh;
-                client.h -= (hh+mPaddingY);
+                wdg->doMove( client.x, client.y2()-wh+1 );
+                //wdg->doResize( C.w, wh );
+                //C.y += wh;
+                client.h -= (wh+mPaddingY);
                 break;
               case wal_RightBottom:
-                wdg->doMove( client.x2()-ww+1, client.y2()-hh+1 );
-                //wdg->doResize( C.w, hh );
-                client.h -= (hh+mPaddingY);
+                wdg->doMove( client.x2()-ww+1, client.y2()-wh+1 );
+                //wdg->doResize( C.w, wh );
+                client.h -= (wh+mPaddingY);
                 break;
               case wal_Stacked:
                 wdg->doMove(stackx,stacky);
                 //TODO: fix
                 int w = ww + mPaddingX;
-                int h = hh + mPaddingY;
-
-                // denne er feil
-                // wrapper til neste linje/row, hvis current widget ikke får plass,
+                int h = wh + mPaddingY;
 
                 if ( hasFlag(wfl_Vertical))
                 {
-                  int remain = parent.y2() - stacky + 1 - hh;
+                  int remain = parent.y2() - stacky + 1 - wh;
                   if (remain>=h)
                   {
                     stacky+=h;
@@ -340,7 +344,7 @@ class axContainer : public axWidget,
                   else
                   {
                     stacky = parent.y + mPaddingY;
-                    if (largest>0) stackx += largest;//w;                                        // largest
+                    if (largest>0) stackx += largest;//w;         // largest
                     else stackx+=w;
                     largest = 0;//-1;
                   }
@@ -357,7 +361,7 @@ class axContainer : public axWidget,
                   else
                   {
                     stackx = parent.x + mPaddingX;
-                    if (largest>0) stacky += largest;//h;                                        // largest
+                    if (largest>0) stacky += largest;//h;         // largest
                     else stacky += h;
                     largest = 0;//-1;
                   }
@@ -365,7 +369,7 @@ class axContainer : public axWidget,
 
                 break;
             } //switch alignment
-            mContent.combine( wdg->getRect() );
+            mContent.combine( wdg->getRect() ); // keep track of outer boundary
             //wdg->doRealign();
           } //for widgets
         } //wfl_Align
@@ -374,12 +378,12 @@ class axContainer : public axWidget,
     //----------
 
     /**
-      paints the container, and its children
+      paints the container, and its children.
       does some intersection testing, and skips widgets that are not visible,
-      or outside the update area (aRect)
+      or outside the update area (aRect).
       if AX_PAINTERS is defined, paints the widgets from last to first,
       else from first to last.
-      additionally, if wfl_CLip is set, before drawing, setup the clip rectangle
+      additionally, if wfl_CLip is set, before drawing, setup the clip rectangle.
 
     */
 
@@ -390,6 +394,7 @@ class axContainer : public axWidget,
         {
           if( mRect.intersects(aRect) )
           {
+            //TODO: pushCLipFlag
             if (hasFlag(wfl_Clip)) aCanvas->setClipRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
             //axWidget::doPaint( aCanvas, aRect );
             #ifdef AX_PAINTERS
@@ -401,6 +406,10 @@ class axContainer : public axWidget,
               axWidget* W = mWidgets[i];
               if (W->intersects(aRect)) W->doPaint(aCanvas, mRect);
             }
+            // this fails for recursive clip rectangles,
+            // the innermost rect will clear the clip rect on its way out,
+            // but it should reset to what it was 'on enrty'
+            //TODO: popCLipFlag
             if( hasFlag(wfl_Clip) ) aCanvas->clearClipRect();
           } //intersect
         }
@@ -444,7 +453,7 @@ class axContainer : public axWidget,
     /**
       if any widget were 'captured' during an earlier mouse down event,
       that widget is sent a mouse up event (doMouseUp is called),
-      and the capture is released
+      and the capture is released.
       this function does nothing if wfl_Active flag is not set.
     */
 
@@ -484,9 +493,13 @@ class axContainer : public axWidget,
     //virtual void doKeyDown(int aK, int aS) {}
     //virtual void doKeyUp(int aK, int aS) {}
 
+  //protected:
+
     //----------------------------------------
     // widget listener
     //----------------------------------------
+
+    // widgets responding to containers
 
     virtual void onChange(axWidget* aWidget)                  { mListener->onChange(aWidget); }
     virtual void onRedraw(axWidget* aWidget)                  { mListener->onRedraw(aWidget); }

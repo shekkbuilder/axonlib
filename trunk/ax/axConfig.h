@@ -10,6 +10,16 @@
   #define AX_LINUX
 #endif
 
+// plugin settings
+
+#define AX_PLUGIN_VST
+//#define AX_PLUGIN_MULTI
+
+// gui settings
+
+//#define AX_PAINTERS
+//#define AX_NODIRTYWIDGETS
+
 //----------------------------------------------------------------------
 
 #endif

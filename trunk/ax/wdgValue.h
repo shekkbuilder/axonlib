@@ -58,8 +58,9 @@ class wdgValue : public axWidget
         mFont       = new axFont(AX_GREY_LIGHT);
         mSens1      = 0.005;
         mSens2      = 0.1;
-        if (mParameter) mValue = mParameter->doGetValue();
-        else mValue = 0;
+        //if (mParameter) mValue = mParameter->doGetValue();
+        //else
+        mValue = 0;
       }
 
     virtual ~wdgValue()
@@ -75,15 +76,16 @@ class wdgValue : public axWidget
     virtual void doSetValue(float aValue)
       {
         mValue = aValue;
-        if (mParameter) mParameter->doSetValue(aValue);
+        //if (mParameter) mParameter->doSetValue(aValue);
       }
 
     //----------
 
     virtual float doGetValue(void)
       {
-        if (mParameter) return mParameter->doGetValue();
-        else return mValue;
+        //if (mParameter) return mParameter->doGetValue();
+        //else
+          return mValue;
       }
 
     //----------
@@ -95,8 +97,9 @@ class wdgValue : public axWidget
         aCanvas->selectBrush(mFillBrush);
         aCanvas->fillRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
         aCanvas->selectFont(mFont);
-        if (mParameter) mParameter->doGetDisplay(buf);
-        else sprintf(buf,"%.2f",mValue);
+        //if (mParameter) mParameter->doGetDisplay(buf);
+        //else
+        sprintf(buf,"%.2f",mValue);
         aCanvas->drawText(mRect.x,mRect.y,mRect.x2()/*-5*/,mRect.y2(),buf,mTextAlign);
       }
 
@@ -141,10 +144,7 @@ class wdgValue : public axWidget
           prev = cur;
           mValue -= delta;
           mValue = axMin(1,axMax(0,mValue));
-          //TRACE("value:%f\n",mValue);
-          //if (mParameter) mParameter->doSetValue(mValue);
-          //if (mParameter) mParameter->setValue(mValue);
-          if (mParameter) mParameter->setValueDirect(mValue);
+          //if (mParameter) mParameter->setValueDirect(mValue);
           mListener->onChange(this);
           sprintf(hint," %.3f",mValue);
           mListener->onHint(hint);

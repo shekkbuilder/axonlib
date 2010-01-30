@@ -288,6 +288,7 @@
   int main(void)
   {
     AX_APPLICATION* app = new AX_APPLICATION();
+    //TODO: command line arguments
     app->main();
     return 0;
   }

@@ -69,12 +69,13 @@ class wdgLabel : public axWidget
       {
         axWidget::doPaint(aCanvas,aRect);
         aCanvas->selectFont(mFont);
-        if (mParameter)
-        {
-          mParameter->doGetDisplay(txt);
-          aCanvas->drawText(mRect.x,mRect.y,mRect.x2(),mRect.y2(),txt,mTextAlign);
-        }
-        else aCanvas->drawText(mRect.x,mRect.y,mRect.x2(),mRect.y2(),mText,mTextAlign);
+//        if (mParameter)
+//        {
+//          mParameter->doGetDisplay(txt);
+//          aCanvas->drawText(mRect.x,mRect.y,mRect.x2(),mRect.y2(),txt,mTextAlign);
+//        }
+//        else
+        aCanvas->drawText(mRect.x,mRect.y,mRect.x2(),mRect.y2(),mText,mTextAlign);
       }
 
 };

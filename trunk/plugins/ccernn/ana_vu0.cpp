@@ -13,6 +13,7 @@
 #include "axEditor.h"
 #include "wdgKnob.h"
 #include "wdgVuMeter.h"
+#include "wdgPanel.h"
 
 #include "parInteger.h"
 #include "wdgImgSwitch.h"
@@ -22,8 +23,8 @@
 
 //----------------------------------------------------------------------
 
-class myPlugin : public axPlugin//,
-                 //public axWidgetListener
+class myPlugin : public axPlugin,
+                 public axWidgetListener
 {
   public:
     bool        editor_initialized;
@@ -86,14 +87,18 @@ class myPlugin : public axPlugin//,
           editor_initialized = true;
         }
         axEditor* EDIT = new axEditor("ana_vu_window",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
-        EDIT->appendWidget( wSpeed = new wdgKnob(     EDIT,0,axRect(10, 10, 128,32 ), wal_None/*, pSpeed*/ ));
-        EDIT->appendWidget( sw     = new wdgImgSwitch(EDIT,1,axRect(100,100,30, 30 ), wal_None/*, psw*/, 0, swSrf ));
-        EDIT->appendWidget( wMeter = new wdgVuMeter(  EDIT,2,axRect(10, 50, 10, 128), wal_None/*, NULL*/));
+        wdgPanel* panel;
+        EDIT->appendWidget( panel = new wdgPanel(this,-1,NULL_RECT,wal_Client));
+
+        panel->appendWidget( wSpeed = new wdgKnob(     this,0,axRect(10, 10, 128,32 ), wal_None/*, pSpeed*/ ));
+        panel->appendWidget( sw     = new wdgImgSwitch(this,1,axRect(100,100,30, 30 ), wal_None/*, psw*/, 0, swSrf ));
+        panel->appendWidget( wMeter = new wdgVuMeter(  this,2,axRect(10, 50, 10, 128), wal_None/*, NULL*/));
         EDIT->connect( wSpeed, pSpeed );
         EDIT->connect( sw,     psw );
         //wMeter->mValue = 0.66;
         left = 0;
         right = 0;
+        EDIT->doRealign();
         mEditor = EDIT;
         return mEditor;
       }

@@ -26,7 +26,7 @@
   \file axApplication.h
   \brief standalone application
 
-  can we have more detailed file descriptions here?
+  [can we have more detailed file descriptions here? and where will it be found in the generated docs?]
 
 */
 

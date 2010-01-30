@@ -13,7 +13,6 @@
 // no gui
 
 //#include "ccernn/fx_blur0.cpp"
-//#include "ccernn/fx_cutter0.cpp"  // !!!
 //#include "ccernn/fx_dist0.cpp"
 //#include "ccernn/fx_envelope0.cpp"
 //#include "ccernn/fx_freeze0.cpp"
@@ -43,20 +42,26 @@
 // error
 //----------------------------------------------------------------------
 
+// no gui
+
+//#include "ccernn/fx_cutter0.cpp"  // !!!
+
 // gui
 
 // FIX: backgrounds!
 
 //#include "ccernn/ana_daubechies0.cpp"
 //#include "ccernn/ana_fft.cpp"
+
 //#include "ccernn/ana_sigview0.cpp"
+
 //#include "ccernn/ana_vu0.cpp"
 //#include "ccernn/fx_dynamics0.cpp"
-//#include "ccernn/fx_tempodelay0.cpp"
+#include "ccernn/fx_tempodelay0.cpp"
 //#include "ccernn/fx_wgtavg0.cpp"
 //#include "ccernn/midi_fibonacci0.cpp"
 //#include "ccernn/syn_binaural0.cpp"
-#include "ccernn/syn_perc0.cpp"
+//#include "ccernn/syn_perc0.cpp"
 
 // FIX: voice/manager
 //#include "ccernn/syn_poly0.cpp"

@@ -31,7 +31,7 @@
 
 /**
  * fast bit reverse algorithm
- * origin: http://www.jjj.de/fxt/fxtpage.html 
+ * origin: http://www.jjj.de/fxt/fxtpage.html
  * @param[in] x int
  * @return x int
  */
@@ -58,7 +58,7 @@ inline unsigned int axBitReverse(unsigned int x)
  * radix algorithm
  * @param[in] source long*
  * @param[in] dest long*
- * @param[in] N long  
+ * @param[in] N long
  * @param[in] byte int
  */
 inline void axRadix (long *source, long *dest, long N, int byte)
@@ -85,5 +85,14 @@ inline void axRadix (long *source, long *dest, long N, int byte)
 //  );
 //  i += 1;
 //);
+
+/*
+TODO:
+  axMemcpy, axMemsey
+  axStrCpy,Strdup, etc...
+  strcmp
+  sprintf (doesn't need to be that advanced..)
+  stdlib & std replacements
+*/
 
 #endif

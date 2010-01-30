@@ -144,20 +144,20 @@ class wdgKnob : public wdgValue
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-        if( mParameter )
-        {
-          name[0] = '\0';
-          display[0] = '\0';
-          val = mParameter->doGetValue();
-          mParameter->doGetName(name);
-          mParameter->doGetDisplay(display);
-        }
-        else
-        {
+        //if( mParameter )
+        //{
+        //  name[0] = '\0';
+        //  display[0] = '\0';
+        //  val = mParameter->doGetValue();
+        //  mParameter->doGetName(name);
+        //  mParameter->doGetDisplay(display);
+        //}
+        //else
+        //{
           val = mValue;
           strcpy(name,"[name]");
           sprintf(display,"%f",val);
-        }
+        //}
         switch(mKnobSize)
         {
           case 0: drawKnobSmall(aCanvas,aRect,val,name,display,0); break;
