@@ -226,7 +226,7 @@ class myPlugin : public axPlugin,
         wdgPanel* panel;
         EDIT->appendWidget( panel = new wdgPanel(this,-1,NULL_RECT,wal_Client));
 
-        panel->appendWidget( wScope     = new wdgScope(   this,3,axRect( 10,70,266,200),wal_None ) );
+        panel->appendWidget( wScope = new wdgScope(this,3,axRect( 10,70,266,200),wal_None) );
           //wViewMode->setup(2,str_viewmode);
           wScope->mSize = mLength;
           wScope->mBuffer = mViewBuffer;
@@ -276,6 +276,22 @@ class myPlugin : public axPlugin,
           mEditor->redrawDirty();
         }
       }
+
+    //----------------------------------------
+
+    //virtual void onChange(axParameter* aParameter)
+    //  {
+    //    if (mEditor) mEditor->onChange(aParameter);
+    //    doProcessParameter(aParameter);
+    //  }
+
+    //----------
+
+    //virtual void onChange(axWidget* aWidget)
+    //  {
+    //    if (mEditor) mEditor->onChange(aWidget);
+    //  }
+
 
 };
 

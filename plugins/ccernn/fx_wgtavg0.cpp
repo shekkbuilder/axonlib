@@ -30,14 +30,11 @@ class myPlugin : public axPlugin,
     float       z0,z1;
     float       weight;
     int         mode;
-
     parInteger  *pMode;
     parFloat    *pWeight;
-
     axEditor    *mEditor;
     wdgSwitch   *wMode;
     wdgValue    *wWeight;
-
 
   public:
 
@@ -45,73 +42,19 @@ class myPlugin : public axPlugin,
     : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
       {
         mEditor = NULL;
-        describe("fx_wgtavg0","ccernn","product_string",0,0);
+        describe("fx_wgtavg0","ccernn","axonlib example plugin",0,0);
         hasEditor(AX_WIDTH,AX_HEIGHT);
-
         appendParameter( pMode   = new parInteger(this, 0, "mode",   "", 0,  0,1, flt_txt ) );
         appendParameter( pWeight = new parFloat(  this, 1, "weight", "", 0.5 ) );
-        //pMode->setup(0,0,1,flt_txt);
-        //mode   = 0;
-        //pMode->setInt(0);
-        //pWeight->setValue(0.5);
         processParameters();
         z0=z1=0;
       }
 
-    //virtual ~myPlugin() {}
+    //virtual ~myPlugin()
+    //  {
+    / /}
 
     //--------------------------------------------------
-
-    // parameters have mOwner = this
-    // we override axPlugin.onChange, so we need to call doProcessParameter ourselves
-    // (if we need it)
-    virtual void onChange(axParameter* aParameter)
-      {
-        //TODO: better/safer "editor is visible" testing?
-        if( mEditor ) mEditor->onChange( aParameter );
-        doProcessParameter(aParameter);
-      }
-
-    virtual void onChange(axWidget* aWidget)
-      {
-        if (mEditor) mEditor->onChange(aWidget);
-      }
-
-    //--------------------------------------------------
-
-    virtual void* doCreateEditor(void)
-      {
-        axEditor* EDIT = new axEditor( "fx_wgtavg_gui", this, -1, axRect(0,0,AX_WIDTH-1,AX_HEIGHT-1), AX_FLAGS );
-        wdgPanel *P;
-        EDIT->appendWidget( P = new wdgPanel(this,-1,NULL_RECT,wal_Client) );
-        P->appendWidget( wMode   = new wdgSwitch( this, 0, axRect(10,10,50,20), wal_None/*, pMode*/ ) );
-        P->appendWidget( wWeight = new wdgValue(  this, 1, axRect(10,40,50,20), wal_None/*, pWeight*/ ) );
-        EDIT->doRealign();
-        //wMode->setup("off","on");
-        wMode->setup(flt_txt);
-        //E->updateWidgetValues(); // connect by wdg/par.mID !!
-        EDIT->connect( wMode, pMode );
-        EDIT->connect( wWeight, pWeight );
-        mEditor = EDIT;
-        //TRACE("fx_wgtavg.mEditor = %x\n",(int)mEditor);
-        return mEditor;
-      }
-
-    //----------
-
-    virtual void doDestroyEditor(void)
-      {
-        axEditor* EDIT = mEditor;
-        mEditor = NULL;
-        delete EDIT;
-      }
-
-    virtual void doIdleEditor(void)
-      {
-        if (mEditor) mEditor->redrawDirty();
-      }
-
-    //----------
 
     virtual void doProcessParameter(axParameter* aParameter)
       {
@@ -146,6 +89,56 @@ class myPlugin : public axPlugin,
             break;
         }
       }
+
+    //--------------------------------------------------
+
+    virtual void* doCreateEditor(void)
+      {
+        axEditor* EDIT = new axEditor( "fx_wgtavg_gui", this, -1, axRect(0,0,AX_WIDTH-1,AX_HEIGHT-1), AX_FLAGS );
+        wdgPanel *P;
+        EDIT->appendWidget(    P = new wdgPanel( this,-1, NULL_RECT,           wal_Client) );
+        P->appendWidget(   wMode = new wdgSwitch(this, 0, axRect(10,10,50,20), wal_None  ) );
+        P->appendWidget( wWeight = new wdgValue( this, 1, axRect(10,40,50,20), wal_None  ) );
+        EDIT->doRealign();
+        //wMode->setup("off","on");
+        wMode->setup(flt_txt);
+        //E->updateWidgetValues(); // connect by wdg/par.mID !!
+        EDIT->connect( wMode, pMode );
+        EDIT->connect( wWeight, pWeight );
+        mEditor = EDIT;
+        //TRACE("fx_wgtavg.mEditor = %x\n",(int)mEditor);
+        return mEditor;
+      }
+
+    //----------
+
+    virtual void doDestroyEditor(void)
+      {
+        axEditor* EDIT = mEditor;
+        mEditor = NULL;
+        delete EDIT;
+      }
+
+    virtual void doIdleEditor(void)
+      {
+        if (mEditor) mEditor->redrawDirty();
+      }
+
+    //--------------------------------------------------
+
+    virtual void onChange(axParameter* aParameter)
+      {
+        if (mEditor) mEditor->onChange(aParameter);
+        doProcessParameter(aParameter);
+      }
+
+    //----------
+
+    virtual void onChange(axWidget* aWidget)
+      {
+        if (mEditor) mEditor->onChange(aWidget);
+      }
+
 
 };
 
