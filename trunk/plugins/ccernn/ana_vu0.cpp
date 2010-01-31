@@ -61,21 +61,7 @@ class myPlugin : public axPlugin,
       {
       }
 
-    //----------
-
-    virtual void onChange(axParameter* aParameter)
-      {
-        if(mEditor) mEditor->onChange(aParameter);
-        doProcessParameter(aParameter);
-      }
-
-    //virtual void onChange(axWidget* aWidget)
-    //  {
-    //    TRACE("change\n");
-    //    if(mEditor) mEditor->appendDirty(aWidget);
-    //  }
-
-    //----------
+    //--------------------------------------------------
 
     virtual void* doCreateEditor(void)
       {
@@ -90,12 +76,11 @@ class myPlugin : public axPlugin,
         wdgPanel* panel;
         EDIT->appendWidget( panel = new wdgPanel(this,-1,NULL_RECT,wal_Client));
 
-        panel->appendWidget( wSpeed = new wdgKnob(     this,0,axRect(10, 10, 128,32 ), wal_None/*, pSpeed*/ ));
-        panel->appendWidget( sw     = new wdgImgSwitch(this,1,axRect(100,100,30, 30 ), wal_None/*, psw*/, 0, swSrf ));
-        panel->appendWidget( wMeter = new wdgVuMeter(  this,2,axRect(10, 50, 10, 128), wal_None/*, NULL*/));
+        panel->appendWidget( wSpeed = new wdgKnob(     this,0,axRect(10, 10, 128,32 ), wal_None  ));
+        panel->appendWidget( sw     = new wdgImgSwitch(this,1,axRect(100,100,30, 30 ), wal_None, 0, swSrf ));
+        panel->appendWidget( wMeter = new wdgVuMeter(  this,2,axRect(10, 50, 10, 128), wal_None  ));
         EDIT->connect( wSpeed, pSpeed );
-        EDIT->connect( sw,     psw );
-        //wMeter->mValue = 0.66;
+        EDIT->connect( sw, psw );
         left = 0;
         right = 0;
         EDIT->doRealign();
@@ -116,11 +101,13 @@ class myPlugin : public axPlugin,
 
     virtual void doIdleEditor(void)
       {
-        float val = (left + right) * 0.5;
-        wMeter->mLevel = val;
-        //mEditor->appendDirty(wMeter);
-        //mEditor->appendDirty(sw);
-        mEditor->redrawDirty();
+        if (mEditor)
+        {
+          float val = (left + right) * 0.5;
+          wMeter->mLevel = val;
+          mEditor->appendDirty(wMeter);
+          mEditor->redrawDirty();
+        }
       }
 
     //----------
@@ -150,6 +137,21 @@ class myPlugin : public axPlugin,
           else right  += ( 0 - right  ) * speed;
         *outs[0] = spl0;
         *outs[1] = spl1;
+      }
+
+    //--------------------------------------------------
+
+    virtual void onChange(axParameter* aParameter)
+      {
+        if (mEditor) mEditor->onChange(aParameter);
+        doProcessParameter(aParameter);
+      }
+
+    //----------
+
+    virtual void onChange(axWidget* aWidget)
+      {
+        if (mEditor) mEditor->onChange(aWidget);
       }
 
 };

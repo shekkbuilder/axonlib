@@ -21,8 +21,9 @@
 #include "axSurface.h"
 #include "wdgImage.h"
 
-#include "../extern/lodepng.h"
-#include "../extern/lodepng.cpp"
+//#include "../extern/lodepng.h"
+//#include "../extern/lodepng.cpp"
+#include "axBitmapLoader.h"
 #include "images/binaural_back.h"
 
 //----------------------------------------------------------------------
@@ -34,21 +35,20 @@ class myPlugin : public axPlugin,
 
 {
   private:
-    bool is_gui_initialized;
-    axBitmap*       back_bmp;
-    axSurface*      back_srf;
+    bool        is_gui_initialized;
+    axSurface*  back_srf;
   public:
-    axEditor* mEditor;
-    SPL       EVENTS[MAXEVT*2];
-    int       offset;
-    float     ph1,  ph2;
-    float     diff, decay;
-    float     vol,  frq;
-    float     vol_t,frq_t;
-    float     irate;
-    int       playing_note;
-    float     playing_freq;
-    wdgKnob   *k1,*k2;
+    axEditor*   mEditor;
+    SPL         EVENTS[MAXEVT*2];
+    int         offset;
+    float       ph1,  ph2;
+    float       diff, decay;
+    float       vol,  frq;
+    float       vol_t,frq_t;
+    float       irate;
+    int         playing_note;
+    float       playing_freq;
+    wdgKnob     *k1,*k2;
 
 
 
@@ -62,12 +62,8 @@ class myPlugin : public axPlugin,
         describe("syn_binaural0","ccernn","product_string",0,0);
         hasEditor(AX_WIDTH,AX_HEIGHT);
         isSynth();
-        //setNumInputs(2);
-        //axParameter* par;
-        appendParameter( /*par =*/ new parFloat( this,0,"hz diff","", 4,  -25, 25, 0.005 ) );
-        //TRACE("par1 = %x\n",(int)par);
-        appendParameter( /*par2 =*/ new parFloat( this,1,"xfade",  "", 25,  1, 100 ) );
-        //TRACE("par2 = %x\n",(int)par);
+        appendParameter( new parFloat( this,0,"hz diff","", 4,  -25, 25, 0.005 ) );
+        appendParameter( new parFloat( this,1,"xfade",  "", 25,  1, 100 ) );
         processParameters();
         for( int i=0; i<MAXEVT; i++ ) EVENTS[i*2]=-1;
         ph1 = ph2 = 0;
@@ -78,30 +74,14 @@ class myPlugin : public axPlugin,
       {
         if(is_gui_initialized)
         {
-          delete back_bmp;
           delete back_srf;
         }
       }
 
     //--------------------------------------------------
 
-    //virtual void doProcessState(int aState)
-    //  {
-    //    TRACE("DoProcessState: %i\n",aState);
-    //  }
-
-    //----------
-
-    //virtual void doProcessTransport(int aState)
-    //  {
-    //    TRACE("doProcessTransport: %i\n",aState);
-    //  }
-
-    //----------
-
     virtual void doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3)
       {
-        //TRACE("DoProcessMidi: (ofs:%i)  %i,%i,%i\n",ofs,msg1,msg2,msg3);
         if( msg1==9*16)
         {
           int   _note = msg2;
@@ -131,7 +111,6 @@ class myPlugin : public axPlugin,
         //TODO: do something better...
         int  id = aParameter->mID;
         float f = aParameter->getValue();
-        TRACE("id:%i, f:%f\n",id,f);
         switch(id)
         {
           case 0: diff  = f;  break;
@@ -143,7 +122,7 @@ class myPlugin : public axPlugin,
 
     virtual bool doProcessBlock(float** inputs, float** outputs, long sampleFrames)
       {
-        //TRACE("mSampleRate %f\n",mSampleRate);
+        //updateTimeInfo(); // AX_AUTOSYNC;
         irate = 1 / mSampleRate;
         offset = 0;
         return false;
@@ -187,46 +166,16 @@ class myPlugin : public axPlugin,
 
         if(!is_gui_initialized)
         {
-          unsigned char*  buffer;
-          unsigned char*  image;
-          unsigned int    buffersize;
-          unsigned int    imagesize;
-          LodePNG_Decoder decoder;
-          //LodePNG_loadFile(&buffer, &buffersize, filename);
-          buffer     =  binaural_back;
-          buffersize =  41373;
-          LodePNG_Decoder_init(&decoder);
-          LodePNG_decode(&decoder,&image,&imagesize,buffer,buffersize);
-          if (!decoder.error)
-          {
-            int width = decoder.infoPng.width;
-            int height = decoder.infoPng.height;
-            //int depth = decoder.infoPng.color.bitDepth;
-            //int bpp = LodePNG_InfoColor_getBpp(&decoder.infoPng.color);
-            back_bmp = new axBitmap(width,height,image);
-            back_bmp->convertRgbaBgra();
-            back_bmp->setBackground(128,128,128);
-            back_srf = new axSurface(width,height/*,0*/);
-            back_srf->mCanvas->drawBitmap(back_bmp, 0,0, 0,0,width,height);
-            free(image);
-          }
-          //free(buffer);
-          LodePNG_Decoder_cleanup(&decoder);
+          back_srf = loadPng( binaural_back, 41373 );
           is_gui_initialized=true;
         }
-
-        //E->setLayout(0,0,10,10);
-        //E->setFlag(wfl_Vertical);
-        EDIT->appendWidget( new wdgImage(     this, 2, axRect(  0,  0, 286,410), wal_None/*, NULL,*/, back_srf ) );
-        EDIT->appendWidget( k1 = new wdgKnob( this, 0, axRect( 10,365, 128, 32), wal_None/*, mParameters[0]*/ ) );
-        EDIT->appendWidget( k2 = new wdgKnob( this, 1, axRect(148,365, 128, 32), wal_None/*, mParameters[1]*/ ) );
-        //E->updateWidgetValues(); // connect by wdg/par.mID !!
+        EDIT->appendWidget( new wdgImage(     this, 2, axRect(  0,  0, 286,410), wal_None, back_srf ) );
+        EDIT->appendWidget( k1 = new wdgKnob( this, 0, axRect( 10,365, 128, 32), wal_None ) );
+        EDIT->appendWidget( k2 = new wdgKnob( this, 1, axRect(148,365, 128, 32), wal_None ) );
         EDIT->connect( k1, mParameters[0] );
         EDIT->connect( k2, mParameters[1] );
+        EDIT->doRealign();
         mEditor = EDIT;
-        //TRACE("syn_binaural = %x\n",(int)mEditor);
-        //TRACE("  k1 = %x\n",(int)k1);
-        //TRACE("  k1 = %x\n",(int)k2);
         return mEditor;
       }
 

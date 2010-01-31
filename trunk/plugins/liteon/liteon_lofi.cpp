@@ -39,13 +39,15 @@
 #include "wdgValue.h"
 #include "wdgKnob.h"
 #include "wdgSwitch.h"
+#include "wdgPanel.h"
 // ---------------------
 #include "axBitmap.h"
 #include "axSurface.h"
 #include "wdgImage.h"
 // ---------------------
-#include "../extern/lodepng.h"
-#include "../extern/lodepng.cpp"
+#include "axBitmapLoader.h"
+//#include "../extern/lodepng.h"
+//#include "../extern/lodepng.cpp"
 #include "images/pattern0.h"
 // ----------------------
 // @ static arrays
@@ -56,7 +58,8 @@ char* str_interpolation[] = { (char*)"Interpolation Off",(char*)"Interpolation O
 // ---------------------------------------------------
 // @ constructor
 // ---------------------------------------------------
-class myPlugin : public axPlugin
+class myPlugin : public axPlugin,
+                 public axWidgetListener
 {
 	// --------------
 	// @ private
@@ -67,7 +70,7 @@ class myPlugin : public axPlugin
   	wdgSwitch* swch;
 		// ----------------------
 		bool is_gui_initialized;
-    axBitmap*       back_bmp;
+//    axBitmap*       back_bmp;
     axSurface*      back_srf;
     // ----------------------
   	int		gfxd, gfxr, gfxf;
@@ -120,7 +123,7 @@ class myPlugin : public axPlugin
     {
       if(is_gui_initialized)
       {
-        delete back_bmp;
+//        delete back_bmp;
         delete back_srf;
       }
     }
@@ -132,6 +135,10 @@ class myPlugin : public axPlugin
       if( mEditor ) mEditor->onChange( aParameter );
       doProcessParameter(aParameter);
     }
+    virtual void onChange(axWidget* aWidget)
+      {
+        if (mEditor) mEditor->onChange(aWidget);
+      }
     // ------------------------------------
 	  // @ create editor
 		// ------------------------------------
@@ -140,56 +147,64 @@ class myPlugin : public axPlugin
     {
     	// @ new editor
       axEditor* EDIT = new axEditor( "lofi_gui", this, -1, axRect(0,0,AX_WIDTH-1,AX_HEIGHT-1), AX_FLAGS );
+      wdgPanel* panel;
+      EDIT->appendWidget( panel = new wdgPanel(this,-1,NULL_RECT,wal_Client));
       // --------------------------------------
       // @ decode bitmap and attach as convas
       // --------------------------------------
       if(!is_gui_initialized)
       {
-        unsigned char*  buffer;
-        unsigned char*  image;
-        unsigned int    buffersize;
-        unsigned int    imagesize;
-        LodePNG_Decoder decoder;
-        //LodePNG_loadFile(&buffer, &buffersize, filename);
-        buffer     =  pattern0;
-        buffersize =  1953;
-        LodePNG_Decoder_init(&decoder);
-        LodePNG_decode(&decoder,&image,&imagesize,buffer,buffersize);
-        if (!decoder.error)
-        {
-          int width = decoder.infoPng.width;
-          int height = decoder.infoPng.height;
-          //int depth = decoder.infoPng.color.bitDepth;
-          //int bpp = LodePNG_InfoColor_getBpp(&decoder.infoPng.color);
-          back_bmp = new axBitmap(width,height,image);
-          back_bmp->convertRgbaBgra();
-          back_bmp->setBackground(128,128,128);
-          back_srf = new axSurface(width,height/*,0*/);
-          back_srf->mCanvas->drawBitmap(back_bmp, 0,0, 0,0,width,height);
-          free(image);
-        }
-        //free(buffer);
-        LodePNG_Decoder_cleanup(&decoder);
+//        unsigned char*  buffer;
+//        unsigned char*  image;
+//        unsigned int    buffersize;
+//        unsigned int    imagesize;
+//        LodePNG_Decoder decoder;
+//        //LodePNG_loadFile(&buffer, &buffersize, filename);
+//        buffer     =  pattern0;
+//        buffersize =  1953;
+//        LodePNG_Decoder_init(&decoder);
+//        LodePNG_decode(&decoder,&image,&imagesize,buffer,buffersize);
+//        if (!decoder.error)
+//        {
+//          int width = decoder.infoPng.width;
+//          int height = decoder.infoPng.height;
+//          //int depth = decoder.infoPng.color.bitDepth;
+//          //int bpp = LodePNG_InfoColor_getBpp(&decoder.infoPng.color);
+//          back_bmp = new axBitmap(width,height,image);
+//          back_bmp->convertRgbaBgra();
+//          back_bmp->setBackground(128,128,128);
+//          back_srf = new axSurface(width,height/*,0*/);
+//          back_srf->mCanvas->drawBitmap(back_bmp, 0,0, 0,0,width,height);
+//          free(image);
+//        }
+//        //free(buffer);
+//        LodePNG_Decoder_cleanup(&decoder);
+        back_srf = loadPng( pattern0, 1953 );
         is_gui_initialized=true;
       }
 			// ------------------
       // @ append widgets
       // ------------------
       // @ image
-      EDIT->appendWidget( new wdgImage( EDIT, 7, axRect(  0,  0, AX_WIDTH,AX_HEIGHT), wal_None, /*NULL,*/ back_srf ) );
+      //EDIT->appendWidget( new wdgImage( EDIT, 7, axRect(  0,  0, AX_WIDTH,AX_HEIGHT), wal_None, /*NULL,*/ back_srf ) );
+      panel->appendWidget( new wdgImage( this, 7, axRect(  0,  0, AX_WIDTH,AX_HEIGHT), wal_None, /*NULL,*/ back_srf ) );
       // @ switch
-      EDIT->appendWidget( swch = new wdgSwitch( EDIT, 0, axRect( 50, 10, 128, 32), wal_None/*, mParameters[0]*/ ) );
+      //EDIT->appendWidget( swch = new wdgSwitch( EDIT, 0, axRect( 50, 10, 128, 32), wal_None/*, mParameters[0]*/ ) );
+      panel->appendWidget( swch = new wdgSwitch( this, 0, axRect( 50, 10, 128, 32), wal_None/*, mParameters[0]*/ ) );
       swch->setup(str_processing);
       EDIT->connect( swch, mParameters[0] );
-      EDIT->appendWidget( swch = new wdgSwitch( EDIT, 1, axRect( 50, 10 + 32 + 5, 128, 32), wal_None/*, mParameters[1]*/ ) );
+      //EDIT->appendWidget( swch = new wdgSwitch( EDIT, 1, axRect( 50, 10 + 32 + 5, 128, 32), wal_None/*, mParameters[1]*/ ) );
+      panel->appendWidget( swch = new wdgSwitch( this, 1, axRect( 50, 10 + 32 + 5, 128, 32), wal_None/*, mParameters[1]*/ ) );
       swch->setup(str_interpolation);
       EDIT->connect( swch, mParameters[1] );
       // @ knobs
       for (int kni=2; kni<7; kni++)
       {
-      	EDIT->appendWidget( knb = new wdgKnob( EDIT, kni, axRect( 50, 10 +(kni*(32+5)), 128, 32), wal_None/*, mParameters[kni]*/ ) );
+      	//EDIT->appendWidget( knb = new wdgKnob( EDIT, kni, axRect( 50, 10 +(kni*(32+5)), 128, 32), wal_None/*, mParameters[kni]*/ ) );
+      	panel->appendWidget( knb = new wdgKnob( this, kni, axRect( 50, 10 +(kni*(32+5)), 128, 32), wal_None/*, mParameters[kni]*/ ) );
 				EDIT->connect( knb, mParameters[kni] );
 			}
+			EDIT->doRealign();
       mEditor = EDIT;
       return mEditor;
     }

@@ -39,6 +39,7 @@ class myPlugin : public axPlugin,
     axEditor* mEditor;
 
     wdgKnob *k1,*k2,*k3,*k4;
+    parFloat *p1,*p2,*p3,*p4;
 
   public:
 
@@ -49,10 +50,10 @@ class myPlugin : public axPlugin,
         describe("fx_tempodelay0","ccernn","product_string",0,0);
         hasEditor(AX_WIDTH,AX_HEIGHT);
         //isSynth();
-        appendParameter( new parFloat( this,0,"beats",   "", 0.75, 0.25, MAX_NUMBEATS, 0.25  ) );
-        appendParameter( new parFloat( this,1,"feedback","", 0.75  ) );
-        appendParameter( new parFloat( this,2,"dry",     "", 1.00 ) );
-        appendParameter( new parFloat( this,3,"wet",     "", 0.75 ) );
+        appendParameter( p1 = new parFloat( this,0,"beats",   "", 0.75, 0.25, MAX_NUMBEATS, 0.25  ) );
+        appendParameter( p2 = new parFloat( this,1,"feedback","", 0.75  ) );
+        appendParameter( p3 = new parFloat( this,2,"dry",     "", 1.00 ) );
+        appendParameter( p4 = new parFloat( this,3,"wet",     "", 0.75 ) );
         processParameters();
         bufsize = 0;
         pos     = 0;
@@ -83,16 +84,16 @@ class myPlugin : public axPlugin,
 
     virtual void doProcessParameter(axParameter* aParameter)
       {
-//        int  id = aParameter->mID;
-//        float f = aParameter->getValue();
+        int  id = aParameter->mID;
+        float f = aParameter->getValue();
 //      //lock
-//        switch(id)
-//        {
-//          case 0: beats = f;  break;
-//          case 1: fb    = f;  break;
-//          case 2: dry   = f;  break;
-//          case 3: wet   = f;  break;
-//        }
+        switch(id)
+        {
+          case 0: beats = f;  break;
+          case 1: fb    = f;  break;
+          case 2: dry   = f;  break;
+          case 3: wet   = f;  break;
+        }
 //      //unlock
       }
 
@@ -143,12 +144,11 @@ class myPlugin : public axPlugin,
           P->appendWidget( k3 = new wdgKnob( this, -1, axRect( 10, 90, 128,32 ), wal_None ) );
           P->appendWidget( k4 = new wdgKnob( this, -1, axRect( 10,130, 128,32 ), wal_None ) );
         EDIT->doRealign();
-        EDIT->connect( k1, mParameters[0] );
-        EDIT->connect( k2, mParameters[1] );
-        EDIT->connect( k3, mParameters[2] );
-        EDIT->connect( k4, mParameters[3] );
+        EDIT->connect( k1, p1 );
+        EDIT->connect( k2, p2 );
+        EDIT->connect( k3, p3 );
+        EDIT->connect( k4, p4 );
         mEditor = EDIT;
-        //TRACE("fx_tempodelay.mEditor = %x\n",(int)mEditor);
         return mEditor;
       }
 
@@ -171,11 +171,6 @@ class myPlugin : public axPlugin,
     //--------------------------------------------------
     // parameter listener
     //--------------------------------------------------
-
-    // needed if you have an editor, to notify it about
-    // parameter changes. after we've told the editor, we
-    // call doProcessEditor (the default, if you don't
-    // override this)
 
     virtual void onChange(axParameter* aParameter)
       {

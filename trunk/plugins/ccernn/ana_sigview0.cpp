@@ -172,42 +172,6 @@ class myPlugin : public axPlugin,
       }
 
     //----------------------------------------------------------------------
-    // listeners
-    //----------------------------------------------------------------------
-
-    // we need this one because we have to notify the editor
-    // that something has changed.
-    virtual void onChange(axParameter* aParameter)
-      {
-        if (mEditor) mEditor->onChange(aParameter);
-        doProcessParameter(aParameter);
-      }
-
-    //----------
-
-    // this one is called when any widget changes its internal value
-    // check if it's the left/right selector widget, and if so,
-    // 'do the right thing'
-    virtual void onChange(axWidget* aWidget)
-      {
-        switch(aWidget->mID)
-        {
-          case 2: wScope->mMode = wViewMode->mSelected; break;
-        }
-        mEditor->onRedraw(aWidget);
-      }
-
-    //----------
-
-    virtual void onResize(int dX, int dY)   // delta x,y
-      {
-        int w = wScope->getRect().w + dX;
-        int h = wScope->getRect().h + dY;
-        wScope->doResize( w,h );
-        mEditor->onResize(wScope,dX,dY);
-      }
-
-    //----------------------------------------------------------------------
     // editor
     //----------------------------------------------------------------------
 
@@ -271,6 +235,44 @@ class myPlugin : public axPlugin,
           mEditor->redrawDirty();
         }
       }
+
+    //----------------------------------------------------------------------
+    // listeners
+    //----------------------------------------------------------------------
+
+    // we need this one because we have to notify the editor
+    // that something has changed.
+    virtual void onChange(axParameter* aParameter)
+      {
+        if (mEditor) mEditor->onChange(aParameter);
+        doProcessParameter(aParameter);
+      }
+
+    //----------
+
+    // this one is called when any widget changes its internal value
+    // check if it's the left/right selector widget, and if so,
+    // 'do the right thing'
+    virtual void onChange(axWidget* aWidget)
+      {
+        switch(aWidget->mID)
+        {
+          case 2: wScope->mMode = wViewMode->mSelected; break;
+        }
+        //mEditor->onRedraw(aWidget);
+        mEditor->onChange(aWidget);
+      }
+
+    //----------
+
+    virtual void onResize(int dX, int dY)   // delta x,y
+      {
+        int w = wScope->getRect().w + dX;
+        int h = wScope->getRect().h + dY;
+        wScope->doResize( w,h );
+        mEditor->onResize(wScope,dX,dY);
+      }
+
 
 
 };

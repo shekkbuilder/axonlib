@@ -19,6 +19,7 @@
 #include "parFloat.h"
 #include "parInteger.h"
 
+#include "wdgPanel.h"
 #include "wdgLabel.h"
 #include "wdgValue.h"
 #include "wdgKnob.h"
@@ -36,14 +37,11 @@ char* str_updown[] = { (char*)"up", (char*)"down" };
 
 //----------
 
-class myPlugin : public axPlugin
+class myPlugin : public axPlugin,
+                 public axWidgetListener
 {
   public:
     axEditor* mEditor;
-    //float     BUFFER[MAX_BUFFER_SIZE];
-    //int       bufsize;
-    //int       pos;
-    //float     beats,fb,dry,wet;
     int sync;
     float speed;
     float beats;
@@ -67,7 +65,7 @@ class myPlugin : public axPlugin
 //    axSurface*      back_srf;
     unsigned char*  buffer;
     unsigned int    width, height;
-//    bool            is_gui_initialized;
+    bool            is_gui_initialized;
 
   public:
 
@@ -75,11 +73,10 @@ class myPlugin : public axPlugin
     : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
       {
         mEditor = NULL;
+        is_gui_initialized = false;
         describe("midi_fibonacci0","ccernn","product_string",0,0xfaccface);
         hasEditor(AX_WIDTH,AX_HEIGHT);
         //isSynth();
-        mEditor = NULL;
-//        is_gui_initialized = false;
         appendParameter( new parInteger(this,0,"sync",            "", 1,    0, 1,   str_noyes ) );
         appendParameter( new parInteger(this,1,"speed (ms)",      "", 125,  1, 1000 ) );
         appendParameter( new parFloat(  this,2,"beats (is sync)", "", 0.25, 0, 4,   0.05   ) );
@@ -103,91 +100,6 @@ class myPlugin : public axPlugin
 ////        }
 //      }
 
-    //--------------------------------------------------
-
-    virtual void onChange(axParameter* aParameter)
-      {
-        if( mEditor ) mEditor->onChange( aParameter );
-        doProcessParameter(aParameter);
-      }
-
-    //--------------------------------------------------
-
-    virtual void* doCreateEditor(void)
-      {
-        //TRACE("creating editor (midi_fibonacci)\n");
-        //TRACE("- is_gui_initialized = %i\n",(int)is_gui_initialized);
-//        if(!is_gui_initialized)
-//        {
-//          is_gui_initialized=true;
-//          char path_img[1024];
-//          char* path_vst = (char*)AudioEffectX::getDirectory();
-//          TRACE("- path_vst = %s\n",path_vst);
-//          //#ifdef WIN32
-//          //TRACE("- axBasePath() = %s\n",axBasePath());
-//          //#endif
-//          //GetModuleFileName( GetModuleHandle("yourdllname.dll" ), buffer, buffer_size );
-//          //----------
-//          //TODO: srf = axBitmapLoader.loadPng(filename,&w,&h,&buf);
-//          path_img[0] = '\0';
-//          strncat(path_img,path_vst,256);
-//          strncat(path_img,(char*)"cernknob01.png",256);
-//          TRACE("- loading:%s\n",path_img);
-//          LodePNG_decode32f(&buffer,&width,&height,path_img);
-//          knob_bmp = new axBitmap(width,height,buffer);
-//          knob_bmp->convertRgbaBgra();
-//          knob_bmp->setBackground(128,128,128);
-//          knob_srf = new axSurface(width,height,0);
-//          knob_srf->mCanvas->drawBitmap(knob_bmp, 0,0, 0,0,width,height);
-//          free(buffer);
-//          //----------
-//          path_img[0] = '\0';
-//          strncat(path_img,path_vst,256);
-//          strncat(path_img,(char*)"cernback01.png",256);
-//          TRACE("- loading:%s\n",path_img);
-//          LodePNG_decode32f(&buffer,&width,&height,path_img);
-//          back_bmp = new axBitmap(width,height,buffer);
-//          back_bmp->convertRgbaBgra();
-//          back_bmp->setBackground(128,128,128);
-//          back_srf = new axSurface(width,height,0);
-//          back_srf->mCanvas->drawBitmap(back_bmp, 0,0, 0,0,width,height);
-//          free(buffer);
-//          //----------
-//        }
-        axEditor* EDIT = new axEditor( "midi_fibonacci_editor",this, -1, axRect(0,0,AX_WIDTH,AX_HEIGHT), AX_FLAGS );
-//        E->appendWidget( new wdgImage( E, -1, axRect(0,0,AX_WIDTH,AX_HEIGHT), wal_None, NULL, back_srf ) );
-        for( int i=0; i<mParameters.size(); i++ )
-        {
-          axParameter* par = mParameters[i]; // skip background
-//          axWidget* wdg = new wdgImgKnob(E,i,axRect(10,10+i*40,32,32),wal_None,par,20,knob_srf);
-          axWidget* wdg = new wdgKnob(EDIT,i,axRect(10,10+i*40,128,32),wal_None/*,par*/);
-          EDIT->appendWidget(wdg);
-          EDIT->connect(wdg,par);
-        }
-        //E->updateWidgetValues();
-        //E->doRealign();
-        //TRACE("....ok (midi_fibonacci)\n");
-        mEditor = EDIT;
-        return mEditor;
-      }
-
-    //----------
-
-    virtual void doDestroyEditor(void)
-      {
-        //TODO: lock?
-        axEditor* EDIT = mEditor;
-        mEditor = NULL;
-        delete EDIT;
-      }
-
-    //----------
-
-    virtual void doIdleEditor(void)
-      {
-        //TRACE("pre: onChange par\n");
-        if(mEditor) mEditor->redrawDirty();
-      }
 
     //--------------------------------------------------
 
@@ -216,7 +128,6 @@ class myPlugin : public axPlugin
       {
         int  id = aParameter->mID;
         float f = aParameter->getValue();
-        //TRACE("process param %i = %f\n",id,f);
         switch(id)
         {
           case 0: sync   = f;                       break;
@@ -282,6 +193,64 @@ class myPlugin : public axPlugin
         //------------------------------
         *outs[0] = spl0;
         *outs[1] = spl1;
+      }
+
+    //--------------------------------------------------
+
+    //--------------------------------------------------
+
+    virtual void* doCreateEditor(void)
+      {
+        axEditor* EDIT = new axEditor( "midi_fibonacci_editor",this, -1, axRect(0,0,AX_WIDTH,AX_HEIGHT), AX_FLAGS );
+        wdgPanel* panel;
+        EDIT->appendWidget( panel = new wdgPanel(this,-1,NULL_RECT,wal_Client) );
+        // E->appendWidget( new wdgImage( E, -1, axRect(0,0,AX_WIDTH,AX_HEIGHT), wal_None, NULL, back_srf ) );
+        for( int i=0; i<mParameters.size(); i++ )
+        {
+          axParameter* par = mParameters[i]; // skip background
+          //axWidget* wdg = new wdgImgKnob(E,i,axRect(10,10+i*40,32,32),wal_None,par,20,knob_srf);
+          axWidget* wdg = new wdgKnob(this,i,axRect(10,10+i*40,128,32),wal_None/*,par*/);
+          panel->appendWidget(wdg);
+          EDIT->connect(wdg,par);
+        }
+        EDIT->doRealign();
+        mEditor = EDIT;
+        return mEditor;
+      }
+
+    //----------
+
+    virtual void doDestroyEditor(void)
+      {
+        //TODO: lock?
+        axEditor* EDIT = mEditor;
+        mEditor = NULL;
+        delete EDIT;
+      }
+
+    //----------
+
+    virtual void doIdleEditor(void)
+      {
+        //TRACE("pre: onChange par\n");
+        if(mEditor) mEditor->redrawDirty();
+      }
+
+    //--------------------------------------------------
+
+    //--------------------------------------------------
+
+    virtual void onChange(axParameter* aParameter)
+      {
+        if( mEditor ) mEditor->onChange( aParameter );
+        doProcessParameter(aParameter);
+      }
+
+    //----------
+
+    virtual void onChange(axWidget* aWidget)
+      {
+        if (mEditor) mEditor->onChange(aWidget);
       }
 
 };
