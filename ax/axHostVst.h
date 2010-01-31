@@ -18,7 +18,7 @@
 
 /**
   \file axHostVst.h
- */
+*/
 
 #ifndef axHostVst_included
 #define axHostVst_included

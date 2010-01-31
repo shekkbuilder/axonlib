@@ -17,16 +17,9 @@
  */
 
 /**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
- */
+  \file axBitmapLoad.h
+  \brief bitmap loader & decoder
+*/
 
 #ifndef axBitmapLoad_included
 #define axBitmapLoad_included
@@ -38,8 +31,9 @@
 #include "../extern/lodepng.h"
 #include "../extern/lodepng.cpp"
 
-//TODO: split decoding & buffer preparation into separate function
+//----------------------------------------------------------------------
 
+//TODO: deprecate
 axSurface* loadPng(unsigned char* buffer, unsigned int buffersize)
   {
     axBitmap* bmp = NULL;
@@ -72,6 +66,16 @@ axSurface* loadPng(unsigned char* buffer, unsigned int buffersize)
     return srf;
   }
 
+//----------------------------------------------------------------------
+//
+//----------------------------------------------------------------------
+
+//  axBitmap* bmp = decodePng(buffer,size);
+//  bmp->convertRgbaBgra();
+//  bmp->setBackground(128,128,128);
+//  axSurface* srf = uploadBitmap(bmp);
+//  delete bmp;
+
 //----------
 
 axBitmap* decodePng(unsigned char* buffer, unsigned int buffersize)
@@ -103,10 +107,6 @@ axSurface* uploadBitmap(axBitmap* bmp)
   return srf;
   //delete bmp;
 }
-
-// axBitmap* bmp =
-//
-//
 
 //----------------------------------------------------------------------
 #endif

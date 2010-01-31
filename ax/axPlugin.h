@@ -19,8 +19,8 @@
 //hardcoded, until we can be sure it is setup everywhere else (plugins)
 #define AX_PLUGIN_VST
 
-// programs & parameters
 //TODO: dirty parameters?
+//TODO: move vst-specific overloaded funcs to axPluginVst
 
 /**
   \file axPlugin.h

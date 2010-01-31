@@ -1,37 +1,94 @@
+
+// ----- library -----
+
 - cleanup api
-  
   there were a lot of haphazard and impulsive coding in the beginning.
   cleanup and keep to one coding style, and keep to it..
   specialize, and take advantage of that
 
-- subdirectories
-
+- src subdirectories
   /mod, modules, aka dsp...
   /op, operators, for script
   /par, parameters
   /wdg, widgets
 
+- axConfig
+  use AX_LINUX, AX_WIN32, etc, everywhere
+  define in f.ex axGlobals, or axDefines...
+
+- axDebug
+  something better if you don't define AX_DEBUG
+  (currently TRACE is being redefined to do_nothing(...)
+  asserts?
+
+- axMutex
+  lock down things that might be dangerous if accessed by two (or more) simultaneous threads
+
+// ----- plugin -----
+
+- prgrams & banks
+  move vst specific program/bank handling to axPluginVst
+  add generic/portable  wrappers to axPlugin
+  - axProgram
+  - axBank
+
+- axPluginImpl
+  ladspa, dssi, lv2, pd external, (standalone?)
+
+- axHost
+  enumerate host caps + info at startup
+  defined constants for hosts
+  (things that need host-specific handling, like window resizing)
+  extensions (reaper)
+  for things like callbacks back into the host
+
+- axParameter
+  more parameter derived classes
+  parBool, parMs, parDb
+  squared, cubed, inverse (1/x, reciprocal?)
+
+// ----- gui -----
+
 - axContainer, widget hover
-- axWindow X11/W32
+  - axWindow X11/W32
   - mouse cursor constants
   - setMousePos(point), restrictMouse(rect)
-  
   to change mouse cursor when hovering over widgets
-  
-- axCanvas, createPen/Brush/Font. select or usePen/Brush/..
-  
-  currently we delete and recreate pen, brush, etc, every time we change pen color.
-  ineffective, and more prone to memory leaks, and os problems.
-  create tthe needed pens and brushes in constructor, and use/select in doPaint()
 
--
+- axBitmap
+  some way of having non-platform specific bitmaps.
+  general memory bitmap, axBitmapMem
+  and methods to 'upgrade' to device-dependent bitmap (for blitting)
+  - set background from another bitmap w/alpha
 
-  axPen
-  axBrush
-  axFont
+- streamline widget set
+  - wdgLabel
+  - wdgShape
+  - wdgButton
+  - wdgKnob
+  - wdgSlider
+  :
+  - wdgPanel
+  - wdgGroupBox
+  - wdgScrollBox
+  - wdgTabs
+  :
+  - wdgSizer
 
-  axProgram
-  axBank
+- axPen/axBrush
+  can we set new color without needing to destroy the old pen and create a new one?
+  too bad if gradients, or pixel stuff  need a bunch of pens...
 
-axModule/axGraph
-operator <-> module
+- axEditor
+  some more, tiresome repetitive things could be handled by the editor
+  widget/parameter connectioins
+  message-passing to listeners
+
+// ----- other -----
+
+- dsp classes, dsp graph
+  combine with axModule, axGraph ??
+
+- axScript <-> axModule
+  operator <-> module
+

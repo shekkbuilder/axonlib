@@ -52,7 +52,7 @@ class myPlugin : public axPlugin,
 
     //virtual ~myPlugin()
     //  {
-    / /}
+    // }
 
     //--------------------------------------------------
 
