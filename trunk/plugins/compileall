@@ -2,15 +2,17 @@
 
 #--------------------------------------------------
 
-./compile ccernn/again
+# ./compile ccernn/again
 
 #--------------------------------------------------
 
+./compile ccernn/ana_daubechies0
+./compile ccernn/ana_fft
 ./compile ccernn/ana_sigview0
 ./compile ccernn/ana_vu0
 
 ./compile ccernn/fx_blur0
-#./compile ccernn/fx_cutter0
+./compile ccernn/fx_cutter0
 ./compile ccernn/fx_dist0
 ./compile ccernn/fx_dynamics0
 ./compile ccernn/fx_envelope0

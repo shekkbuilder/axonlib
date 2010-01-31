@@ -287,7 +287,10 @@ class myPlugin : public axPlugin,
             //for (int i=0; i<BUFFERSIZE; i++) mViewBuffer[i] *= mWindow[i];
             mayer_realfft(BUFFERSIZE,mViewBuffer);
             //mayer_fft(BUFFERSIZE,mViewBuffer,mViewBuffer2);
-            float floor = powf(10,-100/20); //  // 1e-10 = pow(10, -200/20);
+
+            //float floor = powf(10,-100/20); //  // 1e-10 = pow(10, -200/20);
+            float floor = axPow(10,-100/20); //  // 1e-10 = pow(10, -200/20);
+
             int HALF = BUFFERSIZE / 2;
             //float scale = 1.0f / (float)HALF;
             for (int i=1; i<HALF; i++)

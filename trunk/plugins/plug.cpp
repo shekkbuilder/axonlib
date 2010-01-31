@@ -1,14 +1,14 @@
 
 //----------------------------------------------------------------------
-// compiles
+
 //----------------------------------------------------------------------
 
-// test
+    // ----- test
 
 //#include "ccernn/again.cpp"
-//#include "ccernn/plug_debug.cpp"
+#include "ccernn/plug_debug.cpp"
 
-// no gui
+    // ----- no gui
 
 //#include "ccernn/fx_blur0.cpp"
 //#include "ccernn/fx_dist0.cpp"
@@ -25,7 +25,7 @@
 //#include "ccernn/midi_transpose0.cpp"
 //#include "ccernn/syn_plucked0.cpp"
 
-// gui
+    // ----- gui
 
 //#include "ccernn/ana_daubechies0.cpp"
 //#include "ccernn/ana_fft.cpp"
@@ -39,20 +39,19 @@
 //#include "ccernn/syn_binaural0.cpp"
 //#include "ccernn/syn_perc0.cpp"
 
-// ports
+    // ----- ports
 
 //#include "ports/mda_ambience.cpp"
 //#include "ports/autotalent.cpp"
 //#include "ports/freeverb.cpp"
 
-// liteon
+    // ----- liteon
 
 //#include "liteon/liteon_tilteq.cpp"
-#include "liteon/liteon_lofi.cpp"
+//#include "liteon/liteon_lofi.cpp"
 
 //----------------------------------------------------------------------
 // error
 //----------------------------------------------------------------------
 
-// FIX: voice/manager
 //#include "ccernn/syn_poly0.cpp"

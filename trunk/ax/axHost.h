@@ -18,7 +18,7 @@
 
 /**
   \file axHost.h
- */
+*/
 
 #ifndef axHost_included
 #define axHost_included

@@ -11,10 +11,10 @@
 #include "axDebug.h"
 
 #include "axPlugin.h"
-#include "axEditor.h"
-
 //#include "parFloat.h"
 //#include "parInteger.h"
+
+#include "axEditor.h"
 
 #include "wdgLabel.h"
 #include "wdgKnob.h"
@@ -27,11 +27,13 @@
 
 #include "wdgImgKnob.h"
 #include "wdgImgSwitch.h"
+
 #include "axBitmapLoader.h"
 #include "images/vslider1_20x100_65h.h" // 46002
 #include "images/testbutton.h"          // 10935
 #include "images/testbutton2.h"         // 10935
 #include "images/testbutton3.h"         // 10935
+
 
 //----------------------------------------------------------------------
 
@@ -41,24 +43,25 @@ class myPlugin : public axPlugin,
   public:
     bool        is_gui_initialized;
     axEditor    *mEditor;
-    //axWindow    *testwin;
 
-    axSurface   *mSrfSlider;
-    axSurface   *mSrfBut1, *mSrfBut2, *mSrfBut3;
+    axSurface     *mSrfSlider;
+    axSurface     *mSrfBut1, *mSrfBut2, *mSrfBut3;
 
-    wdgKnob       *wKnob,*wKnob2,*wKnob3;
-    wdgTabs       *wTabs;
     axContainer   *wPage1,*wPage2,*wPage3;
+    wdgPanel      *wLeft, *wRight, *wTop, *wBottom, *wClient;
+    wdgTabs       *wTabs;
+    wdgGroupBox   *gr1,*gr2,*gr3,*gr4,*gr5;
+    wdgScrollBox  *scr;
+
     wdgResizer    *wSizer;
     wdgResizer    *wSplitter;
-    wdgPanel      *wLeft, *wRight, *wTop, *wBottom, *wClient;
+
+    wdgLabel      *wStatus;
+    wdgKnob       *wKnob,*wKnob2,*wKnob3;
     wdgImgKnob    *slid;
     wdgImgSwitch  *wBut1,*wBut2,*wBut3,*wBut4;
-    wdgLabel      *wStatus;
-    wdgGroupBox   *gr1,*gr2,*gr3,*gr4,*gr5;
 
     //wdgScroller   *scr;
-    wdgScrollBox   *scr;
     //float prevscroll;
 
   public:
@@ -92,163 +95,6 @@ class myPlugin : public axPlugin,
     //
     //--------------------------------------------------
 
-    //virtual void onChange(axParameter* aParameter)
-    //  {
-    //    if(mEditor) mEditor->onChange(aParameter);
-    //    doProcessParameter(aParameter);
-    //  }
-
-    virtual void onChange(axWidget* aWidget)
-      {
-        // if changed widget = knob, switch tab/page
-        int id = aWidget->mID;
-        float val = aWidget->doGetValue();
-        switch(id)
-        {
-          case -99:
-            wTabs->setPage( (int)axMin(2,floorf(val*3)) );
-            mEditor->onChange(wTabs);
-            break;
-//          case -199:
-//          {
-//            int hh = wLeft->mRect.h - wLeft->mMarginY;
-//            int i = (float)(wLeft->mMaxY - hh) * val;
-//            int dy = i - prevscroll;
-//            wLeft->doScroll(0,-dy);
-//            mEditor->onChange(wLeft);
-//            //TRACE("%i\n",y2);
-//            //wLeft->doScroll(dx,dy);
-//            prevscroll = i;
-//          }
-//            break;
-//          //case -299:
-//          //  break;
-
-          case 100:
-            if (val>0.5)
-            {
-              wTabs->setPage(0);
-              wBut2->doSetValue(0);
-              wBut3->doSetValue(0);
-              mEditor->onChange(wTabs);
-              mEditor->onChange(wBut2);
-              mEditor->onChange(wBut3);
-            }
-            else wBut1->doSetValue(1);
-            break;
-          case 101:
-            if (val>0.5)
-            {
-              wTabs->setPage(1);
-              wBut1->doSetValue(0);
-              wBut3->doSetValue(0);
-              mEditor->onChange(wTabs);
-              mEditor->onChange(wBut1);
-              mEditor->onChange(wBut3);
-            }
-            else wBut2->doSetValue(1);
-            break;
-          case 102:
-            if (val>0.5)
-            {
-              wTabs->setPage(2);
-              wBut1->doSetValue(0);
-              wBut2->doSetValue(0);
-              mEditor->onChange(wTabs);
-              mEditor->onChange(wBut1);
-              mEditor->onChange(wBut2);
-            }
-            else wBut3->doSetValue(1);
-            break;
-//          case 199:
-//            if (val>0.5)
-//            {
-//              testwin = new axWindow( "win_2", this, 12345, axRect(0,0,300,200), AX_WINDOWED|AX_BUFFERED);
-//              wdgPanel* pnl;
-//              testwin->appendWidget( new wdgPanel(    testwin,-1, axRect( 0,0,100,0  ),wal_Left    ) );
-//              testwin->appendWidget( new wdgPanel(    testwin,-1, axRect( 0,0,0,  50 ),wal_Top     ) );
-//              testwin->appendWidget( new wdgPanel(    testwin,-1, axRect( 0,0,0,  20 ),wal_Bottom  ) );
-//              testwin->appendWidget( new wdgPanel(    testwin,-1, axRect( 0,0,40, 0  ),wal_Right   ) );
-//              testwin->appendWidget( pnl=new wdgPanel(testwin,-1, NULL_RECT, wal_Client  ) );
-//              pnl->setAlign(5,5,5,5);
-//              pnl->appendWidget( new wdgKnob( testwin,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-//              pnl->appendWidget( new wdgKnob( testwin,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-//              pnl->appendWidget( new wdgKnob( testwin,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-//              pnl->appendWidget( new wdgKnob( testwin,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-//              pnl->appendWidget( new wdgKnob( testwin,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-//              testwin->doRealign();
-//              testwin->show();
-//              testwin->redraw();
-//              testwin->eventLoop(); // blocks!!
-//              testwin->hide();
-//              delete testwin;
-//              testwin = NULL;
-//            }
-//            break;
-        }
-        // then back to the default handler
-        mEditor->onChange(aWidget);
-      }
-
-    //----------
-
-//    void recalc_scroller(void)
-//      {
-//        //HACK
-//        int total = gr1->mRect.h
-//                  + gr2->mRect.h
-//                  + gr3->mRect.h
-//                  + gr4->mRect.h
-//                  + gr5->mRect.h
-//                  + (5*4);
-//        //TRACE("total: %i\n",total);
-//        float n = (float)scr->mRect.h / (float)total;
-//        n = axMax(0,axMin(1,n));
-//        scr->setThumbSize(n);
-//        //mEditor->onChange(scr);
-//      }
-
-    virtual void onResize(axWidget* aWidget,int dX, int dY)   // delta x,y
-      {
-        if (aWidget->mID == 314) // wdgSplitter, window resizer
-        {
-          int w = mEditor->getRect().w + dX;
-          int h = mEditor->getRect().h + dY;
-          mEditor->resizeWindow(w,h);
-          //recalc_scroller();
-          //mEditor->onChange(scr);
-        }
-        if (aWidget->mID == 315) // wdgSplitter, left splitter
-        {
-          int w = wLeft->getRect().w + dX;
-          int h = wLeft->getRect().h;// + dY;
-          wLeft->doResize(w,h);
-          mEditor->doRealign();
-          //recalc_scroller();
-          mEditor->redraw();
-        }
-//        if (aWidget->mID == 1000) // group boxes
-//        {
-//          wLeft->doRealign();
-//          //recalc_scroller();
-//          mEditor->onChange(wLeft);
-//        }
-      }
-
-    virtual void onCursor(int aCursor) { mEditor->onCursor(aCursor); }
-
-    //
-
-    virtual void onHint(axString aHint)
-      {
-        wStatus->setText(aHint);
-        mEditor->onChange(wStatus);
-      }
-
-    //--------------------------------------------------
-    //
-    //--------------------------------------------------
-
     //virtual void doProcessState(int aState)
     //  {
     //    TRACE("DoProcessState: %i\n",aState);
@@ -273,15 +119,15 @@ class myPlugin : public axPlugin,
 
     //----------
 
-//    virtual void doProcessParameter(axParameter* aParameter)
-//      {
-//        int  id = aParameter->mID;
-//        float f = aParameter->getValue();
-//        switch(id)
-//        {
-//          case 0: mValue = f;  break;
-//        }
-//      }
+    //virtual void doProcessParameter(axParameter* aParameter)
+    //  {
+    //    int  id = aParameter->mID;
+    //    float f = aParameter->getValue();
+    //    switch(id)
+    //    {
+    //      case 0: mValue = f;  break;
+    //    }
+    //  }
 
     //--------------------------------------------------
     // audio
@@ -343,34 +189,27 @@ class myPlugin : public axPlugin,
         //wLeft->setAlign(5,5,5,5);
         //wLeft->appendWidget( scr = new wdgScroller( this,1001, axRect(0,0,8,0), wal_Left ));
         wLeft->appendWidget( scr = new wdgScrollBox( this,1001, NULL_RECT, wal_Client ));
-
-        /*wLeft*/scr->appendWidget( gr1 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0, 75),wal_Top ));
-        /*wLeft*/scr->appendWidget( gr2 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0, 50),wal_Top ));
-        /*wLeft*/scr->appendWidget( gr3 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0,100),wal_Top ));
-        /*wLeft*/scr->appendWidget( gr4 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0,200),wal_Top ));
-        /*wLeft*/scr->appendWidget( gr5 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0, 50),wal_Top ));
-
-        gr3->wContainer->setAlign(0,0,3,3);
-        gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-        gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-        gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-        gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-        gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-
-        //scr->setFlag(wfl_Vertical);
-        //scr->setThumb(0, 0.25);
-
-//        gr1->setup("groupbox1",  false,true);
-//        gr2->setup("group 2",    false,true);
-//        gr3->setup("box 3",      false,true);
-//        gr4->setup("...4",       false,true);
-//        gr5->setup("and five..", false,true);
-
-//        gr1->setBackground(false,axColor(96,96,96));
-//        gr2->setBackground(false,axColor(96,96,96));
-//        gr3->setBackground(false,axColor(96,96,96));
-//        gr4->setBackground(false,axColor(144,144,144));
-//        gr5->setBackground(false,axColor(96,96,96));
+          //scr->setFlag(wfl_Vertical);
+          //scr->setThumb(0, 0.25);
+          scr->appendWidget( gr1 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0, 75),wal_Top ));
+          scr->appendWidget( gr2 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0, 50),wal_Top ));
+          scr->appendWidget( gr3 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0,100),wal_Top ));
+          scr->appendWidget( gr4 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0,200),wal_Top ));
+          scr->appendWidget( gr5 = new wdgGroupBox( wLeft,1000, axRect( 0,0,0, 50),wal_Top ));
+            //gr1->setup("groupbox1",  false,true);
+            //gr2->setup("group 2",    false,true);
+            //gr3->setup("box 3",      false,true);
+            gr3->wContainer->setAlign(0,0,3,3);
+            gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+            gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+            gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+            gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+            gr3->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+            //gr1->setup("groupbox1",  false,true);
+            //gr2->setup("group 2",    false,true);
+            //gr3->setup("box 3",      false,true);
+            //gr4->setup("...4",       false,true);
+            //gr5->setup("and five..", false,true);
 
         // bottom: status bar & resize widget
 
@@ -391,57 +230,43 @@ class myPlugin : public axPlugin,
 
         wClient->setAlign(5,5);
         wClient->appendWidget( wTabs  = new wdgTabs(this, -1,axRect(10,10,256,128),wal_Client));
-
-        wTabs->appendPage( wPage1 = new axContainer(this, -1,NULL_RECT,wal_Client) );
-        wTabs->appendPage( wPage2 = new axContainer(this, -1,NULL_RECT,wal_Client) );
-        wTabs->appendPage( wPage3 = new axContainer(this, -1,NULL_RECT,wal_Client) );
-
-        //wPage1->setBackground(true);
-        //wPage2->setBackground(true);
-        //wPage3->setBackground(true);
-
-        wPage1->setAlign(10,10,5, 15);
-        wPage2->setAlign(10,10,20,20);
-        wPage3->setAlign(10,10,5, 5);
-
-        wPage2->setFlag(wfl_Vertical);
-
-        wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-        wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-        wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-        wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-        wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-        wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-        wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-        wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-        wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-        wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-        wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
-
-        //for (int i=0; i<11; i++) wPage1->mWidgets[i]->doSetValue((float)i*0.1);
-
-        wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,1 ) );
-        wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,1 ) );
-        wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,1 ) );
-        wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,1 ) );
-        wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,1 ) );
-        wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,0 ) );
-        wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,0 ) );
-        wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,0 ) );
-        wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,0 ) );
-        wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,0 ) );
-        wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,0 ) );
-
-        wPage3->appendWidget( new wdgKnob( this,0,axRect( 50, 50,128,32),wal_None,1 ) );
-        wPage3->appendWidget( new wdgKnob( this,0,axRect( 50, 90, 64,32),wal_None,0 ) );
-        wPage3->appendWidget( new wdgKnob( this,0,axRect( 130,90, 64,32),wal_None,0 ) );
-
-        wTabs->setPage(0);
-
-        ed->doRealign();
+          wTabs->appendPage( wPage1 = new axContainer(this, -1,NULL_RECT,wal_Client) );
+          wTabs->appendPage( wPage2 = new axContainer(this, -1,NULL_RECT,wal_Client) );
+          wTabs->appendPage( wPage3 = new axContainer(this, -1,NULL_RECT,wal_Client) );
+            wPage1->setAlign(10,10,5, 15);
+            wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+            wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+            wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+            wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+            wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+            wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+            wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+            wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+            wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+            wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+            wPage1->appendWidget( new wdgKnob( this,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+            //for (int i=0; i<11; i++) wPage1->mWidgets[i]->doSetValue((float)i*0.1);
+            wPage2->setAlign(10,10,20,20);
+            wPage2->setFlag(wfl_Vertical);
+            wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,1 ) );
+            wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,1 ) );
+            wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,1 ) );
+            wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,1 ) );
+            wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,1 ) );
+            wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,0 ) );
+            wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,0 ) );
+            wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,0 ) );
+            wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,0 ) );
+            wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,0 ) );
+            wPage2->appendWidget( new wdgKnob( this,0,axRect( 0, 0,128,32),wal_Stacked,0 ) );
+            wPage3->setAlign(10,10,5, 5);
+            wPage3->appendWidget( new wdgKnob( this,0,axRect( 50, 50,128,32),wal_None,1 ) );
+            wPage3->appendWidget( new wdgKnob( this,0,axRect( 50, 90, 64,32),wal_None,0 ) );
+            wPage3->appendWidget( new wdgKnob( this,0,axRect( 130,90, 64,32),wal_None,0 ) );
+          wTabs->setPage(0);
 
         //recalc_scroller();
-
+        ed->doRealign();
         mEditor = ed;
         return mEditor;
       }
@@ -460,6 +285,170 @@ class myPlugin : public axPlugin,
     virtual void doIdleEditor(void)
       {
         if (mEditor) mEditor->redrawDirty();
+      }
+
+    //--------------------------------------------------
+    // listeners
+    //--------------------------------------------------
+
+    virtual void onChange(axParameter* aParameter)
+      {
+        if(mEditor) mEditor->onChange(aParameter);
+        doProcessParameter(aParameter);
+      }
+
+    //----------
+
+    virtual void onChange(axWidget* aWidget)
+      {
+        int id = aWidget->mID;
+        float val = aWidget->doGetValue();
+        switch(id)
+        {
+          case -99:
+            wTabs->setPage( (int)axMin(2,floorf(val*3)) );
+            mEditor->onChange(wTabs);
+            break;
+          //case -199:
+          //{
+          //  int hh = wLeft->mRect.h - wLeft->mMarginY;
+          //  int i = (float)(wLeft->mMaxY - hh) * val;
+          //  int dy = i - prevscroll;
+          //  wLeft->doScroll(0,-dy);
+          //  mEditor->onChange(wLeft);
+          //  //TRACE("%i\n",y2);
+          //  //wLeft->doScroll(dx,dy);
+          //  prevscroll = i;
+          //}
+          //  break;
+          //case -299:
+          //  break;
+          case 100:
+            if (val>0.5)
+            {
+              wTabs->setPage(0);
+              wBut2->doSetValue(0);
+              wBut3->doSetValue(0);
+              mEditor->onChange(wTabs);
+              mEditor->onChange(wBut2);
+              mEditor->onChange(wBut3);
+            }
+            else wBut1->doSetValue(1);
+            break;
+          case 101:
+            if (val>0.5)
+            {
+              wTabs->setPage(1);
+              wBut1->doSetValue(0);
+              wBut3->doSetValue(0);
+              mEditor->onChange(wTabs);
+              mEditor->onChange(wBut1);
+              mEditor->onChange(wBut3);
+            }
+            else wBut2->doSetValue(1);
+            break;
+          case 102:
+            if (val>0.5)
+            {
+              wTabs->setPage(2);
+              wBut1->doSetValue(0);
+              wBut2->doSetValue(0);
+              mEditor->onChange(wTabs);
+              mEditor->onChange(wBut1);
+              mEditor->onChange(wBut2);
+            }
+            else wBut3->doSetValue(1);
+            break;
+          //case 199:
+          //  if (val>0.5)
+          //  {
+          //    testwin = new axWindow( "win_2", this, 12345, axRect(0,0,300,200), AX_WINDOWED|AX_BUFFERED);
+          //    wdgPanel* pnl;
+          //    testwin->appendWidget( new wdgPanel(    testwin,-1, axRect( 0,0,100,0  ),wal_Left    ) );
+          //    testwin->appendWidget( new wdgPanel(    testwin,-1, axRect( 0,0,0,  50 ),wal_Top     ) );
+          //    testwin->appendWidget( new wdgPanel(    testwin,-1, axRect( 0,0,0,  20 ),wal_Bottom  ) );
+          //    testwin->appendWidget( new wdgPanel(    testwin,-1, axRect( 0,0,40, 0  ),wal_Right   ) );
+          //    testwin->appendWidget( pnl=new wdgPanel(testwin,-1, NULL_RECT, wal_Client  ) );
+          //    pnl->setAlign(5,5,5,5);
+          //    pnl->appendWidget( new wdgKnob( testwin,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+          //    pnl->appendWidget( new wdgKnob( testwin,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+          //    pnl->appendWidget( new wdgKnob( testwin,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+          //    pnl->appendWidget( new wdgKnob( testwin,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+          //    pnl->appendWidget( new wdgKnob( testwin,0,axRect(0,0, 80,16),wal_Stacked,0 ) );
+          //    testwin->doRealign();
+          //    testwin->show();
+          //    testwin->redraw();
+          //    testwin->eventLoop(); // blocks!!
+          //    testwin->hide();
+          //    delete testwin;
+          //    testwin = NULL;
+          //  }
+          //  break;
+        }
+        // then back to the default handler
+        mEditor->onChange(aWidget);
+      }
+
+    //----------
+
+    //void recalc_scroller(void)
+    //  {
+    //    //HACK
+    //    int total = gr1->mRect.h
+    //              + gr2->mRect.h
+    //              + gr3->mRect.h
+    //              + gr4->mRect.h
+    //              + gr5->mRect.h
+    //              + (5*4);
+    //    //TRACE("total: %i\n",total);
+    //    float n = (float)scr->mRect.h / (float)total;
+    //    n = axMax(0,axMin(1,n));
+    //    scr->setThumbSize(n);
+    //    //mEditor->onChange(scr);
+    //  }
+
+    //----------
+
+    virtual void onResize(axWidget* aWidget,int dX, int dY)   // delta x,y
+      {
+        if (aWidget->mID == 314) // wdgSplitter, window resizer
+        {
+          int w = mEditor->getRect().w + dX;
+          int h = mEditor->getRect().h + dY;
+          mEditor->resizeWindow(w,h);
+          //recalc_scroller();
+          //mEditor->onChange(scr);
+        }
+        if (aWidget->mID == 315) // wdgSplitter, left splitter
+        {
+          int w = wLeft->getRect().w + dX;
+          int h = wLeft->getRect().h;// + dY;
+          wLeft->doResize(w,h);
+          mEditor->doRealign();
+          //recalc_scroller();
+          mEditor->redraw();
+        }
+        //if (aWidget->mID == 1000) // group boxes
+        //{
+        //  wLeft->doRealign();
+        //  //recalc_scroller();
+        //  mEditor->onChange(wLeft);
+        //}
+      }
+
+    //----------
+
+    virtual void onCursor(int aCursor)
+      {
+        mEditor->onCursor(aCursor);
+      }
+
+    //----------
+
+    virtual void onHint(axString aHint)
+      {
+        wStatus->setText(aHint);
+        mEditor->onChange(wStatus);
       }
 
 };
