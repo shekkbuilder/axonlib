@@ -556,7 +556,7 @@ class axPluginVst :  public AudioEffectX,
       {
         if(mWindow)
         {
-          mWindow->hide();
+          //mWindow->hide();
           //lock
           mWindow = NULL;
           doDestroyEditor();

@@ -33,13 +33,6 @@
 
 class ax// : public ax
 {
-  private:
-
-    float priv_var; ///< description
-
-  protected:
-
-    float prot_var; ///< description
 
   public:
 
@@ -48,13 +41,22 @@ class ax// : public ax
       more description
     */
 
-    ax() {}
+    ax()
+      {
+      }
+
+    //----------
 
     /// destructor
     /**
+      ...
     */
 
-    virtual ~ax() {}
+    virtual ~ax()
+      {
+      }
+
+    //----------------------------------------
 
 };
 

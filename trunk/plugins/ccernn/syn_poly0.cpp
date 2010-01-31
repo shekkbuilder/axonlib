@@ -12,9 +12,12 @@
 
 #include "axPlugin.h"
 #include "parFloat.h"
+
 #include "axEditor.h"
-#include "wdgImgKnob.h"
+#include "wdgPanel.h"
 #include "wdgLabel.h"
+#include "wdgImgKnob.h"
+
 #include "axBitmapLoader.h"
 #include "images/knob2.h"
 
@@ -38,21 +41,16 @@
 class myVoice : public axVoice
 {
   public:
-
     virtual float process(void)
       {
         //axVoice::process();
         if (mEnvStage==env_offset)  mEnvStage = env_attack;
         if (mEnvStage==env_release) mEnvStage = env_finished;
-
         float out = sin(mPhase*PI2);
-
         mPhase += mPhaseAdd;
-        //mPhase -= floorf(mPhaseAdd);
         if (mPhase>=1) mPhase-=1;
         return out * mVelocity;
       }
-
 };
 
 //----------------------------------------------------------------------
@@ -61,30 +59,33 @@ class myVoice : public axVoice
 
 #define MAX_VOICES 8
 
-class myPlugin : public axPlugin
+class myPlugin : public axPlugin,
+                 public axWidgetListener
 {
   private:
-    axVoiceManager VM;
-    float       gain;
-    axEditor    *mEditor;
     bool        is_gui_initialized;
+    axEditor    *mEditor;
     axSurface   *srfKnob;
-    wdgImgKnob  *wGain;
-
+    float       mGain;
+    parFloat*   pGain;
+    wdgImgKnob* wGain;
+    axVoiceManager VM;
   public:
 
     myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
     : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
       {
-        mEditor = NULL;
-        srfKnob = NULL;
         is_gui_initialized = false;
-        describe("syn_poly0","ccernnb","no_product_string",0001,0x666);
+        mEditor = NULL;
+        //srfKnob = NULL;
+        describe("syn_poly0","ccernnb","axonlib example plugin",0002,AX_MAGIC+0x0000);
         hasEditor(AX_WIDTH,AX_HEIGHT);
+// TODO: axPlugin functiuons for these (no calling directly into vst)
         setNumInputs(0);
         isSynth();
+//
         for (int i=0; i<MAX_VOICES; i++) VM.appendVoice(new myVoice());
-        appendParameter(new parFloat(this,0,"gain","",1,0,2,0.1));
+        appendParameter( pGain = new parFloat(this,0,"gain","",1,0,2,0.1));
         processParameters();
       }
 
@@ -92,15 +93,7 @@ class myPlugin : public axPlugin
 
     virtual ~myPlugin()
       {
-        if (srfKnob) delete srfKnob;
-      }
-
-    //--------------------------------------------------
-
-    virtual void onChange(axParameter* aParameter)
-      {
-        if(mEditor) mEditor->onChange(aParameter);
-        doProcessParameter(aParameter);
+        if (is_gui_initialized) delete srfKnob;
       }
 
     //--------------------------------------------------
@@ -128,7 +121,7 @@ class myPlugin : public axPlugin
 
     virtual void doProcessParameter(axParameter* aParameter)
       {
-        if (aParameter->mID==0) gain = aParameter->getValue();
+        if (aParameter->mID==0) mGain = aParameter->getValue();
       }
 
     //--------------------------------------------------
@@ -145,10 +138,8 @@ class myPlugin : public axPlugin
 
     virtual void doProcessSample(float** ins, float** outs)
       {
-        //spl0 = *ins[0];
-        //spl1 = *ins[1];
         float out = VM.process(0);
-        out *= gain;
+        out *= mGain;
         *outs[0] = out;
         *outs[1] = out;
       }
@@ -164,18 +155,21 @@ class myPlugin : public axPlugin
     // editor
     //--------------------------------------------------
 
-    virtual axWindow* doCreateEditor(void)
+    virtual void* doCreateEditor(void)
       {
-        axEditor* E = new axEditor("again_window",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
+        axEditor* ED = new axEditor("again_window",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
+        wdgPanel* panel;
+        ED->appendWidget( panel = new wdgPanel(this,-1,NULL_RECT,wal_Client) );
         if(!is_gui_initialized)
         {
           srfKnob = loadPng( knob2, 15255 );
           is_gui_initialized=true;
         }
-        E->appendWidget(new wdgImgKnob(E, 0,axRect(10,30,32,32),wal_None,65,srfKnob));
-        E->appendWidget(new wdgLabel(  E,-1,axRect(10,10,32,16),wal_None,"gain",AX_GREY_LIGHT,tal_Center));
-        for (int i=0; i<AX_NUMPARAMS; i++) E->connect(E->mWidgets[i],mParameters[i]);
-        mEditor = E;
+        panel->appendWidget(wGain = new wdgImgKnob(this, 0,axRect(10,30,32,32),wal_None,65,srfKnob));
+        panel->appendWidget(        new wdgLabel(  this,-1,axRect(10,10,32,16),wal_None,"gain",AX_GREY_LIGHT,tal_Center));
+        ED->connect(wGain,pGain);
+        ED->doRealign();
+        mEditor = ED;
         return mEditor;
       }
 
@@ -183,19 +177,33 @@ class myPlugin : public axPlugin
 
     virtual void doDestroyEditor(void)
       {
-        axEditor* tempeditor = mEditor;
+        axEditor* ED = mEditor;
         mEditor = NULL;
-        delete tempeditor;
+        delete ED;
       }
 
     //----------
 
     virtual void doIdleEditor(void)
       {
-        mEditor->redrawDirty();
+        if (mEditor) mEditor->redrawDirty();
       }
 
     //--------------------------------------------------
+    // listeners
+    //--------------------------------------------------
+
+    virtual void onChange(axParameter* aParameter)
+      {
+        if(mEditor) mEditor->onChange(aParameter);
+        doProcessParameter(aParameter);
+      }
+
+    virtual void onChange(axWidget* aWidget)
+      {
+        if (mEditor) mEditor->onChange(aWidget);
+
+      }
 
 };
 

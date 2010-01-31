@@ -6,7 +6,7 @@
     // ----- test
 
 //#include "ccernn/again.cpp"
-#include "ccernn/plug_debug.cpp"
+//#include "ccernn/plug_debug.cpp"
 
     // ----- no gui
 
@@ -33,6 +33,7 @@
 //#include "ccernn/ana_vu0.cpp"
 //#include "ccernn/fx_cutter0.cpp"
 //#include "ccernn/fx_dynamics0.cpp"
+//#include "ccernn/fx_sampler0.cpp"
 //#include "ccernn/fx_tempodelay0.cpp"
 //#include "ccernn/fx_wgtavg0.cpp"
 //#include "ccernn/midi_fibonacci0.cpp"
@@ -54,4 +55,4 @@
 // error
 //----------------------------------------------------------------------
 
-//#include "ccernn/syn_poly0.cpp"
+#include "ccernn/syn_poly0.cpp"
