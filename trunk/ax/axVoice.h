@@ -64,7 +64,7 @@ class axVoiceManager;
 #define env_decay     2
 #define env_sustain   3
 #define env_release   4
-#define env_finished  5
+#define env_finished  0xffff
 
 //----------
 
@@ -104,24 +104,55 @@ class axVoice// : public axModule
       {
       }
 
-    //----------
+    //----------------------------------------
+    //
+    //----------------------------------------
 
-    virtual void setSampleRate(float aSampleRate)
+    inline void updatePhase(void)
       {
-        iSampleRate = 1/aSampleRate;
+        mPhase += mPhaseAdd;
+        if (mPhase>=1) mPhase-=1;
       }
 
     //----------
 
+    inline bool updatePhaseExt(void)
+      {
+        bool wrap = false;
+        mPhase += mPhaseAdd;
+        if (mPhase>=1)
+        {
+          mPhase-=1;
+          wrap = true;
+        }
+        return wrap;
+      }
+
+    //----------------------------------------
+    //
+    //----------------------------------------
+
+    virtual void setSampleRate(float aSampleRate)
+      {
+        if (aSampleRate>1)
+          iSampleRate = 1/aSampleRate;
+        else
+          iSampleRate = 1;
+      }
+
+    //----------
+
+    //NOTE: a little heavy..
+    // we assume you'll use this voice for synthesis
     virtual void noteOn(int aOffset,int aNote,float aVelocity)
       {
-        mActive = true;
-        mNote = aNote;
+        mActive   = true;
+        mNote     = aNote;
         mVelocity = aVelocity;
-        mOffset = aOffset;
+        mOffset   = aOffset;
         mEnvStage = env_offset;
-        mFreq = 440 * pow(2.0,(aNote-69.0) / 12);
-        mPhase = 0;
+        mPhase    = 0;
+        mFreq     = 440 * pow(2.0,(aNote-69.0) / 12);
         mPhaseAdd = mFreq * iSampleRate;
       }
 
@@ -136,7 +167,7 @@ class axVoice// : public axModule
 
     //----------
 
-    virtual float process(void)
+    virtual float process(float input=0)
       {
         //switch(mEnvStage)
         //{
@@ -148,11 +179,7 @@ class axVoice// : public axModule
         return 0;
       }
 
-    //----------
-
 };
-
-//----------
 
 typedef axArray<axVoice*> axVoices;
 
@@ -162,11 +189,7 @@ typedef axArray<axVoice*> axVoices;
 //
 //----------------------------------------------------------------------
 
-//#define MAX_VOICES 16
-
-//----------
-
-class axVoiceManager : public axModuleListener
+class axVoiceManager// : public axModuleListener
 {
   private:
     axVoices  mVoices;
@@ -188,7 +211,7 @@ class axVoiceManager : public axModuleListener
 
     //----------
 
-    inline void setSampleRate(float aSampleRate)
+    void setSampleRate(float aSampleRate)
       {
         for (int i=0; i<mVoices.size(); i++)
           mVoices[i]->setSampleRate(aSampleRate);
@@ -217,7 +240,7 @@ class axVoiceManager : public axModuleListener
 
     //----------
 
-    int findVoice(void)
+    int findInactiveVoice(void)
       {
         for (int i=0; i<mVoices.size(); i++)
         {
@@ -228,10 +251,10 @@ class axVoiceManager : public axModuleListener
 
     //----------
 
-    void  noteOn(int aOffset, int aNote, float aVelocity)
+    void noteOn(int aOffset, int aNote, float aVelocity)
       {
         if (mNoteMap[aNote]>=0) return; // already playing
-        int voice = findVoice();
+        int voice = findInactiveVoice();
         if (voice>=0)
         {
           mNoteMap[aNote] = voice;
@@ -241,7 +264,7 @@ class axVoiceManager : public axModuleListener
 
     //----------
 
-    void  noteOff(int aOffset, int aNote, float aVelocity)
+    void noteOff(int aOffset, int aNote, float aVelocity)
       {
         int voice = mNoteMap[aNote];
         if (voice<0) return; // not playing
@@ -251,7 +274,7 @@ class axVoiceManager : public axModuleListener
 
     //----------
 
-    float process(int aChannel=0)
+    float process(float input=0)
       {
         float out = 0;
         for (int i=0; i<mVoices.size(); i++)

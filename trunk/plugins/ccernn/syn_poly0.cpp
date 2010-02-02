@@ -47,8 +47,7 @@ class myVoice : public axVoice
         if (mEnvStage==env_offset)  mEnvStage = env_attack;
         if (mEnvStage==env_release) mEnvStage = env_finished;
         float out = sin(mPhase*PI2);
-        mPhase += mPhaseAdd;
-        if (mPhase>=1) mPhase-=1;
+        updatePhase();
         return out * mVelocity;
       }
 };
@@ -80,10 +79,10 @@ class myPlugin : public axPlugin,
         //srfKnob = NULL;
         describe("syn_poly0","ccernnb","axonlib example plugin",0002,AX_MAGIC+0x0000);
         hasEditor(AX_WIDTH,AX_HEIGHT);
-// TODO: axPlugin functiuons for these (no calling directly into vst)
+        // TODO: axPlugin functiuons for these (no calling directly into vst)
         setNumInputs(0);
         isSynth();
-//
+        //
         for (int i=0; i<MAX_VOICES; i++) VM.appendVoice(new myVoice());
         appendParameter( pGain = new parFloat(this,0,"gain","",1,0,2,0.1));
         processParameters();
@@ -138,7 +137,7 @@ class myPlugin : public axPlugin,
 
     virtual void doProcessSample(float** ins, float** outs)
       {
-        float out = VM.process(0);
+        float out = VM.process();
         out *= mGain;
         *outs[0] = out;
         *outs[1] = out;
