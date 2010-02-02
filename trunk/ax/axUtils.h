@@ -21,11 +21,6 @@
  * \brief contains various utility scripts
  */
 
-/**
- * \brief contains various utility scripts
- *
- */
-
 #ifndef axUtils_included
 #define axUtils_included
 

@@ -45,19 +45,20 @@
   - resizeable windows <br>
   - optimized math methods <br>
   - dsp classes <br>
-  - a lot of example plugins <br>
+  - lots of example plugins <br>
   - <br>
   - <br>
   - <br>  
   <br>
   
   uses third party code:
-  - lodepng <br>
+  - lodepng by lode vandevenne <br>
+  - base linux/win32 code by jorgen aase <br>
   -  <br>
   -  <br>
   
   \section install_section # installation   
-  get the latest revisions from the svn reposotory at: <br>    
+  <b>get the latest revision from the svn reposotory at:</b> <br>    
   http://axonlib.googlecode.com <br>
   
   <b>get the vst sdk from:</b> <br>
@@ -65,7 +66,7 @@
   http://ygrabit.steinberg.de/~ygrabit/public_html/index.html <br> 
   (the 2.4r1 link) <br>
   
-  create the following folders: <br>
+  <b>create the following folders:</b> <br>
   
   \code
   axonlib 
@@ -73,7 +74,7 @@
   axonlib\vstsdk24 <-- copy vst sdk here (pluginterfaces...public.sdk...etc) 
   \endcode
   
-  <b>compilers and requirments: </b> <br>
+  <b>compiler requirements: </b> <br>
   
   -- for linux download & install:: <br>  
   mingw32 - to cross-compile for win32 <br>

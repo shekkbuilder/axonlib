@@ -21,11 +21,6 @@
  * \brief math approximations and routines
  */
 
-/**
- * \brief math approximations and routines
- *
- */
-
 // ---------------------------------------------------------------------------
 // NOTES:
 // apparently the following set of compiler flags is pretty much 'owning' some
