@@ -94,18 +94,20 @@ class wdgKnob : public wdgValue
 
     void drawKnob(axCanvas* aCanvas, axRect aRect, float aValue, axString aName, axString aDisplay, int aFlags)
       {
-        int x = mRect.x;
-        int y = mRect.y;
+        int x  = mRect.x;
+        int y  = mRect.y;
+        int x2 = mRect.x2();
+        //int y2 = mRect.y2();
         // text rectangles
         aCanvas->clearPen();
         aCanvas->selectBrush(brush_name_back);
-        aCanvas->fillRect(x+16,y,x+127,y+14);
+        aCanvas->fillRect(x+16,y,x2,y+14);
         aCanvas->selectBrush(brush_disp_back);
-        aCanvas->fillRect(x+16,y+17,x+127,y+31);
+        aCanvas->fillRect(x+16,y+17,x2,y+31);
         aCanvas->selectFont(font_name);
-        aCanvas->drawText(x+40,y,x+127,y+14,aName,tal_Left);
+        aCanvas->drawText(x+40,y,x2,y+14,aName,tal_Left);
         aCanvas->selectFont(font_disp);
-        aCanvas->drawText(x+40,y+17,x+127,y+31,aDisplay,tal_Left);
+        aCanvas->drawText(x+40,y+17,x2,y+31,aDisplay,tal_Left);
         // erase circle behind knob
         aCanvas->selectBrush(brush_knob_back_outer);
         aCanvas->fillCircle(x-4,y-4,x+35,y+35);

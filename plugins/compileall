@@ -27,6 +27,7 @@
 ./compile ccernn/fx_wgtavg0
 
 ./compile ccernn/midi_ccaudio0
+./compile ccernn/midi_cellular0
 ./compile ccernn/midi_fibonacci0
 ./compile ccernn/midi_notelen0
 ./compile ccernn/midi_syncdelay0

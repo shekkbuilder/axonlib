@@ -1,5 +1,4 @@
 
-//----------------------------------------------------------------------
 
 //----------------------------------------------------------------------
 
@@ -37,8 +36,10 @@
 //#include "ccernn/fx_tempodelay0.cpp"
 //#include "ccernn/fx_wgtavg0.cpp"
 //#include "ccernn/midi_fibonacci0.cpp"
+#include "ccernn/midi_cellular0.cpp"
 //#include "ccernn/syn_binaural0.cpp"
 //#include "ccernn/syn_perc0.cpp"
+//#include "ccernn/syn_poly0.cpp"
 
     // ----- ports
 
@@ -52,7 +53,4 @@
 //#include "liteon/liteon_lofi.cpp"
 
 //----------------------------------------------------------------------
-// error
-//----------------------------------------------------------------------
 
-#include "ccernn/syn_poly0.cpp"
