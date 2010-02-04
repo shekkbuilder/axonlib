@@ -27,7 +27,7 @@
  * long desc
  *
  */
- 
+
 #ifndef axSurface_included
 #define axSurface_included
 //----------------------------------------------------------------------
@@ -68,6 +68,10 @@ class axSurfaceBase
       };
 
     //int getHandle(void) { return (int)mHandle; }
+    inline int getWidth(void) { return mWidth; }
+    inline int getHeight(void) { return mHeight; }
+    inline int getDepth(void) { return mDepth; }
+    inline axCanvas* getCanvas(void) { return mCanvas; }
 
 };
 

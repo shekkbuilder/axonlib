@@ -38,7 +38,8 @@
 
 class axBitmapX11 : public axBitmapBase
 {
-  //public:
+  //private:
+  //  bool mPrepared;
   protected:
     XImage* mImage;
     //char*   mBuffer;
@@ -47,57 +48,55 @@ class axBitmapX11 : public axBitmapBase
     axBitmapX11(int aWidth, int aHeight)
     : axBitmapBase(aWidth,aHeight)
       {
-        mDepth  = DefaultDepth(gDP,DefaultScreen(gDP)); // 32?
-        mBuffer = new char[mWidth*mHeight*4];
-        mImage = XCreateImage(
-          gDP,
-          //CopyFromParent,     // DefaultVisual(gDP,DefaultScreen(gDP)),  // visual
-          DefaultVisual(gDP,DefaultScreen(gDP)),  // visual
-          mDepth,             // depth
-          ZPixmap,            // format
-          0,                  // offset
-          mBuffer,            // data
-          mWidth, mHeight,    // size
-          32,                 // pad
-          0                   // bytes per line
-        );
-
-//        TRACE("LSBFirst=%i,MSBFirst=%i\n",LSBFirst, MSBFirst);
-//        TRACE("\naxBitmapX11\n");
-//        TRACE("  width: %i\n",mHandle->width);
-//        TRACE("  height: %i\n",mHandle->height);
-//        TRACE("  xoffset: %i\n",mHandle->xoffset);
-//        TRACE("  format: %i\n",mHandle->format);
-//        TRACE("  data: %x\n",(int)mHandle->data);
-//        TRACE("  byte_order: %i\n",mHandle->byte_order);
-//        TRACE("  bitmap_unit: %i\n",mHandle->bitmap_unit);
-//        TRACE("  bitmap_bit_order: %i\n",mHandle->bitmap_bit_order);
-//        TRACE("  bitmap_pad: %i\n",mHandle->bitmap_pad);
-//        TRACE("  depth: %i\n",mHandle->depth);
-//        TRACE("  bytes_per_line: %i\n",mHandle->bytes_per_line);
-//        TRACE("  bits_per_pixel: %i\n",mHandle->bits_per_pixel);
-//        TRACE("  red_mask: %i\n",(int)mHandle->red_mask);
-//        TRACE("  green_mask: %i\n",(int)mHandle->green_mask);
-//        TRACE("  blue_mask: %i\n",(int)mHandle->blue_mask);
-
+        //mPrepared = false;
+        //prepare();
       }
 
     virtual ~axBitmapX11()
       {
-        //((XImage*)mImage)->data = NULL;    // we want to delete it ourselves...
-        mImage->data = NULL;    // we want to delete it ourselves...
-        XDestroyImage(mImage);  // frees data too
-        if (mBuffer)
+        //trace("axBitmapX11.destructor");
+        if (mPrepared)
         {
-          delete[] mBuffer;
-          mBuffer = NULL;
+          //((XImage*)mImage)->data = NULL;    // we want to delete it ourselves...
+          mImage->data = NULL;    // we want to delete it ourselves...
+          XDestroyImage(mImage);  // frees data too
         }
+        //if (mBuffer) delete[] mBuffer;
+        //mBuffer = NULL;
+      }
+
+    //----------
+
+    virtual void prepare(void)
+      {
+        //trace("prepare");
+        if (!mPrepared)
+        {
+          mDepth  = DefaultDepth(gDP,DefaultScreen(gDP)); // 32?
+
+          //mBuffer = new char[mWidth*mHeight*4];
+          if (!mBuffer) mBuffer = new char[mWidth*mHeight*4];
+
+          mImage = XCreateImage(
+            gDP,
+            //CopyFromParent,     // DefaultVisual(gDP,DefaultScreen(gDP)),  // visual
+            DefaultVisual(gDP,DefaultScreen(gDP)),  // visual
+            mDepth,             // depth
+            ZPixmap,            // format
+            0,                  // offset
+            mBuffer,            // data
+            mWidth, mHeight,    // size
+            32,                 // pad
+            0                   // bytes per line
+          );
+          mPrepared = true;
+        } // !prepared
       }
 
     //----------
 
     virtual int getHandle(void) { return (int)mImage; }
-    virtual char* getBuffer(void) { return (char*)mBuffer; }
+    //virtual char* getBuffer(void) { return (char*)mBuffer; }
 
 };
 

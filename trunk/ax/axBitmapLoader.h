@@ -101,25 +101,30 @@
 //
 //----------------------------------------------------------------------
 
+// int decodePNG( std::vector<unsigned char>& out_image_32bit,
+//                unsigned long& image_width,
+//                unsigned long& image_height,
+//                const unsigned char* in_png,
+//                unsigned long in_size )
+
+// decode a pre-loaded buffer containing png file
 axBitmap* decodePng(unsigned char* buffer, unsigned int buffersize)
   {
-    std::vector<unsigned char> image;
-    //loadFile(buffer, filename);
     unsigned long width, height;
+    std::vector<unsigned char> image;
     /*int error = */decodePNG(image, width, height, buffer, buffersize);
-    //if (error!=0) std::cout << "error: " << error << std::endl;
-    //the pixels are now in the vector "image", use it as texture, draw it, ...
-    //if (image.size() > 4)
-    //  std::cout << "width: " << w << " height: " << h << " first pixel: " << std::hex << int(image[0]) << int(image[1]) << int(image[2]) << int(image[3]) << std::endl;
     axBitmap* bmp = new axBitmap(width,height,&image[0]);
     return bmp;
   }
 
 //----------
 
+// blit bitmap to surface
+// (upload to vram/xserver)
 axSurface* uploadBitmap(axBitmap* bmp)
 {
-  axSurface* srf = new axSurface(bmp->getWidth(),bmp->getHeight()/*,0*/);
+  axSurface* srf = new axSurface(bmp->getWidth(),bmp->getHeight());
+  //bmp->prepare();
   srf->mCanvas->drawBitmap(bmp,0,0,0,0,bmp->getWidth(),bmp->getHeight());
   return srf;
   //delete bmp;
@@ -127,19 +132,57 @@ axSurface* uploadBitmap(axBitmap* bmp)
 
 //----------
 
+// [helper] decode & upload
 axSurface* loadPng(unsigned char* buffer, unsigned int buffersize)
   {
-    axBitmap*  bmp = decodePng(buffer,buffersize);
+    axBitmap* bmp = decodePng(buffer,buffersize);
     //TODO: remove these!
     // caller's responsibility!
-    // just ut them here to not break every gui plugin :-/
+    // i just put them here (temporary) to not break every gui plugin :-/
       bmp->convertRgbaBgra();
       bmp->setBackground(128,128,128);
     //
+    bmp->prepare();
     axSurface* srf = uploadBitmap(bmp);
     delete bmp;
     return srf;
   }
+
+//----------
+
+//untested!
+//in:
+//  aFilename = name (and path) of file
+//out:
+//  aBuffer = ptr to allocated buffer,
+//            you must free it yourself, free(*aBuffer);
+//  return  = size of buffer
+
+// load file into memory
+#include <stdio.h>
+int loadFile(char* aFilename, unsigned char** aBuffer)
+{
+	//int size = 0;
+	FILE *f = fopen(aFilename,"rb");
+	if (f==NULL)
+	{
+		*aBuffer = NULL;
+		return -1; // file opening fail
+	}
+	fseek(f,0,SEEK_END);
+	unsigned int size = ftell(f);
+	fseek(f,0,SEEK_SET);
+	//*aBuffer = (char*)malloc(size+1);
+	*aBuffer = (unsigned char*)malloc(size);
+	if ( size != fread(*aBuffer,sizeof(char),size,f) )
+	{
+		free(*aBuffer);
+		return -2; // file reading fail
+	}
+	fclose(f);
+	//(*aBuffer)[size] = 0;
+	return size;
+}
 
 //----------------------------------------------------------------------
 #endif
