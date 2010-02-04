@@ -37,7 +37,7 @@
 // so this header needs a bit of general rework.. and more testing to check
 // what is redundant and what is genuine.
 //
-// overall the GCC levels of optimization are quite impressive! 
+// overall the GCC levels of optimization are quite impressive!
 // the -ffast-math is perhaps the biggest booster but it reduces accuracy.
 // ---------------------------------------------------------------------------
 

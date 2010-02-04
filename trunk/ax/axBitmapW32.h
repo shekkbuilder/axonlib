@@ -30,7 +30,7 @@ class axBitmapW32 : public axBitmapBase
   protected:
   //public:
     HBITMAP mBitmap;
-    char*   mBuffer;
+    //char*   mBuffer;
 
   public:
 
