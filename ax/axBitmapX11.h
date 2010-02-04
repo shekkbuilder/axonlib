@@ -41,7 +41,7 @@ class axBitmapX11 : public axBitmapBase
   //public:
   protected:
     XImage* mImage;
-    char*   mBuffer;
+    //char*   mBuffer;
   public:
 
     axBitmapX11(int aWidth, int aHeight)

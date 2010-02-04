@@ -62,6 +62,7 @@ class wdgGrid : public axWidget
     //----------
 
     virtual void on_ClickCell(int aX, int aY, int aB) {}
+    virtual void on_DrawCell(axCanvas* aCanvas, axRect aRect, int aX, int aY) {}
 
     //--------------------------------------------------
     // ..base
@@ -77,6 +78,15 @@ class wdgGrid : public axWidget
           // background
           aCanvas->selectBrush(mBackBrush);
           aCanvas->fillRect(mRect.x,mRect.y,mRect.x2()-1,mRect.y2()-1);
+          // cells
+          for (int xx=0; xx<mWidth; xx++ )
+          {
+            for (int yy=0; yy<mHeight; yy++ )
+            {
+              axRect R = axRect( mRect.x+(xx*xcell), mRect.y+(yy*ycell), xcell,ycell);
+              on_DrawCell(aCanvas,R,xx,yy);
+            }
+          }
           // grid
           float x = (float)mRect.x + xcell - 1;
           float y = (float)mRect.y + ycell - 1;
@@ -101,6 +111,7 @@ class wdgGrid : public axWidget
         int x = (int)axFloor(  (float)(aX-mRect.x) / xcell  );
         int y = (int)axFloor(  (float)(aY-mRect.y) / ycell  );
         on_ClickCell(x,y,aB);
+        mListener->onChange(this);
       }
 
 };
