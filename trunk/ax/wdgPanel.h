@@ -29,28 +29,46 @@
 
 class wdgPanel : public axContainer
 {
+  private:
+    axPen*    m_LightPen;
+    axPen*    m_DarkPen;
+    axBrush*  m_FillBrush;
+
   protected:
-    axPen*    mPenLight;
-    axPen*    mPenDark;
-    axBrush*  mBrushFill;
+    axPen*    mLightPen;
+    axPen*    mDarkPen;
+    axBrush*  mFillBrush;
 
   public:
 
     wdgPanel(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment)
     : axContainer(aListener,aID,aRect,aAlignment)
       {
-        mPenLight  = new axPen(AX_GREY_LIGHT);
-        mPenDark   = new axPen(AX_GREY_DARK);
-        mBrushFill = new axBrush(AX_GREY);
+        m_LightPen  = new axPen(AX_GREY_LIGHT);
+        m_DarkPen   = new axPen(AX_GREY_DARK);
+        m_FillBrush = new axBrush(AX_GREY);
+        mLightPen   = m_LightPen;
+        mDarkPen    = m_DarkPen;
+        mFillBrush  = m_FillBrush;
         //clearFlag(wfl_DefaultDraw);
       }
 
     virtual ~wdgPanel()
       {
-        delete mPenLight;
-        delete mPenDark;
-        delete mBrushFill;
+        delete m_LightPen;
+        delete m_DarkPen;
+        delete m_FillBrush;
       }
+
+    //--------------------------------------------------
+
+    inline axPen* getLightPen(void) { return mLightPen; }
+    inline axPen* getDarkPen(void) { return mDarkPen; }
+    inline axBrush* getFillBrush(void) { return mFillBrush; }
+
+    inline void setLightPen(axPen* aPen) { mLightPen = aPen; }
+    inline void setDarkPen(axPen* aPen) { mDarkPen = aPen; }
+    inline void setFillBrush(axBrush* aBrush) { mFillBrush = aBrush; }
 
     //--------------------------------------------------
     // widget handler
@@ -59,22 +77,26 @@ class wdgPanel : public axContainer
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
         // visible?
+        //if (hasFlag(wfl_DefaultDraw))
         {
-          //  _
-          // |
-          //
-          aCanvas->selectPen(mPenLight);
-          aCanvas->drawLine(mRect.x,   mRect.y,   mRect.x2(),mRect.y   );
-          aCanvas->drawLine(mRect.x,   mRect.y,   mRect.x,   mRect.y2());
-          //
-          // _|
-          //
-          aCanvas->selectPen(mPenDark);
-          aCanvas->drawLine(mRect.x2(),mRect.y,   mRect.x2(),mRect.y2());
-          aCanvas->drawLine(mRect.x,   mRect.y2(),mRect.x2(),mRect.y2());
-          // fill
+          //if (hasFlag(wfl_DefaultDraw))
+          {
+            //  _
+            // |
+            //
+            aCanvas->selectPen(mLightPen);
+            aCanvas->drawLine(mRect.x,   mRect.y,   mRect.x2(),mRect.y   );
+            aCanvas->drawLine(mRect.x,   mRect.y,   mRect.x,   mRect.y2());
+            //
+            // _|
+            //
+            aCanvas->selectPen(mDarkPen);
+            aCanvas->drawLine(mRect.x2(),mRect.y,   mRect.x2(),mRect.y2());
+            aCanvas->drawLine(mRect.x,   mRect.y2(),mRect.x2(),mRect.y2());
+            // fill
+          }
           aCanvas->clearPen();
-          aCanvas->selectBrush(mBrushFill);
+          aCanvas->selectBrush(mFillBrush);
           aCanvas->fillRect(mRect.x+1, mRect.y+1, mRect.x2()-1, mRect.y2()-1);
         }
         axContainer::doPaint(aCanvas,aRect);

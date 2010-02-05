@@ -84,6 +84,9 @@ class axPluginBase
     */
     virtual void describe(axString aEffect, axString aVendor, axString aProduct, int aVersion, unsigned int aID) {}
 
+    virtual void setupAudio(int aInputs, int aOutputs, bool aIsSynth) {}
+    virtual void setupEditor(int aWidth, int aHeight) {}
+
     /// gui?
     /**
       call this in your plugin constructor if your plugin has a gui.
@@ -228,11 +231,10 @@ class axPlugin  : public axPluginImpl,
     : axPluginImpl(audioMaster,numProgs,numParams)
       {
         mPlugFlags = aPlugFlags;
-        axInitialize(mPlugFlags);   // os/platform specific initialization
-// move to vst
-//        canProcessReplacing();      // need this for vst sdk 2.4
-//        setNumInputs(2);            // defaults to 2 inputs & outputs
-//        setNumOutputs(2);           // aka stereo effect
+        axInitialize(mPlugFlags); // os/platform specific initialization
+        //setNumInputs(2); // defaults to 2 inputs & outputs
+        //setNumOutputs(2); // aka stereo effect
+//        setup(2,2,false);
         mParameters.clear();
         mName = "?";
       }
@@ -291,8 +293,30 @@ class axPlugin  : public axPluginImpl,
           strcpy( mProgramNames[i],mProgramNames[0]);
           for (int j=0; j<AX_NUMPARAMS; j++) mPrograms[i][j] = mPrograms[0][j];
         }
-
       }
+
+    virtual void dumpPrograms(void)
+      {
+        printf("//---------- programs ----------\n");
+        for (int i=1; i<AX_NUMPROGS; i++)
+        {
+          printf("program %i: '%s'\n",i,mProgramNames[i]);
+          for (int j=0; j<AX_NUMPARAMS; j++) printf("%f ",mPrograms[i][j]);
+          printf("\n");
+        }
+        printf("//---------- end ----------\n");
+      }
+
+    virtual void randomizeProgram(float aAmount=1)
+      {
+        for (int i=0; i<AX_NUMPARAMS; i++)
+        {
+          float val = mPrograms[mCurProg][i] = mParameters[i]->doGetValue();
+          val = axRandom();
+          mParameters[i]->doSetValue( val );
+        }
+      }
+
 
     //--------------------------------------------------
     // plugin handler

@@ -20,6 +20,7 @@
 #include "wdgImgKnob.h"
 #include "wdgImage.h"
 #include "wdgLabel.h"
+#include "wdgSwitch.h"
 
 #include "axBitmapLoader.h"
 #include "images/syn_perc_back.h"
@@ -40,9 +41,6 @@ char* str_com[] = { (char*)"osc.1",(char*)"osc.2",(char*)"mix",(char*)"AM",(char
 class myPlugin : public axPlugin,
                  public axWidgetListener
 {
-
-
-
   private:
     float EVENTS[MAX_EVENTS];
     float srate,irate,irat2;
@@ -122,8 +120,10 @@ class myPlugin : public axPlugin,
         mEditor = NULL;
         is_gui_initialized = false;
         describe("syn_perc0","ccernn","axonlib example plugin",0,0);
-        hasEditor(AX_WIDTH,AX_HEIGHT);
-        isSynth();
+        setupAudio(2,2,true);
+        setupEditor(AX_WIDTH,AX_HEIGHT);
+        //hasEditor(AX_WIDTH,AX_HEIGHT);
+        //isSynth();
 
         midivel = 0;
         midifreq = 0;
@@ -184,10 +184,12 @@ class myPlugin : public axPlugin,
         appendParameter( new parFloat(  this,31,"bw",           "",  1              ));
         appendParameter( new parFloat(  this,32,"master",       "",  0.98           ));
         appendParameter( new parFloat(  this,33,"decay",        "",  100,   0, 100  ));
+
         processParameters();
         //saveProgram();
         //duplicatePrograms();
         initPrograms();
+        //dumpPrograms(); // add button to call this
       }
 
     //----------
@@ -302,6 +304,7 @@ class myPlugin : public axPlugin,
           case 31: out_bw    = f*f; break;
           case 32: master    = f*f; break;
           case 33: mas_d     = irat2 / axMax(1,f*f*f); break;
+
         }
       }
 
@@ -519,47 +522,52 @@ class myPlugin : public axPlugin,
         //wdgPanel* P;
         //EDIT->appendWidget(new wdgPanel(this,-1,NULL_RECT,wal_Client,mSrfBack));
 
-        panel->appendWidget(            new wdgImage(this,-1,axRect(0,0,445,275),wal_None,/*NULL,*/ mSrfBack));
-        panel->appendWidget(midilabel = new wdgLabel(this,-1,axRect(366,205,51,14),wal_None,/*NULL,*/buf,AX_GREY_LIGHT,tal_Right)); // midi-label
+        panel->appendWidget(            new wdgImage(this,-1,axRect(0,0,445,275),wal_None,mSrfBack));
+        panel->appendWidget(midilabel = new wdgLabel(this,-1,axRect(366,205,51,14),wal_None,buf,AX_GREY_LIGHT,tal_Right)); // midi-label
 
-        panel->appendWidget(new wdgImgKnob(this,   0,axRect( 366,183,  20, 20 ),wal_None,/*mParameters[ 0],*/ 65, mSrfKnob )); // midi
-        panel->appendWidget(new wdgImgKnob(this,   1,axRect(   9, 45,  32, 32 ),wal_None,/*mParameters[ 1],*/  8, mSrfKnob_osc ));
-        panel->appendWidget(new wdgImgKnob(this,   2,axRect(  38,102,  20, 20 ),wal_None,/*mParameters[ 2],*/ 65, mSrfKnob ));
-        panel->appendWidget(new wdgImgKnob(this,   3,axRect(  62,102,  20, 20 ),wal_None,/*mParameters[ 3],*/ 65, mSrfKnob ));
-        panel->appendWidget(new wdgImgKnob(this,   4,axRect(  86,102,  20, 20 ),wal_None,/*mParameters[ 4],*/ 65, mSrfKnob ));
-        panel->appendWidget(new wdgImgKnob(this,   5,axRect(  38,126,  20, 20 ),wal_None,/*mParameters[ 5],*/ 65, mSrfKnob ));
-        panel->appendWidget(new wdgImgKnob(this,   6,axRect(  62,126,  20, 20 ),wal_None,/*mParameters[ 6],*/ 65, mSrfKnob ));
-        panel->appendWidget(new wdgImgKnob(this,   7,axRect(  86,126,  20, 20 ),wal_None,/*mParameters[ 7],*/ 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,   0,axRect( 366,183,  20, 20 ),wal_None, 65, mSrfKnob )); // midi
+        panel->appendWidget(new wdgImgKnob(this,   1,axRect(   9, 45,  32, 32 ),wal_None,  8, mSrfKnob_osc ));
+        panel->appendWidget(new wdgImgKnob(this,   2,axRect(  38,102,  20, 20 ),wal_None, 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,   3,axRect(  62,102,  20, 20 ),wal_None, 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,   4,axRect(  86,102,  20, 20 ),wal_None, 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,   5,axRect(  38,126,  20, 20 ),wal_None, 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,   6,axRect(  62,126,  20, 20 ),wal_None, 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,   7,axRect(  86,126,  20, 20 ),wal_None, 65, mSrfKnob ));
 
-        panel->appendWidget(new wdgImgKnob(this,   8,axRect(   9,157,  32, 32 ),wal_None,/*mParameters[ 8],*/  5, mSrfKnob_flt ));
-        panel->appendWidget(new wdgImgKnob(this,   9,axRect(  38,214,  20, 20 ),wal_None,/*mParameters[ 9],*/ 65, mSrfKnob ));
-        panel->appendWidget(new wdgImgKnob(this,  10,axRect(  62,214,  20, 20 ),wal_None,/*mParameters[10],*/ 65, mSrfKnob ));
-        panel->appendWidget(new wdgImgKnob(this,  11,axRect(  86,214,  20, 20 ),wal_None,/*mParameters[11],*/ 65, mSrfKnob ));
-        panel->appendWidget(new wdgImgKnob(this,  12,axRect(  38,238,  20, 20 ),wal_None,/*mParameters[12],*/ 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,   8,axRect(   9,157,  32, 32 ),wal_None,  5, mSrfKnob_flt ));
+        panel->appendWidget(new wdgImgKnob(this,   9,axRect(  38,214,  20, 20 ),wal_None, 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,  10,axRect(  62,214,  20, 20 ),wal_None, 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,  11,axRect(  86,214,  20, 20 ),wal_None, 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,  12,axRect(  38,238,  20, 20 ),wal_None, 65, mSrfKnob ));
 
-        panel->appendWidget(new wdgImgKnob(this,  13,axRect( 137, 45,  32, 32 ),wal_None,/*mParameters[13],*/  8, mSrfKnob_osc ));
-        panel->appendWidget(new wdgImgKnob(this,  14,axRect( 166,102,  20, 20 ),wal_None,/*mParameters[14],*/ 65, mSrfKnob ));
-        panel->appendWidget(new wdgImgKnob(this,  15,axRect( 190,102,  20, 20 ),wal_None,/*mParameters[15],*/ 65, mSrfKnob ));
-        panel->appendWidget(new wdgImgKnob(this,  16,axRect( 214,102,  20, 20 ),wal_None,/*mParameters[16],*/ 65, mSrfKnob ));
-        panel->appendWidget(new wdgImgKnob(this,  17,axRect( 166,126,  20, 20 ),wal_None,/*mParameters[17],*/ 65, mSrfKnob ));
-        panel->appendWidget(new wdgImgKnob(this,  18,axRect( 190,126,  20, 20 ),wal_None,/*mParameters[18],*/ 65, mSrfKnob ));
-        panel->appendWidget(new wdgImgKnob(this,  19,axRect( 214,126,  20, 20 ),wal_None,/*mParameters[19],*/ 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,  13,axRect( 137, 45,  32, 32 ),wal_None,  8, mSrfKnob_osc ));
+        panel->appendWidget(new wdgImgKnob(this,  14,axRect( 166,102,  20, 20 ),wal_None, 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,  15,axRect( 190,102,  20, 20 ),wal_None, 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,  16,axRect( 214,102,  20, 20 ),wal_None, 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,  17,axRect( 166,126,  20, 20 ),wal_None, 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,  18,axRect( 190,126,  20, 20 ),wal_None, 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,  19,axRect( 214,126,  20, 20 ),wal_None, 65, mSrfKnob ));
 
-        panel->appendWidget(new wdgImgKnob(this,  20,axRect( 137,157,  32, 32 ),wal_None,/*mParameters[20],*/  5, mSrfKnob_flt ));
-        panel->appendWidget(new wdgImgKnob(this,  21,axRect( 166,214,  20, 20 ),wal_None,/*mParameters[21],*/ 65, mSrfKnob ));
-        panel->appendWidget(new wdgImgKnob(this,  22,axRect( 190,214,  20, 20 ),wal_None,/*mParameters[22],*/ 65, mSrfKnob ));
-        panel->appendWidget(new wdgImgKnob(this,  23,axRect( 214,214,  20, 20 ),wal_None,/*mParameters[23],*/ 65, mSrfKnob ));
-        panel->appendWidget(new wdgImgKnob(this,  24,axRect( 166,238,  20, 20 ),wal_None,/*mParameters[24],*/ 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,  20,axRect( 137,157,  32, 32 ),wal_None,  5, mSrfKnob_flt ));
+        panel->appendWidget(new wdgImgKnob(this,  21,axRect( 166,214,  20, 20 ),wal_None, 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,  22,axRect( 190,214,  20, 20 ),wal_None, 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,  23,axRect( 214,214,  20, 20 ),wal_None, 65, mSrfKnob ));
+        panel->appendWidget(new wdgImgKnob(this,  24,axRect( 166,238,  20, 20 ),wal_None, 65, mSrfKnob ));
 
-        panel->appendWidget(new wdgImgKnob(this,  25,axRect( 265, 45,  32, 32 ),wal_None,/*mParameters[25],*/  5, mSrfKnob_com )); // combine
-        panel->appendWidget(new wdgImgKnob(this,  26,axRect( 366,158,  20, 20 ),wal_None,/*mParameters[26],*/ 65, mSrfKnob )); // x-click
-        panel->appendWidget(new wdgImgKnob(this,  27,axRect( 278, 94,  20, 20 ),wal_None,/*mParameters[27],*/ 65, mSrfKnob )); // boost
-        panel->appendWidget(new wdgImgKnob(this,  28,axRect( 278,118,  20, 20 ),wal_None,/*mParameters[28],*/ 65, mSrfKnob )); // clip
-        panel->appendWidget(new wdgImgKnob(this,  29,axRect( 265,157,  32, 32 ),wal_None,/*mParameters[29],*/  5, mSrfKnob_flt )); // flt
-        panel->appendWidget(new wdgImgKnob(this,  30,axRect( 278,198,  20, 20 ),wal_None,/*mParameters[30],*/ 65, mSrfKnob )); // freq
-        panel->appendWidget(new wdgImgKnob(this,  31,axRect( 278,222,  20, 20 ),wal_None,/*mParameters[31],*/ 65, mSrfKnob )); // bw
-        panel->appendWidget(new wdgImgKnob(this,  32,axRect( 366, 94,  20, 20 ),wal_None,/*mParameters[32],*/ 65, mSrfKnob )); // master
-        panel->appendWidget(new wdgImgKnob(this,  33,axRect( 366,118,  20, 20 ),wal_None,/*mParameters[33],*/ 65, mSrfKnob )); // decay
+        panel->appendWidget(new wdgImgKnob(this,  25,axRect( 265, 45,  32, 32 ),wal_None,  5, mSrfKnob_com )); // combine
+        panel->appendWidget(new wdgImgKnob(this,  26,axRect( 366,158,  20, 20 ),wal_None, 65, mSrfKnob )); // x-click
+        panel->appendWidget(new wdgImgKnob(this,  27,axRect( 278, 94,  20, 20 ),wal_None, 65, mSrfKnob )); // boost
+        panel->appendWidget(new wdgImgKnob(this,  28,axRect( 278,118,  20, 20 ),wal_None, 65, mSrfKnob )); // clip
+        panel->appendWidget(new wdgImgKnob(this,  29,axRect( 265,157,  32, 32 ),wal_None,  5, mSrfKnob_flt )); // flt
+        panel->appendWidget(new wdgImgKnob(this,  30,axRect( 278,198,  20, 20 ),wal_None, 65, mSrfKnob )); // freq
+        panel->appendWidget(new wdgImgKnob(this,  31,axRect( 278,222,  20, 20 ),wal_None, 65, mSrfKnob )); // bw
+        panel->appendWidget(new wdgImgKnob(this,  32,axRect( 366, 94,  20, 20 ),wal_None, 65, mSrfKnob )); // master
+        panel->appendWidget(new wdgImgKnob(this,  33,axRect( 366,118,  20, 20 ),wal_None, 65, mSrfKnob )); // decay
+
+        wdgSwitch* sw;
+        panel->appendWidget( sw = new wdgSwitch( this, 333,axRect(0,0, 20,20), wal_None )); // randomize
+        sw->setup("r","r");
+
 
         for (int i=0;i<AX_NUMPARAMS; i++) EDIT->connect( panel->getWidget(i+2), mParameters[i] );
 
@@ -626,6 +634,12 @@ class myPlugin : public axPlugin,
             pMidi->doGetDisplay(buf);
             midilabel->setText(buf);
             mEditor->redrawWidget(midilabel);
+          }
+          if (aWidget->mID==333)
+          {
+            float n = mParameters[0]->doGetValue();
+            randomizeProgram();
+            mParameters[0]->doSetValue(n);
           }
         }
       }

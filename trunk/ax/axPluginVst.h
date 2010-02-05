@@ -63,6 +63,7 @@ struct axVstEvents
 class axPluginVst :  public AudioEffectX,
                      public axPluginBase
 {
+  //TODO: privatize/protect things
   public:
   //private:
     bool          mEditorIsOpen; // axEditor reads this
@@ -118,8 +119,8 @@ class axPluginVst :  public AudioEffectX,
         for( int i=0; i<MAX_MIDI_SEND; i++ ) mMidiEventList.events[i] = &mMidiEvents[i];
         mEditorIsOpen = false;
         canProcessReplacing();      // need this for vst sdk 2.4
-        setNumInputs(2);            // defaults to 2 inputs & outputs
-        setNumOutputs(2);           // aka stereo effect
+//        setNumInputs(2);            // defaults to 2 inputs & outputs
+//        setNumOutputs(2);           // aka stereo effect
       }
 
     virtual ~axPluginVst()
@@ -142,6 +143,21 @@ class axPluginVst :  public AudioEffectX,
         mVendorVersion  = aVersion;
         setUniqueID(aID);
       }
+
+    //----------
+
+    virtual void setupAudio(int aInputs=2, int aOutputs=2, bool aIsSynth=false)
+      {
+        setNumInputs(aInputs);            // defaults to 2 inputs & outputs
+        setNumOutputs(aOutputs);           // aka stereo effect
+        isSynth(aIsSynth);
+      }
+
+    virtual void setupEditor(int aWidth, int aHeight)
+      {
+        hasEditor(aWidth,aHeight);
+      }
+
 
     //----------------------------------------
     // AudioEffectX
@@ -257,16 +273,19 @@ class axPluginVst :  public AudioEffectX,
     //TODO: the programs/banks stuff is too primitive
     // chunks?
 
-    virtual void setProgramName(char* name)
+    // overloaded by axPlugin
+    virtual void setProgram(VstInt32 program)
       {
-        strcpy( mProgramNames[mCurProg], name );
+        //for (int i=0; i<AX_NUMPARAMS; i++) mPrograms[mCurProg][i] = mParameters[i]->doGetValue();
+        mCurProg = program;
+        //for (int i=0; i<AX_NUMPARAMS; i++) mParameters[i]->doSetValue( mPrograms[mCurProg][i] );
       }
 
     //----------
 
-    virtual void  getProgramName(char* name)
+    virtual void setProgramName(char* name)
       {
-        strcpy(name,mProgramNames[mCurProg]);
+        strcpy( mProgramNames[mCurProg], name );
       }
 
     //----------
@@ -278,11 +297,9 @@ class axPluginVst :  public AudioEffectX,
 
     //----------
 
-    virtual void setProgram(VstInt32 program)
+    virtual void  getProgramName(char* name)
       {
-        //for (int i=0; i<AX_NUMPARAMS; i++) mPrograms[mCurProg][i] = mParameters[i]->doGetValue();
-        mCurProg = program;
-        //for (int i=0; i<AX_NUMPARAMS; i++) mParameters[i]->doSetValue( mPrograms[mCurProg][i] );
+        strcpy(name,mProgramNames[mCurProg]);
       }
 
     //----------------------------------------------------------------------
