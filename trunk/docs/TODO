@@ -16,13 +16,14 @@
   use AX_LINUX, AX_WIN32, etc, everywhere
   define in f.ex axGlobals, or axDefines...
 
-- axDebug
-  something better if you don't define AX_DEBUG
-  (currently TRACE is being redefined to do_nothing(...)
-  asserts?
-
 - axMutex
   lock down things that might be dangerous if accessed by two (or more) simultaneous threads
+
+- axDebug
+  default win32 debug method  
+
+- axMath
+  doxy: a partial performance table relative to compiler flags  
 
 // ----- plugin -----
 
