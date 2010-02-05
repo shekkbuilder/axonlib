@@ -23,22 +23,12 @@
 
 // ---------------------------------------------------------------------------
 // NOTES:
-// apparently the following set of compiler flags is pretty much 'owning' some
-// of the more basic inline asm optimizations:
-// -O3 -msse -mfpmath=sse -funroll-loops
-// and renders them times slower in comparison..
-// furthermore, writing the exact same sse optimizations as the gas generated
-// code (-S) as inline, still performs slower.
-// this leaves a simplified conclusion that its unlikely that
-// inline assembly can outperform the gas generated code with the given set
-// of compiler flags.
-// well, unless some sort of an approximation/shortcut is in action:
-// for example the axLog2f outperforms the log2f 6 times.
-// so this header needs a bit of general rework.. and more testing to check
-// what is redundant and what is genuine.
+// the empty inline asm declarateion: __asm__ __volatile__ ("":::);
+// may look absurd but i've discovered that the inline asm that follows such,
+// returns proper values (is 'volatile') yet execution times are much faster.
+// we may as well leave it this way.
 //
-// overall the GCC levels of optimization are quite impressive!
-// the -ffast-math is perhaps the biggest booster but it reduces accuracy.
+// this file requires a short performance table (to explain compiler flags)
 // ---------------------------------------------------------------------------
 
 #ifndef axMath_included
@@ -102,6 +92,7 @@ inline float axAbs(const float value)
 */
 inline float axNeg(float value)
 {
+  __asm__ __volatile__ ("":::);
   __asm__
   (
     "xorl $0x80000000, %0;"    : "=r" (value)    : "0" (value)
@@ -268,6 +259,7 @@ inline float axRandom(const float aLow, const float aHigh)
  */
 inline float axLogf(float value)
 {
+  __asm__ __volatile__ ("":::);
   __asm__
   (
     "fld %0;"    "fldln2;"    "fxch;"    "fyl2x;"    "fst %0;"
@@ -284,11 +276,42 @@ inline float axLogf(float value)
  */
 inline float axLog2f(float value)
 {
+  __asm__ __volatile__ ("":::);
   __asm__
   (
     "fld1;"    "fld %0;"    "fyl2x;"    "fst %0;"
     : "=m" (value)
     : "m" (value)
+  );
+  return value;
+}
+
+/**
+ * fast approximation of the squre root function (fpu)
+ * @param[in] value float
+ * @return value float
+ */
+inline float axSqrtf(float value)
+{
+  __asm__ __volatile__ ("":::);
+  __asm__
+  (
+    "fsqrt;"    : "=t" (value)    : "0" (value)
+  );
+  return value;
+}
+
+/**
+ * fast approximation of the invert squre root function (fpu)
+ * @param[in] value float
+ * @return value float
+ */
+inline float axInvSqrtf(float value)
+{
+  __asm__ __volatile__ ("":::);
+  __asm__
+  (
+    "fsqrt;"  "fld1;"   "fdivp;"    : "=t" (value)    : "0" (value)
   );
   return value;
 }
@@ -300,6 +323,7 @@ inline float axLog2f(float value)
  */
 inline float axSinf(float value)
 {
+  __asm__ __volatile__ ("":::);
   __asm__
   (
     "fsin;"    : "=t" (value)    : "0" (value)
@@ -314,6 +338,7 @@ inline float axSinf(float value)
  */
 inline float axCosf(float value)
 {
+  __asm__ __volatile__ ("":::);
   __asm__
   (
     "fcos;"    : "=t" (value)    : "0" (value)
@@ -328,6 +353,7 @@ inline float axCosf(float value)
  */
 inline float axTanf(float value)
 {
+  __asm__ __volatile__ ("":::);
   __asm__
   (
     "fptan;"    : "=t" (value)    : "0" (value)
@@ -344,6 +370,7 @@ inline float axAsinf(float value)
 {
   // asin(x)=atan(sqrt(x*x/(1-x*x)))
   float tmp;
+  __asm__ __volatile__ ("":::);
   __asm__
   (
     "fld %0;"    "fld %0;"    "fmulp;"    "fst %1;"    "fld1;"    "fsubp;"
@@ -364,6 +391,7 @@ inline float axAcosf(float value)
 {
   // acos(x) = atan(sqrt((1-x*x)/(x*x)))
   float tmp;
+  __asm__ __volatile__ ("":::);
   __asm__
   (
     "fld %0;"    "fld %0;"    "fmulp;"    "fst %1;"    "fld1;"    "fsubp;"
@@ -382,6 +410,7 @@ inline float axAcosf(float value)
  */
 inline float axAtanf(float value)
 {
+  __asm__ __volatile__ ("":::);
   __asm__
   (
     "fld %0;"    "fld1;"    "fpatan;"    "fst %0;"
@@ -399,6 +428,7 @@ inline float axAtanf(float value)
  */
 inline float axNrt(float value, long root)
 {
+  __asm__ __volatile__ ("":::);
   __asm__
   (
     "subl $0x3f800000, %0;"    "subl $1, %2;"
@@ -416,6 +446,7 @@ inline float axNrt(float value, long root)
  */
 inline float axSqrt(float value)
 {
+  __asm__ __volatile__ ("":::);
   __asm__
   (
     "subl $0x3f800000, %0;"    "shrl $1, %0;"    "addl $0x3f800000, %0;"

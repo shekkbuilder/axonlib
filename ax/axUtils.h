@@ -32,7 +32,8 @@
  */
 inline unsigned int axBitReverse(unsigned int x)
 {
-	__asm__ volatile
+	__asm__ __volatile__ ("":::);
+  __asm__
 	(
 		"movl %0, %%eax;"		"andl $0xaaaaaaaa, %%eax;"		"shrl $1, %%eax;"
 		"andl $0x55555555, %0;"		"shll $1, %0;"		"orl %%eax, %0;"

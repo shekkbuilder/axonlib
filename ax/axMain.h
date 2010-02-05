@@ -414,6 +414,8 @@
 //
 //----------------------------------------------------------------------
 
+#include "axDebug.h"
+
 #ifdef AX_PLUGIN
 
 //#include "axHostVst.h"
@@ -443,7 +445,7 @@
       AX_PLUGIN* plugin = new AX_PLUGIN(audioMaster,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
       //axHostVst* host = new axHostVst(audioMaster);
       //AX_PLUGIN* plugin = new AX_PLUGIN(host,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
-      if (!plugin) return 0;
+      if (!plugin) return 0;      
       return (int)plugin->getAeffect();
     }
 
