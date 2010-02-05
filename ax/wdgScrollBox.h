@@ -35,87 +35,94 @@
 #include "axContainer.h"
 #include "wdgScroller.h"
 
-//class wdgGroupHeader : public wdgPanel
-//{
-//  public:
-//
-//    wdgGroupHeader(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment)
-//    : wdgPanel(aListener,aID,aRect,aAlignment)
-//      {}
-//
-//    virtual void doMouseDown(int aX, int aY, int aB)
-//      {
-//        mListener->onChange(this);
-//      }
-//};
-
 class wdgScrollBox : public axContainer
 {
+  //private:
+  //  axContainer*  w_Container;
   protected:
-  //public:
-    //wdgPanel*     wTitleBar;
+    //wdgPanel*     wContainer;
     axContainer*  wContainer;
+    //axContainer*  w_Container;
     wdgScroller*  wScrollBar;
-    //wdgScroller   *scr;
-    //float prevscroll;
-    float mPrevScroll;
-    float mVisible;
-    int mScrolledX,mScrolledY;
+    int           mScrolledX; // how much we've already scrolled
+    int           mScrolledY; // -_"--
+    float         mVisible;   // how much of the content is visible (calculated in doRealign)
 
   public:
 
     wdgScrollBox(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None)
     : axContainer(aListener, aID, aRect, aAlignment)
       {
-        axContainer::appendWidget( wScrollBar = new wdgScroller(this,-1,axRect(0,0,10,0),wal_Right ) );
+        axContainer::appendWidget( wScrollBar  = new wdgScroller(this,-1,axRect(0,0,10,0),wal_Right ) );
         axContainer::appendWidget( wContainer = new axContainer(this,-1,NULL_RECT,       wal_Client ) );
-        //wContainer->setBackground(true, axColor(112,112,112) );
-        mPrevScroll = 0;
-        mVisible = 1;
+        //wContainer = w_Container;
+        doRealign();
         wScrollBar->setFlag(wfl_Vertical);
-        wScrollBar->setThumbSize(0.25);
+        wScrollBar->setThumbSize(1);
         mScrolledX = mScrolledY = 0;
-
+        mVisible = 1;
       }
 
     //virtual ~wdgScrollBox()
     //  {
     //  }
 
-    //----------
+    //--------------------------------------------------
+
+    // accessors
 
     inline axContainer* getContainer(void) { return wContainer; }
     inline wdgScroller* getScrollBar(void) { return wScrollBar; }
 
-//    void recalc_scroll(void)
-//      {
-//        int over = mContent.h - mRect.h;
-//        if (over>0)
-//        {
-//          float visi = (float)mRect.h / (float)mMaxY;
-//          TRACE("over: %i\n",over);
-//          TRACE("visi: %f\n",visi);
-//          wScrollBar->setThumbSize( visi );
-//        }
-//        else
-//        {
-//          wScrollBar->doSetValue(0);
-//          wScrollBar->setThumbSize(1);
-//        }
-//      }
+    //--------------------------------------------------
 
-    //----------
-
-    virtual void appendWidget(axWidget* aWidget/*, bool aRealign=false*/)
+    void unscroll(void)
       {
-        wContainer->appendWidget(aWidget);
+        doScroll(-mScrolledX,-mScrolledY);
+        wScrollBar->doSetValue(0);
       }
 
     //----------
 
+    void calc_thumbsize(void)
+      {
+        float height  = (float)wContainer->getRect().h;       // size of container
+        float content = (float)wContainer->getContent().h;    // size of content
+        if (content>height)
+        {
+          mVisible = height / content;
+          wScrollBar->setThumbSize(mVisible);
+        }
+        else
+        {
+          mVisible = 1;
+          wScrollBar->setThumbSize(1);
+        }
+      }
+
+    //----------
+
+    void set_scrollpos(float x, float y)
+      {
+        float scrollable = (float)wContainer->getContent().h * (1-mVisible);
+        int yscroll = (int)(scrollable*y);
+        int dy = yscroll - mScrolledY;
+        doScroll(0,dy);
+      }
+
+    //--------------------------------------------------
+
+    virtual void appendWidget(axWidget* aWidget)
+      {
+        wContainer->appendWidget(aWidget);
+      }
+
+    //--------------------------------------------------
+    //
+    //--------------------------------------------------
+
     virtual void doScroll(int dX, int dY)
       {
-        //for( int i=0;i<wContainer->mWidgets.size(); i++ )
         for( int i=0;i<wContainer->numWidgets(); i++ )
         {
           axWidget* wdg = wContainer->getWidget(i);
@@ -125,78 +132,44 @@ class wdgScrollBox : public axContainer
         mScrolledY += dY;
       }
 
-    void unscroll(void)
-      {
-        doScroll(-mScrolledX,-mScrolledY);
-        mScrolledX = 0;
-        mScrolledY = 0;
-      }
+    //----------
 
-    //TODO: update scroll pos
     virtual void doResize(int aW, int aH)
       {
-        //TRACE("wdgScrollBox.doResize\n");
-        mVisible = 1;
-        //TRACE("- pre doResize:  mContent: %i,%i,%i,%i\n",wContainer->mContent.x,wContainer->mContent.y,wContainer->mContent.w,wContainer->mContent.h);
-        unscroll();
         axContainer::doResize(aW,aH);
-        //TRACE("- post doResize:  mContent: %i,%i,%i,%i\n",wContainer->mContent.x,wContainer->mContent.y,wContainer->mContent.w,wContainer->mContent.h);
-        float height = (float)wContainer->getRect().h;
-        float content = (float) wContainer->getContent().h;
-        //TRACE("- height : %f\n",height);
-        //TRACE("- content: %f\n",content);
-        if (content>height)
-        {
-          mVisible = height / content;
-          //TRACE("visible: %f (thumbsize)\n",mVisible);
-          wScrollBar->setThumbSize(mVisible);
-            //
-            float scrollable = (float)content * (1-mVisible);
-            float val = wScrollBar->doGetValue();
-            int i = (int)(scrollable*val);
-            int dy = i;// - mPrevScroll;
-            doScroll(0,dy);
-            mPrevScroll = dy;
-          //
-        }
-        else
-        {
-          wScrollBar->doSetValue(0);
-          mScrolledX = 0;
-          mScrolledY = 0;
-          wScrollBar->setThumbSize( 1 );
-        }
-        //mListener->onChange(wScrollBar);
+        calc_thumbsize();
       }
 
     //----------
+
+    virtual void doRealign(void)
+      {
+        float y = wScrollBar->doGetValue();
+        //trace("v: "<<v);
+        unscroll();
+        axContainer::doRealign();
+        calc_thumbsize();
+        set_scrollpos(0,y);
+        wScrollBar->doSetValue(y);
+      }
+
+    //--------------------------------------------------
+    //
+    //--------------------------------------------------
 
     virtual void onChange(axWidget* aWidget)
       {
-        //TRACE("wdgScrollBox.onChange\n");
-//        int id = aWidget->mID;
-        float val = aWidget->doGetValue();
-//        if (id==0)
         if (aWidget==wScrollBar)
         {
-          //float scrollable = (float)wScrollBar->mRect.h * (1-mVisible);
+          float val = aWidget->doGetValue();
           float scrollable = (float)wContainer->getContent().h * (1-mVisible);
-          //TRACE("- scrollable: %f\n",scrollable);
           int i = (int)(scrollable*val);
-          //TRACE("- pixels to scroll: %i\n",i);
-          int dy = i - (int)mPrevScroll;
+          int dy = i - mScrolledY;
           doScroll(0,dy);
-          mListener->onChange(wContainer);
-          mPrevScroll = i;
+          mListener->onChange(this);
         }
         mListener->onChange(aWidget);
-        //mListener->onResize(this,0,0);
       }
-
-    //----------
-
-
-
 
 };
 

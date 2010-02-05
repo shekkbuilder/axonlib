@@ -51,11 +51,11 @@
 
   #ifdef WIN32
     /**
-     * # creates a winapi debugger window    
+     * # creates a winapi debugger window
      */
     #include <windows.h>
     #include <sstream>
-    #include <stdarg.h>    
+    #include <stdarg.h>
     // ----------------
     using namespace std;
     const unsigned int axDtext_id = 0x3039;
@@ -63,9 +63,9 @@
     const unsigned int axDwinH = 300;
     ostringstream oss;
     HWND axDdialog;
-    HWND axDtext;    
+    HWND axDtext;
     MSG axDmsg;
-    bool axDfirstopen = false;    
+    bool axDfirstopen = false;
     // ----------------
     /// message listener:
     bool WINAPI axDmsglistner(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -81,7 +81,7 @@
       }
       return false;
     }
-    /// create window after first call   
+    /// create window after first call
     void axDwin_create(void)
     {
       if (!axDfirstopen)
@@ -100,7 +100,7 @@
           WS_HSCROLL|ES_MULTILINE|ES_WANTRETURN|ES_AUTOHSCROLL|ES_AUTOVSCROLL,
           0, 0, axDwinW-5, axDwinH-25, axDdialog, (HMENU)axDtext_id, NULL, NULL
         );
-        /// attach listener     
+        /// attach listener
         SetWindowLong(axDdialog, DWL_DLGPROC, (long)axDmsglistner);
         while(GetMessage(&axDmsg,NULL,0,0))
         {
@@ -111,12 +111,12 @@
       }
     }
     // ----------------
-    /** # usage:    
+    /** # usage:
      * debugw("myvar = ", myvar);
-     * debugw(myvar, " <- message");    
+     * debugw(myvar, " <- message");
      * debugw("message", "");
      * debugw(myvar, "");
-     */        
+     */
     template <typename T0, typename T1>
     void wdebug(const T0 p0, const T1 p1)
     {
@@ -130,10 +130,11 @@
       SendMessage(axDtext, EM_REPLACESEL, (WPARAM)FALSE, (LPARAM)text);
     }
     // ----------------
-    // where to put    
-    
+    // where to put
+
   #else
-    #define wdebug(x,x) ((void)0)
+    //#define wdebug(x,x) ((void)0)
+    #define wdebug(x,y) ((void)0)
   #endif
 #else
   #define NDEBUG

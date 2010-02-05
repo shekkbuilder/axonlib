@@ -6,6 +6,7 @@
 #include "wdgPanel.h"
 #include "wdgImage.h"
 #include "wdgImgSwitch.h"
+#include "wdgTextBox.h"
 
 #include "axBitmap.h"
 #include "axSurface.h"
@@ -17,19 +18,22 @@
 class myWin : public axWindow
 {
   private:
-    wdgPanel*   panel;
-    axSurface* srf;
-    axBitmap*   bmp;
-    axSurface* srf2;
-    axBitmap*   bmp2;
-    wdgImgSwitch* sw1;
-    wdgImage* im1;
+    axBitmap      *bmp, *bmp2;
+    axSurface     *srf, *srf2;
+    wdgPanel      *panel;
+    wdgImgSwitch  *sw1;
+    wdgImage      *im1;
+    wdgTextBox    *txt;
+
+    int counter;
 
   public:
 
     myWin(int aID, axRect aRect, int aFlags=0)
     : axWindow("test1_win",this,aID,aRect,aFlags)
       {
+        counter = 0;
+
         panel = new wdgPanel(this,-1,NULL_RECT,wal_Client);
         appendWidget(panel);
 
@@ -58,8 +62,9 @@ class myWin : public axWindow
 
         //----------
 
-        panel->appendWidget( im1 = new wdgImage(    this,0,axRect(100,50,256,256),wal_None,srf) );
-        panel->appendWidget( sw1 = new wdgImgSwitch(this,0,axRect(130,80,30,30),wal_None, 0, srf2) );
+        panel->appendWidget( im1 = new wdgImage(    this,-1,axRect(10, 10,256,256),wal_None,  srf) );
+        panel->appendWidget( sw1 = new wdgImgSwitch(this, 0,axRect(40, 40,30, 30 ),wal_None,  0, srf2) );
+        panel->appendWidget( txt = new wdgTextBox(  this, 1,axRect(300,10,150,256),wal_None   ) );
         doRealign();
       }
 
@@ -75,6 +80,18 @@ class myWin : public axWindow
 
     virtual void onChange(axWidget* aWidget)
       {
+        if (aWidget->mID==0) // button
+        {
+          char* buf = new char[32];
+          sprintf(buf,"click #%i",counter);
+          counter++;
+          txt->appendText(buf);
+
+//          txt->unscroll();
+//          txt->appendText(buf);
+//          txt->doRealign();
+//          redrawWidget(txt);
+        }
         redrawWidget(aWidget);
       }
 
