@@ -372,6 +372,7 @@ class axContainer : public axWidget,
             mContent.combine( wdg->getRect() ); // keep track of outer boundary
             //wdg->doRealign();
           } //for widgets
+          mContent.add(0,0,mMarginX,mMarginY);
         } //wfl_Align
       }
 
