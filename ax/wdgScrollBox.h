@@ -74,6 +74,14 @@ class wdgScrollBox : public axContainer
     inline axContainer* getContainer(void) { return wContainer; }
     inline wdgScroller* getScrollBar(void) { return wScrollBar; }
 
+    inline void setContainer(axContainer* c)
+    {
+      delete wContainer;
+      wContainer = c;
+      mWidgets[1] = c;
+      doRealign();
+    }
+
     //--------------------------------------------------
 
     void unscroll(void)
@@ -145,7 +153,6 @@ class wdgScrollBox : public axContainer
     virtual void doRealign(void)
       {
         float y = wScrollBar->doGetValue();
-        //trace("v: "<<v);
         unscroll();
         axContainer::doRealign();
         calc_thumbsize();

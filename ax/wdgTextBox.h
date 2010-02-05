@@ -49,8 +49,13 @@ class wdgTextBox : public wdgScrollBox
       }
     virtual void appendText(axString aText)
       {
-        //unscroll();
-        appendWidget( new wdgLabel(this,-1,axRect(0,0,0,16),wal_Top,aText,AX_GREY_LIGHT,tal_Left) );
+        appendWidget( new wdgLabel(this,-1,axRect(0,0,0,16),wal_Top,aText,AX_BLACK,tal_Left) );
+        doRealign();
+        mListener->onChange(this);
+      }
+    virtual void clearText(void)
+      {
+        wContainer->deleteWidgets();
         doRealign();
         mListener->onChange(this);
       }
