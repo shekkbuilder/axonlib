@@ -51,8 +51,23 @@
 
   #ifdef WIN32
     /**
-     * # creates a winapi debugger window
+     * creates a winapi debugger window (unsafe)
      */
+    
+    /* 
+     NOTES:
+     currently the only debug solution on win32 (?) as google 'says' very little
+     on the subject and the performed tests were not succesful.
+     
+     ..better than nothing.
+     
+     currently works only under reaper, but still crashes the app when plugin is unloaded.
+     the debug windows seems to be shared between axonlib plugins (unsafe).
+     should be gui triggered, since when hosts are scanning for plugins they
+     trigger the parameter process for example and the window pops up and causes a 'halt',
+     but what about no-gui plugins, in general it should be activated only on user input.     
+    */
+    
     #include <windows.h>
     #include <sstream>
     #include <stdarg.h>
@@ -65,49 +80,54 @@
     HWND axDdialog;
     HWND axDtext;
     MSG axDmsg;
-    bool axDfirstopen = false;
+    bool axDfirstopen = true;    
     // ----------------
-    /// message listener:
+    // message listener:
     bool WINAPI axDmsglistner(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
+      if(message == WM_DESTROY)
+      { 
+        DestroyWindow(axDdialog);
+      }
       if(message == WM_CLOSE)
       {
-        PostQuitMessage(0);
-        /*
+        axDfirstopen = true;
+        DestroyWindow(axDdialog);
+        /*        
+        // clear window with the (x) control 
         LPCTSTR text = "# history cleared\r\n";
         SendMessage(axDtext, EM_SETSEL, 0, -1);
         SendMessage(axDtext, EM_REPLACESEL, (WPARAM)true, (LPARAM)text);
-        */
+        */        
       }
       return false;
     }
-    /// create window after first call
+    // create window after first call
     void axDwin_create(void)
     {
-      if (!axDfirstopen)
-      {
-        /// attach parent window
-        axDdialog = CreateWindowEx
-        (
-        	0, WC_DIALOG, "axDebug", WS_OVERLAPPED|WS_CAPTION|WS_SYSMENU|
-          WS_MINIMIZEBOX|WS_EX_TOPMOST|WS_EX_STATICEDGE,
-        	400, 400, axDwinW, axDwinH, NULL, NULL, NULL, NULL
-        );
-        /// create edit control
-        axDtext = CreateWindow
-        (
-          "edit", "# init\r\n", WS_VISIBLE|WS_CHILD|WS_BORDER|WS_VSCROLL|
-          WS_HSCROLL|ES_MULTILINE|ES_WANTRETURN|ES_AUTOHSCROLL|ES_AUTOVSCROLL,
-          0, 0, axDwinW-5, axDwinH-25, axDdialog, (HMENU)axDtext_id, NULL, NULL
-        );
-        /// attach listener
-        SetWindowLong(axDdialog, DWL_DLGPROC, (long)axDmsglistner);
-        while(GetMessage(&axDmsg,NULL,0,0))
-        {
-        	TranslateMessage(&axDmsg);
-        	DispatchMessage(&axDmsg);
-        }
       axDfirstopen = false;
+      // attach parent window
+      axDdialog = CreateWindowEx
+      (
+      	0, WC_DIALOG, "axDebug", WM_KILLFOCUS|WS_OVERLAPPED|WS_CAPTION|WS_SYSMENU|
+        WS_MINIMIZEBOX|WS_EX_TOPMOST|WS_VISIBLE|WS_EX_STATICEDGE,
+      	400, 400, axDwinW, axDwinH, NULL, NULL, NULL, NULL
+      );
+      // set on top
+      SetWindowPos(axDdialog, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
+      // create edit control
+      axDtext = CreateWindow
+      (
+        "edit", "# init\r\n", WM_KILLFOCUS|WS_VISIBLE|WS_CHILD|WS_BORDER|WS_VSCROLL|
+        WS_HSCROLL|ES_MULTILINE|ES_WANTRETURN|ES_AUTOHSCROLL|ES_AUTOVSCROLL,
+        0, 0, axDwinW-5, axDwinH-25, axDdialog, (HMENU)axDtext_id, NULL, NULL
+      );
+      // attach listener
+      SetWindowLong(axDdialog, DWL_DLGPROC, (long)axDmsglistner);
+      while(GetMessage(&axDmsg,NULL,0,0))
+      {
+      	TranslateMessage(&axDmsg);
+      	DispatchMessage(&axDmsg);
       }
     }
     // ----------------
@@ -118,22 +138,23 @@
      * debugw(myvar, "");
      */
     template <typename T0, typename T1>
-    void wdebug(const T0 p0, const T1 p1)
+    void wdebug(const T0 p0, const T1 p1, bool newline = true)
     {
-      oss << p0 << p1 << "\r\n";
+      if (axDfirstopen) axDwin_create();
+      oss << p0 << " " << p1;
+      if (newline) oss << "\r\n"; 
       string s2 = oss.str();
       const char *string = s2.c_str();
       LPCTSTR text = (LPCTSTR)string;
       oss.str().clear();
       int nLength = GetWindowTextLength(axDtext);
-      SendMessage(axDtext, EM_SETSEL, (WPARAM)nLength, (LPARAM)nLength);
+      if (nLength < 4000)
+      { SendMessage(axDtext, EM_SETSEL, (WPARAM)nLength, (LPARAM)nLength); }
+      else
+      { SendMessage(axDtext, EM_SETSEL, 0, -1); }
       SendMessage(axDtext, EM_REPLACESEL, (WPARAM)FALSE, (LPARAM)text);
     }
-    // ----------------
-    // where to put
-
-  #else
-    //#define wdebug(x,x) ((void)0)
+  #else    
     #define wdebug(x,y) ((void)0)
   #endif
 #else
@@ -141,7 +162,7 @@
   #define trace(x) ((void)0)
   #define warn(x) ((void)0)
   #define assert(x) ((void)0)
-  #define wdebug(x,x) ((void)0)
+  #define wdebug(x,y) ((void)0)
 #endif
 
 //----------------------------------------------------------------------
