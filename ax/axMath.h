@@ -362,6 +362,21 @@ inline float axTanf(float value)
 }
 
 /**
+ * calculates the sinecosine of a floating point number
+ * @param[in] value float
+ * @return value float
+ */
+inline float axSinCosf(float value)
+{
+  __asm__ __volatile__ ("":::);
+  __asm__
+  (
+    "fsincos;"    : "=t" (value)    : "0" (value)
+  );
+  return value;
+}
+
+/**
  * calculates the arc-sine of a floating point number
  * @param[in] value float
  * @return value float
