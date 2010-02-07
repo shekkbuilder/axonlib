@@ -36,7 +36,19 @@
  * trace("message");        // trace a message
  * trace(var << "message"); // combined
  * \endcode
- */
+ * wdebug() is a method which uses the win32api to draw a text window. 
+ * very inefficient to be called per sample on older machines (possible freeze). <br>
+ * examples:
+ * \code
+ * // minimum 2 parameters of different or same type 
+ * wdebug("var = ", myvar);
+ * wdebug(var1, var2);
+ * wdebug(var, " <- text message");
+ * wdebug("text", "more text", false); // no new line
+ * wdebug(var, "");
+ * wdebug("", var);
+ * \endcode
+*/
 
 #ifndef axDebug_included
 #define axDebug_included
@@ -53,59 +65,46 @@
     /**
      * creates a winapi debugger window (unsafe)
      */
-    
-    /* 
-     NOTES:
-     currently the only debug solution on win32 (?) as google 'says' very little
-     on the subject and the performed tests were not succesful.
-     
-     ..better than nothing.
-     
-     currently works only under reaper, but still crashes the app when plugin is unloaded.
-     the debug windows seems to be shared between axonlib plugins (unsafe).
-     should be gui triggered, since when hosts are scanning for plugins they
-     trigger the parameter process for example and the window pops up and causes a 'halt',
-     but what about no-gui plugins, in general it should be activated only on user input.     
-    */
-    
+
+    /*
+    NOTES:
+    working under reaper, vstpa. much more stable and useable version.
+    #issues:
+    - crashes energyxt with c0000005 (access violation) in:
+    "..!ZN8myPlugin15doProcessSampleEPPfS1_"
+    - plugin instances share a axDebug window and crash the host if multiple windows are created
+    and then all plugins are unloaded (case: reaper). 
+    - the debugger window has to be controlled from a plugin with doProcessState(..)
+    best case for users will be to only include axDebug.h, define AX_DEBUG
+    and be ready to call wdebug(..)
+    */    
     #include <windows.h>
+    #include <windowsx.h>
     #include <sstream>
-    #include <stdarg.h>
     // ----------------
     using namespace std;
-    const unsigned int axDtext_id = 0x3039;
-    const unsigned int axDwinW = 500;
-    const unsigned int axDwinH = 300;
-    ostringstream oss;
-    HWND axDdialog;
-    HWND axDtext;
-    MSG axDmsg;
-    bool axDfirstopen = true;    
+    const unsigned int axDtext_id = 0x3039; // text window id
+    const unsigned int axDwinW = 500;       // debug win width
+    const unsigned int axDwinH = 300;       // debug win height
+    const unsigned int axDtextLimit = 1000; // define maximum text length
+    HWND axDdialog;                         // parent window handle
+    HWND axDtext;                           // edit control handle
+    bool axDwopen = false;                  
     // ----------------
-    // message listener:
+    // destroy window
+    void axDwinDestroy(void) { PostQuitMessage(0); DestroyWindow(axDdialog); axDwopen = false; }
+    // ----------------
+    // message listener
     bool WINAPI axDmsglistner(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
-      if(message == WM_DESTROY)
-      { 
-        DestroyWindow(axDdialog);
-      }
-      if(message == WM_CLOSE)
-      {
-        axDfirstopen = true;
-        DestroyWindow(axDdialog);
-        /*        
-        // clear window with the (x) control 
-        LPCTSTR text = "# history cleared\r\n";
-        SendMessage(axDtext, EM_SETSEL, 0, -1);
-        SendMessage(axDtext, EM_REPLACESEL, (WPARAM)true, (LPARAM)text);
-        */        
-      }
+      // destroy
+      if (message == WM_DESTROY || message == WM_CLOSE) { axDwinDestroy(); }      
       return false;
     }
-    // create window after first call
-    void axDwin_create(void)
+    // ----------------
+    // create window
+    void axDwinCreate(void)
     {
-      axDfirstopen = false;
       // attach parent window
       axDdialog = CreateWindowEx
       (
@@ -113,48 +112,60 @@
         WS_MINIMIZEBOX|WS_EX_TOPMOST|WS_VISIBLE|WS_EX_STATICEDGE,
       	400, 400, axDwinW, axDwinH, NULL, NULL, NULL, NULL
       );
-      // set on top
+      // set always on top
       SetWindowPos(axDdialog, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
       // create edit control
       axDtext = CreateWindow
       (
         "edit", "# init\r\n", WM_KILLFOCUS|WS_VISIBLE|WS_CHILD|WS_BORDER|WS_VSCROLL|
-        WS_HSCROLL|ES_MULTILINE|ES_WANTRETURN|ES_AUTOHSCROLL|ES_AUTOVSCROLL,
-        0, 0, axDwinW-5, axDwinH-25, axDdialog, (HMENU)axDtext_id, NULL, NULL
+        WS_HSCROLL|ES_READONLY|ES_LOWERCASE|ES_MULTILINE|ES_WANTRETURN|ES_AUTOHSCROLL|
+        ES_AUTOVSCROLL, 0, 0, axDwinW-5, axDwinH-25, axDdialog, (HMENU)axDtext_id,
+        NULL, NULL
       );
-      // attach listener
+      // attach listener to parent window
       SetWindowLong(axDdialog, DWL_DLGPROC, (long)axDmsglistner);
-      while(GetMessage(&axDmsg,NULL,0,0))
-      {
-      	TranslateMessage(&axDmsg);
-      	DispatchMessage(&axDmsg);
-      }
+      // limit text in edit control
+      Edit_LimitText(axDtext, axDtextLimit);
+      // set flag: window is created
+      axDwopen = true;
     }
     // ----------------
-    /** # usage:
-     * debugw("myvar = ", myvar);
-     * debugw(myvar, " <- message");
-     * debugw("message", "");
-     * debugw(myvar, "");
+    /** send text to debug window (inefficient).      
      */
     template <typename T0, typename T1>
     void wdebug(const T0 p0, const T1 p1, bool newline = true)
     {
-      if (axDfirstopen) axDwin_create();
-      oss << p0 << " " << p1;
-      if (newline) oss << "\r\n"; 
-      string s2 = oss.str();
-      const char *string = s2.c_str();
-      LPCTSTR text = (LPCTSTR)string;
-      oss.str().clear();
-      int nLength = GetWindowTextLength(axDtext);
-      if (nLength < 4000)
-      { SendMessage(axDtext, EM_SETSEL, (WPARAM)nLength, (LPARAM)nLength); }
-      else
-      { SendMessage(axDtext, EM_SETSEL, 0, -1); }
-      SendMessage(axDtext, EM_REPLACESEL, (WPARAM)FALSE, (LPARAM)text);
+      if (axDwopen) // if window is created
+      {
+        // use a string stream to cast input vars to type std::string
+        ostringstream oss;
+        oss << p0 << " " << p1;
+        if (newline) oss << "\r\n";
+        string s2 = oss.str();
+        
+        // cast std::string to char* then to LPCTSTR (win32)
+        const char* string = s2.c_str();
+        LPCTSTR text = (LPCTSTR)string;
+
+        // get length of new string & old text
+        int str_len = s2.length();
+        int len = Edit_GetTextLength(axDtext);
+
+        // clear a portion (str_len*2) of text if too much already exist
+        if ((len + str_len) >= axDtextLimit)
+        {
+          Edit_SetSel(axDtext, 0, str_len << 1);
+          Edit_ReplaceSel(axDtext, "");
+          len = Edit_GetTextLength(axDtext);
+        }
+
+        // append the string at the end of the entire text
+        Edit_SetSel(axDtext, len, len);
+        Edit_ReplaceSel(axDtext, text);
+      }
     }
-  #else    
+    // ----------------
+  #else
     #define wdebug(x,y) ((void)0)
   #endif
 #else

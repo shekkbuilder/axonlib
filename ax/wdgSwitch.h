@@ -17,7 +17,7 @@
  */
 
 /**
-  \file wdgSwitch,h
+  \file wdgSwitch.h
   \brief switch (or button) widget
 */
 

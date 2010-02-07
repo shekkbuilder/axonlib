@@ -17,21 +17,22 @@
  */
 
 /**
- * @file 
- * \brief DC offset filter.
+ * @file dspInterpolate.h
+ * \brief interpolation methods
  */
 
-
-#ifndef dspDCF_included
-#define dspDCF_included
+#ifndef dspInterpolate_included
+#define dspInterpolate_included
 
 /**
- * \brief DC offset filter.
+ * \brief interpolation methods
  *   
- * one pole, one zero DC offset filter from julius orion smith (jos).
- * http://www-ccrma.stanford.edu/~jos/filters/
  */
-class dspDCF
+ 
+// TODO:   http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/ 
+
+ 
+class dspInterpolate
 {
   private:
     /*@{*/
@@ -43,7 +44,7 @@ class dspDCF
     /**
      * constructor          
      */
-    dspDCF()
+    dspInterpolate()
     {
       x1 = y1 = 0;
       setup(0.999f);
@@ -52,6 +53,7 @@ class dspDCF
      * sets filter coeff. suggested range [0.99 - 1]
      * @param[in] inR float  
      */
+    
     void setup(const float inR)
     {
       R = inR;
