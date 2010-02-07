@@ -36,7 +36,9 @@
 #include "axContainer.h"
 #include "axSurface.h"
 
-class wdgResizer : public axWidget
+#include "wdgPaintBox.h"
+
+class wdgResizer : public wdgPaintBox
 {
   private:
     char    hint[256];
@@ -51,13 +53,14 @@ class wdgResizer : public axWidget
   public:
 
     wdgResizer(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment/*,axParameter* aParameter=NULL,*/)
-    : axWidget(aListener,aID,aRect,aAlignment/*,aParameter*/)
+    //: axWidget(aListener,aID,aRect,aAlignment)
+    : wdgPaintBox(aListener,aID,aRect,aAlignment)
       {
         is_dragging = false;
         // assume lower right corner
         //clearFlag(wfl_Active);
         //mSurface = aSurface;
-        mFillBrush = new axBrush(AX_GREY_DARK);
+        //mFillBrush = new axBrush(AX_GREY_DARK);
       }
 
     virtual ~wdgResizer()
@@ -69,16 +72,16 @@ class wdgResizer : public axWidget
     // widget handler
     //--------------------------------------------------
 
-    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
-      {
-        //TRACE("wdgResizer.doPaint\n");
-        if(hasFlag(wfl_Visible))
-        {
-          //aCanvas->setBrushColor( AX_GREY_DARK );
-          aCanvas->selectBrush(mFillBrush);
-          aCanvas->fillRect( mRect.x,mRect.y,mRect.x2(),mRect.y2());
-        }
-      }
+//    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
+//      {
+//        axContainer::doPaint(aCanvas,aRect);
+//        if(hasFlag(wfl_Visible))
+//        {
+//          //aCanvas->setBrushColor( AX_GREY_DARK );
+//          aCanvas->selectBrush(mFillBrush);
+//          aCanvas->fillRect( mRect.x,mRect.y,mRect.x2(),mRect.y2());
+//        }
+//      }
 
     virtual void doMouseDown(int aX, int aY, int aB)
       {

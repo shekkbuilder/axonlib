@@ -208,6 +208,8 @@ class axArray
         }
       }
 
+    //----------
+
     /// push item
     /**
       push item to the end of the array, so you can use it like a stack

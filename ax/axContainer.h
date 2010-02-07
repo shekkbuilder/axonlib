@@ -281,28 +281,31 @@ class axContainer : public axWidget,
               case wal_Client:
                 wdg->doMove( client.x, client.y );
                 wdg->doResize( client.w, client.h );
-                //empty = true;
                 break;
               case wal_Left:
                 wdg->doMove( client.x, client.y );
                 wdg->doResize( ww, client.h );
+                //ww = wdg->getRect().w;
                 client.x += (ww + mPaddingX);
                 client.w -= (ww + mPaddingX);
                 break;
               case wal_Right:
                 wdg->doMove( client.x2()-ww+1, client.y );
                 wdg->doResize( ww, client.h );
+                //ww = wdg->getRect().w;
                 client.w -= (ww + mPaddingX);
                 break;
               case wal_Top:
                 wdg->doMove( client.x, client.y );
                 wdg->doResize( client.w, wh );
+                //wh = wdg->getRect().h;
                 client.y += (wh + mPaddingY);
                 client.h -= (wh + mPaddingY);
                 break;
               case wal_Bottom:
                 wdg->doMove( client.x, client.y2()-wh+1 );
                 wdg->doResize( client.w, wh );
+                //wh = wdg->getRect().w;
                 client.h -= (wh + mPaddingY);
                 break;
               case wal_LeftTop:
