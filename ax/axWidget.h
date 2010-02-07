@@ -306,7 +306,8 @@ class axWidget : public axWidgetBase
     int               mConnection;
     float             mValue;
     axParameter*      mParameter; // for displaying
-    int mMinWidth,mMinHeight,mMaxWidth,mMaxHeight;
+    int               mMinWidth, mMinHeight;
+    int               mMaxWidth, mMaxHeight;
   public:
     void*             mUser;
     int               mID;

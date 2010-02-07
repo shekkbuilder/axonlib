@@ -49,20 +49,23 @@ class myPlugin : public axPlugin
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         describe("tilteq","liteon","product_string",0,0x6c74);
+        setupAudio(2,2);
         float srate  = updateSampleRate();
-        amp    = 6/log(2);        
+        amp    = 6/log(2);
         pi     = 3.141592;
         sr3    = 3*srate;
         a0 = b1 = 0;
-        lp_out = lp_out_r = 0;        
+        lp_out = lp_out_r = 0;
         appendParameter( new parInteger(this,0, "processing",       "",       0,   0,  1, str_processing) );
         appendParameter( new parFloat(  this,1, "center frequency", "scale",  50,  0,  100, 0.05   ) );
         appendParameter( new parFloat(  this,2, "tilt (low/high)",  "db",     0,  -6,  6,   0.05   ) );
-        appendParameter( new parFloat(  this,3, "output gain",      "db",     0,  -25, 25,  0.05   ) );       
+        appendParameter( new parFloat(  this,3, "output gain",      "db",     0,  -25, 25,  0.05   ) );
         processParameters();
       }
 
@@ -78,9 +81,9 @@ class myPlugin : public axPlugin
           case 0: // slider1
             mono = (int)f;
             break;
-          case 1: // slider2        
-          {            
-            // debug test           
+          case 1: // slider2
+          {
+            // debug test
             //----
             float sx = 16+f*1.20103;
             float f0 = floor(exp(sx*log(1.059))*8.17742);
@@ -92,7 +95,7 @@ class myPlugin : public axPlugin
           }
           case 2: // slider3
           {
-            float gain = f;            
+            float gain = f;
             float gfactor = 4;
             float g1, g2;
             if (gain>0)
@@ -129,10 +132,10 @@ class myPlugin : public axPlugin
           case pst_Suspend:
             axDwinDestroy();
           break;
-        }      
+        }
       #endif
     }
-    
+
     //--------------------------------------------------
     virtual void doProcessSample(float** ins, float** outs)
       {
@@ -154,12 +157,12 @@ class myPlugin : public axPlugin
           lp_out = a0*input + b1*lp_out;
           float output = input + lgain*lp_out + hgain*(input - lp_out);
           spl0 = output*outgain;
-          
+
           float input_r = spl1;
           lp_out_r = a0*input_r + b1*lp_out_r;
           float output_r = input_r + lgain*lp_out_r + hgain*(input_r - lp_out_r);
           spl1 = output_r*outgain;
-        }        
+        }
         // ---------
         *outs[0] = spl0-DENORM;
         *outs[1] = spl1-DENORM;

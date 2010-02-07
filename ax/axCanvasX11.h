@@ -99,7 +99,7 @@ class axCanvasImpl : public axCanvasBase
 
     virtual void selectFont(axFont* aFont)
       {
-        XSetForeground(gDP,mGC,aFont->color().mColor);
+        XSetForeground(gDP,mGC,aFont->getColor().mColor);
       }
 
     //--------------------------------------------------

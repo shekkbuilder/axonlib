@@ -43,13 +43,17 @@ class myPlugin : public axPlugin,
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         mEditor = NULL;
         describe("fx_tempodelay0","ccernn","product_string",0,0);
-        hasEditor(AX_WIDTH,AX_HEIGHT);
+        //hasEditor(AX_WIDTH,AX_HEIGHT);
         //isSynth();
+        setupAudio(2,2);
+        setupEditor(AX_WIDTH,AX_HEIGHT);
         appendParameter( p1 = new parFloat( this,0,"beats",   "", 0.75, 0.25, MAX_NUMBEATS, 0.25  ) );
         appendParameter( p2 = new parFloat( this,1,"feedback","", 0.75  ) );
         appendParameter( p3 = new parFloat( this,2,"dry",     "", 1.00 ) );

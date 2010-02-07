@@ -45,10 +45,13 @@ class myPlugin : public axPlugin
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         describe("fx_split0","ccernn","product_string",0,1);
+        setupAudio(2,2);
         //hasEditor(AX_WIDTH,AX_HEIGHT);
         //isSynth();
         setNumInputs(2);

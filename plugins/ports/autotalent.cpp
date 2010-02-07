@@ -154,8 +154,10 @@ class myPlugin : public axPlugin
 
     //----------
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         unsigned long ti;
         float SampleRate = updateSampleRate();
@@ -227,7 +229,9 @@ class myPlugin : public axPlugin
         fragsize      = 0;
 
         //mEditor = NULL;
-        describe("AutoTalent","Thomas A. Baran","product_string",0,0);
+        describe("AutoTalent","thomas a. baran","product_string",0,0);
+        setupAudio(2,2);
+
         //hasEditor(AX_WIDTH,AX_HEIGHT);
 
         appendParameter(new parFloat(this, 0,"Mix",          "",     1 ));

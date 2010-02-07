@@ -35,10 +35,13 @@ class myPlugin : public axPlugin
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         describe("fx_svf0","ccernn","product_string",0,0);
+        setupAudio(2,2);
         appendParameter( pMode = new parInteger(this,0,"mode", "", 0, 0,4, str_filter ) );
         appendParameter( pFreq = new parFloat(  this,1,"freq", "", 1 ) );
         appendParameter( pBW   = new parFloat(  this,2,"bw",   "", 1 ) );

@@ -38,12 +38,16 @@ class myPlugin : public axPlugin,
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         mEditor = NULL;
         describe("fx_wgtavg0","ccernn","axonlib example plugin",0,0);
-        hasEditor(AX_WIDTH,AX_HEIGHT);
+        //hasEditor(AX_WIDTH,AX_HEIGHT);
+        setupAudio(2,2);
+        setupEditor(AX_WIDTH,AX_HEIGHT);
         appendParameter( pMode   = new parInteger(this, 0, "mode",   "", 0,  0,1, flt_txt ) );
         appendParameter( pWeight = new parFloat(  this, 1, "weight", "", 0.5 ) );
         processParameters();

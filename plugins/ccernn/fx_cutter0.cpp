@@ -220,8 +220,10 @@ class myPlugin : public axPlugin,
     // constructor & destructor
     //----------------------------------------
 
-    myPlugin(audioMasterCallback audioMaster,long numProgs,long numParams, int aPlugFlags=0)
-    : axPlugin(audioMaster,numProgs,numParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster,long numProgs,long numParams, int aPlugFlags=0)
+    //: axPlugin(audioMaster,numProgs,numParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         //TRACE("MAX_BEATSIZE %i\n",MAX_BEATSIZE);
         //TRACE("MAX_BUFSIZE %i\n",MAX_BUFSIZE);
@@ -235,7 +237,9 @@ class myPlugin : public axPlugin,
         mBeatsLeft = 0;
         mProb = 1;
         describe("fx_cutter0","ccernn","",0,AX_MAGIC+0x0001);
-        hasEditor(AX_WIDTH,AX_HEIGHT);
+        //hasEditor(AX_WIDTH,AX_HEIGHT);
+        setupAudio(2,2);
+        setupEditor(AX_WIDTH,AX_HEIGHT);
         appendParameter( pNumBeats  = new parInteger(this,0,"num beats", "",4, 1,16 ) );
         appendParameter( pMaxSelect = new parInteger(this,1,"max select","",4, 1,8  ) );
         appendParameter( pMaxRepeat = new parInteger(this,2,"max repeat","",4, 1,16 ) );

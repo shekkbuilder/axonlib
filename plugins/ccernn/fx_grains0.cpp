@@ -74,10 +74,13 @@ class myPlugin : public axPlugin
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags )
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         describe("fx_grains0","ccernn","product_string",0,1);
+        setupAudio(2,2);
         //hasEditor(AX_WIDTH,AX_HEIGHT);
         //appendParameter( mParam1 = new parFloat(this,0,"mParam1","",0,-1,1,.1) );
         //processParameters();
@@ -254,8 +257,8 @@ class myPlugin : public axPlugin
             G->duration -= 1;
             if( G->duration <= 0 ) G->active = 0;
 
-            float gvol = G->phase  * ( 2 - abs(G->phase ) );
-            float dvol = G->phase2 * ( 2 - abs(G->phase2) );
+            float gvol = G->phase  * ( 2 - fabs(G->phase ) );
+            float dvol = G->phase2 * ( 2 - fabs(G->phase2) );
 
             out += BUFFER[ (int)G->pos ] * dvol * gvol;
           } //on

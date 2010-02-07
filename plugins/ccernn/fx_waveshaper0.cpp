@@ -32,11 +32,14 @@ class myPlugin : public axPlugin
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         describe("fx_waveshaper0","ccernn","product_string",0,2);
         appendParameter( new parFloat(  this,0,"amount","", 0, -1, 1  ) );
+        setupAudio(2,2);
         //appendParameter( new parInteger(this,1,"mode",  "", 0, 0, 7  ) );
         processParameters();
       }

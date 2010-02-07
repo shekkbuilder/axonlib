@@ -21,10 +21,13 @@ class myPlugin : public axPlugin
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         describe("midi_ccaudio0","ccernn","product_string",0,0);
+        setupAudio(2,2);
         for (int i=0; i<MAX_EVENTS; i++) EVENTS[i] = -1;
         out = 0;
         appendParameter(new parInteger(this,0,"midi cc",    "", 60, 0,127 ));

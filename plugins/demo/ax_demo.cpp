@@ -26,6 +26,8 @@
 #include "axBitmapLoader.h"
 #include "images/fibonacci.h"
 
+#include "axHost.h"
+
 //----------------------------------------------------------------------
 
 class myPlugin : public axPlugin,
@@ -55,8 +57,10 @@ class myPlugin : public axPlugin,
     // con/de-structor
     //--------------------------------------------------
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         mEditor = NULL;
         mGuiInitialized = false;

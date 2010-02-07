@@ -69,14 +69,19 @@ class myPlugin : public axPlugin,
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         mEditor = NULL;
         is_gui_initialized = false;
         describe("midi_fibonacci0","ccernn","product_string",0,0xfaccface);
-        hasEditor(AX_WIDTH,AX_HEIGHT);
+        //hasEditor(AX_WIDTH,AX_HEIGHT);
         //isSynth();
+        setupAudio(2,2);
+        setupEditor(AX_WIDTH,AX_HEIGHT);
+
         appendParameter( new parInteger(this,0,"sync",            "", 1,    0, 1,   str_noyes ) );
         appendParameter( new parInteger(this,1,"speed (ms)",      "", 125,  1, 1000 ) );
         appendParameter( new parFloat(  this,2,"beats (is sync)", "", 0.25, 0, 4,   0.05   ) );

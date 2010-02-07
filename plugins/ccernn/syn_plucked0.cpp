@@ -24,12 +24,15 @@ class myPlugin : public axPlugin
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         describe("syn_plucked0","ccernn","product_string",0,0);
-        setNumInputs(0);
-        isSynth();
+        //setNumInputs(0);
+        //isSynth();
+        setupAudio(0,2,true);
         axRandomize(418);
         buf  = new float[MAX_BUFSIZE];
         noi  = 0;

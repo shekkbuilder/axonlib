@@ -1,5 +1,5 @@
 
-#include "demo/ax_demo.cpp"
+//#include "demo/ax_demo.cpp"
 
 //----------------------------------------------------------------------
 
@@ -14,7 +14,7 @@
 //#include "ccernn/fx_dist0.cpp"
 //#include "ccernn/fx_envelope0.cpp"
 //#include "ccernn/fx_freeze0.cpp"
-//#include "ccernn/fx_grains0.cpp"
+#include "ccernn/fx_grains0.cpp"
 //#include "ccernn/fx_moddelay0.cpp"
 //#include "ccernn/fx_split0.cpp"
 //#include "ccernn/fx_svf0.cpp"
@@ -37,7 +37,7 @@
 //#include "ccernn/fx_tempodelay0.cpp"
 //#include "ccernn/fx_wgtavg0.cpp"
 //#include "ccernn/midi_fibonacci0.cpp"
-//#include "ccernn/midi_cellular0.cpp"      // !!!
+//#include "ccernn/midi_cellular0.cpp"      // error!!!
 //#include "ccernn/syn_binaural0.cpp"
 //#include "ccernn/syn_perc0.cpp"
 //#include "ccernn/syn_poly0.cpp"

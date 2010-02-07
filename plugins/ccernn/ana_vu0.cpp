@@ -41,13 +41,17 @@ class myPlugin : public axPlugin,
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         editor_initialized = false;
         mEditor = NULL;
         describe("ana_vu0","ccernn","product_string",0,0);
-        hasEditor(AX_WIDTH,AX_HEIGHT);
+        //hasEditor(AX_WIDTH,AX_HEIGHT);
+        setupAudio(2,2);
+        setupEditor(AX_WIDTH,AX_HEIGHT);
         left = 0;
         right = 0;
         appendParameter( pSpeed = new parFloat(  this,0,"speed","", 20, 1,50 ) );
