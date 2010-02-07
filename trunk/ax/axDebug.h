@@ -77,22 +77,19 @@
     - the debugger window has to be controlled from a plugin with doProcessState(..)
     best case for users will be to only include axDebug.h, define AX_DEBUG
     and be ready to call wdebug(..)
-    */    
+    */
     #include <windows.h>
     #include <windowsx.h>
     #include <sstream>
     // ----------------
-    using namespace std;
-    const unsigned int axDtext_id = 0x3039; // text window id
     const unsigned int axDwinW = 500;       // debug win width
     const unsigned int axDwinH = 300;       // debug win height
     const unsigned int axDtextLimit = 1000; // define maximum text length
-    HWND axDdialog;                         // parent window handle
     HWND axDtext;                           // edit control handle
-    bool axDwopen = false;                  
+           
     // ----------------
     // destroy window
-    void axDwinDestroy(void) { PostQuitMessage(0); DestroyWindow(axDdialog); axDwopen = false; }
+    void axDwinDestroy(void) { DestroyWindow(axDtext); axDtext = NULL; }
     // ----------------
     // message listener
     bool WINAPI axDmsglistner(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -105,29 +102,31 @@
     // create window
     void axDwinCreate(void)
     {
-      // attach parent window
-      axDdialog = CreateWindowEx
+      if (axDtext == NULL)
+      {
+      // attach window
+      axDtext = CreateWindowEx
       (
-      	0, WC_DIALOG, "axDebug", WM_KILLFOCUS|WS_OVERLAPPED|WS_CAPTION|WS_SYSMENU|
-        WS_MINIMIZEBOX|WS_EX_TOPMOST|WS_VISIBLE|WS_EX_STATICEDGE,
-      	400, 400, axDwinW, axDwinH, NULL, NULL, NULL, NULL
+        0, "EDIT", "axDebug\r\n",
+        WS_SYSMENU|WS_MINIMIZEBOX|WS_POPUPWINDOW|WS_CAPTION|              
+        WS_VISIBLE|WS_BORDER|WS_VSCROLL|WS_HSCROLL|
+        ES_READONLY|ES_MULTILINE|ES_WANTRETURN|WS_SIZEBOX|
+        ES_AUTOHSCROLL|ES_AUTOVSCROLL,
+        400, 400, axDwinW-5, axDwinH-25, NULL, NULL, NULL, NULL
       );
-      // set always on top
-      SetWindowPos(axDdialog, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
-      // create edit control
-      axDtext = CreateWindow
-      (
-        "edit", "# init\r\n", WM_KILLFOCUS|WS_VISIBLE|WS_CHILD|WS_BORDER|WS_VSCROLL|
-        WS_HSCROLL|ES_READONLY|ES_LOWERCASE|ES_MULTILINE|ES_WANTRETURN|ES_AUTOHSCROLL|
-        ES_AUTOVSCROLL, 0, 0, axDwinW-5, axDwinH-25, axDdialog, (HMENU)axDtext_id,
-        NULL, NULL
-      );
-      // attach listener to parent window
-      SetWindowLong(axDdialog, DWL_DLGPROC, (long)axDmsglistner);
-      // limit text in edit control
+      //set window properties
+      // - on top
+      SetWindowPos(axDtext, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
+      // - default win32 font
+      HFONT hfDefault;
+      hfDefault = (HFONT)GetStockObject(DEFAULT_GUI_FONT);      
+      SendMessage(axDtext, WM_SETFONT, (WPARAM)hfDefault, MAKELPARAM(FALSE, 0));
+      // - listener      
+      SetWindowLong(axDtext, DWL_DLGPROC, (long)axDmsglistner);
+      // - set limit
       Edit_LimitText(axDtext, axDtextLimit);
-      // set flag: window is created
-      axDwopen = true;
+      
+      }
     }
     // ----------------
     /** send text to debug window (inefficient).      
@@ -135,7 +134,7 @@
     template <typename T0, typename T1>
     void wdebug(const T0 p0, const T1 p1, bool newline = true)
     {
-      if (axDwopen) // if window is created
+      if (axDtext != NULL) // if window is created
       {
         // use a string stream to cast input vars to type std::string
         ostringstream oss;
@@ -162,12 +161,16 @@
         // append the string at the end of the entire text
         Edit_SetSel(axDtext, len, len);
         Edit_ReplaceSel(axDtext, text);
+        
+        // kill focus
+        SendMessage(axDtext, WM_KILLFOCUS, 0, 0);
       }
     }
     // ----------------
   #else
     #define wdebug(x,y) ((void)0)
   #endif
+  
 #else
   #define NDEBUG
   #define trace(x) ((void)0)

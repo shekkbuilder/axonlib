@@ -76,3 +76,38 @@ class dspInterpolate
 
 //----------------------------------------------------------------------
 #endif
+
+
+/*
+desc:n times oversampler
+slider1:1<1,64,1>oversample (x)
+slider2:1<0,1,1{OFF,ON}>Antialiasing filter
+@slider
+factor = slider1;
+filter_coef = exp(-2*$pi*(0.5/factor) );
+filter = slider2;
+@sample
+//spl0_ = spl0_tmp; //store last input sample
+spl0_tmp = spl0;
+x = 0;
+
+loop(factor,
+  //interp
+  y = spl0_tmp + x*(spl0-spl0_tmp);
+  
+  //proces
+  //y = y*0.8;
+  
+  // filter here
+  //filter ? tmp = y + filter_coef*(tmp-y) : tmp = y;
+  m1=m0;
+  filter ? tmp=0.5*(m1+m0=y) : tmp=y;
+  
+  //decimator
+  x==0 ? spl0 = tmp; 
+  x += 1/factor;
+);
+
+spl1 = spl0;
+
+*/
