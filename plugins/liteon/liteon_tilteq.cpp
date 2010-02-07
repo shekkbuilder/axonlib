@@ -22,12 +22,14 @@
 #define AX_PLUGIN     myPlugin
 #define AX_NUMPROGS   0
 #define AX_NUMPARAMS  4
-//#define AX_AUTOSYNC
+// debug
 #define AX_DEBUG
 #include "axDebug.h"
+
 #include "axPlugin.h"
 #include "parFloat.h"
 #include "parInteger.h"
+
 
 //----------------------------------------------------------------------
 
@@ -50,14 +52,13 @@ class myPlugin : public axPlugin
     myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
     : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
       {
-        describe("tilteq","liteon","product_string",0,0);
+        describe("tilteq","liteon","product_string",0,0x6c74);
         float srate  = updateSampleRate();
-        float j = axSqrtf(2);
         amp    = 6/log(2);        
         pi     = 3.141592;
         sr3    = 3*srate;
         a0 = b1 = 0;
-        lp_out = lp_out_r = 0;
+        lp_out = lp_out_r = 0;        
         appendParameter( new parInteger(this,0, "processing",       "",       0,   0,  1, str_processing) );
         appendParameter( new parFloat(  this,1, "center frequency", "scale",  50,  0,  100, 0.05   ) );
         appendParameter( new parFloat(  this,2, "tilt (low/high)",  "db",     0,  -6,  6,   0.05   ) );
@@ -114,8 +115,7 @@ class myPlugin : public axPlugin
         }
       }
 
-    
-    // debug here? 
+    // debug
     virtual void doProcessState(int aState)
     {
       #if defined(AX_DEBUG) && defined(WIN32)
@@ -123,6 +123,8 @@ class myPlugin : public axPlugin
         {
           case pst_Resume:
             axDwinCreate();
+            wdebug("axLogf=", axLogf(2.24));
+            wdebug("logf=", logf(2.24));
           break;
           case pst_Suspend:
             axDwinDestroy();
@@ -134,13 +136,13 @@ class myPlugin : public axPlugin
     //--------------------------------------------------
     virtual void doProcessSample(float** ins, float** outs)
       {
-        // wdebug() here = freeze
-        float spl0 = *ins[0]+DENORM;
-        float spl1 = *ins[1]+DENORM;
+        //wdebug() here = freeze
+        float spl0 = *ins[0] + DENORM;
+        float spl1 = *ins[1] + DENORM;
         if (mono==1)
         {
           //process mono
-          float input = (spl0+spl1)/2;
+          float input = (spl0+spl1)*0.5;
           lp_out = a0*input + b1*lp_out;
           float output = input + lgain*lp_out + hgain*(input - lp_out);
           spl0=spl1=output*outgain;
@@ -152,6 +154,7 @@ class myPlugin : public axPlugin
           lp_out = a0*input + b1*lp_out;
           float output = input + lgain*lp_out + hgain*(input - lp_out);
           spl0 = output*outgain;
+          
           float input_r = spl1;
           lp_out_r = a0*input_r + b1*lp_out_r;
           float output_r = input_r + lgain*lp_out_r + hgain*(input_r - lp_out_r);
