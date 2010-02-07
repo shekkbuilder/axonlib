@@ -62,16 +62,16 @@ class myPlugin : public axPlugin
         appendParameter( new parFloat(  this,1, "center frequency", "scale",  50,  0,  100, 0.05   ) );
         appendParameter( new parFloat(  this,2, "tilt (low/high)",  "db",     0,  -6,  6,   0.05   ) );
         appendParameter( new parFloat(  this,3, "output gain",      "db",     0,  -25, 25,  0.05   ) );       
-        //processParameters();
+        processParameters();
       }
 
     //----------
     virtual void doProcessParameter(axParameter* aParameter)
       {
-      
         int  id = aParameter->mID;
         float f = aParameter->getValue();
-        wdebug(id, f);
+        wdebug("id = ", id, false);
+        wdebug(", value = ", f);
         switch(id)
         {
           case 0: // slider1
@@ -91,7 +91,7 @@ class myPlugin : public axPlugin
           }
           case 2: // slider3
           {
-            float gain = f;
+            float gain = f;            
             float gfactor = 4;
             float g1, g2;
             if (gain>0)
@@ -114,9 +114,27 @@ class myPlugin : public axPlugin
         }
       }
 
+    
+    // debug here? 
+    virtual void doProcessState(int aState)
+    {
+      #if defined(AX_DEBUG) && defined(WIN32)
+        switch(aState)
+        {
+          case pst_Resume:
+            axDwinCreate();
+          break;
+          case pst_Suspend:
+            axDwinDestroy();
+          break;
+        }      
+      #endif
+    }
+    
     //--------------------------------------------------
     virtual void doProcessSample(float** ins, float** outs)
       {
+        // wdebug() here = freeze
         float spl0 = *ins[0]+DENORM;
         float spl1 = *ins[1]+DENORM;
         if (mono==1)
@@ -138,7 +156,8 @@ class myPlugin : public axPlugin
           lp_out_r = a0*input_r + b1*lp_out_r;
           float output_r = input_r + lgain*lp_out_r + hgain*(input_r - lp_out_r);
           spl1 = output_r*outgain;
-        }
+        }        
+        // ---------
         *outs[0] = spl0-DENORM;
         *outs[1] = spl1-DENORM;
       }

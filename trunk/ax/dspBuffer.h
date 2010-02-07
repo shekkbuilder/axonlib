@@ -17,15 +17,8 @@
  */
 
 /**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
+ * @file dspBuffer.h
+ * \brief dsp buffer 
  */
 
 #ifndef dspBuffer_included

@@ -20,7 +20,7 @@
   lock down things that might be dangerous if accessed by two (or more) simultaneous threads
 
 - axDebug
-  default win32 debug method  
+  more stable win32 default debug method + ease of use
 
 - axMath
   doxy: a partial performance table relative to compiler flags  
@@ -89,6 +89,8 @@
 
 - dsp classes, dsp graph
   combine with axModule, axGraph ??
+
+- dsp interpolation methods.
 
 - axScript <-> axModule
   operator <-> module

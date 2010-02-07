@@ -21,19 +21,18 @@
  * \brief desc
  */
 
-/**
- * \brief desc
- *
- * long desc
- *
- */
-
 #ifndef dspSync_included
 #define dspSync_included
 //----------------------------------------------------------------------
 
 #include "dspModule.h"
 
+/**
+ * \brief desc
+ *
+ * long desc
+ *
+ */
 class dspSync : public dspModule
 {
   public:

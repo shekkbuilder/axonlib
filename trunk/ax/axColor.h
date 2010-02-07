@@ -21,10 +21,6 @@
  * \brief platform/device dependent color
  */
 
-/**
- * \brief platform/device dependent color
- */
-
 #ifndef axColor_included
 #define axColor_included
 //----------------------------------------------------------------------
@@ -32,8 +28,6 @@
 /// platform/device dependent color
 
 #include "axGlobals.h"
-
-/// some pre-defined colors
 
   #define AX_BLACK        axColor(   0,   0,   0 )
   #define AX_GREY_DARK    axColor(  64,  64,  64 )
@@ -57,6 +51,9 @@
   #define AX_BLUE_DARK    axColor(   0,   0, 128 )
   #define AX_MAGENTA_DARK axColor( 128,   0, 128 )
 
+/**
+ * \brief platform/device dependent color
+ */
 struct axColor
 {
   //public:

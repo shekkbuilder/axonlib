@@ -17,7 +17,7 @@
  */
 
 /**
-  \file axBitmapLoad.h
+  \file axBitmapLoader.h
   \brief bitmap loader & decoder
 */
 
