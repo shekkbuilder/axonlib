@@ -82,6 +82,14 @@
 #define wal_Parent      11    ///< full parent size, regardless of current client size
 /* @} */
 
+// panel/paintbox draw modes
+#define pdm_None        0
+#define pdm_Background  1
+#define pdm_Border      2
+#define pdm_Image       4
+#define pdm_All         0xffff
+
+
 //#define MAX_TEXT_LEN 16
 
 #include "axParameter.h"
@@ -298,6 +306,7 @@ class axWidget : public axWidgetBase
     int               mConnection;
     float             mValue;
     axParameter*      mParameter; // for displaying
+    int mMinWidth,mMinHeight,mMaxWidth,mMaxHeight;
   public:
     void*             mUser;
     int               mID;
@@ -319,11 +328,20 @@ class axWidget : public axWidgetBase
         setFlag(wfl_Capture);
         mOrig.set(mRect.x,mRect.y);
         mParameter = NULL;
+        mMinWidth = mMinHeight = 0;
+        mMaxWidth = mMaxHeight = 999999;
       }
 
     //virtual ~axWidget()
     //  {
     //  }
+
+    //--------------------------------------------------
+
+    inline void setMinWidth(int w) { mMinWidth = w; }
+    inline void setMaxWidth(int w) { mMaxWidth = w; }
+    inline void setMinHeight(int h) { mMinHeight = h; }
+    inline void setMaxHeight(int h) { mMaxHeight = h; }
 
     //--------------------------------------------------
     // inline
@@ -440,6 +458,10 @@ class axWidget : public axWidgetBase
     */
     virtual void doResize(int aW, int aH)
       {
+        if (aW < mMinWidth) aW = mMinWidth;
+        if (aW > mMaxWidth) aW = mMaxWidth;
+        if (aH < mMinHeight) aH = mMinHeight;
+        if (aH > mMaxHeight) aH = mMaxHeight;
         mRect.w = aW;
         mRect.h = aH;
       }

@@ -3,15 +3,15 @@
 
 #include "axApplication.h"
 #include "axWindow.h"
-#include "wdgPanel.h"
-#include "wdgImage.h"
-#include "wdgImgSwitch.h"
-#include "wdgTextBox.h"
-
 #include "axBitmap.h"
 #include "axSurface.h"
 
 #include "axBitmapLoader.h"
+
+#include "wdgPanel.h"
+#include "wdgImage.h"
+#include "wdgImgSwitch.h"
+#include "wdgTextBox.h"
 
 //----------------------------------------------------------------------
 //
