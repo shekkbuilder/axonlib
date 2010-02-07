@@ -35,6 +35,8 @@
 #include "axString.h"
 #include "axParameter.h"
 
+#include "axHost.h"
+
 //----------
 
 // plugin flags
@@ -212,6 +214,7 @@ class axPlugin  : public axPluginImpl,
 {
   //public:
   protected:
+    axHost*       mHost;
   //axMutex       mMutex_params;
     int           mPlugFlags;
     axParameters  mParameters;
@@ -227,9 +230,11 @@ class axPlugin  : public axPluginImpl,
       \param numParams number of parameters
       \param aPlugFlags calls axInitialize with these flags
     */
-    axPlugin(audioMasterCallback audioMaster,long numProgs,long numParams, int aPlugFlags=0)
-    : axPluginImpl(audioMaster,numProgs,numParams)
+    //axPlugin(audioMasterCallback audioMaster,long numProgs,long numParams, int aPlugFlags=0)
+    axPlugin(axHost* aHost,long numProgs,long numParams, int aPlugFlags=0)
+    : axPluginImpl((audioMasterCallback)aHost->getPtr(),numProgs,numParams)
       {
+        mHost = aHost;
         mPlugFlags = aPlugFlags;
         axInitialize(mPlugFlags); // os/platform specific initialization
         //setNumInputs(2); // defaults to 2 inputs & outputs

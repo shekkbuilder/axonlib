@@ -129,7 +129,7 @@ class axCanvasImpl : public axCanvasBase
     virtual void selectFont(axFont* aFont)
       {
         //SetTextColor(mDC,mTextColor.mColor);
-        SetTextColor(mDC,aFont->color().mColor);
+        SetTextColor(mDC,aFont->getColor().mColor);
       }
 
     //--------------------------------------------------
@@ -390,9 +390,9 @@ class axCanvasImpl : public axCanvasBase
         if (aAlign & tal_Top) flags = flags | DT_TOP;
         else if (aAlign & tal_Bottom) flags = flags | DT_BOTTOM;
         else flags = flags | DT_VCENTER;
-        HFONT oldfont = (HFONT)SelectObject(mDC, mFont);
+      HFONT oldfont = (HFONT)SelectObject(mDC, mFont);
         DrawText(mDC, aText.ptr(), -1, &R, flags | DT_NOCLIP | DT_SINGLELINE | DT_NOPREFIX);
-        SelectObject(mDC, oldfont);
+      SelectObject(mDC, oldfont);
       }
 
     //--------------------------------------------------

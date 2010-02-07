@@ -38,6 +38,7 @@
 #include "pluginterfaces/vst2.x/aeffectx.h"
 #include "public.sdk/source/vst2.x/audioeffect.cpp"
 #include "public.sdk/source/vst2.x/audioeffectx.cpp"
+
 #include "axWindow.h"
 //#include "axHostVst.h"
 

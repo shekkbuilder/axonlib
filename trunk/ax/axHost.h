@@ -34,5 +34,25 @@
   - -> host: resize window
 */
 
+class axHostBase
+{
+  public:
+    axHostBase(void* ptr) {}
+    virtual ~axHostBase() {}
+    virtual void* getPtr(void) { return NULL; }
+};
+
+#ifdef AX_PLUGIN_VST
+  #include "axHostVst.h"
+#endif
+
+
+class axHost : public axHostImpl
+{
+  public:
+    axHost(void* ptr) : axHostImpl(ptr) {}
+    virtual ~axHost() {}
+};
+
 //----------------------------------------------------------------------
 #endif

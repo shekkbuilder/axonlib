@@ -66,16 +66,21 @@ class myPlugin : public axPlugin,
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         //prevscroll = 0;
         //testwin = NULL;
         mEditor = NULL;
         is_gui_initialized = false;
         mSrfSlider = NULL;
-        hasEditor(AX_WIDTH,AX_HEIGHT);
+        //hasEditor(AX_WIDTH,AX_HEIGHT);
+        setupAudio(2,2);
+        setupEditor(AX_WIDTH,AX_HEIGHT);
         describe("plug_debug","ccernn","product_string",0,0);
+
       }
 
     //----------

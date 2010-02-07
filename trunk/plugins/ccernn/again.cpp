@@ -20,10 +20,13 @@ class myPlugin : public axPlugin
     float gain;
     float buf[1024];
   public:
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags )
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         describe("again","ccernn","no_product_string",0001,0x666);
+        setupAudio(2,2);
         appendParameter(new parFloat(this,0,"gain","",1,0,2,0.1));
         processParameters();
       }

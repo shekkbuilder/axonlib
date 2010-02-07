@@ -50,14 +50,19 @@ class myPlugin : public axPlugin,
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         mEditor = NULL;
         is_gui_initialized = false;
-        hasEditor(AX_WIDTH,AX_HEIGHT);
+        //hasEditor(AX_WIDTH,AX_HEIGHT);
         describe("fx_dynamics0","ccernn","product_string",0,0);
         //isSynth();
+        setupAudio(2,2);
+        setupEditor(AX_WIDTH,AX_HEIGHT);
+
         appendParameter( p1 = new parFloat(   this, 0, "threshold",   "", 1         ));
         appendParameter( p2 = new parFloat(   this, 1, "ratio",       "", 1,   1,20 ));
         appendParameter( p3 = new parFloat(   this, 2, "attack",      "", 7,   1,20 ));

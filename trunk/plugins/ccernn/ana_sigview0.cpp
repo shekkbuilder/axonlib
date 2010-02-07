@@ -56,12 +56,16 @@ class myPlugin : public axPlugin,
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         mEditor = NULL;
         describe("ana_sigview0","ccernn","product_string",0, AX_MAGIC+1001);
-        hasEditor(AX_WIDTH,AX_HEIGHT);
+        setupAudio(2,2);
+        setupEditor(AX_WIDTH,AX_HEIGHT);
+        //hasEditor(AX_WIDTH,AX_HEIGHT);
         //isSynth();
         mBuffer1 = new float[MAX_BUFFER_SIZE];
         mBuffer2 = new float[MAX_BUFFER_SIZE];

@@ -26,6 +26,15 @@
 
 // vst-specific implementation of axHost
 
+class axHostVst : public axHostBase
+{
+  public:
+    axHostVst(void* ptr) : axHostBase(ptr) {}
+    virtual ~axHostVst() {}
+};
+
+typedef axHostVst axHostImpl;
+
 //----------------------------------------------------------------------
 #endif
 

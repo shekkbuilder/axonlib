@@ -30,15 +30,15 @@
 
 /**
   \image html logo.png
-  
+
   \mainpage axonlib mainpage
   \section introduction_section # introduction
-  <b>---todo: edit introduction---</b>  
-  
-  <b>axonlib</b> is a standalone multiplatform (win32/linux) vst plugin library which focuses on 
+  <b>---todo: edit introduction---</b>
+
+  <b>axonlib</b> is a standalone multiplatform (win32/linux) vst plugin library which focuses on
   the ease of use while rataining 'low-level' control. it is realeased under the gnu lgpl license.
   <br>
-  
+
   feature highlights:
   - gui widgets <br>
   - loading of external png images <br>
@@ -48,49 +48,49 @@
   - lots of example plugins <br>
   - <br>
   - <br>
-  - <br>  
+  - <br>
   <br>
-  
+
   uses third party code:
   - lodepng by lode vandevenne <br>
   - base linux/win32 code by jorgen aase <br>
   -  <br>
   -  <br>
-  
-  \section install_section # installation   
-  <b>get the latest revision from the svn reposotory at:</b> <br>    
+
+  \section install_section # installation
+  <b>get the latest revision from the svn reposotory at:</b> <br>
   http://axonlib.googlecode.com <br>
-  
+
   <b>get the vst sdk from:</b> <br>
-  
-  http://ygrabit.steinberg.de/~ygrabit/public_html/index.html <br> 
+
+  http://ygrabit.steinberg.de/~ygrabit/public_html/index.html <br>
   (the 2.4r1 link) <br>
-  
+
   <b>create the following folders:</b> <br>
-  
+
   \code
-  axonlib 
-  axonlib\axonlib <-- copy axonlib here (ax...bin...docs..etc) 
-  axonlib\vstsdk24 <-- copy vst sdk here (pluginterfaces...public.sdk...etc) 
+  axonlib
+  axonlib\axonlib <-- copy axonlib here (ax...bin...docs..etc)
+  axonlib\vstsdk24 <-- copy vst sdk here (pluginterfaces...public.sdk...etc)
   \endcode
-  
+
   <b>compiler requirements: </b> <br>
-  
-  -- for linux download & install:: <br>  
+
+  -- for linux download & install:: <br>
   mingw32 - to cross-compile for win32 <br>
   g++ - to compile c++ code for linux <br>
   xorg-dev - required for gui-s. <br>
-  
+
   -- win32:: <br>
   get mingw32 (the one included with dev-c++ will suffice) <br>
   set path to '[mingw32dir]/bin/g++.exe' <br>
 
   -- to compile with cygwin for windows:: <br>
   download & install the standard mingw32, g++ packages <br>
-  
+
   -- to compile with cygwin for linux:: <br>
   see bottom of 'axonlib/plugins/compile-cygwin' for instructions <br>
-  
+
   \section usage_section # usage
 
   the absolutely simplest plugin you can make, a 'do nothing' plugin could look like this:
@@ -311,20 +311,20 @@
   \endcode
 
   \section compile_section # compilation
-  
+
   there are ready to use compile scripts in the 'axonlib/plugins' folder.
   the compile scripts will move the resulted binaries to '../bin'
   edit them suit your needs.
-   
+
   \note under win32 if you have a source file in a subfolder relative to 'compile.cmd'
   you should call the compile script like:
   \code
   cd mysubfolder
   ../compile.cmd myfx.cpp
-  \endcode  
-  
+  \endcode
+
   (see 'man gcc' for more info) <br>
-  
+
   default compiler lines: <br>
   \code
   //cygwin for win32::
@@ -333,38 +333,38 @@
   g++.exe -I../ax -I../../vstsdk24 -shared -mwindows -lpthread [inputfile.cpp] -s -o [outputfile.cpp] -Wl,-gc-sections
   //linux for linux::
   g++ -I../ax -I../../vstsdk24 -lX11 -lpthread -shared [inputfile.cpp] -s -o [outputfile.cpp] -Wl,-gc-sections
-  //linux for win32::  
+  //linux for win32::
   i586-mingw32msvc-g++ -I../ax -I../../vstsdk24 -mwindows -shared [inputfile.cpp] -s -o [outputfile.cpp] -Wl,-gc-sections
   \endcode
-      
+
   suggested optimization flags:
   \code
   -O3 -Os -fdata-sections -ffunction-sections -funroll-loops
   \endcode
-  
+
   for monitoring warnings use (note that the vst sdk 2.4 may pop a warning or two):
   \code
   -pedantic -fpermissive -W -Wall
   \endcode
-  
-  enabling sse optimized math. this will enable gas to optimize the generated asm code with sse instructions. 
-  \code 
+
+  enabling sse optimized math. this will enable gas to optimize the generated asm code with sse instructions.
+  \code
   -msse -mfpmath=sse
   \endcode
-  
+
   enabling 'fast-math' will allow the compiler to cut some corner when the default c math functions are used (sinf, tanf etc).
   this will make such as fast as the included methods in axMath.h but with reduced accuracy.
   \code
    -ffast-math
   \endcode
-  
+
   stripping the generated binary: <br>
   (see 'man strip' for more info)
   \code
   strip --strip-all [binaryfile]
   //or (i586-mingw32msvc-strip)
   \endcode
-  
+
   \subsection subsection1 a subsection
 
 */
@@ -418,7 +418,7 @@
 
 #ifdef AX_PLUGIN
 
-//#include "axHostVst.h"
+#include "axHost.h"
 
   #ifdef WIN32
 
@@ -442,10 +442,10 @@
 
     int main(audioMasterCallback audioMaster)
     {
-      AX_PLUGIN* plugin = new AX_PLUGIN(audioMaster,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
-      //axHostVst* host = new axHostVst(audioMaster);
-      //AX_PLUGIN* plugin = new AX_PLUGIN(host,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
-      if (!plugin) return 0;      
+      //AX_PLUGIN* plugin = new AX_PLUGIN(audioMaster,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
+      axHost* host = new axHost((void*)audioMaster);
+      AX_PLUGIN* plugin = new AX_PLUGIN(host,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
+      if (!plugin) return 0;
       return (int)plugin->getAeffect();
     }
 
@@ -467,9 +467,9 @@
 
     AEffect* main(audioMasterCallback audioMaster)
     {
-      AX_PLUGIN* plugin = new AX_PLUGIN(audioMaster,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
-      //axHostVst* host = new axHostVst(audioMaster);
-      //AX_PLUGIN* plugin = new AX_PLUGIN(host,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
+      //AX_PLUGIN* plugin = new AX_PLUGIN(audioMaster,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
+      axHost* host = new axHost((void*)audioMaster);
+      AX_PLUGIN* plugin = new AX_PLUGIN(host,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
       if (!plugin) return 0;
       return plugin->getAeffect();
     }

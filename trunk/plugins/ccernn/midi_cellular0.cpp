@@ -190,8 +190,10 @@ class myPlugin : public axPlugin,
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         //CELLS = new int[SIZE2 * 6];
         //memset(CELLS,0,SIZE2*6*sizeof(float));
@@ -210,7 +212,9 @@ class myPlugin : public axPlugin,
         mEditor = NULL;
         mGuiInitialized = false;
         describe("midi_cellular0","ccernn","axonlib example project",0,AX_MAGIC+0x0000);
-        hasEditor(AX_WIDTH,AX_HEIGHT);
+        setupAudio(2,2);
+        setupEditor(AX_WIDTH,AX_HEIGHT);
+        //hasEditor(AX_WIDTH,AX_HEIGHT);
 
         appendParameter( pWidth       = new parInteger(this, 0,"width",       "", 16,   4,    64          ));
         appendParameter( pHeight      = new parInteger(this, 1,"height",      "", 16,   4,    64          ));

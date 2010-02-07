@@ -71,17 +71,22 @@ class myPlugin : public axPlugin,
     axVoiceManager VM;
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         is_gui_initialized = false;
         mEditor = NULL;
         //srfKnob = NULL;
         describe("syn_poly0","ccernnb","axonlib example plugin",0002,AX_MAGIC+0x0000);
-        hasEditor(AX_WIDTH,AX_HEIGHT);
         // TODO: axPlugin functiuons for these (no calling directly into vst)
-        setNumInputs(0);
-        isSynth();
+        //hasEditor(AX_WIDTH,AX_HEIGHT);
+        //setNumInputs(0);
+        //isSynth();
+        setupAudio(0,2,true);
+        setupEditor(AX_WIDTH,AX_HEIGHT);
+
         //
         for (int i=0; i<MAX_VOICES; i++) VM.appendVoice(new myVoice());
         appendParameter( pGain = new parFloat(this,0,"gain","",1,0,2,0.1));

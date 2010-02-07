@@ -18,10 +18,13 @@ class myPlugin : public axPlugin
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         describe("midi_notelen0","ccernn","product_string",0,0);
+        setupAudio(2,2);
         appendParameter( new parFloat(this,0,"note length", "ms", 100, 0,1000 ) );
         processParameters();
         for( int i=0; i<128; i++ ) OFFSETS[i]=-1;

@@ -44,11 +44,11 @@ class axFontBase
         mStyle = aStyle;
       }
     virtual ~axFontBase() {}
-    inline axString name(void) { return mName; }
-    inline axColor color(void) { return mColor; }
-    inline int size(void)     { return mSize; }
-    inline int style(void)    { return mStyle; }
-    virtual int handle(void)  { return 0; }
+    inline axString getName(void) { return mName; }
+    inline axColor  getColor(void) { return mColor; }
+    inline int      getSize(void)     { return mSize; }
+    inline int      getStyle(void)    { return mStyle; }
+    virtual int     getHandle(void)  { return 0; }
 };
 
 //----------------------------------------------------------------------

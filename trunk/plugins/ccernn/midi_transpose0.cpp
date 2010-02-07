@@ -21,10 +21,13 @@ class myPlugin : public axPlugin
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         describe("midi_transpose0","ccernn","product_string",0,0);
+        setupAudio(2,2);
         appendParameter( pTrans = new parInteger( this,0,"mode", "", 0, -24,24 ) );
       }
 
@@ -34,7 +37,7 @@ class myPlugin : public axPlugin
       {
         int id = aParameter->mID;
         float f = aParameter->getValue();
-        TRACE("DoProcessParameter (%i) %f\n",id,f);
+        trace("DoProcessParameter (" << id << ") " << f);
         switch(id)
         {
           case 0:

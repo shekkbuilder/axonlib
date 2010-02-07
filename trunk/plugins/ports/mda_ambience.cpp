@@ -32,8 +32,10 @@ class myPlugin : public axPlugin
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         memset(buf1,0,1024*sizeof(float));
         memset(buf2,0,1024*sizeof(float));
@@ -44,6 +46,8 @@ class myPlugin : public axPlugin
         fb  = 0.8;
         //mEditor = NULL;
         describe("mda_ambience","ccernn","product_string",0,0);
+        setupAudio(2,2);
+
         //hasEditor(AX_WIDTH,AX_HEIGHT);
         //isSynth();
         appendParameter(new parFloat(this,0,"size",   "",0.7));

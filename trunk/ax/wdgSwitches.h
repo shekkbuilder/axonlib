@@ -86,7 +86,7 @@ class wdgSwitches : public axWidget
         mValue = aValue;
         int n = (int)axFloor( aValue * (float)mNum );
         mSelected = axMinInt( mNum-1, n );
-        TRACE("- n=%i\n",mSelected);
+        //trace("- n=" << mSelected);
       }
 
     //----------

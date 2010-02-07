@@ -41,10 +41,13 @@ class myPlugin : public axPlugin
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags )
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         describe("fx_blur0","ccernn","product_string",0,1);
+        setupAudio(2,2);
         //hasEditor(AX_WIDTH,AX_HEIGHT);
         //isSynth();
         mParameters.append( pSize   = new parFloat(  this,0,"size",  "", 0.5,  0,1, NULL)  );

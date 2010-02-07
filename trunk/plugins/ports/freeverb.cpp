@@ -53,12 +53,15 @@ class myPlugin : public axPlugin
 
   public:
 
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         //mEditor = NULL;
         //hasEditor(AX_WIDTH,AX_HEIGHT);
         describe("freeverb","jezar","product_string",0,0);
+        setupAudio(2,2);
         appendParameter(new parFloat(  this,0,"roomsize", "",0 ));
         appendParameter(new parFloat(  this,1,"damp",     "",0 ));
         appendParameter(new parFloat(  this,2,"wet",      "",0 ));
