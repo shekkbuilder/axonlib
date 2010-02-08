@@ -17,15 +17,8 @@
  */
 
 /**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
+ * @file axWindowX11.h
+ * \brief window for x11
  */
 
 #ifndef axWindowX11_included

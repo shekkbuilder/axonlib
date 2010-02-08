@@ -17,15 +17,8 @@
  */
 
 /**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
+ * @file axWindowW32.h
+ * \brief window for win32
  */
 
 #ifndef axWindowW32_included

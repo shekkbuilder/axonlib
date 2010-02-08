@@ -16,12 +16,6 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-// - /**
-// - * @file
-// - * \brief desc
-// - */
-
 /**
   \file axApplication.h
   \brief standalone application

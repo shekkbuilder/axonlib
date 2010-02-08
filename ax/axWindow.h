@@ -21,13 +21,6 @@
  * \brief os/host window
  */
 
-/**
- * \brief desc
- *
- * long desc
- *
- */
-
 #ifndef axWindow_included
 #define axWindow_included
 //----------------------------------------------------------------------

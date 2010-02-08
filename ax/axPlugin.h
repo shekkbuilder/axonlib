@@ -107,7 +107,7 @@ class axPluginBase
     /// get host sync and tme info
     /**
       update the internal time, sync, .. variables.
-      if you #define AX_AUTOSYNC somewhere, this will be called automatically just before every audio block
+      if you define AX_AUTOSYNC somewhere, this will be called automatically just before every audio block
       (and the doProcessTransport is called if needed).
     */
     virtual void updateTimeInfo(void) {}
@@ -122,7 +122,7 @@ class axPluginBase
 
     /// host transport has changed
     /**
-      if you have #defined AX_AUTOSYNC, this will be called before every audio block if transport state has changed.
+      if you have defined AX_AUTOSYNC, this will be called before every audio block if transport state has changed.
     */
     virtual void  doProcessTransport(int aState) {}
 
@@ -192,7 +192,7 @@ class axPluginBase
     /// idle editor
     /**
       this is called 20-30 times per second, depending on the host.
-      (if you have not #define AX_NODIRTYWIDGETS, you should redraw the dirty-widgets list here)
+      (if you have not define AX_NODIRTYWIDGETS, you should redraw the dirty-widgets list here)
     */
     virtual void  doIdleEditor(void) {}
 };
@@ -225,7 +225,7 @@ class axPlugin  : public axPluginImpl,
     /// constructor
     /**
       calls axInitialize(aPlugFlags)
-      \param audioMaster audioMaster (vst)
+      \param aHost axHost (vst)
       \param numProgs number of programs
       \param numParams number of parameters
       \param aPlugFlags calls axInitialize with these flags

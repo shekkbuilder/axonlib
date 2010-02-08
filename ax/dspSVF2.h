@@ -17,22 +17,20 @@
  */
 
 /**
- * @file dspInterpolate.h
- * \brief interpolation methods
+ * @file dspSVF2.h
+ * \brief SVF based on rbj's audio cookbook
+ * ----TODO 
  */
 
-#ifndef dspInterpolate_included
-#define dspInterpolate_included
+#ifndef dspSVF2_included
+#define dspSVF2_included
 
 /**
- * \brief interpolation methods
- *   
+ * \brief SVF based on rbj's audio cookbook 
+ *  biquad LP, HP, BP, BR    
  */
  
-// TODO:   http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/ 
-
- 
-class dspInterpolate
+class dspSVF2
 {
   private:
     /*@{*/
@@ -43,8 +41,8 @@ class dspInterpolate
   public:
     /**
      * constructor          
-     */
-    dspInterpolate()
+     **/
+    dspSVF2()
     {
       x1 = y1 = 0;
       setup(0.999f);

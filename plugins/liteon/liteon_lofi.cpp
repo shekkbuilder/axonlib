@@ -379,8 +379,8 @@ class myPlugin : public axPlugin,
 				}
   			//spl0 = (spl0 >? -lim) <? lim;
   			//spl1 = (spl1 >? -lim) <? lim;
-   			spl0 = axMax(-lim,axMin(spl0,lim));
-   			spl1 = axMax(-lim,axMin(spl1,lim));
+   			spl0 = axLimit(spl0,lim);
+   			spl1 = axLimit(spl1,lim);
       }
       // -------------------
       // @ output

@@ -17,15 +17,13 @@
  */
 
 /**
- * @file
+ * @file axColor.h
  * \brief platform/device dependent color
  */
 
 #ifndef axColor_included
 #define axColor_included
 //----------------------------------------------------------------------
-
-/// platform/device dependent color
 
 #include "axGlobals.h"
 
@@ -56,16 +54,18 @@
  */
 struct axColor
 {
-  //public:
-
+    //public:
     int mColor;
 
     /// empty constructor
-
     axColor() { mColor=0; }
 
-    /// constructor w/initial setup
-
+    /**
+     constructor w/initial setup         
+     * @param[in] aR int red value
+     * @param[in] aG int green value
+     * @param[in] aB int blue value 
+    */
     axColor(int aR,int aG,int aB) { set(aR,aG,aB); }
     //axColor(float aR,float aG,float aB) { setcolor(aR*255,aG*255,aB*255); }
 
@@ -74,14 +74,20 @@ struct axColor
     //void  operator = (int  i)        { mColor = i; }
     //void  operator = (const int i)   { mColor = i; }
 
-    /// create/set color
+    /**
+     create/set color
+     * @param[in] aR int red value
+     * @param[in] aG int green value
+     * @param[in] aB int blue value     
+     * @return void
+     */
     void set(int aR, int aG, int aB)
       {
-
+        // win32
         #ifdef WIN32
         mColor = RGB(aR,aG,aB);
         #endif
-
+        // linux
         #ifdef linux
           XColor xcol;
           xcol.red   = aR << 8;
@@ -91,13 +97,14 @@ struct axColor
           XAllocColor(gDP,XDefaultColormap(gDP,0),&xcol);
           mColor = xcol.pixel;
         #endif
-
       }
 
     /**
-     * get random color and set
+     * get random color and set <br>
+     * default threshold value for dark color is 96 and for light 192.     
      * @param[in] flag int 0=normal, 1=light, 2=dark
      * @param[in] thd int threshold [0..255]
+     * @return void     
      */
     // fixes "warning: comparison between signed and unsigned integer expression"
     //void random(const int flag=0, int thd=0)

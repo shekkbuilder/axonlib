@@ -17,8 +17,11 @@
  */
 
 /**
- * @file
+ * @file axMath.h
  * \brief math approximations and routines
+ * \code
+ * TODO: a short performance table
+ * \endcode  
  */
 
 // ---------------------------------------------------------------------------
@@ -36,6 +39,7 @@
 
 #include <math.h>
 #include <time.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include "axDebug.h"
 #include "axDefines.h"
@@ -201,6 +205,48 @@ inline float axCalcValuep(const float a, const float b, const float c)
 }
 
 /**
+ * calculate the average value of a set of floating point numbers
+ * example: <br>
+ * \code
+ * axAvrg(3, -1.f, 3.5f, 5.f); // result is 2.5  
+ * \endcode   
+ * @param[in] count unsigned int - number of elements (n)
+ * @param[in] elements[0-n] float - elements
+ * @return float 
+ */
+inline float axAvrg(const unsigned int n,...)
+{
+  va_list ap;
+  float total = 0.f;
+  va_start(ap, n);
+  for(unsigned int i = 0; i < count; i++)
+    total += va_arg(ap, double);
+  va_end(ap);
+  return total/n;
+}
+
+/**
+ * calculate the average value of a set of integers
+ * example: <br>
+ * \code
+ * axAvrgInt(5, -2, -1, 1, 5, 7); // result is 2
+ * \endcode   
+ * @param[in] count unsigned int - number of elements (n)
+ * @param[in] elements[0-n] int - elements
+ * @return int 
+ */
+inline int axAvrgInt(const unsigned int count,...)
+{
+  va_list ap;
+  int total = 0;
+  va_start(ap, n);
+  for(unsigned int i = 0; i < n; i++)
+    total += va_arg(ap, int);
+  va_end(ap);
+  return total/n;
+}
+
+/**
  * passes a seed to the random number generator
  * @param[in] aSeed int default value -> use ctime
  */
@@ -262,9 +308,9 @@ inline float axLogf(float value)
   __asm__ __volatile__ ("":::);
   __asm__
   (
-    "fld %0;"    "fldln2;"    "fxch;"    "fyl2x;"    "fst %0;"
-    : "=m" (value)
-    : "m" (value)
+    "fld %0;"    "fldln2;"    "fxch;"    "fyl2x;"
+    : "=t" (value)
+    : "0" (value)
   );
   return value;
 }
@@ -279,9 +325,9 @@ inline float axLog2f(float value)
   __asm__ __volatile__ ("":::);
   __asm__
   (
-    "fld1;"    "fld %0;"    "fyl2x;"    "fst %0;"
-    : "=m" (value)
-    : "m" (value)
+    "fld %0;"   "fld1;"   "fxch;"  "fyl2x;"
+    : "=t" (value)
+    : "0" (value)
   );
   return value;
 }
@@ -311,7 +357,8 @@ inline float axInvSqrtf(float value)
   __asm__ __volatile__ ("":::);
   __asm__
   (
-    "fsqrt;"  "fld1;"   "fdivp;"    : "=t" (value)    : "0" (value)
+    "fsqrt;"  "fld1;"   "fdivp;"
+    : "=t" (value)    : "0" (value)
   );
   return value;
 }
@@ -356,24 +403,33 @@ inline float axTanf(float value)
   __asm__ __volatile__ ("":::);
   __asm__
   (
-    "fptan;"    : "=t" (value)    : "0" (value)
+    "fptan;"  "fstp %1;"
+    : "=t" (value)    : "0" (value)
   );
   return value;
 }
 
 /**
- * calculates the sinecosine of a floating point number
- * @param[in] value float
- * @return value float
+ * calculates both the sine and cosine of a floating point number
+ * \code
+ * // example:
+ * float sinx;
+ * float cosx;
+ * axSinCosf(x, &sinx, &cosx);
+ * // sinx and cosx will recieve the results   
+ * \endcode   
+ * @param[in] x float input variable
+ * @param[in] sin float* pointer to sin value 
+ * @param[in] cos float* pointer to cos value 
+ * @return void
  */
-inline float axSinCosf(float value)
+inline void axSinCosf(float x, float *sin, float *cos)
 {
   __asm__ __volatile__ ("":::);
   __asm__
   (
-    "fsincos;"    : "=t" (value)    : "0" (value)
+    "fsincos;" : "=t" (*cos), "=u" (*sin) : "0" (x)
   );
-  return value;
 }
 
 /**
@@ -389,10 +445,8 @@ inline float axAsinf(float value)
   __asm__
   (
     "fld %0;"    "fld %0;"    "fmulp;"    "fst %1;"    "fld1;"    "fsubp;"
-    "fld %1;"    "fdivp;"    "fsqrt;"    "fld1;"    "fpatan;"    "fst %0;"
-    : "=m" (value)
-    : "m" (tmp)
-    : "eax"
+    "fld %1;"    "fdivp;"    "fsqrt;"    "fld1;"    "fpatan;"   "fst %0;"
+    : "=m" (value)  : "m" (tmp)
   );
   return value;
 }
@@ -411,9 +465,7 @@ inline float axAcosf(float value)
   (
     "fld %0;"    "fld %0;"    "fmulp;"    "fst %1;"    "fld1;"    "fsubp;"
     "fld %1;"    "fdivrp;"    "fsqrt;"    "fld1;"    "fpatan;"    "fst %0;"
-    : "=m" (value)
-    : "m" (tmp)
-    : "eax"
+    : "=m" (value)    : "m" (tmp)
   );
   return value;
 }
@@ -428,7 +480,7 @@ inline float axAtanf(float value)
   __asm__ __volatile__ ("":::);
   __asm__
   (
-    "fld %0;"    "fld1;"    "fpatan;"    "fst %0;"
+    "fld %0;"    "fld1;"    "fpatan;"
     : "=m" (value)
     : "m" (value)
   );

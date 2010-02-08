@@ -35,8 +35,10 @@
   \section introduction_section # introduction
   <b>---todo: edit introduction---</b>
 
-  <b>axonlib</b> is a standalone multiplatform (win32/linux) vst plugin library which focuses on
-  the ease of use while rataining 'low-level' control. it is realeased under the gnu lgpl license.
+  <b>axonlib</b> is a standalone, multiplatform (win32/linux) library for
+  vst plugins and standalone applications, which focuses on the ease of
+  use, while rataining 'low-level' control. it is realeased under the gnu lgpl
+  license.
   <br>
 
   feature highlights:
@@ -313,8 +315,8 @@
   \section compile_section # compilation
 
   there are ready to use compile scripts in the 'axonlib/plugins' folder.
-  the compile scripts will move the resulted binaries to '../bin'
-  edit them suit your needs.
+  the compile scripts will move the resulted binaries to '../bin'.
+  edit them to suit your needs.
 
   \note under win32 if you have a source file in a subfolder relative to 'compile.cmd'
   you should call the compile script like:
@@ -327,14 +329,16 @@
 
   default compiler lines: <br>
   \code
-  //cygwin for win32::
-  g++ -I../ax -I../../vstsdk24 -shared -mwindows -mno-cygwin -lpthread [inputfile.cpp] -s -o [outputfile.cpp] -Wl,-gc-sections
   //win32::
   g++.exe -I../ax -I../../vstsdk24 -shared -mwindows -lpthread [inputfile.cpp] -s -o [outputfile.cpp] -Wl,-gc-sections
   //linux for linux::
   g++ -I../ax -I../../vstsdk24 -lX11 -lpthread -shared [inputfile.cpp] -s -o [outputfile.cpp] -Wl,-gc-sections
   //linux for win32::
   i586-mingw32msvc-g++ -I../ax -I../../vstsdk24 -mwindows -shared [inputfile.cpp] -s -o [outputfile.cpp] -Wl,-gc-sections
+  //cygwin for win32::
+  g++ -I../ax -I../../vstsdk24 -shared -mwindows -mno-cygwin -lpthread [inputfile.cpp] -s -o [outputfile.cpp] -Wl,-gc-sections
+  //cygwin for linux::
+  (see bottom of 'axonlib/plugins/compile-cygwin')
   \endcode
 
   suggested optimization flags:

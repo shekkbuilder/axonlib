@@ -21,14 +21,6 @@
  * \brief global things
  */
 
-/**
- * \brief global things
- *
- * long desc
- *
- */
-
-
 #ifndef axGlobals_included
 #define axGlobals_included
 //----------------------------------------------------------------------
