@@ -82,8 +82,6 @@ class axCanvasBase
     //axPen*    mDefaultPen;
     //axBrush*  mDefaultBrush;
     //axFont*   mDefaultFont;
-    int       mNumClipRects;
-    axRect    mClipRects[MAX_CLIPRECTS];
 
   public:
 
@@ -96,7 +94,7 @@ class axCanvasBase
         //mTextColor  = axColor(255,255,255);
         mPenWidth   = 0;
         mXpos=mYpos = 0;
-        mNumClipRects = 0;
+//        mNumClipRects = 0;
         //mDefaultPen = NULL;//createPen(AX_GREY_LIGHT,0,0);
         //mDefaultBrush = NULL;//createBrush(AX_GREY_DARK,0);
         //mDefaultFont = NULL;//createFont("arial",12,0);
@@ -187,11 +185,15 @@ class axCanvasBase
 
 class axCanvas : public axCanvasImpl
 {
+  //private:
+  //  axRect mClipStack[16];
+  //  int mClipStackPos;
   public:
 
     axCanvas(int aHandle, int aMode=cmo_window)
     : axCanvasImpl(aHandle,aMode)
       {
+        //mClipStackPos = 0;
       }
 
     virtual ~axCanvas()
@@ -270,6 +272,21 @@ class axCanvas : public axCanvasImpl
 //                      mClipRects[mNumClipRects].y2());
 //        }
 //      }
+
+    //--------------------------------------------------
+    //
+    //--------------------------------------------------
+
+    //void push_rect(axRect aRect)
+    //  {
+    //    mClipStack[mClipStackPos++] = aRect;
+    //  }
+
+    //axRect pop_rect(void)
+    //  {
+    //    return mClipStack[--mClipStackPos];
+    //  }
+
 
 };
 

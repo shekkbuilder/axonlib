@@ -62,6 +62,7 @@ class myPlugin : public axPlugin,
     myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
     : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
+        //trace("- ax_demo.constructor");
         mEditor = NULL;
         mGuiInitialized = false;
         describe("ax_demo","ccernn","product_string",0,0);

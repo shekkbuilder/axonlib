@@ -131,6 +131,11 @@ class myWin : public axWindow
         redrawWidget(aWidget);
       }
 
+    //virtual void onHover(axWidget* aWidget)
+    //  {
+    //    trace("hover: " << aWidget->mID );
+    //  }
+
     //--------------------------------------------------
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)

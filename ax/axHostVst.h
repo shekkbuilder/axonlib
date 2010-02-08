@@ -24,12 +24,21 @@
 #define axHostVst_included
 //----------------------------------------------------------------------
 
+#include "pluginterfaces/vst2.x/aeffect.h"
+#include "pluginterfaces/vst2.x/aeffectx.h"
+
 // vst-specific implementation of axHost
 
 class axHostVst : public axHostBase
 {
+  private:
+    audioMasterCallback audioMaster;
   public:
-    axHostVst(void* ptr) : axHostBase(ptr) {}
+    axHostVst(void* ptr)
+    : axHostBase(ptr)
+      {
+        audioMaster = (audioMasterCallback)ptr;
+      }
     virtual ~axHostVst() {}
 };
 

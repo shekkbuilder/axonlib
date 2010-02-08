@@ -24,7 +24,7 @@
 /**
  * \brief rectangle class
  *
- * \long has methods to combine rectangles and find intersections 
+ * \long has methods to combine rectangles and find intersections
  *
  */
 
@@ -153,7 +153,7 @@ struct axRect
 
 #define NULL_RECT axRect(0,0,0,0) ///< null rect.
 
-//typedef axArray<axRect*> axRects;
+typedef axArray<axRect*> axRects;
 
 //----------------------------------------------------------------------
 #endif

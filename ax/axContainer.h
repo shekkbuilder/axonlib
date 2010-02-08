@@ -51,14 +51,6 @@ class axContainer : public axWidget,
 
   public:
 
-    /// constructor
-    /**
-      \param aListener listener that will receive response-events from this
-      \param aID widget it, use for whatever
-      \param aRect position (relative to parent) and size
-      \param aAlignment alignment mode
-    */
-
     axContainer(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None)
     : axWidget(aListener, aID, aRect, aAlignment)
       {
@@ -74,6 +66,7 @@ class axContainer : public axWidget,
         setFlag(wfl_Align);
         mOffsetX = 0;
         mOffsetY = 0;
+        //mClipStackPos = 0;
       }
 
     //----------
@@ -84,10 +77,14 @@ class axContainer : public axWidget,
       }
 
     //--------------------------------------------------
+    // accessors
+    //--------------------------------------------------
 
     inline axWidget* getWidget(int i) { return mWidgets[i]; }
     inline axRect getContent(void) { return mContent; } // set up in doRealign
 
+    //--------------------------------------------------
+    // set
     //--------------------------------------------------
 
     /// set alignment borders
@@ -108,7 +105,9 @@ class axContainer : public axWidget,
         mClickedWidget  = NULL;
       }
 
-    //----------
+    //--------------------------------------------------
+    // widgets
+    //--------------------------------------------------
 
     /// clear subwidgets list
 
@@ -176,7 +175,13 @@ class axContainer : public axWidget,
 
     virtual axWidget* findWidget(int aX, int aY)
       {
-        for( int i=0; i<mWidgets.size(); i++ )
+
+        //for( int i=0; i<mWidgets.size(); i++ )
+        #ifdef AX_PAINTERS
+        for (int i=0; i<mWidgets.size(); i++)
+        #else
+        for (int i=mWidgets.size()-1; i>=0; i--)
+        #endif
         {
           axWidget* W = mWidgets[i];
           if(W->hasFlag(wfl_Active))
@@ -186,12 +191,23 @@ class axContainer : public axWidget,
         return NULL;
       }
 
-  //protected:
+    //--------------------------------------------------
+    //
+    //--------------------------------------------------
+
+    //void push_rect(axRect aRect)
+    //  {
+    //    mClipStack[mClipStackPos++] = aRect;
+    //  }
+
+    //axRect pop_rect(void)
+    //  {
+    //    return mClipStack[--mClipStackPos];
+    //  }
 
     //--------------------------------------------------
     // widget base
     //--------------------------------------------------
-
 
     //virtual void      doReset(void) {}
     //virtual void      doSetValue(float aValue) {} // 0..1
@@ -219,7 +235,8 @@ class axContainer : public axWidget,
 
     virtual void doScroll(int dX, int dY)
       {
-        for( int i=0;i<mWidgets.size(); i++ ) // move sub-widgets only
+        // move sub-widgets only
+        for( int i=0;i<mWidgets.size(); i++ )
         {
           mWidgets[i]->doMove( mWidgets[i]->getRect().x + dX, mWidgets[i]->getRect().y + dY );
         }
@@ -243,6 +260,35 @@ class axContainer : public axWidget,
     /**
       realign sub-widgets according to their alignment setting.
       also, it keeps track of a mContent rectangle, that encapsulates all the sub-widgets
+    */
+
+/*
+
+    M = margin
+    P = padding (between widgets when stacked)
+
+     ________________________________________ _ _          _ ____
+    |          ^                                                  |
+    |          M                                                  |
+    |      ____v___       ________       ____ _            _      |
+    |     |        |     |        |     |                   |     |
+    |<-M->|        |<-P->|        |<-P->|                   |<-M->|
+    |     |________|     |________|     |______ _       _ __|     |
+    |          ^                                                  :
+    |          P
+    |      ____v____      ___ _
+    |     |         |    |
+    |     :         .
+    |
+
+*/
+
+    /// constructor
+    /**
+      \param aListener listener that will receive response-events from this
+      \param aID widget it, use for whatever
+      \param aRect position (relative to parent) and size
+      \param aAlignment alignment mode
     */
 
     //TODO:
@@ -398,8 +444,11 @@ class axContainer : public axWidget,
         {
           if( mRect.intersects(aRect) )
           {
-            //TODO: pushCLipFlag
-            if (hasFlag(wfl_Clip)) aCanvas->setClipRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
+            if (hasFlag(wfl_Clip))
+            {
+              aCanvas->setClipRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
+              //aCanvas->push_rect(mRect);
+            }
             //axWidget::doPaint( aCanvas, aRect );
             #ifdef AX_PAINTERS
             for( int i=mWidgets.size()-1; i>=0; i-- )
@@ -413,8 +462,13 @@ class axContainer : public axWidget,
             // this fails for recursive clip rectangles,
             // the innermost rect will clear the clip rect on its way out,
             // but it should reset to what it was 'on enrty'
-            //TODO: popCLipFlag
-            if( hasFlag(wfl_Clip) ) aCanvas->clearClipRect();
+
+            if (hasFlag(wfl_Clip))
+            {
+              //axRect CR = aCanvas->pop_rect();
+              //aCanvas->setClipRect( CR.x, CR.y, CR.x2(), CR.y2() );
+              aCanvas->clearClipRect();
+            }
           } //intersect
         }
       }
@@ -486,8 +540,11 @@ class axContainer : public axWidget,
 
     virtual void doMouseMove(int aX, int aY, int aB)
       {
+        //axWidget* W = findWidget(aX,aY);
+        //if (W) mListener->onHover(W);
         if( hasFlag(wfl_Active) )
         {
+          //TODO: find hovering widget?
           if( mCapturedWidget ) mCapturedWidget->doMouseMove(aX,aY,aB);
         } //active
       }

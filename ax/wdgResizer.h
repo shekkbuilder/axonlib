@@ -42,7 +42,7 @@ class wdgResizer : public wdgPaintBox
 {
   private:
     char    hint[256];
-    axBrush*  mFillBrush;
+    //axBrush*  mFillBrush;
 
   protected:
     //axSurface* mSurface;
@@ -65,7 +65,7 @@ class wdgResizer : public wdgPaintBox
 
     virtual ~wdgResizer()
       {
-        delete mFillBrush;
+        //delete mFillBrush;
       }
 
     //--------------------------------------------------
@@ -89,7 +89,6 @@ class wdgResizer : public wdgPaintBox
         prevx = aX;
         prevy = aY;
         mListener->onCursor(cuMove);
-
         //sizerx = mRect.x;
         //sizery = mRect.y;
       }
@@ -109,8 +108,8 @@ class wdgResizer : public wdgPaintBox
           mListener->onResize(this,deltax,deltay);
           prevx = aX;
           prevy = aY;
-          sprintf(hint,"<resizing>");
-          mListener->onHint(hint);
+          //sprintf(hint,"<resizing>");
+          //mListener->onHint(hint);
         }
       }
 
