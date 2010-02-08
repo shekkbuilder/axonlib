@@ -149,7 +149,7 @@ struct axRect
 
 #define NULL_RECT axRect(0,0,0,0) ///< null rect.
 
-//typedef axArray<axRect*> axRects;
+typedef axArray<axRect*> axRects;
 
 //----------------------------------------------------------------------
 #endif
