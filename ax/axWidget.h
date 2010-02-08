@@ -313,19 +313,19 @@ class axWidget : public axWidgetBase
       {
         mListener   = aListener;
         mRect       = aRect;
+        mOrig.set(mRect.x,mRect.y);
         mAlignment  = aAlignment;
-        mValue      = 0;
-        mConnection = -1;
-        mUser       = NULL;
-        mID         = aID;
         clearAllFlags();
         setFlag(wfl_Active);
         setFlag(wfl_Visible);
         setFlag(wfl_Capture);
-        mOrig.set(mRect.x,mRect.y);
-        mParameter = NULL;
-        mMinWidth = mMinHeight = 0;
-        mMaxWidth = mMaxHeight = 999999;
+        mConnection = -1;
+        mValue      = 0;
+        mParameter  = NULL;
+        mMinWidth   = mMinHeight = 0;
+        mMaxWidth   = mMaxHeight = 999999;
+        mUser       = NULL;
+        mID         = aID;
       }
 
     //virtual ~axWidget()
@@ -334,8 +334,8 @@ class axWidget : public axWidgetBase
 
     //--------------------------------------------------
 
-    inline void setMinWidth(int w) { mMinWidth = w; }
-    inline void setMaxWidth(int w) { mMaxWidth = w; }
+    inline void setMinWidth(int w)  { mMinWidth = w; }
+    inline void setMaxWidth(int w)  { mMaxWidth = w; }
     inline void setMinHeight(int h) { mMinHeight = h; }
     inline void setMaxHeight(int h) { mMaxHeight = h; }
 
@@ -433,16 +433,19 @@ class axWidget : public axWidgetBase
 
     //----------
 
-    /// scroll (content of) widget
-    /**
-      \param dX number of pixels to scroll horizontally
-      \param dY number of pixels to scroll vertically
-    */
-    virtual void doScroll(int dX, int dY)
-      {
-        mRect.x += dX;
-        mRect.y += dY;
-      }
+//    /// scroll (content of) widget
+//    /**
+//      \param dX number of pixels to scroll horizontally
+//      \param dY number of pixels to scroll vertically
+//    */
+//    virtual void doScroll(int dX, int dY)
+//      {
+//        // hmmm, this should not be here?
+//        // doScroll means 'scroll content', not 'scroll yourself'
+//        // move to axContainer?
+//        mRect.x += dX;
+//        mRect.y += dY;
+//      }
 
     //----------
 
