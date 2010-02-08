@@ -17,15 +17,8 @@
  */
 
 /**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
+ * @file axEditor.h
+ * \brief editor class
  */
 
 #ifndef axEditor_included

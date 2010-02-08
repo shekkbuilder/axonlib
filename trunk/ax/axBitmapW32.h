@@ -16,6 +16,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file axBitmapW32.h
+ * \brief bitmap for win32
+ */
+
 #ifndef axBitmapW32_included
 #define axBitmapW32_included
 //----------------------------------------------------------------------

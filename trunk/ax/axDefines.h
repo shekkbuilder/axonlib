@@ -17,17 +17,10 @@
  */
 
 /**
- * @file
- * \brief desc
+ * @file axDefines.h
+ * \brief axonlib definitions
  */
 
-/**
- * \brief desc
- *
- * long desc
- *
- */
- 
 #ifndef axDefines_included
 #define axDefines_included
 //----------------------------------------------------------------------

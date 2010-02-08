@@ -18,7 +18,7 @@
 
 /**
   \file axFont.h
-  \brief font
+  \brief font class
 */
 
 #ifndef axFont_included

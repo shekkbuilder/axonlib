@@ -74,6 +74,7 @@ class myPlugin : public axPlugin
       {
         int  id = aParameter->mID;
         float f = aParameter->getValue();
+        trace("id = " << id << ", value = " << f); 
         wdebug("id = ", id, false);
         wdebug(", value = ", f);
         switch(id)
@@ -119,18 +120,20 @@ class myPlugin : public axPlugin
       }
 
     // debug
-    virtual void doProcessState(int aState)
+    virtual void doProcessState(int aState) // overwride default method
     {
-      #if defined(AX_DEBUG) && defined(WIN32)
+      #if defined(AX_DEBUG) && defined(WIN32) // check for win32 and ax_debug
         switch(aState)
         {
-          case pst_Resume:
-            axDwinCreate();
-            wdebug("axLogf=", axLogf(2.24));
-            wdebug("logf=", logf(2.24));
+          case pst_Open:                                // - on plugin open
+            axDstdCreate();                             // create console
+            axDwinCreate();                             // create debug win            
+            trace("axLogf(2.24)=" << axLogf(2.24));     // test trace()
+            wdebug("axLogf(2.24)=", axLogf(2.24));      // test wdebug()
           break;
-          case pst_Suspend:
-            axDwinDestroy();
+          case pst_Close:                               // - on plugin close
+            axDstdDestroy();                            // destroy console            
+            axDwinDestroy();                            // destroy debug win
           break;
         }
       #endif

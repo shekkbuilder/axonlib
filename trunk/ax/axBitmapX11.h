@@ -17,15 +17,8 @@
  */
 
 /**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
+ * @file axBitmapX11.h
+ * \brief bitmap for X11
  */
 
 #ifndef axBitmapX11_included
