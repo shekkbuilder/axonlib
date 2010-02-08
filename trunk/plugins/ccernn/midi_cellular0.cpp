@@ -1,3 +1,5 @@
+#if 0
+
 // currently in a non-working state....
 // delayed until a few other things are in place
 
@@ -33,10 +35,10 @@
     // distance from CELLS
     //#define C2 SIZE2
     //#define CELLS  0
-    #define SAVED  (SIZE2*2)
-    #define RTRIG  (SIZE2*3)
-    #define GTRIG  (SIZE2*4)
-    #define BTRIG  (SIZE2*5)
+//    #define SAVED  (SIZE2*2)
+//    #define RTRIG  (SIZE2*3)
+//    #define GTRIG  (SIZE2*4)
+//    #define BTRIG  (SIZE2*5)
 
 
 //----------------------------------------------------------------------
@@ -49,13 +51,13 @@ class myGrid: public wdgGrid
 {
   private:
     axBrush*  mBrushes[16];
-    int*      CELLS; // dangerous
+    int*      mCells; // dangerous
   public:
     myGrid(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment, int* aCells)
     : wdgGrid(aListener,aID,aRect,aAlignment)
       {
         //CELLS = NULL;
-        CELLS = aCells;
+        mCells = aCells;
         mBrushes[ 0] = new axBrush( AX_GREY_DARK );     // ....
         mBrushes[ 1] = new axBrush( AX_RED_DARK );      // ...r
         mBrushes[ 2] = new axBrush( AX_GREEN_DARK );    // ..g.
@@ -77,35 +79,35 @@ class myGrid: public wdgGrid
       {
         for (int i=0; i<16;i++) delete mBrushes[i];
       }
-    //inline void setCells(int* aCells) { CELLS=aCells; }
+    inline void setCells(int* aCells) { mCells=aCells; }
     virtual void on_DrawCell(axCanvas* aCanvas, axRect aRect,int x, int y)
       {
-        assert(CELLS);
+        assert(mCells);
         int index = (y*SIZE)+x;
         index += SIZE+1;
-        int cel = CELLS[index];
         int brush = 0;
-        if (cel==1) brush = 8;
-        if (CELLS[RTRIG+index]==1) brush |= 1;
-        if (CELLS[GTRIG+index]==1) brush |= 2;
-        if (CELLS[BTRIG+index]==1) brush |= 4;
+        int cel = mCells[index];
+        if (cel&1) brush  = 8;
+        if (cel&2) brush |= 1;
+        if (cel&4) brush |= 2;
+        if (cel&8) brush |= 4;
         aCanvas->selectBrush( mBrushes[brush] );
         aCanvas->fillRect(aRect.x,aRect.y,aRect.x2(),aRect.y2());
       }
     virtual void on_ClickCell(int x, int y, int b)
       {
-        assert(CELLS);
+        assert(mCells);
         int index = (y*SIZE)+x;
         index += SIZE+1;
         trace( "x:" << x << " y:" << y << " b:" << b);
-        if (b==1) CELLS[index] = 1;
-        if (b==2) CELLS[index] = 0;
-        if (b==but_Shift+1) CELLS[RTRIG+index] = 1;
-        if (b==but_Shift+2) CELLS[RTRIG+index] = 0;
-        if (b==but_Ctrl +1) CELLS[GTRIG+index] = 1;
-        if (b==but_Ctrl +2) CELLS[GTRIG+index] = 0;
-        if (b==but_Alt  +1) CELLS[BTRIG+index] = 1;
-        if (b==but_Alt  +2) CELLS[BTRIG+index] = 0;
+        if (b==1) mCells[index] |= 1;
+        if (b==2) mCells[index] &= ~1;
+        if (b==but_Shift+1) mCells[index] |=  1;
+        if (b==but_Shift+2) mCells[index] &= ~1;
+        if (b==but_Ctrl +1) mCells[index] |=  1;
+        if (b==but_Ctrl +2) mCells[index] &= ~1;
+        if (b==but_Alt  +1) mCells[index] |=  1;
+        if (b==but_Alt  +2) mCells[index] &= ~1;
       }
 };
 
@@ -183,10 +185,14 @@ class myPlugin : public axPlugin,
     int   cycle;
     int   offset;
     int   block;
+
+    int*  mBuffer;
     int*  mCells;
-    int   CELLS;
+    int*  mCells2;
+    int*  mSaved;
+//    int   CELLS;
+//    int   C2;
     int   SIZEh;
-    int   C2;
 
   public:
 
@@ -195,12 +201,11 @@ class myPlugin : public axPlugin,
     myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
     : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
-        //CELLS = new int[SIZE2 * 6];
-        //memset(CELLS,0,SIZE2*6*sizeof(float));
-        mCells = new int[SIZE2 * 6];
-        memset(mCells,0,SIZE2*6*sizeof(float));
-        CELLS = 0;
-        C2 = SIZE2;
+        mBuffer = new int[SIZE2 * 3];
+        memset(mBuffer,0,SIZE2*3*sizeof(float));
+        mCells  = mBuffer;
+        mCells2 = mBuffer + SIZE2;
+        mSaved  = mBuffer + SIZE2*2;
         isplaying = false;
         countdown = 0;
         cycle = 0;
@@ -334,7 +339,7 @@ class myPlugin : public axPlugin,
         EDIT->appendWidget(wPanel = new wdgPanel(this,-1,NULL_RECT,wal_Client));
         if (!mGuiInitialized) { mGuiInitialized = true; }
 
-        wPanel->appendWidget( wGrid       = new myGrid( this,-1,axRect( 10,10,320,320),wal_None,CELLS) );
+        wPanel->appendWidget( wGrid       = new myGrid( this,-1,axRect( 10,10,320,320),wal_None,mCells) );
 
         wPanel->appendWidget( wWidth      = new wdgKnob(this, 0,axRect( 10,340,155,32),wal_None) );
         wPanel->appendWidget( wHeight     = new wdgKnob(this, 1,axRect( 10,380,155,32),wal_None) );
@@ -789,3 +794,6 @@ desc:midi_automata :: ccernn.2009 :: v0.0.4
   );
 
 */
+
+
+#endif

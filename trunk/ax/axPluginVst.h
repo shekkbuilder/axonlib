@@ -36,6 +36,7 @@
 
 #include "pluginterfaces/vst2.x/aeffect.h"
 #include "pluginterfaces/vst2.x/aeffectx.h"
+
 #include "public.sdk/source/vst2.x/audioeffect.cpp"
 #include "public.sdk/source/vst2.x/audioeffectx.cpp"
 
@@ -204,16 +205,21 @@ class axPluginVst :  public AudioEffectX,
 
     virtual VstInt32 canDo(char *ptr)
       {
-        if (strcmp(ptr,"sendVstEvents"))        return 1; // plug-in will send Vst events to Host
-        if (strcmp(ptr,"sendVstMidiEvent"))     return 1; // plug-in will send MIDI events to Host
-        if (strcmp(ptr,"receiveVstEvents"))     return 1; // plug-in can receive MIDI events from Host
-        if (strcmp(ptr,"receiveVstMidiEvent"))  return 1; // plug-in can receive MIDI events from Host
-        if (strcmp(ptr,"receiveVstTimeInfo"))   return 1; // plug-in can receive Time info from Host
+        unsigned int ret = 0;
+        if (!strcmp(ptr,"sendVstEvents"))        ret=1; // plug-in will send Vst events to Host
+        if (!strcmp(ptr,"sendVstMidiEvent"))     ret=1; // plug-in will send MIDI events to Host
+        if (!strcmp(ptr,"receiveVstEvents"))     ret=1; // plug-in can receive MIDI events from Host
+        if (!strcmp(ptr,"receiveVstMidiEvent"))  ret=1; // plug-in can receive MIDI events from Host
+        if (!strcmp(ptr,"receiveVstTimeInfo"))   ret=1; // plug-in can receive Time info from Host
         //if (strcmp(ptr,"offline"))              return 0; // plug-in supports offline functions (#offlineNotify, #offlinePrepare, #offlineRun)
         //if (strcmp(ptr,"midiProgramNames"))     return 0; // plug-in supports function #getMidiProgramName ()
         //if (strcmp(ptr,"bypass"))               return 0; // plug-in supports function #setBypass ()
-        if (strcmp(ptr,"hasCockosExtensions"))  return 0xbeef0000;
-        return 0;
+        if (!strcmp(ptr,"hasCockosExtensions"))  ret=0xbeef0000;
+        //trace("- axPluginVst.canDo: '" << ptr << "' = " << hex << ret);
+        return ret;
+
+//hex << 100 << endl;
+
       }
 
     //----------------------------------------------------------------------
@@ -606,9 +612,29 @@ class axPluginVst :  public AudioEffectX,
 
     //----------------------------------------------------------------------
     //
+    // vendor specific
+    //
+    //----------------------------------------------------------------------
+
+    virtual VstIntPtr vendorSpecific(VstInt32 lArg, VstIntPtr lArg2, void* ptrArg, float floatArg)
+      {
+        trace("- vendorSpecific");
+        //if( lArg == 0xdeadbef0 && lArg2 >= 1 && lArg2 <= kNumParams )
+        //{
+        //  ((double *) ptrArg)[0] = 0;
+        //  ((double *) ptrArg)[1] = 1469;  // Should be linked to Delay::buffer_size
+        //  return 0xbeef;
+        //}
+        return 0;
+      }
+
+    //----------------------------------------------------------------------
+    //
     // dispatcher
     //
     //----------------------------------------------------------------------
+
+
 
     virtual VstIntPtr dispatcher(VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
       {
@@ -656,6 +682,10 @@ class axPluginVst :  public AudioEffectX,
             {
               idleEditor();
             }
+            break;
+          case effVendorSpecific:
+          //  // v = vendorSpecific (index, value, ptr, opt);
+            trace("- effVendorSpecific");
             break;
           default:
             result = AudioEffectX::dispatcher(opcode,index,value,ptr,opt);

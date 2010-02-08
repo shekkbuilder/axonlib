@@ -78,7 +78,7 @@ class wdgButton : public axWidget
 
     //--------------------------------------------------
 
-    virtual void on_Click(wdgButton* btn) {}
+    virtual void on_Click(wdgButton* btn) {} // override this
 
     //--------------------------------------------------
 
@@ -193,7 +193,7 @@ class wdgButton : public axWidget
       {
         if (mIsOn)
         {
-          trace("click");
+          //trace("click");
           on_Click(this);
         }
         mIsOn = false;

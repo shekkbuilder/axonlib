@@ -13,14 +13,14 @@
 // b) 'real' memcpy/memset (macros?)
 inline void copy_cells(int dst, int src, int num)
   {
-    for (int i=0;i<num;i++) { CELLS[dst+i] = CELLS[src+i]; }
+    for (int i=0;i<num;i++) { mCells[dst+i] = mCells[src+i]; }
   }
 
 //----------
 
 inline void clear_cells(int dst, int num)
   {
-    for (int i=0;i<num;i++) { CELLS[dst+i] = 0; }
+    for (int i=0;i<num;i++) { mCells[dst+i] = 0; }
   }
 
 //----------------------------------------------------------------------
@@ -48,13 +48,13 @@ inline void do_Tick(void)
     {
       if (mWrap)
       {
-        CELLS[cell] = CELLS[cell+width];
-        CELLS[cell+width+1] = CELLS[cell+1];
+        mCells[cell] = mCells[cell+width];
+        mCells[cell+width+1] = mCells[cell+1];
       }
       else
       {
-        CELLS[cell] = 0;
-        CELLS[cell+width+1] = 0;
+        mCells[cell] = 0;
+        mCells[cell+width+1] = 0;
       }
       cell += SIZE;
     }
@@ -67,53 +67,53 @@ inline void do_Tick(void)
     {
       if (mWrap)
       {
-        CELLS[cell] = CELLS[cell+width];
-        CELLS[cell+width+1] = CELLS[cell+1];
+        mCells[cell] = mCells[cell+width];
+        mCells[cell+width+1] = mCells[cell+1];
       }
       else
       {
-        CELLS[cell] = 0;
-        CELLS[cell+width+1] = 0;
+        mCells[cell] = 0;
+        mCells[cell+width+1] = 0;
       }
       int x = 0;
       for (int iw=0; iw<width; iw++)
       {
-        int n = CELLS[cell];
+        int n = mCells[cell];
         int neighbours = 0;
         switch (mUpdateMode)
         {
           case 0:
-            neighbours += CELLS[cell-SIZE-1];
-            neighbours += CELLS[cell-SIZE  ];
-            neighbours += CELLS[cell-SIZE+1];
-            neighbours += CELLS[cell     -1];
-            neighbours += CELLS[cell     +1];
-            neighbours += CELLS[cell+SIZE-1];
-            neighbours += CELLS[cell+SIZE  ];
-            neighbours += CELLS[cell+SIZE+1];
+            neighbours += mCells[cell-SIZE-1];
+            neighbours += mCells[cell-SIZE  ];
+            neighbours += mCells[cell-SIZE+1];
+            neighbours += mCells[cell     -1];
+            neighbours += mCells[cell     +1];
+            neighbours += mCells[cell+SIZE-1];
+            neighbours += mCells[cell+SIZE  ];
+            neighbours += mCells[cell+SIZE+1];
             // life: B3/S23
             if (n==0)
             { // B3
-              if (neighbours==3) CELLS[cell+C2]=1; else CELLS[cell+C2]=0;
+              if (neighbours==3) mCells2[cell]|=1; else mCells2[cell]&=~1;
             }
             if (n==1)
             { // S23
-              if (neighbours<2) CELLS[cell+C2]=0;
-              else if (neighbours>3) CELLS[cell+C2]=0;
-              else CELLS[cell+C2]=1;
+              if (neighbours<2) mCells2[cell]=0;
+              else if (neighbours>3) mCells2[cell]=0;
+              else mCells2[cell]=1;
             }
             break;
           case 1:
-            CELLS[cell+C2] = CELLS[cell+1];
+            mCells2[cell] = mCells[cell+1];
             break;
           case 2:
-            CELLS[cell+C2] = CELLS[cell-1];
+            mCells2[cell] = mCells[cell-1];
             break;
           case 3:
-            CELLS[cell+C2] = CELLS[cell+SIZE];
+            mCells2[cell] = mCells[cell+SIZE];
             break;
           case 4:
-            CELLS[cell+C2] = CELLS[cell-SIZE];
+            mCells2[cell] = mCells[cell-SIZE];
           // Life     = B3/S23
           // Gnarl    = B1/S1
           // Seeds    = B2/S
@@ -121,14 +121,17 @@ inline void do_Tick(void)
           // LongLife = B345/S5
           // HighLife = B36/S23
         }
-        _CELLS += C2;
-        C2 = -C2;
+        int* temp = mCells2;
+        mCells2 = mCells;
+        mCells = temp;
+        //_CELLS += C2;
+        //C2 = -C2;
 
 
 //        //--- midi
 
         int index = (y*SIZE)+x + SIZE+1;
-        if ( CELLS[RTRIG+index]>0)
+        if (mCells[index]&2)
         {
 //          int note = /*notestart-*/y;
 //          if (CELLS[cell+C2]==0) c==1 ?
@@ -136,14 +139,14 @@ inline void do_Tick(void)
 //          cell[C2]==1 ?
 //            midisend(offset,$x90+0, note | (127*256) );
         }
-        if (CELLS[GTRIG+index]>0)
+        if (mCells[index]&4)
         {
           //float value = (float)(height-y-1) * (128.0f/mHeight); // (h-y-1) ?
 //          float value = (float)y * (128.0f/mHeight); // (h-y-1) ?
 //          cell[C2]==1 ?
 //            midisend(offset,$xb0+0, ccnum1  | (value*256) );
         }
-        if (CELLS[BTRIG+index]>0)
+        if (mCells[index]&8)
         {
           //float value = (float)(height-y-1) * (128/height); // (h-y-1) ?
 //          float value = (float)(y) * (128/mHeight); // (h-y-1) ?
@@ -250,17 +253,16 @@ inline void do_Cycle(void)
         //if (mCycleMode==1) memcpy(CELLS+C2,SAVED,SIZE2);
         if (mCycleMode==2)
         {
-          clear_cells(C2,SIZE2);
-
+          clear_cells(SIZE2,SIZE2);
           if (mRandom>0)
           {
-            int C = C2+SIZE+1;
+            int C = SIZE+1;
             int num = (mWidth*mHeight)*mRandom;
             for( int i=0; i<num; i++ )
             {
               int x = mWidth  * axRandom();
               int y = mHeight * axRandom();
-              CELLS[C+(y*SIZE)+x] = 1;
+              mCells2[ C + (y*SIZE) + x] = 1;
             }
             //);
           } // random>0
