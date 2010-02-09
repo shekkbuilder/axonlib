@@ -232,8 +232,9 @@ class axPlugin  : public axPluginImpl,
     */
     //axPlugin(audioMasterCallback audioMaster,long numProgs,long numParams, int aPlugFlags=0)
     axPlugin(axHost* aHost,long numProgs,long numParams, int aPlugFlags=0)
-    : axPluginImpl((audioMasterCallback)aHost->getPtr(),numProgs,numParams)
+    : axPluginImpl(aHost,numProgs,numParams)
       {
+        //trace("axPlugin constructor. aHost = " << hex << aHost);
         mHost = aHost;
         mPlugFlags = aPlugFlags;
         axInitialize(mPlugFlags); // os/platform specific initialization

@@ -1,5 +1,5 @@
 
-#include "demo/ax_demo.cpp"
+//#include "demo/ax_demo.cpp"
 
     // ----- error
 
@@ -53,7 +53,7 @@
 
     // ----- liteon
 
-//#include "liteon/liteon_tilteq.cpp"
+#include "liteon/liteon_tilteq.cpp"
 //#include "liteon/liteon_lofi.cpp"
 
 //----------------------------------------------------------------------

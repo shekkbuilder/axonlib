@@ -21,7 +21,7 @@
  * \brief math approximations and routines
  * \code
  * TODO: a short performance table
- * \endcode  
+ * \endcode
  */
 
 // ---------------------------------------------------------------------------
@@ -208,18 +208,19 @@ inline float axCalcValuep(const float a, const float b, const float c)
  * calculate the average value of a set of floating point numbers
  * example: <br>
  * \code
- * axAvrg(3, -1.f, 3.5f, 5.f); // result is 2.5  
- * \endcode   
+ * axAvrg(3, -1.f, 3.5f, 5.f); // result is 2.5
+ * \endcode
  * @param[in] count unsigned int - number of elements (n)
  * @param[in] elements[0-n] float - elements
- * @return float 
+ * @return float
  */
 inline float axAvrg(const unsigned int n,...)
 {
   va_list ap;
   float total = 0.f;
   va_start(ap, n);
-  for(unsigned int i = 0; i < count; i++)
+  //for(unsigned int i = 0; i < count; i++)
+  for(unsigned int i = 0; i < n; i++)
     total += va_arg(ap, double);
   va_end(ap);
   return total/n;
@@ -230,12 +231,13 @@ inline float axAvrg(const unsigned int n,...)
  * example: <br>
  * \code
  * axAvrgInt(5, -2, -1, 1, 5, 7); // result is 2
- * \endcode   
+ * \endcode
  * @param[in] count unsigned int - number of elements (n)
  * @param[in] elements[0-n] int - elements
- * @return int 
+ * @return int
  */
-inline int axAvrgInt(const unsigned int count,...)
+//inline int axAvrgInt(const unsigned int count,...)
+inline int axAvrgInt(const unsigned int n,...)
 {
   va_list ap;
   int total = 0;
@@ -416,11 +418,11 @@ inline float axTanf(float value)
  * float sinx;
  * float cosx;
  * axSinCosf(x, &sinx, &cosx);
- * // sinx and cosx will recieve the results   
- * \endcode   
+ * // sinx and cosx will recieve the results
+ * \endcode
  * @param[in] x float input variable
- * @param[in] sin float* pointer to sin value 
- * @param[in] cos float* pointer to cos value 
+ * @param[in] sin float* pointer to sin value
+ * @param[in] cos float* pointer to cos value
  * @return void
  */
 inline void axSinCosf(float x, float *sin, float *cos)

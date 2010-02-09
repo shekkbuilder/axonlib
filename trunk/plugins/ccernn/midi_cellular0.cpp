@@ -1,11 +1,11 @@
-#if 0
+//#if 0
 
 // currently in a non-working state....
 // delayed until a few other things are in place
 
 #define AX_PLUGIN     myPlugin
-#define AX_NUMPROGS   0
-#define AX_NUMPARAMS  2
+#define AX_NUMPROGS   1
+#define AX_NUMPARAMS  14
 #define AX_WIDTH      340
 #define AX_HEIGHT     630
 #define AX_FLAGS      (AX_EMBEDDED|AX_BUFFERED)
@@ -50,14 +50,18 @@
 class myGrid: public wdgGrid
 {
   private:
+
     axBrush*  mBrushes[16];
-    int*      mCells; // dangerous
+    int*      mCells;     // dangerous?
+    int*      mTriggers;  // dangerous?
+
   public:
-    myGrid(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment, int* aCells)
+
+    myGrid(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment/*, int* aCells*/)
     : wdgGrid(aListener,aID,aRect,aAlignment)
       {
-        //CELLS = NULL;
-        mCells = aCells;
+        //mCells = aCells;
+        mCells = NULL;
         mBrushes[ 0] = new axBrush( AX_GREY_DARK );     // ....
         mBrushes[ 1] = new axBrush( AX_RED_DARK );      // ...r
         mBrushes[ 2] = new axBrush( AX_GREEN_DARK );    // ..g.
@@ -75,39 +79,55 @@ class myGrid: public wdgGrid
         mBrushes[14] = new axBrush( AX_CYAN );          // *bg.
         mBrushes[15] = new axBrush( AX_WHITE );         // *bgr
       }
+
     virtual ~myGrid()
       {
         for (int i=0; i<16;i++) delete mBrushes[i];
       }
-    inline void setCells(int* aCells) { mCells=aCells; }
+
+    //inline void setCells(int* aCells) { mCells=aCells; }
+    inline void mySetup(int* aCells, int* aTriggers)
+      {
+        mCells=aCells;
+        mTriggers=aTriggers;
+      }
+
     virtual void on_DrawCell(axCanvas* aCanvas, axRect aRect,int x, int y)
       {
-        assert(mCells);
-        int index = (y*SIZE)+x;
-        index += SIZE+1;
-        int brush = 0;
-        int cel = mCells[index];
-        if (cel&1) brush  = 8;
-        if (cel&2) brush |= 1;
-        if (cel&4) brush |= 2;
-        if (cel&8) brush |= 4;
-        aCanvas->selectBrush( mBrushes[brush] );
-        aCanvas->fillRect(aRect.x,aRect.y,aRect.x2(),aRect.y2());
+        //assert(mCells);
+        if (mCells)
+        {
+          int index = (y*SIZE)+x;
+          index += SIZE+1;
+          int brush = 0;
+          int cel = mCells[index];
+          int trg = mTriggers[index];
+          if (cel&1) brush  = 8;
+          if (trg&1) brush |= 1;
+          if (trg&2) brush |= 2;
+          if (trg&4) brush |= 4;
+          aCanvas->selectBrush( mBrushes[brush] );
+          aCanvas->fillRect(aRect.x,aRect.y,aRect.x2(),aRect.y2());
+        }
       }
+
     virtual void on_ClickCell(int x, int y, int b)
       {
-        assert(mCells);
-        int index = (y*SIZE)+x;
-        index += SIZE+1;
-        trace( "x:" << x << " y:" << y << " b:" << b);
-        if (b==1) mCells[index] |= 1;
-        if (b==2) mCells[index] &= ~1;
-        if (b==but_Shift+1) mCells[index] |=  1;
-        if (b==but_Shift+2) mCells[index] &= ~1;
-        if (b==but_Ctrl +1) mCells[index] |=  1;
-        if (b==but_Ctrl +2) mCells[index] &= ~1;
-        if (b==but_Alt  +1) mCells[index] |=  1;
-        if (b==but_Alt  +2) mCells[index] &= ~1;
+        //assert(mCells);
+        if (mCells)
+        {
+          int index = (y*SIZE)+x;
+          index += SIZE+1;
+          //trace( "x:" << x << " y:" << y << " b:" << b);
+          if (b==1) mCells[index] |= 1;
+          if (b==2) mCells[index] &= ~1;
+          if (b==but_Shift+1) mTriggers[index] |=  1;
+          if (b==but_Shift+2) mTriggers[index] &= ~1;
+          if (b==but_Ctrl +1) mTriggers[index] |=  2;
+          if (b==but_Ctrl +2) mTriggers[index] &= ~2;
+          if (b==but_Alt  +1) mTriggers[index] |=  4;
+          if (b==but_Alt  +2) mTriggers[index] &= ~4;
+        }
       }
 };
 
@@ -152,31 +172,26 @@ class myPlugin : public axPlugin,
 {
   private:
   // gui
-    bool      mGuiInitialized;
-    axEditor* mEditor;
-    wdgPanel* wPanel;
-    myGrid*   wGrid;
-
+    bool        mGuiInitialized;
+    axEditor*   mEditor;
+    wdgPanel*   wPanel;
+    myGrid*     wGrid;
     wdgKnob     *wWidth, *wHeight;
     wdgKnob     *wPlayMode, *wSpeedMode, *wUpdateMode, *wCycleMode;
     wdgKnob     *wCycleCount, *wWrap, *wMidiNote, *wMidiCC1, *wMidiCC2;
     wdgKnob     *wMS, *wBeats, *wRandom;
-
+  //parameters
     parInteger  *pWidth, *pHeight;
     parInteger  *pPlayMode, *pSpeedMode, *pUpdateMode, *pCycleMode;
     parInteger  *pCycleCount, *pWrap, *pMidiNote, *pMidiCC1, *pMidiCC2;
     parFloat    *pMS, *pBeats, *pRandom;
-
+  //plugin
     int         mWidth,  mHeight;
     int         mPlayMode, mSpeedMode, mUpdateMode, mCycleMode;
     int         mCycleCount, mWrap, mMidiNote, mMidiCC1, mMidiCC2;
     float       mMS, mBeats, mRandom;
-
-    //int   width;
-    //int   height;
-
+  //internal
     float speed;
-
     bool  redrawgrid;
     bool  redraw;
     int   prevstate;
@@ -185,13 +200,11 @@ class myPlugin : public axPlugin,
     int   cycle;
     int   offset;
     int   block;
-
     int*  mBuffer;
     int*  mCells;
     int*  mCells2;
+    int*  mTriggers;
     int*  mSaved;
-//    int   CELLS;
-//    int   C2;
     int   SIZEh;
 
   public:
@@ -201,38 +214,36 @@ class myPlugin : public axPlugin,
     myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
     : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
-        mBuffer = new int[SIZE2 * 3];
-        memset(mBuffer,0,SIZE2*3*sizeof(float));
-        mCells  = mBuffer;
-        mCells2 = mBuffer + SIZE2;
-        mSaved  = mBuffer + SIZE2*2;
+        mBuffer   = new int[SIZE2*4];
+        memset(mBuffer,0,SIZE2*4*sizeof(int));
+        mCells    = mBuffer;
+        mCells2   = mBuffer + SIZE2;
+        mTriggers = mBuffer + SIZE2*2;
+        mSaved    = mBuffer + SIZE2*3;
         isplaying = false;
         countdown = 0;
-        cycle = 0;
+        cycle     = 0;
         prevstate = 0;
-        redraw = false;
-        //width = 320;
-        //height = 320;
+        redraw    = false;
 
         mEditor = NULL;
         mGuiInitialized = false;
         describe("midi_cellular0","ccernn","axonlib example project",0,AX_MAGIC+0x0000);
         setupAudio(2,2);
         setupEditor(AX_WIDTH,AX_HEIGHT);
-        //hasEditor(AX_WIDTH,AX_HEIGHT);
 
         appendParameter( pWidth       = new parInteger(this, 0,"width",       "", 16,   4,    64          ));
         appendParameter( pHeight      = new parInteger(this, 1,"height",      "", 16,   4,    64          ));
         appendParameter( pPlayMode    = new parInteger(this, 2,"play mode",   "", 0,    0,    2,          str_playmode ));
         appendParameter( pSpeedMode   = new parInteger(this, 3,"speed mode",  "", 0,    0,    1,          str_speedmode ));
-        appendParameter( pMS          = new parFloat(  this, 4,"ms",          "", 500,  10,   2000, 0.01  ));
-        appendParameter( pBeats       = new parFloat(  this, 5,"beats",       "", 0.25, 0.02, 4,    0.01  ));
+        appendParameter( pMS          = new parFloat(  this, 4,"ms",          "", 250,  10,   2000        ));
+        appendParameter( pBeats       = new parFloat(  this, 5,"beats",       "", 0.5,  0.25, 4,    0.25  ));
         appendParameter( pUpdateMode  = new parInteger(this, 6,"update mode", "", 1,    0,    4,          str_updatemode ));
 
         appendParameter( pWrap        = new parInteger(this, 7,"wrap",        "", 1,    0,    1,          str_wrap ));
-        appendParameter( pRandom      = new parFloat(  this, 8,"random",      "", 50,   0,    100,  0.01  ));
-        appendParameter( pCycleMode   = new parInteger(this, 9,"cycle mode",  "", 2,    0,    2,          str_cyclemode ));
-        appendParameter( pCycleCount  = new parInteger(this,10,"cycle count", "", 4,    0,    64 ));
+        appendParameter( pRandom      = new parFloat(  this, 8,"random",      "", 25,   0,    100         ));
+        appendParameter( pCycleMode   = new parInteger(this, 9,"cycle mode",  "", 0,    0,    2,          str_cyclemode ));
+        appendParameter( pCycleCount  = new parInteger(this,10,"cycle count", "", 16,   0,    64 ));
         appendParameter( pMidiNote    = new parInteger(this,11,"midi note",   "", 36,   0,    127 ));
         appendParameter( pMidiCC1     = new parInteger(this,12,"midi cc",     "", 60,   0,    127 ));
         appendParameter( pMidiCC2     = new parInteger(this,13,"midi cc",     "", 61,   0,    127 ));
@@ -244,13 +255,14 @@ class myPlugin : public axPlugin,
 
     virtual ~myPlugin()
       {
+        delete[] mBuffer;
         if (mGuiInitialized)
         {
         }
       }
 
     #include "midi_cellular0_dsp.h"
-    #include "midi_cellular0_gui.h"
+    //#include "midi_cellular0_gui.h"
 
     //--------------------------------------------------
     // midi, events, ..
@@ -314,8 +326,8 @@ class myPlugin : public axPlugin,
         updateTimeInfo();
         do_Timing();
         do_Transport();
-        do_Sync();
-        do_Cycle();
+        if ( isplaying || mPlayMode==1) do_Sync();
+        //do_Cycle();
         return false; //TODO: clear samples, return true
       }
 
@@ -339,7 +351,7 @@ class myPlugin : public axPlugin,
         EDIT->appendWidget(wPanel = new wdgPanel(this,-1,NULL_RECT,wal_Client));
         if (!mGuiInitialized) { mGuiInitialized = true; }
 
-        wPanel->appendWidget( wGrid       = new myGrid( this,-1,axRect( 10,10,320,320),wal_None,mCells) );
+        wPanel->appendWidget( wGrid       = new myGrid( this,-1,axRect( 10,10,320,320),wal_None ) );
 
         wPanel->appendWidget( wWidth      = new wdgKnob(this, 0,axRect( 10,340,155,32),wal_None) );
         wPanel->appendWidget( wHeight     = new wdgKnob(this, 1,axRect( 10,380,155,32),wal_None) );
@@ -399,13 +411,14 @@ class myPlugin : public axPlugin,
         {
           if (redrawgrid)
           {
-            //trace("idle editor: redrawgrid");
             wGrid->setup(mWidth,mHeight);
+            wGrid->mySetup(mCells,mTriggers);
             mEditor->appendDirty(wGrid);
             redrawgrid=false;
           }
           mEditor->redrawDirty();
         }
+        //else mEditor->clearDirty();
       }
 
     //--------------------------------------------------
@@ -430,16 +443,15 @@ class myPlugin : public axPlugin,
         if (mEditor) mEditor->onChange(aWidget);
       }
 
-
 };
 
     #undef SIZE
     #undef SIZE2
-    //#undef C2
-    #undef SAVED
-    #undef RTRIG
-    #undef GTRIG
-    #undef BTRIG
+//    //#undef C2
+//    #undef SAVED
+//    #undef RTRIG
+//    #undef GTRIG
+//    #undef BTRIG
 
 //----------------------------------------------------------------------
 #include "axMain.h"
@@ -796,4 +808,4 @@ desc:midi_automata :: ccernn.2009 :: v0.0.4
 */
 
 
-#endif
+//#endif

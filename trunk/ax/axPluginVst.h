@@ -104,10 +104,13 @@ class axPluginVst :  public AudioEffectX,
 
   public:
 
-    axPluginVst(audioMasterCallback audioMaster,long numProgs,long numParams)
-    : AudioEffectX(audioMaster,numProgs,numParams)
+    //axPluginVst(audioMasterCallback audioMaster,long numProgs,long numParams)
+    //: AudioEffectX(audioMaster,numProgs,numParams)
+    axPluginVst(axHost* aHost,long numProgs,long numParams)
+    : AudioEffectX( (audioMasterCallback)aHost->getPtr(), numProgs,numParams)
       {
-
+        //trace("axPluginVst constructor. aHost = " << hex << aHost);
+        //trace(" aHost->getPtr() = " << hex << aHost->getPtr() );
         mCurProg = 0;
         for (int i=0; i<AX_NUMPROGS; i++)
         {
@@ -215,7 +218,7 @@ class axPluginVst :  public AudioEffectX,
         //if (strcmp(ptr,"midiProgramNames"))     return 0; // plug-in supports function #getMidiProgramName ()
         //if (strcmp(ptr,"bypass"))               return 0; // plug-in supports function #setBypass ()
         if (!strcmp(ptr,"hasCockosExtensions"))  ret=0xbeef0000;
-        //trace("- axPluginVst.canDo: '" << ptr << "' = " << hex << ret);
+        trace("- axPluginVst.canDo: '" << ptr << "' = " << hex << ret);
         return ret;
 
 //hex << 100 << endl;
@@ -397,6 +400,7 @@ class axPluginVst :  public AudioEffectX,
     //	kVstTransportRecording   = 1 << 3,	///< set if Host sequencer is in record mode
     //	kVstAutomationWriting    = 1 << 6,	///< set if automation write mode active (record parameter changes)
     //	kVstAutomationReading    = 1 << 7,	///< set if automation read mode active (play parameter changes)
+
     //	kVstNanosValid           = 1 << 8,	///< VstTimeInfo::nanoSeconds valid
     //	kVstPpqPosValid          = 1 << 9,	///< VstTimeInfo::ppqPos valid
     //	kVstTempoValid           = 1 << 10,	///< VstTimeInfo::tempo valid
@@ -411,7 +415,9 @@ class axPluginVst :  public AudioEffectX,
 
     virtual void updateTimeInfo(void)
       {
+        //trace("updateTimeInfo");
         mTimeInfo   = getTimeInfo( kVstPpqPosValid + kVstTempoValid );
+        //trace("..ok. mTimeInfo =  " << hex << mTimeInfo );
         mPlayState  = mTimeInfo->flags & 0xff;
         mSamplePos  = mTimeInfo->samplePos;
         mSampleRate = mTimeInfo->sampleRate;
