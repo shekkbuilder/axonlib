@@ -74,7 +74,27 @@ class myPlugin : public axPlugin
       {
         int  id = aParameter->mID;
         float f = aParameter->getValue();
-        trace("id = " << id << ", value = " << f); 
+        trace("id = " << id << ", value = " << f);
+
+        //the next wdebug line gives (in linux)
+        //"error: macro "wdebug" passed 3 arguments, but takes just 2"
+        //
+        //  defines as (in axDebug.h)
+        //  #ifdef linux
+        //    ..
+        //    #define wdebug(x,y) ((void)0)
+        //  #endif
+        //
+        //tried to add a
+        //  #define wdebug(x,y,b) ((void)0)
+        //but that redefines wdebug to take (exactly) 3 arguments
+        //no overloading with macros, it seems?
+        //so, need to find a good way to solve this, or some way to completely ignore wdebug
+        //macro with linux...
+        //maybe a separate function/macro for with or without newline?
+        //(instead of the third ('false' here) argument?
+        //  wdebug/wdebugnl ?
+
         wdebug("id = ", id, false);
         wdebug(", value = ", f);
         switch(id)
@@ -127,12 +147,12 @@ class myPlugin : public axPlugin
         {
           case pst_Open:                                // - on plugin open
             axDstdCreate();                             // create console
-            axDwinCreate();                             // create debug win            
+            axDwinCreate();                             // create debug win
             trace("axLogf(2.24)=" << axLogf(2.24));     // test trace()
             wdebug("axLogf(2.24)=", axLogf(2.24));      // test wdebug()
           break;
           case pst_Close:                               // - on plugin close
-            axDstdDestroy();                            // destroy console            
+            axDstdDestroy();                            // destroy console
             axDwinDestroy();                            // destroy debug win
           break;
         }

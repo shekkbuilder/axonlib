@@ -40,6 +40,7 @@ class axHostVst : public axHostBase
         audioMaster = (audioMasterCallback)ptr;
       }
     virtual ~axHostVst() {}
+    virtual void* getPtr(void) { return (void*)audioMaster; }
 };
 
 typedef axHostVst axHostImpl;

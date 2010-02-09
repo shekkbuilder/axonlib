@@ -24,7 +24,7 @@
  * debugging purposes. <br><br>
  * assert() examples:
  * \code
- * assert(var);             // if 'var' is false the compiler will throw an error and abort  
+ * assert(var);             // if 'var' is false the compiler will throw an error and abort
  * assert(num>5);           // same as above but if 'num' is not greater than 5
  * \endcode
  * warn() examples:
@@ -36,8 +36,8 @@
  * trace(var);              // trace a variable
  * trace("message");        // trace a message
  * trace(var << "message"); // combined
- * \endcode 
- * wdebug() (win32) examples: 
+ * \endcode
+ * wdebug() (win32) examples:
  * \code
  * // minimum 2 parameters of different or same type
  * wdebug("var = ", myvar);
@@ -46,12 +46,12 @@
  * wdebug("text", "more text", false); // no new line
  * wdebug(var, "");
  * wdebug("", var);
- * \endcode 
+ * \endcode
  * <br>
  * win32 specific methods: <br>
  * -------------------------------- <br>
  * on windows you should manually create a debug window (console or gui) and
- * destroy it when the plugin is beeing closed. 
+ * destroy it when the plugin is beeing closed.
  * <br>
  * <br>
  * <b>gui window (inefficient):</b> <br>
@@ -63,7 +63,7 @@
  * (possible freeze). <br>
  * <br>
  * <b>console window (efficient):</b> <br>
- * uses the standart trace(), warn() macros. <br>  
+ * uses the standart trace(), warn() macros. <br>
  * axDstdCreate() - create a debug console and route stdout to it <br>
  * axDstdDestroy() - destroy the debug console <br>
  * <br>
@@ -76,12 +76,12 @@
         {
           case pst_Open:                                // - on plugin open
             axDstdCreate();                             // create console
-            axDwinCreate();                             // create debug gui           
+            axDwinCreate();                             // create debug gui
             trace("axLogf(2.24)=" << axLogf(2.24));     // test trace()
             wdebug("axLogf(2.24)=", axLogf(2.24));      // test wdebug()
           break;
           case pst_Close:                               // - on plugin close
-            axDstdDestroy();                            // destroy console            
+            axDstdDestroy();                            // destroy console
             axDwinDestroy();                            // destroy debug gui
           break;
         }
@@ -98,14 +98,14 @@
 #ifdef AX_DEBUG
   #include <assert.h>
   #include <iostream>
-  using namespace std;  
+  using namespace std;
   // trace() & warn() defined bellow
 
   // case: windows
   #ifdef WIN32
     /**
      * creates a winapi debugger window (unsafe / slow)
-     *      
+     *
     NOTES:
     much more stable and useable version. works under reaper3, enrgyxt2 and vstpa.
     #issues:
@@ -204,12 +204,12 @@
       }
     }
 
-    // allocate console and route stdout as seen in example:     
+    // allocate console and route stdout as seen in example:
     // http://support.microsoft.com/kb/105305
     // --------------------------------------------------------
     unsigned int hCrt = 0;                  // crt handle
     FILE *sfile;                            // file stream
-    
+
     // ----------------
     // destroy console
     void axDstdDestroy(void)
@@ -218,7 +218,7 @@
       close((int)sfile);
       hCrt = 0;
     }
-    
+
     // ----------------
     // create console
     void axDstdCreate(void)
@@ -228,7 +228,7 @@
         // allocate console
         AllocConsole();
         // set title
-        SetConsoleTitle("axDebug");        
+        SetConsoleTitle("axDebug");
         // get handle for console
         // requires _WIN32_WINNT >= 0x0500 (see above, before windows.h)
         HWND hCw = GetConsoleWindow();
@@ -236,14 +236,14 @@
 	      {
           // set allways on top
           SetWindowPos(hCw, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
-          // disable close button (otherwise crash if clicked)        
+          // disable close button (otherwise crash if clicked)
 		      HMENU hMenu = GetSystemMenu(hCw, 0);
 		      if(hMenu != NULL)
 		      {
             DeleteMenu(hMenu, SC_CLOSE, MF_BYCOMMAND);
             DrawMenuBar(hCw);
-		      }          
-        }        
+		      }
+        }
         // get std handle for text output
         hCrt = _open_osfhandle((long)GetStdHandle(STD_OUTPUT_HANDLE), _O_TEXT);
         // open stream
@@ -257,11 +257,11 @@
       #define trace(x) { if (hCrt != 0) { cout << "TRC | LINE: " << __LINE__ << " | " << x << endl; cout.flush(); } }
       #define warn(x) { if (hCrt != 0) { printf("WARN | LINE: %i | %s\n", __LINE__, x); } }
     }
-    
+
   #endif
   // case: linux
   #ifdef linux
-    #define trace(x) { cout << "TRC | LINE: " << __LINE__ << " | " << x << endl; cout.flush(); }    
+    #define trace(x) { cout << "TRC | LINE: " << __LINE__ << " | " << x << endl; cout.flush(); }
     #define warn(x) { printf("WARN | LINE: %i | %s\n", __LINE__, x); }
     #define wdebug(x,y) ((void)0)
   #endif

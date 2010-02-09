@@ -104,6 +104,8 @@ class wdgGrid : public axWidget
         } //w&h>0
       }
 
+    //----------
+
     virtual void doMouseDown(int aX, int aY, int aB)
       {
         float xcell  = ((float)mRect.w / (float)mWidth);

@@ -1,39 +1,35 @@
-
-// 0 =
-// 1 =
-// 2 = save
-// 3 = r
-// 4 = g
-// 5 = b
-
-//----------
+//----------------------------------------------------------------------
 
 //TODO:
 // a) hope the compiler will optimize this (probably)
 // b) 'real' memcpy/memset (macros?)
-inline void copy_cells(int dst, int src, int num)
+inline void copy_cells(int* dst, int* src, int num)
   {
-    for (int i=0;i<num;i++) { mCells[dst+i] = mCells[src+i]; }
+    //for (int i=0;i<num;i++) { mCells[dst+i] = mCells[src+i]; }
+    memcpy(dst,src,num*4);
   }
 
 //----------
 
-inline void clear_cells(int dst, int num)
+inline void clear_cells(int* dst, int num)
   {
-    for (int i=0;i<num;i++) { mCells[dst+i] = 0; }
+    //for (int i=0;i<num;i++) { mCells[dst+i] = 0; }
+    memset(dst,0,num*4);
   }
 
 //----------------------------------------------------------------------
 
-inline void do_Tick(void)
+inline void do_UpdateGrid(void)
   {
-    trace("do_Tick");
+    //trace("do_UpdateGrid");
     int width  = (int)mWidth;
     int height = (int)mHeight;
+    //trace("   width: " << dec << width << " height: " << height);
 
     //--- wraparound
 
-    int cell = 0;//_CELLS;
+    int* cell  = mCells;
+    //int* cell2 = mCells2;
     if (mWrap==1)
     {
       copy_cells(cell,cell+SIZEh,width+2);
@@ -48,90 +44,88 @@ inline void do_Tick(void)
     {
       if (mWrap)
       {
-        mCells[cell] = mCells[cell+width];
-        mCells[cell+width+1] = mCells[cell+1];
+        cell[0] = cell[width];
+        cell[width+1] = cell[1];
       }
       else
       {
-        mCells[cell] = 0;
-        mCells[cell+width+1] = 0;
+        cell[0] = 0;
+        cell[width+1] = 0;
       }
       cell += SIZE;
     }
 
     //--- update grid
 
-    cell = SIZE+1;
+    cell  = mCells+SIZE+1;
+    int* cell2 = mCells2+SIZE+1;
     int y = 0;
     for (int ih=0; ih<height; ih++)
     {
       if (mWrap)
       {
-        mCells[cell] = mCells[cell+width];
-        mCells[cell+width+1] = mCells[cell+1];
+        cell[0] = cell[width];
+        cell[width+1] = cell[1];
       }
       else
       {
-        mCells[cell] = 0;
-        mCells[cell+width+1] = 0;
+        cell[0] = 0;
+        cell[width+1] = 0;
       }
       int x = 0;
       for (int iw=0; iw<width; iw++)
       {
-        int n = mCells[cell];
+        int n = *cell & 1;
         int neighbours = 0;
         switch (mUpdateMode)
         {
           case 0:
-            neighbours += mCells[cell-SIZE-1];
-            neighbours += mCells[cell-SIZE  ];
-            neighbours += mCells[cell-SIZE+1];
-            neighbours += mCells[cell     -1];
-            neighbours += mCells[cell     +1];
-            neighbours += mCells[cell+SIZE-1];
-            neighbours += mCells[cell+SIZE  ];
-            neighbours += mCells[cell+SIZE+1];
+            neighbours += (cell[-SIZE-1] & 1);
+            neighbours += (cell[-SIZE  ] & 1);
+            neighbours += (cell[-SIZE+1] & 1);
+            neighbours += (cell[     -1] & 1);
+            neighbours += (cell[     +1] & 1);
+            neighbours += (cell[+SIZE-1] & 1);
+            neighbours += (cell[+SIZE  ] & 1);
+            neighbours += (cell[+SIZE+1] & 1);
             // life: B3/S23
             if (n==0)
             { // B3
-              if (neighbours==3) mCells2[cell]|=1; else mCells2[cell]&=~1;
+              if (neighbours==3) *cell2=1; else *cell2=0;
             }
             if (n==1)
             { // S23
-              if (neighbours<2) mCells2[cell]=0;
-              else if (neighbours>3) mCells2[cell]=0;
-              else mCells2[cell]=1;
+              if (neighbours<2) *cell2=0;
+              else if (neighbours>3) *cell2=0;
+              else *cell2=1;
             }
             break;
           case 1:
-            mCells2[cell] = mCells[cell+1];
+            *cell2 = cell[+1];
             break;
           case 2:
-            mCells2[cell] = mCells[cell-1];
+            *cell2 = cell[-1];
             break;
           case 3:
-            mCells2[cell] = mCells[cell+SIZE];
+            *cell2 = cell[+SIZE];
             break;
           case 4:
-            mCells2[cell] = mCells[cell-SIZE];
+            *cell2 = cell[-SIZE];
+            break;
           // Life     = B3/S23
           // Gnarl    = B1/S1
           // Seeds    = B2/S
           // 34Life   = B34/S34
           // LongLife = B345/S5
           // HighLife = B36/S23
-        }
-        int* temp = mCells2;
-        mCells2 = mCells;
-        mCells = temp;
+        } // switch updatemode
         //_CELLS += C2;
         //C2 = -C2;
-
 
 //        //--- midi
 
         int index = (y*SIZE)+x + SIZE+1;
-        if (mCells[index]&2)
+        if (mTriggers[index]&1)
         {
 //          int note = /*notestart-*/y;
 //          if (CELLS[cell+C2]==0) c==1 ?
@@ -139,14 +133,14 @@ inline void do_Tick(void)
 //          cell[C2]==1 ?
 //            midisend(offset,$x90+0, note | (127*256) );
         }
-        if (mCells[index]&4)
+        if (mTriggers[index]&2)
         {
           //float value = (float)(height-y-1) * (128.0f/mHeight); // (h-y-1) ?
 //          float value = (float)y * (128.0f/mHeight); // (h-y-1) ?
 //          cell[C2]==1 ?
 //            midisend(offset,$xb0+0, ccnum1  | (value*256) );
         }
-        if (mCells[index]&8)
+        if (mTriggers[index]&4)
         {
           //float value = (float)(height-y-1) * (128/height); // (h-y-1) ?
 //          float value = (float)(y) * (128/mHeight); // (h-y-1) ?
@@ -154,14 +148,19 @@ inline void do_Tick(void)
 //            midiSend(offset,$xb0+0, ccnum2  | (value*256) );
         }
 
-        cell += 1;
+        cell  += 1;
+        cell2 += 1;
         x += 1;
       } // loop width
-      cell += (SIZE-width);
+      cell  += (SIZE-width);
+      cell2 += (SIZE-width);
       y += 1;
     } // loop height
 //    CELLS += C2;
 //    C2 = -C2;
+    int* temp = mCells2;
+    mCells2 = mCells;
+    mCells = temp;
   }
 
 //----------------------------------------------------------------------
@@ -217,6 +216,38 @@ inline void do_Transport(void)
 
 //----------------------------------------------------------------------
 
+inline void do_Cycle(void)
+  {
+    //trace("do_Cycle");
+    if (mCycleMode>0)
+    {
+      cycle -= 1;
+      if (cycle<=0)
+      {
+        //if (mCycleMode==1) memcpy(CELLS+C2,SAVED,SIZE2);
+        if (mCycleMode==2)
+        {
+          clear_cells(mCells,SIZE2);
+          if (mRandom>0)
+          {
+            int C = SIZE+1;
+            int num = (mWidth*mHeight)*mRandom;
+            for( int i=0; i<num; i++ )
+            {
+              int x = mWidth  * axRandom();
+              int y = mHeight * axRandom();
+              mCells[ C + (y*SIZE) + x] = 1;
+            }
+            //);
+          } // random>0
+        } // cyclemode=2
+        cycle = mCycleCount;
+      } // cycle<=0
+    } // cyclemode>0
+  }
+
+//----------------------------------------------------------------------
+
 inline void do_Sync(void)
   {
     //trace("do_Sync");
@@ -233,7 +264,8 @@ inline void do_Sync(void)
       {
         offset += countdown;
         block -= countdown;
-        do_Tick();
+        do_UpdateGrid();
+        do_Cycle();
         redrawgrid = true;
         countdown = speed;
       } // count<block
@@ -242,35 +274,6 @@ inline void do_Sync(void)
 
 //----------------------------------------------------------------------
 
-inline void do_Cycle(void)
-  {
-    //trace("do_Cycle");
-    if (mCycleMode>0)
-    {
-      cycle -= 1;
-      if (cycle<=0)
-      {
-        //if (mCycleMode==1) memcpy(CELLS+C2,SAVED,SIZE2);
-        if (mCycleMode==2)
-        {
-          clear_cells(SIZE2,SIZE2);
-          if (mRandom>0)
-          {
-            int C = SIZE+1;
-            int num = (mWidth*mHeight)*mRandom;
-            for( int i=0; i<num; i++ )
-            {
-              int x = mWidth  * axRandom();
-              int y = mHeight * axRandom();
-              mCells2[ C + (y*SIZE) + x] = 1;
-            }
-            //);
-          } // random>0
-        } // cyclemode=2
-        cycle = mCycleCount;
-      } // cycle<=0
-    } // cyclemode>0
-  }
 
 //----------------------------------------------------------------------
 
