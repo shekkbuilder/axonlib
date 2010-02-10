@@ -234,7 +234,7 @@
         HWND hCw = GetConsoleWindow();
         if(hCw != NULL)
 	      {
-          // set allways on top
+          // set always on top
           SetWindowPos(hCw, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
           // disable close button (otherwise crash if clicked)
 		      HMENU hMenu = GetSystemMenu(hCw, 0);
@@ -263,7 +263,7 @@
   #ifdef linux
     #define trace(x) { cout << "TRC | LINE: " << __LINE__ << " | " << x << endl; cout.flush(); }
     #define warn(x) { printf("WARN | LINE: %i | %s\n", __LINE__, x); }
-    #define wdebug(x,y) ((void)0)
+    #define wdebug(...) ((void)0)
   #endif
 // case: no debug
 #else
@@ -271,7 +271,7 @@
   #define trace(x) ((void)0)
   #define warn(x) ((void)0)
   #define assert(x) ((void)0)
-  #define wdebug(x,y) ((void)0)
+  #define wdebug(...) ((void)0)
 #endif
 
 //----------------------------------------------------------------------
