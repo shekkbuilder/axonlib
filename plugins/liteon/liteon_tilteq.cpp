@@ -95,8 +95,8 @@ class myPlugin : public axPlugin
         //(instead of the third ('false' here) argument?
         //  wdebug/wdebugnl ?
 
-        wdebug("id = ", id, false);
-        wdebug(", value = ", f);
+        wdebug("id = ", id, 1, 0);
+        wdebug(", value = ", f, 0, 1);
         switch(id)
         {
           case 0: // slider1

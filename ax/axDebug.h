@@ -43,7 +43,7 @@
  * wdebug("var = ", myvar);
  * wdebug(var1, var2);
  * wdebug(var, " <- text message");
- * wdebug("text", "more text", false); // no new line
+ * wdebug("text", "more text", false, false); // "don't show line number", "no new line"
  * wdebug(var, "");
  * wdebug("", var);
  * \endcode
@@ -169,12 +169,13 @@
     // ----------------
     // send text to debug window
     template <typename T0, typename T1>
-    void wdebug(const T0 p0, const T1 p1, bool newline = true)
+    void wdebug(const T0 p0, const T1 p1, bool lineN = true, bool newline = true)
     {
       if (axDtext != NULL) // if window is created
       {
         // use a string stream to cast input vars to type std::string
         ostringstream oss;
+        if (lineN) oss << __LINE__ << " | ";
         oss << p0 << " " << p1;
         if (newline) oss << "\r\n";
         string s2 = oss.str();
@@ -254,15 +255,15 @@
         setvbuf(stdout, NULL, _IONBF, 0);
       }
       // define trace() and warn() to check for hCrt;
-      #define trace(x) { if (hCrt != 0) { cout << "TRC | LINE: " << __LINE__ << " | " << x << endl; cout.flush(); } }
-      #define warn(x) { if (hCrt != 0) { printf("WARN | LINE: %i | %s\n", __LINE__, x); } }
+      #define trace(x) { if (hCrt != 0) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); } }
+      #define warn(x) { if (hCrt != 0) { printf("WARN | %i | %s\n", __LINE__, x); } }
     }
 
   #endif
   // case: linux
   #ifdef linux
-    #define trace(x) { cout << "TRC | LINE: " << __LINE__ << " | " << x << endl; cout.flush(); }
-    #define warn(x) { printf("WARN | LINE: %i | %s\n", __LINE__, x); }
+    #define trace(x) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); }
+    #define warn(x) { printf("WARN | %i | %s\n", __LINE__, x); }
     #define wdebug(...) ((void)0)
   #endif
 // case: no debug

@@ -19,9 +19,10 @@
 /**
  * \file axMath.h
  * \brief math approximations and routines
- * axonlib's math library with a collection of optimized functions for trigonometry,
+ *  
+ * axonlib's math header with a collection of optimized functions for trigonometry,
  * algebra and analysis. <br>
- * some of the methods have a 'f' suffix version (e.g.: axTanf) <br>
+ * some of the methods have a 'f' suffix version (e.g.: axTanf).
  * such versions use FPU instructions for the calculation.
  * the versions without 'f' suffix are most likely less cpu heavy approximations,
  * but with reduced accuracy and acceptable input range (e.g. axLog). <br> 
@@ -50,27 +51,32 @@
 #include "axDefines.h"
 #include "axUtils.h"
 
-/// square of x
+/**
+ * square of x: (x^2)
+ */ 
 #define axSqr(x) ((x)*(x))
 
-/// cube of x
+/**
+ * cube of x: (x^3)
+ */
 #define axCube(x) ((x)*(x)*(x))
 
 /**
  * newton step 1 (newton's method) <br>
- * \code 
- * new_approx = (old_approx + x/old_approx) / 2;
- * \endcode 
-*/
-#define axNewtonStep(y, x) { (y)=((y)+(x)/(y))*0.5f; }
-/**
- * newton step 2 (newton's method) <br>
  * as seen in axInvSqrt <br> 
  * \code 
  * y = x*(1.5f - (x/2)*x*x);
  * \endcode 
 */
-#define axNewtonStep2(x) { (x) = (x)*(1.5f - (x)*0.5f)*(x)*(x); }
+#define axNewtonStep(x) { (x) = (x)*(1.5f - (x)*0.5f)*(x)*(x); }
+
+/**
+ * newton step 2 (newton's method) <br>
+ * \code 
+ * new_approx = (old_approx + x/old_approx) / 2;
+ * \endcode 
+*/
+#define axNewtonStep2(y, x) { (y)=((y)+(x)/(y))*0.5f; }
 
 /**
  * returns the floor of a floating point number
@@ -118,7 +124,7 @@ inline float axRound(const float value)
  * float integer;  
  * float fraction = axModf(value_pi, &integer);
  * // fraction = 0.141592, integer = 3   
- * \endcode 
+ * \endcode
  * @param[in] value float - input variable
  * @param[in] intpart float* - pointer to integer part variable
  * @return float - fractional part
@@ -137,9 +143,9 @@ inline float axModf(const float value, float* intpart)
  * float denominator = 2;    
  * float result = numerator - (floorf(numerator/denominator) * denominator);
  * // result = 1.3  
- * \endcode  
- * param[in] x float - numerator (divident) 
- * param[in] y float - denominator (devisor or modulus)  
+ * \endcode
+ * @param[in] x float - numerator (divident) 
+ * @param[in] y float - denominator (devisor or modulus)  
  */
 inline float axFmod(const float x, const float y)
   {
@@ -533,19 +539,20 @@ inline float axExp(const float exponent)
 }
 
 /**
- * Returns the result of x*(2^floor(y)) <br>
+ * returns the result of x*(2^floor(y)) <br>
  * ( significand (x) multiplied by the exponent(2^y) )
  * \code
  * // example: 
  * float sig = 2.f;
  * float exponent = 4.1f; // will be truncated to 4.0f
- * float result = axLdexp(
+ * float result = axFscale(sig, exponent);
  * // result = 32.f
  * \endcode  
- * param[in] x float - significand
- * param[in] y float - denominator (devisor or modulus)  
+ * @param[in] x float - significand
+ * @param[in] y float - exponent
+ * @return value float   
  */
-float axLdexp(const float x, const float y)
+inline float axFscale(const float x, const float y)
 {
   register float value;
   __asm__ __volatile__ ("":::);
@@ -554,6 +561,36 @@ float axLdexp(const float x, const float y)
     "fscale;"  : "=t" (value) : "0" (x), "u" (y)
   );
   return value;
+}
+
+/**
+ * separates the input variable x into significand*(2^exponent)<br>
+ * uses IEEE logb(x) 
+ * \code
+ * // example: 
+ * float value = 3.141592;
+ * float exponent;
+ * float significand = axFxtract(value, &exponent);
+ * // significand = 1.5708, exponent = 1
+ * // 3.141592 = 1.5708 * (2^1)
+ * // -----------------------------------
+ * // NOTE: using frexp() from libm
+ * // significand = 0.785398, exponent = 2
+ * // 3.141592 = 0.785398 * (2^2)
+ * \endcode
+ * @param[in] value float - input value
+ * @param[in] _exp float* - pointer to the exponent variable
+ * @return sig float - value of significand
+ */
+inline float axFxtract(float value, float* _exp)
+{
+  register float sig;  
+  __asm__ __volatile__("":::);
+  __asm__
+  (
+    "fxtract;"   :"=t"(sig), "=u"(*_exp)   :"0"(value)
+  );
+  return sig;
 }
 
 /**
@@ -853,7 +890,7 @@ inline float axAcotanf(float value)
  * @param[in] value float
  * @return value float
  */
-inline float axAsecf(float value) (fpu)
+inline float axAsecf(float value)
 {
   // asec(x) = atan(sqrt(x*x-1))  
   __asm__ __volatile__ ("":::);
@@ -1003,19 +1040,19 @@ inline float axCosh(const float x)
 }
 
 /**
- * approximation of the hyperbolic-tangens function for range [-50.f, 50.f] (fpu)
- * @param[in] x float
+ * approximation of the hyperbolic-tangens function for range [-50, 50] (fpu)
+ * @param[in] value const float
  * @return result float
  */
-inline float axTanf(const float x)
+inline float axTanhf(const float value)
 {
-  if (x > 50)
+  if (value > 50)
     return 1;
-  else if (x < -50)
+  else if (value < -50)
     return -1;
   else
   {
-    const float _e = axExpf(x);
+    const float _e = axExpf(value);
     const float _er = 1.f/_e;
     return (_e - _er) / (_e + _er);
   }
@@ -1053,23 +1090,20 @@ inline float dB2lin(const float dB)
 }
 
 /**
- * calculate the average value of a set of floating point numbers
+ * calculate the average value of a set of floats
  * example: <br>
  * \code
- * axAvrg(3, -1.f, 3.5f, 5.f); // result is 2.5
+ * float ar[] = { -1.f, 2.f, 3.f, 4.f, 5.f }; 
+ * float result = axAvrg(5, ar); // result is 2.6f
  * \endcode
- * @param[in] count unsigned int - number of elements (n)
- * @param[in] elements[0-n] float - elements
+ * @param n unsigned int - number of elements (n)
+ * @param ar float* - array of floats
  * @return float
  */
-inline float axAvrg(const unsigned int n,...)
+inline float axAvrg(const unsigned int n, const float* ar)
 {
-  va_list ap;
-  float total = 0.f;
-  va_start(ap, n);
-  for(unsigned int i = 0; i < n; i++)
-    total += va_arg(ap, double);
-  va_end(ap);
+  float total = 0;
+  for(unsigned int i = 0; i < n; i++) total += ar[i];
   return total/n;
 }
 
@@ -1077,20 +1111,17 @@ inline float axAvrg(const unsigned int n,...)
  * calculate the average value of a set of integers
  * example: <br>
  * \code
- * axAvrgInt(5, -2, -1, 1, 5, 7); // result is 2
+ * int ar[] = { -1, 2, 3, 4, 5 }; 
+ * float result = axAvrgInt(5, ar); // result is 2 (truncated)
  * \endcode
- * @param[in] count unsigned int - number of elements (n)
- * @param[in] elements[0-n] int - elements
+ * @param n unsigned int - number of elements (n)
+ * @param ar int* - array of integers
  * @return int
  */
-inline int axAvrgInt(const unsigned int n,...)
+inline int axAvrgInt(const unsigned int n, const int* ar)
 {
-  va_list ap;
   int total = 0;
-  va_start(ap, n);
-  for(unsigned int i = 0; i < n; i++)
-    total += va_arg(ap, int);
-  va_end(ap);
+  for(unsigned int i = 0; i < n; i++) total += ar[i];  
   return total/n;
 }
 
@@ -1109,10 +1140,7 @@ inline int axAvrgInt(const unsigned int n,...)
 inline float axRMS(const unsigned int n, const float* ar)
 {
   float numr = 0;
-  for (unsigned int i=0; i<n; i++)
-  {
-    numr += axSqr(ar[i]); // ar[i] * ar[i]
-  }
+  for (unsigned int i=0; i<n; i++) numr += axSqr(ar[i]); // ar[i] * ar[i]
   return axSqrtf(numr/n);
 }
 
