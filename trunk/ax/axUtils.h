@@ -40,8 +40,8 @@
 #define axSwap(x,y) { typeof(x) tmp = (x);(x) = (y);(y) = (tmp); }
 
 /**
- * returns the size of an array
- * @param[in] x array
+ * returns the size of an array <br>
+ * input x - T array
  * \code 
  * char a[15];
  * int b[axGetArrSize(a) + 1];
@@ -117,6 +117,9 @@ inline void axRadix (long *source, long *dest, long N, int byte)
 
 /*
 TODO:
+  axCPUID
+  bitshifting
+  return a specific bit
   axMemcpy, axMemsey
   axStrCpy,Strdup, etc...
   strcmp
@@ -126,6 +129,58 @@ TODO:
 
 
 //---------------------
+
+/*
+
+// TODO: cpuid
+// reform into a function call, so that devs can check for target CPU specific features...
+// this will allow the developer to call for example axCPUID() at plugin runtime so that some
+// definitions are made, such as: __HAS_SSE__, __HAS_SSE2__
+//
+// check how common are the CPUID parameters between architectures
+// the instruction should be standardized.  
+
+int a,b,c,d;
+char line[] = "-----------------------------------------";
+inline void cpuid(const unsigned int func)
+{
+	__asm__ __volatile__
+	(
+    "cpuid;"    : "=a" (a), "=b" (b), "=c" (c), "=d" (d)    : "a" (func)
+  );
+  cout << showbase << hex << line << endl
+  << "CPUID_FN: " << func << endl << line << endl;
+  cout << hex << "eax: " << a << endl;
+  cout << hex << "ebx: " << b << endl;
+  cout << hex << "ecx: " << c << endl;  
+  cout << hex << "edx: " << d << endl << endl;
+  // check sse
+  if (func == 0x00000001)
+  {
+    //cout << "sse  (edx & (1 << 25)): " << (d & (1 << 25)) << endl;    
+    cout << "sse  (1 & (edx >> 25)): " << (1 & (d >> 25)) << endl;
+    cout << "sse2 (1 & (edx >> 26)): " << (1 & (d >> 26)) << endl;
+    cout << "sse3 (1 & (ecx >> 9)):  " << (1 & (c >> 9))  << endl << endl;
+  }  
+  // check mmx / 3dnow
+  if (func == 0x80000001)
+  {
+    cout << "mmx     (1 & (edx << 22)): " << (1 & (d >> 22)) << endl;
+    cout << "3dnow!  (1 & (edx << 31)): " << (1 & (d >> 31)) << endl;
+    cout << "3dnow!2 (1 & (edx << 30)): " << (1 & (d >> 30)) << endl << endl;
+  }  
+}
+
+int main(void)
+{
+  cpuid(0x00000000);
+  cpuid(0x00000001);
+  cpuid(0x80000001);
+  system("pause");
+  return 0;
+}
+
+*/
 
 
 
