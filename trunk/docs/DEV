@@ -1,2 +1,30 @@
 axonlib developer
 (extending the library, making your own widgets, parameters, ...)
+
+
+[initial/preliminary/work-in-progress]
+
+the main parts of the library
+
+1. portability
+2. plugin
+3. parameters
+4. widgets
+?. ?
+
+1. portability
+
+this is a very important aspect.
+source code for your plugins should be 100% portable across all platforms that axonlib supports,
+and everything should be similar and with the same feature set
+
+2. plugin
+
+currently only a vst-wrapper is in place. it takes care of, and simplifies communication between plugin and host.
+same thig here as with the portability, everything sjould be portable across plugin formats.
+at a later time, there will be wrappers for other plugin formats, like: ladspa/dssi/lv2 (linux), pd externals, etc..
+even standalone applications could be built as a plugin, with a plugin wrapper for binary standalone programs.
+
+3. parameters
+
+4. widgets

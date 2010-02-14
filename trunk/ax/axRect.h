@@ -18,9 +18,9 @@
 
 /**
  * \file axRect.h
- * \brief rectangle class 
- * 
- * has methods to combine rectangles and find intersections 
+ * \brief rectangle class
+ *
+ * has methods to combine rectangles and find intersections
  *
  */
 
@@ -128,6 +128,8 @@ struct axRect
   //   | |_|_|        |_|.:
   //   |___|            :
   //
+  // (large rect above is 'incoming' rect)
+  // cut-away
   inline void crop(int aX, int aY, int aW, int aH)
     {
       if( aX > x ) x = aX;

@@ -300,7 +300,7 @@ class axWidget : public axWidgetBase
     int               mFlags;
     int               mConnection;
     float             mValue;
-    axParameter*      mParameter; // for displaying
+    axParameter*      mParameter;             // for displaying. this shouldn't really be here...
     int               mMinWidth, mMinHeight;
     int               mMaxWidth, mMaxHeight;
   public:

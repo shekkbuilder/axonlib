@@ -25,272 +25,250 @@
 #define axVoice_included
 //----------------------------------------------------------------------
 
-#include "axArray.h"
-#include "axDefines.h"
-#include "axMath.h"
-#include "axModule.h"
+#include "axList.h"
 
- /*
-
-- if there is a note on and off for the same note within a block,
-  the note will be ignored (cancelled by note off
-  before it has had a chance to be 'seen')
-
-  TODO:
-  proper array/list. midi is handlen 'in-between proces blocks, so it should be safe enough
-  to mess with this during doProcessMidi
-
-  do we need to sort the events?
-  insert sorted? check if offset is equal or larger than prevoiusly (or last) event,
-  if not, search for correct position
-
-  assume not that many events per block, so that sorting shouldn't take that much time?
-
-*/
-
-class axVoiceManager;
-
-//----------------------------------------------------------------------
-//
-// voice
-//
-//----------------------------------------------------------------------
-
-// env_offset = offset into following process block before the voice
-// should be started
-
-#define env_offset    0
-#define env_attack    1
-#define env_decay     2
-#define env_sustain   3
-#define env_release   4
-#define env_finished  0xffff
+#define vst_Off       0
+#define vst_Playing   1
+#define vst_Released  2
 
 //----------
 
-class axVoice// : public axModule
+class axVoice : public axListNode
 {
+  friend class axVoiceManager;
+  protected:
+    int   mState;
+    float iRate;
   public:
-    //axVoiceManager* mOwner;
-    bool  mActive;
-    int   mNote;
-    float mVelocity;
-    int   mOffset;
-    int   mEnvStage;
-    float mFreq;
-    float iSampleRate;
-    float mPhase;
-    float mPhaseAdd;
-
-  public:
-
-    axVoice(/*axVoiceManager* aOwner*/)
+    axVoice()
       {
-        //mOwner      = aOwner;
-        mActive     = false;
-        mNote       = 0;
-        mVelocity   = 0;
-        mOffset     = 0;
-        mEnvStage   = env_offset;
-        mFreq       = 440;
-        iSampleRate = 1/44100;
-        mPhase      = 0;
-        mPhaseAdd   = mFreq * iSampleRate;
+        mState = vst_Off;
       }
-
-    //----------
-
-    virtual ~axVoice()
-      {
-      }
-
-    //----------------------------------------
-    //
-    //----------------------------------------
-
-    inline void updatePhase(void)
-      {
-        mPhase += mPhaseAdd;
-        if (mPhase>=1) mPhase-=1;
-      }
-
-    //----------
-
-    inline bool updatePhaseExt(void)
-      {
-        bool wrap = false;
-        mPhase += mPhaseAdd;
-        if (mPhase>=1)
-        {
-          mPhase-=1;
-          wrap = true;
-        }
-        return wrap;
-      }
-
-    //----------------------------------------
-    //
-    //----------------------------------------
-
-    virtual void setSampleRate(float aSampleRate)
-      {
-        if (aSampleRate>1)
-          iSampleRate = 1/aSampleRate;
-        else
-          iSampleRate = 1;
-      }
-
-    //----------
-
-    //NOTE: a little heavy..
-    // we assume you'll use this voice for synthesis
-    virtual void noteOn(int aOffset,int aNote,float aVelocity)
-      {
-        mActive   = true;
-        mNote     = aNote;
-        mVelocity = aVelocity;
-        mOffset   = aOffset;
-        mEnvStage = env_offset;
-        mPhase    = 0;
-        mFreq     = 440 * pow(2.0,(aNote-69.0) / 12);
-        mPhaseAdd = mFreq * iSampleRate;
-      }
-
-    //----------
-
-    virtual void noteOff(int aOffset,int aNote,float aVelocity)
-      {
-        if (mEnvStage==env_offset) mOffset = 0; // not yet started
-        else mOffset = aOffset;
-        mEnvStage = env_release;
-      }
-
-    //----------
-
-    virtual float process(float input=0)
-      {
-        //switch(mEnvStage)
-        //{
-        //  case env_offset: mEnvStage = env_attack; /*TRACE("attack\n");*/ break;
-        //  case env_release: mEnvStage = env_finished; /*TRACE("release\n");*/ break;
-        //}
-        if (mEnvStage==env_offset)  mEnvStage = env_attack;
-        if (mEnvStage==env_release) mEnvStage = env_finished;
-        return 0;
-      }
-
+    virtual ~axVoice() {}
+    virtual void setSampleRate(float aRate) { iRate = 1/aRate; }
+    virtual void noteOn(int aNote, int aVel) {}
+    virtual void noteOff(int aNote, int aVel) {}
+    virtual void control(int aIndex, float aVel) {}
+    virtual float process(void) {return 0;}
 };
 
 typedef axArray<axVoice*> axVoices;
 
 //----------------------------------------------------------------------
-//
-// voice manager
-//
-//----------------------------------------------------------------------
 
-class axVoiceManager// : public axModuleListener
+struct vm_event
+{
+  int ofs;
+  unsigned char msg1,msg2,msg3;
+  char padding;
+};
+
+#define MAX_EVENTS 1024
+
+class axVoiceManager
 {
   private:
-    axVoices  mVoices;
-    int       mNoteMap[128];
+    int       mOffset;
+    int       mNextEvent;
+    int       mCurrEvent;
+    int       mNumEvents;
+    vm_event  mEvents[MAX_EVENTS];
 
+  protected:
+    axVoice*  mNoteMap[128];
+    //int       mMaxVoices;
+    axVoices  mAllVoices;
+    axList    mFreeVoices;
+    axList    mPlayingVoices;
+    axList    mReleasedVoices;
   public:
 
-    axVoiceManager()
+    axVoiceManager(/*int aNumVoices*/)
       {
-        for (int i=0; i<128; i++) mNoteMap[i] = -1;
+        //mMaxVoices = aNumVoices;
+        //for (int i=0; i<mMaxVoices; i++ )
+        //{
+        //  axVoice* V = new axVoice();
+        //  mAllVoices.append(V);
+        //  mFreeVoices.append(V);
+        //}
+        memset(mNoteMap,0,sizeof(mNoteMap));
+        mOffset = 0;
+        mCurrEvent = 0;
+        mNextEvent = 999999;
+        mNumEvents = 0;
+        memset(mEvents,0,sizeof(mEvents));
       }
 
     //----------
 
     virtual ~axVoiceManager()
       {
-        for (int i=0; i<mVoices.size(); i++) delete mVoices[i];
+        deleteVoices();
+      }
+
+    //----------------------------------------
+
+    virtual void appendVoice(axVoice* V)
+      {
+        mAllVoices.append(V);
+        mFreeVoices.append(V);
+        //mMaxVoices++;
       }
 
     //----------
 
-    void setSampleRate(float aSampleRate)
+    virtual void deleteVoices(void)
       {
-        for (int i=0; i<mVoices.size(); i++)
-          mVoices[i]->setSampleRate(aSampleRate);
+        for (int i=0; i<mAllVoices.size(); i++)
+          delete mAllVoices[i];
       }
 
     //----------
 
-    void appendVoice(axVoice* aVoice)
+    virtual void setSampleRate( float aRate )
       {
-        mVoices.append(aVoice);
-      }
-
-    //----------
-
-    void cleanup(void)
-      {
-        for (int i=0; i<mVoices.size(); i++)
+        for (int i=0; i<mAllVoices.size(); i++)
         {
-          if (mVoices[i]->mEnvStage==env_finished)
+          mAllVoices[i]->setSampleRate(aRate);
+        }
+      }
+
+    //----------------------------------------
+
+    //axVoice* noteOn(int aNote, float aVel)
+    virtual void noteOn(int aNote, int aVel)
+      {
+        axVoice* V = (axVoice*)mFreeVoices.getTail();
+        if (V) { mFreeVoices.removeTail(); }
+        else
+        {
+          V = (axVoice*)mReleasedVoices.getHead();
+          if (V) { mReleasedVoices.removeHead(); }
+        }
+        if (V)
+        {
+          mNoteMap[aNote] = V;
+          mPlayingVoices.append(V);
+          V->mState = vst_Playing;
+          V->noteOn(aNote,aVel);
+        }
+      }
+
+    //----------
+
+    //axVoice* noteOff(int aNote, float aVel)
+    virtual void noteOff(int aNote, int aVel)
+      {
+        axVoice* V = mNoteMap[aNote];
+        if (V)
+        {
+          mNoteMap[aNote] = NULL;
+          mPlayingVoices.remove(V);
+          mReleasedVoices.append(V);
+          V->mState = vst_Released;
+          V->noteOff(aNote,aVel);
+        }
+      }
+
+    //----------
+
+    void control(int aIndex, float aVal)
+      {
+        for (int i=0; i<mAllVoices.size(); i++) mAllVoices[i]->control(aIndex,aVal);
+      }
+
+
+    void midi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3)
+      {
+        if (mNumEvents<MAX_EVENTS)
+        {
+          mEvents[mNumEvents].ofs  = ofs;
+          mEvents[mNumEvents].msg1 = msg1;
+          mEvents[mNumEvents].msg2 = msg2;
+          mEvents[mNumEvents].msg3 = msg3;
+          mNumEvents++;
+        }
+      }
+
+    //----------
+
+    void preProcess(void)
+      {
+        mOffset = 0;
+        mCurrEvent = 0;
+        if (mNumEvents>0) mNextEvent = mEvents[0].ofs;
+        else mNextEvent = 999999;
+      }
+
+    //----------
+
+    float process(void)
+      {
+        // events
+        while (mOffset==mNextEvent)
+        {
+          //int chn  = mEvents[mCurrEvent].msg1 & 0x0f;
+          int msg  = mEvents[mCurrEvent].msg1 & 0xf0;
+          int note = mEvents[mCurrEvent].msg2;
+          int vel  = mEvents[mCurrEvent].msg3;
+          switch(msg)
           {
-            //TODO: notemap here or in noteOff?
-            mVoices[i]->mActive = false;
+            case 0x90:
+              if (vel==0) noteOff(note,vel);
+              else noteOn(note,vel);
+              break;
+            case 0x80:
+              note = mEvents[mCurrEvent].msg2;
+              vel  = mEvents[mCurrEvent].msg3;
+              noteOff(note,vel);
+              break;
           }
+          //-----
+          mCurrEvent++;
+          if (mCurrEvent<mNumEvents) mNextEvent = mEvents[mCurrEvent].ofs;
+          else mNextEvent = 999999;
         }
-      }
-
-    //----------
-
-    int findInactiveVoice(void)
-      {
-        for (int i=0; i<mVoices.size(); i++)
-        {
-          if (!mVoices[i]->mActive) return i;
-        }
-        return -1;
-      }
-
-    //----------
-
-    void noteOn(int aOffset, int aNote, float aVelocity)
-      {
-        if (mNoteMap[aNote]>=0) return; // already playing
-        int voice = findInactiveVoice();
-        if (voice>=0)
-        {
-          mNoteMap[aNote] = voice;
-          mVoices[voice]->noteOn(aOffset,aNote,aVelocity);
-        }
-      }
-
-    //----------
-
-    void noteOff(int aOffset, int aNote, float aVelocity)
-      {
-        int voice = mNoteMap[aNote];
-        if (voice<0) return; // not playing
-        mNoteMap[aNote] = -1;
-        mVoices[voice]->noteOff(aOffset,aNote,aVelocity);
-      }
-
-    //----------
-
-    float process(float input=0)
-      {
+        mOffset++;
         float out = 0;
-        for (int i=0; i<mVoices.size(); i++)
+        // playing voices
+        axVoice* V = (axVoice*)mPlayingVoices.getHead();
+        while (V)
         {
-          if (mVoices[i]->mActive)
-          {
-            if (mVoices[i]->mOffset>0) mVoices[i]->mOffset-=1; // wait
-            else out += mVoices[i]->process();
-          }
+          out += V->process();
+          V = (axVoice*)V->getNext();
+        }
+        // released voices
+        V = (axVoice*)mReleasedVoices.getHead();
+        while (V)
+        {
+          if (V->mState!=vst_Off) out += V->process();
+          V = (axVoice*)V->getNext();
         }
         return out;
       }
 
     //----------
 
+    void postProcess(void)
+      {
+        axVoice* V = (axVoice*)mReleasedVoices.getHead();
+        while (V)
+        {
+          if (V->mState==vst_Off)
+          {
+            axVoice* next = (axVoice*)V->getNext();
+            mReleasedVoices.remove(V);
+            mFreeVoices.append(V);
+            V = next;
+          }
+          else V = (axVoice*)V->getNext();
+        }
+        mNumEvents = 0;
+      }
+
 };
+
 
 //----------------------------------------------------------------------
 #endif

@@ -18,13 +18,11 @@
 
 /**
  * @file dspBuffer.h
- * \brief dsp buffer 
+ * \brief dsp buffer
  */
 
 #ifndef dspBuffer_included
 #define dspBuffer_included
-//----------------------------------------------------------------------
-
 //----------------------------------------------------------------------
 
 class dspBuffer

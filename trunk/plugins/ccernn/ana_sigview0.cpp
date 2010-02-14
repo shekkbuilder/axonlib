@@ -26,38 +26,81 @@
 #define MAX_SAMPLE_RATE 192000
 #define MAX_BUFFER_SIZE (MAX_SAMPLE_RATE*2)
 
-char* str_viewmode[] = { (char*)"left", (char*)"right" };
+#define DOUBLEBUFFER
 
 //----------------------------------------------------------------------
+//
+// scope
+//
+//----------------------------------------------------------------------
+
+class myScope : public wdgScope
+{
+  private:
+    axBrush* mBackBrush;
+  public:
+    myScope(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None)
+    : wdgScope(aListener,aID,aRect,aAlignment)
+      {
+        mBackBrush = new axBrush(AX_GREY_DARK);
+        setBackgroundBrush(mBackBrush);
+      }
+    virtual ~myScope()
+      {
+        delete mBackBrush;
+      }
+    //virtual void do_PrePaint(axCanvas* aCanvas, axRect aRect)
+    //  {
+    //    aCanvas->selectBrush(mBackBrush);
+    //    aCanvas->fillRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
+    //  }
+    //virtual void do_PostPaint(axCanvas* aCanvas, axRect aRect)
+    //  {
+    //  }
+};
+
+//----------------------------------------------------------------------
+//
+// plugin
+//
+//----------------------------------------------------------------------
+
+char* str_viewmode[] = { (char*)"left", (char*)"right" };
+
+//----------
+
 
 class myPlugin : public axPlugin,
                  public axWidgetListener
 {
   private:
+    int           mIndex;
     float*        mBuffer1;
-    float*        mBuffer2;
     float*        mRecBuffer;
+    #ifdef DOUBLEBUFFER
+    float*        mBuffer2;
     float*        mRec2Buffer;
     float*        mViewBuffer;
     bool          mFilled;
-    int           mViewMode;
+    #endif
+    //int           mViewMode;
   protected:
     axEditor*     mEditor;
-    int           mIndex;
+
     float         mScale;
     int           mLength;
+
     parFloat*     pScale;
     parInteger*   pLength;
+
     wdgKnob*      wScale;
     wdgKnob*      wLength;
-    wdgSwitches*  wViewMode;
-    wdgScope*      wScope;
-    //wdgResizer*   wSizer;
+
+    //wdgSwitches*  wViewMode;
+    myScope*      wScope;
 
   public:
 
-    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
-    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
     myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
     : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
@@ -65,19 +108,18 @@ class myPlugin : public axPlugin,
         describe("ana_sigview0","ccernn","product_string",0, AX_MAGIC+1001);
         setupAudio(2,2);
         setupEditor(AX_WIDTH,AX_HEIGHT);
-        //hasEditor(AX_WIDTH,AX_HEIGHT);
-        //isSynth();
         mBuffer1 = new float[MAX_BUFFER_SIZE];
-        mBuffer2 = new float[MAX_BUFFER_SIZE];
-        mViewBuffer = new float[MAX_BUFFER_SIZE];
         memset(mBuffer1,0,MAX_BUFFER_SIZE*sizeof(float));
-        memset(mBuffer2,0,MAX_BUFFER_SIZE*sizeof(float));
-        memset(mViewBuffer,0,MAX_BUFFER_SIZE*sizeof(float));
-        mIndex = 0;
         mRecBuffer = mBuffer1;
+        mIndex = 0;
+        #ifdef DOUBLEBUFFER
+        mBuffer2 = new float[MAX_BUFFER_SIZE];
+        memset(mBuffer2,0,MAX_BUFFER_SIZE*sizeof(float));
+        mViewBuffer = new float[MAX_BUFFER_SIZE];
+        memset(mViewBuffer,0,MAX_BUFFER_SIZE*sizeof(float));
         mRec2Buffer = mBuffer2;
         mFilled = false;
-
+        #endif
         appendParameter( pScale  = new parFloat(  this, 0, "scale", "",   1,   0,  4 ) );
         appendParameter( pLength = new parInteger(this, 1, "length","ms", 250, 10, 1000 ) );
         processParameters();
@@ -87,8 +129,10 @@ class myPlugin : public axPlugin,
     virtual ~myPlugin()
       {
         delete[] mBuffer1;
+        #ifdef DOUBLEBUFFER
         delete[] mBuffer2;
         delete[] mViewBuffer;
+        #endif
       }
 
     //----------------------------------------------------------------------
@@ -125,7 +169,9 @@ class myPlugin : public axPlugin,
           case 1:
             mLength = f*ms;
             mIndex=0;
+            #ifdef DOUBLEBUFFER
             mFilled=false;
+            #endif
             if (mEditor) wScope->mSize = mLength;
             break;
         }
@@ -149,28 +195,26 @@ class myPlugin : public axPlugin,
 
     //----------
 
+    // we fill the buffer that mRecBuffer is pointing to, until it's full (mLength)
+    // then swap the pointers around, so we write to the other buffer
+
     virtual void doProcessSample(float** ins, float** outs)
       {
         float spl0 = *ins[0];
         float spl1 = *ins[1];
-
-          assert(mIndex>=0);
-          assert(mIndex<mLength);
-
         mRecBuffer[mIndex*2]   = spl0;
         mRecBuffer[mIndex*2+1] = spl1;
         mIndex += 1;
         if (mIndex>=mLength)
         {
           mIndex=0;
-          // switch buffers
-          float* temp = mRecBuffer;
-          mRecBuffer = mRec2Buffer;
-          mRec2Buffer = temp;
-          //signal redraw
+          #ifdef DOUBLEBUFFER
+          float* temp = mRec2Buffer;
+          mRec2Buffer = mRecBuffer;
+          mRecBuffer = temp;
           if( mFilled==false ) mFilled=true;
+          #endif
         }
-
         *outs[0] = spl0;
         *outs[1] = spl1;
       }
@@ -179,28 +223,25 @@ class myPlugin : public axPlugin,
     // editor
     //----------------------------------------------------------------------
 
-    // can this one die because of some threading issues? (ala close editor) think,think..
     virtual void* doCreateEditor(void)
       {
         axEditor* EDIT = new axEditor("ana_sigview_editor",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
         wdgPanel* panel;
         EDIT->appendWidget( panel = new wdgPanel(this,-1,NULL_RECT,wal_Client));
 
-
         panel->appendWidget( wScale     = new wdgKnob(    this,0,axRect( 10,10,128, 32),wal_None/*, pScale */ ) );
         panel->appendWidget( wLength    = new wdgKnob(    this,1,axRect(140,10,128, 32),wal_None/*, pLength*/ ) );
-        panel->appendWidget( wViewMode  = new wdgSwitches(this,2,axRect( 10,50,266, 16),wal_None ) );
-        panel->appendWidget( wScope     = new wdgScope(   this,3,axRect( 10,70,266,200),wal_None ) );
-          wViewMode->setup(2,str_viewmode);
+        //panel->appendWidget( wViewMode  = new wdgSwitches(this,2,axRect( 10,50,266, 16),wal_None ) );
+        panel->appendWidget( wScope     = new myScope(    this,3,axRect( 10,70,266,200),wal_None ) );
+          //wViewMode->setup(2,str_viewmode);
           wScope->mSize = mLength;
+          #ifdef DOUBLEBUFFER
           wScope->mBuffer = mViewBuffer;
-          wScope->mDrawFlags = wbf_Wave | wbf_Slices;
-          //wScope->mWaveColor = AX_YELLOW;
-          wScope->mNumSlices = 8;
-          //wScope->mSlicesColor = AX_WHITE;
-
-        //E->appendWidget( wSizer = new wdgResizer( this,99,axRect(276,270,10,10),wal_None ) );
-
+          #else
+          wScope->mBuffer = mRecBuffer;
+          #endif
+          //wScope->mDrawFlags = wbf_Wave;// | wbf_Slices;
+          //wScope->mNumSlices = 8;
         EDIT->connect( wScale, pScale  );
         EDIT->connect( wLength,pLength );
         // could mEditor be in use from another thread? gui? audio? setParameter?
@@ -222,20 +263,30 @@ class myPlugin : public axPlugin,
 
     //----------
 
-    // let's say this has just been called from the gui thread to update the interface
-    // immediately after this, you close the editor (doDestroyEditor above)
-    // it would be no good to delete the mEditor class while we're still drawing
-    // so, some locking is probablynecessary
+      // let's say this has just been called from the gui thread to update the interface
+      // immediately after this, you close the editor (doDestroyEditor above)
+      // it would be no good to delete the mEditor class while we're still drawing
+      // so, some locking is probablynecessary
+
+    // when mFilled is true, it means that mRec2Buffer points to the buffer that has just been filled
+    // copy that to our viewbuffer, and signal 'empty buffer'
+    // there is some extra buffering involved in all this, but i think it's safer...
+
     virtual void doIdleEditor(void)
       {
         if (mEditor)
         {
+          #ifdef DOUBLEBUFFER
           if (mFilled)
           {
             memcpy(mViewBuffer,mRec2Buffer,mLength*2*sizeof(float));
             mFilled=false;
             mEditor->appendDirty( wScope );
           }
+          #else
+          wScope->setScale(mScale);
+          mEditor->appendDirty( wScope );
+          #endif
           mEditor->redrawDirty();
         }
       }
@@ -259,10 +310,10 @@ class myPlugin : public axPlugin,
     // 'do the right thing'
     virtual void onChange(axWidget* aWidget)
       {
-        switch(aWidget->mID)
-        {
-          case 2: wScope->mMode = wViewMode->mSelected; break;
-        }
+        //switch(aWidget->mID)
+        //{
+        //  case 2: wScope->mMode = wViewMode->mSelected; break;
+        //}
         //mEditor->onRedraw(aWidget);
         mEditor->onChange(aWidget);
       }
@@ -280,6 +331,9 @@ class myPlugin : public axPlugin,
 
 
 };
+
+#undef DOUBLEBUFFER
+
 
 //----------------------------------------------------------------------
 #include "axMain.h"

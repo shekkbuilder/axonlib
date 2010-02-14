@@ -1,7 +1,7 @@
 #define AX_PLUGIN     myPlugin
-#define AX_NUMPROGS   0
-#define AX_NUMPARAMS  1
-#define AX_WIDTH      52
+#define AX_NUMPROGS   1
+#define AX_NUMPARAMS  3
+#define AX_WIDTH      136
 #define AX_HEIGHT     72
 #define AX_FLAGS      (AX_EMBEDDED|AX_BUFFERED)
 //#define AX_AUTOSYNC
@@ -22,17 +22,8 @@
 #include "images/knob2.h"
 
 #include "axVoice.h"
-#include "dspEnvelope.h"
 
-/*
-
-- #include "axVoice.h"
-- class myVoice::axVoice { process() }
-- constructor: for (int i=0; i<MAX_VOICES; i++) VM.appendVoice(new myVoice());
-- processMidi: VM.noteOn, noteOff
-- processSample: float out = VM.process(0);
-
-*/
+#define MAX_VOICES 16
 
 //----------------------------------------------------------------------
 // voice
@@ -40,15 +31,58 @@
 
 class myVoice : public axVoice
 {
+  private:
+    float ph;
+    float phadd;
+    float vel;
+    float attack,release;
+    float att, att_s;
+    float rel, rel_s;
   public:
+    myVoice()
+    : axVoice()
+      {
+      }
+    virtual ~myVoice()
+      {
+      }
+    //void setAttack(float a) { attack=a; }
+    //void setRelease(float r) { release=r; }
+    virtual void noteOn(int aNote, int aVel)
+      {
+        float freq = 440 * powf(2.0,(aNote-69.0) / 12);
+        ph    = 0;
+        phadd = freq * iRate;
+        vel   = (float)aVel * inv127;
+        att   = 0;
+        att_s = attack;
+        rel   = 1;
+        rel_s = 0;
+      }
+    virtual void noteOff(int aNote, int aVel)
+      {
+        //mState = vst_Off;
+        rel = att;
+        rel_s = release;
+      }
+    virtual void control(int aIndex, float aValue)
+      {
+        switch(aIndex)
+        {
+          case 0: attack  = aValue; break;
+          case 1: release = aValue; break;
+        }
+      }
     virtual float process(void)
       {
-        //axVoice::process();
-        if (mEnvStage==env_offset)  mEnvStage = env_attack;
-        if (mEnvStage==env_release) mEnvStage = env_finished;
-        float out = sin(mPhase*PI2);
-        updatePhase();
-        return out * mVelocity;
+        //float out = sinf(PI2*ph);
+        float out = ph*2-1;
+        ph += phadd;
+        if (ph>=1) ph-=1;
+        att += (1-att)*att_s;
+        rel += (0-rel)*rel_s;
+        if (rel<EPSILON) mState=vst_Off;   // !!!
+        return out*vel*att*rel;
       }
 };
 
@@ -56,40 +90,45 @@ class myVoice : public axVoice
 // plugin
 //----------------------------------------------------------------------
 
-#define MAX_VOICES 8
-
 class myPlugin : public axPlugin,
                  public axWidgetListener
 {
   private:
-    bool        is_gui_initialized;
-    axEditor    *mEditor;
-    axSurface   *srfKnob;
-    float       mGain;
-    parFloat*   pGain;
-    wdgImgKnob* wGain;
-    axVoiceManager VM;
+
+    float           mGain;
+    float           mAttack;
+    float           mRelease;
+    float           mAttack_d,  mAttack_c;
+    float           mRelease_d, mRelease_c;
+    axVoiceManager* VM;
+
+    parFloat*       pGain;
+    parFloat*       pAttack;
+    parFloat*       pRelease;
+
+    bool            is_gui_initialized;
+    axEditor*       mEditor;
+    axSurface*      srfKnob;
+    wdgImgKnob*     wGain;
+    wdgImgKnob*     wAttack;
+    wdgImgKnob*     wRelease;
+
   public:
 
-    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
-    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
     myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
     : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
+        axRandomize(19);
+        VM = new axVoiceManager();//(MAX_VOICES);
+        for (int i=0; i<MAX_VOICES; i++) VM->appendVoice( new myVoice() );
         is_gui_initialized = false;
         mEditor = NULL;
-        //srfKnob = NULL;
         describe("syn_poly0","ccernnb","axonlib example plugin",0002,AX_MAGIC+0x0000);
-        // TODO: axPlugin functiuons for these (no calling directly into vst)
-        //hasEditor(AX_WIDTH,AX_HEIGHT);
-        //setNumInputs(0);
-        //isSynth();
         setupAudio(0,2,true);
         setupEditor(AX_WIDTH,AX_HEIGHT);
-
-        //
-        for (int i=0; i<MAX_VOICES; i++) VM.appendVoice(new myVoice());
-        appendParameter( pGain = new parFloat(this,0,"gain","",1,0,2,0.1));
+        appendParameter( pGain    = new parFloat(this,0,"gain",   "",1, 0,2));
+        appendParameter( pAttack  = new parFloat(this,1,"attack", "",3, 1,50 ));
+        appendParameter( pRelease = new parFloat(this,2,"release","",20,1,50 ));
         processParameters();
       }
 
@@ -98,34 +137,50 @@ class myPlugin : public axPlugin,
     virtual ~myPlugin()
       {
         if (is_gui_initialized) delete srfKnob;
+        delete VM;
       }
 
     //--------------------------------------------------
     // signals
     //--------------------------------------------------
 
-    //virtual void doProcessState(int aState) {}
+    virtual void doProcessState(int aState)
+      {
+        switch(aState)
+        {
+          case pst_Resume:
+            VM->postProcess(); // to be sure there's no unprocessed events in the buffers
+            break;
+        }
+      }
+
     //virtual void doProcessTransport(int aState) {}
 
     //----------
 
     virtual void doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3)
       {
-        int msg = (msg1&0xf0) >> 4;
-        //TRACE("msg:%i\n",msg);
-        if (msg==9)
-        {
-          if (msg3==0) VM.noteOff(ofs,msg2,0);
-          else VM.noteOn( ofs,msg2,msg3*inv127);
-        }
-        if (msg==8) VM.noteOff(ofs,msg2,msg3*inv127);
+        VM->midi(ofs,msg1,msg2,msg3);
       }
 
     //----------
 
     virtual void doProcessParameter(axParameter* aParameter)
       {
-        if (aParameter->mID==0) mGain = aParameter->getValue();
+        int id = aParameter->mID;
+        float val = aParameter->getValue();
+        switch(id)
+        {
+          case 0:
+            mGain = val;
+            break;
+          case 1:
+            VM->control(0, 1/(val*val*val) );
+            break;
+          case 2:
+            VM->control(1, 1/(val*val*val) );
+            break;
+        }
       }
 
     //--------------------------------------------------
@@ -134,7 +189,8 @@ class myPlugin : public axPlugin,
 
     virtual bool doProcessBlock(float** inputs, float** outputs, long sampleFrames)
     {
-      VM.setSampleRate( updateSampleRate() );
+      VM->setSampleRate( updateSampleRate() );
+      VM->preProcess();
       return false;
     }
 
@@ -142,17 +198,16 @@ class myPlugin : public axPlugin,
 
     virtual void doProcessSample(float** ins, float** outs)
       {
-        float out = VM.process();
-        out *= mGain;
-        *outs[0] = out;
-        *outs[1] = out;
+        float out = VM->process();
+        *outs[0] = out * mGain;
+        *outs[1] = out * mGain;
       }
 
     //----------
 
     virtual void doPostProcess(float** inputs, float** outputs, long sampleFrames)
       {
-        VM.cleanup();
+        VM->postProcess();
       }
 
     //--------------------------------------------------
@@ -169,9 +224,17 @@ class myPlugin : public axPlugin,
           srfKnob = loadPng( knob2, 15255 );
           is_gui_initialized=true;
         }
-        panel->appendWidget(wGain = new wdgImgKnob(this, 0,axRect(10,30,32,32),wal_None,65,srfKnob));
-        panel->appendWidget(        new wdgLabel(  this,-1,axRect(10,10,32,16),wal_None,"gain",AX_GREY_LIGHT,tal_Center));
+        panel->appendWidget(wGain    = new wdgImgKnob(this, 0,axRect(10,30,32,32),wal_None,65,srfKnob));
+        panel->appendWidget(wAttack  = new wdgImgKnob(this, 0,axRect(52,30,32,32),wal_None,65,srfKnob));
+        panel->appendWidget(wRelease = new wdgImgKnob(this, 0,axRect(94,30,32,32),wal_None,65,srfKnob));
+
+        panel->appendWidget(           new wdgLabel(  this,-1,axRect(10,10,32,16),wal_None,"gain",   AX_GREY_LIGHT,tal_Center));
+        panel->appendWidget(           new wdgLabel(  this,-1,axRect(52,10,32,16),wal_None,"attack", AX_GREY_LIGHT,tal_Center));
+        panel->appendWidget(           new wdgLabel(  this,-1,axRect(94,10,32,16),wal_None,"release",AX_GREY_LIGHT,tal_Center));
+
         ED->connect(wGain,pGain);
+        ED->connect(wAttack,pAttack);
+        ED->connect(wRelease,pRelease);
         ED->doRealign();
         mEditor = ED;
         return mEditor;
