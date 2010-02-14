@@ -244,9 +244,9 @@ class myPlugin : public axPlugin,
           //wViewMode->setup(2,str_viewmode);
           wScope->mSize = mLength / 2;
           wScope->mBuffer = mViewBuffer;
-          wScope->mDrawFlags = wbf_Wave;// | wbf_Slices;
+//          wScope->mDrawFlags = wbf_Wave;// | wbf_Slices;
           //wScope->mWaveColor = AX_YELLOW;
-          wScope->mUnipolar = true;
+//          wScope->mUnipolar = true;
           //wScope->mNumSlices = 8;
           //wScope->mSlicesColor = AX_WHITE;
 

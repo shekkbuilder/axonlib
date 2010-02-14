@@ -218,11 +218,8 @@ class axPluginVst :  public AudioEffectX,
         //if (strcmp(ptr,"midiProgramNames"))     return 0; // plug-in supports function #getMidiProgramName ()
         //if (strcmp(ptr,"bypass"))               return 0; // plug-in supports function #setBypass ()
         if (!strcmp(ptr,"hasCockosExtensions"))  ret=0xbeef0000;
-        trace("- axPluginVst.canDo: '" << ptr << "' = " << hex << ret);
+        //trace("- axPluginVst.canDo: '" << ptr << "' = " << hex << ret);
         return ret;
-
-//hex << 100 << endl;
-
       }
 
     //----------------------------------------------------------------------

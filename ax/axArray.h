@@ -214,7 +214,8 @@ class axArray
     /**
       push item to the end of the array, so you can use it like a stack
     */
-    void push(const _T& aItem)
+    //void push(const _T& aItem)
+    void push(_T aItem)
       {
         append(aItem);
       }
@@ -223,7 +224,8 @@ class axArray
     /**
       pops the last item off the array, like a stack
     */
-    _T& pop(void)
+    //_T& pop(void)
+    _T pop(void)
       {
         if (mSize>0)
         {

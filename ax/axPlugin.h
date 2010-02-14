@@ -95,7 +95,7 @@ class axPluginBase
       \param aWidth the initial width of the editor
       \param aHeight the initial height of the editor
     */
-    virtual void hasEditor(int aWidth, int aHeight) {}
+//    virtual void hasEditor(int aWidth, int aHeight) {}
     /// send midi out
     /**
       call this to send midi out of the plugin.

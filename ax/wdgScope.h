@@ -43,208 +43,205 @@
 // since we're in the gui thread then?
 
 #include "axWidget.h"
+#include "wdgPaintBox.h"
 
-#ifndef MAX_CURSORS
-  #define MAX_CURSORS 16
-#endif
+//#ifndef MAX_CURSORS
+//  #define MAX_CURSORS 16
+//#endif
 
-#ifndef MAX_AREAS
-  #define MAX_AREAS   16
-#endif
+//#ifndef MAX_AREAS
+//  #define MAX_AREAS   16
+//#endif
 
-#define wbf_Wave    1
-#define wbf_Slices  2
-#define wbf_Cursors 4
-#define wbf_Areas   8
-#define wbf_All     0xffff
+//#define wbf_Wave    1
+//#define wbf_Slices  2
+//#define wbf_Cursors 4
+//#define wbf_Areas   8
+//#define wbf_All     0xffff
 
-struct bufCursor
-{
-  float   pos;
-  //axColor color;
-  axPen*  pen;
-};
+//struct bufCursor
+//{
+//  float   pos;
+//  //axColor color;
+//  axPen*  pen;
+//};
 
-struct bufArea
-{
-  float   start;
-  float   end;
-  //axColor color;
-  axBrush* brush;
-};
+//struct bufArea
+//{
+//  float   start;
+//  float   end;
+//  //axColor color;
+//  axBrush* brush;
+//};
 
 //----------
 
-class wdgScope : public axWidget
+class wdgScope : public wdgPaintBox
 {
-  private:
-    axBrush* mFillBrush;
+  //private:
+  //  axBrush* mFillBrush;
   public:
     int       mSize;    // num samples
     float*    mBuffer;  // mSize*2 samples (stereo)
-    int       mMode;    // left/right
-    bool      mUnipolar;
+    float     mScale;
+//    int       mMode;    // left/right
+//    bool      mUnipolar;
   public:
-    int       mDrawFlags;
-    int       mNumSlices;
-    int       mNumCursors;
-    int       mNumAreas;
-    bufCursor mCursors[MAX_CURSORS];
-    bufArea   mAreas[MAX_AREAS];
-
-    //axColor mWaveColor;
-    //axColor mSlicesColor;
+//    int       mDrawFlags;
+//    int       mNumSlices;
+//    int       mNumCursors;
+//    int       mNumAreas;
+//    bufCursor mCursors[MAX_CURSORS];
+//    bufArea   mAreas[MAX_AREAS];
     axPen* mWavePen;
-    axPen* mSlicesPen;
-    axPen* mRectPen;
+//    axPen* mSlicesPen;
+//    axPen* mRectPen;
 
   public:
 
-    wdgScope(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None/*, axParameter* aParameter=NULL*/)
-    : axWidget(aListener,aID,aRect,aAlignment/*,aParameter*/)
+    wdgScope(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None)
+    //: axWidget(aListener,aID,aRect,aAlignment)
+    : wdgPaintBox(aListener,aID,aRect,aAlignment)
       {
         clearFlag(wfl_Active);
         mSize   = 0;
         mBuffer = NULL;
-        mMode   = 0;
-        mUnipolar = false;
-        //
-        mDrawFlags        = wbf_Wave;
-        mNumSlices        = 0;
-        mNumCursors       = 0;
-        mNumAreas         = 0;
-        mFillBrush  = new axBrush(AX_GREY_DARK);
+        mScale = 1;
+//        mMode   = 0;
+//        mUnipolar = false;
+//        mDrawFlags        = wbf_Wave;
+//        mNumSlices        = 0;
+//        mNumCursors       = 0;
+//        mNumAreas         = 0;
+        //mFillBrush  = new axBrush(AX_GREY_DARK);
         //mWaveColor        = AX_GREY_LIGHT;
         //mSlicesColor      = AX_GREY_DARK;
         mWavePen = new axPen( AX_GREY_LIGHT );
-        mSlicesPen = new axPen( AX_GREY_DARK );
-        mRectPen = new axPen( AX_GREY_DARK );
-        int i;
-        for( i=0; i<MAX_CURSORS; i++)
-        {
-          mCursors[i].pos = 0;
-          //mCursors[i].color = axColor(255,255,255);
-          mCursors[i].pen = new axPen(AX_WHITE);
-        }
-        for( i=0; i<MAX_AREAS; i++)
-        {
-          mAreas[i].start = 0;
-          mAreas[i].end = 0;
-          //mAreas[i].color = axColor(96,96,96);
-          mAreas[i].brush = new axBrush( axColor(96,96,96));
-        }
-
+//        mSlicesPen = new axPen( AX_GREY_DARK );
+//        mRectPen = new axPen( AX_GREY_DARK );
+//        int i;
+//        for( i=0; i<MAX_CURSORS; i++)
+//        {
+//          mCursors[i].pos = 0;
+//          mCursors[i].pen = new axPen(AX_WHITE);
+//        }
+//        for( i=0; i<MAX_AREAS; i++)
+//        {
+//          mAreas[i].start = 0;
+//          mAreas[i].end = 0;
+//          mAreas[i].brush = new axBrush( axColor(96,96,96));
+//        }
 
       }
+
     virtual ~wdgScope()
       {
         //TODO delete everything
-        delete mFillBrush;
+        //delete mFillBrush;
       }
 
-    //----------
+    //--------------------------------------------------
 
-    void setup(float* aBuffer, int aSize, int aMode)
+    virtual void do_PrePaint(axCanvas* aCanvas, axRect aRect) {}
+    virtual void do_PostPaint(axCanvas* aCanvas, axRect aRect) {}
+
+    //--------------------------------------------------
+
+    inline void setBuffer(float* aBuffer, int aSize)
       {
         mBuffer = aBuffer;
         mSize = aSize;
-        mMode = aMode;
       }
+
+    inline void setScale(float aScale) { mScale = aScale; }
 
     //----------
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-//        axWidget::doPaint(aCanvas, aRect);
-//        aCanvas->setPenColor( axColor(255,255,0) );
-//        int w  = mRect.w;
-//        int h2 = (mRect.h/2);
-//        if (mBuffer && w>0 && mSize>0)
+        wdgPaintBox::doPaint(aCanvas,aRect);
+
+        // --- areas
+
+//        if( mDrawFlags&wbf_Areas )
 //        {
-//          float x = 0;
-//          float xadd = mSize / w;
-//          int px = mRect.x;
-//          int py = mRect.y +  h2;
-//          for (int i=0; i<w; i++)
+//          for( int i=0; i<mNumAreas; i++ )
 //          {
-//            float n;
-//            if (mMode==0) n=mBuffer[((int)x)*2];
-//            else if (mMode==1) n=mBuffer[((int)x)*2+1];
-//            int y = mRect.y +  h2 + (n*h2);
-//            aCanvas->drawLine( px,py,mRect.x+i, y );
-//            px = mRect.x+i;
-//            py = y;
-//            x+=xadd;
+//            int ss = mAreas[i].start * mRect.w + mRect.x;
+//            int se = mAreas[i].end   * mRect.w + mRect.x;
+//            //aCanvas->setBrushColor( mAreas[i].color );
+//            aCanvas->selectBrush( mAreas[i].brush );
+//            aCanvas->fillRect( ss, mRect.y, se, mRect.y2() );
 //          }
-//        }
+//        } //areas
+        do_PrePaint(aCanvas, aRect);
 
-        if( mDrawFlags&wbf_Areas )
-        {
-          for( int i=0; i<mNumAreas; i++ )
-          {
-            int ss = mAreas[i].start * mRect.w + mRect.x;
-            int se = mAreas[i].end   * mRect.w + mRect.x;
-//aCanvas->setBrushColor( mAreas[i].color );
-aCanvas->selectBrush( mAreas[i].brush );
-            aCanvas->fillRect( ss, mRect.y, se, mRect.y2() );
-          }
-        } //areas
+        // --- wave
 
-        if( mDrawFlags&wbf_Wave )
-        {
+//        if( mDrawFlags&wbf_Wave )
+//        {
           if( mBuffer && mSize>0 )
           {
-//aCanvas->setPenColor( mWaveColor );
-aCanvas->selectPen( mWavePen );
+            //aCanvas->setPenColor( mWaveColor );
+            aCanvas->selectPen( mWavePen );
             int h2 = mRect.h * 0.5;
             int x   = mRect.x;
             int y1,y2;
-            if (mUnipolar) y2 = mRect.y2() - 1;
-            else y2  = mRect.y + h2;
+            //if (mUnipolar) y2 = mRect.y2() - 1;
+            //else
+              y2  = mRect.y + h2;
             float pos = 0;
             float posadd = mSize / mRect.w;
             for( int i=0; i<mRect.w; i++ )
             {
-              float n = mBuffer[ (int)pos ];
+              float n = mBuffer[ ((int)pos) * 2 ];
+              n *= mScale;
               pos += posadd;
-              if (mUnipolar) y1 = y2 - (mRect.h*n);
-              else y1 = y2 - (h2*n);
+              //if (mUnipolar) y1 = y2 - (mRect.h*n);
+              //else
+                y1 = y2 - (h2*n);
               aCanvas->drawLine(x,y1,x,y2);
               x++;
             }
           }
-        } //wbm_Wave
+//        } //wbm_Wave
 
-        if( mDrawFlags&wbf_Slices )
-        {
-          if( mNumSlices>1 )
-          {
-//aCanvas->setPenColor( mSlicesColor );
-aCanvas->selectPen( mSlicesPen );
-            float xadd = (float)mRect.w / (float)mNumSlices;
-            float x = mRect.x + xadd;
-            for( int i=1; i<mNumSlices; i++ )
-            {
-              aCanvas->drawLine( x, mRect.y, x, mRect.y2() );
-              x += xadd;
-            }
-          }
-        } //wbm_Slices
+        do_PostPaint(aCanvas, aRect);
 
-        if( mDrawFlags&wbf_Cursors )
-        {
-          for( int i=0; i<mNumCursors; i++ )
-          {
-//aCanvas->setPenColor( mCursors[i].color );
-aCanvas->selectPen( mCursors[i].pen );
-            int rp = mCursors[i].pos * mRect.w + mRect.x;
-            aCanvas->drawLine( rp, mRect.y, rp, mRect.y2() );
-          }
-        } //wbf_Cursors
+        // --- grid/slices
 
-//aCanvas->setPenColor(AX_GREY_DARK);
-aCanvas->selectPen( mRectPen );
-        aCanvas->drawRect(mRect.x, mRect.y,mRect.x2(),mRect.y2());
+//        if( mDrawFlags&wbf_Slices )
+//        {
+//          if( mNumSlices>1 )
+//          {
+//            //aCanvas->setPenColor( mSlicesColor );
+//            aCanvas->selectPen( mSlicesPen );
+//            float xadd = (float)mRect.w / (float)mNumSlices;
+//            float x = mRect.x + xadd;
+//            for( int i=1; i<mNumSlices; i++ )
+//            {
+//              aCanvas->drawLine( x, mRect.y, x, mRect.y2() );
+//              x += xadd;
+//            }
+//          }
+//        } //wbm_Slices
+
+        // --- cursors
+
+//        if( mDrawFlags&wbf_Cursors )
+//        {
+//          for( int i=0; i<mNumCursors; i++ )
+//          {
+//            //aCanvas->setPenColor( mCursors[i].color );
+//            aCanvas->selectPen( mCursors[i].pen );
+//            int rp = mCursors[i].pos * mRect.w + mRect.x;
+//            aCanvas->drawLine( rp, mRect.y, rp, mRect.y2() );
+//          }
+//        } //wbf_Cursors
+//        //aCanvas->setPenColor(AX_GREY_DARK);
+
+//        aCanvas->selectPen( mRectPen );
+//        aCanvas->drawRect(mRect.x, mRect.y,mRect.x2(),mRect.y2());
 
       }
 };

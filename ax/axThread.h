@@ -32,10 +32,6 @@
 #define axThread_included
 //----------------------------------------------------------------------
 
-//TODO:
-//- windows version
-//- mutex/lock?
-
 class axThreadBase
 {
   protected:
