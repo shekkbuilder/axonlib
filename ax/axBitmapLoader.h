@@ -136,12 +136,12 @@ axSurface* uploadBitmap(axBitmap* bmp)
 axSurface* loadPng(unsigned char* buffer, unsigned int buffersize)
   {
     axBitmap* bmp = decodePng(buffer,buffersize);
-    //TODO: remove these!
-    // caller's responsibility!
-    // i just put them here (temporary) to not break every gui plugin :-/
+      //TODO: remove these!
+      // caller's responsibility!
+      // i just put them here (temporary) to not break every gui plugin :-/
       bmp->convertRgbaBgra();
       bmp->setBackground(128,128,128);
-    //
+      //
     bmp->prepare();
     axSurface* srf = uploadBitmap(bmp);
     delete bmp;
