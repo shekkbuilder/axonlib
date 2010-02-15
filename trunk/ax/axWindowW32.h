@@ -97,6 +97,11 @@ class axWindowImpl : public axWindowBase
         mWinCursor = LoadCursor(NULL,IDC_ARROW);
         mPrevCursor = -666;
 //----- register window class
+        /*
+          should this be moved to axGlobal? and where should we unregister it?
+          all instances share the same global data in a dll, so we could register the window class once
+          and all instances uses that class
+        */
         char* classname = mWinName.ptr();//(char*)"axonlib";
         WNDCLASS wc;
         memset(&wc,0,sizeof(wc));

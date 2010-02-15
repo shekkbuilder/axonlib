@@ -25,7 +25,26 @@
 #define axVoice_included
 //----------------------------------------------------------------------
 
+// - max block size: 999999 samples
+//     a biiig offset that we will hopefully never reach
+// - max events per block: #define MAX_EVENTS 1024
+//     a static buffer for the incoming events, to avoid runtime memory juggling
+// - very basic nna/note-stealing (works ok-ish)
+// - currently only note on/off
+// - converts events in processSample
+//     could be done in processBlock (does it matter?)
+// - not optimized
+//     but 16 basic saw voices uses only around 0.8% cpu (reaper/wine)
+//     so i've postponed that until it gets problematic
+// - bugs?
+
 #include "axList.h"
+
+//----------------------------------------------------------------------
+//
+// voice
+//
+//----------------------------------------------------------------------
 
 #define vst_Off       0
 #define vst_Playing   1
@@ -40,21 +59,57 @@ class axVoice : public axListNode
     int   mState;
     float iRate;
   public:
-    axVoice()
-      {
-        mState = vst_Off;
-      }
+    axVoice() { mState = vst_Off; }
     virtual ~axVoice() {}
-    virtual void setSampleRate(float aRate) { iRate = 1/aRate; }
-    virtual void noteOn(int aNote, int aVel) {}
-    virtual void noteOff(int aNote, int aVel) {}
-    virtual void control(int aIndex, float aVel) {}
+    virtual void  setSampleRate(float aRate) { iRate = 1/aRate; }
+    virtual void  noteOn(int aNote, int aVel) {}
+    virtual void  noteOff(int aNote, int aVel) {}
+    virtual void  control(int aIndex, float aVel) {}
     virtual float process(void) {return 0;}
 };
 
 typedef axArray<axVoice*> axVoices;
 
 //----------------------------------------------------------------------
+//
+// voice manager
+//
+//----------------------------------------------------------------------
+
+/*
+
+[assume events in buffer are sorted by their offset in the audiobuffer]
+
+we have:
+- an array with all vailable voices (allocated at startup)
+- a list of available voices (initially containing ptr to all available voices)
+- a list of playing voices
+- a list of released (decaying) voices
+note on:
+- grab a voice from the free voices list, and append it to the playing list
+- if no voice available in the free list, take the oldest voice from decaying voices
+note off:
+- move the voice from the playing to the released list
+process:
+- process both playing and released lists,
+  call process for each voice, and add their outputs
+  voices can set their mState to vst_Off to shut themselves off (see post-process)
+post-process:
+- move all voices with mState == vst_Off from released to free voices list
+- cleanup buffers and counters
+
+midi:
+we copy all incoming midi events to a buffer.
+during sample processing:
+keep track of current offset (position in buffer), and next event to process
+when offset reaches next event, we fire off note on/ff etc events
+and continue, looking at the next event and its offset
+
+
+after the block has finished, we reset the buffers and offset
+and prepare for next block
+
+*/
 
 struct vm_event
 {
@@ -65,6 +120,8 @@ struct vm_event
 
 #define MAX_EVENTS 1024
 
+//----------------------------------------
+
 class axVoiceManager
 {
   private:
@@ -73,31 +130,25 @@ class axVoiceManager
     int       mCurrEvent;
     int       mNumEvents;
     vm_event  mEvents[MAX_EVENTS];
+    int       mNumPlaying;
 
   protected:
     axVoice*  mNoteMap[128];
-    //int       mMaxVoices;
     axVoices  mAllVoices;
     axList    mFreeVoices;
     axList    mPlayingVoices;
     axList    mReleasedVoices;
   public:
 
-    axVoiceManager(/*int aNumVoices*/)
+    axVoiceManager()
       {
-        //mMaxVoices = aNumVoices;
-        //for (int i=0; i<mMaxVoices; i++ )
-        //{
-        //  axVoice* V = new axVoice();
-        //  mAllVoices.append(V);
-        //  mFreeVoices.append(V);
-        //}
         memset(mNoteMap,0,sizeof(mNoteMap));
         mOffset = 0;
         mCurrEvent = 0;
         mNextEvent = 999999;
         mNumEvents = 0;
         memset(mEvents,0,sizeof(mEvents));
+        mNumPlaying = 0;
       }
 
     //----------
@@ -113,7 +164,6 @@ class axVoiceManager
       {
         mAllVoices.append(V);
         mFreeVoices.append(V);
-        //mMaxVoices++;
       }
 
     //----------
@@ -136,7 +186,6 @@ class axVoiceManager
 
     //----------------------------------------
 
-    //axVoice* noteOn(int aNote, float aVel)
     virtual void noteOn(int aNote, int aVel)
       {
         axVoice* V = (axVoice*)mFreeVoices.getTail();
@@ -152,12 +201,12 @@ class axVoiceManager
           mPlayingVoices.append(V);
           V->mState = vst_Playing;
           V->noteOn(aNote,aVel);
+          mNumPlaying++;
         }
       }
 
     //----------
 
-    //axVoice* noteOff(int aNote, float aVel)
     virtual void noteOff(int aNote, int aVel)
       {
         axVoice* V = mNoteMap[aNote];
@@ -168,6 +217,7 @@ class axVoiceManager
           mReleasedVoices.append(V);
           V->mState = vst_Released;
           V->noteOff(aNote,aVel);
+          mNumPlaying--;
         }
       }
 
@@ -178,6 +228,7 @@ class axVoiceManager
         for (int i=0; i<mAllVoices.size(); i++) mAllVoices[i]->control(aIndex,aVal);
       }
 
+    //----------
 
     void midi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3)
       {
@@ -224,7 +275,6 @@ class axVoiceManager
               noteOff(note,vel);
               break;
           }
-          //-----
           mCurrEvent++;
           if (mCurrEvent<mNumEvents) mNextEvent = mEvents[mCurrEvent].ofs;
           else mNextEvent = 999999;
@@ -269,7 +319,5 @@ class axVoiceManager
 
 };
 
-
 //----------------------------------------------------------------------
 #endif
-

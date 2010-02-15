@@ -20,7 +20,7 @@
   lock down things that might be dangerous if accessed by two (or more) simultaneous threads
 
 - axMath
-  doxy: a partial performance table relative to compiler flags  
+  doxy: a partial performance table relative to compiler flags
 
 - axUtils
   cpuid, bitshifters, return specific bit
@@ -50,17 +50,14 @@
 
 // ----- gui -----
 
-- axContainer, widget hover
-  - axWindow X11/W32
-  - mouse cursor constants
-  - setMousePos(point), restrictMouse(rect)
-  to change mouse cursor when hovering over widgets
+- hovering
+  in axContainer, mouse cursor change,
+  notify widget on enter/leave
 
-- axBitmap
-  some way of having non-platform specific bitmaps.
-  general memory bitmap, axBitmapMem
-  and methods to 'upgrade' to device-dependent bitmap (for blitting)
-  - set background from another bitmap w/alpha
+- mouse cursor
+  setMousePos(point), restrictMouse(rect)
+  change mouse cursor when hovering over widgets
+  hide when dragging knobs, etc.
 
 - streamline widget set
   - wdgLabel
@@ -85,6 +82,10 @@
   widget/parameter connectioins
   message-passing to listeners
 
+- axSynth, axEffect
+  one step up the class-hierarchy ladder.
+  handle repetitive and boring things
+
 // ----- other -----
 
 - dsp classes, dsp graph
@@ -95,3 +96,6 @@
 - axScript <-> axModule
   operator <-> module
 
+- axSingleton
+  encapsulate global things inside a singleton
+  window class registration...
