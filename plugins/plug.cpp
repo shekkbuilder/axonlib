@@ -1,5 +1,5 @@
 
-//#include "demo/ax_demo.cpp"
+#include "demo/ax_demo.cpp"
 //#include "ccernn/again.cpp"
 //#include "ccernn/plug_debug.cpp"
 
@@ -49,7 +49,7 @@
 //#include "ccernn/midi_fibonacci0.cpp"
 //#include "ccernn/syn_binaural0.cpp"
 //#include "ccernn/syn_perc0.cpp"
-#include "ccernn/syn_poly0.cpp"
+//#include "ccernn/syn_poly0.cpp"
 
     // ----- ports
 

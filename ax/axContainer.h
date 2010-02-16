@@ -175,8 +175,6 @@ class axContainer : public axWidget,
 
     virtual axWidget* findWidget(int aX, int aY)
       {
-
-        //for( int i=0; i<mWidgets.size(); i++ )
         #ifdef AX_PAINTERS
         for (int i=0; i<mWidgets.size(); i++)
         #else
@@ -185,10 +183,33 @@ class axContainer : public axWidget,
         {
           axWidget* W = mWidgets[i];
           if(W->hasFlag(wfl_Active))
-            if(W->contains(aX,aY))
+            if (W->contains(aX,aY))
               return W;
         }
         return NULL;
+      }
+
+    //----------
+
+    virtual axWidget* findHover(int aX, int aY)
+      {
+        //axWidget* W = findWidget(aX,aY);
+        axWidget* W = NULL;
+        #ifdef AX_PAINTERS
+        for (int i=0; i<mWidgets.size(); i++)
+        #else
+        for (int i=mWidgets.size()-1; i>=0; i--)
+        #endif
+        {
+          axWidget* SW = mWidgets[i];
+          if (SW->contains(aX,aY))
+          {
+            W = SW;
+            break;
+          }
+        }
+        if (W) return W->findHover(aX,aY);
+        else return this;
       }
 
     //--------------------------------------------------
@@ -544,9 +565,21 @@ class axContainer : public axWidget,
         //if (W) mListener->onHover(W);
         if( hasFlag(wfl_Active) )
         {
-          //TODO: find hovering widget?
           if( mCapturedWidget ) mCapturedWidget->doMouseMove(aX,aY,aB);
         } //active
+
+        //TODO: find hovering widget?
+
+        //axWidget* wdg = findHover(aX,aY);
+        //if (wdg)
+        //  trace("hover id: " << wdg->mID );
+        //if (wdg != mHoverWidget)
+        //{
+        //  if (mHoverWidget) mHoverWidget->onLeave();
+        //  mHoverWidget = wdg;
+        //  mHoverWidget->onEnter();
+        //}
+
       }
 
     //----------

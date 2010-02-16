@@ -11,6 +11,7 @@
 #include "axSynth.h"
 #include "parFloat.h"
 #include "parInteger.h"
+#include "parDB.h"
 #include "wdgPanel.h"
 #include "wdgLabel.h"
 #include "wdgImgKnob.h"
@@ -49,6 +50,8 @@ class myVoice : public axVoice
         rel1_s = release;
       }
 
+    //virtual void  ctrlChange(int aCtrl, int aVal) {}
+
     virtual void control(int aIndex, float aValue)
       {
         switch(aIndex)
@@ -62,7 +65,6 @@ class myVoice : public axVoice
         }
       }
 
-    //virtual float process(void)
     virtual void process(float* outs)
       {
         float out1 = ph1*2-1; // sinf(PI2*ph);
@@ -88,8 +90,9 @@ class mySynth : public axSynth
     bool is_gui_initialized;
     axSurface *srfKnob;
     //float mGain, mAttack, mRelease, mTuneOct, mTuneSemi, mTuneCent;
-    parFloat *pGain, *pAttack, *pRelease;
+    parFloat /**pGain,*/ *pAttack, *pRelease;
     parInteger *pTuneOct, *pTuneSemi, *pTuneCent;
+    parDB *pGain;
     wdgImgKnob *wGain, *wAttack, *wRelease, *wTuneOct, *wTuneSemi, *wTuneCent;
   public:
 
@@ -101,12 +104,13 @@ class mySynth : public axSynth
         describe("syn_poly0","ccernnb","axonlib example plugin",0002,AX_MAGIC+0x0000);
         setupAudio(0,2,true);
         for (int i=0; i<MAX_VOICES; i++) VM->appendVoice( new myVoice() );
-        appendParameter( pGain     = new parFloat(  this,0,"gain",   "",0.5,0, 1  ));
-        appendParameter( pAttack   = new parFloat(  this,1,"attack", "",3,  1, 50 ));
-        appendParameter( pRelease  = new parFloat(  this,2,"release","",20, 1, 50 ));
-        appendParameter( pTuneOct  = new parInteger(this,3,"oct",    "",0, -4, 4  ));
-        appendParameter( pTuneSemi = new parInteger(this,4,"semi",   "",0, -12,12 ));
-        appendParameter( pTuneCent = new parInteger(this,5,"cent",   "",0, -50,50 ));
+        //appendParameter( pGain     = new parFloat(  this,0,"gain",   "",0.5,0, 1  ));
+        appendParameter( pGain     = new parDB(     this,0,"gain",   "db",0,-60, 12  ));
+        appendParameter( pAttack   = new parFloat(  this,1,"attack", "",  3,  1, 50 ));
+        appendParameter( pRelease  = new parFloat(  this,2,"release","",  20, 1, 50 ));
+        appendParameter( pTuneOct  = new parInteger(this,3,"oct",    "",  0, -4, 4  ));
+        appendParameter( pTuneSemi = new parInteger(this,4,"semi",   "",  0, -12,12 ));
+        appendParameter( pTuneCent = new parInteger(this,5,"cent",   "",  0, -50,50 ));
         processParameters();
       }
 
@@ -115,7 +119,7 @@ class mySynth : public axSynth
     virtual void doSetupEditor(axEditor* aEditor)
       {
         wdgPanel* panel;
-        aEditor->appendWidget( panel = new wdgPanel(this,-1,NULL_RECT,wal_Client) );
+        aEditor->appendWidget( panel = new wdgPanel(this,-100,NULL_RECT,wal_Client) );
         if(!is_gui_initialized)
         {
           srfKnob = loadPng( knob2, 15255 );
@@ -128,11 +132,11 @@ class mySynth : public axSynth
         panel->appendWidget(wTuneSemi = new wdgImgKnob(this, 4,axRect(170,30,32,32),wal_None,65,srfKnob));
         panel->appendWidget(wTuneCent = new wdgImgKnob(this, 5,axRect(210,30,32,32),wal_None,65,srfKnob));
         panel->appendWidget(            new wdgLabel(  this,-1,axRect( 10,10,32,16),wal_None,"gain",AX_GREY_LIGHT,tal_Center));
-        panel->appendWidget(            new wdgLabel(  this,-1,axRect( 50,10,32,16),wal_None,"att", AX_GREY_LIGHT,tal_Center));
-        panel->appendWidget(            new wdgLabel(  this,-1,axRect( 90,10,32,16),wal_None,"rel", AX_GREY_LIGHT,tal_Center));
-        panel->appendWidget(            new wdgLabel(  this,-1,axRect(130,10,32,16),wal_None,"oct", AX_GREY_LIGHT,tal_Center));
-        panel->appendWidget(            new wdgLabel(  this,-1,axRect(170,10,32,16),wal_None,"semi",AX_GREY_LIGHT,tal_Center));
-        panel->appendWidget(            new wdgLabel(  this,-1,axRect(210,10,32,16),wal_None,"cent",AX_GREY_LIGHT,tal_Center));
+        panel->appendWidget(            new wdgLabel(  this,-2,axRect( 50,10,32,16),wal_None,"att", AX_GREY_LIGHT,tal_Center));
+        panel->appendWidget(            new wdgLabel(  this,-3,axRect( 90,10,32,16),wal_None,"rel", AX_GREY_LIGHT,tal_Center));
+        panel->appendWidget(            new wdgLabel(  this,-4,axRect(130,10,32,16),wal_None,"oct", AX_GREY_LIGHT,tal_Center));
+        panel->appendWidget(            new wdgLabel(  this,-5,axRect(170,10,32,16),wal_None,"semi",AX_GREY_LIGHT,tal_Center));
+        panel->appendWidget(            new wdgLabel(  this,-6,axRect(210,10,32,16),wal_None,"cent",AX_GREY_LIGHT,tal_Center));
         aEditor->connect(wGain,pGain);
         aEditor->connect(wAttack,pAttack);
         aEditor->connect(wRelease,pRelease);
@@ -140,7 +144,6 @@ class mySynth : public axSynth
         aEditor->connect(wTuneSemi,pTuneSemi);
         aEditor->connect(wTuneCent,pTuneCent);
         aEditor->doRealign();
-
       }
 
     virtual void doProcessParameter(axParameter* aParameter)
