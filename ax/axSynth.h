@@ -99,9 +99,12 @@ class axSynth : public axPlugin,
     //TODO: stereo
     virtual void doProcessSample(float** ins, float** outs)
       {
-        float out = VM->process();
-        *outs[0] = out;// * mGain;
-        *outs[1] = out;// * mGain;
+        //float out = VM->process();
+        //float out = VM->process();
+        float _outs[2];
+        VM->process(&_outs[0]);
+        *outs[0] = _outs[0];
+        *outs[1] = _outs[1];
       }
 
     //----------

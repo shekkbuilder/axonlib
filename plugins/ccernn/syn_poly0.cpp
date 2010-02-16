@@ -62,7 +62,8 @@ class myVoice : public axVoice
         }
       }
 
-    virtual float process(void)
+    //virtual float process(void)
+    virtual void process(float* outs)
       {
         float out1 = ph1*2-1; // sinf(PI2*ph);
         float out2 = ph2*2-1; // sinf(PI2*ph);
@@ -71,7 +72,8 @@ class myVoice : public axVoice
         att1 += (1-att1)*att1_s;
         rel1 += (0-rel1)*rel1_s;
         if (rel1<EPSILON) mState=vst_Off;
-        return (out1+out2)*vel*att1*rel1 * gain;
+        outs[0] = out1*vel*att1*rel1 * gain;
+        outs[1] = out2*vel*att1*rel1 * gain;
       }
 
 };

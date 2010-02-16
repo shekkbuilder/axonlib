@@ -64,8 +64,10 @@ class axVoice : public axListNode
     virtual void  setSampleRate(float aRate) { iRate = 1/aRate; }
     virtual void  noteOn(int aNote, int aVel) {}
     virtual void  noteOff(int aNote, int aVel) {}
+    virtual void  ctrlChange(int aCtrl, int aVal) {}
     virtual void  control(int aIndex, float aVel) {}
-    virtual float process(void) {return 0;}
+    //virtual float process(void) {return 0;}
+    virtual void  process(float* outs) {}
 };
 
 typedef axArray<axVoice*> axVoices;
@@ -254,7 +256,8 @@ class axVoiceManager
 
     //----------
 
-    float process(void)
+    //float process(void)
+    void process(float* outs)
       {
         // events
         while (mOffset==mNextEvent)
@@ -280,22 +283,35 @@ class axVoiceManager
           else mNextEvent = 999999;
         }
         mOffset++;
-        float out = 0;
+        //float out = 0;
+        float left = 0;
+        float right = 0;
+        float _outs[2];
         // playing voices
         axVoice* V = (axVoice*)mPlayingVoices.getHead();
         while (V)
         {
-          out += V->process();
+          //out += V->process();
+          V->process(&_outs[0]);
+          left += _outs[0];
+          right += _outs[1];
           V = (axVoice*)V->getNext();
         }
         // released voices
         V = (axVoice*)mReleasedVoices.getHead();
         while (V)
         {
-          if (V->mState!=vst_Off) out += V->process();
+          if (V->mState!=vst_Off) //out += V->process();
+          {
+            V->process(&_outs[0]);
+            left += _outs[0];
+            right += _outs[1];
+          }
           V = (axVoice*)V->getNext();
         }
-        return out;
+        //return out;
+        outs[0] = left;
+        outs[1] = right;
       }
 
     //----------

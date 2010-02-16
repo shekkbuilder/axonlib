@@ -43,13 +43,13 @@
 //#include "ccernn/fx_cutter0.cpp"
 //#include "ccernn/fx_dynamics0.cpp"
 //#include "ccernn/fx_sampler0.cpp"
-#include "ccernn/fx_tempodelay0.cpp"
+//#include "ccernn/fx_tempodelay0.cpp"
 //#include "ccernn/fx_wgtavg0.cpp"
 //#include "ccernn/midi_cellular0.cpp"
 //#include "ccernn/midi_fibonacci0.cpp"
 //#include "ccernn/syn_binaural0.cpp"
 //#include "ccernn/syn_perc0.cpp"
-//#include "ccernn/syn_poly0.cpp"
+#include "ccernn/syn_poly0.cpp"
 
     // ----- ports
 
