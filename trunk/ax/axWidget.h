@@ -398,6 +398,16 @@ class axWidget : public axWidgetBase
       }
 
     //--------------------------------------------------
+
+    virtual axWidget* findHover(int aX, int aY)
+      {
+        //if (mRect.contains(aX,aY))
+          return this;
+        //else
+        //  return NULL;
+      }
+
+    //--------------------------------------------------
     // widget base
     //--------------------------------------------------
 

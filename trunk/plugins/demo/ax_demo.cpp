@@ -182,12 +182,12 @@ class myPlugin : public axPlugin,
           mGuiInitialized = true;
         }
 
-        axEditor* EDIT = new axEditor("ax_demo_editor",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
+        axEditor* EDIT = new axEditor("ax_demo_editor",this,0,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
 
         EDIT->appendWidget( wBottom = new wdgPanel(  this,-1,axRect(0,0,0,20),wal_Bottom) );
           wBottom->setDrawMode(pdm_Background);
 
-        EDIT->appendWidget( wLeft   = new wdgPanel(  this,-1,axRect(0,0,150,0),wal_Left) );
+        EDIT->appendWidget( wLeft   = new wdgPanel(  this,-2,axRect(0,0,150,0),wal_Left) );
           wLeft->setDrawMode(  pdm_Border|pdm_Background);
           wLeft->setBackgroundBrush( mLeftBrush );
           wLeft->setMinWidth(100);
@@ -197,7 +197,7 @@ class myPlugin : public axPlugin,
           wSplit->setDrawMode(pdm_Background);
           wSplit->setBackgroundBrush(mSizerBrush);
 
-        EDIT->appendWidget( wTop    = new wdgPanel(  this,-1,axRect(0,0,0,50),wal_Top) );
+        EDIT->appendWidget( wTop    = new wdgPanel(  this,-3,axRect(0,0,0,50),wal_Top) );
           wTop->setDrawMode(pdm_Border|pdm_Background);
           //wTop->setBackgroundBrush( mBackBrush );
           wTop->setAlign(10,10,5,5);
@@ -207,7 +207,7 @@ class myPlugin : public axPlugin,
           wTop->appendWidget( new wdgButton(this,104,axRect(0,0,30,30),wal_LeftTop, "4" ) );
           wTop->appendWidget( new wdgButton(this,105,axRect(0,0,30,30),wal_LeftTop, "5" ) );
 
-        EDIT->appendWidget( wMain   = new wdgPanel(  this,-1,axRect(0,0,0,0),wal_Client) );
+        EDIT->appendWidget( wMain   = new wdgPanel(  this,-4,axRect(0,0,0,0),wal_Client) );
           wMain->setDrawMode( pdm_Image );
           wMain->setImage( mBackSrf );
           //wMain->setBackgroundBrush( mMainBrush );

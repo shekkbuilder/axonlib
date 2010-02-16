@@ -286,10 +286,10 @@ inline void axCPUID(const int fcall=33139, int* eax=0, int* ebx=0, int* ecx=0, i
 
 /**
  * conversation from bandwidth (octaves) to q factor
- * @param[in] n float - length in octaves 
- * @return q_factor float 
+ * @param[in] n float - length in octaves
+ * @return q_factor float
  */
-inline void axOctaves2Qfactor(const float n)
+inline float/*void*/ axOctaves2Qfactor(const float n)
 {
   const float _pow2n = axPowf(2.f, n);
   return axSqrtf(_pow2n) / (1.f - _pow2n);
@@ -300,7 +300,7 @@ inline void axOctaves2Qfactor(const float n)
  * @param[in] q float - q factor
  * @return octaves float
  */
-inline void axQfactor2Octaves(const float q)
+inline float/*void*/ axQfactor2Octaves(const float q)
 {
   return 1.4426950408889634f * axSinhf(0.5 * q);
 }
@@ -312,12 +312,12 @@ inline void axQfactor2Octaves(const float q)
  * @param[in] N long
  * @param[in] byte int
  */
-inline void axOctave2Qfactor(const float n)
+inline float/*void*/ axOctave2Qfactor(const float n)
 {
   const float _pow2n = axPowf(2.f, n);
   return axSqrtf(_pow2n) / (1.f - _pow2n);
 }
- 
+
 
 /**
  * radix algorithm
