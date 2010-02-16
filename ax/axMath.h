@@ -19,41 +19,32 @@
 /**
  * \file axMath.h
  * \brief math approximations and routines
- *  
+ *
  * axonlib's math header with a collection of optimized functions for trigonometry,
  * algebra and analysis. <br>
  * some of the methods have a 'f' suffix version (e.g.: axTanf).
- * such versions use FPU instructions for the calculation.
+ * such versions use FPU instructions for the calculation (FPU x87 required).
  * the versions without 'f' suffix are most likely less cpu heavy approximations,
- * but with reduced accuracy and acceptable input range (e.g. axLog). <br> 
+ * but with reduced accuracy and acceptable input range (e.g. axCos). <br>
  * \code
  * TODO:
  * - short performance table
  * \endcode
  */
 
-// ---------------------------------------------------------------------------
-// NOTES:
-// the empty inline asm declaration: __asm__ __volatile__ ("":::);
-// may look absurd but i've discovered that the inline asm that follows such,
-// returns proper values (sometimes a 'non-volatile' delcared methods can return incorrect)
-// yet execution times are much faster. we may as well leave it this way.
-// ---------------------------------------------------------------------------
-
 #ifndef axMath_included
 #define axMath_included
 
-#include <math.h> // <- could this be optional since most ? 
+#include <math.h>
 #include <time.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include "axDebug.h"
 #include "axDefines.h"
-#include "axUtils.h"
 
 /**
  * square of x: (x^2)
- */ 
+ */
 #define axSqr(x) ((x)*(x))
 
 /**
@@ -63,20 +54,36 @@
 
 /**
  * newton step 1 (newton's method) <br>
- * as seen in axInvSqrt <br> 
- * \code 
+ * as seen in axInvSqrt <br>
+ * \code
  * y = x*(1.5f - (x/2)*x*x);
- * \endcode 
+ * \endcode
 */
 #define axNewtonStep(x) { (x) = (x)*(1.5f - (x)*0.5f)*(x)*(x); }
 
 /**
  * newton step 2 (newton's method) <br>
- * \code 
+ * \code
  * new_approx = (old_approx + x/old_approx) / 2;
- * \endcode 
+ * \endcode
 */
 #define axNewtonStep2(y, x) { (y)=((y)+(x)/(y))*0.5f; }
+
+/**
+ * convert radians to degrees <br>
+ * \code
+ * deg = rad*(180/pi);
+ * \endcode
+ */
+#define axRad2Deg(x) ( (x)*57.2957795130823f )
+
+/**
+ * convert degrees to radians
+ * \code
+ * rad = deg*(pi/180);
+ * \endcode
+ */
+#define axDeg2Rad(x) ( (x)*0.01745329251994f )
 
 /**
  * returns the floor of a floating point number
@@ -84,8 +91,8 @@
  * // -1.6 -> -1
  * // -1.1 -> -1
  * // 1.6 -> 1
- * // 1.1 -> 1 
- * \endcode  
+ * // 1.1 -> 1
+ * \endcode
  * @param[in] value float
  * @return result float
  */
@@ -115,15 +122,15 @@ inline float axRound(const float value)
 }
 
 /**
- * fast modf() for floating point values. <br> 
+ * fast modf() for floating point values. <br>
  * returns the fractional part of a floating point number
  * and stores the integer part in the second argument.
  * \code
  * // example:
  * value_pi = 3.141592;
- * float integer;  
+ * float integer;
  * float fraction = axModf(value_pi, &integer);
- * // fraction = 0.141592, integer = 3   
+ * // fraction = 0.141592, integer = 3
  * \endcode
  * @param[in] value float - input variable
  * @param[in] intpart float* - pointer to integer part variable
@@ -138,14 +145,14 @@ inline float axModf(const float value, float* intpart)
 /**
  * returns the remainder of the division of two arguments
  * \code
- * // example: 
+ * // example:
  * float numerator = 5.3;
- * float denominator = 2;    
+ * float denominator = 2;
  * float result = numerator - (floorf(numerator/denominator) * denominator);
- * // result = 1.3  
+ * // result = 1.3
  * \endcode
- * @param[in] x float - numerator (divident) 
- * @param[in] y float - denominator (devisor or modulus)  
+ * @param[in] x float - numerator (divident)
+ * @param[in] y float - denominator (devisor or modulus)
  */
 inline float axFmod(const float x, const float y)
   {
@@ -440,7 +447,7 @@ inline float axLog10(const float x)
  * \code
  * axPow(3.5f, 2);
  * axPowf(3.5f, 2.5f);
- * \endcode  
+ * \endcode
  * @param[in] x float - base
  * @param[in] y float - exponent
  * @return float
@@ -451,7 +458,7 @@ inline float axPowf(const float x, const float y)
   __asm__ __volatile__ ("":::);
   __asm__
   (
-    "fld1;"                       // |  
+    "fld1;"                       // |
     "fxch;"                       // |
     "fyl2x;"                      // log2(x)
     "fmul %%st(1);"               // y*log2(x)
@@ -461,7 +468,7 @@ inline float axPowf(const float x, const float y)
     "fsub %%st(1);"               // fract(y*log2(x))
     "f2xm1;"                      // 2^(fract(y*log2(x))) - 1
     "fld1;"                       // |
-    "faddp;"                      // += 1    
+    "faddp;"                      // += 1
     "fscale;"                     // x*(2^exp)
     : "=t" (value), "=u" (exponent)   :"0" (x), "1" (y)
   );
@@ -487,7 +494,7 @@ inline float axPow(float x, unsigned int n)
 }
 
 /**
- * approximation of [e] to the power of a number (fpu) 
+ * approximation of [e] to the power of a number (fpu)
  * @param[in] x float input value
  * @return value float
  */
@@ -513,8 +520,8 @@ inline float axExpf(const float x)
 }
 
 /**
- * fast approximation of [e] to the power of a number <br> 
- * based on http://theoval.sys.uea.ac.uk/publications/pdf/nc2000a.pdf <br> 
+ * fast approximation of [e] to the power of a number <br>
+ * based on http://theoval.sys.uea.ac.uk/publications/pdf/nc2000a.pdf <br>
  * note: original is for double precision (has a double to float cast)
  * @param[in] exponent float
  * @return result float
@@ -542,15 +549,15 @@ inline float axExp(const float exponent)
  * returns the result of x*(2^floor(y)) <br>
  * ( significand (x) multiplied by the exponent(2^y) )
  * \code
- * // example: 
+ * // example:
  * float sig = 2.f;
  * float exponent = 4.1f; // will be truncated to 4.0f
  * float result = axFscale(sig, exponent);
  * // result = 32.f
- * \endcode  
+ * \endcode
  * @param[in] x float - significand
  * @param[in] y float - exponent
- * @return value float   
+ * @return value float
  */
 inline float axFscale(const float x, const float y)
 {
@@ -565,9 +572,9 @@ inline float axFscale(const float x, const float y)
 
 /**
  * separates the input variable x into significand*(2^exponent)<br>
- * uses IEEE logb(x) 
+ * uses IEEE logb(x)
  * \code
- * // example: 
+ * // example:
  * float value = 3.141592;
  * float exponent;
  * float significand = axFxtract(value, &exponent);
@@ -584,7 +591,7 @@ inline float axFscale(const float x, const float y)
  */
 inline float axFxtract(float value, float* _exp)
 {
-  register float sig;  
+  register float sig;
   __asm__ __volatile__("":::);
   __asm__
   (
@@ -594,13 +601,16 @@ inline float axFxtract(float value, float* _exp)
 }
 
 /**
- * fast approximation of a N-th root function
+ * rought approximation of a N-th root function (inaccurate) <br>
+ * use axPowf(x, 1/n) instead.
  * @param[in] value float
  * @param[in] root long
  * @return value float
  */
 inline float axNrt(float value, long root)
 {
+  // alt: newton-ramson, is still slower than the fpu axPowf
+  // xn = (1/n)*((n-1)*xn + x/pow(xn, n-1));
   __asm__ __volatile__ ("":::);
   __asm__
   (
@@ -628,20 +638,22 @@ inline float axSqrtf(float value)
 }
 
 /**
- * fast approximation of the squre root function
- * @param[in] value float
+ * fast approximation of the squre root function <br>
+ * based on: http://www.azillionmonkeys.com/qed/sqroot.html
+ * @param[in] y float
  * @return value float
  */
-inline float axSqrt(float value)
+inline float axSqrt(const float y)
 {
-  __asm__ __volatile__ ("":::);
-  __asm__
-  (
-    "subl $0x3f800000, %0;"    "shrl $1, %0;"    "addl $0x3f800000, %0;"
-    : "=r" (value)
-    : "0" (value)
-  );
-  return value;
+  float x, z, tmp;
+  unsigned long* tfptr = ((unsigned long*)&tmp);
+  tmp = y;
+  *tfptr = (0xbe6ec85f - *tfptr)>>1;   // good initial guess
+  x = tmp;
+  z = y*0.5;
+  x *= (1.5f - x*x*z);   // two newton iterations
+  x *= (1.5f - x*x*z);
+  return x*y;
 }
 
 /**
@@ -691,6 +703,17 @@ inline float axSinf(float value)
 }
 
 /**
+ * fast approximation of the sine function for range [-pi, pi]
+ * @param[in] x float
+ * @return result float
+ */
+inline float axSin(float x)
+{
+  x = x * (1.2732395447f - 0.4052847345f * axAbs(x));
+  return 0.225f * (x * axAbs(x) - x) + x;
+}
+
+/**
  * calculates the cosine of a floating point number (fpu)
  * @param[in] value float
  * @return value float
@@ -703,6 +726,17 @@ inline float axCosf(float value)
     "fcos;"    : "=t" (value)    : "0" (value)
   );
   return value;
+}
+
+/**
+ * fast approximation of the cosine function for range [-pi, pi]
+ * @param[in] x float
+ * @return result float
+ */
+inline float axCos(float x)
+{
+  const float x2 = x*x;
+  return (15120 + x2*(-6900 + 313*x2)) / (15120 + x2*(660 + 13*x2));
 }
 
 /**
@@ -721,6 +755,16 @@ inline float axTanf(float value)
   return value;
 }
 
+/**
+ * fast approximation of the tangens function for range [-pi, pi]
+ * @param[in] x float
+ * @return result float
+ */
+inline float axTan(float x)
+{
+  const float x2 = x*x;
+  return (x*(105 - 10*x2)) / (105 - x*(45*x - x*x2));
+}
 
 /**
  * calculates both the sine and cosine of a floating point number (fpu)
@@ -736,7 +780,7 @@ inline float axTanf(float value)
  * @param[in] cos float* pointer to cos value
  * @return void
  */
-inline void axSinCosf(float x, float* sin, float* cos)
+inline void axSinCosf(const float x, float* sin, float* cos)
 {
   __asm__ __volatile__ ("":::);
   __asm__
@@ -765,6 +809,17 @@ inline float axAsinf(float value)
 }
 
 /**
+ * fast approximation of the arc-sine function for range [-1, 1]
+ * @param[in] x float
+ * @return result float
+ */
+inline float axAsin(const float x)
+{
+  return M_PI_2 - axSqrtf(1 - x)*(1.5707288 - x*(0.2121144 + x*(0.0742610 -
+  x*(0.0187293 + 0.395*x))));
+}
+
+/**
  * calculates the arc-cosine of a floating point number (fpu)
  * @param[in] value float
  * @return value float
@@ -784,19 +839,41 @@ inline float axAcosf(float value)
 }
 
 /**
+ * fast approximation of the arc-cosine function for range [-1, 1]
+ * @param[in] x float
+ * @return result float
+ */
+inline float axAcos(const float x)
+{
+  const float x2 = x*x;
+  return x*(x2*(-0.55*x2 + 0.097) - 1.008) + 1.571;
+}
+
+/**
  * calculates the arc-tangens of a floating point number (fpu)
  * @param[in] value float
  * @return value float
  */
 inline float axAtanf(float value)
 {
-  // from partial tangens  
+  // from partial tangens
   __asm__ __volatile__ ("":::);
   __asm__
   (
     "fld1;"    "fpatan;"    : "=t" (value)    : "0" (value)
   );
   return value;
+}
+
+/**
+ * fast approximation of the arc-tangens function for range [-2, 2]
+ * @param[in] x float
+ * @return result float
+ */
+inline float axAtan(const float x)
+{
+  const float x2 = x*x;
+  return (x*(105 + 55*x2)) / (105 + x2*(90 + 9*x2));
 }
 
 /**
@@ -845,7 +922,7 @@ inline float axCscf(float value)
   __asm__ __volatile__ ("":::);
   __asm__
   (
-    "fsin;"   "fld1;"   "fdivrp;"    
+    "fsin;"   "fld1;"   "fdivrp;"
     : "=t" (value)    : "0" (value)
   );
   return value;
@@ -892,7 +969,7 @@ inline float axAcotanf(float value)
  */
 inline float axAsecf(float value)
 {
-  // asec(x) = atan(sqrt(x*x-1))  
+  // asec(x) = atan(sqrt(x*x-1))
   __asm__ __volatile__ ("":::);
   __asm__
   (
@@ -919,72 +996,6 @@ inline float axAcscf(float value)
     : "=t" (value)    : "0" (value)
   );
   return value;
-}
-
-/**
- * fast approximation of the sine function for range [-pi, pi]
- * @param[in] x float
- * @return result float
- */
-inline float axSin(float x)
-{
-  x = x * (1.2732395447f - 0.4052847345f * axAbs(x));
-  return 0.225f * (x * axAbs(x) - x) + x;
-}
-
-/**
- * fast approximation of the cosine function for range [-pi, pi]
- * @param[in] x float
- * @return result float
- */
-inline float axCos(float x)
-{
-  const float x2 = x*x;
-  return (15120 + x2*(-6900 + 313*x2)) / (15120 + x2*(660 + 13*x2));
-}
-
-/**
- * fast approximation of the tangens function for range [-pi, pi]
- * @param[in] x float
- * @return result float
- */
-inline float axTan(float x)
-{
-  const float x2 = x*x;
-  return (x*(105 - 10*x2)) / (105 - x*(45*x - x*x2));
-}
-
-/**
- * fast approximation of the arc-sine function for range [-1, 1]
- * @param[in] x float
- * @return result float
- */
-inline float axAsin(const float x)
-{
-  return M_PI_2 - axSqrtf(1 - x)*(1.5707288 - x*(0.2121144 + x*(0.0742610 -
-  x*(0.0187293 + 0.395*x))));
-}
-
-/**
- * fast approximation of the arc-cosine function for range [-1, 1]
- * @param[in] x float
- * @return result float
- */
-inline float axAcos(const float x)
-{
-  const float x2 = x*x;
-  return x*(x2*(-0.55*x2 + 0.097) - 1.008) + 1.571;
-}
-
-/**
- * fast approximation of the arc-tangens function for range [-2, 2]
- * @param[in] x float
- * @return result float
- */
-inline float axAtan(const float x)
-{
-  const float x2 = x*x;
-  return (x*(105 + 55*x2)) / (105 + x2*(90 + 9*x2));
 }
 
 /**
@@ -1070,30 +1081,10 @@ inline float axTanh(const float x)
 }
 
 /**
- * converts linear value to decibel
- * @param[in] lin float
- * @return result float
- */
-inline float lin2dB(const float lin)
-{
-  return LOG2DB * axLogf(lin);
-}
-
-/**
- * converts decibel value to linear
- * @param[in] dB float
- * @return result float
- */
-inline float dB2lin(const float dB)
-{
-  return axExpf(DB2LOG * dB);
-}
-
-/**
  * calculate the average value of a set of floats
  * example: <br>
  * \code
- * float ar[] = { -1.f, 2.f, 3.f, 4.f, 5.f }; 
+ * float ar[] = { -1.f, 2.f, 3.f, 4.f, 5.f };
  * float result = axAvrg(5, ar); // result is 2.6f
  * \endcode
  * @param n unsigned int - number of elements (n)
@@ -1111,7 +1102,7 @@ inline float axAvrg(const unsigned int n, const float* ar)
  * calculate the average value of a set of integers
  * example: <br>
  * \code
- * int ar[] = { -1, 2, 3, 4, 5 }; 
+ * int ar[] = { -1, 2, 3, 4, 5 };
  * float result = axAvrgInt(5, ar); // result is 2 (truncated)
  * \endcode
  * @param n unsigned int - number of elements (n)
@@ -1121,7 +1112,7 @@ inline float axAvrg(const unsigned int n, const float* ar)
 inline int axAvrgInt(const unsigned int n, const int* ar)
 {
   int total = 0;
-  for(unsigned int i = 0; i < n; i++) total += ar[i];  
+  for(unsigned int i = 0; i < n; i++) total += ar[i];
   return total/n;
 }
 
@@ -1133,8 +1124,8 @@ inline int axAvrgInt(const unsigned int n, const int* ar)
  * float result = axRMS(5, ar);   // result = 3.31662
  * \endcode
  * @param[in] n unsigned int - size of the array
- * @param[in] ar float* - array of floats  
- *   
+ * @param[in] ar float* - array of floats
+ *
  * @return float
  */
 inline float axRMS(const unsigned int n, const float* ar)

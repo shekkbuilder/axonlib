@@ -28,8 +28,17 @@
 /**
  * \brief DC offset filter.
  *   
- * one pole, one zero DC offset filter from julius orion smith (jos).
- * http://www-ccrma.stanford.edu/~jos/filters/
+ * one pole, one zero DC offset filter from julius orion smith (jos). <br>
+ * http://www-ccrma.stanford.edu/~jos/filters/ <br>
+ * usage: 
+ * \code
+ * // include "dspDCF.h"   
+ * // create instance
+ * dspDCF dcfilter;
+ * // setup 
+ * float dcout = dcfilter.process(input); // process input sample
+ * \endcode 
+ *  
  */
 class dspDCF
 {

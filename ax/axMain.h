@@ -36,7 +36,7 @@
   <b>---todo: edit introduction---</b>
 
   <b>axonlib</b> is a standalone, multiplatform (win32/linux) library for
-  vst plugins and standalone applications, which focuses on the ease of
+  vst plugins and applications, which focuses on the ease of
   use, while rataining 'low-level' control. it is realeased under the gnu lgpl
   license.
   <br>
@@ -105,10 +105,11 @@
   class myPlugin : public axPlugin
   {
     public:
-      myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
-      : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+      myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+      : axPlugin(aHost, aNumProgs, aNumParams, aPlugFlags)
         {
           describe("axPlugin_minimal","axAuthor","axProduct",0,0);
+          setupAudio(0, 0);  // optional ?
         }
   };
   #include "axMain.h"
@@ -131,11 +132,11 @@
     public:
       float mValue;
     public:
-      myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
-      : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+      myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+      : axPlugin(aHost, aNumProgs, aNumParams, aPlugFlags)
         {
           describe("axPlugin_no_gui","axAuthor","axProduct",0,0);
-          //isSynth();
+          setupAudio(2, 2);
           appendParameter( new parFloat(this,0,"value","",0.5) );
           processParameters();
         }
@@ -217,9 +218,10 @@
 
     public:
 
-      myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
-      : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+      myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
+      : axPlugin(aHost, aNumProgs, aNumParams, aPlugFlags)
         {
+          setupAudio(2, 2);
           mEditor = NULL;
           mGuiInitialized = false;
           describe("axPlugin_with_gui","axAuthor","axProduct",0,0);
@@ -351,9 +353,9 @@
   -pedantic -fpermissive -W -Wall
   \endcode
 
-  enabling sse optimized math. this will enable gas to optimize the generated asm code with sse instructions.
+  enabling sse optimized math. this will enable gas to optimize the generated asm code with sse and fpu instructions.
   \code
-  -msse -mfpmath=sse
+  -msse -mfpmath=sse,x87
   \endcode
 
   enabling 'fast-math' will allow the compiler to cut some corner when the default c math functions are used (sinf, tanf etc).
