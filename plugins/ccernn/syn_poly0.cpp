@@ -4,8 +4,10 @@
 #define AX_WIDTH      260
 #define AX_HEIGHT     100
 #define AX_FLAGS      (AX_EMBEDDED|AX_BUFFERED)
+
 #define AX_DEBUG
 #include "axDebug.h"
+
 #include "axSynth.h"
 #include "parFloat.h"
 #include "parInteger.h"
@@ -14,14 +16,20 @@
 #include "wdgImgKnob.h"
 #include "axBitmapLoader.h"
 #include "images/knob2.h"
+
+//----------------------------------------------------------------------
+
 class myVoice : public axVoice
 {
   private:
-    float attack,release, tuneoct, tunesemi, tunecent, vel;
+    float gain, attack,release, tuneoct, tunesemi, tunecent, vel;
     float ph1, phadd1, ph2, phadd2, att1, att1_s, rel1, rel1_s;
   public:
+
     myVoice() : axVoice() {}
+
     virtual ~myVoice() {}
+
     virtual void noteOn(int aNote, int aVel)
       {
         vel = (float)aVel * inv127;
@@ -34,22 +42,26 @@ class myVoice : public axVoice
         phadd1  = fr1 * iRate;
         phadd2  = fr2 * iRate;
       }
+
     virtual void noteOff(int aNote, int aVel)
       {
         rel1   = att1;
         rel1_s = release;
       }
+
     virtual void control(int aIndex, float aValue)
       {
         switch(aIndex)
         {
-          case 0: attack   = aValue; break;
-          case 1: release  = aValue; break;
-          case 2: tuneoct  = aValue; break;
-          case 3: tunesemi = aValue; break;
-          case 4: tunecent = aValue; break;
+          case 0: gain     = aValue; break;
+          case 1: attack   = aValue; break;
+          case 2: release  = aValue; break;
+          case 3: tuneoct  = aValue; break;
+          case 4: tunesemi = aValue; break;
+          case 5: tunecent = aValue; break;
         }
       }
+
     virtual float process(void)
       {
         float out1 = ph1*2-1; // sinf(PI2*ph);
@@ -59,20 +71,26 @@ class myVoice : public axVoice
         att1 += (1-att1)*att1_s;
         rel1 += (0-rel1)*rel1_s;
         if (rel1<EPSILON) mState=vst_Off;
-        return (out1+out2)*vel*att1*rel1;
+        return (out1+out2)*vel*att1*rel1 * gain;
       }
+
 };
+
+//----------------------------------------------------------------------
+
 #define MAX_VOICES 16
+
 class mySynth : public axSynth
 {
   private:
     bool is_gui_initialized;
     axSurface *srfKnob;
-    float mGain, mAttack, mRelease, mTuneOct, mTuneSemi, mTuneCent;
+    //float mGain, mAttack, mRelease, mTuneOct, mTuneSemi, mTuneCent;
     parFloat *pGain, *pAttack, *pRelease;
     parInteger *pTuneOct, *pTuneSemi, *pTuneCent;
     wdgImgKnob *wGain, *wAttack, *wRelease, *wTuneOct, *wTuneSemi, *wTuneCent;
   public:
+
     mySynth(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
     : axSynth(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
@@ -89,7 +107,9 @@ class mySynth : public axSynth
         appendParameter( pTuneCent = new parInteger(this,5,"cent",   "",0, -50,50 ));
         processParameters();
       }
+
     virtual ~mySynth() { if (is_gui_initialized) delete srfKnob; }
+
     virtual void doSetupEditor(axEditor* aEditor)
       {
         wdgPanel* panel;
@@ -117,19 +137,26 @@ class mySynth : public axSynth
         aEditor->connect(wTuneOct,pTuneOct);
         aEditor->connect(wTuneSemi,pTuneSemi);
         aEditor->connect(wTuneCent,pTuneCent);
+        aEditor->doRealign();
+
       }
+
     virtual void doProcessParameter(axParameter* aParameter)
       {
         float val = aParameter->getValue();
         switch(aParameter->mID)
         {
-          case 0: mGain = val; break;
-          case 1: VM->control(0, 1/(val*val*val) ); break;
-          case 2: VM->control(1, 1/(val*val*val) ); break;
-          case 3: VM->control(2, val); break;
-          case 4: VM->control(3, val); break;
-          case 5: VM->control(4, val/100); break;
+          //case 0: mGain = val; break;
+          case 0: VM->control(0,val); break;
+          case 1: VM->control(1, 1/(val*val*val) ); break;
+          case 2: VM->control(2, 1/(val*val*val) ); break;
+          case 3: VM->control(3,val); break;
+          case 4: VM->control(4,val); break;
+          case 5: VM->control(5,val/100); break;
         }
       }
+
 };
+
+//----------------------------------------------------------------------
 #include "axMain.h"

@@ -129,7 +129,7 @@ class axSynth : public axPlugin,
         //trace( (int)WINCLASS[14] );
         axEditor* ED = new axEditor(WIN_NAME,this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
         doSetupEditor(ED);
-        ED->doRealign();
+        //ED->doRealign();
         mEditor = ED;
         return mEditor;
       }
