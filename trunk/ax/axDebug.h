@@ -253,26 +253,34 @@
         *stdout = *sfile;
         // set buffer length to 0
         setvbuf(stdout, NULL, _IONBF, 0);
-      }
-      // define trace() and warn() to check for hCrt;
-      #define trace(x) { if (hCrt != 0) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); } }
-      #define warn(x) { if (hCrt != 0) { printf("WARN | %i | %s\n", __LINE__, x); } }
+      }      
     }
-
+    // define trace() and warn() to check for hCrt;
+    #define trace(x) { if (hCrt != 0) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); } }
+    #define warn(x) { if (hCrt != 0) { printf("WARN | %i | %s\n", __LINE__, x); } }
+  // ---------  
   #endif
   // case: linux
   #ifdef linux
     #define trace(x) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); }
-    #define warn(x) { printf("WARN | %i | %s\n", __LINE__, x); }
-    #define wdebug(...) ((void)0)
+    #define warn(x) { printf("WARN | %i | %s\n", __LINE__, x); }    
+    inline void axDstdCreate(void);
+    inline void axDstdDestroy(void)  
+    inline void axDwinCreate(void);
+    inline void axDwinDestroy(void);
+    inline void wdebug(...);
   #endif
 // case: no debug
 #else
   #define NDEBUG
   #define trace(x) ((void)0)
   #define warn(x) ((void)0)
-  #define assert(x) ((void)0)
-  #define wdebug(...) ((void)0)
+  #define assert(x) ((void)0) 
+  inline void axDstdCreate(void);
+  inline void axDstdDestroy(void)  
+  inline void axDwinCreate(void);
+  inline void axDwinDestroy(void);
+  inline void wdebug(...);
 #endif
 
 //----------------------------------------------------------------------

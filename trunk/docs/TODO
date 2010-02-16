@@ -22,9 +22,6 @@
 - axMath
   doxy: a partial performance table relative to compiler flags
 
-- axUtils
-  cpuid, bitshifters, return specific bit
-
 // ----- plugin -----
 
 - prgrams & banks
