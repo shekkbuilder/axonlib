@@ -4,7 +4,6 @@
 
 #define AX_DEBUG      // add debug
 #include "axDebug.h"
-#include "axUtils.h"
 
 #include "axPlugin.h"
 #include "parInteger.h"
@@ -30,10 +29,7 @@ class myPlugin : public axPlugin
               axDstdCreate();                           // create console on win32
             #endif            
             // ----------
-            #ifdef __HELLO__
-              trace("hello world");
-            #endif
-            // check definitions and print                        
+            // check definitions and print
             trace("### axCPUID() check:");
             if (__AX_SSE3__)     trace("__AX_SSE3__");
             if (__AX_SSSE3__)    trace("__AX_SSSE3__");
