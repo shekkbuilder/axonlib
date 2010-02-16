@@ -146,8 +146,8 @@ inline float axModf(const float value, float* intpart)
  * returns the remainder of the division of two arguments
  * \code
  * // example:
- * float numerator = 5.3;
- * float denominator = 2;
+ * float numerator = 5.3f;
+ * float denominator = 2.f;
  * float result = numerator - (floorf(numerator/denominator) * denominator);
  * // result = 1.3
  * \endcode

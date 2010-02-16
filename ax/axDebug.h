@@ -235,6 +235,18 @@
         HWND hCw = GetConsoleWindow();
         if(hCw != NULL)
 	      {
+          // enable quickedit
+          // ENABLE_EXTENDED_FLAGS = 0x0080
+          // ENABLE_QUICK_EDIT_MODE = 0x0040
+          HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
+          SetConsoleMode(hIn, 0x0080|0x0040);
+          // size & color
+          HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+          //// SetConsoleTextAttribute(hOut, 10);
+          SMALL_RECT cDim = {0, 0, 50, 20};
+          SetConsoleWindowInfo(hOut, true, &cDim);
+          // disable ctrl+c
+          SetConsoleCtrlHandler(NULL, true);
           // set always on top
           SetWindowPos(hCw, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
           // disable close button (otherwise crash if clicked)
