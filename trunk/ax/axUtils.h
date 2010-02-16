@@ -33,6 +33,7 @@ TODO:
 #ifndef axUtils_included
 #define axUtils_included
 
+#include <memory.h> // memset
 #include "axMath.h"
 #include "axDefines.h"
 #include <sstream>
@@ -194,15 +195,15 @@ bool __AX_SSE3__, __AX_SSSE3__, __AX_FPU__, __AX_CMOV__,  __AX_SSE__, __AX_SSE2_
 __AX_SSE4A__, __AX_SSE5__, __AX_MMX__, __AX_MMXEXT__, __AX_3DNOW__, __AX_3DNOWEXT__;
 /**
  * calls the CPUID instruction <br>
- * can be used to target specific CPU architectures:  
+ * can be used to target specific CPU architectures:
  * <br>
  * default mode:
  * \code
  * // init stage
  * axCPUID();           // <- makes definitions
- * // ... 
+ * // ...
  * // processing stage
- * if (__AX_FPU__) cout << "has fpu x87\n";   // FPU code here 
+ * if (__AX_FPU__) cout << "has fpu x87\n";   // FPU code here
  * \endcode
  * list of definitions:
  * \code
@@ -243,7 +244,7 @@ inline void axCPUID(const int fcall=0, int* eax=0, int* ebx=0, int* ecx=0, int* 
   // ----------------------------
   if (fcall == 0)
   {
-    int a, b, c, d;    
+    int a, b, c, d;
     // -----------------
     // 0x00000001
     __asm__ __volatile__
@@ -254,11 +255,11 @@ inline void axCPUID(const int fcall=0, int* eax=0, int* ebx=0, int* ecx=0, int* 
     __AX_SSE3__   = 1 & (c >> 0);
     __AX_SSSE3__  = 1 & (c >> 9);
     __AX_FPU__    = 1 & (d >> 0);
-    __AX_CMOV__   = 1 & (d >> 15);   
-    __AX_SSE__    = 1 & (d >> 25); 
+    __AX_CMOV__   = 1 & (d >> 15);
+    __AX_SSE__    = 1 & (d >> 25);
     __AX_SSE2__   = 1 & (d >> 26);
-    // ----------------- 
-    // 0x80000001    
+    // -----------------
+    // 0x80000001
     __asm__ __volatile__
     (
       "cpuid;"
@@ -266,10 +267,10 @@ inline void axCPUID(const int fcall=0, int* eax=0, int* ebx=0, int* ecx=0, int* 
     );
     __AX_SSE4A__    = 1 & (c >> 4);
     __AX_SSE5__     = 1 & (c >> 11);
-    __AX_MMX__      = 1 & (d >> 23);    
-    __AX_MMXEXT__   = 1 & (d >> 22);   
+    __AX_MMX__      = 1 & (d >> 23);
+    __AX_MMXEXT__   = 1 & (d >> 22);
     __AX_3DNOW__    = 1 & (d >> 31);
-    __AX_3DNOWEXT__ = 1 & (d >> 30); 
+    __AX_3DNOWEXT__ = 1 & (d >> 30);
   }
   // user defined call
   // -----------------
