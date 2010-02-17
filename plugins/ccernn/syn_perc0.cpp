@@ -29,6 +29,8 @@
 #include "images/syn_perc_flt_32x32_5.h"
 #include "images/syn_perc_com_32x32_5.h"
 
+#include "dspOsc0.h"
+
 //----------------------------------------------------------------------
 
 #define MAX_EVENTS 65536
@@ -325,6 +327,13 @@ class myPlugin : public axPlugin,
     // process
     //
     //--------------------------------------------------
+
+    /*
+
+      o1 = osc1
+      o2 = osc2
+
+    */
 
     virtual void doProcessSample(float** ins, float** outs)
       {
