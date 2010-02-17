@@ -262,6 +262,12 @@ class axPluginVst :  public AudioEffectX,
         //doSetSamplerate(mSampleRate);
       }
 
+    virtual float getSampleRate(void)
+      {
+        mSampleRate = updateSampleRate();
+        return mSampleRate;
+      }
+
     //----------
 
     virtual void setBlockSize(VstInt32 blockSize) // max block size

@@ -88,7 +88,10 @@ class axSynth : public axPlugin,
 
     virtual bool doProcessBlock(float** inputs, float** outputs, long sampleFrames)
     {
-      updateTimeInfo();
+      //updateTimeInfo();
+      #ifndef AX_AUTOSYNC
+        (void)getSampleRate();
+      #endif
       VM->setSampleRate( mSampleRate );
       VM->preProcess();
       return false;

@@ -111,6 +111,7 @@ class axPluginBase
       (and the doProcessTransport is called if needed).
     */
     virtual void updateTimeInfo(void) {}
+    virtual float getSampleRate(void) {return 44100;}
 
     //----------
 

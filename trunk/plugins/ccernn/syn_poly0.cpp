@@ -18,36 +18,54 @@
 #include "axBitmapLoader.h"
 #include "images/knob2.h"
 
+#include "dspOsc0.h"
+#include "dspRC.h"
+
 //----------------------------------------------------------------------
 
 class myVoice : public axVoice
 {
   private:
-    float gain, attack,release, tuneoct, tunesemi, tunecent, vel;
-    float ph1, phadd1, ph2, phadd2, att1, att1_s, rel1, rel1_s;
+    float   gain, attack,release, tuneoct, tunesemi, tunecent, vel;
+    dspRC   att1,rel1;
+    dspOsc0 osc1,osc2;
   public:
 
-    myVoice() : axVoice() {}
+    myVoice() : axVoice()
+      {
+        osc1.setup(osc_Ramp,0,0);
+        osc2.setup(osc_Squ,0,0);
+        att1.setup(0,1,0);
+        rel1.setup(0,0,0);
+      }
 
     virtual ~myVoice() {}
+
+    virtual void  setSampleRate(float aRate)
+      {
+        osc1.setSampleRate(aRate);
+        osc2.setSampleRate(aRate);
+        axVoice::setSampleRate(aRate);
+      }
 
     virtual void noteOn(int aNote, int aVel)
       {
         vel = (float)aVel * inv127;
-        ph1 = ph2 = att1 = rel1_s = 0;
-        att1_s  = attack;
-        rel1    = 1;
+        att1.setValue(0);
+        att1.setWeight(attack);
+        rel1.setValue(1);
+        rel1.setWeight(0);
         float detune = (tuneoct*12) + tunesemi + tunecent;
         float fr1 = 440 * powf(2.0,(aNote-69.0) / 12);
         float fr2 = 440 * powf(2.0,(aNote-69.0+detune) / 12);
-        phadd1  = fr1 * iRate;
-        phadd2  = fr2 * iRate;
+        osc1.setFreq(fr1);
+        osc2.setFreq(fr2);
       }
 
     virtual void noteOff(int aNote, int aVel)
       {
-        rel1   = att1;
-        rel1_s = release;
+        rel1.setValue( att1.getValue() );
+        rel1.setWeight(release);
       }
 
     //virtual void  ctrlChange(int aCtrl, int aVal) {}
@@ -67,15 +85,13 @@ class myVoice : public axVoice
 
     virtual void process(float* outs)
       {
-        float out1 = ph1*2-1; // sinf(PI2*ph);
-        float out2 = ph2*2-1; // sinf(PI2*ph);
-        ph1 += phadd1;  if (ph1>=1) ph1-=1;
-        ph2 += phadd2;  if (ph2>=1) ph2-=1;
-        att1 += (1-att1)*att1_s;
-        rel1 += (0-rel1)*rel1_s;
-        if (rel1<EPSILON) mState=vst_Off;
-        outs[0] = out1*vel*att1*rel1 * gain;
-        outs[1] = out2*vel*att1*rel1 * gain;
+        float out1 = osc1.process();
+        float out2 = osc2.process();
+        float a = att1.process();
+        float r = rel1.process();
+        if (r<EPSILON) mState=vst_Off;
+        outs[0] = out1*vel*a*r * gain;
+        outs[1] = out2*vel*a*r * gain;
       }
 
 };
@@ -87,13 +103,12 @@ class myVoice : public axVoice
 class mySynth : public axSynth
 {
   private:
-    bool is_gui_initialized;
-    axSurface *srfKnob;
-    //float mGain, mAttack, mRelease, mTuneOct, mTuneSemi, mTuneCent;
-    parFloat /**pGain,*/ *pAttack, *pRelease;
-    parInteger *pTuneOct, *pTuneSemi, *pTuneCent;
-    parDB *pGain;
-    wdgImgKnob *wGain, *wAttack, *wRelease, *wTuneOct, *wTuneSemi, *wTuneCent;
+    bool        is_gui_initialized;
+    axSurface   *srfKnob;
+    parFloat    *pAttack, *pRelease;
+    parInteger  *pTuneOct, *pTuneSemi, *pTuneCent;
+    parDB       *pGain;
+    wdgImgKnob  *wGain, *wAttack, *wRelease, *wTuneOct, *wTuneSemi, *wTuneCent;
   public:
 
     mySynth(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
@@ -104,8 +119,7 @@ class mySynth : public axSynth
         describe("syn_poly0","ccernnb","axonlib example plugin",0002,AX_MAGIC+0x0000);
         setupAudio(0,2,true);
         for (int i=0; i<MAX_VOICES; i++) VM->appendVoice( new myVoice() );
-        //appendParameter( pGain     = new parFloat(  this,0,"gain",   "",0.5,0, 1  ));
-        appendParameter( pGain     = new parDB(     this,0,"gain",   "db",0,-60, 12  ));
+        appendParameter( pGain     = new parDB(     this,0,"gain",   "db",0,-60, 6  ));
         appendParameter( pAttack   = new parFloat(  this,1,"attack", "",  3,  1, 50 ));
         appendParameter( pRelease  = new parFloat(  this,2,"release","",  20, 1, 50 ));
         appendParameter( pTuneOct  = new parInteger(this,3,"oct",    "",  0, -4, 4  ));
@@ -151,7 +165,6 @@ class mySynth : public axSynth
         float val = aParameter->getValue();
         switch(aParameter->mID)
         {
-          //case 0: mGain = val; break;
           case 0: VM->control(0,val); break;
           case 1: VM->control(1, 1/(val*val*val) ); break;
           case 2: VM->control(2, 1/(val*val*val) ); break;
