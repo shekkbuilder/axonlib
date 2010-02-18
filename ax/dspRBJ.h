@@ -10,167 +10,260 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with Axonlib.
- * If not, see <http://www.gnu.org/licenses/>. 
+ * If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file dspBiquad.h
+/*!
+ * \file dspRBJ.h
  * \brief biquad filters based on rbj's filter cookbook
  */
 
 #ifndef dspRBJ_included
 #define dspRBJ_included
 
-/**
+/*!
+ * \class dspRBJ
  * \brief biquad filters based on rbj's filter cookbook
- * 
- * quick variation of 'biquid.c' by: <br>
- * Tom St Denis, http://tomstdenis.home.dhs.org
- * <br><br>
+ *
  * original filters by: <br>
  * Robert Bristow-Johnson, rbj@audioimagination.com <br>
- *
  */
+
 class dspRBJ
 {
   private:
-  /** coeficients and temp variables */
-    float a0, a1, a2, a3, a4, b0, b1, b2, x1, x2, y1, y2;
-    
-  /** filter types */
-  enum
-  {
-    NOF,    /** no filter */
-    LPF,    /** low pass filter */
-    HPF,    /** gigh pass filter */
-    BPF,    /** band pass filter */
-    NOTCH,  /** notch filter */
-    PEQ,    /** peaking band */
-    LSH,    /** low shelf filter */
-    HSH     /** high shelf filter */
-  };
+    float x1, x2, y1, y2;
+    float a0, a1, a2, b0, b1, b2;
+    float i_a0, i_a1, i_a2, i_b0, i_b1, i_b2;
+    float d_a0, d_a1, d_a2, d_b0, d_b1, d_b2;
+    float s_a0, s_a1, s_a2, s_b0, s_b1, s_b2;
+    bool hasintrp;
+
+    enum
+    {
+      NOF,    // 0 - no filter
+      LPF,    // 1 - low pass filter
+      HPF,    // 2 - gigh pass filter
+      BPF,    // 3 - band pass filter
+      NOTCH,  // 4 - notch filter
+      PEQ,    // 5 - peaking band
+      LSH,    // 6 - low shelf filter
+      HSH     // 7 - high shelf filter
+    };
 
   public:
     /**
      * constructor
+     * <br>
+     * usage:
+     * \code
+     * // include dspRBJ.h
+     * dspRBJ myfilter;
+     * myfilter.setup(1, updateSampleRate(), 1000, 2.5);
+     * // ...
+     * myfilter.process(inpusample);
+     * \endcode
      */
-    dspDCF()
+    dspRBJ()
     {
       setup();
     }
-    
+
     /**
-     * setup filter
-     * @param[in] type unsigned int - filter type. see enum (default=0)
+     * setups filter parameters
+     * <br><br>
+     * filter types:
+     * \code
+     * // 0 - no filter
+     * // 1 - low pass filter
+     * // 2 - high pass filter
+     * // 3 - band pass filter
+     * // 4 - notch filter
+     * // 5 - peaking band
+     * // 6 - low shelf filter
+     * // 7 - high shelf filter
+     * \endcode
+     * @param[in] type unsigned int - filter type. see list above.
      * @param[in] srate float - sample rate
-     * @param[in] freq float - frequency [0.f - 1.f]             
-     * @param[in] q float - q factor (default = 0.5f)
-     * @param[in] gain float - gain in decibels
-     * @return void           
+     * @param[in] freq float - frequency (Hz)
+     * @param[in] octaves float - q factor (default = 0.5f)
+     * @param[in] gain float - gain (dB)
+     * @param[in] intrp bool - enable parameter interpolation (true / false)
+     * @return void
      */
-    void setup(const unsigned int type=0, const float srate=44100, const float freq=0.5f,
-    const float q=0.5f, const float gain=1.f)
+    void setup(const unsigned int type=0, const float srate=44100, const float freq=639.f,
+    float Q=0.5f, const float gain=0.f, const bool intrp=false)
     {
-      // tmp calculations (uses axMath.h)
-      const float A, omega, sn, cs, alpha, beta;
-      // ---           
-      A = axPowf(10.f, gain*0.025f);  // 10^(g/40)
+      // tmp vars
+      float A, omega, sn, cs, alpha, beta, temp1, temp2, temp3, temp4;
+
+      // prewarp
+      Q = axMax(Q, 0.01f);
       omega = PI2 * freq / srate;
       sn = axSinf(omega);
       cs = axCosf(omega);
-      alpha = sn * axSinhf(LN2 * 0.5f * bandwidth * omega / sn);
-      beta = axSqrtf(A + A);
-      
+      alpha = sn / ( 2.0f * Q );
+
       // calculate coeff
       switch (type)
       {
         case LPF:
-          b0 = (1 - cs) * 0.5f;
-          b1 = 1 - cs;
-          b2 = (1 - cs) * 0.5f;
-          a0 = 1 + alpha;
-          a1 = -2 * cs;
-          a2 = 1 - alpha;
+          A = axPowf( 10.f, gain * 0.05f ); // 20
+          b0 = 1.0f  / ( 1.0f  + alpha );
+          b1 = ( -2.0f  * cs ) * b0;
+          b2 = ( 1.0f  - alpha ) * b0;
+          a1 = ( 1.0f  - cs ) * b0; // * A;
+          a0 = a1 * 0.5;
+          a2 = a0;
           break;
         case HPF:
-          b0 = (1 + cs) * 0.5f;
-          b1 = -(1 + cs);
-          b2 = (1 + cs) * 0.5f;
-          a0 = 1 + alpha;
-          a1 = -2 * cs;
-          a2 = 1 - alpha;
+          A = axPowf( 10.f, gain * 0.05f );
+          b0 = 1.0f  / ( 1.0f  + alpha );
+          b1 = ( -2.0f  * cs ) * b0;
+          b2 = ( 1.0f  - alpha ) * b0;
+          a1 = -( 1.0f  + cs ) * b0; // * A;
+          a0 = -a1 * 0.5;
+          a2 = a0;
           break;
         case BPF:
-          b0 = alpha;
-          b1 = 0;
-          b2 = -alpha;
-          a0 = 1 + alpha;
-          a1 = -2 * cs;
-          a2 = 1 - alpha;
+          A = axPowf( 10.f, gain * 0.05f );
+          alpha = sn / ( 2.0f  * Q );
+          b0 = 1.0f  / ( 1.0f  + alpha );
+          b1 = ( -2.0f  * cs ) * b0;
+          b2 = ( 1.0f  - alpha ) * b0;
+          a0 = alpha * b0; // * A;
+          a1 = 0;
+          a2 = -a0;
           break;
         case NOTCH:
-          b0 = 1;
-          b1 = -2 * cs;
-          b2 = 1;
-          a0 = 1 + alpha;
-          a1 = -2 * cs;
-          a2 = 1 - alpha;
+          A = axPowf( 10.f, gain * 0.05f );
+          b0 = 1.0f  / ( 1.0f  + alpha );
+          b1 = ( -2.0f  * cs ) * b0;
+          b2 = ( 1.0f  - alpha ) * b0;
+          a0 = b0; // * A;
+          a1 = b1; // * A;
+          a2 = a0;
           break;
         case PEQ:
-          b0 = 1 + (alpha * A);
-          b1 = -2 * cs;
-          b2 = 1 - (alpha * A);
-          a0 = 1 + (alpha / A);
-          a1 = -2 * cs;
-          a2 = 1 - (alpha / A);
+          A = axPowf( 10.f, gain * 0.025f );  // 40
+          temp1 = alpha * A;
+          temp2 = alpha / A;
+          b0 = 1.0f  / ( 1.0f  + temp2 );
+          b1 = ( -2.0f  * cs ) * b0;
+          b2 = ( 1.0f  - temp2 ) * b0;
+          a0 = ( 1.0f  + temp1 ) * b0;
+          a1 = b1;
+          a2 = ( 1.0f  - temp1 ) * b0;
           break;
         case LSH:
-          b0 = A * ((A + 1) - (A - 1) * cs + beta * sn);
-          b1 = 2 * A * ((A - 1) - (A + 1) * cs);
-          b2 = A * ((A + 1) - (A - 1) * cs - beta * sn);
-          a0 = (A + 1) + (A - 1) * cs + beta * sn;
-          a1 = -2 * ((A - 1) + (A + 1) * cs);
-          a2 = (A + 1) + (A - 1) * cs - beta * sn;
+          A = axPowf( 10.f, gain * 0.025f );
+          temp1 = A + 1.0f; temp2 = A - 1.0f;
+          temp3 = temp1 * cs; temp4 = temp2 * cs;
+          Q = axMin(Q / A * A, 1.87f); // limit to 0.75 octaves
+          beta = sn * axSqrtf( ( A * A + 1.0f  ) / Q - temp2 * temp2 );
+          b0 = 1.0f  / ( temp1 + temp4 + beta );
+          b1 = ( -2.0f  * ( temp2 + temp3 ) ) * b0;
+          b2 = ( temp1 + temp4 - beta ) * b0;
+          a0 = ( A * ( temp1 - temp4 + beta ) ) * b0;
+          a1 = ( 2.0f  * A * ( temp2 - temp3 ) ) * b0;
+          a2 = ( A * ( temp1 - temp4 - beta ) ) * b0;
           break;
         case HSH:
-          b0 = A * ((A + 1) + (A - 1) * cs + beta * sn);
-          b1 = -2 * A * ((A - 1) + (A + 1) * cs);
-          b2 = A * ((A + 1) + (A - 1) * cs - beta * sn);
-          a0 = (A + 1) - (A - 1) * cs + beta * sn;
-          a1 = 2 * ((A - 1) - (A + 1) * cs);
-          a2 = (A + 1) - (A - 1) * cs - beta * sn;
+          A = axPowf(10.f, gain * 0.025f);
+          temp1 = A + 1.0f; temp2 = A - 1.0f;
+          temp3 = temp1 * cs; temp4 = temp2 * cs;
+          Q = axMin(Q / A * A, 1.87f);
+          beta = sn * axSqrtf( ( A * A + 1.0f  ) / Q - temp2 * temp2 );
+          b0 = 1.0f  / ( temp1 - temp4 + beta );
+          b1 = ( 2.0f  * ( temp2 - temp3 ) ) * b0;
+          b2 = ( temp1 - temp4 - beta ) * b0;
+          a0 = ( A * ( temp1 + temp4 + beta ) ) * b0;
+          a1 = ( -2.0f  * A * ( temp2 + temp3 ) ) * b0;
+          a2 = ( A * ( temp1 + temp4 - beta ) ) * b0;
           break;
-        case NOF:
+        default:
           b0 = b1 = b2 = a0 = a1 = a2 = 1.f;
           break;
       }
-  
-      // precompute
-      const float inv_a0 = 1/a0;
-      a0 = b0 * inv_a0;
-      a1 = b1 * inv_a0;
-      a2 = b2 * inv_a0;
-      a3 = a1 * inv_a0;
-      a4 = a2 * inv_a0;
-  
-      // zero initial samples
-      x1 = x2 = 0.f;
-      y1 = y2 = 0.f;    
+
+      // has interpolation
+      hasintrp = true;
+      if (!intrp)
+      {
+        i_a0 = a0;
+        i_a1 = a1;
+        i_a2 = a2;
+        i_b1 = b1;
+        i_b2 = b2;
+        hasintrp = false;
+      }
     }
-    
+
+    /*
+     * interpolate filter coeff <br>
+     * <br>
+     * \code     
+     * // call this from axPlugin::doProcessBlock(..)
+     * // or each N samples: myfilter.interpolate(N)
+     * \endcode     
+     * \param sampleFrames long
+     * \return void
+     */
+    virtual float interpolate(long sampleFrames)
+    {
+      if (hasintrp)
+      {
+        float inv_sb = 1/sampleFrames;
+        // ---
+        d_a0 = (a0 - s_a0)*inv_sb;
+        i_a0 = s_a0;
+        s_a0 = a0;
+        // ---
+        d_a1 = (a1 - s_a1)*inv_sb;
+        i_a1 = s_a1;
+        s_a1 = a1;
+        // ---
+        d_a2 = (a2 - s_a2)*inv_sb;
+        i_a2 = s_a2;
+        s_a2 = a2;
+        // ---
+        d_b1 = (b1 - s_b1)*inv_sb;
+        i_b1 = s_b1;
+        s_b1 = b1;
+        // ---
+        d_b2 = (b2 - s_b2)*inv_sb;
+        i_b2 = s_b2;
+        s_b2 = b2;
+      }
+    }
+
     /**
      * process input sample with filter
      * @param[in] in float
-     * @param[out] result float
+     * @return result float
      */
     virtual float process(const float in)
     {
-      // direct form i
       float result;
-      result = a0*in + a1*x1 + a2*x2 - a3*y1 - a4*y2 + DENORM;
+      // --
+      // interpolate
+      if (hasintrp)
+      {
+        i_a0 += d_a0;
+        i_a1 += d_a1;
+        i_a2 += d_a2;
+        i_b1 += d_b1;
+        i_b2 += d_b2;
+        result = i_a0*in + i_a1*x1 + i_a2*x2 - i_b1*y1 - i_b2*y2 + DENORM;
+      }
+      else
+      {
+        result = a0*in + a1*x1 + a2*x2 - b1*y1 - b2*y2 + DENORM;
+      }
+      //--------
       x2 = x1;
       x1 = in;
       y2 = y1;

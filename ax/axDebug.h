@@ -242,7 +242,7 @@
           SetConsoleMode(hIn, 0x0080|0x0040);
           // size & color
           HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-          //// SetConsoleTextAttribute(hOut, 10);
+          //// SetConsoleTextAttribute(hOut, 15);
           SMALL_RECT cDim = {0, 0, 50, 20};
           SetConsoleWindowInfo(hOut, true, &cDim);
           // disable ctrl+c
@@ -289,7 +289,7 @@
   #define warn(x) ((void)0)
   #define assert(x) ((void)0)
   inline void axDstdCreate(void);
-  inline void axDstdDestroy(void)
+  inline void axDstdDestroy(void);
   inline void axDwinCreate(void);
   inline void axDwinDestroy(void);
   inline void wdebug(...);
