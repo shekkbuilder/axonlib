@@ -10,8 +10,8 @@
 #define AX_NUMPROGS   1
 #define AX_NUMPARAMS  5
 
-#define AX_DEBUG      // add debug
-#include "axDebug.h"
+//#define AX_DEBUG      // add debug
+//#include "axDebug.h"
 
 #include "axPlugin.h"
 #include "parInteger.h"
@@ -118,8 +118,8 @@ public:
       break;
     }
     // setup filters f0, f1
-    f0.setup(ftype, srate, freq, q, gain, true);
-    if (!mono) f1.setup(ftype, srate, freq, q, gain, true);
+    f0.setup(ftype, srate, freq, q, gain, false);
+    if (!mono) f1.setup(ftype, srate, freq, q, gain, false);
   }
     
   virtual bool doProcessBlock(float** inputs, float** outputs, long sampleFrames)

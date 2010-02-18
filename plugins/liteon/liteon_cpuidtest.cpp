@@ -10,8 +10,8 @@
 #define AX_NUMPROGS   1
 #define AX_NUMPARAMS  1
 
-#define AX_DEBUG      // add debug
-#include "axDebug.h"
+//#define AX_DEBUG      // add debug
+//#include "axDebug.h"
 
 #include "axPlugin.h"
 #include "parInteger.h"

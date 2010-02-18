@@ -41,6 +41,7 @@ class dspRBJ
     float d_a0, d_a1, d_a2, d_b0, d_b1, d_b2;
     float s_a0, s_a1, s_a2, s_b0, s_b1, s_b2;
     bool hasintrp;
+    unsigned int seltype;
 
     enum
     {
@@ -69,9 +70,18 @@ class dspRBJ
      */
     dspRBJ()
     {
+      reset_p();     
       setup();
     }
 
+    // reset parameters
+    virtual void reset_p(void)
+    {
+      x1 = x2 = y1 = y2 = i_a0 = i_a1 = i_a2 = i_b0 = i_b1 = i_b2 = 
+      d_a0 = d_a1 = d_a2 = d_b0 = d_b1 = d_b2 =
+      s_a0 = s_a1 = s_a2 = s_b0 = s_b1 = s_b2 = 0.f;
+    }
+    
     /**
      * setups filter parameters
      * <br><br>
@@ -94,7 +104,7 @@ class dspRBJ
      * @param[in] intrp bool - enable parameter interpolation (true / false)
      * @return void
      */
-    void setup(const unsigned int type=0, const float srate=44100, const float freq=639.f,
+    void setup(unsigned int type=0, const float srate=44100, const float freq=639.f,
     float Q=0.5f, const float gain=0.f, const bool intrp=false)
     {
       // tmp vars
@@ -105,8 +115,13 @@ class dspRBJ
       omega = PI2 * freq / srate;
       sn = axSinf(omega);
       cs = axCosf(omega);
-      alpha = sn / ( 2.0f * Q );
-
+      alpha = sn / ( 2.0f * Q );            
+      if (type > 7) type = 0;
+      
+      // reset params
+      if (seltype != type) reset_p();
+      seltype = type;      
+      
       // calculate coeff
       switch (type)
       {
@@ -115,7 +130,7 @@ class dspRBJ
           b0 = 1.0f  / ( 1.0f  + alpha );
           b1 = ( -2.0f  * cs ) * b0;
           b2 = ( 1.0f  - alpha ) * b0;
-          a1 = ( 1.0f  - cs ) * b0; // * A;
+          a1 = ( 1.0f  - cs ) * b0 * A;   // * A -> adds gain
           a0 = a1 * 0.5;
           a2 = a0;
           break;
@@ -124,7 +139,7 @@ class dspRBJ
           b0 = 1.0f  / ( 1.0f  + alpha );
           b1 = ( -2.0f  * cs ) * b0;
           b2 = ( 1.0f  - alpha ) * b0;
-          a1 = -( 1.0f  + cs ) * b0; // * A;
+          a1 = -( 1.0f  + cs ) * b0 * A;
           a0 = -a1 * 0.5;
           a2 = a0;
           break;
@@ -134,7 +149,7 @@ class dspRBJ
           b0 = 1.0f  / ( 1.0f  + alpha );
           b1 = ( -2.0f  * cs ) * b0;
           b2 = ( 1.0f  - alpha ) * b0;
-          a0 = alpha * b0; // * A;
+          a0 = alpha * b0 * A;
           a1 = 0;
           a2 = -a0;
           break;
@@ -143,8 +158,8 @@ class dspRBJ
           b0 = 1.0f  / ( 1.0f  + alpha );
           b1 = ( -2.0f  * cs ) * b0;
           b2 = ( 1.0f  - alpha ) * b0;
-          a0 = b0; // * A;
-          a1 = b1; // * A;
+          a0 = b0 * A;
+          a1 = b1 * A;
           a2 = a0;
           break;
         case PEQ:
@@ -184,8 +199,7 @@ class dspRBJ
           a1 = ( -2.0f  * A * ( temp2 + temp3 ) ) * b0;
           a2 = ( A * ( temp1 + temp4 - beta ) ) * b0;
           break;
-        default:
-          b0 = b1 = b2 = a0 = a1 = a2 = 1.f;
+        case NOF:          
           break;
       }
 
@@ -214,7 +228,7 @@ class dspRBJ
      */
     virtual float interpolate(long sampleFrames)
     {
-      if (hasintrp)
+      if (hasintrp && seltype != 0)
       {
         float inv_sb = 1/sampleFrames;
         // ---
@@ -247,28 +261,35 @@ class dspRBJ
      */
     virtual float process(const float in)
     {
-      float result;
-      // --
-      // interpolate
-      if (hasintrp)
+      if (seltype != 0)
       {
-        i_a0 += d_a0;
-        i_a1 += d_a1;
-        i_a2 += d_a2;
-        i_b1 += d_b1;
-        i_b2 += d_b2;
-        result = i_a0*in + i_a1*x1 + i_a2*x2 - i_b1*y1 - i_b2*y2 + DENORM;
+        float result;
+        // --
+        // interpolate
+        if (hasintrp)
+        {
+          i_a0 += d_a0;
+          i_a1 += d_a1;
+          i_a2 += d_a2;
+          i_b1 += d_b1;
+          i_b2 += d_b2;
+          result = i_a0*in + i_a1*x1 + i_a2*x2 - i_b1*y1 - i_b2*y2 + DENORM;
+        }
+        else
+        {
+          result = a0*in + a1*x1 + a2*x2 - b1*y1 - b2*y2 + DENORM;
+        }
+        //--------
+        x2 = x1;
+        x1 = in;
+        y2 = y1;
+        y1 = result;
+        return result - DENORM;
       }
       else
       {
-        result = a0*in + a1*x1 + a2*x2 - b1*y1 - b2*y2 + DENORM;
-      }
-      //--------
-      x2 = x1;
-      x1 = in;
-      y2 = y1;
-      y1 = result;
-      return result - DENORM;
+        return in;
+      }      
     }
 };
 
