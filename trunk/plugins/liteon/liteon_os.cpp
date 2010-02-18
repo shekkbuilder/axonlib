@@ -101,7 +101,7 @@ public:
   static float callback_f(float sample)
   {
     // some processing
-    sample = axRandomSigned()*0.25f; // white noise    
+    sample = axRandomSigned()*0.25f; // white noise
     return sample;
   }  
   

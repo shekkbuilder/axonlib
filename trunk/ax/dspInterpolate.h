@@ -26,8 +26,8 @@
 
 #include "dspRBJ.h"
 
+// todo: more methods
 // http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/
-// TODO: test
 
 /**
  * \brief interpolation methods    
@@ -53,8 +53,7 @@ class dspInterpolate
      * @param[in] _srate unsigned int sample rate (hz)
      * @param[in] _filter_enalbed bool enable filter (true / false)     
      * @return void
-     */
-    
+     */    
     void setup(const unsigned int _factor=4, const float _srate=44100,
     const bool _filter_enabled=true)
     {
@@ -75,9 +74,9 @@ class dspInterpolate
      */
     virtual float process(float (*cb_function)(float), const float in)
     {
-      float y, t_y, x = 0;
+      float y, t_y, x = 0.f;
       float t_in = in, out;
-      float invf = 1/factor;
+      float invf = 1.f/factor;
       // --
       for (unsigned int i=0; i<factor; i++)
       {
@@ -92,7 +91,7 @@ class dspInterpolate
         if (filter_enabled) t_y = f0.process(y);
         
         // discard samples
-        if (x == 0) out = t_y;
+        if (x == 0.f) out = t_y;
         x += invf;
       }      
       return out;
