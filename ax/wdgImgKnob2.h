@@ -38,12 +38,13 @@
 
 class wdgImgKnob2 : public axContainer
 {
-  //protected:
-  public:
+  private:
+  //public:
     wdgLabel*   name;
     wdgImgKnob* knob;
     wdgLabel*   display;
-    char        buf[256];
+    char        dispbuf[256];
+    char        namebuf[256];
 
   public:
 
@@ -55,23 +56,44 @@ class wdgImgKnob2 : public axContainer
 //        appendWidget( knob    = new wdgImgKnob( this,-2,axRect(aRect.x,aRect.y+16, 32,32),wal_None, aNumImages, aSurface )  );
 //        appendWidget( display = new wdgLabel(   this,-3,axRect(aRect.x,aRect.y+48, 32,16),wal_None, "-", AX_GREY_LIGHT, tal_Center|tal_Bottom )  );
 //        //doRealign();
-        appendWidget( name    = new wdgLabel(   this,-1,axRect(0,0,  32,16),wal_None, "label", AX_GREY_LIGHT, tal_Center|tal_Top )  );
-        appendWidget( knob    = new wdgImgKnob( this,-2,axRect(0,16, 32,32),wal_None, aNumImages, aSurface )  );
-        appendWidget( display = new wdgLabel(   this,-3,axRect(0,48, 32,16),wal_None, "-", AX_GREY_LIGHT, tal_Center|tal_Bottom )  );
+        appendWidget( name    = new wdgLabel(   this,-100,axRect(0,0,  32,16),wal_None, "label", AX_GREY_LIGHT, tal_Center|tal_Top )  );
+        appendWidget( knob    = new wdgImgKnob( this,-200,axRect(0,16, 32,32),wal_None, aNumImages, aSurface )  );
+        appendWidget( display = new wdgLabel(   this,-300,axRect(0,48, 32,16),wal_None, "000", AX_GREY_LIGHT, tal_Center|tal_Bottom )  );
         //doRealign();
-      }
-    virtual void onChange(axWidget* aWidget)
-      {
-        if (aWidget->mID==-2)
-        {
-          buf[0] = 0;
-          if (knob->getParameter()) knob->getParameter()->doGetDisplay(buf);
-          display->setText( buf );
-          mListener->onChange(knob);
-          mListener->onChange(display);
-        }
+        //clearFlag(wfl_Capture);
       }
 
+    //inline axWidget* getKnob(void) { return knob; }
+
+    virtual axWidget* connect(axParameter* aParameter)
+      {
+        //trace("wdgImgKnob2.connect");
+        knob->connect(aParameter);
+        knob->mID = mID;
+        knob->mUser = mUser;
+        aParameter->doGetName(namebuf);
+        aParameter->doGetDisplay(dispbuf);
+        name->setText(namebuf);
+        display->setText(dispbuf);
+        return knob;
+      }
+
+    virtual void onChange(axWidget* aWidget)
+      {
+        if (aWidget==knob)
+        {
+          //trace("tweaking " << aWidget->mID);
+          //trace("  value: " << aWidget->doGetValue() );
+          dispbuf[0] = 0;
+          axParameter* P = knob->getParameter();
+          if (P) P->doGetDisplay(dispbuf);
+          display->setText( dispbuf );
+          //mListener->onRedraw(display);
+          //mListener->onChange(this);
+          mListener->onChange(display);
+        }
+        mListener->onChange(aWidget);
+      }
 
 };
 

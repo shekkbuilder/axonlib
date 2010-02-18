@@ -515,14 +515,18 @@ class axContainer : public axWidget,
         if( hasFlag(wfl_Active) )
         {
           axWidget* wdg = findWidget(aX,aY);
-          if(wdg)
+          if (wdg)
           {
             wdg->doMouseDown(aX,aY,aB);
             mClickedWidget = wdg;
             mClickedX = aX;
             mClickedY = aY;
             mClickedB = aB;
-            if(hasFlag(wfl_Capture)) mCapturedWidget = wdg;
+            if (hasFlag(wfl_Capture))
+            {
+              //trace("captured");
+              mCapturedWidget = wdg;
+            }
           } //wdg
         } //active
       }
@@ -542,6 +546,7 @@ class axContainer : public axWidget,
         {
           if( mCapturedWidget )
           {
+            //trace("released");
             mCapturedWidget->doMouseUp(aX,aY,aB);
             mCapturedWidget = NULL;
             //releaseCursor();
