@@ -339,6 +339,15 @@ class axWidget : public axWidgetBase
     inline void setMinHeight(int h) { mMinHeight = h; }
     inline void setMaxHeight(int h) { mMaxHeight = h; }
 
+    virtual axWidget* connect(axParameter* aParameter) { /*trace("axWidget.connect");*/ mParameter=aParameter; return this; }
+    virtual axParameter* getParameter(void) { return mParameter; }
+
+    //virtual void setParameter(axParameter* aParameter)
+    //  {
+    //    trace("axWidget.setParameter");
+    //    mParameter = aParameter;
+    //  }
+
     //--------------------------------------------------
     // inline
     //--------------------------------------------------
@@ -398,6 +407,8 @@ class axWidget : public axWidgetBase
       }
 
     //--------------------------------------------------
+
+    //----------
 
     virtual axWidget* findHover(int aX, int aY)
       {

@@ -74,21 +74,21 @@ class axEditor : public axWindow,
   private:
 
     //class axWPConnection
-    struct axWPConnection
+    struct wp_connection
     {
       //public:
         axWidget    *mWidget;
         axParameter *mParameter;
       //public:
-        axWPConnection(axWidget *aWidget, axParameter *aParameter)
+        wp_connection(axWidget *aWidget, axParameter *aParameter)
           {
             mWidget = aWidget;
             mParameter = aParameter;
             //TODO: transfer mValue
           }
     };
-    typedef axArray<axWPConnection*> axWPConnections;
-    axWPConnections mConnections;
+    typedef axArray<wp_connection*> wp_connections;
+    wp_connections mConnections;
 
     //axMutex   mutex_dirty;
   //protected://public:
@@ -185,12 +185,26 @@ class axEditor : public axWindow,
 
     void connect(axWidget* aWidget, axParameter* aParameter)
       {
-        aWidget->mParameter = aParameter;
+        //trace("axEditor.connect");
+//        axWidget* wdg = aWidget->connect(aParameter);
+//        int num = mConnections.size();
+//        wdg->mConnection = num;
+//        aParameter->mConnection = num;
+//        mConnections.append( new axWPConnection(wdg,aParameter) );
+//        wdg->doSetValue( aParameter->doGetValue() );
+
+        axWidget* wdg = aWidget->connect(aParameter);
         int num = mConnections.size();
-        aWidget->mConnection = num;
+        //trace("  num: " << num);
+        //aWidget->mConnection = num;
+        //aParameter->mConnection = num;
+        //mConnections.append( new wp_connection(aWidget,aParameter) );
+        //aWidget->doSetValue( aParameter->doGetValue() );
+        wdg->mConnection = num;
         aParameter->mConnection = num;
-        mConnections.append( new axWPConnection(aWidget,aParameter) );
-        aWidget->doSetValue( aParameter->doGetValue() );
+        mConnections.append( new wp_connection(wdg,aParameter) );
+        wdg->doSetValue( aParameter->doGetValue() );
+
       }
 
     //----------
@@ -257,13 +271,12 @@ class axEditor : public axWindow,
 
     virtual void onChange(axWidget* aWidget)
       {
-        //TRACE("- axEditor: onChange(wdg)... id=%i\n",aWidget->mID);
+        trace("axEditor.onChange. wdg.id " << aWidget->mID);
         int con = aWidget->mConnection;//getConnectionIndex();
-        //TRACE("wdg.con: %i\n",con);
+        trace("  connection # " << con );
         if( con>=0 )
         {
           axParameter* par = mConnections[con]->mParameter;
-          //TRACE("  par: %x\n",(int)par);
           float val = aWidget->doGetValue();
           mPlugin->setParameterAutomated(par->mID,val);
           // vst will call back to us with setParameter, which ends up in onChange below (to be redrawn)
