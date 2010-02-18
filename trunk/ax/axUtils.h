@@ -88,22 +88,22 @@ template<class T, size_t N> T decay_array_to_subtype(T (&a)[N]);
  */
 inline long int axBitReverse(long int x)
 {
-	__asm__ __volatile__ ("":::);
+  __asm__ __volatile__ ("":::);
   __asm__
-	(
-		"movl %0, %%eax;"         "andl $0xaaaaaaaa, %%eax;"		"shrl $1, %%eax;"
-		"andl $0x55555555, %0;"		"shll $1, %0;"		            "orl %%eax, %0;"
-		"movl %0, %%eax;"		      "andl $0xcccccccc, %%eax;"		"shrl $2, %%eax;"
-		"andl $0x33333333, %0;"		"shll $2, %0;"		            "orl %%eax, %0;"
-		"movl %0, %%eax;"		      "andl $0xf0f0f0f0, %%eax;"		"shrl $4, %%eax;"
-		"andl $0x0f0f0f0f, %0;"		"shll $4, %0;"		            "orl %%eax, %0;"
-		"movl %0, %%eax;"		      "andl $0xff00ff00, %%eax;"		"shrl $8, %%eax;"
-		"andl $0x00ff00ff, %0;"		"shll $8, %0;"		            "orl %%eax, %0;"
-		"movl %0, %%eax;"		      "andl $0xffff0000, %%eax;"		"shrl $16, %%eax;"
-		"andl $0x0000ffff, %0;"   "shll $16, %0;"		            "orl %%eax, %0;"
-		: "=m" (x)	:		: "eax"
-	);
-	return x;
+  (
+    "movl %0, %%eax;"         "andl $0xaaaaaaaa, %%eax;"    "shrl $1, %%eax;"
+    "andl $0x55555555, %0;"    "shll $1, %0;"                "orl %%eax, %0;"
+    "movl %0, %%eax;"          "andl $0xcccccccc, %%eax;"    "shrl $2, %%eax;"
+    "andl $0x33333333, %0;"    "shll $2, %0;"                "orl %%eax, %0;"
+    "movl %0, %%eax;"          "andl $0xf0f0f0f0, %%eax;"    "shrl $4, %%eax;"
+    "andl $0x0f0f0f0f, %0;"    "shll $4, %0;"                "orl %%eax, %0;"
+    "movl %0, %%eax;"          "andl $0xff00ff00, %%eax;"    "shrl $8, %%eax;"
+    "andl $0x00ff00ff, %0;"    "shll $8, %0;"                "orl %%eax, %0;"
+    "movl %0, %%eax;"          "andl $0xffff0000, %%eax;"    "shrl $16, %%eax;"
+    "andl $0x0000ffff, %0;"   "shll $16, %0;"                "orl %%eax, %0;"
+    : "=m" (x)  :    : "eax"
+  );
+  return x;
 }
 
 /**
@@ -289,10 +289,10 @@ inline void axCPUID(const int fcall=33139, int* eax=0, int* ebx=0, int* ecx=0, i
  * @param[in] n float - length in octaves
  * @return q_factor float
  */
-inline float/*void*/ axOctaves2Qfactor(const float n)
+inline float axOctaves2Q(const float n)
 {
   const float _pow2n = axPowf(2.f, n);
-  return axSqrtf(_pow2n) / (1.f - _pow2n);
+  return -axSqrtf(_pow2n) / (1.f - _pow2n);
 }
 
 /**
@@ -300,24 +300,10 @@ inline float/*void*/ axOctaves2Qfactor(const float n)
  * @param[in] q float - q factor
  * @return octaves float
  */
-inline float/*void*/ axQfactor2Octaves(const float q)
+inline float axQ2Octaves(const float q)
 {
-  return 1.4426950408889634f * axSinhf(0.5 * q);
+  return 1.4426950408889634f * axSinhf(0.5f * q);
 }
-
-/**
- * radix algorithm
- * @param[in] source long*
- * @param[in] dest long*
- * @param[in] N long
- * @param[in] byte int
- */
-inline float/*void*/ axOctave2Qfactor(const float n)
-{
-  const float _pow2n = axPowf(2.f, n);
-  return axSqrtf(_pow2n) / (1.f - _pow2n);
-}
-
 
 /**
  * radix algorithm

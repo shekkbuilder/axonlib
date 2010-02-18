@@ -68,7 +68,7 @@ class dspDCF
     /**
      * process input sample with filter
      * @param[in] in float
-     * @param[out] result float
+     * @return result float
      */
     virtual float process(float in)    
     {

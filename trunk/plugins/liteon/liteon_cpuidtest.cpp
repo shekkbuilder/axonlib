@@ -1,3 +1,11 @@
+/*
+  ******************************************************************************
+  test cpu for features
+  (c) 2009, lubomir i. ivanov (neolit123 at gmail)
+  using axonlib 0.0.x:
+  <http://axonlib.googlecode.com/>
+  ******************************************************************************
+*/
 #define AX_PLUGIN     myPlugin
 #define AX_NUMPROGS   1
 #define AX_NUMPARAMS  1

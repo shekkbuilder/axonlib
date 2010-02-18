@@ -355,9 +355,12 @@
 
   enabling sse optimized math. this will enable gas to optimize the generated asm code with sse and fpu instructions.
   \code
-  -msse -mfpmath=sse,x87
+  -msse -mfpmath=sse,387
   \endcode
-
+  <br>
+  see this page for more information: <br>
+  http://gcc.gnu.org/onlinedocs/gcc-4.0.0/gcc/i386-and-x86_002d64-Options.html
+  <br><br>
   enabling 'fast-math' will allow the compiler to cut some corner when the default c math functions are used (sinf, tanf etc).
   this will make such as fast as the included methods in axMath.h but with reduced accuracy.
   \code

@@ -86,7 +86,7 @@ class dspSVF
      * process inputs with filter
      * @param[in] ins float**
      * @param[in] outs float**     
-     * @param[out] out_L float
+     * @return out_L float
      */
     virtual float process(float** ins, float** outs)
     //float process(float in)

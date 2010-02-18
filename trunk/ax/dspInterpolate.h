@@ -24,21 +24,20 @@
 #ifndef dspInterpolate_included
 #define dspInterpolate_included
 
-/**
- * \brief interpolation methods
- *   
- */
- 
-// TODO:   http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/ 
+#include "dspRBJ.h"
 
- 
+// http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/
+// TODO: test
+
+/**
+ * \brief interpolation methods    
+ */
 class dspInterpolate
 {
   private:
-    /*@{*/
-    float x1, y1; /**< temp variables */ 
-    float R;      /**< filter coefficient */
-    /*@}*/
+    float factor;
+    bool filter_enabled;
+    dspRBJ f0;
 
   public:
     /**
@@ -46,30 +45,57 @@ class dspInterpolate
      */
     dspInterpolate()
     {
-      x1 = y1 = 0;
-      setup(0.999f);
+      setup();
     }
     /**
-     * sets filter coeff. suggested range [0.99 - 1]
-     * @param[in] inR float  
+     * set oversampling factor
+     * @param[in] _factor unsigned int factor (1x....Nx)
+     * @param[in] _srate unsigned int sample rate (hz)
+     * @param[in] _filter_enalbed bool enable filter (true / false)     
+     * @return void
      */
     
-    void setup(const float inR)
+    void setup(const unsigned int _factor=4, const float _srate=44100,
+    const bool _filter_enabled=true)
     {
-      R = inR;
+      factor = _factor;
+      if (factor < 1) factor = 1;
+      filter_enabled = _filter_enabled;
+      if (_filter_enabled)
+      {
+        // filter.setup ( lp, srate, freq, q, gain, param interpolation )
+        f0.setup(1, _factor*_srate,_factor*_srate*0.499f, 0.5f, 1.f, false);
+      }
     }
     /**
-     * process input sample with filter
-     * @param[in] in float
-     * @param[out] result float
+     * process input
+     * @param[in] *cb_function(float) float - pointer to function (callback)        
+     * @param[in] in float - input value       
+     * @return float - output value
      */
-    virtual float process(const float in, float (*cb_function)(float))
+    virtual float process(float (*cb_function)(float), const float in)
     {
-      
-      
-      output = (*cb_function)(input);
-      
-      return output;
+      float y, t_y, x = 0;
+      float t_in = in, out;
+      float invf = 1/factor;
+      // --
+      for (unsigned int i=0; i<factor; i++)
+      {
+        // linear interp
+        y = t_in + x*(in - t_in);
+        
+        // process (call back to function)
+        y = (*cb_function)(y);
+        
+        // filter
+        t_y = y;
+        if (filter_enabled) t_y = f0.process(y);
+        
+        // discard samples
+        if (x == 0) out = t_y;
+        x += invf;
+      }      
+      return out;
     }
 };
 
