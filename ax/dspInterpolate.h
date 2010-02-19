@@ -26,11 +26,41 @@
 
 #include "dspRBJ.h"
 
-// todo: more methods
-// http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/
+// todo: more methods:: http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/
+// todo: other filter options once avaiable
+//
+// q: should this be useable more globally? it is math related and not strictly DSP.
+// perhaps move all interpolation methods in axInterpolate class and have dspInterpolate
+// to call axInterpolate::dosomething(..input, options..)
 
 /**
- * \brief interpolation methods    
+ * \brief interpolation methods
+ * 
+ * can be used to interpolate between sample values and apply antialising
+ * filter <br>
+ * <br>
+ * usage:  
+ * \code
+ * // include dspInterpolate.h    
+ * // # new instance
+ * dspInterpolate i0;
+ * 
+ * // # setup stage
+ * bool aafilter = true;
+ * int os_factor = 4;
+ * float srate = updateSampleRate();    
+ * i0.setup(os_factor, srate, aafilter);
+ *  
+ * // create a static function for callback
+ * static float callback_f(float sample) {...}
+ *   
+ * // # process stage
+ * // pass the 'input' value and 'callback_f' 
+ * float result = i0.process(callback_f, input);
+ * \endcode
+ * <br> 
+ * example in:
+ * /plugins/liteon/_os.cpp    
  */
 class dspInterpolate
 {
@@ -39,19 +69,12 @@ class dspInterpolate
     bool filter_enabled;
     dspRBJ f0;
 
-  public:
+  public:    
     /**
-     * constructor          
-     */
-    dspInterpolate()
-    {
-      setup();
-    }
-    /**
-     * set oversampling factor
+     * setup parameters
      * @param[in] _factor unsigned int factor (1x....Nx)
      * @param[in] _srate unsigned int sample rate (hz)
-     * @param[in] _filter_enalbed bool enable filter (true / false)     
+     * @param[in] _filter_enabled bool enable filter (true / false)     
      * @return void
      */    
     void setup(const unsigned int _factor=4, const float _srate=44100,
@@ -62,15 +85,18 @@ class dspInterpolate
       filter_enabled = _filter_enabled;
       if (_filter_enabled)
       {
+        // setup filter here:
         // filter.setup ( lp, srate, freq, q, gain, param interpolation )
         f0.setup(1, _factor*_srate,_factor*_srate*0.499f, 0.5f, 1.f, false);
       }
     }
+    
     /**
-     * process input
-     * @param[in] *cb_function(float) float - pointer to function (callback)        
+     * process input <br>
+     * *cb_function must point to a static function.
+     * @param[in] *cb_function float - pointer to function (callback)        
      * @param[in] in float - input value       
-     * @return float - output value
+     * @return return float - output value
      */
     virtual float process(float (*cb_function)(float), const float in)
     {
@@ -100,38 +126,3 @@ class dspInterpolate
 
 //----------------------------------------------------------------------
 #endif
-
-
-/*
-desc:n times oversampler
-slider1:1<1,64,1>oversample (x)
-slider2:1<0,1,1{OFF,ON}>Antialiasing filter
-@slider
-factor = slider1;
-filter_coef = exp(-2*$pi*(0.5/factor) );
-filter = slider2;
-@sample
-//spl0_ = spl0_tmp; //store last input sample
-spl0_tmp = spl0;
-x = 0;
-
-loop(factor,
-  //interp
-  y = spl0_tmp + x*(spl0-spl0_tmp);
-  
-  //proces
-  //y = y*0.8;
-  
-  // filter here
-  //filter ? tmp = y + filter_coef*(tmp-y) : tmp = y;
-  m1=m0;
-  filter ? tmp=0.5*(m1+m0=y) : tmp=y;
-  
-  //decimator
-  x==0 ? spl0 = tmp; 
-  x += 1/factor;
-);
-
-spl1 = spl0;
-
-*/

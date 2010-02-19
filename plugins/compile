@@ -3,7 +3,7 @@
 function compile_linux
 {
   echo - $1.so
-  `g++ -I../ax -I../../vstsdk24 -lX11 -lpthread -shared -O3 -Os -fdata-sections -ffunction-sections $1.cpp -s -o $1.so -Wl,-gc-sections`
+  `g++ -I../ax -I../../vstsdk24 -pedantic -fpermissive -lX11 -lpthread -shared -O3 -Os -fdata-sections -ffunction-sections $1.cpp -s -o $1.so -Wl,-gc-sections`
   `strip --strip-all $1.so`
 
 }

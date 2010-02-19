@@ -31,6 +31,16 @@
 #define axPlugin_included
 //----------------------------------------------------------------------
 
+// --------------
+// vstsdk fixes
+// --------------
+
+// aeffect.h : 39
+#ifdef linux
+  #define __cdecl
+#endif
+// --------------
+
 #include "axDefines.h"
 #include "axString.h"
 #include "axParameter.h"
@@ -87,14 +97,15 @@ class axPluginBase
     virtual void describe(axString aEffect, axString aVendor, axString aProduct, int aVersion, unsigned int aID) {}
 
     virtual void setupAudio(int aInputs, int aOutputs, bool aIsSynth) {}
-    virtual void setupEditor(int aWidth, int aHeight) {}
-
+    
     /// gui?
     /**
       call this in your plugin constructor if your plugin has a gui.
       \param aWidth the initial width of the editor
       \param aHeight the initial height of the editor
     */
+    virtual void setupEditor(int aWidth, int aHeight) {}
+
 //    virtual void hasEditor(int aWidth, int aHeight) {}
     /// send midi out
     /**
