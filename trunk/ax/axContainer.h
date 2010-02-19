@@ -51,6 +51,20 @@ class axContainer : public axWidget,
 
   public:
 
+    /// constructor
+    /**
+      \param aListener listener that will receive response-events from this
+      \param aID widget it, use for whatever
+      \param aRect position (relative to parent) and size
+      \param aAlignment alignment mode
+    */
+
+    //TODO:
+    // class wdgLayout : public axContainer
+    // -> doRealign
+
+    //TODO: clipping [hierarchial]
+    //TODO: wal_Center
     axContainer(axWidgetListener* aListener, int aID, axRect aRect, int aAlignment=wal_None)
     : axWidget(aListener, aID, aRect, aAlignment)
       {
@@ -304,20 +318,6 @@ class axContainer : public axWidget,
 
 */
 
-    /// constructor
-    /**
-      \param aListener listener that will receive response-events from this
-      \param aID widget it, use for whatever
-      \param aRect position (relative to parent) and size
-      \param aAlignment alignment mode
-    */
-
-    //TODO:
-    // class wdgLayout : public axContainer
-    // -> doRealign
-
-    //TODO: clipping [hierarchial]
-    //TODO: wal_Center
     virtual void doRealign(void)
       {
         if( hasFlag(wfl_Align ) )

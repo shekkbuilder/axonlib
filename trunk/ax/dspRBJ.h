@@ -99,7 +99,7 @@ class dspRBJ
      * @param[in] type unsigned int - filter type. see list above.
      * @param[in] srate float - sample rate
      * @param[in] freq float - frequency (Hz)
-     * @param[in] octaves float - q factor (default = 0.5f)
+     * @param[in] Q float - q factor (default = 0.5f)
      * @param[in] gain float - gain (dB)
      * @param[in] intrp bool - enable parameter interpolation (true / false)
      * @return void

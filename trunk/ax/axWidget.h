@@ -138,6 +138,7 @@ class axWidgetBase
 
     /// move widget
     /**
+      move    
       \param aX xpos
       \param aY ypos
     */
@@ -153,6 +154,7 @@ class axWidgetBase
 
     /// resizel widget
     /**
+      resize
       \param aW new width
       \param aH new height
     */
@@ -455,10 +457,10 @@ class axWidget : public axWidgetBase
     //----------
 
 //    /// scroll (content of) widget
-//    /**
+//    /
 //      \param dX number of pixels to scroll horizontally
 //      \param dY number of pixels to scroll vertically
-//    */
+//    
 //    virtual void doScroll(int dX, int dY)
 //      {
 //        // hmmm, this should not be here?
