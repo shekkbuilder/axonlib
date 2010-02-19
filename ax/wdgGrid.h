@@ -18,7 +18,7 @@
 
 /**
   \file wdgGrid.h
-  \brief ...
+  \brief grid widget
 */
 
 #ifndef wdgGrid_included

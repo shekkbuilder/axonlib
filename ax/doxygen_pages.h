@@ -16,6 +16,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * \file doxygen_pages.h
+ * \brief --- should hide this file from list 
+ */
 
 //----------------------------------------------------------------------
 //
@@ -32,7 +36,10 @@
   use, while rataining 'low-level' control. it is realeased under the gnu lgpl
   license.
   <br>
-
+  
+  project home: <br>
+  http://axonlib.googlecode.com
+  
   feature highlights:
   - gui widgets <br>
   - loading of external png images <br>
@@ -40,8 +47,11 @@
   - optimized math methods <br>
   - dsp classes <br>
   - lots of example plugins <br>
-  <br>
-
+  
+  developers:
+  - ccernn - cern.th.skei at gmail <br>
+  - liteon - neolit123 at gmail <br> 
+  
   uses third party code by:
   - lode vandevenne <br>
   - jorgen aase <br>
@@ -62,13 +72,13 @@
 
 /**
   \page installation installation
-  <b>go to:</b>http://axonlib.googlecode.com <br>
+  <b>go to:</b> <br>
+  http://axonlib.googlecode.com <br>
    
-  you get the latest revision from the svn reposotory or download the latest
+  you can get the latest revision from the svn reposotory or download the latest
   zip archive from the download section. <br>
 
   <b>get the vst sdk from:</b> <br>
-
   http://ygrabit.steinberg.de/~ygrabit/public_html/index.html <br>
   (the 2.4r1 link - it will actually forward to a registration page and you can get 2.4r2) <br>
   

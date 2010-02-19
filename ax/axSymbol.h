@@ -18,7 +18,7 @@
 
 /**
   \file axSymbol.h
-  \brief ...
+  \brief symbol
 */
 
 #ifndef ax_included

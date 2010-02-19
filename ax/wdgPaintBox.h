@@ -17,8 +17,8 @@
  */
 
 /**
-  \file ax.h
-  \brief ...
+  \file wdgPaintBox.h
+  \brief paint box widget
 */
 
 #ifndef wdgPaintBox_included

@@ -17,9 +17,9 @@
  */
 
 /**
- * @file
- * \brief desc
- */
+ * \file axSurfaceW32.h
+ * \brief surface class w32
+*/ 
 
 /**
  * \brief desc

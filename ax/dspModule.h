@@ -1,3 +1,8 @@
+/**
+  \file dspModule.h
+  \brief module
+*/
+
 #ifndef dspModule_included
 #define dspModule_included
 //----------------------------------------------------------------------

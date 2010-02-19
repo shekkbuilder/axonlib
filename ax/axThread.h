@@ -17,9 +17,9 @@
  */
 
 /**
- * @file
- * \brief desc
- */
+ * \file axThread.h
+ * \brief thread class
+*/ 
 
 /**
  * \brief desc

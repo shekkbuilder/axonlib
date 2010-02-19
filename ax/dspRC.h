@@ -16,6 +16,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+/**
+  \file dspRC.h
+  \brief RC filter
+*/
+
 #ifndef dspRC_included
 #define dspRC_included
 //----------------------------------------------------------------------

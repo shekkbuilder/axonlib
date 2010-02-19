@@ -18,7 +18,7 @@
 
 /**
   \file wdgTextBox.h
-  \brief ...
+  \brief textbox widget
 */
 
 #ifndef wdgTextBox_included

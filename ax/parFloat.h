@@ -17,16 +17,9 @@
  */
 
 /**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
- */
+  \file parFloat.h
+  \brief parameter with floating point values
+*/
 
 #ifndef parFloat_included
 #define parFloat_included

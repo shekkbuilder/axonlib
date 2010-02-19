@@ -17,9 +17,9 @@
  */
 
 /**
- * @file
- * \brief desc
- */
+ * \file axSort.h
+ * \brief sort methods
+*/ 
 
 /**
  * \brief desc

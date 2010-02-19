@@ -16,6 +16,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * \file axList.h
+ * \brief list classes
+*/
+
 #ifndef axList_included
 #define axList_included
 //----------------------------------------------------------------------

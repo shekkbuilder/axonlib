@@ -17,9 +17,9 @@
  */
 
 /**
-  \file axVoice.h
-  \brief polyphonic voice manager
- */
+ * \file axEffect.h
+ * \brief effect class 
+*/ 
 
 #ifndef axEffect_included
 #define axEffect_included
