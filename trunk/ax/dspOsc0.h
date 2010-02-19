@@ -16,7 +16,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-// primitive multi oscillator
+/**
+  \file dspOsc0.h
+  \brief primitive multi oscillator
+*/
 
 #ifndef dspOsc0_included
 #define dspOsc0_included

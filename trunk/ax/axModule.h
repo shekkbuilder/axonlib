@@ -17,17 +17,9 @@
  */
 
 /**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
- */
-
+  \file axModule.h
+  \brief module class
+*/
 
 #ifndef axModule_included
 #define axModule_included

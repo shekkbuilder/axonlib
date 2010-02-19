@@ -2,6 +2,11 @@
 #define axConfig_included
 //----------------------------------------------------------------------
 
+/**
+ * \file axConfig.h
+ * \brief configuration 
+*/ 
+
 #ifdef WIN32
   #define AX_WIN32
 #endif

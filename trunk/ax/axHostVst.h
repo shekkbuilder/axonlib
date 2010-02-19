@@ -18,6 +18,7 @@
 
 /**
   \file axHostVst.h
+  \brief host vst class
 */
 
 #ifndef axHostVst_included

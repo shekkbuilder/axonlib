@@ -17,16 +17,9 @@
  */
 
 /**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
- */
+ * \file axProgram.h
+ * \brief program class 
+*/ 
 
 #ifndef axProgram_included
 #define axProgram_included

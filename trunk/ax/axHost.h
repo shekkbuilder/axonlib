@@ -17,8 +17,9 @@
  */
 
 /**
-  \file axHost.h
-*/
+ * \file axHost.h
+ * \brief host class
+*/ 
 
 #ifndef axHost_included
 #define axHost_included

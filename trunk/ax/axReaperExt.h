@@ -17,16 +17,9 @@
  */
 
 /**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
- */
+ * \file axReaperExt.h
+ * \brief provides access to reaper extentions 
+*/ 
  
 #ifndef axPluginReaperExt_included
 #define axPluginReaperExt_included

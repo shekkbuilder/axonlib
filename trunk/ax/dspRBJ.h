@@ -29,7 +29,7 @@
  * \brief biquad filters based on rbj's filter cookbook
  *
  * original filters by: <br>
- * Robert Bristow-Johnson, rbj@audioimagination.com <br>
+ * Robert Bristow-Johnson, rbj at audioimagination.com <br>
  */
 
 class dspRBJ
@@ -54,6 +54,14 @@ class dspRBJ
       LSH,    // 6 - low shelf filter
       HSH     // 7 - high shelf filter
     };
+    
+    /// reset parameters (private)
+    virtual void reset_p(void)
+    {
+      x1 = x2 = y1 = y2 = i_a0 = i_a1 = i_a2 = i_b0 = i_b1 = i_b2 = 
+      d_a0 = d_a1 = d_a2 = d_b0 = d_b1 = d_b2 =
+      s_a0 = s_a1 = s_a2 = s_b0 = s_b1 = s_b2 = 0.f;
+    }
 
   public:
     /**
@@ -74,14 +82,6 @@ class dspRBJ
       setup();
     }
 
-    // reset parameters
-    virtual void reset_p(void)
-    {
-      x1 = x2 = y1 = y2 = i_a0 = i_a1 = i_a2 = i_b0 = i_b1 = i_b2 = 
-      d_a0 = d_a1 = d_a2 = d_b0 = d_b1 = d_b2 =
-      s_a0 = s_a1 = s_a2 = s_b0 = s_b1 = s_b2 = 0.f;
-    }
-    
     /**
      * setups filter parameters
      * <br><br>

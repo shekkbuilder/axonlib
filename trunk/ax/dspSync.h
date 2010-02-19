@@ -17,9 +17,9 @@
  */
 
 /**
- * @file
- * \brief desc
- */
+  \file dspSync.h
+  \brief sync
+*/
 
 #ifndef dspSync_included
 #define dspSync_included

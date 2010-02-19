@@ -17,9 +17,9 @@
  */
 
 /**
- * @file
- * \brief desc
- */
+ * \file axCanvasW32.h
+ * \brief canvas for w32 
+*/ 
 
 /**
  * \brief desc

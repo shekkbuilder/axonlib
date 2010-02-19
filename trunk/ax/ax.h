@@ -18,7 +18,7 @@
 
 /**
   \file ax.h
-  \brief ...
+  \brief ax template class
 */
 
 #ifndef ax_included

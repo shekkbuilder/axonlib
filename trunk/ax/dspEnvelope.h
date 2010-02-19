@@ -1,3 +1,8 @@
+/**
+  \file dspEnvelope.h
+  \brief envelope
+*/
+
 #ifndef dspEnvelope_included
 #define dspEnvelope_included
 //----------------------------------------------------------------------

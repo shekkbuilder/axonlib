@@ -17,16 +17,9 @@
  */
 
 /**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
- */
+  \file axScript.h
+  \brief forth inspired stack-based script
+*/
 
 #ifndef axScript_included
 #define axScript_included

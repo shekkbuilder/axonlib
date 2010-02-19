@@ -17,9 +17,9 @@
  */
 
 /**
- * @file
- * \brief desc
- */
+ * \file axCanvasX11.h
+ * \brief canvas for x11
+*/ 
 
 /**
  * \brief desc

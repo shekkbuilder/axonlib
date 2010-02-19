@@ -17,9 +17,9 @@
  */
 
 /**
- * @file
- * \brief desc
- */
+ * \file axSurfaceX11.h
+ * \brief surface class x11
+*/ 
 
 /**
  * \brief desc

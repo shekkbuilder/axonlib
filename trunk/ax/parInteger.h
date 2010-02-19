@@ -17,16 +17,9 @@
  */
 
 /**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
- */
+  \file parInteger.h
+  \brief parameter with integer values
+*/
 
 #ifndef parInteger_included
 #define parInteger_included
