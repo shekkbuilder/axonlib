@@ -65,7 +65,7 @@
 class dspInterpolate
 {
   private:
-    float factor;
+    float factor, invf;    
     bool filter_enabled;
     dspRBJ f0;
 
@@ -81,6 +81,8 @@ class dspInterpolate
     const bool _filter_enabled=true)
     {
       factor = _factor;
+      invf = 1.f/factor;
+      float invf = 1.f/factor;
       if (factor < 1) factor = 1;
       filter_enabled = _filter_enabled;
       if (_filter_enabled)
@@ -102,7 +104,6 @@ class dspInterpolate
     {
       float y, t_y, x = 0.f;
       float t_in = in, out;
-      float invf = 1.f/factor;
       // --
       for (unsigned int i=0; i<factor; i++)
       {

@@ -17,16 +17,9 @@
  */
 
 /**
- * @file
- * \brief desc
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
- */
+  \file dspPitchDetect.h
+  \brief pitch detect algo
+*/
 
 #ifndef dspPitchDetect_included
 #define dspPitchDetect_included

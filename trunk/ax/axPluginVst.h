@@ -627,7 +627,7 @@ class axPluginVst :  public AudioEffectX,
 
     virtual VstIntPtr vendorSpecific(VstInt32 lArg, VstIntPtr lArg2, void* ptrArg, float floatArg)
       {
-        trace("- vendorSpecific");
+        // trace("- vendorSpecific");
         //if( lArg == 0xdeadbef0 && lArg2 >= 1 && lArg2 <= kNumParams )
         //{
         //  ((double *) ptrArg)[0] = 0;
