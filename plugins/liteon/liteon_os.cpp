@@ -113,7 +113,7 @@ public:
     
     // pass input sample (splX) and pointer to function (callback_f)
     spl0 = i0.process(callback_f, spl0);
-    spl1 = i0.process(callback_f, spl1);
+    spl1 = i1.process(callback_f, spl1);
     
     *outs[0] = spl0;
     *outs[1] = spl1;

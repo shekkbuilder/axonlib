@@ -17,7 +17,7 @@
  */
 
 /**
- * @file 
+ * \file dspDCF.h 
  * \brief DC offset filter.
  */
 

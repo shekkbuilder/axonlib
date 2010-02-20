@@ -60,6 +60,7 @@
   - \subpage installation
   - \subpage examples
   - \subpage compile
+  - \subpage debug
   - \subpage screenshots
   
 */
@@ -430,6 +431,49 @@
   \endcode
 
 */
+
+//----------------------------------------------------------------------
+//
+// DEBUG
+//
+//----------------------------------------------------------------------
+
+/**
+ \page debug debug
+ 
+ <b>debug info for axonlib compiled binaries </b>
+ 
+ list of debugging commands with a short description:
+ <br>
+ \code
+ assert() - same as C assert. will break if assert(false) [win32 & linux]
+ trace() - output any type of variable and strings similar to std::cout [win32 & linux] 
+ warn() - output a warning [win32 & linux]
+ wdebug() - write output in text window (gui) [win32] 
+ \endcode
+ 
+ <br> <hr> <br>
+ 
+ <b>linux: </b> <br>
+ to debug a shared library on linux simply start the program that loads the 
+ library from a terminal. this will allow stdout to be routed to the terminal
+ output. same for an executable.
+ 
+ <br> <hr> <br>
+ 
+ <b>windows: </b> <br> 
+ debugging a dll on windows is much more complicated. the way to do it is 
+ to create a console programmatically, route stdout to it and disable any
+ buffering so that the output is shown immediately. alternatively the windows
+ gui api can be used so that a text window is created and text is shown there.
+  
+ axonlib provides some methods to the above. 
+ 
+ <br> <hr> <br>
+ 
+ see axDebug.h for more info on syntax and examples. 
+
+ */
 
 //----------------------------------------------------------------------
 //

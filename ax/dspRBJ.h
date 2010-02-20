@@ -54,11 +54,11 @@ class dspRBJ
       LSH,    // 6 - low shelf filter
       HSH     // 7 - high shelf filter
     };
-    
+
     /// reset parameters (private)
     virtual void reset_p(void)
     {
-      x1 = x2 = y1 = y2 = i_a0 = i_a1 = i_a2 = i_b0 = i_b1 = i_b2 = 
+      x1 = x2 = y1 = y2 = i_a0 = i_a1 = i_a2 = i_b0 = i_b1 = i_b2 =
       d_a0 = d_a1 = d_a2 = d_b0 = d_b1 = d_b2 =
       s_a0 = s_a1 = s_a2 = s_b0 = s_b1 = s_b2 = 0.f;
     }
@@ -78,7 +78,7 @@ class dspRBJ
      */
     dspRBJ()
     {
-      reset_p();     
+      reset_p();
       setup();
     }
 
@@ -115,13 +115,19 @@ class dspRBJ
       omega = PI2 * freq / srate;
       sn = axSinf(omega);
       cs = axCosf(omega);
-      alpha = sn / ( 2.0f * Q );            
+      alpha = sn / ( 2.0f * Q );
       if (type > 7) type = 0;
-      
+
       // reset params
       if (seltype != type) reset_p();
-      seltype = type;      
-      
+      seltype = type;
+
+      // check if filter type out of range
+      if (seltype < 0 || seltype > 7)
+      {
+        seltype = 0;
+      }
+
       // calculate coeff
       switch (type)
       {
@@ -199,7 +205,7 @@ class dspRBJ
           a1 = ( -2.0f  * A * ( temp2 + temp3 ) ) * b0;
           a2 = ( A * ( temp1 + temp4 - beta ) ) * b0;
           break;
-        case NOF:          
+        case NOF:
           break;
       }
 
@@ -219,14 +225,14 @@ class dspRBJ
     /*
      * interpolate filter coeff <br>
      * <br>
-     * \code     
+     * \code
      * // call this from axPlugin::doProcessBlock(..)
      * // or each N samples: myfilter.interpolate(N)
-     * \endcode     
+     * \endcode
      * \param sampleFrames long
      * \return void
      */
-    virtual float interpolate(long sampleFrames)
+    virtual void interpolate(long sampleFrames)
     {
       if (hasintrp && seltype != 0)
       {
@@ -289,7 +295,7 @@ class dspRBJ
       else
       {
         return in;
-      }      
+      }
     }
 };
 

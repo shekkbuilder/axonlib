@@ -1,6 +1,6 @@
 /*
   ******************************************************************************
-  buquad filter band (rbj)
+  one pole filters
   (c) 2010, lubomir i. ivanov (neolit123 at gmail)
   using axonlib 0.0.x:
   <http://axonlib.googlecode.com/>
@@ -8,7 +8,7 @@
 */
 #define AX_PLUGIN     myPlugin
 #define AX_NUMPROGS   1
-#define AX_NUMPARAMS  5
+#define AX_NUMPARAMS  4
 
 //#define AX_DEBUG      // add debug
 //#include "axDebug.h"
@@ -17,7 +17,7 @@
 #include "parInteger.h"
 #include "parFloat.h"
 
-#include "dspRBJ.h"   // add filter
+#include "dspOnePole.h"   // add filter
 
 // string arrays
 char* str_processing[] =
@@ -30,9 +30,6 @@ char* ftype_ar[] =
   (char*)"off",
   (char*)"LP",
   (char*)"HP",
-  (char*)"BP",
-  (char*)"BR",
-  (char*)"PK",
   (char*)"LS",
   (char*)"HS"
 };
@@ -43,28 +40,27 @@ class myPlugin : public axPlugin
 
 private:
   unsigned int mono, ftype;
-  float srate, q, freq, gain;
+  float srate, freq, gain;
   // init 2 fiters (left / right)
-  dspRBJ f0,f1;
+  dspOnePole f0,f1;
 
 public:
   // constructor
   myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
       : axPlugin(aHost, aNumProgs, aNumParams, aPlugFlags)
   {
-    describe("biquad_rbj", "liteon", "biquad_rbj", 0, 0x6c74);
+    describe("one_pole", "liteon", "one_pole", 0, 0x6c74);
     // add 2 ins 2 outs
     setupAudio(2, 2);
     // set init values
     mono = 0;
-    freq = q = gain = 0.f;
+    freq = gain = 0.f;
     srate = updateSampleRate();
     // add params
     appendParameter( new parInteger( this, 0, "mode", "",  0, 0, 1, str_processing ) );
-    appendParameter( new parInteger( this, 1, "filter", "", 1, 0, 7, ftype_ar ) );
+    appendParameter( new parInteger( this, 1, "filter", "", 1, 0, 4, ftype_ar ) );
     appendParameter( new parFloat( this, 2, "freq", "scale", 0.5f, 0, 1.0135, 0.0001) );
-    appendParameter( new parFloat( this, 3, "BW", "octaves", 2.543f, 0.01, 4, 0.001) );
-    appendParameter( new parFloat( this, 4, "gain", "dB", 0.f, -24, 24, 0.001) );
+    appendParameter( new parFloat( this, 3, "gain", "dB", 0.f, -24, 24, 0.001) );
     // first process params
     processParameters();
   }
@@ -106,20 +102,16 @@ public:
       // frequency
     case 2:
       freq = axExpf(f*6.90775f + 2.99573f); // [0 - 1.0135] to [20hz - ~22000hz]
-      trace("freq = " << freq);
-      break;
-      // q factor
-    case 3:
-      q = axOctaves2Q(f);
+      //trace("freq = " << freq);
       break;
       // gain
-    case 4:
+    case 3:
       gain = f;
       break;
     }
     // setup filters f0, f1
-    f0.setup(ftype, srate, freq, q, gain, true);
-    if (!mono) f1.setup(ftype, srate, freq, q, gain, true);
+    f0.setup(ftype, srate, freq, gain, true);
+    if (!mono) f1.setup(ftype, srate, freq, gain, true);
   }
 
   // interpolate filter coefficients

@@ -43,7 +43,7 @@
  * wdebug("var = ", myvar);
  * wdebug(var1, var2);
  * wdebug(var, " <- text message");
- * wdebug("text", "more text", false, false); // "don't show line number", "no new line"
+ * wdebug("text", "more text", __LINE__, false); // pass line number, "no new line"
  * wdebug(var, "");
  * wdebug("", var);
  * \endcode
@@ -88,6 +88,7 @@
       #endif
     }
  * \endcode
+ * <br> see /plugins/liteon/_cpuidtest.cpp for complete example. 
 */
 
 #ifndef axDebug_included
@@ -169,13 +170,13 @@
     // ----------------
     // send text to debug window
     template <typename T0, typename T1>
-    void wdebug(const T0 p0, const T1 p1, bool lineN = true, bool newline = true)
+    void wdebug(const T0 p0, const T1 p1, const unsigned int lineN=0, bool newline = true)
     {
       if (axDtext != NULL) // if window is created
       {
         // use a string stream to cast input vars to type std::string
         ostringstream oss;
-        if (lineN) oss << __LINE__ << " | ";
+        if (lineN != 0) oss << lineN << " | ";
         oss << p0 << " " << p1;
         if (newline) oss << "\r\n";
         string s2 = oss.str();
