@@ -33,7 +33,7 @@
 
   <b>axonlib</b> is a standalone, multiplatform (win32/linux) library for
   vst plugins and applications, which focuses on the ease of
-  use, while rataining 'low-level' control. it is realeased under the gnu lgpl
+  use, while rataining 'low-level' control. it is released under the gnu lgpl
   license.
   <br>
   
@@ -467,7 +467,7 @@
  buffering so that the output is shown immediately. alternatively the windows
  gui api can be used so that a text window is created and text is shown there.
   
- axonlib provides some methods to the above. 
+ axonlib provides some methods for the above. 
  
  <br> <hr> <br>
  

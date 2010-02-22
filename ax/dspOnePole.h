@@ -42,7 +42,7 @@
 class dspOnePole
 {
   private:
-    float a0, b1, y, _gain;
+    float a0, b1, y, _gain, _gain2;
     unsigned int ftype;
     bool hasintrp;
     float i_a0, i_b1;
@@ -89,6 +89,7 @@ class dspOnePole
     {
       //gain
       _gain = axDB2Lin(gain);
+      _gain2 = _gain - 1;
       
       // reset params if filter has changed
       if (type != ftype) reset_p();
@@ -147,6 +148,12 @@ class dspOnePole
      */
     virtual float process(float in)
     {
+      if (hasintrp)
+      {
+        i_a0 += d_a0;
+        i_b1 += d_b1;
+      }
+      
       switch (ftype)
       {
         // no filter
@@ -166,12 +173,12 @@ class dspOnePole
         // ls
         case 3:
           y = i_a0*in + i_b1*y + DENORM;
-          return in + (y - DENORM)*_gain;
+          return in + (y - DENORM)*_gain2;
           break;
         // hs
         case 4:
           y = i_a0*in + i_b1*y + DENORM;
-          return in + (in - y - DENORM)*_gain;
+          return in + (in - y - DENORM)*_gain2;
           break;
       }
     }

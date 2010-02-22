@@ -63,7 +63,7 @@
  * (possible freeze). <br>
  * <br>
  * <b>console window (efficient):</b> <br>
- * uses the standart trace(), warn() macros. <br>
+ * uses the standard trace(), warn() macros. <br>
  * axDstdCreate() - create a debug console and route stdout to it <br>
  * axDstdDestroy() - destroy the debug console <br>
  * <br>
@@ -88,6 +88,7 @@
       #endif
     }
  * \endcode
+ * <i>note: debug windows are shared between plugins.</i><br><br>   
  * <br> see /plugins/liteon/_cpuidtest.cpp for complete example. 
 */
 
@@ -107,18 +108,15 @@
     /**
      * creates a winapi debugger window (unsafe / slow)
      *
-    NOTES:
-    much more stable and useable version. works under reaper3, enrgyxt2 and vstpa.
-    #issues:
-    - the debugger window has to be controlled from a plugin with doProcessState(..)
-    best case for users will be to only include axDebug.h, define AX_DEBUG
-    and be ready to call wdebug(..)
+    NOTES:    
+    - the debugger window has to be controlled from a plugin with doProcessState(..)   
     */
     #define _WIN32_WINNT 0x0501   // add this before window.h to use GetConsoleWindow()
     #include <windows.h>
     #include <windowsx.h>         // macros
     #include <io.h>
-    #include <fcntl.h>            // for _O_TEXT
+    #include <stdio.h>            // gcc-4.4.1-tdm
+    //#include <fcntl.h>            // for _O_TEXT
     #include <sstream>
     // ----------------
     const unsigned int axDwinW = 500;       // debug win width
@@ -258,8 +256,8 @@
             DrawMenuBar(hCw);
 		      }
         }
-        // get std handle for text output
-        hCrt = _open_osfhandle((long)GetStdHandle(STD_OUTPUT_HANDLE), _O_TEXT);
+        // get std handle for text output, _O_TEXT = 0x4000
+        hCrt = _open_osfhandle((long)GetStdHandle(STD_OUTPUT_HANDLE), 0x4000);
         // open stream
         sfile = _fdopen(hCrt, "w");
         // link stdout to stream

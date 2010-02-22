@@ -96,14 +96,17 @@ class dspInterpolate
     /**
      * process input <br>
      * *cb_function must point to a static function.
-     * @param[in] *cb_function float - pointer to function (callback)        
+     * @param[in] parent T - instance of parent class     
+     * @param[in] *cb_function float - pointer to function (callback)
      * @param[in] in float - input value       
      * @return return float - output value
      */
-    virtual float process(float (*cb_function)(float), const float in)
+    template <class T>
+    inline float process(const T parent, float (*cb_function)(T, float), const float in)
     {
       float y, t_y, x = 0.f;
       float t_in = in, out;
+    
       // --
       for (unsigned int i=0; i<factor; i++)
       {
@@ -111,11 +114,11 @@ class dspInterpolate
         y = t_in + x*(in - t_in);
         
         // process (call back to function)
-        y = (*cb_function)(y);
+        y = (*cb_function)(parent, y);
         
         // filter
         t_y = y;
-        if (filter_enabled) t_y = f0.process(y);
+        if (filter_enabled) t_y = f0.process(y)*0.9f;
         
         // discard samples
         if (x == 0.f) out = t_y;

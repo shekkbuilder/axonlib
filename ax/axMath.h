@@ -763,7 +763,7 @@ inline float axTanf(float value)
 inline float axTan(float x)
 {
   const float x2 = x*x;
-  return (x*(105 - 10*x2)) / (105 - x*(45*x - x*x2));
+  return (x*(105 - 10*x2)) / (105 - x2*(45 - x2));
 }
 
 /**
@@ -895,7 +895,7 @@ inline float axAtan2f(const float y, const float x)
 }
 
 /**
- * calculates the contangens of a floating point number (fpu)
+ * calculates the cotangens of a floating point number (fpu)
  * @param[in] value float
  * @return value float
  */
@@ -1103,7 +1103,7 @@ inline float axAvrg(const unsigned int n, const float* ar)
  * example: <br>
  * \code
  * int ar[] = { -1, 2, 3, 4, 5 };
- * float result = axAvrgInt(5, ar); // result is 2 (truncated)
+ * int result = axAvrgInt(5, ar); // result is 2 (truncated)
  * \endcode
  * @param n unsigned int - number of elements (n)
  * @param ar int* - array of integers
