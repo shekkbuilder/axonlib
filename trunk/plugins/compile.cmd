@@ -11,16 +11,16 @@ if .%1==. goto nofile
 	set tmpfile=%1
 	if not "%tmpfile:~-4%"==".cpp" goto nocpp
 		:: --------------------------
-		:: set path to mingw/bin
-		set mgwpath=
-		:: --------------------------	
+		:: set path mingw-bin, e.g: c:\mingw\bin\ (with dash at end)
+		set mgwpath=c:\mingw\bin\
+		:: --------------------------
 		:: set target
 		set infile=%1
 		set rstring=.cpp
 		call set target=%%infile:%rstring%=%%
 		set target=%target%.dll
 		set cmdpath=%~p0
-		rem call set tgtpath=%tgtpath:\=/%				 
+		rem call set tgtpath=%tgtpath:\=/%
 		:: --------------------------
 		if exist %target% del %target%;
 		:: --------------------------
