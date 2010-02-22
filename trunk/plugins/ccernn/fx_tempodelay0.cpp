@@ -1,8 +1,8 @@
 #define AX_PLUGIN     myEffect
 #define AX_NUMPROGS   1
 #define AX_NUMPARAMS  4
-#define AX_WIDTH      150
-#define AX_HEIGHT     180
+//#define AX_WIDTH      150
+//#define AX_HEIGHT     180
 #define AX_FLAGS      (AX_EMBEDDED|AX_BUFFERED)
 
 #define AX_DEBUG
@@ -28,8 +28,8 @@ class myEffect : public axEffect
     float     BUFFER[MAX_BUFFER_SIZE];
     int       bufsize,pos;
     float     beats,fb,dry,wet;
-    wdgKnob *k1,*k2,*k3,*k4;
-    parFloat *p1,*p2,*p3,*p4;
+    wdgKnob   *k1,*k2,*k3,*k4;
+    parFloat  *p1,*p2,*p3,*p4;
   public:
 
     myEffect(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
@@ -37,6 +37,7 @@ class myEffect : public axEffect
       {
         describe("fx_tempodelay0","ccernn","product_string",0,0);
         setupAudio(2,2);
+        setupEditor(150,180);//(AX_WIDTH,AX_HEIGHT);
         appendParameter( p1 = new parFloat( this,0,"beats",   "", 0.75, 0.25, MAX_NUMBEATS, 0.25  ) );
         appendParameter( p2 = new parFloat( this,1,"feedback","", 0.75  ) );
         appendParameter( p3 = new parFloat( this,2,"dry",     "", 1.00 ) );
@@ -69,7 +70,7 @@ class myEffect : public axEffect
         float beatsize = (60/mTempo) * mSampleRate;
         int size = beatsize * beats;
         bufsize = size;
-        if( pos>=bufsize ) pos=0;
+        if (pos>=bufsize) pos=0;
         return false;
       }
 
@@ -92,7 +93,7 @@ class myEffect : public axEffect
 
     //----------
 
-    virtual void doSetupEditor(axEditor* aEditor)
+    virtual void do_SetupEditor(axEditor* aEditor)
       {
         wdgPanel* P;
         aEditor->appendWidget( P = new wdgPanel(this, -1, NULL_RECT,wal_Client) );

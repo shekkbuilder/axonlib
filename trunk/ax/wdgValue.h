@@ -70,6 +70,9 @@ class wdgValue : public axWidget
       }
 
     //--------------------------------------------------
+
+    inline void setSensitivity(float s1=0.005, float s2=0.1) { mSens1=s1; mSens2=s2; }
+    //--------------------------------------------------
     // widget handler
     //--------------------------------------------------
 

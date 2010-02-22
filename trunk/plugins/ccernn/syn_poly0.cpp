@@ -120,6 +120,7 @@ class mySynth : public axSynth
         axRandomize(19);
         describe("syn_poly0","ccernnb","axonlib example plugin",0002,AX_MAGIC+0x0000);
         setupAudio(0,2,true);
+        setupEditor(AX_WIDTH,AX_HEIGHT);
         for (int i=0; i<MAX_VOICES; i++) VM->appendVoice( new myVoice() );
         //appendParameter( pGain     = new parDB(     this,0,"gain","db",0,-48, 0  ));
         appendParameter( pGain     = new parFloat(  this,0,"gain","db",1,  0, 1  ));
@@ -133,7 +134,7 @@ class mySynth : public axSynth
 
     virtual ~mySynth() { if (is_gui_initialized) delete srfKnob; }
 
-    virtual void doSetupEditor(axEditor* aEditor)
+    virtual void do_SetupEditor(axEditor* aEditor)
       {
         wdgPanel* panel;
         aEditor->appendWidget( panel = new wdgPanel(this,-100,NULL_RECT,wal_Client) );
@@ -148,27 +149,12 @@ class mySynth : public axSynth
         panel->appendWidget(wTuneOct  = new wdgImgKnob2(this, 3,axRect(130,30,32,64),wal_None,65,srfKnob));
         panel->appendWidget(wTuneSemi = new wdgImgKnob2(this, 4,axRect(170,30,32,64),wal_None,65,srfKnob));
         panel->appendWidget(wTuneCent = new wdgImgKnob2(this, 5,axRect(210,30,32,64),wal_None,65,srfKnob));
-//        panel->appendWidget(            new wdgLabel(  this,-1,axRect( 10,10,32,16),wal_None,"gain",AX_GREY_LIGHT,tal_Center));
-//        panel->appendWidget(            new wdgLabel(  this,-2,axRect( 50,10,32,16),wal_None,"att", AX_GREY_LIGHT,tal_Center));
-//        panel->appendWidget(            new wdgLabel(  this,-3,axRect( 90,10,32,16),wal_None,"rel", AX_GREY_LIGHT,tal_Center));
-//        panel->appendWidget(            new wdgLabel(  this,-4,axRect(130,10,32,16),wal_None,"oct", AX_GREY_LIGHT,tal_Center));
-//        panel->appendWidget(            new wdgLabel(  this,-5,axRect(170,10,32,16),wal_None,"semi",AX_GREY_LIGHT,tal_Center));
-//        panel->appendWidget(            new wdgLabel(  this,-6,axRect(210,10,32,16),wal_None,"cent",AX_GREY_LIGHT,tal_Center));
-
         aEditor->connect(wGain,pGain);
         aEditor->connect(wAttack,pAttack);
         aEditor->connect(wRelease,pRelease);
         aEditor->connect(wTuneOct,pTuneOct);
         aEditor->connect(wTuneSemi,pTuneSemi);
         aEditor->connect(wTuneCent,pTuneCent);
-
-//        aEditor->connect(wGain->getKnob(),pGain);
-//        aEditor->connect(wAttack->getKnob(),pAttack);
-//        aEditor->connect(wRelease->getKnob(),pRelease);
-//        aEditor->connect(wTuneOct->getKnob(),pTuneOct);
-//        aEditor->connect(wTuneSemi->getKnob(),pTuneSemi);
-//        aEditor->connect(wTuneCent->getKnob(),pTuneCent);
-
         aEditor->doRealign();
       }
 

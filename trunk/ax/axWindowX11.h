@@ -174,7 +174,7 @@ class axWindowImpl : public axWindowBase
           Atom prop = XInternAtom(gDP,"_MOTIF_WM_HINTS",True);
           XChangeProperty(gDP,mHandle,prop,prop,32,PropModeReplace,(unsigned char *)&motif_hints,PROP_MOTIF_WM_HINTS_ELEMENTS);
           // --- eventproc
-          data = (void*)&eventProc;
+          data = (void*)(int)&eventProc;  // the (int) to make the compiler shut up its complaining!
           atom = XInternAtom(gDP,"_XEventProc",false);
           XChangeProperty(gDP,mHandle,atom,atom,32,PropModeReplace,(unsigned char*)&data,1);
           // --- this

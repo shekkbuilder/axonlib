@@ -73,19 +73,16 @@ class axEditor : public axWindow,
 {
   private:
 
-    //class axWPConnection
     struct wp_connection
     {
-      //public:
-        axWidget    *mWidget;
-        axParameter *mParameter;
-      //public:
-        wp_connection(axWidget *aWidget, axParameter *aParameter)
-          {
-            mWidget = aWidget;
-            mParameter = aParameter;
-            //TODO: transfer mValue
-          }
+      axWidget    *mWidget;
+      axParameter *mParameter;
+      wp_connection(axWidget *aWidget, axParameter *aParameter)
+        {
+          mWidget = aWidget;
+          mParameter = aParameter;
+          //TODO: transfer mValue
+        }
     };
     typedef axArray<wp_connection*> wp_connections;
     wp_connections mConnections;
@@ -271,9 +268,9 @@ class axEditor : public axWindow,
 
     virtual void onChange(axWidget* aWidget)
       {
-        trace("axEditor.onChange. wdg.id " << aWidget->mID);
+        //trace("axEditor.onChange. wdg.id " << aWidget->mID);
         int con = aWidget->mConnection;//getConnectionIndex();
-        trace("  connection # " << con );
+        //trace("  connection # " << con );
         if( con>=0 )
         {
           axParameter* par = mConnections[con]->mParameter;

@@ -107,7 +107,7 @@ class axPluginVst :  public AudioEffectX,
     //axPluginVst(audioMasterCallback audioMaster,long numProgs,long numParams)
     //: AudioEffectX(audioMaster,numProgs,numParams)
     axPluginVst(axHost* aHost,long numProgs,long numParams)
-    : AudioEffectX( (audioMasterCallback)aHost->getPtr(), numProgs,numParams)
+    : AudioEffectX( (audioMasterCallback)(int)aHost->getPtr(), numProgs,numParams)
       {
         //trace("axPluginVst constructor. aHost = " << hex << aHost);
         //trace(" aHost->getPtr() = " << hex << aHost->getPtr() );

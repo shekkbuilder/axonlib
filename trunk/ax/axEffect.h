@@ -42,7 +42,8 @@ class axEffect : public axPlugin,
     : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         mEditor = NULL;
-        setupEditor(AX_WIDTH,AX_HEIGHT);
+        //setupEditor(AX_WIDTH,AX_HEIGHT);
+        //setupEditor(mWidth,mHeight);
       }
 
     //----------
@@ -53,8 +54,8 @@ class axEffect : public axPlugin,
 
     //--------------------------------------------------
 
-    virtual void doSetupEditor(axEditor* aEditor) {}
-    //virtual void do_IdleEditor(void) {}
+    virtual void do_SetupEditor(axEditor* aEditor) {}
+    virtual void do_IdleEditor(void) {}
 
     //--------------------------------------------------
 
@@ -64,8 +65,8 @@ class axEffect : public axPlugin,
 
     virtual void* doCreateEditor(void)
       {
-        axEditor* ED = new axEditor(WIN_NAME,this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
-        doSetupEditor(ED);
+        axEditor* ED = new axEditor(WIN_NAME,this,-1,axRect(0,0,mWidth,mHeight),AX_FLAGS);
+        do_SetupEditor(ED);
         mEditor = ED;
         return mEditor;
       }
@@ -87,7 +88,7 @@ class axEffect : public axPlugin,
 
     virtual void doIdleEditor(void)
       {
-        //do_IdleEditor();
+        do_IdleEditor();
         if (mEditor) mEditor->redrawDirty();
       }
 

@@ -66,7 +66,8 @@ class wdgKnob : public wdgValue
         font_name             = new axFont(AX_GREY);
         font_disp             = new axFont(AX_GREY_LIGHT);
         pen_knob_arc_full     = new axPen(AX_GREY_DARK,4);
-        pen_knob_arc_outer    = new axPen(AX_YELLOW,4);
+        //pen_knob_arc_outer    = new axPen(AX_YELLOW,4);
+        pen_knob_arc_outer    = new axPen(AX_WHITE,4);
         sm_pen_knob_arc_full  = new axPen(AX_GREY_DARK,3);
         sm_pen_knob_arc_outer = new axPen(AX_WHITE,3);
         sm_brush_knob_pie     = new axBrush(AX_GREY_LIGHT);

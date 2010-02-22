@@ -38,10 +38,14 @@ class axHostVst : public axHostBase
     axHostVst(void* ptr)
     : axHostBase(ptr)
       {
-        audioMaster = (audioMasterCallback)ptr;
+        // ISO C++ forbids casting between pointer-to-function and pointer-to-object
+        //audioMaster = (audioMasterCallback)ptr;
+        audioMaster = (audioMasterCallback)(int)ptr;
       }
     virtual ~axHostVst() {}
-    virtual void* getPtr(void) { return (void*)audioMaster; }
+    // ISO C++ forbids casting between pointer-to-function and pointer-to-object
+    virtual void* getPtr(void) { return (void*)(int)audioMaster; }
+
 };
 
 typedef axHostVst axHostImpl;
