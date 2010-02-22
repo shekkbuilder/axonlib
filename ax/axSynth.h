@@ -44,7 +44,8 @@ class axSynth : public axPlugin,
       {
         mEditor = NULL;
         VM = new axVoiceManager();
-        setupEditor(AX_WIDTH,AX_HEIGHT);
+        //setupEditor(AX_WIDTH,AX_HEIGHT);
+        //setupEditor(mWidth,mHeight);
       }
 
     //----------
@@ -56,8 +57,8 @@ class axSynth : public axPlugin,
 
     //--------------------------------------------------
 
-    virtual void doSetupEditor(axEditor* aEditor) {}
-    //virtual void do_IdleEditor(void) {}
+    virtual void do_SetupEditor(axEditor* aEditor) {}
+    virtual void do_IdleEditor(void) {}
 
     //--------------------------------------------------
     // signals
@@ -133,8 +134,8 @@ class axSynth : public axPlugin,
         //trace(WINCLASS);
         //trace( "strlen " << strlen(WINCLASS) );
         //trace( (int)WINCLASS[14] );
-        axEditor* ED = new axEditor(WIN_NAME,this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
-        doSetupEditor(ED);
+        axEditor* ED = new axEditor(WIN_NAME,this,-1,axRect(0,0,mWidth,mHeight),AX_FLAGS);
+        do_SetupEditor(ED);
         //ED->doRealign();
         mEditor = ED;
         return mEditor;
@@ -157,7 +158,7 @@ class axSynth : public axPlugin,
 
     virtual void doIdleEditor(void)
       {
-        //do_IdleEditor();
+        do_IdleEditor();
         if (mEditor) mEditor->redrawDirty();
       }
 

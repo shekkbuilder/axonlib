@@ -109,9 +109,9 @@
   //----------
 
   #ifdef linux
-    
+
     #define __cdecl
-    
+
     AEffect* main_plugin(audioMasterCallback audioMaster) asm ("main");
     #define main main_plugin
 
@@ -125,7 +125,7 @@
     AEffect* main(audioMasterCallback audioMaster)
     {
       //AX_PLUGIN* plugin = new AX_PLUGIN(audioMaster,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
-      axHost* host = new axHost((void*)audioMaster);
+      axHost* host = new axHost((void*)(int)audioMaster);
       AX_PLUGIN* plugin = new AX_PLUGIN(host,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
       if (!plugin) return 0;
       return plugin->getAeffect();
