@@ -7,10 +7,13 @@ plugins made with axonlib reportedly working in: (with eventual comments)
   * qtractor (plugin window resizing doesn't work)
   * renoise 2.5
 
-*win32:*
+*win32:*<br>
+_note: VST-Plugin Unit Test reports that most major host should work for win32_
   * ableton live 8.1
   * audacity
   * cantabile
+  * cubase 4 (plugin window resizing doesn't work)
+  * cakewalk vst adapter 4 [vst -> dx wrapper]
   * energy xt 1.4
   * energy xt 2
   * fl studio 9
@@ -25,6 +28,3 @@ buggy hosts:
 
 *linux:*
   * jost (mouse/painting event bugs, patch available [http://www.anticore.org/jucetice/forums/viewtopic.php?pid=612#p612 here] )  
-
-*win32:*
-  * cakewalk vst adapter 4 (vst -> dx wrapper) - plugins cannot be found with the normal search function.
