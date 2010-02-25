@@ -34,8 +34,8 @@ public:
       : axPlugin(aHost, aNumProgs, aNumParams, aPlugFlags)
   {
     describe("noise_gen", "liteon", "noise_gen", 0, 0x6c74);
-    // add 0 ins 2 outs
-    setupAudio(0, 2);
+    // add 2 ins 2 outs
+    setupAudio(2, 2);
     // set init values
     gain = 0.25f;
     // add params

@@ -2,30 +2,21 @@
  * This file is part of Axonlib.
  *
  * Axonlib is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3
+ * it under the terms of the Axonlib Library License, either version 1.0 
  * of the License, or (at your option) any later version.
  *
  * Axonlib is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE_AXON for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Axonlib.
- * If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the Axonlib Library License 
+ * If not, see <http://axonlib.googlecode.com/>.
  */
 
 /**
  * @file axPluginVst.h
  * \brief vst plugin implementation
- */
-
-/**
- * \brief desc
- *
- * long desc
- *
  */
 
 #ifndef axPluginVst_included
@@ -46,6 +37,16 @@
 // #include "dispatcher_enums.h"
 
 //----------------------------------------------------------------------
+
+//AX_NUMPROGS & AX_NUMPARAMS should a minimum of 1
+#if (AX_NUMPROGS == 0)
+	#undef AX_NUMPROGS
+	#define AX_NUMPROGS 1
+#endif
+#if (AX_NUMPARAMS == 0)
+	#undef AX_NUMPARAMS
+	#define AX_NUMPARAMS 1
+#endif
 
 //#define MAX_CHANS 64
 #define MAX_MIDI_SEND 1024
