@@ -81,7 +81,7 @@ public:
   virtual bool doProcessBlock(float** inputs, float** outputs, long sampleFrames)
   {
     // debug noise output sample
-    trace(n_out);
+    trace(n_out);    
     return false;
   }
 

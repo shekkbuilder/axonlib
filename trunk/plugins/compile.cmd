@@ -12,7 +12,7 @@ if .%1==. goto nofile
 	if not "%tmpfile:~-4%"==".cpp" goto nocpp
 		:: --------------------------
 		:: set path mingw-bin, e.g: c:\mingw\bin\ (with dash at end)
-		set mgwpath=c:\mingw\bin\
+		set mgwpath=
 		:: --------------------------
 		:: set target
 		set infile=%1

@@ -2,18 +2,16 @@
  * This file is part of Axonlib.
  *
  * Axonlib is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3
+ * it under the terms of the Axonlib License, either version 1.0 
  * of the License, or (at your option) any later version.
  *
  * Axonlib is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with Axonlib.
- * If not, see <http://www.gnu.org/licenses/>. 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ * See LICENSE_AX for more details.
+ *  
+ * You should have received a copy of the Axonlib License 
+ * If not, see <http://axonlib.googlecode.com/>.
  */
 
 // NOTE: requires some debugging
@@ -56,8 +54,6 @@ class dspPRNG0
     
     /**
      * reset the prng
-     * @param[in] void
-     * @return void
      */
     virtual void reset(void)
     {
@@ -68,10 +64,9 @@ class dspPRNG0
     
     /**
      * return a random float number [-1, +1]
-     * @param[in] void
      * @return float
      */
-    virtual float process(void)
+    inline float process(void)
     {
       __asm__ __volatile__("":::);
       __asm__

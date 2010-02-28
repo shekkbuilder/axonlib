@@ -115,9 +115,8 @@ public:
     // call local method f0.process()
     return _pThis->f0.process(sample);
   }
-  // - f1
-  template <class T>
-  static inline float callback_f1(const T pThis, float sample)
+  // - f1  
+  static inline float callback_f1(void* pThis, float sample)
   {
     myPlugin* _pThis = (myPlugin*) pThis;
     return _pThis->f1.process(sample);

@@ -35,7 +35,7 @@ int main (int argc, char **argv)
 	size = ftell(in);
 	fseek (in, 0, SEEK_SET);
 	
-	fprintf (out,"const unsigned %s_size = %u;\n\n", argv[3], size);
+	fprintf (out,"const unsigned %s_size = %u;\n", argv[3], size);
 	fprintf (out,"const unsigned char %s[] = \n{\n", argv[3]);
 	while ((c=fread(a,1,NUM,in))!=0)
 	{
