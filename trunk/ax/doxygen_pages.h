@@ -29,6 +29,7 @@
 
   \mainpage axonlib mainpage 
 
+  <h2>introduction:</h2>
   <b>axonlib</b> is a standalone, multiplatform (win32/linux) library for
   vst plugins and applications, which focuses on the ease of
   use, while rataining 'low-level' control. it is released under the gnu lgpl
@@ -38,7 +39,7 @@
   project home: <br>
   http://axonlib.googlecode.com
   
-  feature highlights:
+  <h2>feature highlights:</h2>
   - gui widgets <br>
   - loading of external png images <br>
   - resizeable windows <br>
@@ -46,15 +47,21 @@
   - dsp classes <br>
   - lots of example plugins <br>
   
-  developers:
+  <h2>developers:</h2>
   - ccernn - cern.th.skei at gmail <br>
   - liteon - neolit123 at gmail <br> 
   
-  uses third party code by:
-  - lode vandevenne <br>
-  - jorgen aase <br>
+  <h2>uses third party code by:</h2>
+  - lode vandevenne (lodepng/picopng)<br>
+  - jorgen aase (some multiplatform code)<br>
+  - miller s. puckette. (mayer_fft)
+  - gregoire pau (dwt97)
+  - tom baran (autotalent)
+  - others
   
-  <b>pages:</b> <br>
+  which is released under the conditions declared by these authors.
+  
+  <h2>pages:</h2>
   - \subpage installation
   - \subpage examples
   - \subpage compile
