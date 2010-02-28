@@ -2,18 +2,18 @@
  * This file is part of Axonlib.
  *
  * Axonlib is free software: you can redistribute it and/or modify
- * it under the terms of the Axonlib Library License, either version 1.0 
+ * it under the terms of the Axonlib License, either version 1.0 
  * of the License, or (at your option) any later version.
  *
  * Axonlib is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See LICENSE_AXON for more details.
- *
- * You should have received a copy of the Axonlib Library License 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ * See LICENSE_AX for more details.
+ *  
+ * You should have received a copy of the Axonlib License 
  * If not, see <http://axonlib.googlecode.com/>.
  */
-
+ 
 /**
  * @file axPluginVst.h
  * \brief vst plugin implementation
@@ -473,7 +473,7 @@ class axPluginVst :  public AudioEffectX,
           for( i=0; i<AX_NUMINPUTS;  i++ ) ins[i]  = inputs[i];
           for( i=0; i<AX_NUMOUTPUTS; i++ ) outs[i] = outputs[i];
           while (--sampleFrames >= 0)
-          {
+ÿ   Pō    {
             doProcessSample(ins,outs);
             for( i=0; i<AX_NUMINPUTS;  i++ ) ins[i]++;
             for( i=0; i<AX_NUMOUTPUTS; i++ ) outs[i]++;

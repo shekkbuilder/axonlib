@@ -2,18 +2,16 @@
  * This file is part of Axonlib.
  *
  * Axonlib is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3
+ * it under the terms of the Axonlib License, either version 1.0 
  * of the License, or (at your option) any later version.
  *
  * Axonlib is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with Axonlib.
- * If not, see <http://www.gnu.org/licenses/>. 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ * See LICENSE_AX for more details.
+ *  
+ * You should have received a copy of the Axonlib License 
+ * If not, see <http://axonlib.googlecode.com/>.
  */
 
 /**
@@ -96,13 +94,12 @@ class dspInterpolate
     /**
      * process input <br>
      * *cb_function must point to a static function.
-     * @param[in] parent T - instance of parent class     
+     * @param[in] parent void* - instance of parent class     
      * @param[in] *cb_function float - pointer to function (callback)
      * @param[in] in float - input value       
      * @return return float - output value
      */
-    template <class T>
-    inline float process(const T parent, float (*cb_function)(T, float), const float in)
+    inline float process(void* parent, float (*cb_function)(void*, float), const float in)
     {
       float y, t_y, x = 0.f;
       float t_in = in, out;
