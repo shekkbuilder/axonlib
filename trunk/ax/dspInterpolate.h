@@ -50,15 +50,15 @@
  * i0.setup(os_factor, srate, aafilter);
  *  
  * // create a static function for callback
- * static float callback_f(float sample) {...}
+ * static float callback_f(void* _this, float sample) {...}
  *   
  * // # process stage
- * // pass the 'input' value and 'callback_f' 
- * float result = i0.process(callback_f, input);
+ * // pass an instance of the current class, the 'input' value and 'callback_f' 
+ * float result = i0.process(this, callback_f, input);
  * \endcode
  * <br> 
  * example in:
- * /plugins/liteon/_os.cpp    
+ * /plugins/liteon/_os.cpp
  */
 class dspInterpolate
 {

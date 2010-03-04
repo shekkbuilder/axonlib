@@ -473,7 +473,7 @@ class axPluginVst :  public AudioEffectX,
           for( i=0; i<AX_NUMINPUTS;  i++ ) ins[i]  = inputs[i];
           for( i=0; i<AX_NUMOUTPUTS; i++ ) outs[i] = outputs[i];
           while (--sampleFrames >= 0)
-ÿ   Pō    {
+          {
             doProcessSample(ins,outs);
             for( i=0; i<AX_NUMINPUTS;  i++ ) ins[i]++;
             for( i=0; i<AX_NUMOUTPUTS; i++ ) outs[i]++;

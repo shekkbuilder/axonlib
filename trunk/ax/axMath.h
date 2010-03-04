@@ -530,7 +530,7 @@ inline float axExp(const float exponent)
   {
     double d;
     struct
-ÿ   P
+    {
       #ifdef LITTLE_ENDIAN
         int i, j;
       #else
@@ -621,7 +621,7 @@ inline float axNrt(float value, long root)
 }
 
 /**
- * returns the squre root of a floating point number (fpu)
+ * returns the square root of a floating point number (fpu)
  * @param[in] value float
  * @return value float
  */
