@@ -18,8 +18,9 @@
 
 // 50 ms = 1/20 sec
 
+#define MAX_MS      50
 #define MAX_SRATE   192000
-#define MAX_DELAY   0.05
+#define MAX_DELAY   1/MAX_MS
 //#define MAX_BUFSIZE 192000
 #define MAX_BUFSIZE ((int)(MAX_SRATE*MAX_DELAY))
 
@@ -78,7 +79,9 @@ class myPlugin : public axPlugin
         //        slider7: 2   <1, 10,  1     > num taps
         //        slider8: .2  <0, 1,   0.001 > tap phase diff
 
-        appendParameter(new parFloat(  this,0,"delay",      "ms",  20,   0, 50 ));
+        trace("MAX_BUFSIZE " << MAX_BUFSIZE);
+
+        appendParameter(new parFloat(  this,0,"delay",      "ms",  20,   0, MAX_MS ));
         appendParameter(new parFloat(  this,1,"depth",      "ms",  5,    0, 25 ));
         appendParameter(new parFloat(  this,2,"rate",       "hz",  0.5,  0, 4 ));
         appendParameter(new parFloat(  this,3,"dry",        "",    0.75  ));

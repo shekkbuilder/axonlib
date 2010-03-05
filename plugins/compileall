@@ -16,6 +16,7 @@
 ./compile ccernn/fx_dist0
 ./compile ccernn/fx_dynamics0
 ./compile ccernn/fx_envelope0
+./compile ccernn/fx_fracdelay0
 ./compile ccernn/fx_freeze0
 ./compile ccernn/fx_grains0
 ./compile ccernn/fx_moddelay0
@@ -40,7 +41,12 @@
 
 #--------------------------------------------------
 
+./compile liteon/liteon_biquad
+./compile liteon/liteon_cpuidtest
 ./compile liteon/liteon_lofi
+./compile liteon/liteon_noise
+./compile liteon/liteon_onepole
+./compile liteon/liteon_os
 ./compile liteon/liteon_tilteq
 
 #--------------------------------------------------

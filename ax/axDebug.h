@@ -2,18 +2,18 @@
  * This file is part of Axonlib.
  *
  * Axonlib is free software: you can redistribute it and/or modify
- * it under the terms of the Axonlib License, either version 1.0 
+ * it under the terms of the Axonlib License, either version 1.0
  * of the License, or (at your option) any later version.
  *
  * Axonlib is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE_AX for more details.
- *  
- * You should have received a copy of the Axonlib License 
+ *
+ * You should have received a copy of the Axonlib License
  * If not, see <http://axonlib.googlecode.com/>.
  */
- 
+
 /**
  * @file axDebug.h
  * \brief debugger methods
@@ -86,8 +86,8 @@
       #endif
     }
  * \endcode
- * <i>note: debug windows are shared between plugins.</i><br><br>   
- * <br> see /plugins/liteon/_cpuidtest.cpp for complete example. 
+ * <i>note: debug windows are shared between plugins.</i><br><br>
+ * <br> see /plugins/liteon/_cpuidtest.cpp for complete example.
 */
 
 #ifndef axDebug_included
@@ -106,8 +106,8 @@
     /**
      * creates a winapi debugger window (unsafe / slow)
      *
-    NOTES:    
-    - the debugger window has to be controlled from a plugin with doProcessState(..)   
+    NOTES:
+    - the debugger window has to be controlled from a plugin with doProcessState(..)
     */
     #define _WIN32_WINNT 0x0501   // add this before window.h to use GetConsoleWindow()
     #include <windows.h>
@@ -199,7 +199,7 @@
 
         // kill focus
         SendMessage(axDtext, WM_KILLFOCUS, 0, 0);
-        
+
         // clear str_stream
         oss.str("");
       }
@@ -276,11 +276,11 @@
   #ifdef linux
     #define trace(x) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); }
     #define warn(x) { printf("WARN | %i | %s\n", __LINE__, x); }
-    inline void axDstdCreate(void);
-    inline void axDstdDestroy(void);
-    inline void axDwinCreate(void);
-    inline void axDwinDestroy(void);
-    inline void wdebug(...);
+    inline void axDstdCreate(void) {}//;
+    inline void axDstdDestroy(void) {}//;
+    inline void axDwinCreate(void) {}//;
+    inline void axDwinDestroy(void) {}//;
+    inline void wdebug(...) {}//;
   #endif
 // case: no debug
 #else

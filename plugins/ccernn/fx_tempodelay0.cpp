@@ -18,14 +18,16 @@
 #define MIN_BPM             30.0f
 #define MAX_SRATE           192000
 #define MAX_NUMBEATS        4
+#define MAX_BeatsPerSecond  ( MIN_BPM / 60.0f )
 #define MAX_SecondsPerBeat  ( 60.0f / MIN_BPM )
 #define MAX_SamplesPerSec   ( MAX_SRATE * 2 )
-#define MAX_BUFFER_SIZE     (int)( MAX_NUMBEATS * MAX_SecondsPerBeat * MAX_SamplesPerSec  )
+#define MAX_BeatSize        ( MAX_SamplesPerSec / MAX_BeatsPerSecond )
+#define MAX_BUFFER_SIZE     ( MAX_NUMBEATS * MAX_BeatSize )
 
 class myEffect : public axEffect
 {
   public:
-    float     BUFFER[MAX_BUFFER_SIZE];
+    float     BUFFER[1000000];//MAX_BUFFER_SIZE];
     int       bufsize,pos;
     float     beats,fb,dry,wet;
     wdgKnob   *k1,*k2,*k3,*k4;
