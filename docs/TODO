@@ -50,6 +50,13 @@
 
 // ----- gui -----
 
+- stricter onChange/onRedraw separation
+  - onChange, internal value/state changed, no redraw
+  - onRedraw, redrawing only
+
+- merge axWidget & axContainer
+  widget can be appended to any other widget to create composite things
+
 - hovering
   in axContainer, mouse cursor change,
   notify widget on enter/leave
@@ -75,7 +82,8 @@
 
 - axPen/axBrush
   can we set new color without needing to destroy the old pen and create a new one?
-  too bad if gradients, or pixel stuff  need a bunch of pens...
+  too bad if gradients, or pixel stuff, need a bunch of pens...
+  we could use axBitmap, and draw pixels manually, but we have to be careful about rgba ordering
 
 - axEditor
   some more, tiresome repetitive things could be handled by the editor

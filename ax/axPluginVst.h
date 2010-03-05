@@ -43,6 +43,8 @@
 	#undef AX_NUMPROGS
 	#define AX_NUMPROGS 1
 #endif
+// this will be problematic for plugins that have no parameters
+// (you can append a dummy parameter in your plugin constructor)
 #if (AX_NUMPARAMS == 0)
 	#undef AX_NUMPARAMS
 	#define AX_NUMPARAMS 1

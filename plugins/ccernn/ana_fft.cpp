@@ -97,6 +97,7 @@ class myPlugin : public axPlugin,
 //        appendParameter( pScale  = new parFloat(  this, 0, "scale", "",   1,   0,  4 ) );
 //        appendParameter( pLength = new parInteger(this, 1, "length","ms", 250, 10, 1000 ) );
 //        processParameters();
+        appendParameter( new axParameter(this,0,"dummy") );
       }
 
     //parameters is automatically deleted
