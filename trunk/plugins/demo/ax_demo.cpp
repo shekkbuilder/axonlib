@@ -47,6 +47,7 @@ class myEffect : public axEffect
         describe("ax_demo","ccernn","axonlib demo",0,AX_MAGIC);
         setupAudio(2,2,false);
         setupEditor(AX_WIDTH,AX_HEIGHT);
+        appendParameter( new axParameter(this,0,"dummy") );
       }
 
     virtual ~myEffect()

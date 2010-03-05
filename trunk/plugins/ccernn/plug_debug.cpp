@@ -80,6 +80,7 @@ class myPlugin : public axPlugin,
         setupAudio(2,2);
         setupEditor(AX_WIDTH,AX_HEIGHT);
         describe("plug_debug","ccernn","product_string",0,0);
+        appendParameter( new axParameter(this,0,"dummy") );
 
       }
 
