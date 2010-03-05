@@ -2,15 +2,15 @@
  * This file is part of Axonlib.
  *
  * Axonlib is free software: you can redistribute it and/or modify
- * it under the terms of the Axonlib License, either version 1.0 
+ * it under the terms of the Axonlib License, either version 1.0
  * of the License, or (at your option) any later version.
  *
  * Axonlib is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE_AX for more details.
- *  
- * You should have received a copy of the Axonlib License 
+ *
+ * You should have received a copy of the Axonlib License
  * If not, see <http://axonlib.googlecode.com/>.
  */
 
@@ -87,7 +87,7 @@ class axPluginBase
     virtual void describe(axString aEffect, axString aVendor, axString aProduct, int aVersion, unsigned int aID) {}
 
     virtual void setupAudio(int aInputs, int aOutputs, bool aIsSynth) {}
-    
+
     /// gui?
     /**
       call this in your plugin constructor if your plugin has a gui.
@@ -181,7 +181,7 @@ class axPluginBase
     /// create editor
     /**
       if you called hasEditor in your constructor, this will be called th create the editor, before the plugin window is shown.
-      \return pointer to window (cast to void*)
+      \return pointer to window, cast to void* (to be platform-independent)
     */
     virtual void* doCreateEditor() { return NULL; }
 

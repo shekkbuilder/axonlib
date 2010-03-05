@@ -1,5 +1,4 @@
-
-#include "demo/ax_demo.cpp"
+//#include "demo/ax_demo.cpp"
 //#include "ccernn/again.cpp"
 //#include "ccernn/plug_debug.cpp"
 
@@ -60,9 +59,13 @@
 
     // ----- liteon
 
-//#include "liteon/liteon_tilteq.cpp"
-//#include "liteon/liteon_lofi.cpp"
+//#include "liteon/liteon_biquad.cpp"
 //#include "liteon/liteon_cpuidtest.cpp"
+//#include "liteon/liteon_lofi.cpp"
+//#include "liteon/liteon_noise.cpp"
+//#include "liteon/liteon_onepole.cpp"
+//#include "liteon/liteon_os.cpp"
+//#include "liteon/liteon_tilteq.cpp"
 
 //----------------------------------------------------------------------
 

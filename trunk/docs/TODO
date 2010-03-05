@@ -15,9 +15,11 @@
 - axConfig
   use AX_LINUX, AX_WIN32, etc, everywhere
   define in f.ex axGlobals, or axDefines...
+  (mainly a search/replace job)
 
 - axMutex
   lock down things that might be dangerous if accessed by two (or more) simultaneous threads
+  but tru to keep things as lock-free as possible (a clock-cycle waiting for a lock is a clock-cycle wasted)
 
 - axMath
   doxy: a partial performance table relative to compiler flags
@@ -44,6 +46,7 @@
   more parameter derived classes
   parBool, parMs, parDb
   squared, cubed, inverse (1/x, reciprocal?)
+  this is mainly a getValue() override (doGetParameter calls getValue)
 
 // ----- gui -----
 
