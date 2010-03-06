@@ -3,8 +3,8 @@
 #define AX_NUMPARAMS  2
 #define AX_FLAGS    (AX_EMBEDDED|AX_BUFFERED)
 
-#define AX_DEBUG
-#include "axDebug.h"
+//#define AX_DEBUG
+//#include "axDebug.h"
 #include "axMath.h"
 
 #include "axPlugin.h"

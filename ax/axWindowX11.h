@@ -2,15 +2,15 @@
  * This file is part of Axonlib.
  *
  * Axonlib is free software: you can redistribute it and/or modify
- * it under the terms of the Axonlib License, either version 1.0 
+ * it under the terms of the Axonlib License, either version 1.0
  * of the License, or (at your option) any later version.
  *
  * Axonlib is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE_AX for more details.
- *  
- * You should have received a copy of the Axonlib License 
+ *
+ * You should have received a copy of the Axonlib License
  * If not, see <http://axonlib.googlecode.com/>.
  */
 
@@ -62,7 +62,8 @@ static char noData[] = { 0,0,0,0,0,0,0,0 };
 #define cuQuestion        99
 #define cuIbeam           152
 
-#define DEF_CURSOR    cuArrow
+//#define DEF_CURSOR    cuArrow
+#define DEF_CURSOR    -1
 
 //----------------------------------------------------------------------
 
@@ -433,13 +434,31 @@ class axWindowImpl : public axWindowBase
 
     //------------------------------
 
+    virtual void resetCursor(void)
+      {
+        XUndefineCursor(gDP,mHandle);
+        XFreeCursor(gDP,mWinCursor);
+        mWinCursor=-1;
+      };
+
+    //----------
+
     virtual void setCursor(int aCursor)
       {
         //if( aCursor<0 ) aCursor = DEF_CURSOR;
-        if (mWinCursor>=0) XFreeCursor(gDP,mWinCursor);
-        if (aCursor<0) mWinCursor = XCreatePixmapCursor( gDP,bitmapNoData,bitmapNoData,&mBlack,&mBlack,0,0 );
-        else mWinCursor = XCreateFontCursor(gDP, aCursor);
-        XDefineCursor(gDP, mHandle, mWinCursor);
+        if (mWinCursor>=0) resetCursor();
+        //{
+        //  XUndefineCursor(gDP,mHandle);
+        //  XFreeCursor(gDP,mWinCursor);
+        //}
+        //if (aCursor<0)
+        //mWinCursor = XCreatePixmapCursor( gDP,bitmapNoData,bitmapNoData,&mBlack,&mBlack,0,0 );
+        //else
+        if (aCursor>=0)
+        {
+          mWinCursor = XCreateFontCursor(gDP, aCursor);
+          XDefineCursor(gDP, mHandle, mWinCursor);
+        }
       };
 
     //----------
@@ -459,7 +478,14 @@ class axWindowImpl : public axWindowBase
 
     virtual void hideCursor(void)
       {
-        setCursor(-1);
+        //setCursor(-1);
+        if (mWinCursor>=0) resetCursor();
+        //{
+        //  XUndefineCursor(gDP,mHandle);
+        //  XFreeCursor(gDP,mWinCursor);
+        //}
+        mWinCursor = XCreatePixmapCursor( gDP,bitmapNoData,bitmapNoData,&mBlack,&mBlack,0,0 );
+        XDefineCursor(gDP, mHandle, mWinCursor);
       }
 
     //----------

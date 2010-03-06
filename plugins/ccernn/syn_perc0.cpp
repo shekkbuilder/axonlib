@@ -5,8 +5,10 @@
 #define AX_WIDTH      445
 #define AX_HEIGHT     275
 #define AX_FLAGS      (AX_EMBEDDED|AX_BUFFERED)
-#define AX_DEBUG
-#include "axDebug.h"
+
+//#define AX_DEBUG
+//#include "axDebug.h"
+
 #include "axPlugin.h"
 #include "parFloat.h"
 #include "parInteger.h"

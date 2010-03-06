@@ -7,8 +7,8 @@
 #define AX_HEIGHT     384
 #define AX_FLAGS      (AX_EMBEDDED|AX_BUFFERED)
 
-#define AX_DEBUG
-#include "axDebug.h"
+//#define AX_DEBUG
+//#include "axDebug.h"
 
 #include "axPlugin.h"
 //#include "parFloat.h"
@@ -230,7 +230,7 @@ class myPlugin : public axPlugin,
         wRight->appendWidget( wKnob2  = new wdgKnob(    this,-199, axRect( 10, 30, 80,16),wal_None,0 ) );
         wRight->appendWidget( wKnob3  = new wdgKnob(    this,-299, axRect( 10, 50, 80,16),wal_None,0 ) );
         wRight->appendWidget( slid    = new wdgImgKnob( this,-1,   axRect( 10,100,20,100),wal_None,65,mSrfSlider ));
-        //slid->mSens1 = 0.01;
+        slid->setSensPixels(80);
 
         // client area: tabs
 
