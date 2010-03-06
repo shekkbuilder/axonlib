@@ -8,9 +8,9 @@
 #define AX_FLAGS      ( AX_EMBEDDED | AX_BUFFERED )
 //#define AX_AUTOSYNC
 
-#define AX_DEBUG
+//#define AX_DEBUG
+//#include "axDebug.h"
 
-#include "axDebug.h"
 #include "axPlugin.h"
 #include "axEditor.h"
 //#include "axBitmap.h"

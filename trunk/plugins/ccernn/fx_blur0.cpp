@@ -3,8 +3,8 @@
 #define AX_NUMPROGS   0
 #define AX_NUMPARAMS  5
 
-#define AX_DEBUG
-#include "axDebug.h"
+//#define AX_DEBUG
+//#include "axDebug.h"
 
 #include "axPlugin.h"
 #include "parFloat.h"

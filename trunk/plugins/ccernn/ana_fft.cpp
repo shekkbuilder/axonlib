@@ -1,6 +1,6 @@
 
-#define AX_DEBUG
-#include "axDebug.h"
+//#define AX_DEBUG
+//#include "axDebug.h"
 
 #define AX_PLUGIN     myPlugin
 #define AX_NUMPROGS   0

@@ -5,8 +5,8 @@
 #define AX_WIDTH      300
 #define AX_HEIGHT     70
 
-#define AX_DEBUG
-#include "axDebug.h"
+//#define AX_DEBUG
+//#include "axDebug.h"
 
 #include "axPlugin.h"
 #include "parFloat.h"

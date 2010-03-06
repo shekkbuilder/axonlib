@@ -8,9 +8,10 @@
 //#define AX_AUTOSYNC
 //#define AX_DIRTYWIDGETS
 //#define AX_PAINTERS
-#define AX_DEBUG
 
-#include "axDebug.h"
+//#define AX_DEBUG
+//#include "axDebug.h"
+
 #include "axPlugin.h"
 //#include "parFloat.h"
 #include "parInteger.h"
