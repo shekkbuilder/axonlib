@@ -38,7 +38,7 @@
 #define env_Release   4
 #define env_Finished  5
 
-#define env_Threshold 0.001f
+#define env_Threshold EPSILON //0.001f
 #define env_MaxStages 5
 //#define env_Scale     6
 
@@ -132,12 +132,15 @@ class dspEnvExpADSR : public dspEnvelope
       }
     virtual float process(void)
       {
-        if (mStage==env_Off || mStage==env_Finished) return 0;
+        if (mStage==env_Off) return 0;
+        if (mStage==env_Finished) return 0;
         if (mStage==env_Sustain) return mValue;
         float target = mStages[mStage].target;
         float rate   = mStages[mStage].rate;
         mValue += (target-mValue) * rate;
-        if (axAbs(mValue-target)<=env_Threshold) { mStage++; }
+// when compiling with -O2, and axAbs doesn't seem to work properly
+//if (axAbs(target-mValue)<=env_Threshold) { mStage++; }
+        if (fabs(target-mValue)<=env_Threshold) { mStage++; }
         return mValue;
       }
 
