@@ -269,7 +269,10 @@
     }
     // define trace() and warn() to check for hCrt;
     #define trace(x) { if (hCrt != 0) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); } }
+    #define trace(x) { if (hCrt != 0) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); } }
     #define warn(x) { if (hCrt != 0) { printf("WARN | %i | %s\n", __LINE__, x); } }
+    // 'direct' trace, for WINE
+    #define wtrace(x) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); }
   // ---------
   #endif
   // case: linux
@@ -281,6 +284,8 @@
     inline void axDwinCreate(void) {}//;
     inline void axDwinDestroy(void) {}//;
     inline void wdebug(...) {}//;
+    // 'direct' trace, for WINE
+    #define wtrace(x) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); }
   #endif
 // case: no debug
 #else
@@ -293,6 +298,8 @@
   inline void axDwinCreate(void);
   inline void axDwinDestroy(void);
   inline void wdebug(...);
+  // 'direct' trace, for WINE
+  #define wtrace(x) ((void)0)
 #endif
 
 //----------------------------------------------------------------------
