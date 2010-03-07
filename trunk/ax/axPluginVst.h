@@ -109,8 +109,14 @@ class axPluginVst :  public AudioEffectX,
 
     //axPluginVst(audioMasterCallback audioMaster,long numProgs,long numParams)
     //: AudioEffectX(audioMaster,numProgs,numParams)
+
+//    axPluginVst(axHost* aHost,long numProgs,long numParams)
+//    : AudioEffectX( (audioMasterCallback)aHost->getMaster(), numProgs,numParams)
+
     axPluginVst(axHost* aHost,long numProgs,long numParams)
     : AudioEffectX( (audioMasterCallback)(int)aHost->getPtr(), numProgs,numParams)
+
+
       {
         //trace("axPluginVst constructor. aHost = " << hex << aHost);
         //trace(" aHost->getPtr() = " << hex << aHost->getPtr() );
@@ -684,7 +690,7 @@ class axPluginVst :  public AudioEffectX,
             break;
           case effEditClose:
             //TRACE("effEditClose\n");
-            if (mFlags&pfl_HasEditor && mEditorIsOpen);
+            if (mFlags&pfl_HasEditor && mEditorIsOpen)
             {
               mEditorIsOpen = false;
               closeEditor();
@@ -692,7 +698,7 @@ class axPluginVst :  public AudioEffectX,
             break;
           case effEditIdle:
             //TRACE("effEditIdle\n");
-            if (mFlags&pfl_HasEditor && mEditorIsOpen);
+            if (mFlags&pfl_HasEditor && mEditorIsOpen)
             {
               idleEditor();
             }
