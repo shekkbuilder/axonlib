@@ -1,15 +1,11 @@
+#include "ccernn/axSynth1/axSynth1.cpp"
+
+//----------------------------------------------------------------------
+
 //#include "demo/ax_demo.cpp"
 //#include "ccernn/again.cpp"
 //#include "ccernn/plug_debug.cpp"
 
-//----------------------------------------------------------------------
-
-    // ----- error
-
-
-//----------------------------------------------------------------------
-
-    // ----- test
 
 //----------------------------------------------------------------------
 
@@ -46,7 +42,7 @@
 //#include "ccernn/midi_fibonacci0.cpp"
 //#include "ccernn/syn_binaural0.cpp"
 //#include "ccernn/syn_perc0.cpp"
-#include "ccernn/syn_poly0.cpp"
+//#include "ccernn/syn_poly0.cpp"
 
     // ----- ports
 

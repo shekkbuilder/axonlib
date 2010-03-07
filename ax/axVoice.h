@@ -2,15 +2,15 @@
  * This file is part of Axonlib.
  *
  * Axonlib is free software: you can redistribute it and/or modify
- * it under the terms of the Axonlib License, either version 1.0 
+ * it under the terms of the Axonlib License, either version 1.0
  * of the License, or (at your option) any later version.
  *
  * Axonlib is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE_AX for more details.
- *  
- * You should have received a copy of the Axonlib License 
+ *
+ * You should have received a copy of the Axonlib License
  * If not, see <http://axonlib.googlecode.com/>.
  */
 
@@ -232,6 +232,7 @@ class axVoiceManager
 
     void midi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3)
       {
+        //trace(" ofs "<<ofs << " msg1 "<<msg1 << " msg2 "<<msg2 << " msg3 "<<msg3);
         if (mNumEvents<MAX_EVENTS)
         {
           mEvents[mNumEvents].ofs  = ofs;

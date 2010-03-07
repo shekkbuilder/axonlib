@@ -78,8 +78,10 @@ class myPlugin : public axPlugin
     axSurface   *srfKnob;
     wdgImgKnob  *wGain;
   public:
-    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
-    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    //myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags )
+    //: axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+    myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags )
+    : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         mEditor = NULL;
         srfKnob = NULL;
@@ -98,19 +100,18 @@ class myPlugin : public axPlugin
         if(mEditor) mEditor->onChange(aParameter);
         doProcessParameter(aParameter);
       }
-    virtual axWindow* doCreateEditor(void)
+    //virtual void* doCreateEditor(void)
+    virtual void do_SetupEditor(axEditor* aEditor)
       {
-        axEditor* E = new axEditor("again_window",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
+        //axEditor* E = new axEditor("again_window",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
         if(!is_gui_initialized)
         {
           srfKnob = loadPng( knob2, 15255 );
           is_gui_initialized=true;
         }
-        E->appendWidget(new wdgImgKnob(E, 0,axRect(10,30,32,32),wal_None,65,srfKnob));
-        E->appendWidget(new wdgLabel(  E,-1,axRect(10,10,32,16),wal_None,"gain",AX_GREY_LIGHT,tal_Center));
-        for (int i=0; i<AX_NUMPARAMS; i++) E->connect(E->mWidgets[i],mParameters[i]);
-        mEditor = E;
-        return mEditor;
+        aEditor->appendWidget(new wdgImgKnob(aEditor, 0,axRect(10,30,32,32),wal_None,65,srfKnob));
+        aEditor->appendWidget(new wdgLabel(  aEditor,-1,axRect(10,10,32,16),wal_None,"gain",AX_GREY_LIGHT,tal_Center));
+        for (int i=0; i<AX_NUMPARAMS; i++) aEditor->connect(aEditor->getWidget(i),mParameters[i]);
       }
     virtual void doDestroyEditor(void)
       {
