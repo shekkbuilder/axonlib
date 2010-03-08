@@ -10,8 +10,8 @@
 #define AX_NUMPROGS   1
 #define AX_NUMPARAMS  2
 
-//#define AX_DEBUG      // add debug
-//#include "axDebug.h"
+#define AX_DEBUG      // add debug
+#include "axDebug.h"
 
 #include "axPlugin.h"
 #include "parInteger.h"
@@ -83,7 +83,7 @@ public:
   // process parameters
   virtual void doProcessParameter(axParameter* aParameter)
   {
-    // param id, value
+    // param id, value    
     int  id = aParameter->mID;
     float f = aParameter->getValue();
     // ---
@@ -107,8 +107,7 @@ public:
   // declare a static processing functions here
   // the dspInterpolate::process() method will call them back
   // - f0
-  template <class T>
-  static inline float callback_f0(const T pThis, float sample)
+  static inline float callback_f0(void* pThis, float sample)
   {
     // cast instance pointer
     myPlugin* _pThis = (myPlugin*) pThis;

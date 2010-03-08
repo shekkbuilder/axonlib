@@ -455,8 +455,9 @@
  \code
  assert() - same as C assert. will break if assert(false) [win32 & linux]
  trace() - output any type of variable and strings similar to std::cout [win32 & linux] 
- warn() - output a warning [win32 & linux]
- wdebug() - write output in text window (gui) [win32] 
+ msg() - output a message/warning [win32 & linux]
+ wdebug() - write output in text window (gui) [win32]
+ wtrace() - trace for wine 
  \endcode
  
  <br> <hr> <br>
