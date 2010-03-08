@@ -25,6 +25,10 @@
  * the versions without 'f' suffix are most likely less cpu heavy approximations,
  * but with reduced accuracy and acceptable input range (e.g. axCos). <br>
  * \code
+ * NOTES:
+ * - non volatile assembly seems to work ok
+ * - gcc 4.x outperforms 3.x many times with -O2, -O3
+ * - get gcc 4.x for windows at http://www.tdragon.net/recentgcc/    
  * TODO:
  * - short performance table
  * \endcode
@@ -106,7 +110,7 @@ inline float axFloor(const float value)
  */
 inline float axCeil(const float value)
 {
-  return (float)(int)(value + 1);
+  return (float)(int)(value + 1.f);
 }
 
 /**
@@ -116,7 +120,7 @@ inline float axCeil(const float value)
 */
 inline float axRound(const float value)
 {
-  return (float)(int)(value + 0.5);
+  return (float)(int)(value + 0.5f);
 }
 
 /**
@@ -155,7 +159,7 @@ inline float axModf(const float value, float* intpart)
 inline float axFmod(const float x, const float y)
   {
   register float value;
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     // gets remainder; copy floating point status register into ax register;
@@ -174,8 +178,15 @@ inline float axFmod(const float x, const float y)
 */
 inline float axAbs(const float value)
 {
-  int i=((*(int*)&value)&0x7fffffff);
-  return (*(float*)&i);
+  // alt: fpu fabs is slower
+  union
+  {
+    int i;
+    float j;
+  } u;
+  u.j = value;
+  u.i &= 0x7fffffff;
+  return u.j;  
 }
 
 /**
@@ -185,19 +196,26 @@ inline float axAbs(const float value)
 */
 inline float axNeg(float value)
 {
-  __asm__ __volatile__ ("":::);
-  __asm__ ( "xorl $0x80000000, %0;"    : "=r" (value)    : "0" (value) );
-  return value;
+  if (value != 0.f)
+  {
+    //__asm__ __volatile__ ("":::);
+    __asm__ ( "xorl $0x80000000, %0;"    : "=r" (value)    : "0" (value) );
+    return value;
+  } else { return 0.f; }
 }
 
 /**
- * returns the sign (-1 or 1) of a floating point number
+ * returns the sign (-1, 1 or 0) of a floating point number
  * @param[in] value float
  * @return value float
 */
 inline float axSign(const float value)
 {
-  return 1.0f + (((*(int*)&value) >> 31) << 1);
+  if (value != 0.f)
+  {
+    int p = (int)value;    
+    return (1 | (p >> 31));
+  } else { return 0.f; }
 }
 
 /**
@@ -353,7 +371,7 @@ inline float axRandom(const float aLow, const float aHigh)
  */
 inline float axLog2f(float value)
 {
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fld1;"   "fxch;"  "fyl2x;"
@@ -370,14 +388,19 @@ inline float axLog2f(float value)
  */
 inline float axLog2(float val)
 {
-  assert (val > 0);
-  int* const exp_ptr = reinterpret_cast<int*>(&val);
-  int x = *exp_ptr;
-  const int log_2 = ((x >> 23) & 255) - 128;
-  x &= ~(255 << 23);
-  x += 127 << 23;
-  *exp_ptr = x;
-  return (val + log_2);
+  if (val > 0)
+  {
+    union
+    {
+      int i;
+      float j;
+    } u;
+    u.j = val;
+    const int log_2 = ((u.i >> 23) & 255) - 128;
+    u.i &= ~(255 << 23);
+    u.i += 127 << 23;
+    return (0.05f + u.j + (float)log_2);
+  } else { return 0.f; }
 }
 
 /**
@@ -387,7 +410,7 @@ inline float axLog2(float val)
  */
 inline float axLogf(float value)
 {
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fld %0;"    "fldln2;"    "fxch;"    "fyl2x;"
@@ -453,7 +476,7 @@ inline float axLog10(const float x)
 inline float axPowf(const float x, const float y)
 {
   register float value, exponent;
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fld1;"                       // |
@@ -499,7 +522,7 @@ inline float axPow(float x, unsigned int n)
 inline float axExpf(const float x)
 {
   register float value, exponent;
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fldl2e;"               // e^x = 2^(x*log2(e))
@@ -560,7 +583,7 @@ inline float axExp(const float exponent)
 inline float axFscale(const float x, const float y)
 {
   register float value;
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fscale;"  : "=t" (value) : "0" (x), "u" (y)
@@ -609,7 +632,7 @@ inline float axNrt(float value, long root)
 {
   // alt: newton-ramson, is still slower than the fpu axPowf
   // xn = (1/n)*((n-1)*xn + x/pow(xn, n-1));
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "subl $0x3f800000, %0;"    "subl $1, %2;"
@@ -627,7 +650,7 @@ inline float axNrt(float value, long root)
  */
 inline float axSqrtf(float value)
 {
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fsqrt;"    : "=t" (value)    : "0" (value)
@@ -638,20 +661,20 @@ inline float axSqrtf(float value)
 /**
  * fast approximation of the squre root function <br>
  * based on: http://www.azillionmonkeys.com/qed/sqroot.html
- * @param[in] y float
+ * @param[in] x float
  * @return value float
  */
-inline float axSqrt(const float y)
+inline float axSqrt(const float x)
 {
-  float x, z, tmp;
-  unsigned long* tfptr = ((unsigned long*)&tmp);
-  tmp = y;
-  *tfptr = (0xbe6ec85f - *tfptr)>>1;   // good initial guess
-  x = tmp;
-  z = y*0.5;
-  x *= (1.5f - x*x*z);   // two newton iterations
-  x *= (1.5f - x*x*z);
-  return x*y;
+  float halfx = x*0.5;
+  union
+  {
+    int i;
+    float j;    
+  } u;
+  u.j = x;
+  u.i = (0xbe6ec85f - u.i) >> 1;   // good initial guess  
+  return x*u.j*(1.5f - u.j*u.j*halfx) + 0.001f; // newton iteration
 }
 
 /**
@@ -661,7 +684,7 @@ inline float axSqrt(const float y)
  */
 inline float axInvSqrtf(float value)
 {
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fsqrt;"  "fld1;"   "fdivp;"
@@ -676,13 +699,17 @@ inline float axInvSqrtf(float value)
  * @param[in] x float
  * @return result float
  */
-inline float axInvSqrt(float x)
+inline float axInvSqrt(const float x)
 {
   float xhalf = 0.5f*x;
-  int i = *(int*)&x;
-  i = 0x5f3759df - (i>>1);
-  x = *(float*)&i;
-  return x*(1.5f - xhalf*x*x);
+  union
+  {
+    float j;
+    int i;
+  } u;
+  u.j = x;
+  u.i = 0x5f3759df - (u.i >> 1); // good initial guess
+  return u.j*(1.5f - u.j*u.j*xhalf) + 0.001f; // newton iteration  
 }
 
 /**
@@ -692,7 +719,7 @@ inline float axInvSqrt(float x)
  */
 inline float axSinf(float value)
 {
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fsin;"    : "=t" (value)    : "0" (value)
@@ -718,7 +745,7 @@ inline float axSin(float x)
  */
 inline float axCosf(float value)
 {
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fcos;"    : "=t" (value)    : "0" (value)
@@ -744,7 +771,7 @@ inline float axCos(float x)
  */
 inline float axTanf(float value)
 {
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fptan;"  "fstp %1;"
@@ -780,7 +807,7 @@ inline float axTan(float x)
  */
 inline void axSinCosf(const float x, float* sin, float* cos)
 {
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fsincos;" : "=t" (*cos), "=u" (*sin) : "0" (x)
@@ -796,7 +823,7 @@ inline float axAsinf(float value)
 {
   // asin(x)=atan(sqrt(x*x/(1-x*x)))
   register float tmp;
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fld %0;"    "fld %0;"    "fmulp;"    "fst %1;"    "fld1;"    "fsubp;"
@@ -826,7 +853,7 @@ inline float axAcosf(float value)
 {
   // acos(x) = atan(sqrt((1-x*x)/(x*x)))
   register float tmp;
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fld %0;"    "fld %0;"    "fmulp;"    "fst %1;"    "fld1;"    "fsubp;"
@@ -855,7 +882,7 @@ inline float axAcos(const float x)
 inline float axAtanf(float value)
 {
   // from partial tangens
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fld1;"    "fpatan;"    : "=t" (value)    : "0" (value)
@@ -883,8 +910,8 @@ inline float axAtan(const float x)
  */
 inline float axAtan2f(const float y, const float x)
 {
-  register double value;
-  __asm__ __volatile__ ("":::);
+  register float value;
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fpatan;"    "fld %%st(0);"    : "=t" (value) : "0" (x), "u" (y)
@@ -900,7 +927,7 @@ inline float axAtan2f(const float y, const float x)
 inline float axCotanf(float value)
 {
   // cotan(x) = 1/tan(x)
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fsincos;"    "fdivrp;"
@@ -917,7 +944,7 @@ inline float axCotanf(float value)
 inline float axCscf(float value)
 {
   // csc(x) = 1/sin(x)
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fsin;"   "fld1;"   "fdivrp;"
@@ -934,7 +961,7 @@ inline float axCscf(float value)
 inline float axSecf(float value)
 {
   // sec(x) = 1/cos(x)
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fcos;"   "fld1;"   "fdivrp;"
@@ -951,7 +978,7 @@ inline float axSecf(float value)
 inline float axAcotanf(float value)
 {
   // arccotan(x) = atan(1/x)
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fld1;"   "fxch;"   "fpatan;"
@@ -968,7 +995,7 @@ inline float axAcotanf(float value)
 inline float axAsecf(float value)
 {
   // asec(x) = atan(sqrt(x*x-1))
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
   "fld %0;"   "fmulp;"    "fld1;"   "fsubp;"    "fsqrt;"
@@ -986,7 +1013,7 @@ inline float axAsecf(float value)
 inline float axAcscf(float value)
 {
   // acsc(x) = atan(sqrt(1/(x*x-1)))
-  __asm__ __volatile__ ("":::);
+  //__asm__ __volatile__ ("":::);
   __asm__
   (
     "fld %0;"   "fmulp;"    "fld1;"   "fsubp;"    "fld1;"   "fdivrp;"

@@ -25,9 +25,9 @@
  * assert(var);             // if 'var' is false the compiler will throw an error and abort
  * assert(num>5);           // same as above but if 'num' is not greater than 5
  * \endcode
- * warn() examples:
+ * msg() examples:
  * \code
- * warn("message");         // show a warning but does not break
+ * msg("message");         // show a message/warning
  * \endcode
  * trace() examples:
  * \code
@@ -35,6 +35,11 @@
  * trace("message");        // trace a message
  * trace(var << "message"); // combined
  * \endcode
+ * wtrace() (linux/wine) example:
+ * \code
+ * wtrace(var);              // trace a variable
+ * wtrace("message");        // trace a message 
+ * \endcode   
  * wdebug() (win32) examples:
  * \code
  * // minimum 2 parameters of different or same type
@@ -46,6 +51,10 @@
  * wdebug("", var);
  * \endcode
  * <br>
+ * linux specific methods: <br>
+ * -------------------------------- <br>
+ * wtrace() - trace for wine <br>
+ *    
  * win32 specific methods: <br>
  * -------------------------------- <br>
  * on windows you should manually create a debug window (console or gui) and
@@ -61,7 +70,7 @@
  * (possible freeze). <br>
  * <br>
  * <b>console window (efficient):</b> <br>
- * uses the standard trace(), warn() macros. <br>
+ * uses the standard trace(), msg() macros. <br>
  * axDstdCreate() - create a debug console and route stdout to it <br>
  * axDstdDestroy() - destroy the debug console <br>
  * <br>
@@ -99,7 +108,7 @@
   #include <assert.h>
   #include <iostream>
   using namespace std;
-  // trace() & warn() defined bellow
+  // trace() & msg() defined bellow
 
   // case: windows
   #ifdef WIN32
@@ -208,23 +217,23 @@
     // allocate console and route stdout as seen in example:
     // http://support.microsoft.com/kb/105305
     // --------------------------------------------------------
-    unsigned int hCrt = 0;                  // crt handle
-    FILE *sfile;                            // file stream
+    unsigned int axHcrt = 0;                  // crt handle
+    FILE *axSfile;                            // file stream
 
     // ----------------
     // destroy console
     void axDstdDestroy(void)
     {
       FreeConsole();
-      close((int)sfile);
-      hCrt = 0;
+      close((int)axSfile);
+      axHcrt = 0;
     }
 
     // ----------------
     // create console
     void axDstdCreate(void)
     {
-      if (hCrt == 0)
+      if (axHcrt == 0)
       {
         // allocate console
         AllocConsole();
@@ -258,19 +267,18 @@
 		      }
         }
         // get std handle for text output, _O_TEXT = 0x4000
-        hCrt = _open_osfhandle((long)GetStdHandle(STD_OUTPUT_HANDLE), 0x4000);
+        axHcrt = _open_osfhandle((long)GetStdHandle(STD_OUTPUT_HANDLE), 0x4000);
         // open stream
-        sfile = _fdopen(hCrt, "w");
+        axSfile = _fdopen(axHcrt, "w");
         // link stdout to stream
-        *stdout = *sfile;
+        *stdout = *axSfile;
         // set buffer length to 0
         setvbuf(stdout, NULL, _IONBF, 0);
       }
     }
-    // define trace() and warn() to check for hCrt;
-    #define trace(x) { if (hCrt != 0) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); } }
-    #define trace(x) { if (hCrt != 0) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); } }
-    #define warn(x) { if (hCrt != 0) { printf("WARN | %i | %s\n", __LINE__, x); } }
+    // define trace() and msg() to check for axHcrt;
+    #define trace(x) { if (axHcrt != 0) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); } }
+    #define msg(x) { if (axHcrt != 0) { printf("MSG | %i | %s\n", __LINE__, x); } }
     // 'direct' trace, for WINE
     #define wtrace(x) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); }
   // ---------
@@ -278,12 +286,12 @@
   // case: linux
   #ifdef linux
     #define trace(x) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); }
-    #define warn(x) { printf("WARN | %i | %s\n", __LINE__, x); }
-    inline void axDstdCreate(void) {}//;
-    inline void axDstdDestroy(void) {}//;
-    inline void axDwinCreate(void) {}//;
-    inline void axDwinDestroy(void) {}//;
-    inline void wdebug(...) {}//;
+    #define msg(x) { printf("msg | %i | %s\n", __LINE__, x); }
+    inline void axDstdCreate(void) {}
+    inline void axDstdDestroy(void) {}
+    inline void axDwinCreate(void) {}
+    inline void axDwinDestroy(void) {}
+    inline void wdebug(...) {}
     // 'direct' trace, for WINE
     #define wtrace(x) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); }
   #endif
@@ -291,13 +299,13 @@
 #else
   #define NDEBUG
   #define trace(x) ((void)0)
-  #define warn(x) ((void)0)
+  #define msg(x) ((void)0)
   #define assert(x) ((void)0)
-  inline void axDstdCreate(void);
-  inline void axDstdDestroy(void);
-  inline void axDwinCreate(void);
-  inline void axDwinDestroy(void);
-  inline void wdebug(...);
+  inline void axDstdCreate(void) {}
+  inline void axDstdDestroy(void) {}
+  inline void axDwinCreate(void) {}
+  inline void axDwinDestroy(void) {}
+  inline void wdebug(...) {}
   // 'direct' trace, for WINE
   #define wtrace(x) ((void)0)
 #endif
