@@ -1,11 +1,11 @@
-#include "ccernn/axSynth1/axSynth1.cpp"
+//#include "ccernn/axSynth1/axSynth1.cpp"
+#include "test/test_graph.cpp"
 
 //----------------------------------------------------------------------
 
 //#include "demo/ax_demo.cpp"
 //#include "ccernn/again.cpp"
 //#include "ccernn/plug_debug.cpp"
-
 
 //----------------------------------------------------------------------
 
