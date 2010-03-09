@@ -3,41 +3,78 @@
 #include "dspRC.h"
 #include "dspEnvelope.h"
 
-#define v_gain      0
-#define v_tuneoct   1
-#define v_tunesemi  2
-#define v_tunecent  3
-#define v_attack    4
-#define v_decay     5
-#define v_sustain   6
-#define v_release   7
+enum v_enums
+{
+  v_o1_gain = 0,
+  v_o1_vol_att,
+  v_o1_vol_dec,
+  v_o1_vol_sus,
+  v_o1_vol_rel,
+  v_o1_tune_oct,
+  v_o1_tune_semi,
+  v_o1_tune_cent,
+  v_o2_gain,
+  v_o2_vol_att,
+  v_o2_vol_dec,
+  v_o2_vol_sus,
+  v_o2_vol_rel,
+  v_o2_tune_oct,
+  v_o2_tune_semi,
+  v_o2_tune_cent,
+  v_mas_gain,
+  v_mas_vol_att,
+  v_mas_vol_dec,
+  v_mas_vol_sus,
+  v_mas_vol_rel
+};
 
 class myVoice : public axVoice
 {
   private:
-    float         gain,tuneoct,tunesemi,tunecent,vel;
-    float         attack,decay,sustain,release;
-    dspOsc0       osc1,osc2;
-  //dspRC         att1,
-  //              rel1;
-    dspEnvExpADSR env1;
+    float         o1_gain;
+    float         o1_vol_att, o1_vol_dec, o1_vol_sus, o1_vol_rel;
+    float         o1_tune_oct, o1_tune_semi, o1_tune_cent;
+    float         o2_gain;
+    float         o2_vol_att, o2_vol_dec, o2_vol_sus, o2_vol_rel;
+    float         o2_tune_oct, o2_tune_semi, o2_tune_cent;
+    float         mas_gain;
+    float         mas_vol_att, mas_vol_dec, mas_vol_sus, mas_vol_rel;
+
+    float         midi_vel;
+
+    dspOsc0       osc1, osc2;
+
+    dspEnvExpADSR o1_vol_env;
+    dspEnvExpADSR o2_vol_env;
+    dspEnvExpADSR mas_vol_env;
+
   public:
 
     myVoice() : axVoice()
       {
-        attack  = 0;
-        decay   = 0;
-        sustain = 1;
-        release = 0;
+        o1_vol_att = 0;
+        o1_vol_dec = 0;
+        o1_vol_sus = 1;
+        o1_vol_rel = 0;
+        o2_vol_att = 0;
+        o2_vol_dec = 0;
+        o2_vol_sus = 1;
+        o2_vol_rel = 0;
+        mas_vol_att = 0;
+        mas_vol_dec = 0;
+        mas_vol_sus = 1;
+        mas_vol_rel = 0;
         osc1.setup(osc_Ramp,0,0);
         osc2.setup(osc_Ramp,0,0);
-        //osc2.setup(osc_Squ,0,0);
-        //att1.setup(0,1,0);
-        //rel1.setup(0,0,0);
-        //env1.setScale(200);
-        env1.setup();
-        env1.setScale(32);
-        env1.setADSR(attack,decay,sustain,release);
+        o1_vol_env.setup();
+        o1_vol_env.setScale(32);
+        o1_vol_env.setADSR(o1_vol_att,o1_vol_dec,o1_vol_sus,o1_vol_rel);
+        o2_vol_env.setup();
+        o2_vol_env.setScale(32);
+        o2_vol_env.setADSR(o2_vol_att,o2_vol_dec,o2_vol_sus,o2_vol_rel);
+        mas_vol_env.setup();
+        mas_vol_env.setScale(32);
+        mas_vol_env.setADSR(mas_vol_att,mas_vol_dec,mas_vol_sus,mas_vol_rel);
       }
 
     virtual ~myVoice()
@@ -53,25 +90,27 @@ class myVoice : public axVoice
 
     virtual void noteOn(int aNote, int aVel)
       {
-        vel = (float)aVel * inv127;
-        //att1.setValue(0);         // start from 0
-        //att1.setWeight(attack);   // fade up
-        //rel1.setValue(1);         // initially, set to full on
-        //rel1.setWeight(0);        // fade speed = 0 (until note off)
-        env1.setADSR(attack,decay,sustain,release);
-        env1.noteOn();
-        float detune = (tuneoct*12) + tunesemi + tunecent;
-        float fr1 = 440 * powf(2.0,(aNote-69.0) / 12);
-        float fr2 = 440 * powf(2.0,(aNote-69.0+detune) / 12);
+        midi_vel = (float)aVel * inv127;
+        //venv1.setADSR(att1,dec1,sus1,rel1);
+        o1_vol_env.setADSR(o1_vol_att,o1_vol_dec,o1_vol_sus,o1_vol_rel);
+        o1_vol_env.noteOn();
+        o2_vol_env.setADSR(o2_vol_att,o2_vol_dec,o2_vol_sus,o2_vol_rel);
+        o2_vol_env.noteOn();
+        mas_vol_env.setADSR(mas_vol_att,mas_vol_dec,mas_vol_sus,mas_vol_rel);
+        mas_vol_env.noteOn();
+        float tune1 = (o1_tune_oct*12) + o1_tune_semi + o1_tune_cent;
+        float tune2 = (o2_tune_oct*12) + o2_tune_semi + o2_tune_cent;
+        float fr1 = 440 * powf(2.0,(aNote-69.0+tune1) / 12);
+        float fr2 = 440 * powf(2.0,(aNote-69.0+tune2) / 12);
         osc1.setFreq(fr1);
         osc2.setFreq(fr2);
       }
 
     virtual void noteOff(int aNote, int aVel)
       {
-        //rel1.setValue( att1.getValue() ); // start from current amplitude
-        //rel1.setWeight(release);          // and let it fade down
-        env1.noteOff();
+        o1_vol_env.noteOff();
+        o2_vol_env.noteOff();
+        mas_vol_env.noteOff();
       }
 
     //virtual void  ctrlChange(int aCtrl, int aVal) {}
@@ -80,28 +119,45 @@ class myVoice : public axVoice
       {
         switch(aIndex)
         {
-          case v_gain:      gain      = aValue; break;
-          case v_attack:    attack    = aValue; break;
-          case v_decay:     decay     = aValue; break;
-          case v_sustain:   sustain   = aValue; break;
-          case v_release:   release   = aValue; break;
-          case v_tuneoct:   tuneoct   = aValue; break;
-          case v_tunesemi:  tunesemi  = aValue; break;
-          case v_tunecent:  tunecent  = aValue; break;
+          case v_o1_gain:      o1_gain      = aValue; break;
+          case v_o1_vol_att:   o1_vol_att   = aValue; break;
+          case v_o1_vol_dec:   o1_vol_dec   = aValue; break;
+          case v_o1_vol_sus:   o1_vol_sus   = aValue; break;
+          case v_o1_vol_rel:   o1_vol_rel   = aValue; break;
+
+          case v_o1_tune_oct:   o1_tune_oct   = aValue; break;
+          case v_o1_tune_semi:  o1_tune_semi  = aValue; break;
+          case v_o1_tune_cent:  o1_tune_cent  = aValue; break;
+
+          case v_o2_gain:      o2_gain      = aValue; break;
+          case v_o2_vol_att:   o2_vol_att   = aValue; break;
+          case v_o2_vol_dec:   o2_vol_dec   = aValue; break;
+          case v_o2_vol_sus:   o2_vol_sus   = aValue; break;
+          case v_o2_vol_rel:   o2_vol_rel   = aValue; break;
+
+          case v_o2_tune_oct:   o2_tune_oct   = aValue; break;
+          case v_o2_tune_semi:  o2_tune_semi  = aValue; break;
+          case v_o2_tune_cent:  o2_tune_cent  = aValue; break;
+
+          case v_mas_gain:      mas_gain      = aValue; break;
+          case v_mas_vol_att:   mas_vol_att   = aValue; break;
+          case v_mas_vol_dec:   mas_vol_dec   = aValue; break;
+          case v_mas_vol_sus:   mas_vol_sus   = aValue; break;
+          case v_mas_vol_rel:   mas_vol_rel   = aValue; break;
         }
       }
 
     virtual void process(float* outs)
       {
-        float out1 = osc1.process();
-        float out2 = osc2.process();
-        //float a = att1.process();
-        //float r = rel1.process();
-        float ee = env1.process();
-        if (ee<EPSILON) mState=vst_Off;
-        float out = (out1+out2) * vel * ee * gain;
-        //outs[0] = out1*vel*n * gain;
-        //outs[1] = out2*vel*n * gain;
+        float o1 = osc1.process();
+        float o2 = osc2.process();
+        float ev1 = o1_vol_env.process();
+        float ev2 = o2_vol_env.process();
+        o1 *= ev1;
+        o2 *= ev2;
+        float evm = mas_vol_env.process();
+        if (evm<EPSILON) mState=vst_Off;
+        float out = (o1+o2) * midi_vel * evm * mas_gain;
         outs[0] = out;
         outs[1] = out;
       }

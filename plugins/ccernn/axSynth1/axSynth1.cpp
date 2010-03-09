@@ -1,8 +1,8 @@
 #define AX_PLUGIN     mySynth
 #define AX_NUMPROGS   1
-#define AX_NUMPARAMS  8
-#define AX_WIDTH      260
-#define AX_HEIGHT     200
+#define AX_NUMPARAMS  21
+#define AX_WIDTH      500
+#define AX_HEIGHT     330
 #define AX_FLAGS      (AX_EMBEDDED|AX_BUFFERED)
 
 #define AX_DEBUG
@@ -17,6 +17,9 @@
 #include "axBitmapLoader.h"
 #include "images/knob.h"
 
+#include "axModule.h"
+#include "axGraph.h"
+
 //----------------------------------------------------------------------
 
 #define MAX_VOICES 16
@@ -28,13 +31,31 @@ class mySynth : public axSynth
     bool        is_gui_initialized;
     axSurface   *srfKnob;
     // --- parameters ---
-    parFloat    *pGain;
-    parInteger  *pTuneOct, *pTuneSemi, *pTuneCent;
-    parFloat    *pAttack, *pDecay, *pSustain, *pRelease;
+
+    parFloat    *pO1Gain;
+    parFloat    *pO1VolAtt, *pO1VolDec, *pO1VolSus, *pO1VolRel;
+    parInteger  *pO1TuneOct, *pO1TuneSemi, *pO1TuneCent;
+
+    parFloat    *pO2Gain;
+    parFloat    *pO2VolAtt, *pO2VolDec, *pO2VolSus, *pO2VolRel;
+    parInteger  *pO2TuneOct, *pO2TuneSemi, *pO2TuneCent;
+
+    parFloat    *pMasGain;
+    parFloat    *pMasVolAtt, *pMasVolDec, *pMasVolSus, *pMasVolRel;
+
     // --- widgets ---
-    wdgImgKnob2 *wGain;
-    wdgImgKnob2 *wTuneOct, *wTuneSemi, *wTuneCent;
-    wdgImgKnob2 *wAttack, *wDecay, *wSustain, *wRelease;
+
+    wdgImgKnob2 *wO1Gain;
+    wdgImgKnob2 *wO1VolAtt, *wO1VolDec, *wO1VolSus, *wO1VolRel;
+    wdgImgKnob2 *wO1TuneOct, *wO1TuneSemi, *wO1TuneCent;
+
+    wdgImgKnob2 *wO2Gain;
+    wdgImgKnob2 *wO2VolAtt, *wO2VolDec, *wO2VolSus, *wO2VolRel;
+    wdgImgKnob2 *wO2TuneOct, *wO2TuneSemi, *wO2TuneCent;
+
+    wdgImgKnob2 *wMasGain;
+    wdgImgKnob2 *wMasVolAtt, *wMasVolDec, *wMasVolSus, *wMasVolRel;
+
   public:
 
     //--------------------------------------------------
@@ -49,14 +70,32 @@ class mySynth : public axSynth
         setupAudio(0,2,true);
         setupEditor(AX_WIDTH,AX_HEIGHT);
         for (int i=0; i<MAX_VOICES; i++) VM->appendVoice( new myVoice() );
-        appendParameter( pGain     = new parFloat(  this,v_gain,    "gain","",  0.5 ));
-        appendParameter( pTuneOct  = new parInteger(this,v_tuneoct, "oct", "",  0, -4, 4  ));
-        appendParameter( pTuneSemi = new parInteger(this,v_tunesemi,"semi","",  0, -12,12 ));
-        appendParameter( pTuneCent = new parInteger(this,v_tunecent,"cent","",  0, -50,50 ));
-        appendParameter( pAttack   = new parFloat(  this,v_attack,  "att", "",  0 ));
-        appendParameter( pDecay    = new parFloat(  this,v_decay,   "dec", "",  0 ));
-        appendParameter( pSustain  = new parFloat(  this,v_sustain, "sus", "",  1 ));
-        appendParameter( pRelease  = new parFloat(  this,v_release, "rel", "",  0 ));
+
+        appendParameter( pO1Gain     = new parFloat(  this,v_o1_gain,     "gain","",  0.5 ));
+        appendParameter( pO1VolAtt   = new parFloat(  this,v_o1_vol_att,  "att", "",  0 ));
+        appendParameter( pO1VolDec   = new parFloat(  this,v_o1_vol_dec,  "dec", "",  0 ));
+        appendParameter( pO1VolSus   = new parFloat(  this,v_o1_vol_sus,  "sus", "",  1 ));
+        appendParameter( pO1VolRel   = new parFloat(  this,v_o1_vol_rel,  "rel", "",  0 ));
+
+        appendParameter( pO1TuneOct   = new parInteger(this,v_o1_tune_oct,  "oct", "",  0, -4, 4  ));
+        appendParameter( pO1TuneSemi  = new parInteger(this,v_o1_tune_semi, "semi","",  0, -12,12 ));
+        appendParameter( pO1TuneCent  = new parInteger(this,v_o1_tune_cent, "cent","",  0, -50,50 ));
+
+        appendParameter( pO2Gain     = new parFloat(  this,v_o2_gain,     "gain","",  0.5 ));
+        appendParameter( pO2VolAtt   = new parFloat(  this,v_o2_vol_att,  "att", "",  0 ));
+        appendParameter( pO2VolDec   = new parFloat(  this,v_o2_vol_dec,  "dec", "",  0 ));
+        appendParameter( pO2VolSus   = new parFloat(  this,v_o2_vol_sus,  "sus", "",  1 ));
+        appendParameter( pO2VolRel   = new parFloat(  this,v_o2_vol_rel,  "rel", "",  0 ));
+
+        appendParameter( pO2TuneOct   = new parInteger(this,v_o2_tune_oct,  "oct", "",  0, -4, 4  ));
+        appendParameter( pO2TuneSemi  = new parInteger(this,v_o2_tune_semi, "semi","",  0, -12,12 ));
+        appendParameter( pO2TuneCent  = new parInteger(this,v_o2_tune_cent, "cent","",  0, -50,50 ));
+
+        appendParameter( pMasGain     = new parFloat(  this,v_mas_gain,     "gain","",  0.5 ));
+        appendParameter( pMasVolAtt   = new parFloat(  this,v_mas_vol_att,  "att", "",  0 ));
+        appendParameter( pMasVolDec   = new parFloat(  this,v_mas_vol_dec,  "dec", "",  0 ));
+        appendParameter( pMasVolSus   = new parFloat(  this,v_mas_vol_sus,  "sus", "",  1 ));
+        appendParameter( pMasVolRel   = new parFloat(  this,v_mas_vol_rel,  "rel", "",  0 ));
         processParameters();
       }
 
@@ -78,25 +117,58 @@ class mySynth : public axSynth
           srfKnob = loadPng( (unsigned char*)knob, knob_size );
           is_gui_initialized=true;
         }
-        panel->appendWidget(wGain     = new wdgImgKnob2(this, v_gain,     axRect( 10,30,32,64),wal_None,65,srfKnob));
-        panel->appendWidget(wTuneOct  = new wdgImgKnob2(this, v_tuneoct,  axRect( 50,30,32,64),wal_None,65,srfKnob));
-        panel->appendWidget(wTuneSemi = new wdgImgKnob2(this, v_tunesemi, axRect( 90,30,32,64),wal_None,65,srfKnob));
-        panel->appendWidget(wTuneCent = new wdgImgKnob2(this, v_tunecent, axRect(130,30,32,64),wal_None,65,srfKnob));
 
-        panel->appendWidget(wAttack   = new wdgImgKnob2(this, v_attack,   axRect( 10,90,32,64),wal_None,65,srfKnob));
-        panel->appendWidget(wDecay    = new wdgImgKnob2(this, v_decay,    axRect( 50,90,32,64),wal_None,65,srfKnob));
-        panel->appendWidget(wSustain  = new wdgImgKnob2(this, v_sustain,  axRect( 90,90,32,64),wal_None,65,srfKnob));
-        panel->appendWidget(wRelease  = new wdgImgKnob2(this, v_release,  axRect(130,90,32,64),wal_None,65,srfKnob));
+        panel->appendWidget(wO1Gain     = new wdgImgKnob2(this, v_o1_gain,      axRect( 10, 10,32,64),wal_None,65,srfKnob));
+        panel->appendWidget(wO1VolAtt   = new wdgImgKnob2(this, v_o1_vol_att,   axRect( 90, 10,32,64),wal_None,65,srfKnob));
+        panel->appendWidget(wO1VolDec   = new wdgImgKnob2(this, v_o1_vol_dec,   axRect(130, 10,32,64),wal_None,65,srfKnob));
+        panel->appendWidget(wO1VolSus   = new wdgImgKnob2(this, v_o1_vol_sus,   axRect(170, 10,32,64),wal_None,65,srfKnob));
+        panel->appendWidget(wO1VolRel   = new wdgImgKnob2(this, v_o1_vol_rel,   axRect(210, 10,32,64),wal_None,65,srfKnob));
 
+        panel->appendWidget(wO1TuneOct  = new wdgImgKnob2(this, v_o1_tune_oct,  axRect(250, 10,32,64),wal_None,65,srfKnob));
+        panel->appendWidget(wO1TuneSemi = new wdgImgKnob2(this, v_o1_tune_semi, axRect(290, 10,32,64),wal_None,65,srfKnob));
+        panel->appendWidget(wO1TuneCent = new wdgImgKnob2(this, v_o1_tune_cent, axRect(330, 10,32,64),wal_None,65,srfKnob));
 
-        aEditor->connect(wGain,     pGain);
-        aEditor->connect(wTuneOct,  pTuneOct);
-        aEditor->connect(wTuneSemi, pTuneSemi);
-        aEditor->connect(wTuneCent, pTuneCent);
-        aEditor->connect(wAttack,   pAttack);
-        aEditor->connect(wDecay,    pDecay);
-        aEditor->connect(wSustain,  pSustain);
-        aEditor->connect(wRelease,  pRelease);
+        panel->appendWidget(wO2Gain     = new wdgImgKnob2(this, v_o2_gain,      axRect( 10, 90,32,64),wal_None,65,srfKnob));
+        panel->appendWidget(wO2VolAtt   = new wdgImgKnob2(this, v_o2_vol_att,   axRect( 90, 90,32,64),wal_None,65,srfKnob));
+        panel->appendWidget(wO2VolDec   = new wdgImgKnob2(this, v_o2_vol_dec,   axRect(130, 90,32,64),wal_None,65,srfKnob));
+        panel->appendWidget(wO2VolSus   = new wdgImgKnob2(this, v_o2_vol_sus,   axRect(170, 90,32,64),wal_None,65,srfKnob));
+        panel->appendWidget(wO2VolRel   = new wdgImgKnob2(this, v_o2_vol_rel,   axRect(210, 90,32,64),wal_None,65,srfKnob));
+
+        panel->appendWidget(wO2TuneOct  = new wdgImgKnob2(this, v_o2_tune_oct,  axRect(250, 90,32,64),wal_None,65,srfKnob));
+        panel->appendWidget(wO2TuneSemi = new wdgImgKnob2(this, v_o2_tune_semi, axRect(290, 90,32,64),wal_None,65,srfKnob));
+        panel->appendWidget(wO2TuneCent = new wdgImgKnob2(this, v_o2_tune_cent, axRect(330, 90,32,64),wal_None,65,srfKnob));
+
+        panel->appendWidget(wMasGain    = new wdgImgKnob2(this, v_mas_gain,     axRect( 10,170,32,64),wal_None,65,srfKnob));
+        panel->appendWidget(wMasVolAtt  = new wdgImgKnob2(this, v_mas_vol_att,  axRect( 90,170,32,64),wal_None,65,srfKnob));
+        panel->appendWidget(wMasVolDec  = new wdgImgKnob2(this, v_mas_vol_dec,  axRect(130,170,32,64),wal_None,65,srfKnob));
+        panel->appendWidget(wMasVolSus  = new wdgImgKnob2(this, v_mas_vol_sus,  axRect(170,170,32,64),wal_None,65,srfKnob));
+        panel->appendWidget(wMasVolRel  = new wdgImgKnob2(this, v_mas_vol_rel,  axRect(210,170,32,64),wal_None,65,srfKnob));
+
+        aEditor->connect( wO1Gain,     pO1Gain    );
+        aEditor->connect( wO1VolAtt,   pO1VolAtt  );
+        aEditor->connect( wO1VolDec,   pO1VolDec  );
+        aEditor->connect( wO1VolSus,   pO1VolSus  );
+        aEditor->connect( wO1VolRel,   pO1VolRel  );
+
+        aEditor->connect( wO1TuneOct,   pO1TuneOct  );
+        aEditor->connect( wO1TuneSemi,  pO1TuneSemi );
+        aEditor->connect( wO1TuneCent,  pO1TuneCent );
+
+        aEditor->connect( wO2Gain,     pO2Gain    );
+        aEditor->connect( wO2VolAtt,   pO2VolAtt  );
+        aEditor->connect( wO2VolDec,   pO2VolDec  );
+        aEditor->connect( wO2VolSus,   pO2VolSus  );
+        aEditor->connect( wO2VolRel,   pO2VolRel  );
+
+        aEditor->connect( wO2TuneOct,   pO2TuneOct  );
+        aEditor->connect( wO2TuneSemi,  pO2TuneSemi );
+        aEditor->connect( wO2TuneCent,  pO2TuneCent );
+
+        aEditor->connect( wMasGain,     pMasGain    );
+        aEditor->connect( wMasVolAtt,   pMasVolAtt  );
+        aEditor->connect( wMasVolDec,   pMasVolDec  );
+        aEditor->connect( wMasVolSus,   pMasVolSus  );
+        aEditor->connect( wMasVolRel,   pMasVolRel  );
         aEditor->doRealign();
       }
 
@@ -110,14 +182,31 @@ class mySynth : public axSynth
         #define v3  (v*v*v)
         switch(aParameter->mID)
         {
-          case v_gain:      VM->control( v_gain,      v3 );     break;
-          case v_tuneoct:   VM->control( v_tuneoct,   v );      break;
-          case v_tunesemi:  VM->control( v_tunesemi,  v );      break;
-          case v_tunecent:  VM->control( v_tunecent,  v/100 );  break;
-          case v_attack:    VM->control( v_attack,    v );      break;
-          case v_decay:     VM->control( v_decay,     v );      break;
-          case v_sustain:   VM->control( v_sustain,   v );      break;
-          case v_release:   VM->control( v_release,   v );      break;
+          case v_o1_gain:      VM->control( v_o1_gain,      v3 );     break;
+          case v_o1_vol_att:   VM->control( v_o1_vol_att,   v  );     break;
+          case v_o1_vol_dec:   VM->control( v_o1_vol_dec,   v  );     break;
+          case v_o1_vol_sus:   VM->control( v_o1_vol_sus,   v2 );     break;
+          case v_o1_vol_rel:   VM->control( v_o1_vol_rel,   v  );     break;
+
+          case v_o1_tune_oct:   VM->control( v_o1_tune_oct,   v  );     break;
+          case v_o1_tune_semi:  VM->control( v_o1_tune_semi,  v  );     break;
+          case v_o1_tune_cent:  VM->control( v_o1_tune_cent,  v/100 );  break;
+
+          case v_o2_gain:      VM->control( v_o2_gain,      v3 );     break;
+          case v_o2_vol_att:   VM->control( v_o2_vol_att,   v  );     break;
+          case v_o2_vol_dec:   VM->control( v_o2_vol_dec,   v  );     break;
+          case v_o2_vol_sus:   VM->control( v_o2_vol_sus,   v2 );     break;
+          case v_o2_vol_rel:   VM->control( v_o2_vol_rel,   v  );     break;
+
+          case v_o2_tune_oct:   VM->control( v_o2_tune_oct,   v  );     break;
+          case v_o2_tune_semi:  VM->control( v_o2_tune_semi,  v  );     break;
+          case v_o2_tune_cent:  VM->control( v_o2_tune_cent,  v/100 );  break;
+
+          case v_mas_gain:      VM->control( v_mas_gain,      v3 );     break;
+          case v_mas_vol_att:   VM->control( v_mas_vol_att,   v  );     break;
+          case v_mas_vol_dec:   VM->control( v_mas_vol_dec,   v  );     break;
+          case v_mas_vol_sus:   VM->control( v_mas_vol_sus,   v2 );     break;
+          case v_mas_vol_rel:   VM->control( v_mas_vol_rel,   v  );     break;
         }
         #undef v2
         #undef v3

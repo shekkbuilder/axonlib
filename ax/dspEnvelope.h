@@ -38,7 +38,7 @@
 #define env_Release   4
 #define env_Finished  5
 
-#define env_Threshold EPSILON //0.001f
+#define env_Threshold 0.001f
 #define env_MaxStages 5
 //#define env_Scale     6
 
