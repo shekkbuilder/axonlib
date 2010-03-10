@@ -26,18 +26,22 @@
 #include "axArray.h"
 #include "axString.h"
 
-//----------
+class axModule;
+
+//----------------------------------------------------------------------
+//
+// pin
+//
+//----------------------------------------------------------------------
 
 // mod pin type
 #define mpt_Data    0
 #define mpt_Signal  1
 
-// mod pin resolution
-#define mpr_Const   0
-#define mpr_Static  1
-#define mpr_Dynamic 2
-
-class axModule;
+// mod pin mode
+#define mpm_Const   0
+#define mpm_Dynamic 1 // audio-rate
+#define mpm_Static  2 //
 
 //----------
 
@@ -46,36 +50,36 @@ class axPin
   protected:
     axModule* mOwner;
     axString  mName;
-    int       mType;    // 0=data, 1=signal, 2=multi
-    int       mRes;     // 0=const, 1=static, 2=dynamic
-    float     mValue;
-    float*    mPtr;
+    int       mType;          // 0=data, 1=signal, 2=multi
+    int       mMode;          // 0=const, 1=static, 2=dynamic
+    float     mDataValue;     // data output: put calculated output here
+    float*    mDataPtr;       // data input: ptr directly to value
+    axModule* mSignalModule;  // signal output: destination module
+    int       mSignalIndex;   // signal output: destination signal pin number
   public:
-    axPin(axModule* aOwner, axString aName, int aType, int aRes=mpr_Dynamic, float aValue=0, float* aPtr=NULL)
+    axPin(axModule* aOwner, axString aName, int aType, int aMode=mpm_Dynamic, float aValue=0, float* aPtr=NULL)
       {
-        mOwner  = aOwner;
-        mName   = aName;
-        mType   = aType;
-        mRes    = aRes;
-        mValue  = aValue;
-        mPtr    = aPtr;
+        mOwner        = aOwner;
+        mName         = aName;
+        mType         = aType;
+        mMode         = aMode;
+        mDataValue    = aValue;
+        mDataPtr      = aPtr;
+        mSignalModule = NULL;
+        mSignalIndex  = 0;
       }
-
-    inline axModule* getOwner(void)         { return mOwner; }
-    inline axString  getName(void)          { return mName; }
-    inline  int      getType(void)          { return mType; }
-    inline int       getRes(void)           { return mRes; }
-
-    inline float     getValue(void)         { return mValue; }
-    inline float*    getValueAdr(void)      { return &mValue; }
-    inline float*    getPtr(void)           { return mPtr; }
-    inline float**   getPtrAdr(void)        { return &mPtr; }
-
-    inline void      setPtr(float* aPtr)    { mPtr=aPtr; }
-    inline void      setValue(float aValue) { mValue=aValue; } // duplicate: set/write
-
-    inline float     readValue(void)        { return *mPtr; }
-    inline void      writeValue(float aValue) { mValue=aValue; }
+    inline axModule* getOwner(void)           { return mOwner; }
+    inline axString  getName(void)            { return mName; }
+    inline  int      getType(void)            { return mType; }
+    inline int       getMode(void)            { return mMode; }
+    inline float     getValue(void)           { return mDataValue; }
+    inline float*    getValueAdr(void)        { return &mDataValue; }
+    inline float*    getPtr(void)             { return mDataPtr; }
+    inline float**   getPtrAdr(void)          { return &mDataPtr; }
+    inline void      setPtr(float* aPtr)      { mDataPtr=aPtr; }
+  //inline void      setValue(float aValue)   { mDataValue=aValue; }
+    inline float     readValue(void)          { return *mDataPtr; }
+    inline void      writeValue(float aValue) { mDataValue=aValue; }
 
 };
 
@@ -85,80 +89,66 @@ typedef axArray<axPin*> axPins;
 
 //----------------------------------------------------------------------
 //
-//
+// module base
 //
 //----------------------------------------------------------------------
 
-// module signal types
-#define mst_gate    1
-#define mst_num     2
-#define mst_value   3
-#define mst_noteon  4
-#define mst_noteoff 5
-#define mst_ctrl    6
+// // module signal types
+// #define mst_gate    1
+// #define mst_num     2
+// #define mst_value   3
+// #define mst_noteon  4
+// #define mst_noteoff 5
+// #define mst_ctrl    6
 
 //----------
 
 class axModuleBase
 {
   public:
-    virtual void doSignal(int aIndex, int aType, int aNum=0, float aVal=0/*, void* aPtr*/) {}
-    virtual void doProcess(void) {}
-    virtual void doCompile(void) {}
-    virtual void doExecute(void) {}
-    //virtual void doNoteOn(int aNote, float aVelocity) {}
-    //virtual void doNoteOff(int aNote/*, float aVelocity*/) {}
-    //virtual void doControl(int aIndex, float aValue) {}
+    virtual void doProcess(void) {}       // 'normal', non-compiled execution
+    virtual void doCompile(void) {}       // prepare/compile graph (prepare execlist)
+    virtual void doExecute(void) {}       // execute compiled network (execlist)
+    virtual void doSignal(int aIndex) {}  // send signal
 };
 
-/*
-
-onProcess - 'normal', non-compiled execution
-onSignal  -
-onCompile - cache pointers, everything you need into this module,
-            check which inputs is connected, ..
-            so that the module network is independent of the graph
-onExecute - exec compiled network
-
-*/
-
-//------------------------------
+//----------------------------------------------------------------------
 
 class axModuleListener
 {
-  //virtual void onChangePins(void) {}      // number of pins (in/out) changed
-  //virtual void onChangeParams(void) {}    // number of parameters changed
+  public:
+    virtual void onChangePins(void) {}      // number of pins (in/out) changed
+    virtual void onChangeParams(void) {}    // number of parameters changed
 };
 
 //----------------------------------------------------------------------
 //
-// axModule
+// module
 //
 //----------------------------------------------------------------------
 
 // module Modes
-#define mmo_Const   0
-#define mmo_Static  1
-#define mmo_Dynamic 2
+#define mmo_Const   0   // const/static
+#define mmo_Dynamic 1   // updated every sample (or 'tick')
+
+//----------
 
 class axModule : public axModuleBase
 {
   protected:
     axModuleListener* mListener;
-    int       mMode;
-    axString  mName;
-    axPins    mInputs;
-    axPins    mOutputs;
-    //bool      mIsDynamic;
-    //bool      mIsStatic;
+    axString          mName;
+    int               mMode;
+    axPins            mInputs;
+    axPins            mOutputs;
 
   public:
 
-    axModule(axModuleListener* aListener, axString aName)
+    axModule(axModuleListener* aListener, axString aName/*, int aMode=mmo_Dynamic*/)
       {
         mListener = aListener;
-        mMode = mmo_Const;
-        mName = aName;
+        mName     = aName;
+        mMode     = mmo_Dynamic;//aMode;
         mInputs.clear();
         mOutputs.clear();
       }
@@ -193,6 +183,17 @@ class axModule : public axModuleBase
 
     //----------------------------------------
 
+    virtual void connectDataInput( int aInput, float* aSource)
+      {
+        axPin* dst = mInputs[aInput];
+        if (dst->getType()==mpt_Data)
+        {
+          dst->setPtr(aSource);
+        }
+      }
+
+    //----------
+
     virtual void connectDataInput( int aInput, axModule* aSource, int aOutput)
       {
         axPin* src = aSource->getOutPin(aOutput);
@@ -204,16 +205,8 @@ class axModule : public axModuleBase
         }
       }
 
-    //----------
 
-    virtual void connectDataInput( int aInput, float* aSource)
-      {
-        axPin* dst = mInputs[aInput];
-        if (dst->getType()==mpt_Data)
-        {
-          dst->setPtr(aSource);
-        }
-      }
+    //----------------------------------------
 
     //virtual void doSignal(int aIndex, int aType, int aNum=0, float aVal=0/*, void* aPtr*/) {}
     //virtual void doProcess(void) {}
