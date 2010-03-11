@@ -93,6 +93,7 @@ class axPluginBase
       call this in your plugin constructor if your plugin has a gui.
       \param aWidth the initial width of the editor
       \param aHeight the initial height of the editor
+      \param aManage if false, you have to create (and manage) the axEditor class yourself
     */
     virtual void setupEditor(int aWidth, int aHeight) {}
 
@@ -259,6 +260,10 @@ class axPlugin  : public axPluginImpl,
         axCleanup(mPlugFlags);
         //TRACE("axPlugin destructor ok\n");
       }
+
+    //--------------------------------------------------
+
+    inline axParameter* getParamPtr(int aIndex) { return mParameters[aIndex]; }
 
     //--------------------------------------------------
     // programs vs params

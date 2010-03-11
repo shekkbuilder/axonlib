@@ -96,7 +96,7 @@ class axPluginVst :  public AudioEffectX,
     int           mCurProg;
     float         mPrograms[AX_NUMPROGS][AX_NUMPARAMS];
     char          mProgramNames[AX_NUMPROGS][kVstMaxProgNameLen+1];        // !!!!!
-
+  //protected:
 
     //----------------------------------------------------------------------
 
@@ -133,8 +133,8 @@ class axPluginVst :  public AudioEffectX,
         for( int i=0; i<MAX_MIDI_SEND; i++ ) mMidiEventList.events[i] = &mMidiEvents[i];
         mEditorIsOpen = false;
         canProcessReplacing();      // need this for vst sdk 2.4
-//        setNumInputs(2);            // defaults to 2 inputs & outputs
-//        setNumOutputs(2);           // aka stereo effect
+        //setNumInputs(2);            // defaults to 2 inputs & outputs
+        //setNumOutputs(2);           // aka stereo effect
       }
 
     virtual ~axPluginVst()
