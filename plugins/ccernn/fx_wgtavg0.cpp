@@ -96,9 +96,9 @@ class myPlugin : public axPlugin,
 
     //--------------------------------------------------
 
-    virtual void* doCreateEditor(void)
+    virtual void* doCreateEditor(int aParent)
       {
-        axEditor* EDIT = new axEditor( "fx_wgtavg_gui", this, -1, axRect(0,0,AX_WIDTH-1,AX_HEIGHT-1), AX_FLAGS );
+        axEditor* EDIT = new axEditor( "fx_wgtavg_gui", this, -1, axRect(0,0,AX_WIDTH-1,AX_HEIGHT-1), AX_FLAGS, aParent );
         wdgPanel *P;
         EDIT->appendWidget(    P = new wdgPanel( this,-1, NULL_RECT,           wal_Client) );
         P->appendWidget(   wMode = new wdgSwitch(this, 0, axRect(10,10,50,20), wal_None  ) );

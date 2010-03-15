@@ -234,9 +234,9 @@ class myPlugin : public axPlugin,
     //----------------------------------------------------------------------
 
     // can this one die because of some threading issues? (ala close editor) think,think..
-    virtual void* doCreateEditor(void)
+    virtual void* doCreateEditor(int aParent)
       {
-        axEditor* EDIT = new axEditor("ana_sigview_editor",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
+        axEditor* EDIT = new axEditor("ana_sigview_editor",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS,aParent);
         wdgPanel* panel;
         EDIT->appendWidget( panel = new wdgPanel(this,-1,NULL_RECT,wal_Client));
 

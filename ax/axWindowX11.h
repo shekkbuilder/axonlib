@@ -35,11 +35,13 @@
 #include "axGlobals.h"
 //#include "axColor.h"
 #include "axWindow.h"
+//#include "axThread.h"
 
 //----------------------------------------------------------------------
 
 void eventProc(XEvent* ev);
 void* timerProc(void* data);
+//void* threadProc(void* data);
 static char noData[] = { 0,0,0,0,0,0,0,0 };
 
 // http://tronche.com/gui/x/xlib/appendix/b/
@@ -67,6 +69,7 @@ static char noData[] = { 0,0,0,0,0,0,0,0 };
 
 //----------------------------------------------------------------------
 
+
 class axWindowImpl : public axWindowBase
 {
   private:
@@ -84,10 +87,13 @@ class axWindowImpl : public axWindowBase
     int       mWinCursor;
     XColor    mBlack;
 
+    //pthread_t mThreadHandle;
+
   public:
 
-    axWindowImpl(axString aWinName, axWidgetListener* aListener, int aID, axRect aRect, int aWinFlags=0)
-    : axWindowBase(aWinName,aListener,aID,aRect,aWinFlags)
+    //axWindowImpl(axString aWinName, axWidgetListener* aListener, int aID, axRect aRect, int aWinFlags=0)
+    axWindowImpl(axString aWinName, axWidgetListener* aListener, int aID, axRect aRect, int aWinFlags, int aParent)
+    : axWindowBase(aWinName,aListener,aID,aRect,aWinFlags,aParent)
       {
     /*long*/ eventmask  = ExposureMask
                         | ButtonPressMask
@@ -99,7 +105,7 @@ class axWindowImpl : public axWindowBase
                         | PropertyChangeMask
                         | ClientMessage;
 //-----
-        if (aWinFlags&AX_WINDOWED)
+        if (aWinFlags&AX_WINDOWED) // || aParent=0;
         {
 
 //          mHandle = XCreateSimpleWindow(
@@ -142,9 +148,19 @@ class axWindowImpl : public axWindowBase
           swa.background_pixmap = None;       // http://tronche.com/gui/x/xlib/window/attributes/background.html
           swa.colormap          = 0;          // http://tronche.com/gui/x/xlib/window/attributes/colormap.html
           swa.event_mask        = eventmask;  // http://tronche.com/gui/x/xlib/window/attributes/event-and-do-not-propagate.html
+
+          //trace("axWindowX11: XDefaultRootWindow(gDP)=" << (int)XDefaultRootWindow(gDP) << " aParent=" << aParent << " gDP=" << (int)gDP );
+
           mHandle = XCreateWindow(
             gDP,
-            XDefaultRootWindow(gDP),
+
+            // here you must supply the parent window that as been given to you in the effEditOpen call
+            // Juce checks, that there is a child window of this parent after the return from effEditOpen,
+            // and if there is not, it will ignore your _eventproc. This is what happens.
+
+            //XDefaultRootWindow(gDP),
+            (Window)aParent,
+
             aRect.x,aRect.y,aRect.w,aRect.h,
             CopyFromParent,
             CopyFromParent,
@@ -227,6 +243,7 @@ class axWindowImpl : public axWindowBase
     virtual void show(void)
       {
         XMapWindow(gDP,mHandle);
+        //pthread_create(&mThreadHandle,NULL,&threadProc,this);
       }
 
     //----------
@@ -323,21 +340,19 @@ class axWindowImpl : public axWindowBase
 
     virtual void invalidate(int aX, int aY, int aW, int aH)
       {
-        //TRACE("invalidate (winx11)\n");
         static XExposeEvent ev;
         ev.type     = Expose;
         ev.display  = gDP;
-        ev.window   = mHandle;
+        ev.window   = mHandle; // mParent;
         ev.x        = aX;
         ev.y        = aY;
         ev.width    = aW;
         ev.height   = aH;
         ev.count    = 0;
-        //TODO: test true
         XSendEvent(gDP,mHandle,false,ExposureMask,(XEvent*)&ev);
         //eventhandler( (XEvent*)&ev);
         //XFlush(gDP);
-        //XClearArea(gDP, mHandle, aRect.x1, aRect.y1, aRect.width(), aRect.height(), true);
+        //XClearArea(gDP, mHandle, aX, aY, aW, aH, true);
         //XSync(gDP,false);
       }
 
@@ -578,8 +593,8 @@ class axWindowImpl : public axWindowBase
 
     //----------
 
-    virtual void eventHandler(XEvent* ev)
     //virtual void eventHandler(int aEvent)
+    virtual void eventHandler(XEvent* ev)
       {
         //XEvent* ev = (XEvent*)aEvent;
         axRect rc;
@@ -589,27 +604,21 @@ class axWindowImpl : public axWindowBase
         switch (ev->type)
         {
           case ConfigureNotify:
-            //TRACE("ConfigureNotify\n");
-            //TODO: resize surface, if any
             w = ev->xconfigure.width;
             h = ev->xconfigure.height;
             while (XCheckTypedWindowEvent(gDP, ev->xconfigure.window, ConfigureNotify, ev))
             {
-              //rc.combine( ev->xexpose.x, ev->xexpose.y, ev->xexpose.width, ev->xexpose.height );
+              //rc.combine(ev->xexpose.x, ev->xexpose.y,ev->xexpose.width,ev->xexpose.height);
               w = ev->xconfigure.width;
               h = ev->xconfigure.height;
             }
-            //TRACE("ConfigureNotify %i,%i\n",w,h);
-            //flush();
-
-            //if (w!=mRect.w || h!=mRect.h)
+            trace("ConfigureNotify " << w << "," << h);
+           //flush();
+            //if ((w!=mRect.w) || (h!=mRect.h))
             //{
-
             resizeBuffer(w,h);
             doResize(w,h);
-
             //}
-
             //onRedraw(mRect);
             break;
           case Expose:
@@ -622,7 +631,7 @@ class axWindowImpl : public axWindowBase
             {
               rc.combine( ev->xexpose.x, ev->xexpose.y, ev->xexpose.width, ev->xexpose.height );
             }
-            //TRACE("Expose %i,%i,%i,%i\n",rc.x, rc.y, rc.w,rc.h);
+            trace("Expose " << rc.x << "," << rc.y << "," << rc.w << "," << rc.h);
             if (mWinFlags&AX_BUFFERED && mSurface)
             {
               mSurfaceMutex.lock();
@@ -646,29 +655,35 @@ class axWindowImpl : public axWindowBase
             break;
           case ClientMessage:
             val = ev->xclient.data.l[0];
+            trace("ClientMessage " << val);
             if (val==666) doTimer();  //TODO: fix?
             break;
           case ButtonPress:
             but = buttons(ev->xbutton.button);
             key = keys(ev->xbutton.state);
+            trace("ButtonPress " << ev->xbutton.x << "," << ev->xbutton.y << ", " << (but|key));
             doMouseDown(ev->xbutton.x, ev->xbutton.y, but|key );
             //mClickedButton = but;
             break;
           case ButtonRelease:
             but = buttons(ev->xbutton.button);
             key = keys(ev->xbutton.state);
+            trace("ButtonRelease " << ev->xbutton.x << "," << ev->xbutton.y << ", " << (but|key));
             doMouseUp(ev->xbutton.x, ev->xbutton.y, but|key);
             //mClickedButton = 0;
             break;
           case MotionNotify:
             but = 0;//buttons(ev->xbutton.button);
             key = keys(ev->xbutton.state);
+            trace("MotionNotify " << ev->xbutton.x << "," << ev->xbutton.y << ", " << (but|key));
             doMouseMove(ev->xbutton.x, ev->xbutton.y, but|key);
             break;
           case KeyPress:
+            trace("KeyPress " << ev->xkey.keycode << "," << ev->xkey.state);
             doKeyDown(ev->xkey.keycode, ev->xkey.state);
             break;
           case KeyRelease:
+            trace("KeyRelease " << ev->xkey.keycode << "," << ev->xkey.state);
             doKeyUp(ev->xkey.keycode, ev->xkey.state);
             break;
 //
@@ -772,6 +787,26 @@ void* timerProc(void* data)
   }
   return NULL;
 }
+
+//----------------------------------------------------------------------
+
+//void* threadProc(void* data)
+//  {
+//    axWindowImpl* win = (axWindowImpl*)data;
+//    if (win)
+//    {
+//      XEvent ev;
+//      while (1)
+//      {
+//        XNextEvent(gDP,&ev);
+//        //unsigned int data = ev.xclient.data.l[0];
+//        //if (ev.type==ClientMessage && data==wmDeleteMessage) break;
+//        //else
+//        win->eventHandler(&ev);
+//      }
+//    }
+//    return NULL;
+//  }
 
 //----------------------------------------------------------------------
 #endif

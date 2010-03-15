@@ -4,7 +4,7 @@
 	(c) 2009, lubomir i. ivanov (neolit123 at gmail)
 	using axonlib 0.0.x:
 	<http://axonlib.googlecode.com/>
-	******************************************************************************  
+	******************************************************************************
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -146,10 +146,10 @@ class myPlugin : public axPlugin,
     // @ create editor
     // ------------------------------------
     //virtual axWindow* doCreateEditor(void)
-    virtual void* doCreateEditor(void)
+    virtual void* doCreateEditor(int aParent)
     {
       // @ new editor
-      axEditor* EDIT = new axEditor( "lofi_gui", this, -1, axRect(0,0,AX_WIDTH-1,AX_HEIGHT-1), AX_FLAGS );
+      axEditor* EDIT = new axEditor( "lofi_gui", this, -1, axRect(0,0,AX_WIDTH-1,AX_HEIGHT-1), AX_FLAGS, aParent );
       wdgPanel* panel;
       EDIT->appendWidget( panel = new wdgPanel(this,-1,NULL_RECT,wal_Client));
       // --------------------------------------

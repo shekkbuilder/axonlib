@@ -77,7 +77,8 @@ class myGraph : public axGraph,
 
     inline void setParam(int aIndex, float aValue)      { if (aIndex==0) const1->setValue(aValue); }
     inline void setInputs(float aLeft, float aRight)    { audioin->setInputs(aLeft,aRight); }
-    inline void getOutputs(float* aLeft, float* aRight) { *aLeft=audioout->getInput(0); *aRight=audioout->getInput(1);}
+    //inline void getOutputs(float* aLeft, float* aRight) { *aLeft=audioout->getInput(0); *aRight=audioout->getInput(1);}
+    inline void getOutputs(float* aLeft, float* aRight) { *aLeft=audioout->readInput(0); *aRight=audioout->readInput(1);}
 };
 
 //----------------------------------------------------------------------
@@ -93,8 +94,8 @@ class myEditor: public axEditor
     wdgImgKnob2*  wKnob;
 
   public:
-    myEditor(axString aWinName, axPlugin* aPlugin, int aID, axRect aRect, int aWinFlags=0)
-    : axEditor(aWinName,aPlugin,aID,aRect,aWinFlags)
+    myEditor(axString aWinName, axPlugin* aPlugin, int aID, axRect aRect, int aWinFlags, int aParent)
+    : axEditor(aWinName,aPlugin,aID,aRect,aWinFlags, aParent)
       { }
 
     inline void setup(axSurface* srf)
@@ -144,7 +145,7 @@ class myPlugin : public axEffect,
 
     // override axEffect's doCreateEditor
     // becuause we want our own editor class, and not the generic axEditor
-    virtual void* doCreateEditor(void)
+    virtual void* doCreateEditor(int aParent)
       {
         if (!mGuiInit)
         {
@@ -152,7 +153,7 @@ class myPlugin : public axEffect,
           mGuiInit = true;
         }
         myEditor* ed;
-        ed = new myEditor("test_graph_editor",this,-1,axRect(0,0,mWidth,mHeight),AX_FLAGS);
+        ed = new myEditor("test_graph_editor",this,-1,axRect(0,0,mWidth,mHeight),AX_FLAGS,aParent);
         ed->setup(srfKnob);
         mEditor = ed;
         return mEditor;

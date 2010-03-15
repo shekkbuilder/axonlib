@@ -365,9 +365,9 @@ class myPlugin : public axPlugin,
     //
     //----------------------------------------
 
-    virtual void* doCreateEditor(void)
+    virtual void* doCreateEditor(int aParent)
       {
-        axEditor* EDIT = new axEditor("with_gui_win",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
+        axEditor* EDIT = new axEditor("with_gui_win",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS,aParent);
         EDIT->appendWidget( wMain = new wdgPanel(this,-1,NULL_RECT,wal_Client));
         if (!mGuiInitialized) { mGuiInitialized = true; }
         wMain->appendWidget( wNumBeats  = new wdgKnob(   this, 0,axRect(10, 10, 128,32 ),wal_None) );

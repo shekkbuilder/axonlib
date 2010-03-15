@@ -52,10 +52,10 @@ class axWindowBase : public axContainer
 
   public:
 
-    axWindowBase(axString aWinName, axWidgetListener* aListener, int aID, axRect aRect, int aWinFlags=0)
+    axWindowBase(axString aWinName, axWidgetListener* aListener, int aID, axRect aRect, int aWinFlags, int aParent)
     : axContainer(aListener,aID,aRect/*,aWinFlags*/) // alignment
       {
-        mParent = 0;
+        mParent = aParent;//0;
         mWinFlags = aWinFlags;
         mCanvas = NULL;
         mSurface = NULL;
@@ -126,9 +126,11 @@ class axWindow : public axWindowImpl
 
   public:
 
-    axWindow(axString aWinName, axWidgetListener* aListener, int aID, axRect aRect, int aWinFlags=0)
-    : axWindowImpl(aWinName, aListener,aID,aRect,aWinFlags)
+    //axWindow(axString aWinName, axWidgetListener* aListener, int aID, axRect aRect, int aWinFlags=0)
+    axWindow(axString aWinName, axWidgetListener* aListener, int aID, axRect aRect, int aWinFlags, int aParent)
+    : axWindowImpl(aWinName, aListener,aID,aRect,aWinFlags,aParent)
       {
+        //mParent = aParent;
         mCanvas = new axCanvas( getHandle(), cmo_window );
         if (aWinFlags&AX_BUFFERED)
         {

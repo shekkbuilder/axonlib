@@ -204,9 +204,9 @@ class myPlugin : public axPlugin,
 
     //--------------------------------------------------
 
-    virtual void* doCreateEditor(void)
+    virtual void* doCreateEditor(int aParent)
       {
-        axEditor* EDIT = new axEditor( "midi_fibonacci_editor",this, -1, axRect(0,0,AX_WIDTH,AX_HEIGHT), AX_FLAGS );
+        axEditor* EDIT = new axEditor( "midi_fibonacci_editor",this, -1, axRect(0,0,AX_WIDTH,AX_HEIGHT), AX_FLAGS, aParent );
         wdgPanel* panel;
         EDIT->appendWidget( panel = new wdgPanel(this,-1,NULL_RECT,wal_Client) );
         // E->appendWidget( new wdgImage( E, -1, axRect(0,0,AX_WIDTH,AX_HEIGHT), wal_None, NULL, back_srf ) );

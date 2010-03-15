@@ -5,8 +5,10 @@
 #define AX_WIDTH      150
 #define AX_HEIGHT     190
 #define AX_FLAGS      (AX_EMBEDDED|AX_BUFFERED)
-//#define AX_DEBUG
-//#include "axDebug.h"
+
+#define AX_DEBUG
+#include "axDebug.h"
+
 #include "axMath.h"
 #include "axPlugin.h"
 #include "parFloat.h"
@@ -67,7 +69,7 @@ class myPlugin : public axPlugin,
 
     //--------------------------------------------------
 
-    virtual void* doCreateEditor(void)
+    virtual void* doCreateEditor(int aParent)
       {
         if(!editor_initialized)
         {
@@ -76,7 +78,7 @@ class myPlugin : public axPlugin,
           swSrf = loadPng(buffer,size);
           editor_initialized = true;
         }
-        axEditor* EDIT = new axEditor("ana_vu_window",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
+        axEditor* EDIT = new axEditor("ana_vu_window",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS,aParent);
         wdgPanel* panel;
         EDIT->appendWidget( panel = new wdgPanel(this,-1,NULL_RECT,wal_Client));
 

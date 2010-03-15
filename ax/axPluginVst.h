@@ -573,14 +573,16 @@ class axPluginVst :  public AudioEffectX,
     //----------------------------------------------------------------------
 
     // [internal]
-    void openEditor(void* ptr,long value)
+    void openEditor(void* ptr/*,long value*/)
       {
         //#ifdef linux
         //  if (gDP==NULL) gDP = (Display*)value; // gDP = (Display*)value;
         //#endif
         //if( mWindow ) doDestroyEditor();
         //if( mWindow ) TRACE("oops! mWindo is not NULL (axPluginVst::openEditor)\n"); // meaning we could be executing 'inside' it in another thread?????
-        axWindow* win = (axWindow*)doCreateEditor(/*mWidth,mHeight*/);
+
+        axWindow* win = (axWindow*)doCreateEditor((int)ptr);
+
         if (win)
         {
           win->reparent((int)ptr);
@@ -674,16 +676,17 @@ class axPluginVst :  public AudioEffectX,
             }
             break;
           case effEditOpen:
-            //TRACE("effEditOpen. ptr=%08x\n",(int)ptr);
+            //trace("axPluginVST effEditOpen: value=" << (int)value << "     ptr=" << (int)ptr);
             if (mFlags&pfl_HasEditor)
             {
               // what will happen if we close and re-open the plugin on a different screen/monitor
               // could we get a different Display* (for example, if it has a different bitdepth)?
               // if so, each window needs its own (cached?) Display*
               #ifdef linux
+                //trace("gDP=" << (int)gDP);
                 if (gDP==NULL) gDP = (Display*)value;
               #endif
-              openEditor(ptr,value);
+              openEditor(ptr/*,value*/);
               result = 1;
               mEditorIsOpen = true;
             }
@@ -705,7 +708,7 @@ class axPluginVst :  public AudioEffectX,
             break;
           case effVendorSpecific:
           //  // v = vendorSpecific (index, value, ptr, opt);
-            trace("- effVendorSpecific");
+            //trace("- effVendorSpecific");
             break;
           default:
             result = AudioEffectX::dispatcher(opcode,index,value,ptr,opt);

@@ -164,9 +164,9 @@ class myPlugin : public axPlugin,
 
     //--------------------------------------------------
 
-    virtual void* doCreateEditor(void)
+    virtual void* doCreateEditor(int aParent)
       {
-        axEditor* EDIT = new axEditor( "syn_binaural_gui",this, -1, axRect(0,0,AX_WIDTH,AX_HEIGHT), AX_FLAGS );
+        axEditor* EDIT = new axEditor( "syn_binaural_gui",this, -1, axRect(0,0,AX_WIDTH,AX_HEIGHT), AX_FLAGS, aParent );
 
         if(!is_gui_initialized)
         {

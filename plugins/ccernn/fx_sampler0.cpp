@@ -503,10 +503,10 @@ class myPlugin : public axPlugin,
     // editor
     //--------------------------------------------------
 
-    virtual void* doCreateEditor(void)
+    virtual void* doCreateEditor(int aParent)
       {
         if (!mGuiInitialized) { mGuiInitialized = true; }
-        axEditor* EDIT = new axEditor("with_gui_win",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
+        axEditor* EDIT = new axEditor("with_gui_win",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS,aParent);
         EDIT->appendWidget( wPanel = new wdgPanel(this,-1,NULL_RECT,wal_Client) );
         wPanel->appendWidget( wBeats          = new wdgKnob(  this, 0,axRect( 10, 10, 128, 32),wal_None) );
         wPanel->appendWidget( wSyncMode       = new wdgKnob(  this, 1,axRect( 10, 50, 128, 32),wal_None) );
