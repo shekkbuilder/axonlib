@@ -7,8 +7,8 @@
 #define AX_HEIGHT     384
 #define AX_FLAGS      (AX_EMBEDDED|AX_BUFFERED)
 
-//#define AX_DEBUG
-//#include "axDebug.h"
+#define AX_DEBUG
+#include "axDebug.h"
 
 #include "axPlugin.h"
 //#include "parFloat.h"
@@ -160,9 +160,10 @@ class myPlugin : public axPlugin,
     //--------------------------------------------------
 
     //virtual axWindow* doCreateEditor(void)
-    virtual void* doCreateEditor(void)
+    //virtual void* doCreateEditor(void)
+    virtual void* doCreateEditor(int aParent)
       {
-        axEditor* ed = new axEditor("plug_debug_win",this,-1,axRect(0,0,mWidth,mHeight),AX_FLAGS);
+        axEditor* ed = new axEditor("plug_debug_win",this,-1,axRect(0,0,mWidth,mHeight),AX_FLAGS,aParent);
         if(!is_gui_initialized)
         {
           mSrfSlider = loadPng( vslider1,    46002 );

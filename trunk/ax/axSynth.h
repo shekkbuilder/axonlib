@@ -127,13 +127,13 @@ class axSynth : public axPlugin,
     #define STR(s) STR2(s)
     #define WIN_NAME STR(AX_PLUGIN) "_window"
 
-    virtual void* doCreateEditor(void)
+    virtual void* doCreateEditor(int aParent)
       {
         //trace(WINCLASS);
         //trace( "strlen " << strlen(WINCLASS) );
         //trace( (int)WINCLASS[14] );
         axEditor* ED;
-        ED = new axEditor(WIN_NAME,this,-1,axRect(0,0,mWidth,mHeight),AX_FLAGS);
+        ED = new axEditor(WIN_NAME,this,-1,axRect(0,0,mWidth,mHeight),AX_FLAGS,aParent);
         do_SetupEditor(ED);
         mEditor = ED;
         //ED->doRealign();

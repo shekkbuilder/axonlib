@@ -61,10 +61,10 @@ class axEffect : public axPlugin,
     #define STR(s) STR2(s)
     #define WIN_NAME STR(AX_PLUGIN) "_window"
 
-    virtual void* doCreateEditor(void)
+    virtual void* doCreateEditor(int aParent)
       {
         axEditor* ED;
-        ED = new axEditor(WIN_NAME,this,-1,axRect(0,0,mWidth,mHeight),AX_FLAGS);
+        ED = new axEditor(WIN_NAME,this,-1,axRect(0,0,mWidth,mHeight),AX_FLAGS,aParent);
         do_SetupEditor(ED);
         mEditor = ED;
         return mEditor;

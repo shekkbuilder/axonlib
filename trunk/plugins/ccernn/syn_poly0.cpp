@@ -5,8 +5,8 @@
 #define AX_HEIGHT     100
 #define AX_FLAGS      (AX_EMBEDDED|AX_BUFFERED)
 
-//#define AX_DEBUG
-//#include "axDebug.h"
+#define AX_DEBUG
+#include "axDebug.h"
 
 #include "axSynth.h"
 #include "parFloat.h"

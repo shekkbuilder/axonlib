@@ -184,7 +184,8 @@ class axPluginBase
       if you called hasEditor in your constructor, this will be called th create the editor, before the plugin window is shown.
       \return pointer to window, cast to void* (to be platform-independent)
     */
-    virtual void* doCreateEditor() { return NULL; }
+
+    virtual void* doCreateEditor(int aParent) { return NULL; }
 
     /// destroy editor
     /**

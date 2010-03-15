@@ -95,8 +95,8 @@ class axEditor : public axWindow,
 
   public:
 
-    axEditor(axString aWinName, axPlugin* aPlugin, int aID, axRect aRect, int aWinFlags=0)
-    : axWindow(aWinName,this,aID,aRect,aWinFlags)
+    axEditor(axString aWinName, axPlugin* aPlugin, int aID, axRect aRect, int aWinFlags, int aParent)
+    : axWindow(aWinName,this,aID,aRect,aWinFlags,aParent)
       {
         mPlugin = aPlugin;
       }

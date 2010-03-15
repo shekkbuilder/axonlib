@@ -23,6 +23,9 @@
 #define axModule_included
 //----------------------------------------------------------------------
 
+//NOTE: pointer juggling might be dangerous if the graph is running
+//TODO: error/safety checking, mutexes?
+
 #include "axArray.h"
 #include "axString.h"
 
@@ -72,10 +75,12 @@ class axPin
     inline axString  getName(void)            { return mName; }
     inline  int      getType(void)            { return mType; }
     inline int       getMode(void)            { return mMode; }
+
     inline float     getValue(void)           { return mDataValue; }
     inline float*    getValueAdr(void)        { return &mDataValue; }
     inline float*    getPtr(void)             { return mDataPtr; }
     inline float**   getPtrAdr(void)          { return &mDataPtr; }
+
     inline void      setPtr(float* aPtr)      { mDataPtr=aPtr; }
   //inline void      setValue(float aValue)   { mDataValue=aValue; }
     inline float     readValue(void)          { return *mDataPtr; }
@@ -118,7 +123,7 @@ class axModuleListener
 {
   public:
     virtual void onChangePins(void) {}      // number of pins (in/out) changed
-    virtual void onChangeParams(void) {}    // number of parameters changed
+    //virtual void onChangeParams(void) {}    // number of parameters changed
 };
 
 //----------------------------------------------------------------------
@@ -128,8 +133,9 @@ class axModuleListener
 //----------------------------------------------------------------------
 
 // module Modes
-#define mmo_Const   0   // const/static
-#define mmo_Dynamic 1   // updated every sample (or 'tick')
+#define mmo_Const     0   // const/static
+#define mmo_Dynamic   1   // updated every sample (or 'tick')
+//#define mmo_Static  2   // updated every sample (or 'tick')
 
 //----------
 
@@ -168,8 +174,10 @@ class axModule : public axModuleBase
     inline axPin*   getInPin(int aIndex)        { return mInputs[aIndex]; }
     inline axPin*   getOutPin(int aIndex)       { return mOutputs[aIndex]; }
 
-    inline float    getInput(int aIndex)        { return mInputs[aIndex]->readValue(); }
-    inline float    getOutput(int aIndex)       { return mOutputs[aIndex]->getValue(); }
+    //inline float    getInput(int aIndex)        { return mInputs[aIndex]->readValue(); }
+    //inline float    getOutput(int aIndex)       { return mOutputs[aIndex]->getValue(); }
+    inline float    readInput(int aIndex)        { return mInputs[aIndex]->readValue(); }
+    inline float    readOutput(int aIndex)       { return mOutputs[aIndex]->getValue(); }
 
     void appendInput(axPin* pin)  { mInputs.append(pin); }
     void appendOutput(axPin* pin) { mOutputs.append(pin); }
@@ -186,10 +194,10 @@ class axModule : public axModuleBase
     virtual void connectDataInput( int aInput, float* aSource)
       {
         axPin* dst = mInputs[aInput];
-        if (dst->getType()==mpt_Data)
-        {
+        //if (dst->getType()==mpt_Data)
+        //{
           dst->setPtr(aSource);
-        }
+        //}
       }
 
     //----------
@@ -198,11 +206,12 @@ class axModule : public axModuleBase
       {
         axPin* src = aSource->getOutPin(aOutput);
         axPin* dst = mInputs[aInput];
-        if ( dst->getType()==mpt_Data && src->getType()==mpt_Data )
-        {
+        //if ( dst->getType()==mpt_Data
+        //  && src->getType()==mpt_Data )
+        //{
           float* ptr = src->getValueAdr();
           dst->setPtr(ptr);
-        }
+        //}
       }
 
 

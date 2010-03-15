@@ -138,9 +138,9 @@ class myPlugin : public axPlugin,
 
     //--------------------------------------------------
 
-    virtual void* doCreateEditor(void)
+    virtual void* doCreateEditor(int aParent)
       {
-        axEditor* EDIT = new axEditor("fx_dynamics0_window",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
+        axEditor* EDIT = new axEditor("fx_dynamics0_window",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS,aParent);
         wdgPanel* panel;
         EDIT->appendWidget( panel = new wdgPanel(this,-1,NULL_RECT,wal_Client));
 

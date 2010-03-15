@@ -345,9 +345,9 @@ class myPlugin : public axPlugin,
     // editor
     //--------------------------------------------------
 
-    virtual void* doCreateEditor(void)
+    virtual void* doCreateEditor(int aParent)
       {
-        axEditor* EDIT = new axEditor("with_gui_win",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS);
+        axEditor* EDIT = new axEditor("with_gui_win",this,-1,axRect(0,0,AX_WIDTH,AX_HEIGHT),AX_FLAGS,aParent);
         EDIT->appendWidget(wPanel = new wdgPanel(this,-1,NULL_RECT,wal_Client));
         if (!mGuiInitialized) { mGuiInitialized = true; }
 
