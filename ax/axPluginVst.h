@@ -581,16 +581,20 @@ class axPluginVst :  public AudioEffectX,
         //if( mWindow ) doDestroyEditor();
         //if( mWindow ) TRACE("oops! mWindo is not NULL (axPluginVst::openEditor)\n"); // meaning we could be executing 'inside' it in another thread?????
 
+        //trace("axPluginVst.openEditor");
         axWindow* win = (axWindow*)doCreateEditor((int)ptr);
-
+        //trace("1");
         if (win)
         {
+          //trace("2");
           win->reparent((int)ptr);
+          //trace("3");
           win->show();
           //lock
           mWindow = win;
           //unlock
         }
+        //trace("...ok");
       }
 
     //----------
@@ -683,8 +687,10 @@ class axPluginVst :  public AudioEffectX,
               // could we get a different Display* (for example, if it has a different bitdepth)?
               // if so, each window needs its own (cached?) Display*
               #ifdef linux
+              #ifndef AX_THREAD_GUI
                 //trace("gDP=" << (int)gDP);
                 if (gDP==NULL) gDP = (Display*)value;
+              #endif
               #endif
               openEditor(ptr/*,value*/);
               result = 1;

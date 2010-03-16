@@ -163,7 +163,9 @@ class myPlugin : public axPlugin,
     //virtual void* doCreateEditor(void)
     virtual void* doCreateEditor(int aParent)
       {
+        //trace("plug_debug.doCreateEditor");
         axEditor* ed = new axEditor("plug_debug_win",this,-1,axRect(0,0,mWidth,mHeight),AX_FLAGS,aParent);
+        //trace("a");
         if(!is_gui_initialized)
         {
           mSrfSlider = loadPng( vslider1,    46002 );
@@ -275,6 +277,7 @@ class myPlugin : public axPlugin,
         //recalc_scroller();
         ed->doRealign();
         mEditor = ed;
+        //trace("plug_debug.doCreateEditor ... OK");
         return mEditor;
       }
 
