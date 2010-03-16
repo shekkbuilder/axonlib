@@ -41,7 +41,9 @@
 
 void eventProc(XEvent* ev);
 void* timerProc(void* data);
-//void* threadProc(void* data);
+#ifdef AX_THREAD_GUI
+void* threadProc(void* data);
+#endif
 static char noData[] = { 0,0,0,0,0,0,0,0 };
 
 // http://tronche.com/gui/x/xlib/appendix/b/
@@ -87,7 +89,11 @@ class axWindowImpl : public axWindowBase
     int       mWinCursor;
     XColor    mBlack;
 
-    //pthread_t mThreadHandle;
+    Atom      mCustomEventAtom;
+    #ifdef AX_THREAD_GUI
+    pthread_t mThreadHandle;
+    //bool      mIsGuiThreadRunning;
+    #endif
 
   public:
 
@@ -104,10 +110,11 @@ class axWindowImpl : public axWindowBase
                         | StructureNotifyMask
                         | PropertyChangeMask
                         | ClientMessage;
+
+
 //-----
         if (aWinFlags&AX_WINDOWED) // || aParent=0;
         {
-
 //          mHandle = XCreateSimpleWindow(
 //            gDP,                      // display
 //            XDefaultRootWindow(gDP),  // parent
@@ -117,7 +124,6 @@ class axWindowImpl : public axWindowBase
 //            CopyFromParent //0                         // backcol
 //          );
 //          XSelectInput(gDP,mHandle,eventmask);
-
           XSetWindowAttributes swa;
           swa.override_redirect = true;       // http://tronche.com/gui/x/xlib/window/attributes/override-redirect.html
           swa.background_pixmap = None;       // http://tronche.com/gui/x/xlib/window/attributes/background.html
@@ -134,7 +140,6 @@ class axWindowImpl : public axWindowBase
             CWBackPixmap|CWEventMask,
             &swa
           );
-
           // --- WM_DELETE_WINDOW ClientMessage
           wmDeleteMessage = XInternAtom(gDP,"WM_DELETE_WINDOW",True);
           XSetWMProtocols(gDP,mHandle,&wmDeleteMessage,1);
@@ -148,19 +153,14 @@ class axWindowImpl : public axWindowBase
           swa.background_pixmap = None;       // http://tronche.com/gui/x/xlib/window/attributes/background.html
           swa.colormap          = 0;          // http://tronche.com/gui/x/xlib/window/attributes/colormap.html
           swa.event_mask        = eventmask;  // http://tronche.com/gui/x/xlib/window/attributes/event-and-do-not-propagate.html
-
           //trace("axWindowX11: XDefaultRootWindow(gDP)=" << (int)XDefaultRootWindow(gDP) << " aParent=" << aParent << " gDP=" << (int)gDP );
-
           mHandle = XCreateWindow(
             gDP,
-
             // here you must supply the parent window that as been given to you in the effEditOpen call
             // Juce checks, that there is a child window of this parent after the return from effEditOpen,
             // and if there is not, it will ignore your _eventproc. This is what happens.
-
             //XDefaultRootWindow(gDP),
             (Window)aParent,
-
             aRect.x,aRect.y,aRect.w,aRect.h,
             CopyFromParent,
             CopyFromParent,
@@ -170,8 +170,8 @@ class axWindowImpl : public axWindowBase
             &swa
           );
 
-          Atom atom;
-          void* data;
+//          Atom atom;
+//          void* data;
           // --- title-bar, borders
           #define MWM_HINTS_DECORATIONS (1L << 1)
           #define PROP_MOTIF_WM_HINTS_ELEMENTS  5
@@ -188,6 +188,9 @@ class axWindowImpl : public axWindowBase
           motif_hints.decorations = 0;
           Atom prop = XInternAtom(gDP,"_MOTIF_WM_HINTS",True);
           XChangeProperty(gDP,mHandle,prop,prop,32,PropModeReplace,(unsigned char *)&motif_hints,PROP_MOTIF_WM_HINTS_ELEMENTS);
+#ifndef AX_THREAD_GUI
+          Atom atom;
+          void* data;
           // --- eventproc
           data = (void*)(int)&eventProc;  // the (int) to make the compiler shut up its complaining!
           atom = XInternAtom(gDP,"_XEventProc",false);
@@ -196,6 +199,7 @@ class axWindowImpl : public axWindowBase
           data = this;
           atom = XInternAtom(gDP, "_this", false);
           XChangeProperty(gDP,mHandle,atom,atom,32,PropModeReplace,(unsigned char*)&data,1);
+#endif
         } //AX_EMBEDDED
 //-----
         bitmapNoData = XCreateBitmapFromData(gDP,mHandle,noData,8,8);
@@ -208,15 +212,27 @@ class axWindowImpl : public axWindowBase
         XAllocColor(gDP,XDefaultColormap(gDP,0),&mBlack);
         //mCanvas = new axCanvas(mHandle,cmo_window);
         //if (aWinFlags&AX_BUFFERED) mSurface = new axSurface(aRect.w,aRect.h);
+        #ifdef AX_THREAD_GUI
+        //mIsGuiThreadRunning = false;
+        pthread_create(&mThreadHandle,NULL,&threadProc,this);
+        //mIsGuiThreadRunning = true;
+        #endif
       }
 
     //----------
 
     virtual ~axWindowImpl()
       {
-        //hide();
+        //hide(); // will also kill the (eventual) message thread
         //if (mSurface) delete mSurface;
         //if (mCanvas) delete mCanvas;
+        #ifdef AX_THREAD_GUI
+        //mIsGuiThreadRunning = false;
+        //pthread_cancel(mThreadHandle);
+        sendEvent(667); // signal we want to quit
+        void* ret;
+        pthread_join(mThreadHandle,&ret);
+        #endif
         XDestroyWindow(gDP,mHandle);
         XFreePixmap(gDP, bitmapNoData);
         if (mWinCursor>=0) XFreeCursor(gDP,mWinCursor);
@@ -242,14 +258,26 @@ class axWindowImpl : public axWindowBase
 
     virtual void show(void)
       {
+        //trace("axWindowX11.show");
+//        #ifdef AX_THREAD_GUI
+//        mIsGuiThreadRunning = true;
+//        pthread_create(&mThreadHandle,NULL,&threadProc,this);
+//        #endif
         XMapWindow(gDP,mHandle);
-        //pthread_create(&mThreadHandle,NULL,&threadProc,this);
       }
 
     //----------
 
     virtual void hide(void)
       {
+        //trace("axWindowX11.hide");
+//        #ifdef AX_THREAD_GUI
+//        mIsGuiThreadRunning = false;
+//        void* ret;
+//        //pthread_cancel(mThreadHandle);
+//        sendEvent(/*667*/);
+//        pthread_join(mThreadHandle,&ret);
+//        #endif
         XUnmapWindow(gDP,mHandle);
       }
 
@@ -527,10 +555,10 @@ class axWindowImpl : public axWindowBase
     //----------
 
     //typedef struct {
-    //	int type;			/* ClientMessage */
+    //	int type;			          /* ClientMessage */
     //	unsigned long serial;		/* # of last request processed by server */
-    //	Bool send_event;		/* true if this came from a SendEvent request */
-    //	Display *display;		/* Display the event was read from */
+    //	Bool send_event;		    /* true if this came from a SendEvent request */
+    //	Display *display;		    /* Display the event was read from */
     //	Window window;
     //	Atom message_type;
     //	int format;
@@ -541,16 +569,20 @@ class axWindowImpl : public axWindowBase
     //	        } data;
     //} XClientMessageEvent;
 
-    virtual void sendEvent(unsigned int aValue)
+    virtual void sendEvent(unsigned int aValue=0)
     {
-      XClientMessageEvent event;
-      event.type = ClientMessage;
-      event.data.l[0] = aValue;
-      //event.message_type = 0;
-      XSendEvent(gDP,mHandle,0,0,(XEvent *)&event);
+//      trace("sendEvent");
+      static XClientMessageEvent event;
+      memset(&event,0,sizeof(event));
+      event.type          = ClientMessage;
+      event.message_type  = mCustomEventAtom;
+      event.display       = gDP;
+      event.window        = mHandle;
+      event.format        = 32;
+      event.data.l[0]     = aValue;
+      XSendEvent(gDP,mHandle,False,NoEventMask,(XEvent*)&event);
+      XFlush(gDP);
     }
-
-    //XSendEvent(gDP,mHandle,false,ExposureMask,(XEvent*)&ev);
 
     virtual void eventLoop(void)
       {
@@ -612,7 +644,7 @@ class axWindowImpl : public axWindowBase
               w = ev->xconfigure.width;
               h = ev->xconfigure.height;
             }
-            trace("ConfigureNotify " << w << "," << h);
+//            trace("ConfigureNotify " << w << "," << h);
            //flush();
             //if ((w!=mRect.w) || (h!=mRect.h))
             //{
@@ -631,7 +663,7 @@ class axWindowImpl : public axWindowBase
             {
               rc.combine( ev->xexpose.x, ev->xexpose.y, ev->xexpose.width, ev->xexpose.height );
             }
-            trace("Expose " << rc.x << "," << rc.y << "," << rc.w << "," << rc.h);
+//            trace("Expose " << rc.x << "," << rc.y << "," << rc.w << "," << rc.h);
             if (mWinFlags&AX_BUFFERED && mSurface)
             {
               mSurfaceMutex.lock();
@@ -655,35 +687,35 @@ class axWindowImpl : public axWindowBase
             break;
           case ClientMessage:
             val = ev->xclient.data.l[0];
-            trace("ClientMessage " << val);
+//            trace("ClientMessage " << val);
             if (val==666) doTimer();  //TODO: fix?
             break;
           case ButtonPress:
             but = buttons(ev->xbutton.button);
             key = keys(ev->xbutton.state);
-            trace("ButtonPress " << ev->xbutton.x << "," << ev->xbutton.y << ", " << (but|key));
+//            trace("ButtonPress " << ev->xbutton.x << "," << ev->xbutton.y << ", " << (but|key));
             doMouseDown(ev->xbutton.x, ev->xbutton.y, but|key );
             //mClickedButton = but;
             break;
           case ButtonRelease:
             but = buttons(ev->xbutton.button);
             key = keys(ev->xbutton.state);
-            trace("ButtonRelease " << ev->xbutton.x << "," << ev->xbutton.y << ", " << (but|key));
+//            trace("ButtonRelease " << ev->xbutton.x << "," << ev->xbutton.y << ", " << (but|key));
             doMouseUp(ev->xbutton.x, ev->xbutton.y, but|key);
             //mClickedButton = 0;
             break;
           case MotionNotify:
             but = 0;//buttons(ev->xbutton.button);
             key = keys(ev->xbutton.state);
-            trace("MotionNotify " << ev->xbutton.x << "," << ev->xbutton.y << ", " << (but|key));
+//            trace("MotionNotify " << ev->xbutton.x << "," << ev->xbutton.y << ", " << (but|key));
             doMouseMove(ev->xbutton.x, ev->xbutton.y, but|key);
             break;
           case KeyPress:
-            trace("KeyPress " << ev->xkey.keycode << "," << ev->xkey.state);
+//            trace("KeyPress " << ev->xkey.keycode << "," << ev->xkey.state);
             doKeyDown(ev->xkey.keycode, ev->xkey.state);
             break;
           case KeyRelease:
-            trace("KeyRelease " << ev->xkey.keycode << "," << ev->xkey.state);
+//            trace("KeyRelease " << ev->xkey.keycode << "," << ev->xkey.state);
             doKeyUp(ev->xkey.keycode, ev->xkey.state);
             break;
 //
@@ -764,6 +796,7 @@ int getProperty(Window handle, Atom atom)
 
 void eventProc(XEvent* ev)
 {
+  //trace("eventProc");
   axWindowImpl* win = (axWindowImpl*)getProperty(ev->xany.window, XInternAtom(gDP,"_this",false));
   if (win==0) return;
   win->eventHandler(ev);
@@ -790,23 +823,42 @@ void* timerProc(void* data)
 
 //----------------------------------------------------------------------
 
-//void* threadProc(void* data)
-//  {
-//    axWindowImpl* win = (axWindowImpl*)data;
-//    if (win)
-//    {
-//      XEvent ev;
-//      while (1)
-//      {
-//        XNextEvent(gDP,&ev);
-//        //unsigned int data = ev.xclient.data.l[0];
-//        //if (ev.type==ClientMessage && data==wmDeleteMessage) break;
-//        //else
-//        win->eventHandler(&ev);
-//      }
-//    }
-//    return NULL;
-//  }
+#ifdef AX_THREAD_GUI
+void* threadProc(void* data)
+  {
+    axWindowImpl* win = (axWindowImpl*)data;
+    if (win)
+    {
+      XEvent ev;
+      while (1)
+      {
+        //if (!win->mIsGuiThreadRunning) pthread_exit(NULL);  //break;
+        //if (XPending(gDP))
+        //{
+          XNextEvent(gDP,&ev);
+          //trace("threadProc event");
+
+          //unsigned int data = ev.xclient.data.l[0];
+          //if (ev.type==ClientMessage && data==123) break;
+          //else win->eventHandler(&ev);
+          if (ev.type==ClientMessage)
+          {
+            //trace("  :: ClientMessage");
+            XClientMessageEvent *cev = (XClientMessageEvent *)&ev;
+            unsigned int data = ev.xclient.data.l[0];
+            if (cev->message_type == win->mCustomEventAtom && data==667)
+            {
+              //trace("pthread_quit");
+              pthread_exit(NULL); //break;
+            }
+          }
+          else win->eventHandler(&ev);
+        //}
+      }
+    }
+    return NULL;
+  }
+#endif
 
 //----------------------------------------------------------------------
 #endif

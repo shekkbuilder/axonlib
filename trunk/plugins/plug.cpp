@@ -1,3 +1,5 @@
+//#define AX_THREAD_GUI
+
 //#include "ccernn/axSynth1/axSynth1.cpp"
 //#include "test/test_graph.cpp"
 
