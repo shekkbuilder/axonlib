@@ -67,7 +67,7 @@ class myPlugin : public axPlugin,
       {
         //daub.setSize(BUFFERSIZE);
         mEditor = NULL;
-        describe("ana_fft","ccernn","product_string",0, AX_MAGIC+1001);
+        describe("ana_fft0","ccernn","axonlib example plugin",0, AX_MAGIC+1001);
         setupAudio(2,2);
         setupEditor(AX_WIDTH,AX_HEIGHT);
         //hasEditor(AX_WIDTH,AX_HEIGHT);
