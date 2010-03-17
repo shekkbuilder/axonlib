@@ -21,9 +21,6 @@
   lock down things that might be dangerous if accessed by two (or more) simultaneous threads
   but tru to keep things as lock-free as possible (a clock-cycle waiting for a lock is a clock-cycle wasted)
 
-- axMath
-  doxy: a partial performance table relative to compiler flags
-
 // ----- plugin -----
 
 - prgrams & banks
@@ -96,10 +93,14 @@
 
 // ----- other -----
 
+- lit: more plugins js -> ax
+
+- doxy: short js -> ax tutor
+
 - dsp classes, dsp graph
   combine with axModule, axGraph ??
 
-- dsp interpolation methods, some biquad filters for general use
+- dspInterpolate - more methods
 
 - axScript <-> axModule
   operator <-> module
