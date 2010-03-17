@@ -23,7 +23,7 @@ class myPlugin : public axPlugin
     myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
     : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
-        describe("midi_notelen0","ccernn","product_string",0,0);
+        describe("midi_notelen0","ccernn","axonlib example plugin",0,0);
         setupAudio(2,2);
         appendParameter( new parFloat(this,0,"note length", "ms", 100, 0,1000 ) );
         processParameters();

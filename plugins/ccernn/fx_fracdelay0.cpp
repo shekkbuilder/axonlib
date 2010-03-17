@@ -43,7 +43,7 @@ class myEffect : public axEffect
     myEffect(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
     : axEffect(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
-        describe("fx_fracdelay0","ccernn","product_string",0,0);
+        describe("fx_fracdelay0","ccernn","axonlib example plugin",0,0);
         setupAudio(2,2);
         setupEditor(150,180);
         appendParameter( pDly = new parFloat( this,0,"dly", "",   100,  0,    MAX_BUFFER_SIZE ) );

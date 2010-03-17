@@ -40,7 +40,7 @@ class myPlugin : public axPlugin
     myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
     : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
-        describe("fx_svf0","ccernn","product_string",0,0);
+        describe("fx_svf0","ccernn","axonlib example plugin",0,0);
         setupAudio(2,2);
         appendParameter( pMode = new parInteger(this,0,"mode", "", 0, 0,4, str_filter ) );
         appendParameter( pFreq = new parFloat(  this,1,"freq", "", 1 ) );

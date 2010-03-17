@@ -43,7 +43,7 @@ class myEffect : public axEffect
       {
         setupEditor(AX_WIDTH,AX_HEIGHT);
         setupAudio(2,2);
-        describe("ana_sigview0","ccernn","product_string",0, AX_MAGIC+1001);
+        describe("ana_daubechies0","ccernn","axonlib example plugin",0, AX_MAGIC+1001);
         daub.setSize(BUFFERSIZE);
         mBuffer1 = new float[BUFFERSIZE];
         mBuffer2 = new float[BUFFERSIZE];

@@ -58,7 +58,7 @@ class myPlugin : public axPlugin,
         mEditor = NULL;
         is_gui_initialized = false;
         //hasEditor(AX_WIDTH,AX_HEIGHT);
-        describe("fx_dynamics0","ccernn","product_string",0,0);
+        describe("fx_dynamics0","ccernn","axonlib example plugin",0,0);
         //isSynth();
         setupAudio(2,2);
         setupEditor(AX_WIDTH,AX_HEIGHT);

@@ -26,7 +26,7 @@ class myPlugin : public axPlugin
     myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
     : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
-        describe("midi_transpose0","ccernn","product_string",0,0);
+        describe("midi_transpose0","ccernn","axonlib example plugin",0,0);
         setupAudio(2,2);
         appendParameter( pTrans = new parInteger( this,0,"mode", "", 0, -24,24 ) );
       }

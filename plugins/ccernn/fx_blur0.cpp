@@ -46,7 +46,7 @@ class myPlugin : public axPlugin
     myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags )
     : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
-        describe("fx_blur0","ccernn","product_string",0,1);
+        describe("fx_blur0","ccernn","axonlib example plugin",0,1);
         setupAudio(2,2);
         //hasEditor(AX_WIDTH,AX_HEIGHT);
         //isSynth();

@@ -3,8 +3,8 @@
 #define AX_NUMPROGS   0
 #define AX_NUMPARAMS  5
 
-#define AX_DEBUG
-#include "axDebug.h"
+//#define AX_DEBUG
+//#include "axDebug.h"
 
 #include "axPlugin.h"
 #include "dspSVF.h"
@@ -45,7 +45,7 @@ class myPlugin : public axPlugin
     myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags )
     : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
-        describe("fx_dist0","ccernn","product_string",0,2);
+        describe("fx_dist0","ccernn","axonlib example plugin",0,2);
         setupAudio(2,2);
         appendParameter( pPre  = new parFloat(    this,0,"pre gain", "", 1, 0,2 ) );
         appendParameter( pMode = new parInteger(  this,1,"mode",     "", 0, 0,5, str_mode ) );
