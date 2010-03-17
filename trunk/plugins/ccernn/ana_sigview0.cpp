@@ -105,7 +105,7 @@ class myPlugin : public axPlugin,
     : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         mEditor = NULL;
-        describe("ana_sigview0","ccernn","product_string",0, AX_MAGIC+1001);
+        describe("ana_sigview0","ccernn","axonlib example plugin",0, AX_MAGIC+1001);
         setupAudio(2,2);
         setupEditor(AX_WIDTH,AX_HEIGHT);
         mBuffer1 = new float[MAX_BUFFER_SIZE];

@@ -44,7 +44,7 @@ class myPlugin : public axPlugin
     : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         //mEditor = NULL;
-        describe("midi_syncdelay0","ccernn","product_string",0,0);
+        describe("midi_syncdelay0","ccernn","axonlib example plugin",0,0);
         setupAudio(2,2);
         //hasEditor(AX_WIDTH,AX_HEIGHT);
         //isSynth();

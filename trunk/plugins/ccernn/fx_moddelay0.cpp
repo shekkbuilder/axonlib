@@ -58,7 +58,7 @@ class myPlugin : public axPlugin
     : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
         //mEditor = NULL;
-        describe("fx_moddelay0","ccernn","product_string",0,0);
+        describe("fx_moddelay0","ccernn","axonlib example plugin",0,0);
         setupAudio(2,2);
         //hasEditor(AX_WIDTH,AX_HEIGHT);
         //isSynth();

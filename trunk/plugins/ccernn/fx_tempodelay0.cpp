@@ -37,7 +37,7 @@ class myEffect : public axEffect
     myEffect(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
     : axEffect(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
-        describe("fx_tempodelay0","ccernn","product_string",0,0);
+        describe("fx_tempodelay0","ccernn","axonlib example plugin",0,0);
         setupAudio(2,2);
         setupEditor(150,180);//(AX_WIDTH,AX_HEIGHT);
         appendParameter( p1 = new parFloat( this,0,"beats",   "", 0.75, 0.25, MAX_NUMBEATS, 0.25  ) );

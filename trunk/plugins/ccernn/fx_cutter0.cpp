@@ -236,7 +236,7 @@ class myPlugin : public axPlugin,
         mBeatCounter = 0;
         mBeatsLeft = 0;
         mProb = 1;
-        describe("fx_cutter0","ccernn","",0,AX_MAGIC+0x0001);
+        describe("fx_cutter0","ccernn","axonlib example plugin",0,AX_MAGIC+0x0001);
         //hasEditor(AX_WIDTH,AX_HEIGHT);
         setupAudio(2,2);
         setupEditor(AX_WIDTH,AX_HEIGHT);

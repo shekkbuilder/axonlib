@@ -31,7 +31,7 @@ class myPlugin : public axPlugin
     myPlugin(axHost* aHost, int aNumProgs, int aNumParams, int aPlugFlags)
     : axPlugin(aHost,aNumProgs,aNumParams,aPlugFlags)
       {
-        describe("syn_plucked0","ccernn","product_string",0,0);
+        describe("syn_plucked0","ccernn","axonlib example plugin",0,0);
         //setNumInputs(0);
         //isSynth();
         setupAudio(0,2,true);

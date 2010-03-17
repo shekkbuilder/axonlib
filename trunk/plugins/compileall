@@ -24,7 +24,7 @@
 ./compile ccernn/fx_split0
 ./compile ccernn/fx_svf0
 ./compile ccernn/fx_tempodelay0
-./compile ccernn/fx_waveshaper0
+# ./compile ccernn/fx_waveshaper0
 ./compile ccernn/fx_wgtavg0
 
 ./compile ccernn/midi_ccaudio0

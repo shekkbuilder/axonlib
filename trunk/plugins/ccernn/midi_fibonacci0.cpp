@@ -76,7 +76,7 @@ class myPlugin : public axPlugin,
       {
         mEditor = NULL;
         is_gui_initialized = false;
-        describe("midi_fibonacci0","ccernn","product_string",0,0xfaccface);
+        describe("midi_fibonacci0","ccernn","axonlib example plugin",0,0xfaccface);
         //hasEditor(AX_WIDTH,AX_HEIGHT);
         //isSynth();
         setupAudio(2,2);

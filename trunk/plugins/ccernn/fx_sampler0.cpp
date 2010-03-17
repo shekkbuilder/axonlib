@@ -269,7 +269,7 @@ class myPlugin : public axPlugin,
         //slider8: 52 < 0,127,1> bypass note
 
         appendParameter( pBeats = new parInteger( this, 0, "beats (buffersize)","", 4,  1,16  ));
-        appendParameter( pBeats = new parInteger( this, 1, "sync mode)",        "", 0,  0,1,  str_sync ));
+        appendParameter( pBeats = new parInteger( this, 1, "sync mode",         "", 0,  0,1,  str_sync ));
         appendParameter( pBeats = new parInteger( this, 2, "transport note",    "", 48, 0,127 ));
         appendParameter( pBeats = new parInteger( this, 3, "record note",       "", 49, 0,127 ));
         appendParameter( pBeats = new parInteger( this, 4, "play note",         "", 50, 0,127 ));

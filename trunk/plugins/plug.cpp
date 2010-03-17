@@ -7,7 +7,7 @@
 
 //#include "demo/ax_demo.cpp"
 //#include "ccernn/again.cpp"
-#include "ccernn/plug_debug.cpp"
+//#include "ccernn/plug_debug.cpp"
 
 //----------------------------------------------------------------------
 
@@ -21,7 +21,7 @@
 //#include "ccernn/fx_moddelay0.cpp"
 //#include "ccernn/fx_split0.cpp"
 //#include "ccernn/fx_svf0.cpp"
-//#include "ccernn/fx_waveshaper0.cpp"
+///*#include "ccernn/fx_waveshaper0.cpp"*/
 //#include "ccernn/midi_ccaudio0.cpp"
 //#include "ccernn/midi_notelen0.cpp"
 //#include "ccernn/midi_syncdelay0.cpp"
@@ -31,7 +31,7 @@
     // ----- gui
 
 //#include "ccernn/ana_daubechies0.cpp"
-//#include "ccernn/ana_fft.cpp"
+//#include "ccernn/ana_fft0.cpp"
 //#include "ccernn/ana_sigview0.cpp"
 //#include "ccernn/ana_vu0.cpp"
 //#include "ccernn/fx_cutter0.cpp"
@@ -48,9 +48,9 @@
 
     // ----- ports
 
-//#include "ports/mda_ambience.cpp"
-//#include "ports/autotalent.cpp"
-//#include "ports/freeverb.cpp"
+#include "ports/port_ambience.cpp"
+#include "ports/port_autotalent.cpp"
+#include "ports/port_freeverb.cpp"
 
     // ----- liteon
 

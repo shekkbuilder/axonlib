@@ -50,7 +50,7 @@ class myPlugin : public axPlugin,
       {
         editor_initialized = false;
         mEditor = NULL;
-        describe("ana_vu0","ccernn","product_string",0,0);
+        describe("ana_vu0","ccernn","axonlib example plugin",0,0);
         //hasEditor(AX_WIDTH,AX_HEIGHT);
         setupAudio(2,2);
         setupEditor(AX_WIDTH,AX_HEIGHT);
