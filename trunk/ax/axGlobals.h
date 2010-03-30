@@ -76,14 +76,15 @@ static char base_path[1024];
 
   void  axInitialize(int aFlags)
     {
-//      trace("axInitialize");
+      trace("axInitialize :: aFlags=" << aFlags);
+      //trace("> pre gDP = " << hex << (int)gDP << dec);
       XInitThreads();
       #ifdef AX_THREAD_GUI
       if (!gDP) gDP=XOpenDisplay(NULL);
+      trace("axInitialize :: gDP=" << hex << (int)gDP << dec << " from XOpenDisplay(NULL) ");
       #else
       if (aFlags&AX_WINDOWED) if (!gDP) gDP=XOpenDisplay(NULL);
       #endif
-//      trace("...ok");
     }
 
     /**

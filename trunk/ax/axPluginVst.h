@@ -581,20 +581,14 @@ class axPluginVst :  public AudioEffectX,
         //if( mWindow ) doDestroyEditor();
         //if( mWindow ) TRACE("oops! mWindo is not NULL (axPluginVst::openEditor)\n"); // meaning we could be executing 'inside' it in another thread?????
 
-        //trace("axPluginVst.openEditor");
+        trace("axPluginVst.openEditor :: ptr=" << hex << (int)ptr << dec);
         axWindow* win = (axWindow*)doCreateEditor((int)ptr);
-        //trace("1");
         if (win)
         {
-          //trace("2");
           win->reparent((int)ptr);
-          //trace("3");
           win->show();
-          //lock
           mWindow = win;
-          //unlock
         }
-        //trace("...ok");
       }
 
     //----------
@@ -602,6 +596,7 @@ class axPluginVst :  public AudioEffectX,
     // [internal]
     void closeEditor(void)
       {
+        trace("axPluginVst.closeEditor");
         if(mWindow)
         {
           //mWindow->hide();
@@ -668,7 +663,7 @@ class axPluginVst :  public AudioEffectX,
         switch (opcode)
         {
           case effEditGetRect:
-            //TRACE("effEditGetRect\n");
+            trace("axPluginVST.dispatcher :: effEditGetRect");
             if (mFlags&pfl_HasEditor)
             {
               rect.left     = 0;
@@ -680,7 +675,7 @@ class axPluginVst :  public AudioEffectX,
             }
             break;
           case effEditOpen:
-            //trace("axPluginVST effEditOpen: value=" << (int)value << "     ptr=" << (int)ptr);
+            trace("axPluginVST.dispatcher :: effEditOpen :: ptr=" << hex << (int)ptr << " value=" << (int)value << dec);
             if (mFlags&pfl_HasEditor)
             {
               // what will happen if we close and re-open the plugin on a different screen/monitor
@@ -688,7 +683,6 @@ class axPluginVst :  public AudioEffectX,
               // if so, each window needs its own (cached?) Display*
               #ifdef linux
               #ifndef AX_THREAD_GUI
-                //trace("gDP=" << (int)gDP);
                 if (gDP==NULL) gDP = (Display*)value;
               #endif
               #endif
@@ -698,7 +692,7 @@ class axPluginVst :  public AudioEffectX,
             }
             break;
           case effEditClose:
-            //TRACE("effEditClose\n");
+            trace("axPluginVST.dispatcher :: effEditClose");
             if (mFlags&pfl_HasEditor && mEditorIsOpen)
             {
               mEditorIsOpen = false;
@@ -706,13 +700,14 @@ class axPluginVst :  public AudioEffectX,
             }
             break;
           case effEditIdle:
-            //TRACE("effEditIdle\n");
+            //trace("axPluginVST.dispatcher :: effEditIdle");
             if (mFlags&pfl_HasEditor && mEditorIsOpen)
             {
               idleEditor();
             }
             break;
           case effVendorSpecific:
+            trace("axPluginVST.dispatcher :: effVendorSpecific");
           //  // v = vendorSpecific (index, value, ptr, opt);
             //trace("- effVendorSpecific");
             break;

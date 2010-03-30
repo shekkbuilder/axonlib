@@ -1,12 +1,12 @@
 #define AX_PLUGIN     myEffect
+#define AX_FLAGS      (AX_EMBEDDED|AX_BUFFERED)
 #define AX_NUMPROGS   1
 #define AX_NUMPARAMS  4
-//#define AX_WIDTH      150
-//#define AX_HEIGHT     180
-#define AX_FLAGS      (AX_EMBEDDED|AX_BUFFERED)
 
-//#define AX_DEBUG
-//#include "axDebug.h"
+#define AX_THREAD_GUI
+
+#define AX_DEBUG
+#include "axDebug.h"
 
 #include "axEffect.h"
 #include "parFloat.h"

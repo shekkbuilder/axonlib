@@ -1,5 +1,3 @@
-//#define AX_THREAD_GUI
-
 //#include "ccernn/axSynth1/axSynth1.cpp"
 //#include "test/test_graph.cpp"
 
@@ -38,7 +36,7 @@
 //#include "ccernn/fx_dynamics0.cpp"
 //#include "ccernn/fx_fracdelay0.cpp"
 //#include "ccernn/fx_sampler0.cpp"
-//#include "ccernn/fx_tempodelay0.cpp"
+#include "ccernn/fx_tempodelay0.cpp"
 //#include "ccernn/fx_wgtavg0.cpp"
 //#include "ccernn/midi_cellular0.cpp"
 //#include "ccernn/midi_fibonacci0.cpp"
@@ -48,9 +46,9 @@
 
     // ----- ports
 
-#include "ports/port_ambience.cpp"
-#include "ports/port_autotalent.cpp"
-#include "ports/port_freeverb.cpp"
+//#include "ports/port_ambience.cpp"
+//#include "ports/port_autotalent.cpp"
+//#include "ports/port_freeverb.cpp"
 
     // ----- liteon
 
