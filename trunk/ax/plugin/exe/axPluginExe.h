@@ -102,17 +102,17 @@ typedef axPluginExe axPluginImpl;
 
 #ifdef AX_LINUX
 
-  #define AX_CONTEXT_INIT                           \
-    XInitThreads();                                 \
-    axContext ctx;                                  \
-    Display* display = XOpenDisplay(NULL);          \
-    Window   parent  = XDefaultRootWindow(display); \
-    void*    audio   = NULL;                        \
-    ctx.mDisplay = display;                         \
-    ctx.mWindow  = parent;                          \
+  #define AX_CONTEXT_INIT                               \
+    XInitThreads();                                     \
+    axContext ctx;                                      \
+    Display*    display = XOpenDisplay(NULL);           \
+    Window      parent  = XDefaultRootWindow(display);  \
+    AX_AUDIOPTR audio   = NULL;                         \
+    ctx.mDisplay = display;                             \
+    ctx.mWindow  = parent;                              \
     ctx.mAudio   = audio;
 
-  #define AX_CONTEXT_EXIT                           \
+  #define AX_CONTEXT_EXIT   \
     XCloseDisplay(display);
 
 #endif

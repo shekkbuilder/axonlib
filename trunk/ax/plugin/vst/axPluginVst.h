@@ -109,6 +109,7 @@ class axPluginVst : public axPluginBase
     axPluginVst(axContext* aContext, int aPluginFlags)
     : axPluginBase(aContext, aPluginFlags)
       {
+
         audioMaster = (audioMasterCallback)aContext->mAudio;
         mCurrentProgram = 0;
         mEditorOpen = false;
@@ -943,7 +944,6 @@ typedef axPluginVst axPluginImpl;
 //
 //----------------------------------------------------------------------
 
-
 //----------------------------------------------------------------------
 
 
@@ -957,7 +957,7 @@ typedef axPluginVst axPluginImpl;
     axContext ctx;                                  \
     Display* display = NULL;                        \
     Window   parent  = 0;                           \
-    void*    audio   = (void*)audioMaster;          \
+    AX_AUDIOPTR audio   = (AX_AUDIOPTR)audioMaster; \
     ctx.mDisplay = display;                         \
     ctx.mWindow  = parent;                          \
     ctx.mAudio   = audio;
