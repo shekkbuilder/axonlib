@@ -12,11 +12,9 @@
   #include <X11/Xlib.h>
   struct axContext
   {
-    Display*  mDisplay;
-    Window    mWindow;//mParent;
-    //#ifdef AX_PLUG_VST
-    void*     mAudio;
-    //#endif
+    Display*    mDisplay;
+    Window      mWindow;//mParent;
+    AX_AUDIOPTR mAudio;
   };
 
 #endif

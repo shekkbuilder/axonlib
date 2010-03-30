@@ -10,11 +10,13 @@ class axGraph : public axModule
   protected:
     axModules mModules;
     axModules mExecList;
+    bool      mCompiled;
   public:
 
     axGraph(axString aName)
     : axModule(aName)
       {
+        mCompiled = false;
       }
 
     virtual ~axGraph()
@@ -29,14 +31,12 @@ class axGraph : public axModule
 
     //----------
 
-    // axModuleBase
+    // axModule[Base]
 
-    virtual void process(SPL** aInputs, SPL** aOutputs)
+    virtual void doProcess(SPL** aInputs, SPL** aOutputs)
       {
-        for (int i=0; i<mModules.size(); i++)
-        {
-          mModules[i]->process(aInputs,aOutputs);
-        }
+        if (mCompiled) { for (int i=0; i<mExecList.size(); i++) mExecList[i]->doProcess(aInputs,aOutputs); }
+        else { for (int i=0; i<mModules.size(); i++) mModules[i]->doProcess(aInputs,aOutputs); }
       }
 
 };

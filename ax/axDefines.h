@@ -27,5 +27,12 @@
 #define REC axRect
 #define COL axColor
 
+// with -pedantic (i think) gcc generates
+// "warning: ISO C++ forbids casting between pointer-to-function and pointer-to-object"
+// long, 32/64 bit, same size as void* ???
+
+// a 'safe' type we can typecast to/from ptr (void*)
+#define AX_AUDIOPTR long
+
 //----------------------------------------------------------------------
 #endif

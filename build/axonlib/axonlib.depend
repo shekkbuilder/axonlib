@@ -1,0 +1,228 @@
+# depslib dependency file v1.0
+1269969131 source:/home/cern/code/axonlib/test/test_build.cpp
+	"axConfig.h"
+	"core/axDebug.h"
+	"core/axMath.h"
+	"axPlugin.h"
+	"axEditor.h"
+	"gui/axWidget.h"
+	"wdg/wdgPanel.h"
+	"wdg/wdgTest.h"
+	"audio/axGraph.h"
+	"audio/axModule.h"
+
+1269817491 /home/cern/code/axonlib/ax/axConfig.h
+
+1268162605 /home/cern/code/axonlib/ax/core/axDebug.h
+	<assert.h>
+	<iostream>
+	<windows.h>
+	<windowsx.h>
+	<io.h>
+	<stdio.h>
+	<sstream>
+
+1268654081 /home/cern/code/axonlib/ax/core/axMath.h
+	<math.h>
+	<time.h>
+	<stdarg.h>
+	<stdlib.h>
+	"axDebug.h"
+	"axDefines.h"
+
+1269969115 /home/cern/code/axonlib/ax/axDefines.h
+
+1269803861 /home/cern/code/axonlib/ax/axPlugin.h
+	"axDefines.h"
+	"base/axPluginBase.h"
+	"platform/axContext.h"
+	"axParameter.h"
+	"gui/axWindow.h"
+	"plugin/vst/axPluginVst.h"
+	"plugin/exe/axPluginExe.h"
+
+1269805386 /home/cern/code/axonlib/ax/base/axPluginBase.h
+	"platform/axContext.h"
+	"core/axRect.h"
+	"core/axFlags.h"
+	"axParameter.h"
+	"gui/axWindow.h"
+
+1269968936 /home/cern/code/axonlib/ax/platform/axContext.h
+	"axDefines.h"
+	<X11/Xlib.h>
+	<windows.h>
+
+1269466798 /home/cern/code/axonlib/ax/core/axRect.h
+	"core/axArray.h"
+
+1269467998 /home/cern/code/axonlib/ax/core/axArray.h
+	<stdlib.h>
+
+1269559162 /home/cern/code/axonlib/ax/core/axFlags.h
+
+1269798270 /home/cern/code/axonlib/ax/axParameter.h
+	<stdio.h>
+	"core/axString.h"
+	"core/axFlags.h"
+
+1269466859 /home/cern/code/axonlib/ax/core/axString.h
+	<string.h>
+	"axArray.h"
+
+1269950189 /home/cern/code/axonlib/ax/gui/axWindow.h
+	"axDefines.h"
+	"base/axWindowBase.h"
+	"gui/axSkin.h"
+	"platform/axContext.h"
+	"axParameter.h"
+	"platform/linux/axWindowLinux.h"
+	"platform/win32/axWindowWin32.h"
+
+1269912957 /home/cern/code/axonlib/ax/base/axWindowBase.h
+	"platform/axContext.h"
+	"core/axRect.h"
+	"core/axString.h"
+	"gui/axContainer.h"
+	"gui/axSurface.h"
+	"gui/axCanvas.h"
+
+1269913158 /home/cern/code/axonlib/ax/gui/axContainer.h
+	"core/axRect.h"
+	"gui/axWidget.h"
+	"axParameter.h"
+
+1269913208 /home/cern/code/axonlib/ax/gui/axWidget.h
+	"core/axRect.h"
+	"gui/axCanvas.h"
+	"gui/axSkin.h"
+	"axParameter.h"
+
+1269950178 /home/cern/code/axonlib/ax/gui/axCanvas.h
+	"axDefines.h"
+	"core/axPoint.h"
+	"core/axRect.h"
+	"base/axCanvasBase.h"
+	"platform/linux/axCanvasLinux.h"
+	"platform/win32/axCanvasWin32.h"
+
+1269466699 /home/cern/code/axonlib/ax/core/axPoint.h
+
+1269906979 /home/cern/code/axonlib/ax/base/axCanvasBase.h
+	"gui/axColor.h"
+	"gui/axPen.h"
+	"gui/axBrush.h"
+	"gui/axFont.h"
+	"gui/axBitmap.h"
+
+1269563267 /home/cern/code/axonlib/ax/gui/axColor.h
+	"axDefines.h"
+
+1269563772 /home/cern/code/axonlib/ax/gui/axPen.h
+	"axDefines.h"
+
+1269563780 /home/cern/code/axonlib/ax/gui/axBrush.h
+	"axDefines.h"
+	"gui/axColor.h"
+
+1269722822 /home/cern/code/axonlib/ax/gui/axFont.h
+	"axDefines.h"
+	"core/axString.h"
+
+1269969927 /home/cern/code/axonlib/ax/gui/axBitmap.h
+	"axDefines.h"
+	"platform/axContext.h"
+	"base/axBitmapBase.h"
+	"platform/linux/axBitmapLinux.h"
+	"platform/win32/axBitmapWin32.h"
+
+1269802607 /home/cern/code/axonlib/ax/base/axBitmapBase.h
+	"platform/axContext.h"
+
+1269803825 /home/cern/code/axonlib/ax/platform/linux/axBitmapLinux.h
+	"axDefines.h"
+	"platform/axContext.h"
+	"base/axBitmapBase.h"
+
+1269569485 /home/cern/code/axonlib/ax/platform/win32/axBitmapWin32.h
+
+1269908115 /home/cern/code/axonlib/ax/platform/linux/axCanvasLinux.h
+	<math.h>
+	"platform/axContext.h"
+	"axDefines.h"
+	"base/axCanvasBase.h"
+
+1269569421 /home/cern/code/axonlib/ax/platform/win32/axCanvasWin32.h
+
+1269809318 /home/cern/code/axonlib/ax/gui/axSkin.h
+
+1269950184 /home/cern/code/axonlib/ax/gui/axSurface.h
+	"axDefines.h"
+	"platform/axContext.h"
+	"base/axSurfaceBase.h"
+	"platform/linux/axSurfaceLinux.h"
+	"platform/win32/axSurfaceWin32.h"
+
+1269802390 /home/cern/code/axonlib/ax/base/axSurfaceBase.h
+	"platform/axContext.h"
+
+1269803882 /home/cern/code/axonlib/ax/platform/linux/axSurfaceLinux.h
+	"platform/axContext.h"
+	"axDefines.h"
+	"base/axSurfaceBase.h"
+
+1269569444 /home/cern/code/axonlib/ax/platform/win32/axSurfaceWin32.h
+
+1269907177 /home/cern/code/axonlib/ax/platform/linux/axWindowLinux.h
+	<X11/Xlib.h>
+	<X11/Xutil.h>
+	<pthread.h>
+	"platform/axContext.h"
+	"axDefines.h"
+	"core/axRect.h"
+	"core/axString.h"
+	"base/axWindowBase.h"
+	"gui/axWidget.h"
+	"gui/axCanvas.h"
+	"gui/axSurface.h"
+
+1269569461 /home/cern/code/axonlib/ax/platform/win32/axWindowWin32.h
+
+1269969079 /home/cern/code/axonlib/ax/plugin/vst/axPluginVst.h
+	"pluginterfaces/vst2.x/aeffect.h"
+	"pluginterfaces/vst2.x/aeffectx.h"
+	"platform/axContext.h"
+	"core/axRect.h"
+	"base/axPluginBase.h"
+
+1269969424 /home/cern/code/axonlib/ax/plugin/exe/axPluginExe.h
+	"platform/axContext.h"
+	"core/axRect.h"
+	"gui/axWindow.h"
+	"base/axPluginBase.h"
+
+1269801572 /home/cern/code/axonlib/ax/axEditor.h
+	"axPlugin.h"
+	"gui/axWindow.h"
+
+1269913008 /home/cern/code/axonlib/ax/wdg/wdgPanel.h
+	"gui/axContainer.h"
+
+1269950067 /home/cern/code/axonlib/ax/wdg/wdgTest.h
+	"gui/axContainer.h"
+
+1269971614 /home/cern/code/axonlib/ax/audio/axGraph.h
+	"axDefines.h"
+	"audio/axModule.h"
+
+1269971604 /home/cern/code/axonlib/ax/audio/axModule.h
+	"axDefines.h"
+	"core/axArray.h"
+
+1266592340 /home/cern/code/vstsdk24/pluginterfaces/vst2.x/aeffect.h
+	<string.h>
+	<stdint.h>
+
+1213370194 /home/cern/code/vstsdk24/pluginterfaces/vst2.x/aeffectx.h
+	"aeffect.h"
+
