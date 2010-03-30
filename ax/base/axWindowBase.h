@@ -55,10 +55,19 @@ class axWindowBase : public axContainer//axWidget
     virtual void    unlock(void) {}
     virtual void    show(void) {}
     virtual void    hide(void) {}
+
     virtual void    setPos(int aX, int aY) {}
     virtual void    setSize(int aW, int aH) {}
+    virtual void    setParentSize(int aW, int aH) {}
     virtual void    setTitle(axString aTitle) {}
     virtual void    reparent(int aParent) {}
+
+    virtual void    setCursor(int aCursor) {}
+    virtual void    setCursorPos(int aX, int aY) {}
+    virtual void    showCursor(void) {}
+    virtual void    hideCursor(void) {}
+    virtual void    grabCursor(void) {}
+    virtual void    releaseCursor(void) {}
 
     // medium level
 
@@ -66,6 +75,9 @@ class axWindowBase : public axContainer//axWidget
     virtual void    resizeBuffer(int aWidth, int aHeight) {}
     virtual void    beginPaint(void) {}
     virtual void    endPaint(void) {}
+
+    virtual void    startTimer(int ms) {}
+    virtual void    stopTimer(void) {}
 
     // events
 

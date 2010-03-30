@@ -19,6 +19,31 @@
 
 //----------------------------------------------------------------------
 
+// http://tronche.com/gui/x/xlib/appendix/b/
+// mouse cursor shapes
+#define cuArrow           2
+#define cuArrowUp         114
+#define cuArrowDown       106
+#define cuArrowLeft       110
+#define cuArrowRight      112
+#define cuArrowUpDown     116
+#define cuArrowLeftRight  108
+#define cuMove            52
+#define cuWait            150
+#define cuArrowWait       -1
+#define cuHand            58
+#define cuFinger          60
+#define cuCross           0
+#define cuPencil          86
+#define cuPlus            90
+#define cuQuestion        99
+#define cuIbeam           152
+
+//#define DEF_CURSOR    cuArrow
+#define DEF_CURSOR    -1
+
+//----------
+
 // thread signals
 #define ts_Kill   666
 #define ts_Timer  667
@@ -93,8 +118,15 @@ class axWindowLinux : public axWindowBase
     Pixmap      mBitmapNoData;
     XColor      mBlack;
   protected:
+    // ptr to external axContext (used when creating surfaces)
+    //axContext*  mContext;
     int         mWinCursor;
-    //axContext*  mContext;     // ptr to external axContext (used when creating surfaces)
+
+    //Cursor    invisibleCursor;
+    //Pixmap    bitmapNoData;
+    //int       mWinCursor;
+    //XColor    mBlack;
+
 
   public:
 
@@ -312,6 +344,16 @@ class axWindowLinux : public axWindowBase
 
     //----------
 
+//    //TODO
+//    virtual void setParentSize(int aWidth, int aHeight)
+//      {
+//        //if (mParent!=0)
+//        //  XResizeWindow(gDP, mParent, aWidth, aHeight);
+//        setSize(aWidth,aHeight);
+//      }
+
+    //----------
+
     virtual void setTitle(axString aTitle)
       {
         XTextProperty window_title_property;
@@ -330,39 +372,75 @@ class axWindowLinux : public axWindowBase
         XFlush(mDisplay);
       }
 
-    //----------------------------------------
-    //
-    //----------------------------------------
+    virtual void resetCursor(void)
+      {
+        XUndefineCursor(mDisplay,mHandle);
+        XFreeCursor(mDisplay,mWinCursor);
+        mWinCursor=-1;
+      };
 
-//    virtual axColor createColor(int aRed, int aGreen, int aBlue)
-//    {
-//      XColor xcol;
-//      xcol.red   = aRed << 8;
-//      xcol.green = aGreen << 8;
-//      xcol.blue  = aBlue << 8;
-//      xcol.flags = (DoRed or DoGreen or DoBlue);
-//      XAllocColor(mDisplay,XDefaultColormap(mDisplay,0),&xcol);
-//      return axColor(xcol.pixel);
-//    }
+    //----------
 
-//    virtual axPen createPen(int r, int g, int b, int size=DEF_PENWIDTH)
-//      {
-//        axColor col = createColor(r,g,b);
-//        return axPen(col,size);
-//      }
-//
-//    virtual axBrush createBrush(int r, int g, int b, int style=DEF_BRUSHSTYLE)
-//      {
-//        axColor col = createColor(r,g,b);
-//        return axBrush(col,style);
-//      }
-//
-//    virtual axFont createFont(axString name, int r, int g, int b, int size=-1, int style=0)
-//      {
-//        //TODO: load font 'name'
-//        axColor col = createColor(r,g,b);
-//        return axFont("default",col,size,style);
-//      }
+    virtual void setCursor(int aCursor)
+      {
+        //if( aCursor<0 ) aCursor = DEF_CURSOR;
+        if (mWinCursor>=0) resetCursor();
+        //{
+        //  XUndefineCursor(gDP,mHandle);
+        //  XFreeCursor(gDP,mWinCursor);
+        //}
+        //if (aCursor<0)
+        //mWinCursor = XCreatePixmapCursor( gDP,bitmapNoData,bitmapNoData,&mBlack,&mBlack,0,0 );
+        //else
+        if (aCursor>=0)
+        {
+          mWinCursor = XCreateFontCursor(mDisplay, aCursor);
+          XDefineCursor(mDisplay, mHandle, mWinCursor);
+        }
+      };
+
+    //----------
+
+    //virtual void setCursorPos(int aX, int aY)
+    //  {
+    //  }
+
+    //----------
+
+    virtual void showCursor(void)
+      {
+        setCursor(DEF_CURSOR);
+      }
+
+    //----------
+
+    virtual void hideCursor(void)
+      {
+        //setCursor(-1);
+        if (mWinCursor>=0) resetCursor();
+        //{
+        //  XUndefineCursor(gDP,mHandle);
+        //  XFreeCursor(gDP,mWinCursor);
+        //}
+        mWinCursor = XCreatePixmapCursor( mDisplay,mBitmapNoData,mBitmapNoData,&mBlack,&mBlack,0,0 );
+        XDefineCursor(mDisplay,mHandle,mWinCursor);
+      }
+
+    //----------
+
+    virtual void grabCursor(void)
+      {
+        int which = ButtonPressMask|ButtonReleaseMask|PointerMotionMask;
+        XGrabPointer(mDisplay,mHandle,false,which,GrabModeSync,GrabModeAsync,mHandle,/*cursor*/None,CurrentTime);
+      }
+
+    //----------
+
+    virtual void releaseCursor(void)
+      {
+        XUngrabPointer(mDisplay, CurrentTime);
+      }
+
 
     //----------------------------------------
     // medium level
@@ -420,6 +498,28 @@ class axWindowLinux : public axWindowBase
       {
         XFlush(mDisplay);
       }
+
+
+
+    //----------------------------------------
+    //
+    //----------------------------------------
+
+//    virtual void startTimer(int ms)
+//      {
+//        mTimerSpeed = ms;
+//        mTimerRunning = true;
+//        /*int ret = */pthread_create( &mTimerThread, NULL, &timerProc, this );
+//      }
+
+    //----------
+
+//    virtual void stopTimer(void)
+//      {
+//        void* retval;
+//        mTimerRunning = false;
+//        /*int res = */pthread_join(mTimerThread, &retval);
+//      }
 
     //----------------------------------------
     // events
