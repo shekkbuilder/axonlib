@@ -1,9 +1,0 @@
-axonlib-user
-(how to make plugins/executables)
-
-- inherit from axPlugin
-- override one or more of the (following) methods from axPluginBase
-- call some of these methods in axPluginBase when/if needed
-- compile, and voila...
-
-- editor is a bit more involved
