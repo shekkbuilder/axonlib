@@ -9,7 +9,13 @@
 #include "axParameter.h"
 
 //----------------------------------------------------------------------
+/*
 
+TODO:
+- tune hovering, vs captured
+- modal, send events directly, and only, to specific widget (popup window)
+
+*/
 //----------------------------------------------------------------------
 
 class axContainer : public axWidget
@@ -132,11 +138,10 @@ class axContainer : public axWidget
           axWidget* wdg = mWidgets[i];
           if (wdg->isVisible())
           {
-            // glitches on non-buffered display
-            //if (wdg->getRect().intersects(aRect))   // intersects update rect?
-            //{
+            if (wdg->intersects(aRect))
+            {
               wdg->doPaint(aCanvas,aRect);
-            //}
+            }
           }
         }
         axWidget::doPaint(aCanvas,aRect);
@@ -252,6 +257,7 @@ class axContainer : public axWidget
 
     virtual void onChange(axWidget* aWidget)
       {
+        // default action, pass the message on to the 'owner'
         mListener->onChange(aWidget);
       }
 
