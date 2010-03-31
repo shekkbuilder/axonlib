@@ -22,6 +22,9 @@
 
 #define AX_MAGIC 0x41580000
 
+#define PI 3.1415926535
+#define PI2 (PI*2)
+
 #define SPL float
 #define PTR char*
 #define STR axString
@@ -33,7 +36,7 @@
 // long, 32/64 bit, same size as void* ???
 
 // a 'safe' type we can typecast to/from ptr (void*)
-#define AX_AUDIOPTR long
+#define AX_PTRCAST long
 
 //----------------------------------------------------------------------
 #endif

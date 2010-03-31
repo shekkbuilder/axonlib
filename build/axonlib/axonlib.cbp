@@ -89,14 +89,9 @@
 					<Add option="-pedantic" />
 					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add option="-windows" />
 					<Add option="-DAX_FORMAT_EXE" />
 					<Add directory="../../ax" />
 				</Compiler>
-				<Linker>
-					<Add library="X11" />
-					<Add library="pthread" />
-				</Linker>
 			</Target>
 			<Target title="win32 app - release">
 				<Option output="../../bin/axonlib.exe" prefix_auto="1" extension_auto="0" />
@@ -105,14 +100,12 @@
 				<Option compiler="mingw32" />
 				<Compiler>
 					<Add option="-O3" />
-					<Add option="-windows" />
+					<Add option="-mwindows" />
 					<Add option="-DAX_FORMAT_EXE" />
 					<Add directory="../../ax" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="X11" />
-					<Add library="pthread" />
 				</Linker>
 			</Target>
 			<Target title="win32 plug - debug">
@@ -127,15 +120,11 @@
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-shared" />
-					<Add option="-windows" />
+					<Add option="-mwindows" />
 					<Add option="-DAX_FORMAT_VST" />
 					<Add directory="../../ax" />
 					<Add directory="../../../vstsdk24" />
 				</Compiler>
-				<Linker>
-					<Add library="X11" />
-					<Add library="pthread" />
-				</Linker>
 			</Target>
 			<Target title="win32 plug - release">
 				<Option output="../../bin/axonlib.dll" prefix_auto="1" extension_auto="0" />
@@ -147,15 +136,13 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-shared" />
-					<Add option="-windows" />
+					<Add option="-mwindows" />
 					<Add option="-DAX_FORMAT_VST" />
 					<Add directory="../../ax" />
 					<Add directory="../../../vstsdk24" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="X11" />
-					<Add library="pthread" />
 				</Linker>
 			</Target>
 		</Build>

@@ -14,12 +14,12 @@
 
 #ifdef AX_FORMAT_VST
   #include "platform/vst/axPluginVst.h"
-  #define AX_WIN_DEFAULT AX_WIN_PLUGDEFAULT
+  //#define AX_WIN_DEFAULT AX_WIN_PLUGDEFAULT
 #endif
 
 #ifdef AX_FORMAT_EXE
   #include "platform/exe/axPluginExe.h"
-  #define AX_WIN_DEFAULT AX_WIN_APPDEFAULT
+  //#define AX_WIN_DEFAULT AX_WIN_APPDEFAULT
 #endif
 
 //----------------------------------------------------------------------

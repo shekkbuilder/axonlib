@@ -40,7 +40,7 @@
 #define cuIbeam           152
 
 //#define DEF_CURSOR    cuArrow
-#define DEF_CURSOR    -1
+#define DEF_CURSOR      -1
 
 //----------
 
@@ -177,7 +177,7 @@ class axWindowLinux : public axWindowBase
 
         // --- WM_DELETE_WINDOW ClientMessage ---
 
-        if (mWinFlags & AX_WIN_MSGDELETE)
+        if (mWinFlags.hasFlag(AX_WIN_MSGDELETE))
         {
           mDeleteWindowAtom = XInternAtom(mDisplay,"WM_DELETE_WINDOW",True);
           XSetWMProtocols(mDisplay,mHandle,&mDeleteWindowAtom,1);
@@ -185,7 +185,7 @@ class axWindowLinux : public axWindowBase
 
         // --- remove title-bar, borders ---
 
-        if (mWinFlags & AX_WIN_NOBORDER)
+        if (mWinFlags.hasFlag(AX_WIN_EMBEDDED))
         {
           #define MWM_HINTS_DECORATIONS (1L << 1)
           #define PROP_MOTIF_WM_HINTS_ELEMENTS  5
@@ -208,7 +208,7 @@ class axWindowLinux : public axWindowBase
 
         // --- eventProc ---
 
-        if (mWinFlags & AX_WIN_MSGPROC)
+        if (mWinFlags.hasFlag(AX_WIN_MSGPROC))
         {
           Atom atom;
           void* data;
@@ -248,7 +248,7 @@ class axWindowLinux : public axWindowBase
 
         // --- event handler thread ---
 
-        if (mWinFlags & AX_WIN_MSGTHREAD)
+        if (mWinFlags.hasFlag(AX_WIN_MSGTHREAD))
         {
           pthread_create(&mThreadHandle,NULL,&threadProc,this);
         }
@@ -259,7 +259,7 @@ class axWindowLinux : public axWindowBase
 
     ~axWindowLinux()
       {
-        if (mWinFlags & AX_WIN_MSGTHREAD)
+        if (mWinFlags.hasFlag(AX_WIN_MSGTHREAD))
         {
           sendEvent(ts_Kill);
           void* ret;
@@ -377,7 +377,7 @@ class axWindowLinux : public axWindowBase
         XUndefineCursor(mDisplay,mHandle);
         XFreeCursor(mDisplay,mWinCursor);
         mWinCursor=-1;
-      };
+      }
 
     //----------
 
@@ -397,7 +397,7 @@ class axWindowLinux : public axWindowBase
           mWinCursor = XCreateFontCursor(mDisplay, aCursor);
           XDefineCursor(mDisplay, mHandle, mWinCursor);
         }
-      };
+      }
 
     //----------
 
@@ -465,7 +465,7 @@ class axWindowLinux : public axWindowBase
 
     virtual void resizeBuffer(int aWidth, int aHeight)
       {
-        if (mWinFlags&AX_WIN_BUFFERED)
+        if (mWinFlags.hasFlag(AX_WIN_BUFFERED))
         {
           //mSurfaceMutex.lock();
           axSurface* srf;

@@ -14,7 +14,8 @@
   {
     Display*    mDisplay;
     Window      mWindow;//mParent;
-    AX_AUDIOPTR mAudio;
+    AX_PTRCAST  mAudio;
+    axContext() { mDisplay=NULL; mWindow=0; mAudio=0; }
   };
 
 #endif
@@ -24,7 +25,12 @@
   #include <windows.h>
   struct axContext
   {
-    //char* mWindowClassName;
+    HINSTANCE   mInstance;
+    HWND        mWindow;
+    char*       mWinClassName;
+    AX_PTRCAST  mAudio;
+    axContext() { mInstance=0; mWindow=0; mWinClassName=0; mAudio=0; }
+    axContext(int aWindow) { mInstance=0; mWindow=(HWND)aWindow; mWinClassName=0; mAudio=0; }
   };
 
 #endif

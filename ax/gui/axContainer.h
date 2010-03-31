@@ -50,15 +50,15 @@ class axContainer : public axWidget
 
     //----------
 
-    virtual void setSkin(axSkin* aSkin, bool aChildren=false)
-      {
-        //mSkin = aSkin;
-        axWidget::setSkin(aSkin,aChildren);
-        if (aChildren)
-        {
-          for (int i=0; i<mWidgets.size(); i++) mWidgets[i]->setSkin(aSkin,aChildren);
-        }
-      }
+//    virtual void setSkin(axSkin* aSkin, bool aChildren=false)
+//      {
+//        //mSkin = aSkin;
+//        axWidget::setSkin(aSkin,aChildren);
+//        if (aChildren)
+//        {
+//          for (int i=0; i<mWidgets.size(); i++) mWidgets[i]->setSkin(aSkin,aChildren);
+//        }
+//      }
 
 
     // find first widget that contains x,y
@@ -133,6 +133,7 @@ class axContainer : public axWidget
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
+        wtrace("axContainer.doPaint");
         for (int i=0; i<mWidgets.size(); i++)
         {
           axWidget* wdg = mWidgets[i];

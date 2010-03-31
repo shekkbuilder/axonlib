@@ -19,16 +19,17 @@ class wdgPanel : public axContainer//axWidget
       }
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-        if (mSkin)
-        {
+        //wtrace("wdgPanel.doPaint");
+//        if (mSkin)
+//        {
           switch(mMode)
           {
             case 0:
-              aCanvas->selectBrush(mSkin->getBrush(1)); // assume default-brush?
+              aCanvas->selectBrush(0);
               aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
               break;
           }
-        }
+//        }
         axContainer::doPaint(aCanvas,aRect);
       }
 

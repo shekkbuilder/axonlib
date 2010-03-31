@@ -28,6 +28,15 @@ class axEditor : public axWindow
     : axWindow(aContext,aRect,aWinFlags)
       {
         mPlugin = aPlugin;
+        mCanvas->createPen(AX_GREY_DARK);
+        mCanvas->createPen(AX_GREY);
+        mCanvas->createPen(AX_GREY_LIGHT);
+        mCanvas->createBrush(AX_GREY_DARK);
+        mCanvas->createBrush(AX_GREY);
+        mCanvas->createBrush(AX_GREY_LIGHT);
+        mCanvas->createFont("default",AX_GREY_DARK);
+        mCanvas->createFont("default",AX_GREY);
+        mCanvas->createFont("default",AX_GREY_LIGHT);
       }
 
     //----------

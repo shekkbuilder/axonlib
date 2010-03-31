@@ -11,7 +11,8 @@
 //----------------------------------------------------------------------
 
 // plugin flags
-#define pf_HasEditor 1
+#define pf_None       0
+#define pf_HasEditor  1
 
 //----------
 
@@ -32,6 +33,7 @@ class axPluginBase// : public axParameterListener
 
     axPluginBase(axContext* aContext, int aPluginFlags)
       {
+        wtrace("axPluginBase.constructor");
         mPluginFlags = aPluginFlags;//0;
         mEditorOpen = false;
         mEditorRect = axRect(0,0,256,256);
@@ -40,6 +42,7 @@ class axPluginBase// : public axParameterListener
 
     virtual ~axPluginBase()
       {
+        wtrace("axPluginBase.destructor");
         //deleteParameters();
       }
 
