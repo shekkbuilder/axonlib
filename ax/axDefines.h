@@ -23,6 +23,7 @@
 #define AX_MAGIC 0x41580000
 
 #define SPL float
+#define PTR char*
 #define STR axString
 #define REC axRect
 #define COL axColor

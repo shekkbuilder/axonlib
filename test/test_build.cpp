@@ -56,9 +56,9 @@ class myPlugin : public axPlugin
 
         // test
         mGraph  = new axGraph("graph");
-        mModule = new axModule("Module");
-        mModule->appendPin( new axPin() );
-        mModule->appendPin( new axPin() );
+        mModule = new axModule(mGraph,"Module");
+          mModule->appendPin( new axPin() );
+          mModule->appendPin( new axPin() );
         mGraph->appendModule(mModule);
       }
 

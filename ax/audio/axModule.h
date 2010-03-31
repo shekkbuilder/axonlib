@@ -18,7 +18,7 @@
     (can later be done visually with an editor that has "save as .cpp")
     (or we can have this editor in a plugin)
   - todo: script module
-  - todo: signal pins, going in the 'opposite direction', for control flow, events, etc..
+  - todo: signal pins, going in the 'opposite direction', for control flow, events, etc.. calls doSignal()
 
                    __________________           __________________
                   |_____      _____  |         |_____      _____  |
@@ -41,53 +41,154 @@
 
 //----------------------------------------------------------------------
 
-// input pins:  mPtr points directly to the value from the destination module/pin
-// output pins: mPtr points to the pin output value (internally in module)
+// pin direction
+#define pd_Input  0
+#define pd_Output 1
+
+// pin type
+#define pt_None   0   // const
+#define pt_Signal 1   // static
+#define pt_Audio  2   // dynamic
+
+// signal types
+#define st_Tick   0
+
+// module flags
+#define mf_None   0
+#define mf_Active 1
+
+//----------------------------------------------------------------------
+
+/*
+  a pin is essentially a ptr to a sample (and some helpers)
+  input pins: points directly to the value from the destination module/pin
+  output pins: points to the pin output value (internally in module)
+  these are manipulated in connect(), and doCompile(), etc...
+  to point as close as possibly to the 'real data'
+*/
 
 class axPin
 {
   protected:
-    SPL*  mPtr;
+    SPL*  mPinPtr;
+    int   mPinType;
+    int   mPinDir;
   public:
-    virtual SPL*  getPtr(void) { return mPtr; }
-    virtual void  setPtr(SPL* aPtr) { mPtr=aPtr; }
+    axPin() { mPinDir=pd_Output; mPinType=pt_Audio; }
+    virtual void  setPtr(SPL* aPtr) { mPinPtr=aPtr; }
+    virtual SPL*  getPtr(void) { return mPinPtr; }
+    virtual int   getDir(void) { return mPinDir; }
+    virtual int   getType(void) { return mPinType; }
 };
 
 typedef axArray<axPin*> axPins;
 
 //----------------------------------------------------------------------
 
+// a listener is a way for the module to communicate 'upwards',
+// most probbaly a graph/macro, or our plugin
+// (if we want to 'intercept' the messages)
+
+class axModuleListener
+{
+  public:
+    virtual void onSignal(int aType=0, PTR aValue=NULL) {}
+};
+
+//----------------------------------------------------------------------
+
+/*
+  the default setting is a do-nothing in everything, so its quite useless
+  in a graph, but when you start filling in the virtual methods, it
+  gets more and more functionality
+*/
+
 class axModule
 {
   protected:
+    axModuleListener* mListener;
     axString  mName;
     axPins    mPins;
-  //protected:
-  //    void appendPin(axPin* aPin) { mPins.append(aPin); }
-  //    void deletePins(void) { for (int i=0;i<mPins.size(); i++) delete mPins[i]; }
+    int       mFlags;
+
   public:
-    axModule(axString aName)  { mName=aName; }
-    virtual ~axModule()       { deletePins(); }
 
-    inline void appendPin(axPin* aPin) { mPins.append(aPin); }
-    inline void deletePins(void) { for (int i=0;i<mPins.size(); i++) delete mPins[i]; }
+    axModule(axModuleListener* aListener, axString aName)
+      {
+        mListener = aListener;
+        mName = aName;
+        mFlags = mf_None;
+      }
 
-    virtual axPin*  getPin(int aIndex) { return mPins[aIndex]; }
-    virtual SPL*    getPinPtr(int aIndex) { return mPins[aIndex]->getPtr(); }
-    virtual void    setPinPtr(int aIndex, SPL* aPtr) { mPins[aIndex]->setPtr(aPtr); }
+    virtual ~axModule()
+      {
+        deletePins();
+      }
 
-    virtual int     connectPin(axPin* mDstPin, axPin* aSrcPin, axModule* aSrcMod) { return 0; }
-    virtual int     connectDirect(axPin* mDstPin, SPL* aSource) { return 0; }
+    // init
 
-    virtual void    doProcess(SPL** aInputs, SPL** aOutputs) {}
-    virtual int     doCoompile(void) { return 0;}
-    virtual int     doExecute(void) { return 0; }
+    inline void     appendPin(axPin* aPin)  { mPins.append(aPin); }
+    inline void     deletePins(void)        { for (int i=0;i<mPins.size(); i++) delete mPins[i]; }
+    inline bool     isActive(void)          { return (mFlags&mf_Active); }
 
-    //virtual float process(float in) { return 0; }
+    // access
+
+    virtual axPin*  getPin(int aIndex)                { return mPins[aIndex]; }
+    virtual SPL*    getPinPtr(int aIndex)             { return mPins[aIndex]->getPtr(); }
+    virtual void    setPinPtr(int aIndex, SPL* aPtr)  { mPins[aIndex]->setPtr(aPtr); }
+
+    // graph setup
+
+    virtual int connectPin(axPin* mDstPin, axPin* aSrcPin, axModule* aSrcMod) { return 0; }
+    virtual int connectDirect(axPin* mDstPin, SPL* aSource) { return 0; }
+
+    // runtime
+
+    // send signal to module, aValue = ptr to 'something', depending on signal type.
+    // events, execution flow opposite of audio.
+    // for parameters, midi notes, etc,
+    // ex: midi module can send note event to oscillator, gate event to envelope, etc..
+    // also, for conditional execution
+    // (ex: multiple signal outputs, one of them selected depending on some input)
+
+    virtual void doSignal(int aType=0, PTR aValue=NULL) {}
+
+    // process
+
+    virtual void doProcess(SPL** aInputs, SPL** aOutputs) {}
+
+    // prepares aExecList
+    // cache pointers, check connected inputs
+    // (todo: check pin rates, const, static dynamic)
+    // setup runtime execution state/mode.
+
+    virtual int doCompile(void) { return 0; }
+
+    // compiled (prepared) execution.
+    // use cached pointers, appropriate state/mode, etc..
+    // optimized code-path
+    //
+    // via getPinPtr(), we can get quite close to the source,
+    // so this kind of 'optimization' could be as effective as
+    // the normal process() funtions with pointer to the samples
+
+    virtual int doExecute(SPL** aInputs, SPL** aOutputs) { return 0; }
 
 };
 
 typedef axArray<axModule*> axModules;
 
+//----------------------------------------------------------------------
+/*
+  what if we require that the modules cache everything needed,
+  so that the ptrs in the pins aren't used when calling the execlist?
+  that could make editing the graph at runtime safer? or more predictable?
+
+  modScript . public axModule
+  opModule : public axOpcode
+
+
+
+*/
 //----------------------------------------------------------------------
 #endif

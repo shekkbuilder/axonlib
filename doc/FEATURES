@@ -1,0 +1,24 @@
+[in progress, sketch]
+
+* compile to windows or linux, plugin or standalone executable, with no sourcecode changes
+• common look, feel, functionality among platforms
+• simple to get started, few external dependencies
+• no bloat, tiny and compact binaries, no big external libraries needed
+• cpu efficient, code prepared for (hopefully) good compiler optimization
+• plugin format abstraction (currently vst plugin and standalone exe)
+• simplified handling of parameters, tempo, audio, midi, editor, ...
+• lots of included example plugins
+• hierarchial gui, skinnable, auto-layout, sizeable, moveable, ...
+• mouse cursor shapes, hovering hints
+• includes a basic, but flexible set of widgets/containers
+• simple to make custom widgets
+• resizeable plugin window/editor (in selected hosts)
+• low level gfx (gdi/xlib) canvas, surface, bitmap, and color/pen/brush/font
+• png-decoding from memory (include png directly in exe/plugin)
+• scripts, stack-based, 4th inspired, rudimentary compilation (bytecode)
+• modular audio graph, with connectable dsp modules
+• polyphonic voice manager, event scheduler
+• heavily optimized math functions and approximations..
+• everything is optional (no bloat...)
+• [plus a lot of forgotten things, and all the small details...]
+
