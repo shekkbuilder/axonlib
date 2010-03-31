@@ -13,7 +13,7 @@
 
 //----------------------------------------------------------------------
 
-#define AX_GREY_BLACK       0,   0,   0
+#define AX_BLACK            0,   0,   0
 #define AX_GREY_DARK       64,  64,  64
 #define AX_GREY           128, 128, 128
 #define AX_GREY_LIGHT     192, 192, 192
@@ -40,11 +40,10 @@
 struct axColor
 {
   unsigned long mColor;
-  //
-  axColor() { mColor=0; }
-  axColor(unsigned long aColor) { mColor=aColor; }
+  axColor()                             { mColor=0; }
+  axColor(unsigned long aColor)         { mColor=aColor; }
   inline void set(unsigned long aColor) { mColor=aColor; }
-  inline unsigned long get(void) { return mColor; }
+  inline unsigned long get(void)        { return mColor; }
 };
 
 //----------------------------------------------------------------------

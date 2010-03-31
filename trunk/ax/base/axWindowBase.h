@@ -5,6 +5,7 @@
 #include "platform/axContext.h"
 #include "core/axRect.h"
 #include "core/axString.h"
+#include "core/axFlags.h"
 //#include "gui/axWidget.h"
 #include "gui/axContainer.h"
 #include "gui/axSurface.h"
@@ -14,19 +15,33 @@
 //#include "gui/axBrush.h"
 //#include "gui/axFont.h"
 
-#define AX_WIN_NOBORDER   1
-#define AX_WIN_MSGTHREAD  2
-#define AX_WIN_MSGPROC    4
-#define AX_WIN_MSGDELETE  8
-#define AX_WIN_BUFFERED   16
+//#define AX_WIN_NOBORDER   1
+#define AX_WIN_EMBEDDED   1
+#define AX_WIN_BUFFERED   2
+#define AX_WIN_MSGTHREAD  4
+#define AX_WIN_MSGPROC    8
+#define AX_WIN_MSGDELETE  16
 
-#define AX_WIN_APPDEFAULT   ( AX_WIN_BUFFERED | AX_WIN_MSGDELETE )
-#define AX_WIN_PLUGDEFAULT  ( AX_WIN_BUFFERED | AX_WIN_MSGTHREAD | AX_WIN_NOBORDER)
+//#define AX_WIN_EXEDEFAULT ( AX_WIN_BUFFERED | AX_WIN_MSGDELETE )
+//#define AX_WIN_VSTDEFAULT ( AX_WIN_BUFFERED | AX_WIN_MSGTHREAD | AX_WIN_EMBEDDED)
+
+// mouse buttons and mod keys
+#define bu_None    0
+#define bu_Left    1
+#define bu_Right   2
+#define bu_Middle  4
+#define bu_Shift   8
+#define bu_Ctrl    16
+#define bu_Alt     32
+//const ini bu_Double  = 1 << 6;
+//const int bu_Hover   = 1 << 7;
+
 
 class axWindowBase : public axContainer//axWidget
 {
   protected:
-    int         mWinFlags;
+    //int         mWinFlags;
+    axFlags     mWinFlags;
     axCanvas*   mCanvas;
     axSurface*  mSurface;
     axWidget*   mCapturedWidget;

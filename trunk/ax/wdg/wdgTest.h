@@ -38,20 +38,20 @@ class myWidget : public axContainer//axWidget
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
         char buf[256];
-        if (mSkin)
-        {
-          aCanvas->selectBrush(mSkin->getBrush(0));
+        //if (mSkin)
+        //{
+          aCanvas->selectBrush(1);
           aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
           if (mHighlight)
           {
-            aCanvas->selectPen(mSkin->getPen(2));
+            aCanvas->selectPen(2);
             aCanvas->drawRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
           }
-          aCanvas->selectFont(mSkin->getFont(0));
+          aCanvas->selectFont(0);
           if (mParameter) { mParameter->doGetDisplay(buf); }
           else sprintf(buf,"%.3f",mValue);
           aCanvas->drawText(mRect.x,mRect.y,mRect.x2(),mRect.y2(),buf,ta_Center);
-        }
+        //}
         axContainer::doPaint(aCanvas,aRect);
       }
 

@@ -29,9 +29,22 @@
 
 class axCanvasBase
 {
+  protected:
+    axPens    mPens;
+    axBrushes mBrushes;
+    axFonts   mFonts;
+
   public:
+
     axCanvasBase() {}
-    virtual ~axCanvasBase() {}
+
+    virtual ~axCanvasBase()
+      {
+        int i;
+        for (i=0; i<mPens.size(); i++) deletePen(i);
+        for (i=0; i<mBrushes.size(); i++) deleteBrush(i);
+        for (i=0; i<mFonts.size(); i++) deleteFont(i);;
+      }
 
     // get / set
 
@@ -39,25 +52,32 @@ class axCanvasBase
 
     // pen/brush/font
 
-    virtual axColor createColor(int aRed, int aGreen, int aBlue) { return axColor(); }
-    virtual axPen   createPen(int r, int g, int b, int size=DEF_PENWIDTH) { return axPen(); }
-    virtual axBrush createBrush(int r, int g, int b, int style=DEF_BRUSHSTYLE) { return axBrush(); }
-    virtual axFont  createFont(axString name, int r, int g, int b, int size=-1, int style=0) { return axFont(); }
-    virtual void    deletePen(axPen* aPen) {}
-    virtual void    deleteBrush(axBrush* aBrush) {}
-    virtual void    deleteFont(axFont* aFont) {}
+//    virtual axPen*  createPen(int r, int g, int b, int size=DEF_PENWIDTH) { return NULL; }
+//    virtual axBrush createBrush(int r, int g, int b, int style=DEF_BRUSHSTYLE) { return axBrush(); }
+//    virtual axFont  createFont(axString name, int r, int g, int b, int size=-1, int style=0) { return axFont(); }
+
+    virtual axColor createColor(int aRed, int aGreen, int aBlue) { return axColor(0); }
+    virtual int     createPen(int r, int g, int b, int size=DEF_PENWIDTH) { return 0; }
+    virtual int     createBrush(int r, int g, int b, int style=DEF_BRUSHSTYLE) { return 0; }
+    virtual int     createFont(axString name, int r, int g, int b, int size=-1, int style=0) { return 0; }
+
+    //virtual int     createPen(axColor aColor, int size=DEF_PENWIDTH) { return 0; }
+    //virtual int     createBrush(axColor aColor, int style=DEF_BRUSHSTYLE) { return 0; }
+    //virtual int     createFont(axString aName, axColor aColor, int size=DEF_PENWIDTH, int style=DEF_BRUSHSTYLE) { return 0; }
+
+    virtual void    deletePen(int aPen) {}
+    virtual void    deleteBrush(int aBrush) {}
+    virtual void    deleteFont(int aFont) {}
 
     virtual void    clearPen(void) {}
-    virtual void    selectPen(axPen* aPen) {}
-    virtual void    selectBrush(axBrush* aBrush) {}
-    virtual void    selectFont(axFont* aFont) {}
+    virtual void    selectPen(int aPen) {}
+    virtual void    selectBrush(int aBrush) {}
+    virtual void    selectFont(int aFont) {}
 
     // clip rect
 
     virtual void    setClipRect(int aX1, int aY1, int aX2, int aY2) {}
     virtual void    clearClipRect(void) {}
-    //virtual void    pushClipRect(axRect aRect) {}
-    //virtual void    popClipRect(void) {}
 
     // shapes
 

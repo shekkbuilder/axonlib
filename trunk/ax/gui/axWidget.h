@@ -43,7 +43,7 @@ class axWidget : public axWidgetListener
     axWidgetListener* mListener;
     axRect            mRect;
     axFlags           mFlags;
-    axSkin*           mSkin;
+//    axSkin*           mSkin;
     int               mAlignment;
     //axWidgets         mWidgets;
     //axWidget*         mCaptureWidget;
@@ -62,7 +62,7 @@ class axWidget : public axWidgetListener
         mListener = aListener;
         mRect = aRect;
         mFlags.mBits = wf_Active | wf_Visible | wf_Capture;
-        mSkin = NULL;
+//        mSkin = NULL;
         mConnection = -1;
         mAlignment = aAlignment;
         //mCaptureWidget = NULL;
@@ -107,14 +107,10 @@ class axWidget : public axWidgetListener
 
     //----------
 
-    virtual void setSkin(axSkin* aSkin, bool aChildren=false)
-      {
-        mSkin = aSkin;
-//        if (aChildren)
-//        {
-//          for (int i=0; i<mWidgets.size(); i++) mWidgets[i]->setSkin(aSkin,aChildren);
-//        }
-      }
+//    virtual void setSkin(axSkin* aSkin, bool aChildren=false)
+//      {
+//        mSkin = aSkin;
+//      }
 
     //----------
 

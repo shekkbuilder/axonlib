@@ -14,6 +14,9 @@
 
 //----------------------------------------------------------------------
 
+#define AX_WIN_DEFAULT (AX_WIN_BUFFERED|AX_WIN_MSGTHREAD|AX_WIN_EMBEDDED)
+
+
 // plugin states
 #define ps_Open     1
 #define ps_Close    2
@@ -114,6 +117,9 @@ class axPluginVst : public axPluginBase
         mCurrentProgram = 0;
         mEditorOpen = false;
         mEditorRect = axRect(0,0,256,256);
+
+        canProcessReplacing();
+
         memset(&aeffect,0,sizeof(aeffect));
         aeffect.magic                   = kEffectMagic;
         aeffect.object                  = this;

@@ -18,7 +18,7 @@ class axCanvasLinux : public axCanvasBase
     GC            mGC;
     XFontStruct*  mFont;
   protected:
-    //int           mXpos,mYpos;
+    int           mXpos,mYpos;
     //axRect        mClipRect;
 
   public:
@@ -47,42 +47,6 @@ class axCanvasLinux : public axCanvasBase
     // get / set
     //--------------------------------------------------
 
-    //virtual axColor createColor(int aRed, int aGreen, int aBlue)
-    //  {
-    //    XColor xcol;
-    //    xcol.red   = aRed << 8;
-    //    xcol.green = aGreen << 8;
-    //    xcol.blue  = aBlue << 8;
-    //    xcol.flags = (DoRed or DoGreen or DoBlue);
-    //    XAllocColor(mDisplay,XDefaultColormap(mDisplay,0),&xcol);
-    //    return axColor(xcol.pixel);
-    //  }
-
-    //----------
-
-    //virtual axPen createPen(axColor aColor, int aWidth)
-    //  {
-    //    return new axPen();
-    //  }
-
-    //----------
-
-    //virtual axBrush createBrush(axColor aColor, int aStyle)
-    //  {
-    //    return new axPen();
-    //  }
-
-    //----------
-
-    //virtual axFont createFont(axString aName, axColor aColor, int aSize)
-    //  {
-    //    return new axPen();
-    //  }
-
-    //--------------------------------------------------
-    //
-    //--------------------------------------------------
-
     //virtual void setPos(int aX, int aY)
     //  {
     //    mXpos = aX;
@@ -104,31 +68,50 @@ class axCanvasLinux : public axCanvasBase
 
     //----------
 
-    virtual axPen createPen(int r, int g, int b, int size=DEF_PENWIDTH)
+    virtual int createPen(int r, int g, int b, int size=DEF_PENWIDTH)
       {
-        axColor col = createColor(r,g,b);
-        return axPen(col,size);
+        axPen pen;
+        axColor color = createColor(r,g,b);
+        pen.mColor  = color;
+        pen.mSize   = size;
+        //pen.mHandle = CreatePen(PS_SOLID,size,color.get());
+        int num = mPens.size();
+        mPens.append(pen);
+        return num;
       }
 
     //----------
 
-    virtual axBrush createBrush(int r, int g, int b, int style=DEF_BRUSHSTYLE)
+    virtual int createBrush(int r, int g, int b, int style=DEF_BRUSHSTYLE)
       {
-        axColor col = createColor(r,g,b);
-        return axBrush(col,style);
+        axBrush brush;
+        axColor color = createColor(r,g,b);
+        brush.mColor  = color;
+        brush.mStyle  = style;
+        //brush.mHandle = CreateSolidBrush(color.get());
+        int num = mBrushes.size();
+        mBrushes.append(brush);
+        return num;
       }
 
     //----------
 
-    virtual axFont createFont(axString name, int r, int g, int b, int size=-1, int style=0)
+    virtual int createFont(axString name, int r, int g, int b, int size=-1, int style=0)
       {
-        axColor col = createColor(r,g,b);
-        return axFont(name,col,size,style);
+        axFont font;
+        axColor color = createColor(r,g,b);
+        font.mName    = name;
+        font.mColor   = color;
+        font.mSize    = size;
+        font.mStyle   = style;
+        int num = mFonts.size();
+        mFonts.append(font);
+        return num;
       }
 
-    //virtual void deletePen(axPen* aPen) {}
-    //virtual void deleteBrush(axBrush* aBrush) {}
-    //virtual void deleteFont(axFont* aFont) {}
+    //virtual void deletePen(int aPen) {}
+    //virtual void deleteBrush(int aBrush) {}
+    //virtual void deleteFont(int aFont) {}
 
     //----------
 
@@ -136,25 +119,25 @@ class axCanvasLinux : public axCanvasBase
 
     //----------
 
-    virtual void selectPen(axPen* aPen)
+    virtual void selectPen(int aPen)
       {
-        XSetForeground(mDisplay,mGC,aPen->getColor());
-        XSetLineAttributes(mDisplay,mGC,aPen->getSize(),LineSolid,CapButt,JoinBevel);
+        XSetForeground(mDisplay,mGC,mPens[aPen].mColor.get());
+        XSetLineAttributes(mDisplay,mGC,mPens[aPen].mSize,LineSolid,CapButt,JoinBevel);
       }
 
     //----------
 
-    virtual void selectBrush(axBrush* aBrush)
+    virtual void selectBrush(int aBrush)
       {
-        XSetForeground(mDisplay,mGC,aBrush->getColor());
-        XSetFillStyle(mDisplay,mGC,aBrush->getStyle()); // FillSolid
+        XSetForeground(mDisplay,mGC,mBrushes[aBrush].mColor.get());
+        XSetFillStyle(mDisplay,mGC,mBrushes[aBrush].mStyle); // FillSolid
       }
 
     //----------
 
-    virtual void selectFont(axFont* aFont)
+    virtual void selectFont(int aFont)
       {
-        XSetForeground(mDisplay,mGC,aFont->getColor());
+        XSetForeground(mDisplay,mGC,mFonts[aFont].mColor.get());
       }
 
     //--------------------------------------------------
@@ -178,20 +161,6 @@ class axCanvasLinux : public axCanvasBase
       {
         XSetClipMask(mDisplay,mGC,None);
       }
-
-    //virtual void pushClipRect(axRect aRect)
-    //  {
-    //    axRect* R = new axRect(aRect);
-    //    mClipRects.push(R);
-    //    setClipRect(aRect.x,aRect.y,aRect.x2(),aRect.y2());
-    //  }
-
-    //virtual void popClipRect(void)
-    //  {
-    //    axRect* R = mClipRects.pop();
-    //    setClipRect(R->x,R->y,R->x2(),R->y2());
-    //    delete R;
-    //  }
 
     //--------------------------------------------------
     // shapes

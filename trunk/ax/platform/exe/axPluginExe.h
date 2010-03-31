@@ -7,6 +7,8 @@
 #include "gui/axWindow.h"
 #include "base/axPluginBase.h"
 
+#define AX_WIN_DEFAULT (AX_WIN_BUFFERED|AX_WIN_MSGDELETE)
+
 //----------------------------------------------------------------------
 
 class axPluginExe : public axPluginBase,
@@ -23,6 +25,7 @@ class axPluginExe : public axPluginBase,
     axPluginExe(axContext* aContext, int aPluginFlags)
     : axPluginBase(aContext, aPluginFlags)
       {
+        wtrace("axPluginExe.constructor");
         mTitle = "axPluginExe";
         mTitleBuffer[0] = 0;
       }
@@ -31,6 +34,7 @@ class axPluginExe : public axPluginBase,
 
     virtual ~axPluginExe()
       {
+        wtrace("axPluginExe.destructor");
       }
 
     //--------------------------------------------------
@@ -39,12 +43,17 @@ class axPluginExe : public axPluginBase,
 
     virtual int main(axContext* aContext)
       {
+        wtrace("axPluginExe.main");
         // can this fail if we create the class as axEditor
         // meaning, can we safely typecase a axEditor* to a axWindow?
-        axWindow* win = (axWindow*)doOpenEditor(aContext);
-        win->setTitle(mTitle);
-        win->eventLoop();
-        doCloseEditor();
+        if (mPluginFlags.hasFlag(pf_HasEditor))
+        {
+          axWindow* win = (axWindow*)doOpenEditor(aContext);
+          wtrace("win = " << win);
+          win->setTitle(mTitle);
+          win->eventLoop();
+          doCloseEditor();
+        }
         return 0;
       }
 
@@ -102,25 +111,57 @@ typedef axPluginExe axPluginImpl;
 
 #ifdef AX_LINUX
 
-  #define AX_CONTEXT_INIT                               \
+  #define AX_CONTEXT_INIT(name)                         \
     XInitThreads();                                     \
     axContext ctx;                                      \
     Display*    display = XOpenDisplay(NULL);           \
     Window      parent  = XDefaultRootWindow(display);  \
-    AX_AUDIOPTR audio   = NULL;                         \
+    AX_PTRCAST  audio   = NULL;                         \
     ctx.mDisplay = display;                             \
     ctx.mWindow  = parent;                              \
     ctx.mAudio   = audio;
 
-  #define AX_CONTEXT_EXIT   \
+  #define AX_CONTEXT_EXIT                               \
     XCloseDisplay(display);
 
 #endif
 
+//----------
+
+  #define MAKESTRING2(s) #s
+  #define MAKESTRING(s) MAKESTRING2(s)
+  #define MAKE_NAME(name) MAKESTRING(name) "_window"
+
+//----------
+
+#ifdef AX_WIN32
+
+  #define AX_CONTEXT_INIT(name)                             \
+    axContext ctx;                                          \
+    HINSTANCE instance  = (HINSTANCE)GetModuleHandle(NULL); \
+    AX_PTRCAST  audio   = NULL;                             \
+    char*       winname = (char*)MAKE_NAME(name);           \
+    ctx.mInstance       = instance;                         \
+    ctx.mWinClassName   = winname;                          \
+    ctx.mWindow         = NULL;                             \
+    ctx.mAudio          = audio;
+
+  // unregister window?
+  // what if multiple instances is using the same window?
+
+  #define AX_CONTEXT_EXIT                       \
+    ;
+
+#endif
+
+//----------------------------------------------------------------------
+//
+//----------------------------------------------------------------------
+
 #define AX_ENTRYPOINT(classname)            \
 int main(void)                              \
 {                                           \
-  AX_CONTEXT_INIT                           \
+  AX_CONTEXT_INIT(classname)                \
   axPluginImpl* plug = new classname(&ctx); \
   int ret = plug->main(&ctx);               \
   AX_CONTEXT_EXIT                           \
