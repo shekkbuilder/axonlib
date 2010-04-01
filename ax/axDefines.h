@@ -14,6 +14,10 @@
   #define AX_WIN32
 #endif
 
+//#if defined(__unix__) || defined(__GNUC__)
+//#else
+//#endif
+
 //
 // 0x40    0x48    0x50    0x58
 // |       |       |       |

@@ -128,13 +128,13 @@ typedef axPluginExe axPluginImpl;
 
 //----------
 
-  #define MAKESTRING2(s) #s
-  #define MAKESTRING(s) MAKESTRING2(s)
-  #define MAKE_NAME(name) MAKESTRING(name) "_window"
-
 //----------
 
 #ifdef AX_WIN32
+
+  #define MAKESTRING2(s) #s
+  #define MAKESTRING(s) MAKESTRING2(s)
+  #define MAKE_NAME(name) MAKESTRING(name) "_window"
 
   #define AX_CONTEXT_INIT(name)                             \
     axContext ctx;                                          \
@@ -168,7 +168,6 @@ int main(void)                              \
   delete plug;                              \
   return ret;                               \
 }
-
 
 //----------------------------------------------------------------------
 #endif

@@ -49,6 +49,8 @@ class myPlugin : public axPlugin
       {
         wtrace("myPlugin.constructor");
 
+        mGain = 0;
+
         describe("plug_debug","ccernn","axonlib build.cpp",0,AX_MAGIC+0x0000);
         setupAudio(2,2);
         setupEditor(512,384);
@@ -77,7 +79,6 @@ class myPlugin : public axPlugin
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
         wtrace("myPlugin.doOpenEditor");
-        //mEditor = new myEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         mEditor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         wtrace("mEditor = " << mEditor);
         wdgPanel* panel = new wdgPanel(mEditor,axRect(0,0,512,384),wa_None,0);
@@ -87,45 +88,19 @@ class myPlugin : public axPlugin
         mWidget->appendWidget(mWidget2  = new myWidget(mEditor,axRect( 0,  0,100, 30),wa_None) );
         panel->appendWidget(  mWidget3  = new myWidget(mEditor,axRect(250,20,100, 30),wa_None) );
 
+        mEditor->connect(mWidget, pGain );
+
         mWidget->mName  = "red";
         mWidget2->mName = "grey";
         mWidget3->mName = "third";
-
-        mEditor->connect(mWidget, pGain );
-
-          trace("myEditor=" << this);
-          trace("mWidget=" << mWidget);
-          trace("mWidget2=" << mWidget2);
-          trace("mWidget3=" << mWidget3);
+        trace("myEditor=" << this);
+        trace("mWidget=" << mWidget);
+        trace("mWidget2=" << mWidget2);
+        trace("mWidget3=" << mWidget3);
 
         axCanvas* can = mEditor->getCanvas();
-
-        can->createPen(64,64,64, 0);
-        can->createPen(128,128,128, 0);
-        can->createPen(192,192,192, 0);
-        can->createBrush(64,64,64, 0);
-        can->createBrush(128,128,128, 0);
-        can->createBrush(192,192,192, 0);
-        can->createFont("default", 255,255,255, 0, 0);
-
-        wtrace("can = " << can);
-
-//        mSkin  = new axDefSkin(can);
-//        mSkin2 = new axSkin(can);
-//        mSkin2->appendPen(can->createPen(AX_RED));
-//        mSkin2->appendPen(can->createPen(AX_YELLOW));
-//        mSkin2->appendPen(can->createPen(AX_GREEN));
-//        mSkin2->appendBrush(can->createBrush(AX_RED_DARK));
-//        mSkin2->appendBrush(can->createBrush(AX_GREEN_DARK));
-//        mSkin2->appendBrush(can->createBrush(AX_YELLOW_DARK));
-//        mSkin2->appendFont(can->createFont("default",AX_WHITE));
-//        mEditor->setSkin(mSkin,true);
-//        mWidget->setSkin(mSkin2);
-//        //mWidget2->setSkin(mSkin2);
-//        mWidget3->setSkin(mSkin2);
-
+        can->createPen(255,255,0, 0);
         mEditor->show();
-
         return mEditor;
       }
 

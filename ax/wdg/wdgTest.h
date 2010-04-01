@@ -29,6 +29,7 @@ class myWidget : public axContainer//axWidget
         mClickVal = 0;
         //
         mHighlight = false;
+        mValue = 0;
       }
 
     //virtual ~myWidget() {}
@@ -40,10 +41,19 @@ class myWidget : public axContainer//axWidget
         char buf[256];
         //if (mSkin)
         //{
-          aCanvas->selectBrush(1);
-          aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
           if (mHighlight)
           {
+            aCanvas->clearPen();
+            aCanvas->selectBrush(1);
+            aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
+            aCanvas->selectPen(3);
+            aCanvas->drawRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
+          }
+          else
+          {
+            aCanvas->clearPen();
+            aCanvas->selectBrush(1);
+            aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
             aCanvas->selectPen(2);
             aCanvas->drawRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
           }

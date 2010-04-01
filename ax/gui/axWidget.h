@@ -63,11 +63,10 @@ class axWidget : public axWidgetListener
         mRect = aRect;
         mFlags.mBits = wf_Active | wf_Visible | wf_Capture;
 //        mSkin = NULL;
-        mConnection = -1;
         mAlignment = aAlignment;
+        mConnection = -1;
         //mCaptureWidget = NULL;
         //mHoverWidget = this;//NULL;
-        mConnection = -1;
         mParameter = NULL;
         mValue = 0;
         //mId = aId;

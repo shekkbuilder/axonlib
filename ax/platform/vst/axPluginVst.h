@@ -37,7 +37,7 @@
 class axPluginVst : public axPluginBase
 {
   friend AEffect* main_plugin(audioMasterCallback audioMaster);// asm ("main");
-
+  friend int main(audioMasterCallback audioMaster);
 
   private:
     audioMasterCallback audioMaster;
@@ -145,9 +145,11 @@ class axPluginVst : public axPluginBase
       {
       }
 
-  private:
+  protected:
 
     inline AEffect* getInstance() { return &aeffect; }
+
+  private:
 
   //protected:
 
@@ -529,6 +531,9 @@ class axPluginVst : public axPluginBase
                 ctx.mDisplay = XOpenDisplay(NULL);
                 ctx.mWindow  = (Window)ptr;
                 ctx.mAudio   = NULL;
+              #endif
+              #ifdef AX_WIN32
+                ctx.mWindow = (HWND)ptr;
               #endif
               mEditorWindow = doOpenEditor(&ctx);
               mEditorOpen = true;
@@ -950,20 +955,17 @@ typedef axPluginVst axPluginImpl;
 //
 //----------------------------------------------------------------------
 
-//----------------------------------------------------------------------
-
-
 #ifdef AX_LINUX
 
   #define __cdecl
   AEffect* main_plugin(audioMasterCallback audioMaster) asm ("main");
   #define main main_plugin
 
-  #define AX_CONTEXT_INIT                           \
+  #define AX_CONTEXT_INIT(name)                     \
     axContext ctx;                                  \
     Display* display = NULL;                        \
     Window   parent  = 0;                           \
-    AX_AUDIOPTR audio   = (AX_AUDIOPTR)audioMaster; \
+    AX_PTRCAST audio   = (AX_PTRCAST)audioMaster; \
     ctx.mDisplay = display;                         \
     ctx.mWindow  = parent;                          \
     ctx.mAudio   = audio;
@@ -977,30 +979,60 @@ typedef axPluginVst axPluginImpl;
     AEffect* main(audioMasterCallback audioMaster)  \
     {                                               \
       XInitThreads();                               \
-      AX_CONTEXT_INIT                               \
+      AX_CONTEXT_INIT(plugclass)                    \
       plugclass* plug = new plugclass(&ctx);        \
       if (!plug) return 0;                          \
       AEffect* ae = plug->getInstance();            \
       return ae;                                    \
     }
 
-#endif //AX_LINUX
+#endif
 
-//  #ifdef WIN32
-//    BOOL APIENTRY DllMain(HINSTANCE hModule,DWORD reason,LPVOID lpReserved)
-//    {
-//      gInstance = hModule;
-//      return TRUE;
-//    }
-//    int main(audioMasterCallback audioMaster)
-//    {
-//      //AX_PLUGIN* plugin = new AX_PLUGIN(audioMaster,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
-//      axHost* host = new axHost((void*)audioMaster);
-//      AX_PLUGIN* plugin = new AX_PLUGIN(host,AX_NUMPROGS,AX_NUMPARAMS,AX_FLAGS);
-//      if (!plugin) return 0;
-//      return (int)plugin->getAeffect();
-//    }
-//  #endif //Win32
+
+
+
+//----------------------------------------------------------------------
+
+  #define MAKESTRING2(s) #s
+  #define MAKESTRING(s) MAKESTRING2(s)
+  #define MAKE_NAME(name) MAKESTRING(name) "_window"
+
+#ifdef WIN32
+
+
+  #define AX_CONTEXT_INIT(name)                             \
+    axContext ctx;                                          \
+    HINSTANCE instance  = (HINSTANCE)GetModuleHandle(NULL); \
+    AX_PTRCAST  audio   = NULL;                             \
+    char*       winname = (char*)MAKE_NAME(name);           \
+    ctx.mInstance       = instance;                         \
+    ctx.mWinClassName   = winname;                          \
+    ctx.mWindow         = NULL;                             \
+    ctx.mAudio          = audio;
+
+/*
+  #define AX_CONTEXT_EXIT
+*/
+
+  #define AX_ENTRYPOINT(plugclass)                                          \
+    static HINSTANCE gInstance;                                             \
+    BOOL APIENTRY DllMain(HINSTANCE hModule,DWORD reason,LPVOID lpReserved) \
+    {                                                                       \
+      gInstance = hModule;                                                  \
+      return TRUE;                                                          \
+    }                                                                       \
+    int main(audioMasterCallback audioMaster)                               \
+    {                                                                       \
+      AX_CONTEXT_INIT(plugclass)                                            \
+      plugclass* plug = new plugclass(&ctx);                                \
+      if (!plug) return 0;                                                  \
+      return (int)plug->getInstance();                                      \
+    }
+
+#endif
+
+//----------------------------------------------------------------------
+
 
 //----------------------------------------------------------------------
 #endif

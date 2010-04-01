@@ -14,14 +14,15 @@ class axCanvasWin32 : public axCanvasBase
   private:
 		HDC     mDC;
     HFONT   mFont;
-		HPEN    mPen, mOldPen;
-    HPEN    mOldPen2;
-		HBRUSH  mBrush, mOldBrush;
-    HBRUSH  mOldBrush2;
+		HPEN    mPen, mOldPen, mOldPen2;
+		HBRUSH  mBrush, mOldBrush, mOldBrush2;
 		int     mWinHandle;
-//		axPen*  mNullPen;
     RECT    R;
+    HPEN    mNullPen;
   protected:
+    int     mCurrentPen;
+    int     mCurrentBrush;
+    int     mCurrentFont;
     int     mXpos,mYpos;
 
   public:
@@ -29,6 +30,9 @@ class axCanvasWin32 : public axCanvasBase
     axCanvasWin32(axContext* aContext)
     : axCanvasBase()
       {
+        mCurrentPen = 0;
+        mCurrentBrush = 0;
+        mCurrentFont = 0;
         mPen    = 0;
         mBrush  = 0;
         HDC tempdc = GetDC(0);
@@ -42,13 +46,14 @@ class axCanvasWin32 : public axCanvasBase
         mFont = CreateFontIndirect(&LFont);
         SelectObject(mDC,mFont);
         ReleaseDC(0,tempdc);
-//        mNullPen = new axPen();
+        mNullPen = CreatePen(PS_NULL,0,0);
       }
 
     //----------
 
     virtual ~axCanvasWin32()
       {
+        DeleteObject(mNullPen);
         if (mPen)   DeleteObject(mPen);
         if (mBrush) DeleteObject(mBrush);
         if (mFont)  DeleteObject(mFont);
@@ -142,30 +147,30 @@ class axCanvasWin32 : public axCanvasBase
 
     //----------
 
-    virtual void clearPen(void)
-      {
-        // use pre-defined null pen
-//        selectPen(mNullPen);
-      }
-
-    //----------
-
     virtual void selectPen(int aPen)
       {
+        mCurrentPen = aPen;
         mOldPen2 = (HPEN)SelectObject( (HDC)mDC, mPens[aPen].mHandle );
 //        //TODO: set null brush?
       }
 
     virtual void selectBrush(int aBrush)
       {
+        mCurrentBrush = aBrush;
         mOldBrush2 = (HBRUSH)SelectObject((HDC)mDC, mBrushes[aBrush].mHandle);
 //        //TODO: set null pen?
       }
 
     virtual void selectFont(int aFont)
       {
+        mCurrentFont = aFont;
         //SetTextColor(mDC,mTextColor.mColor);
         SetTextColor(mDC,mFonts[aFont].mColor.get() );
+      }
+
+    //----------
+
+    virtual void clearPen(void) { mOldPen2 = (HPEN)SelectObject( (HDC)mDC, mNullPen );
       }
 
     //----------
@@ -196,7 +201,7 @@ class axCanvasWin32 : public axCanvasBase
 
     virtual void drawPoint(int aX, int aY)
       {
-//        SetPixel(mDC,aX,aY,mPenColor.mColor);
+        SetPixel(mDC,aX,aY,mPens[mCurrentPen].mColor.get());
       }
 
     //----------

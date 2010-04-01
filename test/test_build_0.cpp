@@ -15,7 +15,7 @@
 //
 //----------------------------------------------------------------------
 
-class myWidget : public axWidget
+class myWidget : public axContainer
 {
   private:
     bool  mDragging;
@@ -26,7 +26,7 @@ class myWidget : public axWidget
   public:
 
     myWidget(axWidgetListener* aListener, axRect aRect=NULL_RECT, int aAlignment=wa_None)
-    : axWidget(aListener,aRect,aAlignment)
+    : axContainer(aListener,aRect,aAlignment)
       {
         //mValue = 1;
         mDragging = false;
@@ -40,15 +40,15 @@ class myWidget : public axWidget
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
         char buf[256];
-        if (mSkin)
-        {
-          aCanvas->selectBrush(mSkin->getBrush(0));
+        //if (mSkin)
+        //{
+          aCanvas->selectBrush(0);
           aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
-          aCanvas->selectFont(mSkin->getFont(0));
+          aCanvas->selectFont(0);
           if (mParameter) { mParameter->doGetDisplay(buf); }
           else sprintf(buf,"%.3f",mValue);
           aCanvas->drawText(mRect.x,mRect.y,mRect.x2(),mRect.y2(),buf,ta_Center);
-        }
+        //}
         axWidget::doPaint(aCanvas,aRect);
       }
 
@@ -97,10 +97,9 @@ class myEditor : public axEditor
     axPlugin*   mPlugin;
 
     myWidget*   mWidget;
-    axDefSkin*  mSkin;
-
+    //axDefSkin*  mSkin;
     myWidget*  mWidget2;
-    axSkin*     mSkin2;
+    //axSkin*     mSkin2;
 
 
   public:
@@ -116,12 +115,12 @@ class myEditor : public axEditor
         //trace("mWidget2=" << mWidget2);
         connect(mWidget, mPlugin->param(0) );
 
-        mSkin = new axDefSkin(mCanvas);
-        this->setSkin(mSkin,true);
-        mSkin2 = new axSkin(mCanvas);
-        mSkin2->appendBrush( mCanvas->createBrush(AX_RED_DARK) );
-        mSkin2->appendFont( mCanvas->createFont("default",AX_YELLOW) );
-        mWidget2->setSkin(mSkin2);
+        //mSkin = new axDefSkin(mCanvas);
+        //this->setSkin(mSkin,true);
+        //mSkin2 = new axSkin(mCanvas);
+        //mSkin2->appendBrush( mCanvas->createBrush(AX_RED_DARK) );
+        //mSkin2->appendFont( mCanvas->createFont("default",AX_YELLOW) );
+        //mWidget2->setSkin(mSkin2);
 
         //mFlags.clearFlag(wf_Active);
       }
@@ -134,7 +133,7 @@ class myEditor : public axEditor
 
     virtual void doPaint(axCanvas* aCanvas,axRect aRect)
       {
-        aCanvas->selectBrush(mSkin->getBrush(1));
+        aCanvas->selectBrush(1);
         aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
         axWidget::doPaint(aCanvas,aRect);
       }
@@ -200,5 +199,5 @@ class myPlugin : public axPlugin
 };
 
 //----------------------------------------------------------------------
-AX_ENTRYPOINT(myPlugin);
+AX_ENTRYPOINT(myPlugin)
 //----------------------------------------------------------------------
