@@ -83,7 +83,7 @@ class axWindowWin32 : public axWindowBase
         wc.hCursor        = (HICON)mWinCursor;//LoadCursor(NULL, IDC_ARROW);
         RegisterClass(&wc);
 
-//----- create window (windowed)
+//----- create window (embedded)
 
         if (mWinFlags.hasFlag(AX_WIN_EMBEDDED))
         {
@@ -99,9 +99,10 @@ class axWindowWin32 : public axWindowBase
             mInstance,
             0
           );
+          reparent(mParent);
         } //embedded
 
-//----- create window (embedded)
+//----- create window (windowed)
 
         else
         {
@@ -117,7 +118,6 @@ class axWindowWin32 : public axWindowBase
             mInstance,                // hInstance
             0                         // lpParam
           );
-          //reparent(mParent);
         }
 
 //-----
@@ -140,6 +140,10 @@ class axWindowWin32 : public axWindowBase
         DestroyWindow(mHandle);
         // can this be dangerous if moutlple plugin instances uses the plugin?
         // or is there some reference-counting going on?
+
+  // unregister window?
+  // what if multiple instances is using the same window?
+
         UnregisterClass( mWinName.ptr(), mInstance);
       }
 
@@ -486,7 +490,7 @@ class axWindowWin32 : public axWindowBase
         //MSG msg2;
         //HDC dc;
         LRESULT result = 0;
-        //int btn;
+        int btn;
         axRect rc;
         int w,h;
 
@@ -502,8 +506,8 @@ class axWindowWin32 : public axWindowBase
             beginPaint();
             rc = axRect(  mPS.rcPaint.left,
                           mPS.rcPaint.top,
-                          mPS.rcPaint.right -  mPS.rcPaint.left + 1,
-                          mPS.rcPaint.bottom - mPS.rcPaint.top  + 1);
+                          mPS.rcPaint.right -  mPS.rcPaint.left + 2,
+                          mPS.rcPaint.bottom - mPS.rcPaint.top  + 2);
             //if (mWinFlags & AX_WIN_BUFFERED && mSurface)
             //{
             //  //mSurfaceMutex.lock();
@@ -520,47 +524,47 @@ class axWindowWin32 : public axWindowBase
               // if you obtain a device context handle from the  BeginPaint function,
               // the DC contains a predefined rectangular clipping region that corresponds
               // to the invalid rectangle that requires repainting
-              //mCanvas->setClipRect(rc);
+              mCanvas->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
               doPaint(mCanvas,rc);
-              //mCanvas->clearClipRect();
+              mCanvas->clearClipRect();
             }
             endPaint();
             break;
-//          case WM_LBUTTONDOWN: case WM_RBUTTONDOWN: case WM_MBUTTONDOWN:
-//            switch (message)
-//            {
-//              case WM_LBUTTONDOWN: btn = bu_Left;   break;
-//              case WM_MBUTTONDOWN: btn = bu_Middle; break;
-//              case WM_RBUTTONDOWN: btn = bu_Right;  break;
-//            }
-//            mClickedButton = btn;
-//            doMouseDown(short(LOWORD(lParam)), short(HIWORD(lParam)), btn | remapKey(wParam));
-//            if( mCapturedWidget ) grabCursor();
-//            break;
-//          case WM_LBUTTONUP: case WM_RBUTTONUP: case WM_MBUTTONUP:
-//            switch (message)
-//            {
-//              case WM_LBUTTONUP: btn = bu_Left;   break;
-//              case WM_MBUTTONUP: btn = bu_Middle; break;
-//              case WM_RBUTTONUP: btn = bu_Right;  break;
-//            }
-//            mClickedButton = bu_None;
-//            doMouseUp(short(LOWORD(lParam)), short(HIWORD(lParam)), btn | remapKey(wParam));
-//            if( !mCapturedWidget ) releaseCursor();
-//            break;
-//          case WM_MOUSEMOVE:
-//            doMouseMove(short(LOWORD(lParam)), short(HIWORD(lParam)), mClickedButton | remapKey(wParam));
-//            //return 1;
-//            break;
-//          //case WM_CHAR:
-//          //  doKeyChar(wParam,lParam);
-//          //  break;
-//          case WM_KEYDOWN:
-//            doKeyDown(wParam,lParam);
-//            break;
-//          case WM_KEYUP:
-//            doKeyDown(wParam,lParam);
-//            break;
+          case WM_LBUTTONDOWN: case WM_RBUTTONDOWN: case WM_MBUTTONDOWN:
+            switch (message)
+            {
+              case WM_LBUTTONDOWN: btn = bu_Left;   break;
+              case WM_MBUTTONDOWN: btn = bu_Middle; break;
+              case WM_RBUTTONDOWN: btn = bu_Right;  break;
+            }
+            mClickedButton = btn;
+            doMouseDown(short(LOWORD(lParam)), short(HIWORD(lParam)), btn | remapKey(wParam));
+            if( mCapturedWidget ) grabCursor();
+            break;
+          case WM_LBUTTONUP: case WM_RBUTTONUP: case WM_MBUTTONUP:
+            switch (message)
+            {
+              case WM_LBUTTONUP: btn = bu_Left;   break;
+              case WM_MBUTTONUP: btn = bu_Middle; break;
+              case WM_RBUTTONUP: btn = bu_Right;  break;
+            }
+            mClickedButton = bu_None;
+            doMouseUp(short(LOWORD(lParam)), short(HIWORD(lParam)), btn | remapKey(wParam));
+            if( !mCapturedWidget ) releaseCursor();
+            break;
+          case WM_MOUSEMOVE:
+            doMouseMove(short(LOWORD(lParam)), short(HIWORD(lParam)), mClickedButton | remapKey(wParam));
+            //return 1;
+            break;
+          //case WM_CHAR:
+          //  doKeyChar(wParam,lParam);
+          //  break;
+          case WM_KEYDOWN:
+            doKeyDown(wParam,lParam);
+            break;
+          case WM_KEYUP:
+            doKeyDown(wParam,lParam);
+            break;
           case WM_SIZE:
             //TRACE("WM_SIZE\n");
 

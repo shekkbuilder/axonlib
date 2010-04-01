@@ -116,7 +116,6 @@
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-pedantic" />
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-shared" />
@@ -214,7 +213,7 @@
 		<Unit filename="../../ax/wdg/wdgSlider.h" />
 		<Unit filename="../../ax/wdg/wdgTest.h" />
 		<Unit filename="../../ax/wdg/wdgTextList.h" />
-		<Unit filename="../../test/test_build.cpp" />
+		<Unit filename="../../test/test_build_1.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
