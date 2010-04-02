@@ -61,17 +61,12 @@ class axWindowBase : public axContainer//axWidget
 
     virtual ~axWindowBase() {}
 
-    virtual axCanvas* getCanvas(void) { return mCanvas; }
-    virtual axSurface* getSurface(void) { return mSurface; }
+    // canvas/surface
 
-    //axCanvas* createCanvas(int aParent) { return NULL; }
-    //axSurface* createSurface(int aWidth, int aHeight) { return NULL; }
-
-    // accessors
-
-    //virtual int         getHandle(void) { return 0; }
     virtual axCanvas*   createCanvas(void)  { return NULL; }
     virtual axSurface*  createSurface(void) { return NULL; }
+    virtual axCanvas*   getCanvas(void)     { return mCanvas; }
+    virtual axSurface*  getSurface(void)    { return mSurface; }
 
     // low level
 
@@ -112,8 +107,8 @@ class axWindowBase : public axContainer//axWidget
 
     // axWidgetListener
 
-    virtual void onChange(axWidget* aWidget) { trace(":: axWindowBase.onChange(wdg)"); }
-    virtual void onRedraw(axWidget* aWidget) { trace(":: axWindowBase.onRedraw(wdg)"); }
+    //virtual void onChange(axWidget* aWidget) { trace(":: axWindowBase.onChange(wdg)"); }
+    //virtual void onRedraw(axWidget* aWidget) { trace(":: axWindowBase.onRedraw(wdg)"); }
 
 };
 

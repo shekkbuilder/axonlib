@@ -2,6 +2,18 @@
 #define axWidget_included
 //----------------------------------------------------------------------
 
+/*
+  a widget is the base class for the gui.
+  it is mainly a rectangle in a window, and can receive messages
+  (mouse, keys, paint, ..) from its 'owner' to do something, and can
+  send messages back to notify its handler that something has changed.
+
+  the rect coords are kept in screen-space, relative to the window.
+  this simplifies quite a few calculations at runtime,
+  but also mean that you have to be a little bit careful when setting
+  up the editor/window...
+*/
+
 #include "core/axRect.h"
 #include "gui/axCanvas.h"
 #include "gui/axSkin.h"
@@ -43,17 +55,17 @@ class axWidget : public axWidgetListener
     axWidgetListener* mListener;
     axRect            mRect;
     axFlags           mFlags;
-//    axSkin*           mSkin;
     int               mAlignment;
+    int               mConnection;    // which parameter (if any) this is conected to (set in axEditor.connect)
+    axParameter*      mParameter;     // direct access to the parameter (set in axEditor.connect)
+    float             mValue;
     //axWidgets         mWidgets;
     //axWidget*         mCaptureWidget;
     //axWidget*         mHoverWidget;
-    int               mConnection;
-    axParameter*      mParameter;
-    float             mValue;
-  //public:
-  //  int     mId;
-  //  void*   mPtr;
+    //axSkin*           mSkin;
+  public:
+    //int     mId;
+    //void*   mPtr;
 
   public:
 

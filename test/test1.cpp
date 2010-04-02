@@ -2,9 +2,11 @@
 #include "core/axDebug.h"
 
 #include "platform/axContext.h"
-
 #include "axPlugin.h"
 #include "axEditor.h"
+#include "gui/axContainer.h"
+
+//----------------------------------------------------------------------
 
 class myWidget : public /*axContainer*/axWidget
 {
@@ -20,15 +22,38 @@ class myWidget : public /*axContainer*/axWidget
     virtual ~myWidget() {}
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-        //trace("doPaint");
         aCanvas->selectBrush(0);
         aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
-        //aCanvas->drawSurface(mSurface, 10,10, 0,0,100,100);
         aCanvas->drawImage(mSurface, 10,10, 0,0,100,100);
         //axContainer::doPaint(aCanvas,aRect);
       }
 };
 
+//----------------------------------------------------------------------
+/*
+
+todo/ideas/thoughts/whatever:
+
+- streamline the #define AX_DEBUG + #include "core/axDebug.h" things?
+  just defining AX_DEBUG could be enough?
+  or we could find a platform-independent way to see if we're in a debug build,
+  to get rid of the needed AX_DEBUG altogether...
+  #ifdef __DEBUG__ or something?
+
+- window size is set in two places...
+  setupEditor vs doOpenEditor/axEditor constructor
+
+- brush, pen etc attached to canvas, lost when resizing editor/window
+  because the surface (and thus the canvas) have to be reconstructor
+
+- change color of pen/brush without creating a new one?
+  linux: easy, no real pen, just saving the color, and use it in selectPen() etc
+  win32: can we re-color the pen/brush in some way?
+
+- drawing pixels with rgb values directly (create temporary pen, draw, delete,
+  or re-color an existing stock one, if possible)
+
+*/
 //----------------------------------------------------------------------
 
 class test1 : public axPlugin
@@ -56,24 +81,17 @@ class test1 : public axPlugin
 
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
-        mEditor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
-        //mEditor = new axEditor(this,aContext,mEditorRect,AX_WIN_MSGDELETE);
-
-        //axCanvas* canvas = mEditor->getCanvas();
-        //canvas->createBrush(AX_GREY);
-
+        mEditor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT/*AX_WIN_MSGDELETE*/);
         mEditor->appendWidget( wdg = new myWidget(mEditor,axRect(0,0,640,480)) );
 
         srf = mEditor->createSurface(100,100);
         wdg->mSurface = srf;
 
         axCanvas* can = srf->getCanvas();
-        trace("can="<<can);
-
-        //can->createBrush(AX_BLACK);
         can->clearPen();
         can->createBrush(AX_YELLOW);
-        can->selectBrush(0);
+        can->createBrush(AX_RED_DARK);
+        can->selectBrush(2);
         can->fillRect(0,0,100,100);
         can->selectBrush(1);
         can->fillCircle(0,0,100,100);
@@ -97,6 +115,7 @@ class test1 : public axPlugin
 
 };
 
+//----------------------------------------------------------------------
 AX_ENTRYPOINT(test1)
 
 

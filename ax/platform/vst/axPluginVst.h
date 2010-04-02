@@ -595,7 +595,7 @@ class axPluginVst : public axPluginBase
           case effCanBeAutomated:
             //trace("axPluginVst.dispatcher :: effCanBeAutomated");
             //v = canParameterBeAutomated (index) ? 1 : 0;
-            if (mParameters[index]->flags()->hasFlag(pf_automate)) v = 1;
+            if (mParameters[index]->flags()->hasFlag(pf_Automate)) v = 1;
             break;
           case effString2Parameter:
             //trace("axPluginVst.dispatcher :: effString2Parameter");
@@ -1013,6 +1013,18 @@ typedef axPluginVst axPluginImpl;
 /*
   #define AX_CONTEXT_EXIT
 */
+
+//hInstance = hInstDll;
+//switch(fdwReason) {
+//    case DLL_PROCESS_ATTACH:
+//        initMyLibraries();
+//        if(initLibrariesFailed) {
+//            return FALSE;
+//        }
+//        break;
+//    case DLL_PROCESS_DETACH:
+//        deinitializeLibaries();
+//        break;
 
   #define AX_ENTRYPOINT(plugclass)                                          \
     BOOL APIENTRY DllMain(HINSTANCE hModule,DWORD reason,LPVOID lpReserved) \

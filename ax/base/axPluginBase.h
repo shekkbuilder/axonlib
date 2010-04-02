@@ -33,7 +33,7 @@ class axPluginBase// : public axParameterListener
 
     axPluginBase(axContext* aContext, int aPluginFlags)
       {
-        wtrace("axPluginBase.constructor");
+        //wtrace("axPluginBase.constructor");
         mPluginFlags = aPluginFlags;//0;
         mEditorOpen = false;
         mEditorRect = axRect(0,0,256,256);
@@ -42,7 +42,7 @@ class axPluginBase// : public axParameterListener
 
     virtual ~axPluginBase()
       {
-        wtrace("axPluginBase.destructor");
+        //wtrace("axPluginBase.destructor");
         //deleteParameters();
       }
 

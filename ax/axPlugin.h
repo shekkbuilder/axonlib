@@ -52,7 +52,10 @@ class axPlugin : public axPluginImpl,
         for (int i=0; i<mParameters.size(); i++) delete mParameters[i];
       }
 
-    inline axParameter* param(int aIndex) { return mParameters[aIndex]; }
+    //inline axParameter* param(int aIndex)
+    //  {
+    //    return mParameters[aIndex];
+    //  }
 
     virtual void onChange(axParameter* aParameter)
       {

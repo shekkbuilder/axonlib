@@ -23,9 +23,9 @@ class axParameterListener
 //----------------------------------------------------------------------
 
 // parameter flags
-#define pf_automate 1
+#define pf_Automate 1
 
-#define AX_PAR_DEFAULT (pf_automate)
+#define AX_PAR_DEFAULT (pf_Automate)
 
 //NOTE: plugin flags also has pf_ prefix
 
@@ -37,8 +37,8 @@ class axParameter// : public axParameterBase
   friend class axPlugin;
 
   private:
-    int mConnection;
-    int mIndex;
+    int mConnection;      // which widget (if any) this is connected to
+    int mIndex;           // index into the parameter list (axPluginBase)
 
   protected:
     axParameterListener* mListener;
@@ -49,14 +49,6 @@ class axParameter// : public axParameterBase
     axFlags   mFlags;
 
   public:
-
-//    int       mID;
-//    void*     mUser;
-
-    // aListener  listener
-    // aID        id (for your own use)
-    // aName      name ("lowpass",..)
-    // aLabel     label ("hz,"db",..)
 
     axParameter(axParameterListener* aListener, /*int aID,*/ axString aName, axString aLabel="")
       {
@@ -76,31 +68,22 @@ class axParameter// : public axParameterBase
     // inline
     //--------------------------------------------------
 
-    inline axFlags* flags(void) { return &mFlags; }
+    inline axFlags* flags(void)                     { return &mFlags; }
     inline void setListener(axParameterListener* l) { mListener = l; }
-    inline axParameterListener* getListener(void) { return mListener; }
-    inline void setValueDirect(float v) { mValue = v; }
-    inline float getValueDirect(void) { return mValue; }
-
-    inline int  getConnection(void)     { return mConnection; }
-    inline void setConnection(int aNum) { mConnection = aNum; }
-
-    inline int  getIndex(void)     { return mIndex; }
-    inline void setIndex(int aNum) { mIndex = aNum; }
+    inline axParameterListener* getListener(void)   { return mListener; }
+    inline void setValueDirect(float v)             { mValue = v; }
+    inline float getValueDirect(void)               { return mValue; }
+    inline int  getConnection(void)                 { return mConnection; }
+    inline void setConnection(int aNum)             { mConnection = aNum; }
+    inline int  getIndex(void)                      { return mIndex; }
+    inline void setIndex(int aNum)                  { mIndex = aNum; }
 
     //----------
 
     virtual void setValue(float aValue) { mValue=aValue; }
-    virtual float getValue(void) { return mValue; }
+    virtual float getValue(void)        { return mValue; }
 
     //----------
-
-    //virtual void  doReset(void) {}
-    //virtual void  doSetValue(float aValue) {}
-    //virtual float doGetValue(void) {return 0;}
-    //virtual void  doGetName(char* buf) {}
-    //virtual void  doGetLabel(char* buf) {}
-    //virtual void  doGetDisplay(char* buf) {}
 
     virtual void doReset(void)
       {

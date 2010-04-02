@@ -179,7 +179,6 @@
 		<Unit filename="../../ax/gui/axColor.h" />
 		<Unit filename="../../ax/gui/axContainer.h" />
 		<Unit filename="../../ax/gui/axFont.h" />
-		<Unit filename="../../ax/gui/axGuiBase.h" />
 		<Unit filename="../../ax/gui/axPen.h" />
 		<Unit filename="../../ax/gui/axSkin.h" />
 		<Unit filename="../../ax/gui/axSurface.h" />

@@ -229,7 +229,7 @@ class axWindowLinux : public axWindowBase
         //axContext ctx(mDisplay,mWindow);
         //mCanvas = new axCanvas(&ctx);
         mCanvas = createCanvas();
-        wtrace(":: mCanvas = " << mCanvas);
+        //wtrace(":: mCanvas = " << mCanvas);
 
         // --- surface ---
 
@@ -485,7 +485,7 @@ class axWindowLinux : public axWindowBase
 
     virtual void resizeBuffer(int aWidth, int aHeight)
       {
-        wtrace("axWindowLinux.resizeBuffer");
+        //wtrace("axWindowLinux.resizeBuffer");
         if (mWinFlags.hasFlag(AX_WIN_BUFFERED))
         {
           //if (aWidth!=mSurface->getWidth() || aHeight!=mSurface->getHeight())
@@ -500,16 +500,14 @@ class axWindowLinux : public axWindowBase
             }
             //axContext ctx(mDisplay,mParent);
             //srf = new axSurface(&ctx,aWidth,aHeight);
-            //wtrace("+");
             srf = createSurface(aWidth,aHeight);
-            //wtrace("-");
             mSurface = srf;
-            wtrace(":: mSurface = " << mSurface);
+            //wtrace(":: mSurface = " << mSurface);
             //mSurfaceMutex.unlock();
           //} //size
           //else trace("axWindowLinux.resizeBuffer - size didn't change");
         } //buffered
-        else wtrace(":: not buffered");
+        //else wtrace(":: not buffered");
 
       }
 
@@ -579,7 +577,7 @@ class axWindowLinux : public axWindowBase
           unsigned int data = ev.xclient.data.l[0];
           if (ev.type==ClientMessage && data==mDeleteWindowAtom)
           {
-            //trace("exit signal");
+            //tracetrace("exit signal");
             break;
           }
           else eventHandler(&ev);
@@ -608,7 +606,7 @@ class axWindowLinux : public axWindowBase
 
     void eventHandler(XEvent* ev)
       {
-        wtrace("axWindowX11.eventHandler");
+        //wtrace("axWindowX11.eventHandler");
         //trace("axWindowX11.eventHandler: " << ev->type << " : " << x11_event_names[ev->type]);
         axRect rc;
         int but,key,val;
@@ -624,7 +622,7 @@ class axWindowLinux : public axWindowBase
               w = ev->xconfigure.width;
               h = ev->xconfigure.height;
             }
-            wtrace(":: ConfigureNotify " << w << "," << h);
+            //wtrace(":: ConfigureNotify " << w << "," << h);
             resizeBuffer(w,h);
             doResize(w,h);
             break;
@@ -638,24 +636,27 @@ class axWindowLinux : public axWindowBase
             {
               rc.combine( ev->xexpose.x, ev->xexpose.y, ev->xexpose.width, ev->xexpose.height );
             }
-            wtrace(":: Expose " << rc.x << "," << rc.y << "," << rc.w << "," << rc.h);
-            mCanvas->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
-
+            //wtrace(":: Expose " << rc.x << "," << rc.y << "," << rc.w << "," << rc.h);
+            //mCanvas->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
             if ( mWinFlags.hasFlag(AX_WIN_BUFFERED) && mSurface )
             {
-              wtrace("   :: double buffered");
+              //wtrace("   :: double buffered");
               axCanvas* can = mSurface->getCanvas();
+              can->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
               doPaint(can,rc);
               //mCanvas->drawSurface(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
               mCanvas->drawImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
+              can->clearClipRect();
             }
             else
             {
+              mCanvas->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
               doPaint(mCanvas,rc);
+              mCanvas->clearClipRect();
+
               //XFlush(mDisplay);
             }
-
-            mCanvas->clearClipRect();
+            //mCanvas->clearClipRect();
             endPaint();
             break;
           case ClientMessage:
