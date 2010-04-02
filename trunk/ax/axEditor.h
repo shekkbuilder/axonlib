@@ -5,6 +5,8 @@
 #include "axPlugin.h"
 #include "gui/axWindow.h"
 
+//----------------------------------------------------------------------
+
 struct wp_connection
 {
   axWidget*     mWidget;
@@ -14,7 +16,7 @@ struct wp_connection
 
 typedef axArray<wp_connection> wp_connections;
 
-//----------
+//----------------------------------------------------------------------
 
 class axEditor : public axWindow
 {
@@ -44,13 +46,10 @@ class axEditor : public axWindow
     void connect(axWidget* aWidget, axParameter* aParameter)
       {
         int conn = mConnections.size();
-
         aWidget->setConnection(conn);
         aWidget->setParameter(aParameter);
         aParameter->setConnection(conn);
-
         aWidget->setValue( aParameter->doGetValue() );
-
         mConnections.append( wp_connection(aWidget,aParameter) );
       }
 
@@ -80,6 +79,8 @@ class axEditor : public axWindow
       }
 
     //----------
+
+    // called from axEditor.onChange(axParameter) if editor is open
 
     virtual void paramChanged(axParameter* aParameter)
       {

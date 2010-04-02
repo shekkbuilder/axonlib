@@ -25,7 +25,7 @@ class axPluginExe : public axPluginBase,
     axPluginExe(axContext* aContext, int aPluginFlags)
     : axPluginBase(aContext, aPluginFlags)
       {
-        wtrace("axPluginExe.constructor");
+        //wtrace("axPluginExe.constructor");
         mTitle = "axPluginExe";
         mTitleBuffer[0] = 0;
       }
@@ -34,7 +34,7 @@ class axPluginExe : public axPluginBase,
 
     virtual ~axPluginExe()
       {
-        wtrace("axPluginExe.destructor");
+        //wtrace("axPluginExe.destructor");
       }
 
     //--------------------------------------------------
@@ -43,7 +43,7 @@ class axPluginExe : public axPluginBase,
 
     virtual int main(axContext* aContext)
       {
-        wtrace("axPluginExe.main");
+        //wtrace("axPluginExe.main");
         // can this fail if we create the class as axEditor
         // meaning, can we safely typecase a axEditor* to a axWindow?
         if (mPluginFlags.hasFlag(pf_HasEditor))

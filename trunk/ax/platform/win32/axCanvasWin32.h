@@ -340,6 +340,9 @@ class axCanvasWin32 : public axCanvasBase
 
     //----------
 
+    // hack alert!
+    // draw to a rect size 1000x1000, and align to upper left
+
     virtual void drawText(int aX, int aY, axString aText)
       {
         //SetBkMode(mDC,TRANSPARENT);
@@ -372,38 +375,38 @@ class axCanvasWin32 : public axCanvasBase
     // bitmap
     //--------------------------------------------------
 
-//    virtual void drawBitmap(axBitmapBase* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-//      {
-//        HDC tempdc = CreateCompatibleDC(mDC);
-//        SelectObject(tempdc,(HBITMAP)aBitmap->getHandle());
-//        BitBlt(mDC,aX,aY,aSrcW,aSrcH,tempdc,aSrcX,aSrcY,SRCCOPY);
-//        DeleteDC(tempdc);
-//      }
+    //virtual void drawBitmap(axBitmapBase* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    //  {
+    //    HDC tempdc = CreateCompatibleDC(mDC);
+    //    SelectObject(tempdc,(HBITMAP)aBitmap->getHandle());
+    //    BitBlt(mDC,aX,aY,aSrcW,aSrcH,tempdc,aSrcX,aSrcY,SRCCOPY);
+    //    DeleteDC(tempdc);
+    //  }
 
     //--------------------------------------------------
     // canvas (surface[drawable])
     //--------------------------------------------------
 
-//    //virtual void blit(int aHandle, axPoint aDst, axRect aSrc)
-//    virtual void blit(axCanvasBase* aCanvas, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-//      {
-        //HDC tempdc = (HBITMAP)mHandle->mDC;
-        //axCanvasImpl* ci = (axCanvasImpl*)aCanvas;
-        //BitBlt(mDC,aX,aY,aSrcW,aSrcH,ci->getDC(),aSrcX,aSrcY,SRCCOPY);
-//      }
+    ////virtual void blit(int aHandle, axPoint aDst, axRect aSrc)
+    //virtual void blit(axCanvasBase* aCanvas, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    //  {
+    //    //HDC tempdc = (HBITMAP)mHandle->mDC;
+    //    //axCanvasImpl* ci = (axCanvasImpl*)aCanvas;
+    //    //BitBlt(mDC,aX,aY,aSrcW,aSrcH,ci->getDC(),aSrcX,aSrcY,SRCCOPY);
+    //  }
 
-//    virtual void drawSurface(axSurface* aSurface, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-//      {
-//        axCanvas* canvas = aSurface->getCanvas();
-//        HDC tempdc = (HDC)canvas->getHandle();
-//        BitBlt(mDC,aX,aY,aSrcW,aSrcH,tempdc,aSrcX,aSrcY,SRCCOPY);
-//      }
+    //virtual void drawSurface(axSurface* aSurface, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    //  {
+    //    axCanvas* canvas = aSurface->getCanvas();
+    //    HDC tempdc = (HDC)canvas->getHandle();
+    //    BitBlt(mDC,aX,aY,aSrcW,aSrcH,tempdc,aSrcX,aSrcY,SRCCOPY);
+    //  }
+
     virtual void drawImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
         HDC tempdc = (HDC)aImage->getHandle();
         BitBlt(mDC,aX,aY,aSrcW,aSrcH,tempdc,aSrcX,aSrcY,SRCCOPY);
       }
-
 
 };
 

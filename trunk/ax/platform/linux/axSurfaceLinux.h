@@ -37,14 +37,14 @@ class axSurfaceLinux : public axSurfaceBase
     //: axSurfaceBase(/*aContext,*/aWidth,aHeight)
     : axSurfaceBase(aWidth,aHeight)
       {
-        wtrace("axSurfaceLinux.constructor. this=" << this);
+        //wtrace("axSurfaceLinux.constructor. this=" << this);
         mDisplay  = aContext->mDisplay;
         mDrawable = aContext->mWindow;  // XDefaultRootWindow(mDisplay);
         mWidth    = aWidth;
         mHeight   = aHeight;
         mDepth    = DefaultDepth(mDisplay,DefaultScreen(mDisplay));
         mPixmap   = XCreatePixmap(mDisplay,mDrawable,mWidth,mHeight,mDepth);
-        wtrace(":: mPixmap=" << mPixmap);
+        //wtrace(":: mPixmap=" << mPixmap);
         //axContext ctx(mDisplay,mPixmap); // display, drawable
         //mCanvas = new axCanvas(&ctx);
         mCanvas = createCanvas();

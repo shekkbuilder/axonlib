@@ -50,9 +50,7 @@ class axWindowWin32 : public axWindowBase
     axWindowWin32(axContext* aContext, axRect aRect, int aWinFlags)
     : axWindowBase(aContext,aRect,aWinFlags)
       {
-
-        trace("axWindowWin32.constructor()");
-
+        //wtrace("axWindowWin32.constructor()");
         mInstance   = aContext->mInstance;
         mWinName    = aContext->mWinClassName;
         mParent     = (int)aContext->mWindow;
@@ -73,7 +71,7 @@ class axWindowWin32 : public axWindowBase
         // (or is it done automatically when dll is unloaded?)
 
         char* classname = mWinName.ptr();//(char*)"axonlib";
-        wtrace("window class name:" << classname);
+        //wtrace("window class name:" << classname);
         WNDCLASS wc;
         memset(&wc,0,sizeof(wc));
         wc.style          = CS_HREDRAW | CS_VREDRAW;
@@ -229,11 +227,7 @@ class axWindowWin32 : public axWindowBase
         //SetWindowPos(mWindow,0,0,0,aWidth,aHeight,SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOZORDER);
       }
 
-    //----------
-
-//    virtual void setParentSize(int aWidth, int aHeight)
-//      {
-//      }
+    //------------------------------
 
       //internal
       void getWindowSize(HWND pWnd, int* pW, int* pH)
@@ -251,6 +245,8 @@ class axWindowWin32 : public axWindowBase
           }
         }
 
+      //----------
+
       //internal
       bool isChildWindow(HWND pWnd)
         {
@@ -263,8 +259,7 @@ class axWindowWin32 : public axWindowBase
           return false;
         }
 
-
-      //----------
+    //------------------------------
 
     #define SETPOS_FLAGS SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE
 
@@ -296,7 +291,6 @@ class axWindowWin32 : public axWindowBase
       }
 
     #undef SETPOS_FLAGS
-
 
     //----------
 
@@ -435,7 +429,7 @@ class axWindowWin32 : public axWindowBase
 
     virtual void beginPaint(void)
       {
-        wtrace("axWindowWin32.beginPaint");
+        //wtrace("axWindowWin32.beginPaint");
         /*mPaintDC = */BeginPaint(mWindow,&mPS);
       }
 
@@ -444,24 +438,24 @@ class axWindowWin32 : public axWindowBase
     virtual void endPaint(void)
       {
         EndPaint(mWindow,&mPS);
-        wtrace("axWindowWin32.endPaint");
+        //wtrace("axWindowWin32.endPaint");
       }
 
     //----------------------------------------
     //
     //----------------------------------------
 
-//    virtual void startTimer(int ms)
-//      {
-//        /*mTimer = */SetTimer(mWindow,666,ms,NULL/*timerProc*/);
-//      }
+    //virtual void startTimer(int ms)
+    //  {
+    //    /*mTimer = */SetTimer(mWindow,666,ms,NULL/*timerProc*/);
+    //  }
 
     //----------
 
-//    virtual void stopTimer(void)
-//      {
-//        KillTimer(mWindow,666);
-//      }
+    //virtual void stopTimer(void)
+    //  {
+    //    KillTimer(mWindow,666);
+    //  }
 
     //----------------------------------------
     // events
@@ -530,17 +524,19 @@ class axWindowWin32 : public axWindowBase
                           mPS.rcPaint.top,
                           mPS.rcPaint.right -  mPS.rcPaint.left + 2,
                           mPS.rcPaint.bottom - mPS.rcPaint.top  + 2);
-            //if (mWinFlags & AX_WIN_BUFFERED && mSurface)
-            //{
-            //  //mSurfaceMutex.lock();
-            //  axCanvas* can = mSurface->mCanvas;
-            //  //can->setClipRect(rc);
-            //  doPaint(can,rc);
-            //  mCanvas->blit( can, rc.x,rc.y, rc.x,rc.y,rc.w,rc.h );
-            //  //can->clearClipRect();
-            //  //mSurfaceMutex.unlock();
-            //}
-            //else
+            //mCanvas->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
+            if ( mWinFlags.hasFlag(AX_WIN_BUFFERED) && mSurface )
+            {
+              //mSurfaceMutex.lock();
+              axCanvas* can = mSurface->getCanvas();
+              can->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
+              doPaint(can,rc);
+              //mCanvas->blit( can, rc.x,rc.y, rc.x,rc.y,rc.w,rc.h );
+              mCanvas->drawImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
+              can->clearClipRect();
+              //mSurfaceMutex.unlock();
+            }
+            else
             {
               // http://msdn.microsoft.com/en-us/library/dd183439%28VS.85%29.aspx
               // if you obtain a device context handle from the  BeginPaint function,
@@ -550,6 +546,7 @@ class axWindowWin32 : public axWindowBase
               doPaint(mCanvas,rc);
               mCanvas->clearClipRect();
             }
+            //mCanvas->clearClipRect();
             endPaint();
             break;
           case WM_LBUTTONDOWN: case WM_RBUTTONDOWN: case WM_MBUTTONDOWN:
@@ -620,14 +617,14 @@ class axWindowWin32 : public axWindowBase
           case WM_DESTROY:
             if (!mWinFlags.hasFlag(AX_WIN_EMBEDDED))
             {
-              trace("Quit");
+              //trace("Quit");
               PostQuitMessage(0);
             }
             break;
-//          //case WM_TIMER:
-//          //  if (wParam==666) doTimer();
-//          //  result = 0;
-//          //  break;
+          //case WM_TIMER:
+          //  if (wParam==666) doTimer();
+          //  result = 0;
+          //  break;
           case WM_SETCURSOR:
             SetCursor(mWinCursor);
             break;

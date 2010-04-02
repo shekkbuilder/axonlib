@@ -32,7 +32,7 @@ class axCanvasLinux : public axCanvasBase
     axCanvasLinux(axContext* aContext)
     : axCanvasBase(/*aContext*/)
       {
-        wtrace("axCanvasLinux.constructor");
+        //wtrace("axCanvasLinux.constructor");
         mDisplay  = aContext->mDisplay;
         mDrawable = aContext->mWindow;
         mGC       = XCreateGC(mDisplay,mDrawable,0,&gcvalues);
@@ -51,7 +51,6 @@ class axCanvasLinux : public axCanvasBase
 
     //--------------------------------------------------
 
-    //virtual int getHandle(void) { return (int)mDrawable; }
     //virtual int getHandle(void) { return (int)mDrawable; }
 
     //--------------------------------------------------
@@ -309,10 +308,10 @@ class axCanvasLinux : public axCanvasBase
     //dest_x, dest_y  Specify the x and y coordinates, which are relative to the origin of the drawable and are the coordinates of the subimage.
     //width, height 	Specify the width and height of the subimage, which define the dimensions of the rectangle.
 
-//    virtual void drawBitmap(axBitmapBase* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-//      {
-//        XPutImage(mDisplay,mWindow,mGC,(XImage*)aBitmap->getHandle(),aSrcX,aSrcY,aX,aY,aSrcW,aSrcH);
-//      }
+    //virtual void drawBitmap(axBitmapBase* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    //  {
+    //    XPutImage(mDisplay,mWindow,mGC,(XImage*)aBitmap->getHandle(),aSrcX,aSrcY,aX,aY,aSrcW,aSrcH);
+    //  }
 
     //--------------------------------------------------
     // canvas (surface[drawable])
@@ -335,53 +334,29 @@ class axCanvasLinux : public axCanvasBase
 
     //virtual void blit(int aHandle, axPoint aDst, axRect aSrc)
 
+    //virtual void blit(axCanvasBase* aCanvas, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    //  {
+    //    wtrace("blit");
+    //    //XCopyArea(mDisplay,aCanvas->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
+    //    XCopyArea(mDisplay,aCanvas->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
+    //    wtrace("blit ok");
+    //  }
 
-//    virtual void blit(axCanvasBase* aCanvas, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-//      {
-//        wtrace("blit");
-//        //XCopyArea(mDisplay,aCanvas->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
-//        XCopyArea(mDisplay,aCanvas->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
-//        wtrace("blit ok");
-//      }
-
-
-
-
-
-
-
-
-
-//    virtual void drawSurface(axSurface* aSurface, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-//      {
-//        wtrace("blit");
-//        //XCopyArea(mDisplay,aCanvas->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
-//        XCopyArea(mDisplay,aSurface->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
-//        wtrace("blit ok");
-//      }
+    //virtual void drawSurface(axSurface* aSurface, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    //  {
+    //    wtrace("blit");
+    //    //XCopyArea(mDisplay,aCanvas->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
+    //    XCopyArea(mDisplay,aSurface->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
+    //    wtrace("blit ok");
+    //  }
 
     virtual void drawImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
-        wtrace("blit");
+        //wtrace("blit");
         //XCopyArea(mDisplay,aCanvas->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
         XCopyArea(mDisplay,aImage->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
-        wtrace("blit ok");
+        //wtrace("blit ok");
       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 };
 

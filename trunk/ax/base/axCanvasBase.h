@@ -38,13 +38,6 @@ class axCanvasBase
 
   public:
 
-//    // if aContext->mWindow == NULL, return off-screen canvas
-//    // else window canvas
-//
-//    axCanvasBase(/*axContext* aContext*/)
-//      {
-//      }
-
     virtual ~axCanvasBase()
       {
         int i;
@@ -101,11 +94,10 @@ class axCanvasBase
 
     // bitmap
 
-    virtual void drawImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
-
     //virtual void    drawBitmap(axBitmapBase* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
     //virtual void    blit(axCanvasBase* aCanvas, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
     //virtual void    drawSurface(axSurfaceBase* aSurface, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
+    virtual void drawImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
 
     //----------
 

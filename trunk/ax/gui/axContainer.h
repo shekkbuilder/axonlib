@@ -2,6 +2,15 @@
 #define axContainer_included
 //----------------------------------------------------------------------
 
+/*
+  essentially a widget with sub-widgets. these can have various alignment
+  or positions within its parent.
+  the subwidget rects have coordinates relative to the window, not its parent,
+  and the container can automatically align, resize and move its subwidgets,
+  depending on some flags and defines..
+
+*/
+
 #include "core/axRect.h"
 //#include "gui/axCanvas.h"
 //#include "gui/axSkin.h"
@@ -133,7 +142,7 @@ class axContainer : public axWidget
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-        wtrace("axContainer.doPaint");
+        //wtrace("axContainer.doPaint");
         for (int i=0; i<mWidgets.size(); i++)
         {
           axWidget* wdg = mWidgets[i];

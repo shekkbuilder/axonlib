@@ -12,10 +12,9 @@ class axCanvas;
 class axSurfaceBase : public axImage
 {
   protected:
-    int           mWidth;
-    int           mHeight;
-    int           mDepth;
-    //axCanvasBase* mCanvas;
+    int       mWidth;
+    int       mHeight;
+    int       mDepth;
     axCanvas* mCanvas;
   public:
     axSurfaceBase(int aWidth, int aHeight)
@@ -26,14 +25,10 @@ class axSurfaceBase : public axImage
         mCanvas = NULL;
       }
     virtual ~axSurfaceBase() {}
-    //virtual axCanvas* createCanvas(void) { return NULL; }
-    //virtual int getHandle(void) { return 0; }
-    //virtual axSurfaceBase* getSurface(void) { return NULL; }
 
-    inline int getWidth(void) { return mWidth; }
-    inline int getHeight(void) { return mHeight; }
-    inline int getDepth(void) { return mDepth; }
-    //virtual axCanvasBase* getCanvas(void) { return NULL; }
+    inline int        getWidth(void) { return mWidth; }
+    inline int        getHeight(void) { return mHeight; }
+    inline int        getDepth(void) { return mDepth; }
     virtual axCanvas* getCanvas(void) { return NULL; }
 
 };
