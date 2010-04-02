@@ -12,7 +12,7 @@
 #include "axDefines.h"
 #include "core/axRect.h"
 #include "core/axString.h"
-#include "base/axWindowBase.h"
+//#include "base/axWindowBase.h"
 #include "gui/axWidget.h"
 #include "gui/axCanvas.h"
 #include "gui/axSurface.h"
@@ -105,6 +105,7 @@ static char noData[] = { 0,0,0,0,0,0,0,0 };
 class axWindowLinux : public axWindowBase
 {
   friend void* threadProc(void* data);
+  friend class axPluginVst;
 
   private:
     Display*    mDisplay;
@@ -112,7 +113,7 @@ class axWindowLinux : public axWindowBase
     long        mEventMask;
     Atom        mDeleteWindowAtom;
     pthread_t   mThreadHandle;
-    Window      mHandle;
+    Window      mWindow;
     Atom        mCustomEventAtom;
     Cursor      mInvisibleCursor;
     Pixmap      mBitmapNoData;
@@ -163,7 +164,7 @@ class axWindowLinux : public axWindowBase
 
         // --- create window ---
 
-        mHandle = XCreateWindow(
+        mWindow = XCreateWindow(
           mDisplay,
           mParent,
           aRect.x,aRect.y,aRect.w,aRect.h,
@@ -180,7 +181,7 @@ class axWindowLinux : public axWindowBase
         if (mWinFlags.hasFlag(AX_WIN_MSGDELETE))
         {
           mDeleteWindowAtom = XInternAtom(mDisplay,"WM_DELETE_WINDOW",True);
-          XSetWMProtocols(mDisplay,mHandle,&mDeleteWindowAtom,1);
+          XSetWMProtocols(mDisplay,mWindow,&mDeleteWindowAtom,1);
         }
 
         // --- remove title-bar, borders ---
@@ -201,7 +202,7 @@ class axWindowLinux : public axWindowBase
           motif_hints.flags = MWM_HINTS_DECORATIONS;
           motif_hints.decorations = 0;
           Atom prop = XInternAtom(mDisplay,"_MOTIF_WM_HINTS",True);
-          XChangeProperty(mDisplay,mHandle,prop,prop,32,PropModeReplace,(unsigned char *)&motif_hints,PROP_MOTIF_WM_HINTS_ELEMENTS);
+          XChangeProperty(mDisplay,mWindow,prop,prop,32,PropModeReplace,(unsigned char *)&motif_hints,PROP_MOTIF_WM_HINTS_ELEMENTS);
           #undef MWM_HINTS_DECORATIONS
           #undef PROP_MOTIF_WM_HINTS_ELEMENTS
         }
@@ -215,36 +216,39 @@ class axWindowLinux : public axWindowBase
           // --- eventproc ---
           data = (void*)(int)&eventProc;  // the (int) to make the compiler shut up its complaining!
           atom = XInternAtom(mDisplay,"_XEventProc",false);
-          XChangeProperty(mDisplay,mHandle,atom,atom,32,PropModeReplace,(unsigned char*)&data,1);
+          XChangeProperty(mDisplay,mWindow,atom,atom,32,PropModeReplace,(unsigned char*)&data,1);
           // --- this ---
           data = this;
           atom = XInternAtom(mDisplay, "_this", false);
-          XChangeProperty(mDisplay,mHandle,atom,atom,32,PropModeReplace,(unsigned char*)&data,1);
+          XChangeProperty(mDisplay,mWindow,atom,atom,32,PropModeReplace,(unsigned char*)&data,1);
         }
+
+        // --- canvas ---
+
+        //wtrace("axWindowLinux.constructor - creating mCanvas");
+        //axContext ctx(mDisplay,mWindow);
+        //mCanvas = new axCanvas(&ctx);
+        mCanvas = createCanvas();
+        wtrace(":: mCanvas = " << mCanvas);
+
+        // --- surface ---
+
+        //mSurface = NULL;
+        if (mWinFlags.hasFlag(AX_WIN_BUFFERED))
+        {
+          mSurface = createSurface(mRect.w,mRect.h);
+        }
+        // see also: resizeBuffer
+
         // --- (invisible) mouse cursor ---
 
-        mBitmapNoData = XCreateBitmapFromData(mDisplay,mHandle,noData,8,8);
+        mBitmapNoData = XCreateBitmapFromData(mDisplay,mWindow,noData,8,8);
         mWinCursor    = -1;
         mBlack.red    = 0;
         mBlack.green  = 0;
         mBlack.blue   = 0;
         mBlack.flags  = (DoRed or DoGreen or DoBlue);
         XAllocColor(mDisplay,XDefaultColormap(mDisplay,0),&mBlack);
-
-        // --- canvas ---
-
-        axContext ctx;
-        ctx.mDisplay = mDisplay;
-        ctx.mWindow = mHandle;
-        mCanvas = new axCanvas(&ctx);
-
-        // --- surface ---
-
-        //mSurface = NULL;
-        if (aWinFlags & AX_WIN_BUFFERED)
-        {
-          mSurface = new axSurface(aContext, mRect.w,mRect.h);
-        }
 
         // --- event handler thread ---
 
@@ -269,13 +273,27 @@ class axWindowLinux : public axWindowBase
         if (mSurface) delete mSurface;
         XFreePixmap(mDisplay, mBitmapNoData);
         if (mWinCursor>=0) XFreeCursor(mDisplay,mWinCursor);
-        XDestroyWindow(mDisplay,mHandle);
+        XDestroyWindow(mDisplay,mWindow);
         XFlush(mDisplay);
       }
 
     //----------------------------------------
 
-    virtual int getHandle(void) { return (int)mHandle; }
+    //virtual int getHandle(void) { return (int)mWindow; }
+    //Display* getDisplay(void) { return mDisplay; }
+
+    virtual axCanvas* createCanvas(void)
+      {
+        axContext ctx(mDisplay,mWindow);
+        return new axCanvas(&ctx);
+      }
+
+    virtual axSurface* createSurface(int aWidth, int aHeight)
+      {
+        //axContext ctx(mDisplay,mParent);
+        axContext ctx(mDisplay,mWindow);
+        return new axSurface(&ctx,aWidth,aHeight);
+      }
 
     //----------------------------------------
     // low level
@@ -311,7 +329,7 @@ class axWindowLinux : public axWindowBase
 
     virtual void show(void)
       {
-        XMapWindow(mDisplay,mHandle);
+        XMapWindow(mDisplay,mWindow);
         XFlush(mDisplay);
       }
 
@@ -319,7 +337,7 @@ class axWindowLinux : public axWindowBase
 
     virtual void hide(void)
       {
-        XUnmapWindow(mDisplay,mHandle);
+        XUnmapWindow(mDisplay,mWindow);
         XFlush(mDisplay);
       }
 
@@ -330,7 +348,7 @@ class axWindowLinux : public axWindowBase
         XWindowChanges attr;
         attr.x = aX;
         attr.y = aY;
-        XConfigureWindow(mDisplay,mHandle,CWX|CWY,&attr);
+        XConfigureWindow(mDisplay,mWindow,CWX|CWY,&attr);
         XFlush(mDisplay);
       }
 
@@ -338,7 +356,7 @@ class axWindowLinux : public axWindowBase
 
     virtual void setSize(int aW, int aH)
       {
-        XResizeWindow(mDisplay,mHandle,aW,aH);
+        XResizeWindow(mDisplay,mWindow,aW,aH);
         XFlush(mDisplay);
       }
 
@@ -359,7 +377,7 @@ class axWindowLinux : public axWindowBase
         XTextProperty window_title_property;
         char* window_title = aTitle.ptr();
         XStringListToTextProperty(&window_title,1,&window_title_property);
-        XSetWMName(mDisplay,mHandle,&window_title_property);
+        XSetWMName(mDisplay,mWindow,&window_title_property);
         XFlush(mDisplay);
       }
 
@@ -368,13 +386,15 @@ class axWindowLinux : public axWindowBase
     virtual void reparent(int aParent)
       {
         mParent = aParent;
-        XReparentWindow(mDisplay,mHandle,mParent,0,0);
+        XReparentWindow(mDisplay,mWindow,mParent,0,0);
         XFlush(mDisplay);
       }
 
+    //----------
+
     virtual void resetCursor(void)
       {
-        XUndefineCursor(mDisplay,mHandle);
+        XUndefineCursor(mDisplay,mWindow);
         XFreeCursor(mDisplay,mWinCursor);
         mWinCursor=-1;
       }
@@ -386,7 +406,7 @@ class axWindowLinux : public axWindowBase
         //if( aCursor<0 ) aCursor = DEF_CURSOR;
         if (mWinCursor>=0) resetCursor();
         //{
-        //  XUndefineCursor(gDP,mHandle);
+        //  XUndefineCursor(gDP,mWindow);
         //  XFreeCursor(gDP,mWinCursor);
         //}
         //if (aCursor<0)
@@ -395,7 +415,7 @@ class axWindowLinux : public axWindowBase
         if (aCursor>=0)
         {
           mWinCursor = XCreateFontCursor(mDisplay, aCursor);
-          XDefineCursor(mDisplay, mHandle, mWinCursor);
+          XDefineCursor(mDisplay, mWindow, mWinCursor);
         }
       }
 
@@ -419,11 +439,11 @@ class axWindowLinux : public axWindowBase
         //setCursor(-1);
         if (mWinCursor>=0) resetCursor();
         //{
-        //  XUndefineCursor(gDP,mHandle);
+        //  XUndefineCursor(gDP,mWindow);
         //  XFreeCursor(gDP,mWinCursor);
         //}
         mWinCursor = XCreatePixmapCursor( mDisplay,mBitmapNoData,mBitmapNoData,&mBlack,&mBlack,0,0 );
-        XDefineCursor(mDisplay,mHandle,mWinCursor);
+        XDefineCursor(mDisplay,mWindow,mWinCursor);
       }
 
     //----------
@@ -431,7 +451,7 @@ class axWindowLinux : public axWindowBase
     virtual void grabCursor(void)
       {
         int which = ButtonPressMask|ButtonReleaseMask|PointerMotionMask;
-        XGrabPointer(mDisplay,mHandle,false,which,GrabModeSync,GrabModeAsync,mHandle,/*cursor*/None,CurrentTime);
+        XGrabPointer(mDisplay,mWindow,false,which,GrabModeSync,GrabModeAsync,mWindow,/*cursor*/None,CurrentTime);
       }
 
     //----------
@@ -451,13 +471,13 @@ class axWindowLinux : public axWindowBase
         static XExposeEvent ev;
         ev.type     = Expose;
         ev.display  = mDisplay;
-        ev.window   = mHandle; // mParent;
+        ev.window   = mWindow; // mParent;
         ev.x        = aX;
         ev.y        = aY;
         ev.width    = aW;
         ev.height   = aH;
         ev.count    = 0;
-        XSendEvent(mDisplay,mHandle,false,ExposureMask,(XEvent*)&ev);
+        XSendEvent(mDisplay,mWindow,false,ExposureMask,(XEvent*)&ev);
         XFlush(mDisplay);
       }
 
@@ -465,25 +485,32 @@ class axWindowLinux : public axWindowBase
 
     virtual void resizeBuffer(int aWidth, int aHeight)
       {
+        wtrace("axWindowLinux.resizeBuffer");
         if (mWinFlags.hasFlag(AX_WIN_BUFFERED))
         {
-          //mSurfaceMutex.lock();
-          axSurface* srf;
-          if (mSurface)
-          {
-            srf = mSurface;
-            mSurface = NULL;
-            delete srf;
-          }
-          //srf = new axSurface(mContext,aWidth,aHeight);
-          axContext ctx;
-          ctx.mDisplay = mDisplay;
-          ctx.mWindow  = mHandle;
-          ctx.mAudio   = NULL;
-          srf = new axSurface(&ctx,aWidth,aHeight);
-          mSurface = srf;
-          //mSurfaceMutex.unlock();
-        }
+          //if (aWidth!=mSurface->getWidth() || aHeight!=mSurface->getHeight())
+          //{
+            //mSurfaceMutex.lock();
+            axSurface* srf;
+            if (mSurface)
+            {
+              srf = mSurface;
+              mSurface = NULL;
+              delete srf;
+            }
+            //axContext ctx(mDisplay,mParent);
+            //srf = new axSurface(&ctx,aWidth,aHeight);
+            //wtrace("+");
+            srf = createSurface(aWidth,aHeight);
+            //wtrace("-");
+            mSurface = srf;
+            wtrace(":: mSurface = " << mSurface);
+            //mSurfaceMutex.unlock();
+          //} //size
+          //else trace("axWindowLinux.resizeBuffer - size didn't change");
+        } //buffered
+        else wtrace(":: not buffered");
+
       }
 
     //----------
@@ -532,10 +559,10 @@ class axWindowLinux : public axWindowBase
       event.type          = ClientMessage;
       event.message_type  = mCustomEventAtom;
       event.display       = mDisplay;
-      event.window        = mHandle;
+      event.window        = mWindow;
       event.format        = 32;
       event.data.l[0]     = aValue;
-      XSendEvent(mDisplay,mHandle,False,NoEventMask,(XEvent*)&event);
+      XSendEvent(mDisplay,mWindow,False,NoEventMask,(XEvent*)&event);
       XFlush(mDisplay);
     }
 
@@ -581,6 +608,7 @@ class axWindowLinux : public axWindowBase
 
     void eventHandler(XEvent* ev)
       {
+        wtrace("axWindowX11.eventHandler");
         //trace("axWindowX11.eventHandler: " << ev->type << " : " << x11_event_names[ev->type]);
         axRect rc;
         int but,key,val;
@@ -596,7 +624,7 @@ class axWindowLinux : public axWindowBase
               w = ev->xconfigure.width;
               h = ev->xconfigure.height;
             }
-            //trace("axWindowX11.eventHandler :: ConfigureNotify " << w << "," << h);
+            wtrace(":: ConfigureNotify " << w << "," << h);
             resizeBuffer(w,h);
             doResize(w,h);
             break;
@@ -610,21 +638,23 @@ class axWindowLinux : public axWindowBase
             {
               rc.combine( ev->xexpose.x, ev->xexpose.y, ev->xexpose.width, ev->xexpose.height );
             }
-            //trace("axWindowX11.eventHandler :: Expose " << rc.x << "," << rc.y << "," << rc.w << "," << rc.h);
+            wtrace(":: Expose " << rc.x << "," << rc.y << "," << rc.w << "," << rc.h);
             mCanvas->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
-            //if (mSurface)
-            //{
-            //  mSurfaceMutex.lock();
-            //  axCanvas* can = mSurface->mCanvas;
-            //  doPaint(can,rc);
-            //  mCanvas->blit(can,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
-            //  mSurfaceMutex.unlock();
-            //}
-            //else
-            //{
+
+            if ( mWinFlags.hasFlag(AX_WIN_BUFFERED) && mSurface )
+            {
+              wtrace("   :: double buffered");
+              axCanvas* can = mSurface->getCanvas();
+              doPaint(can,rc);
+              //mCanvas->drawSurface(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
+              mCanvas->drawImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
+            }
+            else
+            {
               doPaint(mCanvas,rc);
               //XFlush(mDisplay);
-            //}
+            }
+
             mCanvas->clearClipRect();
             endPaint();
             break;

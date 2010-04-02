@@ -19,15 +19,15 @@
 class myEditor : public axEditor
 {
   public:
+
     myEditor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
       {
         wtrace("myEditor.constructor");
       }
+
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-        wtrace("myEditor.doPaint");
-        wtrace("x,y: " << aRect.x << "," << aRect.y << "  w,h: " << aRect.w << "," << aRect.h);
         aCanvas->selectBrush(2);
         aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
         aCanvas->selectPen(0);
@@ -50,9 +50,10 @@ class myPlugin : public axPlugin
 
     myPlugin(axContext* aContext)
     : axPlugin(aContext,AX_PLUG_DEFAULT)
+    //: axPlugin(aContext,0/*pf_HasEditor*/)
       {
-        mEditor = NULL;
         wtrace("myPlugin.constructor");
+        mEditor = NULL;
         //describe("test_win32","ccernn","axonlib test",0,AX_MAGIC+0x0000);
         //setupAudio(0,0);
         setupEditor(512,384);
@@ -68,8 +69,9 @@ class myPlugin : public axPlugin
 
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
-        wtrace("myPlugin.doOpenWindow");
-        wtrace("  AX_WIN_DEFAULT = " << AX_WIN_DEFAULT);
+        wtrace("myPlugin.doOpenEditor");
+        // #define AX_WIN_DEFAULT (AX_WIN_BUFFERED|AX_WIN_MSGDELETE)
+        //mEditor = new myEditor(this,aContext,mEditorRect,AX_WIN_MSGDELETE);
         mEditor = new myEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         mEditor->show();
         return mEditor;

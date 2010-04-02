@@ -35,7 +35,7 @@ class axWindowWin32 : public axWindowBase
 {
   private:
     HINSTANCE   mInstance;
-    HWND        mHandle;
+    HWND        mWindow;
     axString    mWinName;
     PAINTSTRUCT mPS;
     //int mWinCursor,mPrevCursor;
@@ -65,7 +65,7 @@ class axWindowWin32 : public axWindowBase
         mClickedButton = bu_None;
 
 
-//----- register window class
+        // --- register window class ---
 
         // multiple instances:
         // what happens when we try to register a window with similar name
@@ -83,11 +83,11 @@ class axWindowWin32 : public axWindowBase
         wc.hCursor        = (HICON)mWinCursor;//LoadCursor(NULL, IDC_ARROW);
         RegisterClass(&wc);
 
-//----- create window (embedded)
+        // --- embedded ---
 
         if (mWinFlags.hasFlag(AX_WIN_EMBEDDED))
         {
-          mHandle = CreateWindowEx(
+          mWindow = CreateWindowEx(
             WS_EX_TOOLWINDOW,
             classname,
             0,
@@ -102,11 +102,11 @@ class axWindowWin32 : public axWindowBase
           reparent(mParent);
         } //embedded
 
-//----- create window (windowed)
+        // --- windowed ---
 
         else
         {
-          mHandle = CreateWindowEx(
+          mWindow = CreateWindowEx(
             WS_EX_OVERLAPPEDWINDOW,   // dwExStyle
             classname,                // lpClassName
             0,                        // lpWindowName
@@ -120,15 +120,23 @@ class axWindowWin32 : public axWindowBase
           );
         }
 
-//-----
+        // ---
 
-        SetWindowLong(mHandle,GWL_USERDATA,(int)this);
-        //DragAcceptFiles(mHandle,true);
-        axContext ctx((int)mHandle);
-        mCanvas = new axCanvas(&ctx);
+        SetWindowLong(mWindow,GWL_USERDATA,(int)this);
+        //DragAcceptFiles(mWindow,true);
+
+        // --- canvas ---
+
+        //axContext ctx((int)mWindow);
+        //mCanvas = new axCanvas(&ctx);
+        mCanvas = createCanvas();
+
+        // --- surface ---
+
         if (aWinFlags & AX_WIN_BUFFERED)
         {
-          mSurface = new axSurface(aContext,mRect.w,mRect.h);
+          //mSurface = new axSurface(aContext,mRect.w,mRect.h);
+          mSurface = createSurface(mRect.w,mRect.h);
         }
 
       }
@@ -137,7 +145,7 @@ class axWindowWin32 : public axWindowBase
 
     ~axWindowWin32()
       {
-        DestroyWindow(mHandle);
+        DestroyWindow(mWindow);
         // can this be dangerous if moutlple plugin instances uses the plugin?
         // or is there some reference-counting going on?
 
@@ -149,7 +157,21 @@ class axWindowWin32 : public axWindowBase
 
     //----------------------------------------
 
-    virtual int getHandle(void) { return (int)mHandle; }
+    //virtual int getHandle(void) { return (int)mWindow; }
+
+    virtual axCanvas* createCanvas(void)
+      {
+        axContext ctx(mWindow);
+        return new axCanvas(&ctx);
+      }
+
+    virtual axSurface* createSurface(int aWidth, int aHeight)
+      {
+        //axContext ctx(mParent);
+        axContext ctx(mWindow);
+        return new axSurface(&ctx,aWidth,aHeight);
+      }
+
 
     //----------------------------------------
     // low level
@@ -182,29 +204,29 @@ class axWindowWin32 : public axWindowBase
 
     virtual void show(void)
       {
-        SetWindowPos(mHandle,0,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_SHOWWINDOW|SWP_NOACTIVATE);
+        SetWindowPos(mWindow,0,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_SHOWWINDOW|SWP_NOACTIVATE);
       }
 
     //----------
 
     virtual void hide(void)
       {
-        ShowWindow(mHandle,SW_HIDE);
+        ShowWindow(mWindow,SW_HIDE);
       }
 
     //----------
 
     virtual void setPos(int aX, int aY)
       {
-        SetWindowPos(mHandle,0,aX,aY,0,0,SWP_NOSIZE|SWP_NOACTIVATE|SWP_NOZORDER);
+        SetWindowPos(mWindow,0,aX,aY,0,0,SWP_NOSIZE|SWP_NOACTIVATE|SWP_NOZORDER);
       }
 
     //----------
 
     virtual void setSize(int aWidth, int aHeight)
       {
-        SetWindowPos(mHandle,HWND_TOP,0,0,aWidth,aHeight,SWP_NOMOVE);
-        //SetWindowPos(mHandle,0,0,0,aWidth,aHeight,SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOZORDER);
+        SetWindowPos(mWindow,HWND_TOP,0,0,aWidth,aHeight,SWP_NOMOVE);
+        //SetWindowPos(mWindow,0,0,0,aWidth,aHeight,SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOZORDER);
       }
 
     //----------
@@ -251,10 +273,10 @@ class axWindowWin32 : public axWindowBase
         int dw = aWidth - mRect.w, dh = aHeight - mRect.h;
         HWND pParent = 0, pGrandparent = 0;
         int w=0, h=0, parentW=0, parentH=0, grandparentW=0, grandparentH=0;
-        getWindowSize(mHandle,&w,&h);
-        if (isChildWindow(mHandle))
+        getWindowSize(mWindow,&w,&h);
+        if (isChildWindow(mWindow))
         {
-          pParent = GetParent(mHandle);
+          pParent = GetParent(mWindow);
           getWindowSize(pParent, &parentW, &parentH);
           if (isChildWindow(pParent))
           {
@@ -262,7 +284,7 @@ class axWindowWin32 : public axWindowBase
             getWindowSize(pGrandparent, &grandparentW, &grandparentH);
           }
         }
-        SetWindowPos(mHandle, 0, 0, 0, w + dw, h + dh, SETPOS_FLAGS);
+        SetWindowPos(mWindow, 0, 0, 0, w + dw, h + dh, SETPOS_FLAGS);
         if (pParent)
         {
           SetWindowPos(pParent, 0, 0, 0, parentW + dw, parentH + dh, SETPOS_FLAGS);
@@ -287,8 +309,8 @@ class axWindowWin32 : public axWindowBase
     virtual void reparent(int aParent)
       {
         mParent = aParent;
-        SetWindowLong(mHandle,GWL_STYLE,(GetWindowLong(mHandle,GWL_STYLE)&~WS_POPUP)|WS_CHILD);
-        SetParent(mHandle, (HWND)aParent);
+        SetWindowLong(mWindow,GWL_STYLE,(GetWindowLong(mWindow,GWL_STYLE)&~WS_POPUP)|WS_CHILD);
+        SetParent(mWindow, (HWND)aParent);
       }
 
     //virtual void resetCursor(void)
@@ -342,7 +364,7 @@ class axWindowWin32 : public axWindowBase
 
     virtual void grabCursor(void)
       {
-        SetCapture(mHandle);
+        SetCapture(mWindow);
       }
 
     //----------
@@ -368,8 +390,8 @@ class axWindowWin32 : public axWindowBase
         R.top    = aY;
         R.right  = aX + aW - 1;
         R.bottom = aY + aH - 1;
-        InvalidateRect(mHandle,&R,false);
-        //UpdateWindow(mHandle);
+        InvalidateRect(mWindow,&R,false);
+        //UpdateWindow(mWindow);
       }
 
     //----------
@@ -414,14 +436,14 @@ class axWindowWin32 : public axWindowBase
     virtual void beginPaint(void)
       {
         wtrace("axWindowWin32.beginPaint");
-        /*mPaintDC = */BeginPaint(mHandle,&mPS);
+        /*mPaintDC = */BeginPaint(mWindow,&mPS);
       }
 
     //----------
 
     virtual void endPaint(void)
       {
-        EndPaint(mHandle,&mPS);
+        EndPaint(mWindow,&mPS);
         wtrace("axWindowWin32.endPaint");
       }
 
@@ -431,14 +453,14 @@ class axWindowWin32 : public axWindowBase
 
 //    virtual void startTimer(int ms)
 //      {
-//        /*mTimer = */SetTimer(mHandle,666,ms,NULL/*timerProc*/);
+//        /*mTimer = */SetTimer(mWindow,666,ms,NULL/*timerProc*/);
 //      }
 
     //----------
 
 //    virtual void stopTimer(void)
 //      {
-//        KillTimer(mHandle,666);
+//        KillTimer(mWindow,666);
 //      }
 
     //----------------------------------------
@@ -581,7 +603,7 @@ class axWindowWin32 : public axWindowBase
             //{
 
             //// hack: ignore this if there is other WM_SIZE messages in the queue
-            //if ( PeekMessage(&msg2,mHandle,WM_SIZE,WM_SIZE,PM_NOREMOVE) )
+            //if ( PeekMessage(&msg2,mWindow,WM_SIZE,WM_SIZE,PM_NOREMOVE) )
             //{
             //  TRACE("there are oher WN_SIZE messages in the queue, so we're ignoring this one\n");
             //}

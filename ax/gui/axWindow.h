@@ -37,8 +37,8 @@ class axWindow : public axWindowImpl
     //
     //----------------------------------------
 
-    virtual axCanvas* getCanvas(void) { return mCanvas; }
-    virtual axSurface* getSurface(void) { return mSurface; }
+    //virtual axCanvas* getCanvas(void) { return mCanvas; }
+    //virtual axSurface* getSurface(void) { return mSurface; }
 
     //inline void redraw(axWidget* aWidget) { axRect R = aWidget->getRect(); invalidate(R.x,R.y,R.x2(),R.y2()); }
 

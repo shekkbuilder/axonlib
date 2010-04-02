@@ -3,8 +3,9 @@
 //----------------------------------------------------------------------
 
 #include "platform/axContext.h"
+#include "base/axImage.h"
 
-class axBitmapBase
+class axBitmapBase : public axImage
 {
   public:
     axBitmapBase(axContext* aContext) {}

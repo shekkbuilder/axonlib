@@ -8,6 +8,7 @@
 #include "platform/axContext.h"
 #include "axDefines.h"
 #include "base/axCanvasBase.h"
+#include "base/axSurfaceBase.h"
 
 class axCanvasWin32 : public axCanvasBase
 {
@@ -28,7 +29,7 @@ class axCanvasWin32 : public axCanvasBase
   public:
 
     axCanvasWin32(axContext* aContext)
-    : axCanvasBase()
+    : axCanvasBase(/*aContext*/)
       {
         mCurrentPen = 0;
         mCurrentBrush = 0;
@@ -36,9 +37,17 @@ class axCanvasWin32 : public axCanvasBase
         mPen    = 0;
         mBrush  = 0;
         HDC tempdc = GetDC(0);
-        mWinHandle = (int)aContext->mWindow;
-        if (aContext->mWindow) mDC = GetDC(aContext->mWindow);   // window
-        else mDC = CreateCompatibleDC(tempdc);                  // surface
+        if (aContext->mWindow)
+        { // window
+          mWinHandle = (int)aContext->mWindow;
+          mDC = GetDC(aContext->mWindow);
+        }
+        else
+        {
+          // surface
+          mWinHandle = 0;
+          mDC = CreateCompatibleDC(tempdc);
+        }
         LOGFONT LFont;
         memset(&LFont,0,sizeof(LFont));
         strcpy(LFont.lfFaceName,"Arial");
@@ -57,15 +66,15 @@ class axCanvasWin32 : public axCanvasBase
         if (mPen)   DeleteObject(mPen);
         if (mBrush) DeleteObject(mBrush);
         if (mFont)  DeleteObject(mFont);
-//        if (mMode==cmo_window) ReleaseDC((HWND)mWinHandle,mDC);
-//        else DeleteDC(mDC);
+        if (mWinHandle) ReleaseDC((HWND)mWinHandle,mDC);
+        else DeleteDC(mDC);
 //        delete mNullPen;
       }
 
     //----------
 
-    //virtual int getHandle(void) { return (int)mHandle; }
-    virtual HDC getDC(void) { return mDC; }
+    virtual int getHandle(void) { return (int)mDC; }
+    //virtual HDC getDC(void) { return mDC; }
 
     //--------------------------------------------------
     //
@@ -363,24 +372,6 @@ class axCanvasWin32 : public axCanvasBase
     // bitmap
     //--------------------------------------------------
 
-    //XPutImage(display, d, gc, image, src_x, src_y, dest_x, dest_y, width, height)
-    //        Display *display;
-    //        Drawable d;
-    //        GC gc;
-    //        XImage *image;
-    //        int src_x, src_y;
-    //        int dest_x, dest_y;
-    //        unsigned int width, height;
-    //
-    //display Specifies the connection to the X server.
-    //d       Specifies the drawable.
-    //gc      Specifies the GC.
-    //image   Specifies the image you want combined with the rectangle.
-    //src_x   Specifies the offset in X from the left edge of the image defined by the XImage structure.
-    //src_y   Specifies the offset in Y from the top edge of the image defined by the XImage structure.
-    //dest_x, dest_y  Specify the x and y coordinates, which are relative to the origin of the drawable and are the coordinates of the subimage.
-    //width, height 	Specify the width and height of the subimage, which define the dimensions of the rectangle.
-
 //    virtual void drawBitmap(axBitmapBase* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
 //      {
 //        HDC tempdc = CreateCompatibleDC(mDC);
@@ -393,28 +384,26 @@ class axCanvasWin32 : public axCanvasBase
     // canvas (surface[drawable])
     //--------------------------------------------------
 
-    //XCopyArea(display, src, dest, gc, src_x, src_y, width, height,  dest_x, dest_y)
-    //      Display *display;
-    //      Drawable src, dest;
-    //      GC gc;
-    //      int src_x, src_y;
-    //      unsigned int width, height;
-    //      int dest_x, dest_y;
-    //
-    //display       Specifies the connection to the X server.
-    //src, dest     Specify the source and destination rectangles to be combined.
-    //gc            Specifies the GC.
-    //src_x, src_y 	Specify the x and y coordinates, which are relative to the origin of the source rectangle and specify its upper-left corner.
-    //width,height 	Specify the width and height, which are the dimensions of both the source and destination rectangles.
-    //dest_x,dest_y Specify the x and y coordinates, which are relative to the origin of the destination rectangle and specify its upper-left corner
-
 //    //virtual void blit(int aHandle, axPoint aDst, axRect aSrc)
 //    virtual void blit(axCanvasBase* aCanvas, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
 //      {
-        ////HDC tempdc = (HBITMAP)mHandle->mDC;
+        //HDC tempdc = (HBITMAP)mHandle->mDC;
         //axCanvasImpl* ci = (axCanvasImpl*)aCanvas;
         //BitBlt(mDC,aX,aY,aSrcW,aSrcH,ci->getDC(),aSrcX,aSrcY,SRCCOPY);
 //      }
+
+//    virtual void drawSurface(axSurface* aSurface, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+//      {
+//        axCanvas* canvas = aSurface->getCanvas();
+//        HDC tempdc = (HDC)canvas->getHandle();
+//        BitBlt(mDC,aX,aY,aSrcW,aSrcH,tempdc,aSrcX,aSrcY,SRCCOPY);
+//      }
+    virtual void drawImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+      {
+        HDC tempdc = (HDC)aImage->getHandle();
+        BitBlt(mDC,aX,aY,aSrcW,aSrcH,tempdc,aSrcX,aSrcY,SRCCOPY);
+      }
+
 
 };
 

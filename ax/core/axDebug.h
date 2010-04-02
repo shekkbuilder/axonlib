@@ -38,8 +38,8 @@
  * wtrace() (linux/wine) example:
  * \code
  * wtrace(var);              // trace a variable
- * wtrace("message");        // trace a message 
- * \endcode   
+ * wtrace("message");        // trace a message
+ * \endcode
  * wdebug() (win32) examples:
  * \code
  * // minimum 2 parameters of different or same type
@@ -54,7 +54,7 @@
  * linux specific methods: <br>
  * -------------------------------- <br>
  * wtrace() - trace for wine <br>
- *    
+ *
  * win32 specific methods: <br>
  * -------------------------------- <br>
  * on windows you should manually create a debug window (console or gui) and
@@ -293,7 +293,8 @@
     inline void axDwinDestroy(void) {}
     inline void wdebug(...) {}
     // 'direct' trace, for WINE
-    #define wtrace(x) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); }
+    //#define wtrace(x) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); }
+    #define wtrace(x) { cout << x << endl; cout.flush(); }
   #endif
 // case: no debug
 #else

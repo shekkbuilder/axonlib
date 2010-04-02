@@ -43,7 +43,7 @@ class axPluginVst : public axPluginBase
     audioMasterCallback audioMaster;
     AEffect   aeffect;
     ERect     rect;
-    axContext ctx;//mContext;
+//    axContext ctx;//mContext;
   private:
     char      mEffectName[kVstMaxEffectNameLen];
     char      mVendorString[kVstMaxVendorStrLen];
@@ -527,17 +527,20 @@ class axPluginVst : public axPluginBase
             //trace("axPluginVst.dispatcher :: effEditOpen");
             if (mPluginFlags.hasFlag(pf_HasEditor) && !mEditorOpen)
             {
+              {
               #ifdef AX_LINUX
-                ctx.mDisplay = XOpenDisplay(NULL);
-                ctx.mWindow  = (Window)ptr;
-                ctx.mAudio   = NULL;
+                Display* disp = XOpenDisplay(NULL);
+                Window win    = (Window)ptr;
+                axContext ctx(disp,win);
               #endif
               #ifdef AX_WIN32
-                ctx.mWindow = (HWND)ptr;
+                HWND win = (HWND)ptr;
+                axContext ctx(win);
               #endif
               mEditorWindow = doOpenEditor(&ctx);
               mEditorOpen = true;
               v = 1;
+              }
             }
             break;
 
@@ -548,7 +551,8 @@ class axPluginVst : public axPluginBase
               mEditorOpen = false;
               doCloseEditor();
               #ifdef AX_LINUX
-                XCloseDisplay(ctx.mDisplay);
+                Display* disp = mEditorWindow->mDisplay;//  getDisplay();
+                XCloseDisplay(disp);
               #endif
             }
             break;
@@ -962,13 +966,10 @@ typedef axPluginVst axPluginImpl;
   #define main main_plugin
 
   #define AX_CONTEXT_INIT(name)                     \
-    axContext ctx;                                  \
-    Display* display = NULL;                        \
-    Window   parent  = 0;                           \
-    AX_PTRCAST audio   = (AX_PTRCAST)audioMaster; \
-    ctx.mDisplay = display;                         \
-    ctx.mWindow  = parent;                          \
-    ctx.mAudio   = audio;
+    Display* display = 0;                           \
+    Window   window  = 0;                           \
+    AX_PTRCAST audio = (AX_PTRCAST)audioMaster;     \
+    axContext ctx(display,window,audio);
 
 /*
   #define AX_CONTEXT_EXIT                           \
@@ -993,29 +994,27 @@ typedef axPluginVst axPluginImpl;
 
 //----------------------------------------------------------------------
 
+
+#ifdef WIN32
+
+  // this is read only, so it should be safe?
+  static HINSTANCE gInstance;
+
   #define MAKESTRING2(s) #s
   #define MAKESTRING(s) MAKESTRING2(s)
   #define MAKE_NAME(name) MAKESTRING(name) "_window"
 
-#ifdef WIN32
-
-
   #define AX_CONTEXT_INIT(name)                             \
-    axContext ctx;                                          \
-    HINSTANCE instance  = (HINSTANCE)GetModuleHandle(NULL); \
-    AX_PTRCAST  audio   = NULL;                             \
+    HINSTANCE instance  = gInstance;                        \
     char*       winname = (char*)MAKE_NAME(name);           \
-    ctx.mInstance       = instance;                         \
-    ctx.mWinClassName   = winname;                          \
-    ctx.mWindow         = NULL;                             \
-    ctx.mAudio          = audio;
+    AX_PTRCAST  audio   = NULL;                             \
+    axContext ctx(instance,winname,audio);
 
 /*
   #define AX_CONTEXT_EXIT
 */
 
   #define AX_ENTRYPOINT(plugclass)                                          \
-    static HINSTANCE gInstance;                                             \
     BOOL APIENTRY DllMain(HINSTANCE hModule,DWORD reason,LPVOID lpReserved) \
     {                                                                       \
       gInstance = hModule;                                                  \

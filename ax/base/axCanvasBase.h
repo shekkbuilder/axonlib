@@ -6,7 +6,9 @@
 #include "gui/axPen.h"
 #include "gui/axBrush.h"
 #include "gui/axFont.h"
-#include "gui/axBitmap.h"
+
+//#include "gui/axBitmap.h"
+#include "base/axImage.h"
 
 //----------------------------------------------------------------------
 
@@ -36,15 +38,22 @@ class axCanvasBase
 
   public:
 
-    axCanvasBase() {}
+//    // if aContext->mWindow == NULL, return off-screen canvas
+//    // else window canvas
+//
+//    axCanvasBase(/*axContext* aContext*/)
+//      {
+//      }
 
     virtual ~axCanvasBase()
       {
         int i;
-        for (i=0; i<mPens.size(); i++) deletePen(i);
+        for (i=0; i<mPens.size(); i++)    deletePen(i);
         for (i=0; i<mBrushes.size(); i++) deleteBrush(i);
-        for (i=0; i<mFonts.size(); i++) deleteFont(i);;
+        for (i=0; i<mFonts.size(); i++)   deleteFont(i);;
       }
+
+    virtual int getHandle(void) { return 0; }
 
     // get / set
 
@@ -52,18 +61,11 @@ class axCanvasBase
 
     // pen/brush/font
 
-//    virtual axPen*  createPen(int r, int g, int b, int size=DEF_PENWIDTH) { return NULL; }
-//    virtual axBrush createBrush(int r, int g, int b, int style=DEF_BRUSHSTYLE) { return axBrush(); }
-//    virtual axFont  createFont(axString name, int r, int g, int b, int size=-1, int style=0) { return axFont(); }
-
     virtual axColor createColor(int aRed, int aGreen, int aBlue) { return axColor(0); }
+
     virtual int     createPen(int r, int g, int b, int size=DEF_PENWIDTH) { return 0; }
     virtual int     createBrush(int r, int g, int b, int style=DEF_BRUSHSTYLE) { return 0; }
     virtual int     createFont(axString name, int r, int g, int b, int size=-1, int style=0) { return 0; }
-
-    //virtual int     createPen(axColor aColor, int size=DEF_PENWIDTH) { return 0; }
-    //virtual int     createBrush(axColor aColor, int style=DEF_BRUSHSTYLE) { return 0; }
-    //virtual int     createFont(axString aName, axColor aColor, int size=DEF_PENWIDTH, int style=DEF_BRUSHSTYLE) { return 0; }
 
     virtual void    deletePen(int aPen) {}
     virtual void    deleteBrush(int aBrush) {}
@@ -99,8 +101,11 @@ class axCanvasBase
 
     // bitmap
 
+    virtual void drawImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
+
     //virtual void    drawBitmap(axBitmapBase* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
     //virtual void    blit(axCanvasBase* aCanvas, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
+    //virtual void    drawSurface(axSurfaceBase* aSurface, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
 
     //----------
 

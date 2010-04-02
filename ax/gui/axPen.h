@@ -1,6 +1,7 @@
 #ifndef axPen_included
 #define axPen_included
 //----------------------------------------------------------------------
+#include "core/axArray.h"
 #include "axDefines.h"
 
 #define DEF_PENWIDTH 0
