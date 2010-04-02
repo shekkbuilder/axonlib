@@ -10,12 +10,20 @@
 #ifdef AX_LINUX
 
   #include <X11/Xlib.h>
+
   struct axContext
   {
     Display*    mDisplay;
     Window      mWindow;//mParent;
     AX_PTRCAST  mAudio;
-    axContext() { mDisplay=NULL; mWindow=0; mAudio=0; }
+
+    axContext(Display* aDisplay, Window aWindow, AX_PTRCAST aAudio=0)
+      {
+        mDisplay = aDisplay;
+        mWindow  = aWindow;
+        mAudio   = 0;
+      }
+
   };
 
 #endif
@@ -29,8 +37,22 @@
     HWND        mWindow;
     char*       mWinClassName;
     AX_PTRCAST  mAudio;
-    axContext() { mInstance=0; mWindow=0; mWinClassName=0; mAudio=0; }
-    axContext(int aWindow) { mInstance=0; mWindow=(HWND)aWindow; mWinClassName=0; mAudio=0; }
+
+    axContext(HINSTANCE aInstance, char* aName, AX_PTRCAST aAudio=0)
+      {
+        mInstance     = aInstance;
+        mWindow       = 0;
+        mWinClassName = aName;
+        mAudio        = aAudio;
+      }
+    axContext(HWND aWindow)
+      {
+        mInstance     = 0;
+        mWindow       = (HWND)aWindow;
+        mWinClassName = 0;
+        mAudio        = 0;
+        }
+    //axContext(HWND win) { mInstance=0; mWindow=win; mWinClassName=0; mAudio=0; }
   };
 
 #endif

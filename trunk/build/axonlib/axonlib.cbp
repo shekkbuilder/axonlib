@@ -159,6 +159,7 @@
 		<Unit filename="../../ax/axPlugin.h" />
 		<Unit filename="../../ax/base/axBitmapBase.h" />
 		<Unit filename="../../ax/base/axCanvasBase.h" />
+		<Unit filename="../../ax/base/axImage.h" />
 		<Unit filename="../../ax/base/axPluginBase.h" />
 		<Unit filename="../../ax/base/axSurfaceBase.h" />
 		<Unit filename="../../ax/base/axWindowBase.h" />
@@ -178,6 +179,7 @@
 		<Unit filename="../../ax/gui/axColor.h" />
 		<Unit filename="../../ax/gui/axContainer.h" />
 		<Unit filename="../../ax/gui/axFont.h" />
+		<Unit filename="../../ax/gui/axGuiBase.h" />
 		<Unit filename="../../ax/gui/axPen.h" />
 		<Unit filename="../../ax/gui/axSkin.h" />
 		<Unit filename="../../ax/gui/axSurface.h" />
@@ -213,7 +215,7 @@
 		<Unit filename="../../ax/wdg/wdgSlider.h" />
 		<Unit filename="../../ax/wdg/wdgTest.h" />
 		<Unit filename="../../ax/wdg/wdgTextList.h" />
-		<Unit filename="../../test/test_build_1.cpp" />
+		<Unit filename="../../test/test1.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

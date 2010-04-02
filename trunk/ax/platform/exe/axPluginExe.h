@@ -49,7 +49,7 @@ class axPluginExe : public axPluginBase,
         if (mPluginFlags.hasFlag(pf_HasEditor))
         {
           axWindow* win = (axWindow*)doOpenEditor(aContext);
-          wtrace("win = " << win);
+          //wtrace("win = " << win);
           win->setTitle(mTitle);
           win->eventLoop();
           doCloseEditor();
@@ -111,15 +111,22 @@ typedef axPluginExe axPluginImpl;
 
 #ifdef AX_LINUX
 
+//  axContext* axInitialize(void)
+//    {
+//      XInitThreads();
+//      Display*  display = XOpenDisplay(NULL);
+//      Window    parent  = XDefaultRootWindow(display);
+//      AX_PTRCAST  audio   = NULL;
+//      ctx.mDisplay = display;
+//      ctx.mWindow  = parent;
+//      ctx.mAudio   = audio;
+//    }
+
   #define AX_CONTEXT_INIT(name)                         \
     XInitThreads();                                     \
-    axContext ctx;                                      \
     Display*    display = XOpenDisplay(NULL);           \
     Window      parent  = XDefaultRootWindow(display);  \
-    AX_PTRCAST  audio   = NULL;                         \
-    ctx.mDisplay = display;                             \
-    ctx.mWindow  = parent;                              \
-    ctx.mAudio   = audio;
+    axContext ctx(display,parent);
 
   #define AX_CONTEXT_EXIT                               \
     XCloseDisplay(display);
@@ -137,20 +144,13 @@ typedef axPluginExe axPluginImpl;
   #define MAKE_NAME(name) MAKESTRING(name) "_window"
 
   #define AX_CONTEXT_INIT(name)                             \
-    axContext ctx;                                          \
     HINSTANCE instance  = (HINSTANCE)GetModuleHandle(NULL); \
-    AX_PTRCAST  audio   = NULL;                             \
     char*       winname = (char*)MAKE_NAME(name);           \
-    ctx.mInstance       = instance;                         \
-    ctx.mWinClassName   = winname;                          \
-    ctx.mWindow         = NULL;                             \
-    ctx.mAudio          = audio;
+    axContext ctx(instance,winname);
 
+  #define AX_CONTEXT_EXIT ;
   // unregister window?
   // what if multiple instances is using the same window?
-
-  #define AX_CONTEXT_EXIT                       \
-    ;
 
 #endif
 

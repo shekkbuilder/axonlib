@@ -7,51 +7,62 @@
 #include "platform/axContext.h"
 #include "axDefines.h"
 #include "base/axCanvasBase.h"
+//#include "gui/axSurface.h"
+
+//----------------------------------------------------------------------
+
+class axSurface;
+
+// needs mDisplay & mWindow (Drawable) set in aContext
 
 class axCanvasLinux : public axCanvasBase
 {
   private:
-    XGCValues     gcvalues;
-  //protected:
-    Display*      mDisplay;
-    Window        mWindow;
+    Display*      mDisplay;   // from context
+    Drawable      mDrawable;  // from context
     GC            mGC;
+    XGCValues     gcvalues;
     XFontStruct*  mFont;
   protected:
-    int           mXpos,mYpos;
-    //axRect        mClipRect;
+    int           mXpos;
+    int           mYpos;
 
   public:
+
     axCanvasLinux(axContext* aContext)
-    : axCanvasBase()
+    : axCanvasBase(/*aContext*/)
       {
+        wtrace("axCanvasLinux.constructor");
         mDisplay  = aContext->mDisplay;
-        mWindow   = aContext->mWindow;
-        mGC       = XCreateGC(mDisplay,mWindow,0,&gcvalues);
+        mDrawable = aContext->mWindow;
+        mGC       = XCreateGC(mDisplay,mDrawable,0,&gcvalues);
         mFont     = XQueryFont(mDisplay,XGContextFromGC(mGC));
-        //mXpos     = 0;
-        //mYpos     = 0;
-        //mClipRect = NULL_RECT;
+        mXpos     = 0;
+        mYpos     = 0;
       }
 
     //----------
 
     virtual ~axCanvasLinux()
       {
-        //XFreeFontInfo(char** names, XFontStruct* free_info, int actual_count);
         XFreeFontInfo(0,mFont,1);   // 1??
         XFreeGC(mDisplay,mGC);
       }
 
     //--------------------------------------------------
+
+    //virtual int getHandle(void) { return (int)mDrawable; }
+    //virtual int getHandle(void) { return (int)mDrawable; }
+
+    //--------------------------------------------------
     // get / set
     //--------------------------------------------------
 
-    //virtual void setPos(int aX, int aY)
-    //  {
-    //    mXpos = aX;
-    //    mYpos = aY;
-    //  }
+    virtual void setPos(int aX, int aY)
+      {
+        mXpos = aX;
+        mYpos = aY;
+      }
 
     //----------
 
@@ -168,42 +179,42 @@ class axCanvasLinux : public axCanvasBase
 
     virtual void drawPoint(int aX, int aY)
       {
-        XDrawPoint(mDisplay,mWindow,mGC,aX,aY);
+        XDrawPoint(mDisplay,mDrawable,mGC,aX,aY);
       }
 
     //----------
 
     virtual void drawLine(int aX1, int aY1, int aX2, int aY2)
       {
-        XDrawLine(mDisplay,mWindow,mGC,aX1,aY1,aX2,aY2);
+        XDrawLine(mDisplay,mDrawable,mGC,aX1,aY1,aX2,aY2);
       }
 
     //----------
 
     virtual void drawRect(int aX1, int aY1, int aX2, int aY2)
       {
-        XDrawRectangle(mDisplay,mWindow,mGC,aX1,aY1,aX2-aX1,aY2-aY1);
+        XDrawRectangle(mDisplay,mDrawable,mGC,aX1,aY1,aX2-aX1,aY2-aY1);
       }
 
     //----------
 
     virtual void fillRect(int aX1, int aY1, int aX2, int aY2)
       {
-        XFillRectangle(mDisplay,mWindow,mGC,aX1,aY1,aX2-aX1+1,aY2-aY1+1);
+        XFillRectangle(mDisplay,mDrawable,mGC,aX1,aY1,aX2-aX1+1,aY2-aY1+1);
       }
 
     //----------
 
     virtual void drawCircle(int aX1, int aY1, int aX2, int aY2)
       {
-        XDrawArc(mDisplay,mWindow,mGC,aX1,aY1,aX2-aX1,aY2-aY1,0*64,360*64);
+        XDrawArc(mDisplay,mDrawable,mGC,aX1,aY1,aX2-aX1,aY2-aY1,0*64,360*64);
       }
 
     //----------
 
     virtual void fillCircle(int aX1, int aY1, int aX2, int aY2)
       {
-        XFillArc(mDisplay,mWindow,mGC,aX1,aY1,aX2-aX1,aY2-aY1,0*64,360*64);
+        XFillArc(mDisplay,mDrawable,mGC,aX1,aY1,aX2-aX1,aY2-aY1,0*64,360*64);
       }
 
     //----------
@@ -218,7 +229,7 @@ class axCanvasLinux : public axCanvasBase
           float a1 = -aAngle1 + 0.25;
           // positive = clockwise, negative = counter-clockwise
           float a2 = -aAngle2;
-          XDrawArc(mDisplay, mWindow,mGC, aX1,aY1,(aX2-aX1+1),(aY2-aY1+1),a1*(360*64),a2*(360*64));
+          XDrawArc(mDisplay, mDrawable,mGC, aX1,aY1,(aX2-aX1+1),(aY2-aY1+1),a1*(360*64),a2*(360*64));
         }
       }
 
@@ -234,7 +245,7 @@ class axCanvasLinux : public axCanvasBase
           float a1 = -aAngle1 + 0.25;
           // positive = clockwise, negative = counter-clockwise
           float a2 = -aAngle2;
-          XFillArc(mDisplay, mWindow,mGC, aX1,aY1,(aX2-aX1+1),(aY2-aY1+1),a1*(360*64),a2*(360*64));
+          XFillArc(mDisplay, mDrawable,mGC, aX1,aY1,(aX2-aX1+1),(aY2-aY1+1),a1*(360*64),a2*(360*64));
         }
       }
 
@@ -258,7 +269,7 @@ class axCanvasLinux : public axCanvasBase
 
     virtual void drawText(int aX, int aY, axString aText)
       {
-        XDrawString(mDisplay,mWindow,mGC,aX,aY+mFont->ascent,aText.ptr(),aText.length());
+        XDrawString(mDisplay,mDrawable,mGC,aX,aY+mFont->ascent,aText.ptr(),aText.length());
       }
 
     //--------
@@ -273,7 +284,7 @@ class axCanvasLinux : public axCanvasBase
         if (aAlign & ta_Left) x = aX1;
         else if (aAlign & ta_Right) x = aX2 - width;
         else x = aX1 + ((aX2 - aX1) >> 1) - ( width >> 1);
-        XDrawString(mDisplay,mWindow,mGC,x,y,aText.ptr(),aText.length());
+        XDrawString(mDisplay,mDrawable,mGC,x,y,aText.ptr(),aText.length());
       }
 
     //--------------------------------------------------
@@ -322,88 +333,59 @@ class axCanvasLinux : public axCanvasBase
     //width,height 	Specify the width and height, which are the dimensions of both the source and destination rectangles.
     //dest_x,dest_y Specify the x and y coordinates, which are relative to the origin of the destination rectangle and specify its upper-left corner
 
-//    //virtual void blit(int aHandle, axPoint aDst, axRect aSrc)
+    //virtual void blit(int aHandle, axPoint aDst, axRect aSrc)
+
+
 //    virtual void blit(axCanvasBase* aCanvas, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
 //      {
-//        XCopyArea(mDisplay,aCanvas->getHandle(),mWindow,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
+//        wtrace("blit");
+//        //XCopyArea(mDisplay,aCanvas->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
+//        XCopyArea(mDisplay,aCanvas->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
+//        wtrace("blit ok");
 //      }
+
+
+
+
+
+
+
+
+
+//    virtual void drawSurface(axSurface* aSurface, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+//      {
+//        wtrace("blit");
+//        //XCopyArea(mDisplay,aCanvas->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
+//        XCopyArea(mDisplay,aSurface->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
+//        wtrace("blit ok");
+//      }
+
+    virtual void drawImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+      {
+        wtrace("blit");
+        //XCopyArea(mDisplay,aCanvas->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
+        XCopyArea(mDisplay,aImage->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
+        wtrace("blit ok");
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 };
 
 typedef axCanvasLinux axCanvasImpl;
 
-#endif
 //----------------------------------------------------------------------
-
-
-
-#if 0
-
-//    // internal
-//    void setforecolor(int aColor) { XSetForeground(gDP,mGC,aColor); };
-//    void setbackcolor(int aColor) { XSetBackground(gDP,mGC,aColor); };
-//
-//    //--------------------------------------------------
-//
-//    virtual void setPenColor(axColor aColor)
-//      {
-//        mPenColor = aColor;
-//        XSetForeground(gDP,mGC,aColor.mColor);
-//      };
-//
-//    //----------
-//
-//    virtual void setBrushColor(axColor aColor)
-//      {
-//        mBrushColor = aColor;
-//        setforecolor(mBrushColor.mColor);
-//      };
-//
-//    //----------
-//
-//    virtual void setTextColor(axColor aColor)
-//      {
-//        mTextColor = aColor;
-//        setforecolor(mTextColor.mColor);
-//      };
-//
-//    //----------
-//
-//    virtual void setPenWidth(int aWidth)
-//      {
-//        mPenWidth = aWidth;
-//        XSetLineAttributes(gDP,mGC,aWidth,LineSolid,CapButt,JoinBevel);
-//      };
-//
-//    virtual void resetPenWidth(void)
-//      {
-//        mPenWidth = DEF_PENWIDTH;
-//        XSetLineAttributes(gDP,mGC,mPenWidth,LineSolid,CapButt,JoinBevel);
-//      };
-//
-//    //----------
-//
-//    virtual void setPenStyle(int aStyle)
-//      {
-//        //TODO
-//      };
-//
-//    //----------
-//
-//    virtual void setBrushStyle(int aStyle)
-//      {
-//        XSetFillStyle(gDP,mGC,aStyle); // FillSolid
-//      };
-
-    //----------
-
-
-
-    //--------------------------------------------------
-
-
-};
-
-
-
 #endif

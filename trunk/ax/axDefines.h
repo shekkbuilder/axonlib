@@ -40,6 +40,8 @@
 // long, 32/64 bit, same size as void* ???
 
 // a 'safe' type we can typecast to/from ptr (void*)
+
+//#define AX_PTRCAST long
 #define AX_PTRCAST long
 
 //----------------------------------------------------------------------
