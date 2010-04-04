@@ -32,18 +32,18 @@
 class axCanvasBase
 {
   protected:
-    axPens    mPens;
-    axBrushes mBrushes;
-    axFonts   mFonts;
+    //axPens    mPens;
+    //axBrushes mBrushes;
+    //axFonts   mFonts;
 
   public:
 
     virtual ~axCanvasBase()
       {
-        int i;
-        for (i=0; i<mPens.size(); i++)    deletePen(i);
-        for (i=0; i<mBrushes.size(); i++) deleteBrush(i);
-        for (i=0; i<mFonts.size(); i++)   deleteFont(i);;
+        //int i;
+        //for (i=0; i<mPens.size(); i++)    deletePen(i);
+        //for (i=0; i<mBrushes.size(); i++) deleteBrush(i);
+        //for (i=0; i<mFonts.size(); i++)   deleteFont(i);;
       }
 
     virtual int getHandle(void) { return 0; }
@@ -54,20 +54,30 @@ class axCanvasBase
 
     // pen/brush/font
 
-    virtual axColor createColor(int aRed, int aGreen, int aBlue) { return axColor(0); }
-
-    virtual int     createPen(int r, int g, int b, int size=DEF_PENWIDTH) { return 0; }
-    virtual int     createBrush(int r, int g, int b, int style=DEF_BRUSHSTYLE) { return 0; }
-    virtual int     createFont(axString name, int r, int g, int b, int size=-1, int style=0) { return 0; }
-
-    virtual void    deletePen(int aPen) {}
-    virtual void    deleteBrush(int aBrush) {}
-    virtual void    deleteFont(int aFont) {}
+    virtual axColor getColor(int aRed, int aGreen, int aBlue) { return axColor(0); }
+    virtual void    setPenColor(axColor aColor) {}
+    virtual void    setBrushColor(axColor aColor) {}
+    virtual void    setTextColor(axColor aColor) {}
 
     virtual void    clearPen(void) {}
-    virtual void    selectPen(int aPen) {}
-    virtual void    selectBrush(int aBrush) {}
-    virtual void    selectFont(int aFont) {}
+    virtual void    resetPen(void) {}
+    virtual void    clearBrush(void) {}
+    virtual void    resetBrush(void) {}
+
+    virtual void setPenWidth(int aWidth) {}
+    virtual void setPenStyle(int aStyle) {}
+    virtual void setBrushStyle(int aStyle) {}
+
+
+//    virtual int     createPen(int r, int g, int b, int size=DEF_PENWIDTH) { return 0; }
+//    virtual int     createBrush(int r, int g, int b, int style=DEF_BRUSHSTYLE) { return 0; }
+//    virtual int     createFont(axString name, int r, int g, int b, int size=-1, int style=0) { return 0; }
+//    virtual void    deletePen(int aPen) {}
+//    virtual void    deleteBrush(int aBrush) {}
+//    virtual void    deleteFont(int aFont) {}
+//    virtual void    selectPen(int aPen) {}
+//    virtual void    selectBrush(int aBrush) {}
+//    virtual void    selectFont(int aFont) {}
 
     // clip rect
 
@@ -77,6 +87,7 @@ class axCanvasBase
     // shapes
 
     virtual void    drawPoint(int aX, int aY) {}
+    virtual void    drawPoint(int aX, int aY, axColor aColor) {}
     virtual void    drawLine(int aX1, int aY1, int aX2, int aY2) {}
     virtual void    drawRect(int aX1, int aY1, int aX2, int aY2) {}
     virtual void    fillRect(int aX1, int aY1, int aX2, int aY2) {}

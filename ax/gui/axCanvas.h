@@ -34,9 +34,9 @@ class axCanvas : public axCanvasImpl
     axCanvas(axContext* aContext)
     : axCanvasImpl(aContext)
       {
-        createBrush(AX_GREY);
-        createPen(AX_GREY_LIGHT);
-        createFont("default",AX_WHITE);
+        //createBrush(AX_GREY);
+        //createPen(AX_GREY_LIGHT);
+        //createFont("default",AX_WHITE);
       }
     virtual ~axCanvas()
       {

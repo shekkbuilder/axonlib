@@ -25,6 +25,7 @@ class wdgPanel : public axContainer//axWidget
           switch(mMode)
           {
             case 0:
+              //aCanvas->clearPen();
               aCanvas->selectBrush(0);
               aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
               break;

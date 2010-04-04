@@ -24,12 +24,62 @@
 #include "platform/axContext.h"
 #include "base/axImage.h"
 
-class axBitmapBase : public axImage
+//class axBitmapBase : public axImage
+//{
+//  public:
+//    axBitmapBase(axContext* aContext) {}
+//    virtual ~axBitmapBase() {}
+//};
+
+class axBitmapBase
 {
+  //public:
+  protected:
+    //int   mHandle;
+    bool  mPrepared;
+    int   mWidth;
+    int   mHeight;
+    int   mDepth;
+    char* mBuffer;
+
   public:
-    axBitmapBase(axContext* aContext) {}
-    virtual ~axBitmapBase() {}
+
+    /// constructor
+    /**
+      creates a bitmap
+      \param aWidth widht of bitmap (in pixels)
+      \param aHeight height of bitmap (in pixels)
+    */
+
+    axBitmapBase(axContext* aContext, int aWidth, int aHeight)
+      {
+        mPrepared = false;
+        mWidth    = aWidth;
+        mHeight   = aHeight;
+        mDepth    = 24;         // !!!
+        mBuffer   = NULL;
+      }
+
+    /// destructor
+    virtual ~axBitmapBase()
+      {
+        //if (mBuffer) delete[] mBuffer;
+      }
+
+    // accessors
+
+    virtual int   getWidth(void)    { return mWidth; }
+    virtual int   getHeight(void)   { return mHeight; }
+    virtual int   getDepth(void)    { return mDepth; }
+    virtual char* getBuffer(void)   { return mBuffer; }
+
+    // overloaded by w32/x11
+
+    virtual int   getHandle(void) { return 0; }
+    virtual void  prepare(void) {}
+
 };
+
 
 //----------------------------------------------------------------------
 #endif

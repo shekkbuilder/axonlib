@@ -295,6 +295,14 @@ class axWindowLinux : public axWindowBase
         return new axSurface(&ctx,aWidth,aHeight);
       }
 
+    virtual axBitmap* createBitmap(int aWidth, int aHeight)
+      {
+        //wtrace("axWindowLinux.createBitmap");
+        //axContext ctx(mDisplay,mParent);
+        axContext ctx(mDisplay,mWindow);
+        return new axBitmap(&ctx,aWidth,aHeight);
+      }
+
     //----------------------------------------
     // low level
     //----------------------------------------
@@ -494,21 +502,16 @@ class axWindowLinux : public axWindowBase
             axSurface* srf;
             if (mSurface)
             {
+              //TODO: copy brushes & pens?
               srf = mSurface;
               mSurface = NULL;
               delete srf;
             }
-            //axContext ctx(mDisplay,mParent);
-            //srf = new axSurface(&ctx,aWidth,aHeight);
             srf = createSurface(aWidth,aHeight);
             mSurface = srf;
-            //wtrace(":: mSurface = " << mSurface);
             //mSurfaceMutex.unlock();
           //} //size
-          //else trace("axWindowLinux.resizeBuffer - size didn't change");
         } //buffered
-        //else wtrace(":: not buffered");
-
       }
 
     //----------
