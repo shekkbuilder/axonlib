@@ -69,7 +69,7 @@ class axWindow : public axWindowImpl
       virtual void redrawRect(axRect aRect)         { invalidate( aRect.x, aRect.y, aRect.x2(), aRect.y2() ); }
       virtual void redrawWidget(axWidget* aWidget)  { redrawRect(aWidget->rect()); }
 
-      virtual void paramChanged(axParameter* aParameter) { trace("axWindow.paramChanged"); }
+      virtual void paramChanged(axParameter* aParameter) { /*wtrace("axWindow.paramChanged");*/ }
 
 };
 

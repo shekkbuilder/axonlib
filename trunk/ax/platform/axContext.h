@@ -10,6 +10,10 @@
 #ifdef AX_LINUX
 
   #include <X11/Xlib.h>
+  #include <X11/Xutil.h>
+  //#include <X11/cursorfont.h>
+  //#include <pthread.h>
+
 
   struct axContext
   {
@@ -30,6 +34,7 @@
 //----------------------------------------------------------------------
 #ifdef AX_WIN32
 
+  #define _WIN32_WINNT 0x0501
   #include <windows.h>
   struct axContext
   {

@@ -8,6 +8,11 @@
 #include "axDefines.h"
 #include "base/axCanvasBase.h"
 //#include "gui/axSurface.h"
+#include "gui/axBitmap.h"
+
+//----------------------------------------------------------------------
+
+#define DEF_PENWIDTH 0
 
 //----------------------------------------------------------------------
 
@@ -65,7 +70,7 @@ class axCanvasLinux : public axCanvasBase
 
     //----------
 
-    virtual axColor createColor(int aRed, int aGreen, int aBlue)
+    virtual axColor getColor(int aRed, int aGreen, int aBlue)
     {
       XColor xcol;
       xcol.red   = aRed << 8;
@@ -76,79 +81,39 @@ class axCanvasLinux : public axCanvasBase
       return axColor(xcol.pixel);
     }
 
-    //----------
+    virtual void    setPenColor(axColor aColor)   { XSetForeground(mDisplay,mGC,aColor.get()); }
+    virtual void    setBrushColor(axColor aColor) { XSetForeground(mDisplay,mGC,aColor.get()); }
+    virtual void    setTextColor(axColor aColor)  { XSetForeground(mDisplay,mGC,aColor.get()); }
 
-    virtual int createPen(int r, int g, int b, int size=DEF_PENWIDTH)
+    //virtual void    clearPen(void)    { mClearPen = true; }
+    virtual void    resetPen(void)    { setPenWidth(DEF_PENWIDTH); }
+    //virtual void    clearBrush(void)  { mClearBrush}
+    //virtual void    resetBrush(void)  {}
+
+    virtual void setPenWidth(int aWidth)
       {
-        axPen pen;
-        axColor color = createColor(r,g,b);
-        pen.mColor  = color;
-        pen.mSize   = size;
-        //pen.mHandle = CreatePen(PS_SOLID,size,color.get());
-        int num = mPens.size();
-        mPens.append(pen);
-        return num;
-      }
+        //mPenWidth = aWidth;
+        XSetLineAttributes(mDisplay,mGC,aWidth,LineSolid,CapRound,JoinRound);
+      };
 
-    //----------
+    //virtual void resetPenWidth(void)
+    //  {
+    //    mPenWidth = DEF_PENWIDTH;
+    //    XSetLineAttributes(gDP,mGC,mPenWidth,LineSolid,CapRound,JoinRound);
+    //  };
 
-    virtual int createBrush(int r, int g, int b, int style=DEF_BRUSHSTYLE)
+    virtual void setPenStyle(int aStyle)
       {
-        axBrush brush;
-        axColor color = createColor(r,g,b);
-        brush.mColor  = color;
-        brush.mStyle  = style;
-        //brush.mHandle = CreateSolidBrush(color.get());
-        int num = mBrushes.size();
-        mBrushes.append(brush);
-        return num;
-      }
+        //TODO
+      };
 
     //----------
 
-    virtual int createFont(axString name, int r, int g, int b, int size=-1, int style=0)
+    virtual void setBrushStyle(int aStyle)
       {
-        axFont font;
-        axColor color = createColor(r,g,b);
-        font.mName    = name;
-        font.mColor   = color;
-        font.mSize    = size;
-        font.mStyle   = style;
-        int num = mFonts.size();
-        mFonts.append(font);
-        return num;
-      }
+        XSetFillStyle(mDisplay,mGC,aStyle); // FillSolid
+      };
 
-    //virtual void deletePen(int aPen) {}
-    //virtual void deleteBrush(int aBrush) {}
-    //virtual void deleteFont(int aFont) {}
-
-    //----------
-
-    //virtual void clearPen(void) {}
-
-    //----------
-
-    virtual void selectPen(int aPen)
-      {
-        XSetForeground(mDisplay,mGC,mPens[aPen].mColor.get());
-        XSetLineAttributes(mDisplay,mGC,mPens[aPen].mSize,LineSolid,CapButt,JoinBevel);
-      }
-
-    //----------
-
-    virtual void selectBrush(int aBrush)
-      {
-        XSetForeground(mDisplay,mGC,mBrushes[aBrush].mColor.get());
-        XSetFillStyle(mDisplay,mGC,mBrushes[aBrush].mStyle); // FillSolid
-      }
-
-    //----------
-
-    virtual void selectFont(int aFont)
-      {
-        XSetForeground(mDisplay,mGC,mFonts[aFont].mColor.get());
-      }
 
     //--------------------------------------------------
     // clip rect
@@ -180,6 +145,13 @@ class axCanvasLinux : public axCanvasBase
       {
         XDrawPoint(mDisplay,mDrawable,mGC,aX,aY);
       }
+
+    virtual void drawPoint(int aX, int aY, axColor aColor)
+      {
+        XSetForeground(mDisplay,mGC,aColor.get());
+        XDrawPoint(mDisplay,mDrawable,mGC,aX,aY);
+      }
+
 
     //----------
 
@@ -308,10 +280,10 @@ class axCanvasLinux : public axCanvasBase
     //dest_x, dest_y  Specify the x and y coordinates, which are relative to the origin of the drawable and are the coordinates of the subimage.
     //width, height 	Specify the width and height of the subimage, which define the dimensions of the rectangle.
 
-    //virtual void drawBitmap(axBitmapBase* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-    //  {
-    //    XPutImage(mDisplay,mWindow,mGC,(XImage*)aBitmap->getHandle(),aSrcX,aSrcY,aX,aY,aSrcW,aSrcH);
-    //  }
+    virtual void drawBitmap(axBitmap* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+      {
+        XPutImage(mDisplay,mDrawable,mGC,(XImage*)aBitmap->getHandle(),aSrcX,aSrcY,aX,aY,aSrcW,aSrcH);
+      }
 
     //--------------------------------------------------
     // canvas (surface[drawable])
@@ -331,24 +303,6 @@ class axCanvasLinux : public axCanvasBase
     //src_x, src_y 	Specify the x and y coordinates, which are relative to the origin of the source rectangle and specify its upper-left corner.
     //width,height 	Specify the width and height, which are the dimensions of both the source and destination rectangles.
     //dest_x,dest_y Specify the x and y coordinates, which are relative to the origin of the destination rectangle and specify its upper-left corner
-
-    //virtual void blit(int aHandle, axPoint aDst, axRect aSrc)
-
-    //virtual void blit(axCanvasBase* aCanvas, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-    //  {
-    //    wtrace("blit");
-    //    //XCopyArea(mDisplay,aCanvas->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
-    //    XCopyArea(mDisplay,aCanvas->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
-    //    wtrace("blit ok");
-    //  }
-
-    //virtual void drawSurface(axSurface* aSurface, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-    //  {
-    //    wtrace("blit");
-    //    //XCopyArea(mDisplay,aCanvas->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
-    //    XCopyArea(mDisplay,aSurface->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
-    //    wtrace("blit ok");
-    //  }
 
     virtual void drawImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {

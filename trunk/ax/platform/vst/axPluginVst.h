@@ -902,10 +902,16 @@ class axPluginVst : public axPluginBase
 
     virtual void describe(axString aName, axString aVendor, axString aProduct, int aVersion, unsigned int aID)
       {
-        strncpy(mEffectName,    aName.ptr(),    kVstMaxEffectNameLen);
-        strncpy(mVendorString,  aVendor.ptr(),  kVstMaxVendorStrLen);
-        strncpy(mProductString, aProduct.ptr(), kVstMaxProductStrLen);
-        mVendorVersion  = aVersion;
+        #ifdef AX_DEBUG
+          char buf[256];
+          sprintf(buf,"%s%s",aName.ptr(),(char*)"_debug");
+          strncpy(mEffectName,buf,kVstMaxEffectNameLen);
+        #else
+          strncpy(mEffectName,aName.ptr(),kVstMaxEffectNameLen);
+        #endif
+        strncpy(mVendorString,aVendor.ptr(),kVstMaxVendorStrLen);
+        strncpy(mProductString,aProduct.ptr(),kVstMaxProductStrLen);
+        mVendorVersion = aVersion;
         setUniqueID(aID);
       }
 

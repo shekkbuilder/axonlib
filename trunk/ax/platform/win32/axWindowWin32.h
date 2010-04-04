@@ -170,6 +170,12 @@ class axWindowWin32 : public axWindowBase
         return new axSurface(&ctx,aWidth,aHeight);
       }
 
+    virtual axBitmap* createBitmap(int aWidth, int aHeight)
+      {
+        axContext ctx(mWindow);
+        return new axBitmap(&ctx,aWidth,aHeight);
+      }
+
 
     //----------------------------------------
     // low level
@@ -506,7 +512,7 @@ class axWindowWin32 : public axWindowBase
         //MSG msg2;
         //HDC dc;
         LRESULT result = 0;
-        int btn;
+        int btn = 0;
         axRect rc;
         int w,h;
 

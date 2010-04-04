@@ -8,22 +8,35 @@
 #include "platform/axContext.h"
 #include "axDefines.h"
 #include "base/axCanvasBase.h"
-#include "base/axSurfaceBase.h"
+//#include "base/axSurfaceBase.h"
+#include "gui/axBitmap.h"
+
+//----------------------------------------------------------------------
+
+#define DEF_PENWIDTH 0
+
+//----------------------------------------------------------------------
 
 class axCanvasWin32 : public axCanvasBase
 {
   private:
 		HDC     mDC;
     HFONT   mFont;
-		HPEN    mPen, mOldPen, mOldPen2;
-		HBRUSH  mBrush, mOldBrush, mOldBrush2;
-		int     mWinHandle;
-    RECT    R;
-    HPEN    mNullPen;
+		HPEN    mPen, mOldPen;      // set when clearPen, use with resetPen()
+    HPEN    mNullPen;     // empty pen (shapes without borders)
+		HBRUSH  mBrush, mOldBrush;
+    HBRUSH  mNullBrush;
+    RECT    R;            // temp
+		//HPEN    mPen, mOldPen, mOldPen2;
+		//HBRUSH  mBrush, mOldBrush, mOldBrush2;
   protected:
+		int     mWinHandle;   // from context
+    axColor mPenColor;
+    axColor mBrushColor;
+    axColor mTextColor;
+    //bool    mIsPenClear;
     int     mCurrentPen;
     int     mCurrentBrush;
-    int     mCurrentFont;
     int     mXpos,mYpos;
 
   public:
@@ -31,11 +44,14 @@ class axCanvasWin32 : public axCanvasBase
     axCanvasWin32(axContext* aContext)
     : axCanvasBase(/*aContext*/)
       {
+        mPenColor   = getColor(AX_GREY_LIGHT);
+        mBrushColor = getColor(AX_GREY);
+        mTextColor  = getColor(AX_WHITE);
         mCurrentPen = 0;
         mCurrentBrush = 0;
-        mCurrentFont = 0;
-        mPen    = 0;
-        mBrush  = 0;
+        //mIsPenClear = false;
+        //mPen    = 0;
+        //mBrush  = 0;
         HDC tempdc = GetDC(0);
         if (aContext->mWindow)
         { // window
@@ -55,7 +71,23 @@ class axCanvasWin32 : public axCanvasBase
         mFont = CreateFontIndirect(&LFont);
         SelectObject(mDC,mFont);
         ReleaseDC(0,tempdc);
+
         mNullPen = CreatePen(PS_NULL,0,0);
+        //http://msdn.microsoft.com/en-us/library/dd145035%28v=VS.85%29.aspx
+        LOGBRUSH logbrush;
+          logbrush.lbStyle = BS_NULL; // BS_HATCHED, BS_HOLLOW, BS_NULL, BS_SOLID, ++
+          logbrush.lbColor = 0;       // ignored if null
+          logbrush.lbHatch = 0;       // if BS_HATCHED: HS_BDIAGONAL, HS_CROSS, HS_DIAGCROSS, HS_FDIAGONAL, HS_HORIZONTAL, HS_VERTICAL
+        mNullBrush = CreateBrushIndirect(&logbrush);
+
+        mPen   = (HPEN)GetStockObject(DC_PEN);
+        mBrush = (HBRUSH)GetStockObject(DC_BRUSH);
+
+        // /*mOldPen = (HPEN)*/    SelectObject(mDC, GetStockObject(DC_PEN));
+        // /*mOldBrush = (HBRUSH)*/SelectObject(mDC, GetStockObject(DC_BRUSH));
+        SelectObject(mDC,mPen);
+        SelectObject(mDC,mBrush);
+
       }
 
     //----------
@@ -63,12 +95,18 @@ class axCanvasWin32 : public axCanvasBase
     virtual ~axCanvasWin32()
       {
         DeleteObject(mNullPen);
-        if (mPen)   DeleteObject(mPen);
-        if (mBrush) DeleteObject(mBrush);
-        if (mFont)  DeleteObject(mFont);
+        DeleteObject(mNullBrush);
+
+        //DeleteObject(mOldPen);
+        //DeleteObject(mOldBrush);
+
+        //if (mPen)   DeleteObject(mPen);
+        //if (mBrush) DeleteObject(mBrush);
+        //if (mFont)  DeleteObject(mFont);
+
         if (mWinHandle) ReleaseDC((HWND)mWinHandle,mDC);
         else DeleteDC(mDC);
-//        delete mNullPen;
+
       }
 
     //----------
@@ -89,115 +127,128 @@ class axCanvasWin32 : public axCanvasBase
 
     //--------------------
 
-    virtual axColor createColor(int aRed, int aGreen, int aBlue)
+    //virtual axColor getColor(int aRed, int aGreen, int aBlue)
+    //  {
+    //    axColor color = RGB(aRed,aGreen,aBlue);
+    //    return color;
+    //  }
+
+    virtual axColor getColor(int aRed, int aGreen, int aBlue)
       {
         axColor color = RGB(aRed,aGreen,aBlue);
         return color;
       }
 
-    //----------
-
-    virtual int createPen(int r, int g, int b, int size=DEF_PENWIDTH)
+    virtual void setPenColor(axColor aColor)
       {
-        axPen pen;
-        axColor color = createColor(r,g,b);
-        pen.mColor  = color;
-        pen.mSize   = size;
-        pen.mHandle = CreatePen(PS_SOLID,size,color.get());
-        int num = mPens.size();
-        mPens.append(pen);
-        return num;
+        mPenColor = aColor;
+        SetDCPenColor(mDC, aColor.get());
       }
 
-    //----------
-
-    virtual int createBrush(int r, int g, int b, int style=DEF_BRUSHSTYLE)
+    virtual void setBrushColor(axColor aColor)
       {
-        axBrush brush;
-        axColor color = createColor(r,g,b);
-        brush.mColor  = color;
-        brush.mStyle  = style;
-        brush.mHandle = CreateSolidBrush(color.get());
-        int num = mBrushes.size();
-        mBrushes.append(brush);
-        return num;
+        mBrushColor = aColor;
+        SetDCBrushColor(mDC, aColor.get());
       }
 
-    //----------
-
-    virtual int createFont(axString name, int r, int g, int b, int size=-1, int style=0)
+    virtual void setTextColor(axColor aColor)
       {
-        axFont font;
-        axColor color = createColor(r,g,b);
-        font.mName    = name;
-        font.mColor   = color;
-        font.mSize    = size;
-        font.mStyle   = style;
-        int num = mFonts.size();
-        mFonts.append(font);
-        return num;
+        mTextColor = aColor;
+        SetTextColor(mDC,aColor.get());
       }
 
-    //----------
-
-    virtual void deletePen(int aPen)
+    virtual void clearPen(void)
       {
-        DeleteObject(mPens[aPen].mHandle);
+        mOldPen = (HPEN)SelectObject( (HDC)mDC, mNullPen );
       }
 
-    virtual void deleteBrush(int aBrush)
+    virtual void resetPen(void)
       {
-        DeleteObject(mBrushes[aBrush].mHandle);
+        SelectObject(mDC,mOldPen);
       }
 
-    virtual void deleteFont(int aFont)
+    virtual void clearBrush(void)
       {
+        mOldBrush = (HBRUSH)SelectObject( (HDC)mDC, mNullBrush );
       }
 
-    //----------
-
-    virtual void selectPen(int aPen)
+    virtual void resetBrush(void)
       {
-        mCurrentPen = aPen;
-        mOldPen2 = (HPEN)SelectObject( (HDC)mDC, mPens[aPen].mHandle );
-//        //TODO: set null brush?
+        SelectObject(mDC,mOldBrush);
       }
 
-    virtual void selectBrush(int aBrush)
+    // internal
+
+    void setPen(int aColor, int aWidth=DEF_PENWIDTH)
       {
-        mCurrentBrush = aBrush;
-        mOldBrush2 = (HBRUSH)SelectObject((HDC)mDC, mBrushes[aBrush].mHandle);
-//        //TODO: set null pen?
-      }
+        //if (mPen)
+        //{
+        //  SelectObject(mDC,mOldPen);
+        //  DeleteObject(mPen);
+        //}
+        HPEN pen = CreatePen(PS_SOLID,aWidth,aColor);
+        mOldPen = (HPEN)SelectObject((HDC)mDC, pen);
+      };
 
-    virtual void selectFont(int aFont)
+    void setBrush(int aColor)
       {
-        mCurrentFont = aFont;
-        //SetTextColor(mDC,mTextColor.mColor);
-        SetTextColor(mDC,mFonts[aFont].mColor.get() );
-      }
+        if (mBrush)
+        {
+          SelectObject(mDC,mOldBrush);
+          DeleteObject(mBrush);
+        }
+        mBrush = CreateSolidBrush(aColor);
+        mOldBrush = (HBRUSH)SelectObject((HDC)mDC, mBrush);
+      };
 
-    //----------
 
-    virtual void clearPen(void) { mOldPen2 = (HPEN)SelectObject( (HDC)mDC, mNullPen );
-      }
+    // internal
 
-    //----------
+    virtual void setPenWidth(int aWidth)
+      {
+        //mPenWidth = aWidth;
+        setPen(mPenColor.mColor,aWidth);
+      };
 
-    virtual void resetPen(void) { SelectObject(mDC,mOldPen2); }
-    virtual void resetBrush(void) { SelectObject(mDC,mOldBrush2); }
+    //virtual void resetPenWidth(void)
+    //  {
+    //    mPenWidth = DEF_PENWIDTH;
+    //    setpen(mPenColor.mColor,mPenWidth);
+    //  };
+
+    virtual void setPenStyle(int aStyle)
+      {
+      };
+
+    virtual void setBrushStyle(int aStyle)
+      {
+      };
+
 
     //--------------------------------------------------
     // clip rect
     //--------------------------------------------------
 
+    // The CreateRectRgn function creates a rectangular region.
+
+    // Regions created by the Create<shape>Rgn methods
+    // (such as CreateRectRgn and CreatePolygonRgn) only include
+    // the interior of the shape; the shape's outline is excluded
+    // from the region. This means that any point on a line between
+    // two sequential vertices is not included in the region.
+    // If you were to call PtInRegion for such a point, it would return zero as the result.
+
+    // The SelectClipRgn function selects a region as the current clipping region for the specified device context.
+
     virtual void setClipRect(int aX1, int aY1, int aX2, int aY2)
       {
-        HRGN hrgn = /*hrgn = */CreateRectRgn( aX1, aY1, aX2, aY2 );
+        HRGN hrgn = /*hrgn = */CreateRectRgn( aX1-1, aY1-1, aX2+1, aY2+1 );
         SelectClipRgn(mDC,hrgn);
       }
 
     //----------
+
+    // To remove a device-context's clipping region, specify a NULL region handle.
 
     virtual void clearClipRect(void)
       {
@@ -210,10 +261,21 @@ class axCanvasWin32 : public axCanvasBase
 
     virtual void drawPoint(int aX, int aY)
       {
-        SetPixel(mDC,aX,aY,mPens[mCurrentPen].mColor.get());
+        //SetPixel(mDC,aX,aY,mPens[mCurrentPen].mColor.get());
+        SetPixel(mDC,aX,aY,mPenColor.get());
       }
 
     //----------
+
+    virtual void drawPoint(int aX, int aY, axColor aColor)
+      {
+        //SetPixel(mDC,aX,aY,mPens[mCurrentPen].mColor.get());
+        SetPixel(mDC,aX,aY,aColor.get());
+      }
+
+    //----------
+
+    // The LineTo function draws a line from the current position up to, but not including, the specified point.
 
     virtual void drawLine(int aX1, int aY1, int aX2, int aY2)
       {
@@ -227,13 +289,23 @@ class axCanvasWin32 : public axCanvasBase
     virtual void drawRect(int aX1, int aY1, int aX2, int aY2)
       {
         // todo setpos + 4 lineto
-        drawLine(aX1, aY1, aX2, aY1);
-        drawLine(aX1, aY1, aX1, aY2);
-        drawLine(aX1, aY2, aX2, aY2);
-        drawLine(aX2, aY1, aX2, aY2);
+        //drawLine(aX1, aY1, aX2, aY1);
+        //drawLine(aX1, aY1, aX1, aY2);
+        //drawLine(aX1, aY2, aX2, aY2);
+        //drawLine(aX2, aY1, aX2, aY2);
+        setPos(aX1,aY1);
+        LineTo(mDC,aX2,aY1);
+        LineTo(mDC,aX2,aY2);
+        LineTo(mDC,aX1,aY2);
+        LineTo(mDC,aX1,aY1);
+        //drawPoint(aX2,aY2);         // !!!
       }
 
     //----------
+
+    // The FillRect function fills a rectangle by using the specified brush.
+    // This function includes the left and top borders,
+    // but excludes the right and bottom borders of the rectangle.
 
     virtual void fillRect(int aX1, int aY1, int aX2, int aY2)
       {
@@ -242,6 +314,7 @@ class axCanvasWin32 : public axCanvasBase
         R.right   = aX2+1;           // !!!
         R.bottom  = aY2+1;           // !!!
         FillRect(mDC,&R,mBrush);
+        //Rectangle(mDC,aX1,aY1,aX2,aY2);
       }
 
     //----------
@@ -254,9 +327,15 @@ class axCanvasWin32 : public axCanvasBase
 
     //----------
 
+    // The Ellipse function draws an ellipse. The center of the ellipse is the
+    // center of the specified bounding rectangle. The ellipse is outlined by
+    // using the current pen and is filled by using the current brush.
+
     virtual void fillCircle(int aX1, int aY1, int aX2, int aY2)
       {
+        clearPen();
         Ellipse( mDC,aX1,aY1,aX2,aY2);
+        resetPen();
       }
 
     //----------
@@ -297,6 +376,7 @@ class axCanvasWin32 : public axCanvasBase
       {
         if( fabs(aAngle2) >= 0.01/*EPSILON*/ )
         {
+          clearPen();
           float a1 = aAngle1 -= 0.25;
           float a2 = a1 + aAngle2;
           if( aAngle2>0 )
@@ -315,6 +395,7 @@ class axCanvasWin32 : public axCanvasBase
           float x2 = x + cos(a2*PI2) * size;
           float y2 = y + sin(a2*PI2) * size;
           Pie(mDC,aX1,aY1,aX2,aY2,(int)x1,(int)y1,(int)x2,(int)y2);
+          resetPen();
         }
       }
 
@@ -375,32 +456,17 @@ class axCanvasWin32 : public axCanvasBase
     // bitmap
     //--------------------------------------------------
 
-    //virtual void drawBitmap(axBitmapBase* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-    //  {
-    //    HDC tempdc = CreateCompatibleDC(mDC);
-    //    SelectObject(tempdc,(HBITMAP)aBitmap->getHandle());
-    //    BitBlt(mDC,aX,aY,aSrcW,aSrcH,tempdc,aSrcX,aSrcY,SRCCOPY);
-    //    DeleteDC(tempdc);
-    //  }
+    virtual void drawBitmap(axBitmap* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+      {
+        HDC tempdc = CreateCompatibleDC(mDC);
+        SelectObject(tempdc,(HBITMAP)aBitmap->getHandle());
+        BitBlt(mDC,aX,aY,aSrcW,aSrcH,tempdc,aSrcX,aSrcY,SRCCOPY);
+        DeleteDC(tempdc);
+      }
 
     //--------------------------------------------------
-    // canvas (surface[drawable])
+    // image
     //--------------------------------------------------
-
-    ////virtual void blit(int aHandle, axPoint aDst, axRect aSrc)
-    //virtual void blit(axCanvasBase* aCanvas, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-    //  {
-    //    //HDC tempdc = (HBITMAP)mHandle->mDC;
-    //    //axCanvasImpl* ci = (axCanvasImpl*)aCanvas;
-    //    //BitBlt(mDC,aX,aY,aSrcW,aSrcH,ci->getDC(),aSrcX,aSrcY,SRCCOPY);
-    //  }
-
-    //virtual void drawSurface(axSurface* aSurface, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-    //  {
-    //    axCanvas* canvas = aSurface->getCanvas();
-    //    HDC tempdc = (HDC)canvas->getHandle();
-    //    BitBlt(mDC,aX,aY,aSrcW,aSrcH,tempdc,aSrcX,aSrcY,SRCCOPY);
-    //  }
 
     virtual void drawImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
