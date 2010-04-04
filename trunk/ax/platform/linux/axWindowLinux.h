@@ -51,7 +51,8 @@
 //----------------------------------------------------------------------
 
 void* threadProc(void* data);
-void eventProc(XEvent* ev);
+void* timerProc(void* data);
+void  eventProc(XEvent* ev);
 
 // empty/blank mouse cursor
 static char noData[] = { 0,0,0,0,0,0,0,0 };
@@ -105,6 +106,7 @@ static char noData[] = { 0,0,0,0,0,0,0,0 };
 class axWindowLinux : public axWindowBase
 {
   friend void* threadProc(void* data);
+  friend void* timerProc(void* data);
   friend class axPluginVst;
 
   private:
@@ -112,12 +114,16 @@ class axWindowLinux : public axWindowBase
     Window      mParent;
     long        mEventMask;
     Atom        mDeleteWindowAtom;
-    pthread_t   mThreadHandle;
+    pthread_t   mEventThread;
     Window      mWindow;
     Atom        mCustomEventAtom;
     Cursor      mInvisibleCursor;
     Pixmap      mBitmapNoData;
     XColor      mBlack;
+    //axEventThread mEventThread;
+    pthread_t   mTimerThread;
+    bool        mTimerRunning;
+    int         mTimerSleep;
   protected:
     // ptr to external axContext (used when creating surfaces)
     //axContext*  mContext;
@@ -138,6 +144,9 @@ class axWindowLinux : public axWindowBase
     axWindowLinux(axContext* aContext, axRect aRect, int aWinFlags)
     : axWindowBase(aContext,aRect,aWinFlags)
       {
+
+        mTimerRunning = false;
+        mTimerSleep = 30; // 30 ms between each timer signal
 
         //mContext  =  aContext;
         //mRect     = aRect;
@@ -254,7 +263,7 @@ class axWindowLinux : public axWindowBase
 
         if (mWinFlags.hasFlag(AX_WIN_MSGTHREAD))
         {
-          pthread_create(&mThreadHandle,NULL,&threadProc,this);
+          pthread_create(&mEventThread,NULL,&threadProc,this);
         }
 
       }
@@ -267,7 +276,14 @@ class axWindowLinux : public axWindowBase
         {
           sendEvent(ts_Kill);
           void* ret;
-          pthread_join(mThreadHandle,&ret);
+          pthread_join(mEventThread,&ret);
+        }
+        if (mTimerRunning)
+        {
+          wtrace("killing timer");
+          mTimerRunning = false;
+          void* ret;
+          pthread_join(mTimerThread,&ret);
         }
         if (mCanvas) delete mCanvas;
         if (mSurface) delete mSurface;
@@ -512,6 +528,9 @@ class axWindowLinux : public axWindowBase
             //mSurfaceMutex.unlock();
           //} //size
         } //buffered
+        //mRect.w = aWidth;
+        //mRect.h = aHeight;
+        //doResize(aWidth,aHeight);
       }
 
     //----------
@@ -533,21 +552,21 @@ class axWindowLinux : public axWindowBase
     //
     //----------------------------------------
 
-//    virtual void startTimer(int ms)
-//      {
-//        mTimerSpeed = ms;
-//        mTimerRunning = true;
-//        /*int ret = */pthread_create( &mTimerThread, NULL, &timerProc, this );
-//      }
+    virtual void startTimer(int ms)
+      {
+        mTimerSleep = ms;
+        mTimerRunning = true;
+        /*int ret = */pthread_create( &mTimerThread, NULL, &timerProc, this );
+      }
 
     //----------
 
-//    virtual void stopTimer(void)
-//      {
-//        void* retval;
-//        mTimerRunning = false;
-//        /*int res = */pthread_join(mTimerThread, &retval);
-//      }
+    virtual void stopTimer(void)
+      {
+        void* ret;
+        mTimerRunning = false;
+        /*int ret = */pthread_join(mTimerThread, &ret);
+      }
 
     //----------------------------------------
     // events
@@ -664,8 +683,8 @@ class axWindowLinux : public axWindowBase
             break;
           case ClientMessage:
             val = ev->xclient.data.l[0];
-            //trace("axWindowX11.eventHandler :: ClientMessage " << val);
-            //if (val==ts_Timer) doTimer();
+            //wtrace("ClientMessage " << val);
+            if (val==ts_Timer) { onTimer(); }
             break;
           case ButtonPress:
             but = remapButton(ev->xbutton.button);
@@ -710,7 +729,6 @@ class axWindowLinux : public axWindowBase
 
 void* threadProc(void* data)
   {
-    //trace("threadProc enter");
     axWindowLinux* win = (axWindowLinux*)data;
     if (win)
     {
@@ -718,21 +736,40 @@ void* threadProc(void* data)
       while (1)
       {
         XNextEvent(win->mDisplay,&ev);
-        //trace("threadProc event");
         if (ev.type==ClientMessage)
         {
+          //wtrace("client message");
           XClientMessageEvent *cev = (XClientMessageEvent *)&ev;
           unsigned int data = ev.xclient.data.l[0];
-          if (cev->message_type == win->mCustomEventAtom && data==ts_Kill)
+          if (cev->message_type==win->mCustomEventAtom)
           {
-            //trace("threadProc kill");
-            pthread_exit(NULL); //break;
+            if (data==ts_Kill) { /*wtrace("ts_Kill");*/ pthread_exit(NULL); }
+            else win->eventHandler(&ev);
           }
         } //ClientMessage
         else win->eventHandler(&ev);
       }
     }
-    //trace("threadProc return");
+    return NULL;
+  }
+
+//----------------------------------------------------------------------
+//
+// timer proc
+//
+//----------------------------------------------------------------------
+
+void* timerProc(void* data)
+  {
+    axWindowLinux* win = (axWindowLinux*)data;
+    if (win)
+    {
+      while (win->mTimerRunning)
+      {
+        win->sendEvent(ts_Timer);
+        usleep(win->mTimerSleep*1000); //ms*1000;
+      }
+    }
     return NULL;
   }
 

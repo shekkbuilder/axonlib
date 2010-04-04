@@ -40,7 +40,6 @@
 class axWindowBase : public axContainer//axWidget
 {
   protected:
-    //int         mWinFlags;
     axFlags     mWinFlags;
     axCanvas*   mCanvas;
     axSurface*  mSurface;
@@ -59,7 +58,15 @@ class axWindowBase : public axContainer//axWidget
         mSurface  = NULL;
       }
 
-    virtual ~axWindowBase() {}
+    virtual ~axWindowBase()
+      {
+      }
+
+    //----------
+
+    virtual void onTimer() {}
+
+    //----------
 
     // canvas/surface
 
