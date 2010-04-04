@@ -92,8 +92,8 @@ class axWidget : public axWidgetListener
 
     //----------
 
-    inline axRect   rect(void) { return mRect; }
-    inline axFlags  flags(void) { return mFlags; }
+    inline axRect   getRect(void) { return mRect; }
+    inline axFlags  getFlags(void) { return mFlags; }
 
     inline bool isActive(void)  { return mFlags.hasFlag(wf_Active); }
     inline bool isVisible(void) { return mFlags.hasFlag(wf_Visible); }

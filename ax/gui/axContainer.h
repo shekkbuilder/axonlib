@@ -111,8 +111,8 @@ class axContainer : public axWidget
         for (int i=0; i<mWidgets.size(); i++)
         {
           axWidget* wdg = mWidgets[i];
-          int wx = wdg->rect().x;
-          int wy = wdg->rect().y;
+          int wx = wdg->getRect().x;
+          int wy = wdg->getRect().y;
           wdg->doMove( wx+deltax, wy+deltay );
         }
         //mRect.setPos(aXpos,aYpos);

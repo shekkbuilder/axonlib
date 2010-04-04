@@ -402,21 +402,22 @@ class axWindowWin32 : public axWindowBase
         //{
           if (mWinFlags.hasFlag(AX_WIN_BUFFERED))
           {
-//            //mSurfaceMutex.lock();
-//            axSurface* srf;
-//            if (mSurface)
-//            {
-//              srf = mSurface;
-//              mSurface = NULL;
-//              delete srf;
-//            }
-//            srf = new axSurface(aWidth,aHeight/*,mWinFlags*/);
-//            mSurface = srf;
-//            //mSurfaceMutex.unlock();
+            //mSurfaceMutex.lock();
+            axSurface* srf;
+            if (mSurface)
+            {
+              srf = mSurface;
+              mSurface = NULL;
+              delete srf;
+            }
+            //srf = new axSurface(aWidth,aHeight/*,mWinFlags*/);
+            srf = createSurface(aWidth,aHeight);
+            mSurface = srf;
+            //mSurfaceMutex.unlock();
           }
           //mRect.w = aWidth;
           //mRect.h = aHeight;
-          //doResize(aWidth,h);
+          //doResize(aWidth,aHeight);
         //} //newsize
       }
 
@@ -451,17 +452,17 @@ class axWindowWin32 : public axWindowBase
     //
     //----------------------------------------
 
-    //virtual void startTimer(int ms)
-    //  {
-    //    /*mTimer = */SetTimer(mWindow,666,ms,NULL/*timerProc*/);
-    //  }
+    virtual void startTimer(int ms)
+      {
+        /*mTimer = */SetTimer(mWindow,667,ms,NULL/*timerProc*/);
+      }
 
     //----------
 
-    //virtual void stopTimer(void)
-    //  {
-    //    KillTimer(mWindow,666);
-    //  }
+    virtual void stopTimer(void)
+      {
+        KillTimer(mWindow,667);
+      }
 
     //----------------------------------------
     // events
@@ -627,10 +628,15 @@ class axWindowWin32 : public axWindowBase
               PostQuitMessage(0);
             }
             break;
-          //case WM_TIMER:
-          //  if (wParam==666) doTimer();
-          //  result = 0;
-          //  break;
+          case WM_TIMER:
+            if (wParam==667)
+            {
+              //wtrace("axWIndowWin32.eventHandler :: timer");
+              onTimer();
+            }
+
+            result = 0;
+            break;
           case WM_SETCURSOR:
             SetCursor(mWinCursor);
             break;
