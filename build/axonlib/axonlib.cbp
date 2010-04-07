@@ -214,7 +214,7 @@
 		<Unit filename="../../ax/wdg/wdgSlider.h" />
 		<Unit filename="../../ax/wdg/wdgTest.h" />
 		<Unit filename="../../ax/wdg/wdgTextList.h" />
-		<Unit filename="../../test/test_timer.cpp" />
+		<Unit filename="../../test/test_alignment.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

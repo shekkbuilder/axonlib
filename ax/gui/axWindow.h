@@ -54,6 +54,8 @@ class axWindow : public axWindowImpl
         //TODO: doRealign
         mRect.w = aWidth;
         mRect.h = aHeight;
+        if (mFlags.hasFlag(wf_Align))
+          doRealign();
       }
 
 //    virtual void doRealign(void) {}

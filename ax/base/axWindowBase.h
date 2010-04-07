@@ -15,7 +15,6 @@
 //#include "gui/axBrush.h"
 //#include "gui/axFont.h"
 
-//#define AX_WIN_NOBORDER   1
 #define AX_WIN_EMBEDDED   1
 #define AX_WIN_BUFFERED   2
 #define AX_WIN_MSGTHREAD  4
@@ -64,7 +63,7 @@ class axWindowBase : public axContainer//axWidget
 
     //----------
 
-    virtual void onTimer() {}
+    virtual void doTimer() {}
 
     //----------
 

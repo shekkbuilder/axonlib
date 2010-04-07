@@ -684,7 +684,7 @@ class axWindowLinux : public axWindowBase
           case ClientMessage:
             val = ev->xclient.data.l[0];
             //wtrace("ClientMessage " << val);
-            if (val==ts_Timer) { onTimer(); }
+            if (val==ts_Timer) { doTimer(); }
             break;
           case ButtonPress:
             but = remapButton(ev->xbutton.button);

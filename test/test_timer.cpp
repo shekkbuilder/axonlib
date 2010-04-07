@@ -30,6 +30,10 @@ class myEditor : public axEditor
     virtual void onTimer()
       {
         //wtrace("onTimer");
+        // (timers can happen anytime (triggered from a separate thread)
+        // axEditor could update widgets here..
+        // and invalidate, so that the doPaint (below)
+        // will be called imn proper gui thread
         invalidate(mRect.x,mRect.y,mRect.w,mRect.h);
       }
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
