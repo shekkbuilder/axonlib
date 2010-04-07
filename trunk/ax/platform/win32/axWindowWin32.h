@@ -42,7 +42,6 @@ class axWindowWin32 : public axWindowBase
     //HCURSOR mWinCursor;
     HCURSOR mWinCursor;
     int mPrevCursor;
-
     int mClickedButton;
     int mParent;
 
@@ -54,16 +53,18 @@ class axWindowWin32 : public axWindowBase
         mInstance   = aContext->mInstance;
         mWinName    = aContext->mWinClassName;
         mParent     = (int)aContext->mWindow;
-
         mWinCursor  = LoadCursor(NULL,IDC_ARROW);
         mPrevCursor = NULL;
-
-        trace(mWinName.ptr());
-
+        //wtrace(mWinName.ptr());
         mClickedButton = bu_None;
 
-
         // --- register window class ---
+
+        //http://msdn.microsoft.com/en-us/library/ms633586%28v=VS.85%29.aspx
+        //RegisterClass:
+        //  All window classes that an application registers are unregistered when it terminates.
+        //  Windows NT/2000/XP: No window classes registered by a DLL are unregistered when the DLL is unloaded.
+        //  A DLL must explicitly unregister its classes when it is unloaded.
 
         // multiple instances:
         // what happens when we try to register a window with similar name
@@ -81,17 +82,23 @@ class axWindowWin32 : public axWindowBase
         wc.hCursor        = (HICON)mWinCursor;//LoadCursor(NULL, IDC_ARROW);
         RegisterClass(&wc);
 
+        //RECT rc = {mRect.x,mRect.y,mRect.x2(),mRect.y2()};
+        RECT rc = { mRect.x, mRect.y, mRect.w, mRect.h };
+
         // --- embedded ---
 
         if (mWinFlags.hasFlag(AX_WIN_EMBEDDED))
         {
+          AdjustWindowRect(&rc,WS_POPUP,FALSE);
           mWindow = CreateWindowEx(
             WS_EX_TOOLWINDOW,
             classname,
             0,
             WS_POPUP,
-            mRect.x,mRect.y,
-            mRect.w,mRect.h,
+            //mRect.x,mRect.y,
+            //mRect.w,mRect.h,
+            rc.left, rc.top,
+            rc.right-rc.left+1, rc.bottom-rc.top+1,
             0,
             0,
             mInstance,
@@ -104,13 +111,16 @@ class axWindowWin32 : public axWindowBase
 
         else
         {
+          AdjustWindowRect(&rc,WS_OVERLAPPEDWINDOW,FALSE);
           mWindow = CreateWindowEx(
             WS_EX_OVERLAPPEDWINDOW,   // dwExStyle
             classname,                // lpClassName
             0,                        // lpWindowName
             WS_OVERLAPPEDWINDOW,      // dwStyle
-            mRect.x,mRect.y,          // x,y
-            mRect.w,mRect.h,          // w,h
+            //mRect.x,mRect.y,          // x,y
+            //mRect.w,mRect.h,          // w,h
+            rc.left, rc.top,
+            rc.right-rc.left+1, rc.bottom-rc.top+1,
             0,                        // hWndParent
             0,                        // hMenu
             mInstance,                // hInstance
@@ -147,9 +157,14 @@ class axWindowWin32 : public axWindowBase
         // can this be dangerous if moutlple plugin instances uses the plugin?
         // or is there some reference-counting going on?
 
-  // unregister window?
-  // what if multiple instances is using the same window?
+        //http://msdn.microsoft.com/en-us/library/ms644899%28v=VS.85%29.aspx
+        //UnregisterClass:
+        //  If the function succeeds, the return value is nonzero.
+        //  If the class could not be found or if a window still exists
+        //  that was created with the class, the return value is zero
 
+        // unregister window?
+        // what if multiple instances is using the same window?
         UnregisterClass( mWinName.ptr(), mInstance);
       }
 
@@ -632,7 +647,7 @@ class axWindowWin32 : public axWindowBase
             if (wParam==667)
             {
               //wtrace("axWIndowWin32.eventHandler :: timer");
-              onTimer();
+              doTimer();
             }
 
             result = 0;

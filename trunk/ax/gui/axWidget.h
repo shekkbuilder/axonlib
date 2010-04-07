@@ -22,12 +22,33 @@
 //----------------------------------------------------------------------
 
 // widget alignment
-#define wa_None 0
+#define wa_None         0
+#define wa_Client       1
+#define wa_Left         2
+#define wa_Right        3
+#define wa_Top          4
+#define wa_Bottom       5
+#define wa_LeftTop      6
+#define wa_RightTop     7
+#define wa_LeftBottom   8
+#define wa_RightBottom  9
+#define wa_Stacked     10
+//#define wa_Parent      11
 
 // widget flags
-#define wf_Active   1
-#define wf_Visible  2
-#define wf_Capture  4
+#define wf_Active   0x0001
+#define wf_Visible  0x0002
+#define wf_Capture  0x0004
+#define wf_Hover    0x0008
+#define wf_Align    0x0010
+#define wf_Vertical 0x0020
+#define wf_Clip     0x0040
+
+#define wf_Fill     0x0100
+#define wf_Border   0x0200
+#define wf_Bevel    0x0400
+#define wf_Image    0x0800
+#define wf_Text     0x1000
 
 
 //----------------------------------------------------------------------
@@ -39,6 +60,7 @@ class axWidgetListener
 {
   public:
     virtual void onChange(axWidget* aWidget) {}
+    //virtual void onRedraw(axWidget* aWidget) {}
 };
 
 //----------------------------------------------------------------------
@@ -59,10 +81,11 @@ class axWidget : public axWidgetListener
     int               mConnection;    // which parameter (if any) this is conected to (set in axEditor.connect)
     axParameter*      mParameter;     // direct access to the parameter (set in axEditor.connect)
     float             mValue;
-    //axWidgets         mWidgets;
-    //axWidget*         mCaptureWidget;
-    //axWidget*         mHoverWidget;
-    //axSkin*           mSkin;
+    // alignment
+    //axPoint           mOrig;
+    axRect            mOrig;
+
+
   public:
     //int     mId;
     //void*   mPtr;
@@ -74,13 +97,13 @@ class axWidget : public axWidgetListener
         mListener = aListener;
         mRect = aRect;
         mFlags.mBits = wf_Active | wf_Visible | wf_Capture;
-//        mSkin = NULL;
         mAlignment = aAlignment;
         mConnection = -1;
-        //mCaptureWidget = NULL;
-        //mHoverWidget = this;//NULL;
         mParameter = NULL;
         mValue = 0;
+
+        mOrig = mRect;//.set(aRect.x,aRect.y);
+
         //mId = aId;
         //mPtr = aPtr;
       }
@@ -107,9 +130,6 @@ class axWidget : public axWidgetListener
     inline float getValue(void) { return mValue; }
     inline void  setValue(float aValue) { mValue=aValue; }
 
-    //virtual void  appendWidget(axWidget* aWidget) { mWidgets.append(aWidget); }
-    //virtual void  deleteWidgets(void) { for (int i=0; i<mWidgets.size(); i++) delete mWidgets[i]; }
-
     inline int  getConnection(void)     { return mConnection; }
     inline void setConnection(int aNum) { mConnection = aNum; }
 
@@ -118,46 +138,8 @@ class axWidget : public axWidgetListener
 
     //----------
 
-//    virtual void setSkin(axSkin* aSkin, bool aChildren=false)
-//      {
-//        mSkin = aSkin;
-//      }
-
-    //----------
-
-    // find first widget that contains x,y
-    // or 'self' is no sub-widgets found or hit
-    //
-    // start searching from end of list, so that widgets that are painted last
-    // (topmost) are found first.
-
-//    virtual axWidget* findWidget(int aXpos, int aYpos)
-//      {
-//        axWidget* widget = this;
-//        int num = mWidgets.size();
-//        if (num>0)
-//        {
-//          for (int i=num-1; i>=0; i--)
-//          {
-//            axWidget* w = mWidgets[i];
-//            if (w->isActive())
-//            {
-//              if (w->contains(aXpos,aYpos))
-//              {
-//                widget = w->findWidget(aXpos,aYpos);
-//                if (widget!=w) return widget;
-//              } //contains
-//            } //active
-//          } //for num
-//        } //num>0
-//        return widget;
-//      }
-
-    virtual axWidget* findWidget(int aXpos, int aYpos)
-      {
-        return this;
-      }
-
+    virtual void setSkin(axSkin* aSkin, bool aSubWidgets=false) {}
+    virtual axWidget* findWidget(int aXpos, int aYpos) { return this; }
 
     //--------------------------------------------------
     //
@@ -167,15 +149,6 @@ class axWidget : public axWidgetListener
 
     virtual void doMove(int aXpos, int aYpos)
       {
-//        int deltax = aXpos - mRect.x;
-//        int deltay = aYpos - mRect.y;
-//        for (int i=0; i<mWidgets.size(); i++)
-//        {
-//          axWidget* wdg = mWidgets[i];
-//          int wx = wdg->rect().x;
-//          int wy = wdg->rect().y;
-//          wdg->doMove( wx+deltax, wy+deltay );
-//        }
         mRect.setPos(aXpos,aYpos);
       }
 
@@ -183,135 +156,26 @@ class axWidget : public axWidgetListener
 
     virtual void doResize(int aWidth, int aHeight)
       {
+        //if (aW < mMinWidth) aW = mMinWidth;
+        //if (aW > mMaxWidth) aW = mMaxWidth;
+        //if (aH < mMinHeight) aH = mMinHeight;
+        //if (aH > mMaxHeight) aH = mMaxHeight;
         mRect.setSize(aWidth,aHeight);
       }
 
     //----------
 
-    //TODO
-
-    virtual void doRealign(void)
-      {
-      }
-
-    //----------
-
-    //TODO
-
-    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
-      {
-//        for (int i=0; i<mWidgets.size(); i++)
-//        {
-//          axWidget* wdg = mWidgets[i];
-//          if (wdg->isVisible())
-//          {
-//            // glitches on non-buffered display
-//            //if (wdg->getRect().intersects(aRect))   // intersects update rect?
-//            //{
-//              wdg->doPaint(aCanvas,aRect);
-//            //}
-//          }
-//        }
-      }
-
-    //----------
-
-    virtual void doMouseDown(int aXpos, int aYpos, int aButton)
-      {
-//        if (mCaptureWidget)
-//        {
-//          mCaptureWidget->doMouseDown(aXpos,aYpos,aButton);
-//        } //capture
-//        else
-//        {
-//          axWidget* hover = findWidget(aXpos,aYpos);
-//          if (hover!=this)
-//          {
-//            if (mFlags.hasFlag(wf_Capture)) mCaptureWidget = hover;
-//            hover->doMouseDown(aXpos,aYpos,aButton);
-//          }
-//        } //!capture
-      }
-
-    //----------
-
-    virtual void doMouseUp(int aXpos, int aYpos, int aButton)
-      {
-//        if (mCaptureWidget)
-//        {
-//          mCaptureWidget->doMouseUp(aXpos,aYpos,aButton);
-//          mCaptureWidget = NULL;
-//        } //capture
-//        // send event to widget under mouse cursor
-//        else
-//        {
-//          axWidget* hover = findWidget(aXpos,aYpos);
-//          if (hover!=this)
-//          {
-//            hover->doMouseUp(aXpos,aYpos,aButton);
-//          }
-//        }
-      }
-
-    //----------
-
-    virtual void doMouseMove(int aXpos, int aYpos, int aButton)
-      {
-//        axWidget* hover = findWidget(aXpos,aYpos);
-//        if (hover!=mHoverWidget)
-//        {
-//          mHoverWidget->doLeave(mCaptureWidget);
-//          mHoverWidget = hover;
-//          mHoverWidget->doEnter(mCaptureWidget);
-//        }
-//        if (mCaptureWidget)
-//        {
-//          mCaptureWidget->doMouseMove(aXpos,aYpos,aButton);
-//        } //!capture
-//        // send event to widget under mouse cursor
-//        else
-//        {
-//          if (hover!=this)
-//          {
-//            hover->doMouseMove(aXpos,aYpos,aButton);
-//          }
-//        } //!capture
-      }
-
-    //----------
-
-    virtual void doKeyDown(int aKeyCode, int aState)
-      {
-//        if (mCaptureWidget)
-//        {
-//          mCaptureWidget->doKeyDown(aKeyCode,aState);
-//        }
-      }
-
-    //----------
-
-    virtual void doKeyUp(int aKeyCode, int aState)
-      {
-//        if (mCaptureWidget)
-//        {
-//          mCaptureWidget->doKeyUp(aKeyCode,aState);
-//        }
-      }
-
-    //----------
-
+    virtual void doRealign(void) {}
+    virtual void doPaint(axCanvas* aCanvas, axRect aRect) {}
+    virtual void doMouseDown(int aXpos, int aYpos, int aButton) {}
+    virtual void doMouseUp(int aXpos, int aYpos, int aButton) {}
+    virtual void doMouseMove(int aXpos, int aYpos, int aButton) {}
+    virtual void doKeyDown(int aKeyCode, int aState) {}
+    virtual void doKeyUp(int aKeyCode, int aState) {}
     virtual void doEnter(axWidget* aCapture) {}
     virtual void doLeave(axWidget* aCapture) {}
-
-
-    //----------------------------------------
     // axWidgetListener
-    //----------------------------------------
-
     //virtual void onChange(axWidget* aWidget)
-    //  {
-    //    mListener->onChange(aWidget);
-    //  }
 
 };
 

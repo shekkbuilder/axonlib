@@ -2,45 +2,54 @@
 #define axSkin_included
 //----------------------------------------------------------------------
 
-//class axSkin
-//{
-//  protected:
-//    axPens    mPens;
-//    axBrushes mBrushes;
-//    axFonts   mFonts;
-//  public:
-//    axSkin(axCanvas* aCanvas) {}
-//    virtual ~axSkin() {}
-//    inline axPen*   getPen(int aIndex)    { return mPens[aIndex]; }
-//    inline axBrush* getBrush(int aIndex)  { return mBrushes[aIndex]; }
-//    inline axFont*  getFont(int aIndex)   { return mFonts[aIndex]; }
-//    inline void appendPen(axPen* aPen)        { mPens.append(aPen); }
-//    inline void appendBrush(axBrush* aBrush)  { mBrushes.append(aBrush); }
-//    inline void appendFont(axFont* aFont)     { mFonts.append(aFont); }
-//};
-//
-////----------------------------------------------------------------------
-//
-//class axDefSkin : public axSkin
-//{
-//  public:
-//    axDefSkin(axCanvas* aCanvas)
-//    : axSkin(aCanvas)
-//      {
-//        mPens.append( aCanvas->createPen(AX_GREY_DARK) );
-//        mPens.append( aCanvas->createPen(AX_GREY) );
-//        mPens.append( aCanvas->createPen(AX_GREY_LIGHT) );
-//        mBrushes.append( aCanvas->createBrush(AX_GREY_DARK) );
-//        mBrushes.append( aCanvas->createBrush(AX_GREY) );
-//        mBrushes.append( aCanvas->createBrush(AX_GREY_LIGHT) );
-//        mFonts.append( aCanvas->createFont("default",AX_GREY_LIGHT) );
-//      }
-//    virtual ~axDefSkin()
-//      {
-//        //for (int i=0; i<mBrushes.size(); i++) { delete mBrushes[i]; }
-//        //for (int i=0; i<mPens.size(); i++) { delete mPens[i]; }
-//      }
-//};
+#include "gui/axCanvas.h"
+#include "gui/axCanvas.h"
+
+class axSkin
+{
+  protected:
+    axColors  mColors;
+  public:
+    axSkin(axCanvas* aCanvas)
+      {
+      }
+    virtual ~axSkin()
+      {
+      }
+    virtual void appendColor(axColor aColor)
+      {
+        mColors.append(aColor);
+      }
+    virtual axColor getColor(int aIndex)
+      {
+        return mColors[aIndex];
+      }
+};
+
+//----------------------------------------------------------------------
+
+class axSkinDef : public axSkin
+{
+  public:
+    //axColor mFillColor;
+    //axColor mBorderColor;
+    //axColor mTextColor;
+  public:
+    axSkinDef(axCanvas* aCanvas)
+    : axSkin(aCanvas)
+      {
+        //mFillColor   = aCanvas->getColor(AX_GREY);
+        //mBorderColor = aCanvas->getColor(AX_GREY_DARK);
+        //mTextColor   = aCanvas->getColor(AX_GREY_LIGHT);
+        appendColor( aCanvas->getColor(AX_GREY_DARK) );
+        appendColor( aCanvas->getColor(AX_GREY) );
+        appendColor( aCanvas->getColor(AX_GREY_LIGHT) );
+        appendColor( aCanvas->getColor(AX_WHITE) );
+      }
+    virtual ~axSkinDef()
+      {
+      }
+};
 
 //----------------------------------------------------------------------
 #endif

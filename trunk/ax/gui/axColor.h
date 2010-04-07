@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "axDefines.h"
+#include "core/axArray.h"
 //#include "base/axColorBase.h"
 
 //----------
@@ -45,6 +46,8 @@ struct axColor
   inline void set(unsigned long aColor) { mColor=aColor; }
   inline unsigned long get(void)        { return mColor; }
 };
+
+typedef axArray<axColor> axColors;
 
 //----------------------------------------------------------------------
 #endif
