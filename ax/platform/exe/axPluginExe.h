@@ -46,7 +46,7 @@ class axPluginExe : public axPluginBase,
         //wtrace("axPluginExe.main");
         // can this fail if we create the class as axEditor
         // meaning, can we safely typecase a axEditor* to a axWindow?
-        if (mPluginFlags.hasFlag(pf_HasEditor))
+        if (mPlugFlags&pf_HasEditor)
         {
           axWindow* win = (axWindow*)doOpenEditor(aContext);
           //wtrace("win = " << win);
@@ -82,7 +82,7 @@ class axPluginExe : public axPluginBase,
     virtual void setupEditor(int aWidth, int aHeight)
       {
         mEditorRect.set(0,0,aWidth,aHeight);
-        mPluginFlags.setFlag(pf_HasEditor);
+        mPlugFlags |= pf_HasEditor;
       }
 
     virtual void setupParameters(void)

@@ -5,15 +5,9 @@
 #include "platform/axContext.h"
 #include "core/axRect.h"
 #include "core/axString.h"
-#include "core/axFlags.h"
-//#include "gui/axWidget.h"
 #include "gui/axContainer.h"
 #include "gui/axSurface.h"
 #include "gui/axCanvas.h"
-//#include "gui/axColor.h"
-//#include "gui/axPen.h"
-//#include "gui/axBrush.h"
-//#include "gui/axFont.h"
 
 #define AX_WIN_EMBEDDED   1
 #define AX_WIN_BUFFERED   2
@@ -39,7 +33,7 @@
 class axWindowBase : public axContainer//axWidget
 {
   protected:
-    axFlags     mWinFlags;
+    int         mWinFlags;
     axCanvas*   mCanvas;
     axSurface*  mSurface;
     axWidget*   mCapturedWidget;

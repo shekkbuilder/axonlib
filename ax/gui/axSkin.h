@@ -28,25 +28,26 @@ class axSkin
 
 //----------------------------------------------------------------------
 
-class axSkinDef : public axSkin
+class axSkinDefault : public axSkin
 {
   public:
     //axColor mFillColor;
     //axColor mBorderColor;
     //axColor mTextColor;
   public:
-    axSkinDef(axCanvas* aCanvas)
+    axSkinDefault(axCanvas* aCanvas)
     : axSkin(aCanvas)
       {
         //mFillColor   = aCanvas->getColor(AX_GREY);
         //mBorderColor = aCanvas->getColor(AX_GREY_DARK);
         //mTextColor   = aCanvas->getColor(AX_GREY_LIGHT);
+        appendColor( aCanvas->getColor(AX_BLACK) );
         appendColor( aCanvas->getColor(AX_GREY_DARK) );
         appendColor( aCanvas->getColor(AX_GREY) );
         appendColor( aCanvas->getColor(AX_GREY_LIGHT) );
         appendColor( aCanvas->getColor(AX_WHITE) );
       }
-    virtual ~axSkinDef()
+    virtual ~axSkinDefault()
       {
       }
 };

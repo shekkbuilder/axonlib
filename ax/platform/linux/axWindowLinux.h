@@ -21,25 +21,25 @@
 
 // http://tronche.com/gui/x/xlib/appendix/b/
 // mouse cursor shapes
-#define cuArrow           2
-#define cuArrowUp         114
-#define cuArrowDown       106
-#define cuArrowLeft       110
-#define cuArrowRight      112
-#define cuArrowUpDown     116
-#define cuArrowLeftRight  108
-#define cuMove            52
-#define cuWait            150
-#define cuArrowWait       -1
-#define cuHand            58
-#define cuFinger          60
-#define cuCross           0
-#define cuPencil          86
-#define cuPlus            90
-#define cuQuestion        99
-#define cuIbeam           152
+#define cu_Arrow           2
+#define cu_ArrowUp         114
+#define cu_ArrowDown       106
+#define cu_ArrowLeft       110
+#define cu_ArrowRight      112
+#define cu_ArrowUpDown     116
+#define cu_ArrowLeftRight  108
+#define cu_Move            52
+#define cu_Wait            150
+#define cu_ArrowWait      -1
+#define cu_Hand            58
+#define cu_Finger          60
+#define cu_Cross           0
+#define cu_Pencil          86
+#define cu_Plus            90
+#define cu_Question        99
+#define cu_Ibeam           152
 
-//#define DEF_CURSOR    cuArrow
+//#define DEF_CURSOR    cu_Arrow
 #define DEF_CURSOR      -1
 
 //----------
@@ -187,7 +187,7 @@ class axWindowLinux : public axWindowBase
 
         // --- WM_DELETE_WINDOW ClientMessage ---
 
-        if (mWinFlags.hasFlag(AX_WIN_MSGDELETE))
+        if (mWinFlags&AX_WIN_MSGDELETE)
         {
           mDeleteWindowAtom = XInternAtom(mDisplay,"WM_DELETE_WINDOW",True);
           XSetWMProtocols(mDisplay,mWindow,&mDeleteWindowAtom,1);
@@ -195,7 +195,7 @@ class axWindowLinux : public axWindowBase
 
         // --- remove title-bar, borders ---
 
-        if (mWinFlags.hasFlag(AX_WIN_EMBEDDED))
+        if (mWinFlags&AX_WIN_EMBEDDED)
         {
           #define MWM_HINTS_DECORATIONS (1L << 1)
           #define PROP_MOTIF_WM_HINTS_ELEMENTS  5
@@ -218,7 +218,7 @@ class axWindowLinux : public axWindowBase
 
         // --- eventProc ---
 
-        if (mWinFlags.hasFlag(AX_WIN_MSGPROC))
+        if (mWinFlags&AX_WIN_MSGPROC)
         {
           Atom atom;
           void* data;
@@ -243,7 +243,7 @@ class axWindowLinux : public axWindowBase
         // --- surface ---
 
         //mSurface = NULL;
-        if (mWinFlags.hasFlag(AX_WIN_BUFFERED))
+        if (mWinFlags&AX_WIN_BUFFERED)
         {
           mSurface = createSurface(mRect.w,mRect.h);
         }
@@ -261,7 +261,7 @@ class axWindowLinux : public axWindowBase
 
         // --- event handler thread ---
 
-        if (mWinFlags.hasFlag(AX_WIN_MSGTHREAD))
+        if (mWinFlags&AX_WIN_MSGTHREAD)
         {
           pthread_create(&mEventThread,NULL,&threadProc,this);
         }
@@ -272,7 +272,7 @@ class axWindowLinux : public axWindowBase
 
     ~axWindowLinux()
       {
-        if (mWinFlags.hasFlag(AX_WIN_MSGTHREAD))
+        if (mWinFlags&AX_WIN_MSGTHREAD)
         {
           sendEvent(ts_Kill);
           void* ret;
@@ -510,7 +510,7 @@ class axWindowLinux : public axWindowBase
     virtual void resizeBuffer(int aWidth, int aHeight)
       {
         //wtrace("axWindowLinux.resizeBuffer");
-        if (mWinFlags.hasFlag(AX_WIN_BUFFERED))
+        if (mWinFlags&AX_WIN_BUFFERED)
         {
           //if (aWidth!=mSurface->getWidth() || aHeight!=mSurface->getHeight())
           //{
@@ -660,7 +660,7 @@ class axWindowLinux : public axWindowBase
             }
             //wtrace(":: Expose " << rc.x << "," << rc.y << "," << rc.w << "," << rc.h);
             //mCanvas->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
-            if ( mWinFlags.hasFlag(AX_WIN_BUFFERED) && mSurface )
+            if ((mWinFlags&AX_WIN_BUFFERED) && mSurface )
             {
               //wtrace("   :: double buffered");
               axCanvas* can = mSurface->getCanvas();

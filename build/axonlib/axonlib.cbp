@@ -166,7 +166,6 @@
 		<Unit filename="../../ax/core/axArray.h" />
 		<Unit filename="../../ax/core/axBuffer.h" />
 		<Unit filename="../../ax/core/axDebug.h" />
-		<Unit filename="../../ax/core/axFlags.h" />
 		<Unit filename="../../ax/core/axList.h" />
 		<Unit filename="../../ax/core/axMath.h" />
 		<Unit filename="../../ax/core/axPoint.h" />
@@ -174,14 +173,13 @@
 		<Unit filename="../../ax/core/axString.h" />
 		<Unit filename="../../ax/deprecated/axApplication.h" />
 		<Unit filename="../../ax/gui/axBitmap.h" />
-		<Unit filename="../../ax/gui/axBrush.h" />
 		<Unit filename="../../ax/gui/axCanvas.h" />
 		<Unit filename="../../ax/gui/axColor.h" />
 		<Unit filename="../../ax/gui/axContainer.h" />
 		<Unit filename="../../ax/gui/axFont.h" />
-		<Unit filename="../../ax/gui/axPen.h" />
 		<Unit filename="../../ax/gui/axSkin.h" />
 		<Unit filename="../../ax/gui/axSurface.h" />
+		<Unit filename="../../ax/gui/axSymbol.h" />
 		<Unit filename="../../ax/gui/axWidget.h" />
 		<Unit filename="../../ax/gui/axWindow.h" />
 		<Unit filename="../../ax/par/parFloat.h" />

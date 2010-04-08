@@ -511,7 +511,7 @@ class axPluginVst : public axPluginBase
 
           case effEditGetRect:
             //trace("axPluginVst.dispatcher :: effEditGetRect");
-            if (mPluginFlags.hasFlag(pf_HasEditor))
+            if (mPlugFlags&pf_HasEditor)
             {
               rect.left     = mEditorRect.x;
               rect.top      = mEditorRect.y;
@@ -525,7 +525,7 @@ class axPluginVst : public axPluginBase
 
           case effEditOpen:
             //trace("axPluginVst.dispatcher :: effEditOpen");
-            if (mPluginFlags.hasFlag(pf_HasEditor) && !mEditorOpen)
+            if ((mPlugFlags&pf_HasEditor) && !mEditorOpen)
             {
               {
               #ifdef AX_LINUX
@@ -546,7 +546,7 @@ class axPluginVst : public axPluginBase
 
           case effEditClose:
             //trace("axPluginVst.dispatcher :: effEditClose");
-            if (mPluginFlags.hasFlag(pf_HasEditor) && mEditorOpen)
+            if ((mPlugFlags&pf_HasEditor) && mEditorOpen)
             {
               mEditorOpen = false;
               doCloseEditor();
@@ -559,7 +559,7 @@ class axPluginVst : public axPluginBase
 
           case effEditIdle:
             //trace("axPluginVst.dispatcher :: effEditIdle");
-            if (mPluginFlags.hasFlag(pf_HasEditor) && mEditorOpen)
+            if ((mPlugFlags&pf_HasEditor) && mEditorOpen)
             {
               doIdleEditor();
             }
@@ -595,7 +595,7 @@ class axPluginVst : public axPluginBase
           case effCanBeAutomated:
             //trace("axPluginVst.dispatcher :: effCanBeAutomated");
             //v = canParameterBeAutomated (index) ? 1 : 0;
-            if (mParameters[index]->flags()->hasFlag(pf_Automate)) v = 1;
+            if ( mParameters[index]->getFlags() & pf_Automate ) v = 1;
             break;
           case effString2Parameter:
             //trace("axPluginVst.dispatcher :: effString2Parameter");
@@ -931,7 +931,7 @@ class axPluginVst : public axPluginBase
         //hasEditor(aWidth,aHeight);
         hasEditor(true);
         mEditorRect.set(0,0,aWidth,aHeight);
-        mPluginFlags.setFlag(pf_HasEditor);
+        mPlugFlags |= pf_HasEditor;
       }
 
     //----------
