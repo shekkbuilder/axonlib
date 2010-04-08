@@ -3,16 +3,15 @@
 //----------------------------------------------------------------------
 
 /*
+
   essentially a widget with sub-widgets. these can have various alignment
-  or positions within its parent.
-  the subwidget rects have coordinates relative to the window, not its parent,
-  and the container can automatically align, resize and move its subwidgets,
-  depending on some flags and defines..
+  or positions within its parent. the subwidget rects have coordinates
+  relative to the window, not its parent, and the container can
+  (automatically) align, resize and move its subwidgets.
 
 */
 
 #include "core/axRect.h"
-//#include "gui/axCanvas.h"
 #include "gui/axSkin.h"
 #include "gui/axWidget.h"
 #include "axParameter.h"
@@ -31,17 +30,16 @@ class axContainer : public axWidget
 {
   //friend class axPlugin;
   //friend class axContainer;
-
   private:
     axRect    mClient;                // current Client area
     int       mStackedX, mStackedY;   // where to put next wal_Stacked widget
-    axRect    mContent;
-    int       mOffsetX,mOffsetY;
+    axRect    mContent;               // rect encapsulating all sub-widgets (updated in doRealign)
+    //int       mOffsetX,mOffsetY;
 
   protected:
 
     axWidgets mWidgets;
-    axWidget* mCaptureWidget;
+    axWidget* mCapturedWidget;
     axWidget* mHoverWidget;
     //mouse
 //    axWidget* mClickWidget;
@@ -57,7 +55,14 @@ class axContainer : public axWidget
     axContainer(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
     : axWidget(aListener,aRect,aAlignment)
       {
-        mCaptureWidget  = NULL;
+
+        mClient     = mRect;
+        mStackedX   = 0;
+        mStackedY   = 0;
+        //mOffsetX    = 0;
+        //mOffsetY    = 0;
+
+        mCapturedWidget  = NULL;
         mHoverWidget    = this;//NULL;
 //        mClickWidget    = NULL;
         mMarginX = 0;
@@ -65,12 +70,8 @@ class axContainer : public axWidget
         mPaddingX = 0;
         mPaddingY = 0;
 
-        mClient     = mRect;
-        mStackedX   = 0;
-        mStackedY   = 0;
-        mOffsetX    = 0;
-        mOffsetY    = 0;
-        mFlags.setFlag(wf_Align);
+        mFlags |= wf_Align;
+        //mFlags |= wf_Clip;
 
       }
 
@@ -106,26 +107,20 @@ class axContainer : public axWidget
         mPaddingY = aPaddingY;
       }
 
-    // reset mouse capture & click info
+    //----------
 
+    // reset mouse capture & click info
     virtual void initMouseState(void)
       {
-        mCaptureWidget = NULL;
+        mCapturedWidget = NULL;
 //        mClickWidget  = NULL;
       }
 
-    //----------
-
-    virtual void setSkin(axSkin* aSkin, bool aSubWidgets=false)
-      {
-        //mSkin = aSkin;
-        //axWidget::setSkin(aSkin,aSubWidgets);
-        if (aSubWidgets)
-        {
-          for (int i=0; i<mWidgets.size(); i++) mWidgets[i]->setSkin(aSkin,aSubWidgets);
-        }
-      }
-
+    //--------------------------------------------------
+    //
+    //
+    //
+    //--------------------------------------------------
 
     // find first widget that contains x,y
     // or 'self' is no sub-widgets found or hit
@@ -133,7 +128,7 @@ class axContainer : public axWidget
     // start searching from end of list, so that widgets that are painted last
     // (topmost) are found first.
 
-    virtual axWidget* findWidget(int aXpos, int aYpos)
+    virtual axWidget* doFindWidget(int aXpos, int aYpos)
       {
         axWidget* widget = this;
         int num = mWidgets.size();
@@ -146,7 +141,7 @@ class axContainer : public axWidget
             {
               if (w->contains(aXpos,aYpos))
               {
-                widget = w->findWidget(aXpos,aYpos);
+                widget = w->doFindWidget(aXpos,aYpos);
                 if (widget!=w) return widget;
               } //contains
             } //active
@@ -155,11 +150,7 @@ class axContainer : public axWidget
         return widget;
       }
 
-    //--------------------------------------------------
-    //
-    //
-    //
-    //--------------------------------------------------
+    //----------
 
     virtual void doMove(int aXpos, int aYpos)
       {
@@ -239,7 +230,7 @@ class axContainer : public axWidget
 
     virtual void doRealign(void)
       {
-        if( mFlags.hasFlag(wf_Align ) )
+        if (mFlags&wf_Align)
         {
           axRect parent = mRect;
           mContent.set(parent.x,parent.y,0,0);
@@ -322,7 +313,7 @@ class axContainer : public axWidget
                 int w = ww + mPaddingX;
                 int h = wh + mPaddingY;
 
-                if ( mFlags.hasFlag(wf_Vertical))
+                if (mFlags&wf_Vertical)
                 {
                   int remain = parent.y2() - stacky + 1 - wh;
                   if (remain>=h)
@@ -363,124 +354,111 @@ class axContainer : public axWidget
         } //wfl_Align
       }
 
+    //--------------------------------------------------
+
+    virtual void doSetSkin(axSkin* aSkin, bool aSubWidgets=false)
+      {
+        //mSkin = aSkin;
+        //axWidget::setSkin(aSkin,aSubWidgets);
+        if (aSubWidgets)
+        {
+          for (int i=0; i<mWidgets.size(); i++) mWidgets[i]->doSetSkin(aSkin,aSubWidgets);
+        }
+        axWidget::doSetSkin(aSkin,aSubWidgets);
+      }
 
     //----------
 
-    //TODO
-
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-        if( mFlags.hasFlag(wf_Visible) )
+        if (mFlags&wf_Visible)
         {
-          if( mRect.intersects(aRect) )
+          if (mRect.intersects(aRect))
           {
-            if (mFlags.hasFlag(wf_Clip)) aCanvas->setClipRect( mRect.x, mRect.y, mRect.x2(), mRect.y2() );
-            //wtrace("axContainer.doPaint");
+            if (mFlags&wf_Clip)
+              aCanvas->setClipRect( mRect.x+mMarginX, mRect.y+mMarginY, mRect.x2()-mMarginX, mRect.y2()-mMarginY );
+            axWidget::doPaint(aCanvas,aRect);
+            //todo: crop aRect & mRect, use as clipping rectangle for subwidgets..
             for (int i=0; i<mWidgets.size(); i++)
             {
               axWidget* wdg = mWidgets[i];
               if (wdg->isVisible())
               {
-                if (wdg->intersects(aRect))
-                {
-                  wdg->doPaint(aCanvas,aRect);
-                }
+                if (wdg->intersects(aRect) && wdg->intersects(mRect)) wdg->doPaint(aCanvas,aRect);
               }
             } //for
-            if (mFlags.hasFlag(wf_Clip)) aCanvas->clearClipRect();
-            axWidget::doPaint(aCanvas,aRect);
+            if (mFlags&wf_Clip) aCanvas->clearClipRect();
           }
         }
       }
 
-    //----------
+    //--------------------------------------------------
 
     virtual void doMouseDown(int aXpos, int aYpos, int aButton)
       {
-        if (mCaptureWidget)
+        if (mCapturedWidget)
         {
-          mCaptureWidget->doMouseDown(aXpos,aYpos,aButton);
-        } //capture
+          mCapturedWidget->doMouseDown(aXpos,aYpos,aButton);
+        }
         else
         {
-          axWidget* hover = findWidget(aXpos,aYpos);
+          axWidget* hover = doFindWidget(aXpos,aYpos);
           if (hover!=this)
           {
-            if (mFlags.hasFlag(wf_Capture)) mCaptureWidget = hover;
+            if (mFlags&wf_Capture) mCapturedWidget = hover;
             hover->doMouseDown(aXpos,aYpos,aButton);
           }
         } //!capture
-        axWidget::doMouseDown(aXpos,aYpos,aButton);
-
+        //axWidget::doMouseDown(aXpos,aYpos,aButton);
       }
 
     //----------
 
     virtual void doMouseUp(int aXpos, int aYpos, int aButton)
       {
-        if (mCaptureWidget)
+        if (mCapturedWidget)
         {
-          mCaptureWidget->doMouseUp(aXpos,aYpos,aButton);
-          mCaptureWidget = NULL;
+          mCapturedWidget->doMouseUp(aXpos,aYpos,aButton);
+          mCapturedWidget = NULL;
         } //capture
-        // send event to widget under mouse cursor
         else
         {
-          axWidget* hover = findWidget(aXpos,aYpos);
-          if (hover!=this)
-          {
-            hover->doMouseUp(aXpos,aYpos,aButton);
-          }
+          axWidget* hover = doFindWidget(aXpos,aYpos);
+          if (hover!=this) hover->doMouseUp(aXpos,aYpos,aButton);
         }
-        axWidget::doMouseUp(aXpos,aYpos,aButton);
+        //axWidget::doMouseUp(aXpos,aYpos,aButton);
       }
 
     //----------
 
     virtual void doMouseMove(int aXpos, int aYpos, int aButton)
       {
-        axWidget* hover = findWidget(aXpos,aYpos);
+        axWidget* hover = doFindWidget(aXpos,aYpos);
         if (hover!=mHoverWidget)
         {
-          mHoverWidget->doLeave(mCaptureWidget);
+          mHoverWidget->doLeave(mCapturedWidget);
           mHoverWidget = hover;
-          mHoverWidget->doEnter(mCaptureWidget);
+          mHoverWidget->doEnter(mCapturedWidget);
         }
-        if (mCaptureWidget)
-        {
-          mCaptureWidget->doMouseMove(aXpos,aYpos,aButton);
-        } //!capture
-        // send event to widget under mouse cursor
-        else
-        {
-          if (hover!=this)
-          {
-            hover->doMouseMove(aXpos,aYpos,aButton);
-          }
-        } //!capture
-        axWidget::doMouseMove(aXpos,aYpos,aButton);
+        if (mCapturedWidget) mCapturedWidget->doMouseMove(aXpos,aYpos,aButton);
+        else if (hover!=this) hover->doMouseMove(aXpos,aYpos,aButton);
+        //axWidget::doMouseMove(aXpos,aYpos,aButton);
       }
 
     //----------
 
     virtual void doKeyDown(int aKeyCode, int aState)
       {
-        if (mCaptureWidget)
-        {
-          mCaptureWidget->doKeyDown(aKeyCode,aState);
-        }
-        axWidget::doKeyDown(aKeyCode,aState);
+        if (mCapturedWidget) mCapturedWidget->doKeyDown(aKeyCode,aState);
+        //axWidget::doKeyDown(aKeyCode,aState);
       }
 
     //----------
 
     virtual void doKeyUp(int aKeyCode, int aState)
       {
-        if (mCaptureWidget)
-        {
-          mCaptureWidget->doKeyUp(aKeyCode,aState);
-        }
-        axWidget::doKeyUp(aKeyCode,aState);
+        if (mCapturedWidget) mCapturedWidget->doKeyUp(aKeyCode,aState);
+        //axWidget::doKeyUp(aKeyCode,aState);
       }
 
     //----------
@@ -497,21 +475,24 @@ class axContainer : public axWidget
     //    axWidget::doEnter(aCapture);
     //  }
 
-    //----------------------------------------
+    //--------------------------------------------------
     // axWidgetListener
-    //----------------------------------------
+    //--------------------------------------------------
 
     virtual void onChange(axWidget* aWidget)
       {
-        // default action, pass the message on to the 'owner'
         mListener->onChange(aWidget);
       }
 
     //virtual void onRedraw(axWidget* aWidget)
     //  {
-    //    // default action, pass the message on to the 'owner'
     //    mListener->onRedraw(aWidget);
     //  }
+
+    virtual void onCursor(int aCursor)
+      {
+        mListener->onCursor(aCursor);
+      }
 
 };
 

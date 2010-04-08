@@ -3,8 +3,8 @@
 //----------------------------------------------------------------------
 
 #include "gui/axColor.h"
-#include "gui/axPen.h"
-#include "gui/axBrush.h"
+//#include "gui/axPen.h"
+//#include "gui/axBrush.h"
 #include "gui/axFont.h"
 
 //#include "gui/axBitmap.h"

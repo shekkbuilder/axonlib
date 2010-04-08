@@ -2,13 +2,11 @@
 #define axParameter_included
 //----------------------------------------------------------------------
 
-#include <stdio.h> // sprintf
-
+#include <stdio.h> // sprintf (doGetDisplay)
 #include "core/axString.h"
-#include "core/axFlags.h"
 
-// kVstMaxParamStrLen    8
-#define MAX_PARAM_TXTLEN 16
+// kVstMaxParamStrLen     8
+#define MAX_PARAM_TXTLEN  16
 
 //----------------------------------------------------------------------
 
@@ -46,29 +44,29 @@ class axParameter// : public axParameterBase
     axString  mLabel;
     float     mValue;   // 0..1
     float     mDefault;
-    axFlags   mFlags;
+    int       mFlags;
 
   public:
 
     axParameter(axParameterListener* aListener, /*int aID,*/ axString aName, axString aLabel="")
       {
         mListener   = aListener;
-        //mID         = aID;
         mName       = aName;
         mLabel      = aLabel;
         mValue      = 0;
         mDefault    = mValue;
-        //mUser       = NULL;
         mConnection = -1;
         mFlags      = AX_PAR_DEFAULT;
         mIndex      = -1;
+        //mID         = aID;
+        //mUser       = NULL;
       }
 
     //--------------------------------------------------
     // inline
     //--------------------------------------------------
 
-    inline axFlags* flags(void)                     { return &mFlags; }
+    inline int getFlags(void)                       { return mFlags; }
     inline void setListener(axParameterListener* l) { mListener = l; }
     inline axParameterListener* getListener(void)   { return mListener; }
     inline void setValueDirect(float v)             { mValue = v; }

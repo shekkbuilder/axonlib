@@ -4,7 +4,6 @@
 
 #include "platform/axContext.h"
 #include "core/axRect.h"
-#include "core/axFlags.h"
 #include "axParameter.h"
 #include "gui/axWindow.h"
 
@@ -23,7 +22,7 @@
 class axPluginBase// : public axParameterListener
 {
   protected:
-    axFlags       mPluginFlags;
+    int           mPlugFlags;
     axParameters  mParameters;
     bool          mEditorOpen;
     axRect        mEditorRect;
@@ -34,7 +33,7 @@ class axPluginBase// : public axParameterListener
     axPluginBase(axContext* aContext, int aPluginFlags)
       {
         //wtrace("axPluginBase.constructor");
-        mPluginFlags = aPluginFlags;//0;
+        mPlugFlags = aPluginFlags;//0;
         mEditorOpen = false;
         mEditorRect = axRect(0,0,256,256);
         mEditorWindow = NULL;

@@ -2,6 +2,8 @@
 #define axWindowWin32_included
 //----------------------------------------------------------------------
 
+#include <windows.h>
+
 //----------------------------------------------------------------------
 
 LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -9,25 +11,25 @@ LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 //----------------------------------------------------------------------
 
 // mouse cursor shapes
-#define cuArrow           ((int)IDC_ARROW)
-#define cuArrowUp         ((int)IDC_UPARROW)
-#define cuArrowDown       -1
-#define cuArrowLeft       -1
-#define cuArrowRight      -1
-#define cuArrowUpDown     ((int)IDC_SIZENS)
-#define cuArrowLeftRight  ((int)IDC_SIZEWE)
-#define cuMove            ((int)IDC_SIZEALL)
-#define cuWait            ((int)IDC_WAIT)
-#define cuArrowWait       ((int)IDC_IDC_APPSTARTING)
-#define cuHand            ((int)IDC_HAND)
-#define cuFinger          -1
-#define cuCross           ((int)IDC_CROSS)
-#define cuPencil          -1
-#define cuPlus            -1
-#define cuQuestion        -1
-#define cuIbeam           -1
+#define cu_Arrow           ((int)IDC_ARROW)
+#define cu_ArrowUp         ((int)IDC_UPARROW)
+#define cu_ArrowDown       cu_Arrow
+#define cu_ArrowLeft       cu_Arrow
+#define cu_ArrowRight      cu_Arrow
+#define cu_ArrowUpDown     ((int)IDC_SIZENS)
+#define cu_ArrowLeftRight  ((int)IDC_SIZEWE)
+#define cu_Move            ((int)IDC_SIZEALL)
+#define cu_Wait            ((int)IDC_WAIT)
+#define cu_ArrowWait       ((int)IDC_APPSTARTING)
+#define cu_Hand            ((int)IDC_HAND)
+#define cu_Finger          cu_Arrow
+#define cu_Cross           ((int)IDC_CROSS)
+#define cu_Pencil          cu_Arrow
+#define cu_Plus            cu_Arrow
+#define cu_Question        cu_Arrow
+#define cu_Ibeam           cu_Arrow
 
-#define DEF_CURSOR    cuArrow
+#define DEF_CURSOR    cu_Arrow
 
 //----------------------------------------------------------------------
 
@@ -40,10 +42,10 @@ class axWindowWin32 : public axWindowBase
     PAINTSTRUCT mPS;
     //int mWinCursor,mPrevCursor;
     //HCURSOR mWinCursor;
-    HCURSOR mWinCursor;
-    int mPrevCursor;
-    int mClickedButton;
-    int mParent;
+    HCURSOR     mWinCursor;
+    int         mPrevCursor;
+    int         mClickedButton;
+    int         mParent;
 
   public:
     axWindowWin32(axContext* aContext, axRect aRect, int aWinFlags)
@@ -87,7 +89,7 @@ class axWindowWin32 : public axWindowBase
 
         // --- embedded ---
 
-        if (mWinFlags.hasFlag(AX_WIN_EMBEDDED))
+        if (mWinFlags&AX_WIN_EMBEDDED)
         {
           AdjustWindowRect(&rc,WS_POPUP,FALSE);
           mWindow = CreateWindowEx(
@@ -336,19 +338,18 @@ class axWindowWin32 : public axWindowBase
 
     virtual void setCursor(int aCursor)
       {
-        if( aCursor<0 )
+        if (aCursor<0)
         {
           hideCursor();// aCursor = DEF_CURSOR;
           mPrevCursor = aCursor;
         } //-1
         else
         {
-          if( mPrevCursor<0 ) showCursor();
-          if( aCursor != mPrevCursor )
+          if (mPrevCursor<0) showCursor();
+          if (aCursor!=mPrevCursor)
           {
-            //mWinCursor = LoadCursor(NULL,(char*)aCursor);
-            //SetCursor( mWinCursor );
-            SetCursor( LoadCursor(NULL,(char*)aCursor) );
+            mWinCursor = LoadCursor(NULL,(char*)aCursor);
+            SetCursor( mWinCursor );
             mPrevCursor = aCursor;
           }
         } //>0
@@ -415,7 +416,7 @@ class axWindowWin32 : public axWindowBase
       {
         //if( aWidth!=mRect.w || aHeight!=mRect.h )
         //{
-          if (mWinFlags.hasFlag(AX_WIN_BUFFERED))
+          if (mWinFlags&AX_WIN_BUFFERED)
           {
             //mSurfaceMutex.lock();
             axSurface* srf;
@@ -547,7 +548,7 @@ class axWindowWin32 : public axWindowBase
                           mPS.rcPaint.right -  mPS.rcPaint.left + 2,
                           mPS.rcPaint.bottom - mPS.rcPaint.top  + 2);
             //mCanvas->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
-            if ( mWinFlags.hasFlag(AX_WIN_BUFFERED) && mSurface )
+            if ((mWinFlags&AX_WIN_BUFFERED) && mSurface )
             {
               //mSurfaceMutex.lock();
               axCanvas* can = mSurface->getCanvas();
@@ -608,7 +609,6 @@ class axWindowWin32 : public axWindowBase
             break;
           case WM_SIZE:
             //TRACE("WM_SIZE\n");
-
             //lParam:
             //  The low-order word of lParam specifies the new width of the client area.
             //  The high-order word of lParam specifies the new height of the client area.
@@ -617,10 +617,8 @@ class axWindowWin32 : public axWindowBase
             //int y = ev->xconfigure.y;
             w = short(LOWORD(lParam));
             h = short(HIWORD(lParam));
-
             //if (w!=mRect.w || h!=mRect.h)
             //{
-
             //// hack: ignore this if there is other WM_SIZE messages in the queue
             //if ( PeekMessage(&msg2,mWindow,WM_SIZE,WM_SIZE,PM_NOREMOVE) )
             //{
@@ -633,11 +631,10 @@ class axWindowWin32 : public axWindowBase
               doResize(w,h);
             //}
             //}
-
             result = 0;
             break;
           case WM_DESTROY:
-            if (!mWinFlags.hasFlag(AX_WIN_EMBEDDED))
+            if (!(mWinFlags&AX_WIN_EMBEDDED))
             {
               //trace("Quit");
               PostQuitMessage(0);
@@ -649,10 +646,10 @@ class axWindowWin32 : public axWindowBase
               //wtrace("axWIndowWin32.eventHandler :: timer");
               doTimer();
             }
-
             result = 0;
             break;
           case WM_SETCURSOR:
+            //wtrace("WM_SETCURSOR");
             SetCursor(mWinCursor);
             break;
           default:

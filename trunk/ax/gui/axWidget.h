@@ -33,7 +33,6 @@
 #define wa_LeftBottom   8
 #define wa_RightBottom  9
 #define wa_Stacked     10
-//#define wa_Parent      11
 
 // widget flags
 #define wf_Active   0x0001
@@ -44,23 +43,32 @@
 #define wf_Vertical 0x0020
 #define wf_Clip     0x0040
 
-#define wf_Fill     0x0100
-#define wf_Border   0x0200
-#define wf_Bevel    0x0400
-#define wf_Image    0x0800
-#define wf_Text     0x1000
+//#define wf_Fill     0x0100
+//#define wf_Border   0x0200
+//#define wf_Bevel    0x0400
+//#define wf_Image    0x0800
+//#define wf_Text     0x1000
 
+// widget options
+#define wo_Fill     0x01
+#define wo_Border   0x02
+#define wo_Bevel    0x04
+#define wo_Image    0x08
+#define wo_Text     0x10
 
 //----------------------------------------------------------------------
 
 class axWidget;
 typedef axArray<axWidget*> axWidgets;
 
+//----------
+
 class axWidgetListener
 {
   public:
     virtual void onChange(axWidget* aWidget) {}
     //virtual void onRedraw(axWidget* aWidget) {}
+    virtual void onCursor(int aCursor=DEF_PENWIDTH) {}
 };
 
 //----------------------------------------------------------------------
@@ -76,76 +84,100 @@ class axWidget : public axWidgetListener
 
     axWidgetListener* mListener;
     axRect            mRect;
-    axFlags           mFlags;
+    int               mFlags;
     int               mAlignment;
     int               mConnection;    // which parameter (if any) this is conected to (set in axEditor.connect)
     axParameter*      mParameter;     // direct access to the parameter (set in axEditor.connect)
     float             mValue;
-    // alignment
-    //axPoint           mOrig;
     axRect            mOrig;
+    axSkin*           mSkin;
+    int               mMinWidth;
+    int               mMaxWidth;
+    int               mMinHeight;
+    int               mMaxHeight;
 
+  protected: // painting
+    int       mOptions;
+    //axColor   mLightColor;
+    //axColor   mDarkColor;
+    //axColor   mFillColor;
+    //axColor   mTextColor;
+    axImage*  mImage;
+    axString  mText;
+    int       mTextAlign;
 
-  public:
-    //int     mId;
-    //void*   mPtr;
+  //public:
+  //  int     mId;
+  //  void*   mPtr;
 
   public:
 
     axWidget(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
       {
-        mListener = aListener;
-        mRect = aRect;
-        mFlags.mBits = wf_Active | wf_Visible | wf_Capture;
-        mAlignment = aAlignment;
+        mListener   = aListener;
+        mRect       = aRect;
+        mFlags      = wf_Active | wf_Visible | wf_Capture;
+        mAlignment  = aAlignment;
         mConnection = -1;
-        mParameter = NULL;
-        mValue = 0;
-
-        mOrig = mRect;//.set(aRect.x,aRect.y);
-
+        mParameter  = NULL;
+        mValue      = 0;
+        mOrig       = mRect;
+        mSkin       = NULL;
+        mMinWidth  = 0;
+        mMaxWidth  = 999999;
+        mMinHeight = 0;
+        mMaxHeight = 999999;
         //mId = aId;
         //mPtr = aPtr;
+        mOptions    = wo_Fill | wo_Bevel;
+        mImage      = NULL;
+        mText       = "wdgPanel";
+        mTextAlign  = ta_Center;
+
       }
 
-    virtual ~axWidget()
-      {
-        //deleteWidgets();
-      }
+    //virtual ~axWidget()
+    //  {
+    //  }
 
     //----------
 
-    inline axRect   getRect(void) { return mRect; }
-    inline axFlags  getFlags(void) { return mFlags; }
+    inline void setFlag(int aFlag) { mFlags |= aFlag; }
+    inline void setAllFlags(int aFlags) { mFlags = aFlags; }
+    inline void clearFlag(int aFlag) { mFlags &= ~aFlag; }
+    inline bool hasFlag(int aFlag) { return (mFlags&aFlag); }
 
-    inline bool isActive(void)  { return mFlags.hasFlag(wf_Active); }
-    inline bool isVisible(void) { return mFlags.hasFlag(wf_Visible); }
-    inline bool doCapture(void) { return mFlags.hasFlag(wf_Capture); }
+    inline void setOption(int aOption)      { mOptions |= aOption; }
+    inline void setAllOptions(int aOptions) { mOptions = aOptions; }
+    inline void clearOption(int aOption)    { mOptions &= ~aOption; }
+    inline bool hasOption(int aOption)      { return (mOptions&aOption); }
 
-    virtual bool intersects(axRect aRect) { return mRect.intersects(aRect); }
-    virtual bool contains(int aXpos, int aYpos) { return mRect.contains(aXpos,aYpos); }
-
-    //----------
-
-    inline float getValue(void) { return mValue; }
-    inline void  setValue(float aValue) { mValue=aValue; }
-
-    inline int  getConnection(void)     { return mConnection; }
-    inline void setConnection(int aNum) { mConnection = aNum; }
-
+    inline axRect       getRect(void) { return mRect; }
+    inline int          getFlags(void) { return mFlags; }
+    inline bool         isActive(void)  { return (mFlags&wf_Active); }
+    inline bool         isVisible(void) { return (mFlags&wf_Visible); }
+    inline bool         doCapture(void) { return (mFlags&wf_Capture); }
+    virtual bool        intersects(axRect aRect) { return mRect.intersects(aRect); }
+    virtual bool        contains(int aXpos, int aYpos) { return mRect.contains(aXpos,aYpos); }
+    inline float        getValue(void) { return mValue; }
+    inline void         setValue(float aValue) { mValue=aValue; }
+    inline int          getConnection(void) { return mConnection; }
+    inline void         setConnection(int aNum) { mConnection = aNum; }
     inline axParameter* getParameter(void) { return mParameter; }
-    inline void setParameter(axParameter* aParameter) { mParameter = aParameter; }
+    inline void         setParameter(axParameter* aParameter) { mParameter = aParameter; }
+
+    //--------------------------------------------------
+    //
+    //
+    //
+    //--------------------------------------------------
+
+    virtual axWidget* doFindWidget(int aXpos, int aYpos)
+      {
+        return this;
+      }
 
     //----------
-
-    virtual void setSkin(axSkin* aSkin, bool aSubWidgets=false) {}
-    virtual axWidget* findWidget(int aXpos, int aYpos) { return this; }
-
-    //--------------------------------------------------
-    //
-    //
-    //
-    //--------------------------------------------------
 
     virtual void doMove(int aXpos, int aYpos)
       {
@@ -156,17 +188,76 @@ class axWidget : public axWidgetListener
 
     virtual void doResize(int aWidth, int aHeight)
       {
-        //if (aW < mMinWidth) aW = mMinWidth;
-        //if (aW > mMaxWidth) aW = mMaxWidth;
-        //if (aH < mMinHeight) aH = mMinHeight;
-        //if (aH > mMaxHeight) aH = mMaxHeight;
+        if (aWidth < mMinWidth) aWidth = mMinWidth;
+        if (aWidth > mMaxWidth) aWidth = mMaxWidth;
+        if (aHeight < mMinHeight) aHeight = mMinHeight;
+        if (aHeight > mMaxHeight) aHeight = mMaxHeight;
         mRect.setSize(aWidth,aHeight);
       }
 
     //----------
 
     virtual void doRealign(void) {}
-    virtual void doPaint(axCanvas* aCanvas, axRect aRect) {}
+
+    //----------
+
+    virtual void doSetSkin(axSkin* aSkin, bool aSubWidgets=false)
+      {
+        mSkin = aSkin;
+        //mLightColor = aSkin->getColor(3);
+        //mDarkColor  = aSkin->getColor(1);
+        //mFillColor  = aSkin->getColor(2);
+        //mTextColor  = aSkin->getColor(4);
+      }
+
+    //----------
+
+    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
+      {
+        // assert skin?
+        // --- fill
+        if (mOptions&wo_Fill)
+        {
+          //aCanvas->setBrushColor(mFillColor);
+          aCanvas->setPenColor( mSkin->getColor(2) );
+          aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
+        }
+        // --- image
+        if (mOptions&wo_Image)
+        {
+          aCanvas->drawImage(mImage,0,0,mRect.x,mRect.y,mRect.w,mRect.h);
+        }
+        // --- border
+        if (mOptions&wo_Border)
+        {
+          //aCanvas->setPenColor(mLightColor);
+          aCanvas->setPenColor( mSkin->getColor(3) );
+          aCanvas->drawRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
+        }
+        else
+        // --- bevel
+        if (mOptions&wo_Bevel)
+        {
+          //aCanvas->setPenColor(mLightColor);
+          aCanvas->setPenColor( mSkin->getColor(3) );
+          aCanvas->drawLine(mRect.x,   mRect.y,   mRect.x2()-1,mRect.y     );
+          aCanvas->drawLine(mRect.x,   mRect.y,   mRect.x,     mRect.y2()-1);
+          //aCanvas->setPenColor(mDarkColor);
+          aCanvas->setPenColor( mSkin->getColor(1) );
+          aCanvas->drawLine(mRect.x+1, mRect.y2(),mRect.x2(),  mRect.y2()  );
+          aCanvas->drawLine(mRect.x2(),mRect.y+1, mRect.x2(),  mRect.y2()  );
+        }
+        // --- text
+        if (mOptions&wo_Text)
+        {
+          //aCanvas->setPenColor(mTextColor);
+          aCanvas->setPenColor( mSkin->getColor(4) );
+          aCanvas->drawText(mRect.x,mRect.y,mRect.x2(),mRect.y2(),mText,mTextAlign);
+        }
+      }
+
+    //----------
+
     virtual void doMouseDown(int aXpos, int aYpos, int aButton) {}
     virtual void doMouseUp(int aXpos, int aYpos, int aButton) {}
     virtual void doMouseMove(int aXpos, int aYpos, int aButton) {}
@@ -174,9 +265,6 @@ class axWidget : public axWidgetListener
     virtual void doKeyUp(int aKeyCode, int aState) {}
     virtual void doEnter(axWidget* aCapture) {}
     virtual void doLeave(axWidget* aCapture) {}
-    // axWidgetListener
-    //virtual void onChange(axWidget* aWidget)
-
 };
 
 
