@@ -82,6 +82,7 @@ class axCanvasBase
     // clip rect
 
     virtual void    setClipRect(int aX1, int aY1, int aX2, int aY2) {}
+    virtual void    resetClipRect(void) {}
     virtual void    clearClipRect(void) {}
 
     // shapes

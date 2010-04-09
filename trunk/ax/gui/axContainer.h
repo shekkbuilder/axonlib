@@ -33,6 +33,8 @@ class axContainer : public axWidget
   private:
     axRect    mClient;                // current Client area
     int       mStackedX, mStackedY;   // where to put next wal_Stacked widget
+
+  protected:
     axRect    mContent;               // rect encapsulating all sub-widgets (updated in doRealign)
     //int       mOffsetX,mOffsetY;
 
@@ -52,7 +54,7 @@ class axContainer : public axWidget
 
   public:
 
-    axContainer(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
+    axContainer(axWidgetListener* aListener, /*int aId, */axRect aRect, int aAlignment=wa_None)
     : axWidget(aListener,aRect,aAlignment)
       {
 
@@ -82,10 +84,13 @@ class axContainer : public axWidget
 
     //----------
 
+    inline axRect getContent(void) { return mContent; }
+
+    //----------
+
     virtual void  appendWidget(axWidget* aWidget)
       {
-        ////TODO: copy std stuff (colors, etc)
-        //mWidgets.append(aWidget);
+        aWidget->doSetSkin(mSkin,false); // inherit skin
         aWidget->doMove( mRect.x + aWidget->getRect().x, mRect.y + aWidget->getRect().y );
         mWidgets.append(aWidget);
 
@@ -99,7 +104,7 @@ class axContainer : public axWidget
 
     //----------
 
-    virtual void setAlignment(int aMarginX, int aMarginY, int aPaddingX=0, int aPaddingY=0)
+    virtual void setBorders(int aMarginX, int aMarginY, int aPaddingX=0, int aPaddingY=0)
       {
         mMarginX  = aMarginX;
         mMarginY  = aMarginY;
@@ -152,6 +157,19 @@ class axContainer : public axWidget
 
     //----------
 
+    virtual void doSetSkin(axSkin* aSkin, bool aSubWidgets=true)
+      {
+        //mSkin = aSkin;
+        //axWidget::setSkin(aSkin,aSubWidgets);
+        if (aSubWidgets)
+        {
+          for (int i=0; i<mWidgets.size(); i++) mWidgets[i]->doSetSkin(aSkin,aSubWidgets);
+        }
+        axWidget::doSetSkin(aSkin,aSubWidgets);
+      }
+
+    //----------
+
     virtual void doMove(int aXpos, int aYpos)
       {
         int deltax = aXpos - mRect.x;
@@ -193,15 +211,8 @@ class axContainer : public axWidget
 
     //----------
 
-    //virtual void doRealign(void)
-    //  {
-    //    axWidget::doRealign();
-    //  }
-
-    /**
-      realign sub-widgets according to their alignment setting.
-      also, it keeps track of a mContent rectangle, that encapsulates all the sub-widgets
-    */
+    // realign sub-widgets according to their alignment setting.
+    // also, it keeps track of a mContent rectangle, that encapsulates all the sub-widgets
 
 /*
 
@@ -248,6 +259,8 @@ class axContainer : public axWidget
             int wh = wdg->getRect().h;
             switch (wdg->mAlignment)//getAlignment() )
             {
+
+              // position relative to container
               case wa_None:
                 wdg->doMove(parent.x+ox,parent.y+oy);
                 break;
@@ -255,10 +268,16 @@ class axContainer : public axWidget
               //  wdg->doMove( parent.x, parent.y );
               //  wdg->doResize( parent.w, parent.h );
               //  break;
+
+              // stretch to fill entire client area
               case wa_Client:
                 wdg->doMove( client.x, client.y );
                 wdg->doResize( client.w, client.h );
                 break;
+
+              //--- stretch ---
+
+              // move to left edge, stretch vertical to client area height
               case wa_Left:
                 wdg->doMove( client.x, client.y );
                 wdg->doResize( ww, client.h );
@@ -266,12 +285,14 @@ class axContainer : public axWidget
                 client.x += (ww + mPaddingX);
                 client.w -= (ww + mPaddingX);
                 break;
+              // move to right edge, stretch vertical to client area height
               case wa_Right:
                 wdg->doMove( client.x2()-ww+1, client.y );
                 wdg->doResize( ww, client.h );
                 //ww = wdg->getRect().w;
                 client.w -= (ww + mPaddingX);
                 break;
+              // move to top, stretch horizontal to client area width
               case wa_Top:
                 wdg->doMove( client.x, client.y );
                 wdg->doResize( client.w, wh );
@@ -279,34 +300,47 @@ class axContainer : public axWidget
                 client.y += (wh + mPaddingY);
                 client.h -= (wh + mPaddingY);
                 break;
+              // move to bottom, stretch horizontal to client area width
               case wa_Bottom:
                 wdg->doMove( client.x, client.y2()-wh+1 );
                 wdg->doResize( client.w, wh );
                 //wh = wdg->getRect().w;
                 client.h -= (wh + mPaddingY);
                 break;
+
+              //--- move ---
+
+              // move to top-left, no resize
               case wa_LeftTop:
                 wdg->doMove( client.x, client.y );
                 //wdg->doResize( ww, C.h );
                 client.x += (ww + mPaddingX);
                 client.w -= (ww + mPaddingX);
                 break;
+              // move to top-right, no resize
               case wa_RightTop:
                 wdg->doMove( client.x2()-ww+1, client.y );
                 //wdg->doResize( ww, C.h );
                 client.w -= (ww + mPaddingX);
                 break;
+              // move to bottom-left, no resize
               case wa_LeftBottom:
                 wdg->doMove( client.x, client.y2()-wh+1 );
                 //wdg->doResize( C.w, wh );
                 //C.y += wh;
                 client.h -= (wh+mPaddingY);
                 break;
+              // move to bottom-right, no resize
               case wa_RightBottom:
                 wdg->doMove( client.x2()-ww+1, client.y2()-wh+1 );
                 //wdg->doResize( C.w, wh );
                 client.h -= (wh+mPaddingY);
                 break;
+
+              //--- stacked ---
+              // stacked widgets does not affect the available client rect
+
+              // stacked horizontal or vertical (depending on wf_Vertical flag)
               case wa_Stacked:
                 wdg->doMove(stackx,stacky);
                 //TODO: fix
@@ -345,7 +379,10 @@ class axContainer : public axWidget
                     largest = 0;//-1;
                   }
                 } //horizontal
-                break;
+                break; // stacked
+
+              //---
+
             } //switch alignment
             mContent.combine( wdg->getRect() ); // keep track of outer boundary
             //wdg->doRealign();
@@ -356,29 +393,19 @@ class axContainer : public axWidget
 
     //--------------------------------------------------
 
-    virtual void doSetSkin(axSkin* aSkin, bool aSubWidgets=false)
-      {
-        //mSkin = aSkin;
-        //axWidget::setSkin(aSkin,aSubWidgets);
-        if (aSubWidgets)
-        {
-          for (int i=0; i<mWidgets.size(); i++) mWidgets[i]->doSetSkin(aSkin,aSubWidgets);
-        }
-        axWidget::doSetSkin(aSkin,aSubWidgets);
-      }
-
-    //----------
-
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
         if (mFlags&wf_Visible)
         {
           if (mRect.intersects(aRect))
           {
-            if (mFlags&wf_Clip)
-              aCanvas->setClipRect( mRect.x+mMarginX, mRect.y+mMarginY, mRect.x2()-mMarginX, mRect.y2()-mMarginY );
             axWidget::doPaint(aCanvas,aRect);
-            //todo: crop aRect & mRect, use as clipping rectangle for subwidgets..
+
+            if (mFlags&wf_Clip)
+            {
+              aCanvas->setClipRect(mRect.x+mMarginX,mRect.y+mMarginY,mRect.x2()-mMarginX,mRect.y2()-mMarginY);
+            }
+
             for (int i=0; i<mWidgets.size(); i++)
             {
               axWidget* wdg = mWidgets[i];
@@ -387,7 +414,8 @@ class axContainer : public axWidget
                 if (wdg->intersects(aRect) && wdg->intersects(mRect)) wdg->doPaint(aCanvas,aRect);
               }
             } //for
-            if (mFlags&wf_Clip) aCanvas->clearClipRect();
+
+            if (mFlags&wf_Clip) aCanvas->clearClipRect(); // resetClipRect();
           }
         }
       }
@@ -445,7 +473,7 @@ class axContainer : public axWidget
         //axWidget::doMouseMove(aXpos,aYpos,aButton);
       }
 
-    //----------
+    //--------------------------------------------------
 
     virtual void doKeyDown(int aKeyCode, int aState)
       {

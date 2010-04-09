@@ -30,22 +30,21 @@
 //const int bu_Hover   = 1 << 7;
 
 
-class axWindowBase : public axContainer//axWidget
+class axWindowBase : public axContainer
 {
   protected:
     int         mWinFlags;
     axCanvas*   mCanvas;
     axSurface*  mSurface;
-    axWidget*   mCapturedWidget;
+    //axWidget*   mCapturedWidget;
 
   //protected:
   public:
 
     axWindowBase(axContext* aContext, axRect aRect, int aWinFlags)
-    : axContainer(NULL,aRect)
-    //: axWidget(NULL,aRect)
+    : axContainer(NULL,/*-1,*/aRect)
       {
-        mRect     = aRect;
+        //mRect     = aRect;
         mWinFlags = aWinFlags;
         mCanvas   = NULL;
         mSurface  = NULL;
@@ -64,7 +63,9 @@ class axWindowBase : public axContainer//axWidget
     // canvas/surface
 
     virtual axCanvas*   createCanvas(void)  { return NULL; }
-    virtual axSurface*  createSurface(void) { return NULL; }
+    //virtual axSurface*  createSurface(void) { return NULL; }
+    virtual axSurface*  createSurface(int aWidth, int aHeight) { return NULL; }
+    virtual axBitmap*   createBitmap(int aWidth, int aHeight) { return NULL; }
     virtual axCanvas*   getCanvas(void)     { return mCanvas; }
     virtual axSurface*  getSurface(void)    { return mSurface; }
 

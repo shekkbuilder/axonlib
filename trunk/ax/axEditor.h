@@ -6,22 +6,36 @@
 #include "gui/axWindow.h"
 
 //----------------------------------------------------------------------
+//
+// connection
+//
+//----------------------------------------------------------------------
 
+// widget <-> parameter connection
 struct wp_connection
 {
   axWidget*     mWidget;
   axParameter*  mParameter;
-  wp_connection(axWidget* aWidget, axParameter* aParameter) { mWidget=aWidget; mParameter=aParameter; }
+  wp_connection(axWidget* aWidget, axParameter* aParameter)
+    {
+      mWidget=aWidget;
+      mParameter=aParameter;
+    }
 };
 
 typedef axArray<wp_connection> wp_connections;
 
+//----------------------------------------------------------------------
+//
+// editor
+//
 //----------------------------------------------------------------------
 
 class axEditor : public axWindow
 {
   protected:
     axPlugin*       mPlugin;
+    axSkinDefault*  mDefaultSkin;
     wp_connections  mConnections;
 
   public:
@@ -30,15 +44,14 @@ class axEditor : public axWindow
     : axWindow(aContext,aRect,aWinFlags)
       {
         mPlugin = aPlugin;
-        //mCanvas->createPen(AX_GREY_DARK);
-        //mCanvas->createPen(AX_GREY);
-        //mCanvas->createPen(AX_GREY_LIGHT);
-        //mCanvas->createBrush(AX_GREY_DARK);
-        //mCanvas->createBrush(AX_GREY);
-        //mCanvas->createBrush(AX_GREY_LIGHT);
-        //mCanvas->createFont("default",AX_GREY_DARK);
-        //mCanvas->createFont("default",AX_GREY);
-        //mCanvas->createFont("default",AX_GREY_LIGHT);
+        axCanvas* can = getCanvas();
+        mDefaultSkin = new axSkinDefault(can);
+        doSetSkin(mDefaultSkin);
+      }
+
+    virtual ~axEditor()
+      {
+        delete mDefaultSkin;
       }
 
     //----------

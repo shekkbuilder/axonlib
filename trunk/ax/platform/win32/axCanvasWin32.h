@@ -29,15 +29,17 @@ class axCanvasWin32 : public axCanvasBase
     RECT    R;            // temp
 		//HPEN    mPen, mOldPen, mOldPen2;
 		//HBRUSH  mBrush, mOldBrush, mOldBrush2;
+    HRGN    mClipRegion;
   protected:
 		int     mWinHandle;   // from context
     axColor mPenColor;
     axColor mBrushColor;
     axColor mTextColor;
-    //bool    mIsPenClear;
     int     mCurrentPen;
     int     mCurrentBrush;
     int     mXpos,mYpos;
+    bool    mHasClipRect;
+    int     mClipX1,mClipY1,mClipX2,mClipY2;
 
   public:
 
@@ -49,9 +51,7 @@ class axCanvasWin32 : public axCanvasBase
         mTextColor  = getColor(AX_WHITE);
         mCurrentPen = 0;
         mCurrentBrush = 0;
-        //mIsPenClear = false;
-        //mPen    = 0;
-        //mBrush  = 0;
+        mHasClipRect = false;
         HDC tempdc = GetDC(0);
         if (aContext->mWindow)
         { // window
@@ -242,8 +242,23 @@ class axCanvasWin32 : public axCanvasBase
 
     virtual void setClipRect(int aX1, int aY1, int aX2, int aY2)
       {
-        HRGN hrgn = /*hrgn = */CreateRectRgn( aX1-1, aY1-1, aX2+1, aY2+1 );
-        SelectClipRgn(mDC,hrgn);
+        //HRGN hrgn = /*hrgn = */CreateRectRgn( aX1-1, aY1-1, aX2+1, aY2+1 );
+        if (mHasClipRect) DeleteObject(mClipRegion);
+        mClipRegion = /*hrgn = */CreateRectRgn( aX1-1, aY1-1, aX2+1, aY2+1 );
+        SelectClipRgn(mDC,mClipRegion);
+        mHasClipRect = true;
+        mClipX1 = aX1;
+        mClipY1 = aY1;
+        mClipX2 = aX2;
+        mClipY2 = aY2;
+      }
+
+    //----------
+
+    virtual void resetClipRect(void)
+      {
+        //clearClipRect();
+        setClipRect(mClipX1,mClipY1,mClipX2,mClipY2);
       }
 
     //----------
@@ -253,6 +268,7 @@ class axCanvasWin32 : public axCanvasBase
     virtual void clearClipRect(void)
       {
         SelectClipRgn(mDC,NULL);
+        if (mHasClipRect) DeleteObject(mClipRegion);
       }
 
     //--------------------------------------------------
