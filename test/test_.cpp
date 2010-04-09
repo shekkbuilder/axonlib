@@ -4,6 +4,8 @@
 #include "platform/axContext.h"
 #include "axPlugin.h"
 #include "axEditor.h"
+#include "gui/axContainer.h"
+#include "gui/axSymbol.h"
 
 //----------------------------------------------------------------------
 //
@@ -14,47 +16,34 @@
 class myEditor : public axEditor
 {
   private:
-    axColor mBackColor;
-    axColor mPenColor;
-    axColor mBrushColor;
+    axContainer* wClient;
 
   public:
 
     myEditor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
     {
-      axCanvas* can = getCanvas();
-      mBackColor  = can->getColor(AX_GREY);
-      mPenColor   = can->getColor(AX_GREY_LIGHT);
-      mBrushColor = can->getColor(AX_GREY_DARK);
-      startTimer(40); // 25 fps
+      //axCanvas* canvas = getCanvas();
+      appendWidget( wClient = new axContainer(this,NULL_RECT,wa_Client) );
+      doSetSkin(mDefaultSkin/*,true*/);
+      doRealign();
+      //startTimer(250);
     }
 
     //----------
 
     virtual ~myEditor()
       {
-        stopTimer();
+        //stopTimer();
       }
 
     //----------
 
-    virtual void onTimer()
-      {
-        // redraw everything
-        invalidate(mRect.x,mRect.y,mRect.w,mRect.h);
-        axEditor::onTimer();
-      }
-
-    //----------
-
-    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
-      {
-        aCanvas->setBrushColor(mBackColor);
-        aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
-        // ...
-        axContainer::doPaint(aCanvas,aRect);
-      }
+    //virtual void doTimer()
+    //  {
+    //    wtrace("doTimer...");
+    //    //invalidate(mRect.x,mRect.y,mRect.w,mRect.h); // redraw everything
+    //  }
 
 };
 
@@ -76,7 +65,7 @@ class myPlugin : public axPlugin
       {
         describe("test_","ccernn","axonlibe example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);
-        setupEditor(256,256);
+        setupEditor(500,400);
         //setupParameters();
       }
 
@@ -106,6 +95,7 @@ class myPlugin : public axPlugin
 
     //virtual void doIdleEditor()
     //  {
+    //    wtrace("...doIdleEditor");
     //  }
 
 };

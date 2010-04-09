@@ -1,0 +1,57 @@
+
+----------------------------------------------------------------------
+platform / os
+----------------------------------------------------------------------
+
+- mac support?
+
+- axCanvas[Win32/Linux]
+  clipping rectangles not working properly
+  most problematic on win32
+  
+----------------------------------------------------------------------
+gui
+----------------------------------------------------------------------
+
+- the skin stuff needs a bit more work
+
+- onCursor, automatic mouse cursor changing when hovering over widgets
+  (mHoverCursor)
+  
+- onHint, bubble hints upwards (to editor)
+
+- onAlign, or something, notify owner' that realignment might be
+  necessary (widget moved, resized, etc)
+  
+- separate onChange and onRedraw
+  (should we be able to redraw directly, without going the 'full round'
+  through invalidate, etc?)
+
+----------------------------------------------------------------------
+widgets
+----------------------------------------------------------------------
+
+- wdgParam, default parameter controlled
+  can be knob, slider, button, text, etc
+
+----------------------------------------------------------------------
+plugin
+----------------------------------------------------------------------
+
+- find default/specific directory (for data files, etc)
+  relative to host or plugin? doesn't really matter,
+  as long as it's stable and working in all hosts (and standalone)
+
+- host id, for ost-dependent things
+  (for example, window resizing is handled very different in hosts,
+  so we might need to do different things depending on host)
+
+----------------------------------------------------------------------
+parameters
+----------------------------------------------------------------------
+
+- more parameter types, or automatic scaling/transforming
+  cubed, squared, ms, hz, db, etc...
+  remap mode?
+  
+

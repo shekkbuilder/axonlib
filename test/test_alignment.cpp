@@ -47,7 +47,6 @@ class myEditor : public axEditor
     axContainer*    wClient;
     axSurface*      mSymSurf;
     axSymbols*      mSymbols;
-    int sym;
 
   public:
 
@@ -59,33 +58,40 @@ class myEditor : public axEditor
       mPenColor   = can->getColor(AX_GREY_DARK);
       mSym1Color  = can->getColor(AX_WHITE);
       mSym2Color  = can->getColor(AX_GREY_LIGHT);
-      setAlignment(30,30,10,10);
       appendWidget(           new axContainer(this,axRect( 0, 0, 100,0  ), wa_Right) );
       appendWidget(           new axContainer(this,axRect( 0, 0, 0,  50 ), wa_Bottom) );
       appendWidget(           new axContainer(this,axRect( 0, 0, 50, 0  ), wa_Left) );
       appendWidget(           new axContainer(this,axRect( 0, 0, 0,  50 ), wa_Top) );
       appendWidget( wClient = new axContainer(this,NULL_RECT,              wa_Client) );
+
+      this->setAlignment(30,30,10,10);
+      this->clearOption(wo_Bevel);
       wClient->setAlignment(20,20,10,10);
       wClient->setFlag(wf_Clip);
-      for (int i=0; i<20; i++)
+      wClient->clearOption(wo_Bevel);
+      wClient->setOption(wo_Border);
+      for (int i=0; i<32; i++)
       {
         myWidget* w = new myWidget(this,axRect(0,0, 32,32), wa_Stacked);
-        //w->setOption(wo_Bevel);
+        w->clearOption(wo_Bevel);
+        w->setOption(wo_Border);
         wClient->appendWidget(w);
       }
-      mSkin = new axSkinDefault(can);
-      doSetSkin(mSkin,true);
+
       doRealign();
       //startTimer(40); // 25 fps
+
+      mSkin = new axSkinDefault(can);
+      doSetSkin(mSkin,true);
 
       mSymSurf = new axSurface(aContext,256,256);
       can = mSymSurf->getCanvas();
       can->setBrushColor(mBackColor);
       can->fillRect(0,0,255,255);
       mSymbols = new axSymbols(mSymSurf);
-      sym = mSymbols->create(symbol1,axRect( 0,0,8,8),mSym1Color,mSym2Color);
-      sym = mSymbols->create(symbol2,axRect( 8,0,8,8),mSym1Color,mSym2Color);
-      sym = mSymbols->create(symbol3,axRect(16,0,8,8),mSym1Color,mSym2Color);
+      mSymbols->create(symbol1,axRect( 0,0,8,8),mSym1Color,mSym2Color);
+      mSymbols->create(symbol2,axRect( 8,0,8,8),mSym1Color,mSym2Color);
+      mSymbols->create(symbol3,axRect(16,0,8,8),mSym1Color,mSym2Color);
 
     }
 
@@ -113,15 +119,15 @@ class myEditor : public axEditor
 
     //----------
 
-    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
-      {
-        aCanvas->setBrushColor(mBackColor);
-        aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
-        axEditor::doPaint(aCanvas,aRect);
-        mSymbols->draw(aCanvas,5,5, 0);
-        mSymbols->draw(aCanvas,15,5,1);
-        mSymbols->draw(aCanvas,25,5,2);
-      }
+//    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
+//      {
+//        aCanvas->setBrushColor(mBackColor);
+//        aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
+//        axEditor::doPaint(aCanvas,aRect);
+//        mSymbols->draw(aCanvas,5,5, 0);
+//        mSymbols->draw(aCanvas,15,5,1);
+//        mSymbols->draw(aCanvas,25,5,2);
+//      }
 
 };
 

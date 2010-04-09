@@ -31,6 +31,7 @@ class axCanvasLinux : public axCanvasBase
   protected:
     int           mXpos;
     int           mYpos;
+    int           mClipX1,mClipY1,mClipX2,mClipY2;
 
   public:
 
@@ -128,6 +129,18 @@ class axCanvasLinux : public axCanvasBase
         r.width  = (aX2-aX1)+2; // xlib seems to cut off one pixel to the right & bottom... ?
         r.height = (aY2-aY1)+2; // so we compensate by adding another pixel
         XSetClipRectangles(mDisplay,mGC,0,0,&r,1,Unsorted);
+        mClipX1 = aX1;
+        mClipY1 = aY1;
+        mClipX2 = aX2;
+        mClipY2 = aY2;
+      }
+
+    //----------
+
+    virtual void resetClipRect(void)
+      {
+        //clearClipRect();
+        setClipRect(mClipX1,mClipY1,mClipX2,mClipY2);
       }
 
     //----------

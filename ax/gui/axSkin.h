@@ -7,22 +7,18 @@
 
 class axSkin
 {
-  protected:
-    axColors  mColors;
+  public:
+    axColor mFillColor;
+    axColor mBorderColor;
+    axColor mTextColor;
+    axColor mLightColor;
+    axColor mDarkColor;
   public:
     axSkin(axCanvas* aCanvas)
       {
       }
     virtual ~axSkin()
       {
-      }
-    virtual void appendColor(axColor aColor)
-      {
-        mColors.append(aColor);
-      }
-    virtual axColor getColor(int aIndex)
-      {
-        return mColors[aIndex];
       }
 };
 
@@ -31,21 +27,14 @@ class axSkin
 class axSkinDefault : public axSkin
 {
   public:
-    //axColor mFillColor;
-    //axColor mBorderColor;
-    //axColor mTextColor;
-  public:
     axSkinDefault(axCanvas* aCanvas)
     : axSkin(aCanvas)
       {
-        //mFillColor   = aCanvas->getColor(AX_GREY);
-        //mBorderColor = aCanvas->getColor(AX_GREY_DARK);
-        //mTextColor   = aCanvas->getColor(AX_GREY_LIGHT);
-        appendColor( aCanvas->getColor(AX_BLACK) );
-        appendColor( aCanvas->getColor(AX_GREY_DARK) );
-        appendColor( aCanvas->getColor(AX_GREY) );
-        appendColor( aCanvas->getColor(AX_GREY_LIGHT) );
-        appendColor( aCanvas->getColor(AX_WHITE) );
+        mFillColor    = aCanvas->getColor(AX_GREY);
+        mBorderColor  = aCanvas->getColor(AX_GREY_DARK);
+        mTextColor    = aCanvas->getColor(AX_GREY_LIGHT);
+        mLightColor   = aCanvas->getColor(AX_GREY_LIGHT);
+        mDarkColor    = aCanvas->getColor(AX_GREY_DARK);
       }
     virtual ~axSkinDefault()
       {
