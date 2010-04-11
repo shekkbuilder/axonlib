@@ -54,16 +54,8 @@ class wdgSizer : public axWidget
         //axWidget::doMouseMove(aXpos,aYpos,aButton);
       }
 
-    virtual void doEnter(axWidget* aCapture)
-      {
-        mListener->onCursor(cu_ArrowLeftRight);
-      }
-
-    virtual void doLeave(axWidget* aCapture)
-      {
-        mListener->onCursor(DEF_CURSOR);
-      }
-
+    virtual void doEnter(axWidget* aCapture) { mListener->onCursor(cu_ArrowLeftRight); }
+    virtual void doLeave(axWidget* aCapture) { mListener->onCursor(DEF_CURSOR); }
 
 };
 

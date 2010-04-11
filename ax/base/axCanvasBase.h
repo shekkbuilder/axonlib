@@ -7,7 +7,7 @@
 //#include "gui/axBrush.h"
 #include "gui/axFont.h"
 
-//#include "gui/axBitmap.h"
+#include "gui/axBitmap.h"
 #include "base/axImage.h"
 
 //----------------------------------------------------------------------
@@ -106,10 +106,8 @@ class axCanvasBase
 
     // bitmap
 
-    //virtual void    drawBitmap(axBitmapBase* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
-    //virtual void    blit(axCanvasBase* aCanvas, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
-    //virtual void    drawSurface(axSurfaceBase* aSurface, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
-    virtual void drawImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
+    virtual void drawBitmap(axBitmap* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
+    virtual void drawImage( axImage*  aImage,  int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {} // aka surface
 
     //----------
 

@@ -232,61 +232,9 @@ class axWidget : public axWidgetListener
         this->doSetSize(w,h);
       }
 
-    //----------
-
-    virtual void doRealign(void)
-      {
-      }
-
-    //----------
+    virtual void doRealign(void) {}
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect) {}
-//      {
-//        if (mSkin)
-//        {
-//          // --- fill
-//          if (mOptions&wo_Fill)
-//          {
-//            //aCanvas->setBrushColor(mFillColor);
-//            aCanvas->setBrushColor( mSkin->mFillColor );
-//            aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
-//          }
-//          // --- image
-//          if (mOptions&wo_Image)
-//          {
-//            aCanvas->drawImage(mImage,0,0,mRect.x,mRect.y,mRect.w,mRect.h);
-//          }
-//          // --- border
-//          if (mOptions&wo_Border)
-//          {
-//            //aCanvas->setPenColor(mLightColor);
-//            aCanvas->setPenColor( mSkin->mBorderColor );
-//            aCanvas->drawRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
-//          }
-//          else
-//          // --- bevel
-//          if (mOptions&wo_Bevel)
-//          {
-//            //aCanvas->setPenColor(mLightColor);
-//            aCanvas->setPenColor( mSkin->mLightColor );
-//            aCanvas->drawLine(mRect.x,   mRect.y,   mRect.x2()-1,mRect.y     );
-//            aCanvas->drawLine(mRect.x,   mRect.y,   mRect.x,     mRect.y2()-1);
-//            //aCanvas->setPenColor(mDarkColor);
-//            aCanvas->setPenColor( mSkin->mDarkColor );
-//            aCanvas->drawLine(mRect.x+1, mRect.y2(),mRect.x2(),  mRect.y2()  );
-//            aCanvas->drawLine(mRect.x2(),mRect.y+1, mRect.x2(),  mRect.y2()  );
-//          }
-//          // --- text
-//          if (mOptions&wo_Text)
-//          {
-//            //aCanvas->setPenColor(mTextColor);
-//            aCanvas->setTextColor( mSkin->mTextColor );
-//            aCanvas->drawText(mRect.x,mRect.y,mRect.x2(),mRect.y2(),mText,mTextAlign);
-//          }
-//        }
-//      }
-
-    //----------
 
     virtual void doMouseDown(int aXpos, int aYpos, int aButton) {}
     virtual void doMouseUp(int aXpos, int aYpos, int aButton) {}
@@ -295,8 +243,8 @@ class axWidget : public axWidgetListener
     virtual void doKeyDown(int aKeyCode, int aState) {}
     virtual void doKeyUp(int aKeyCode, int aState) {}
 
-    virtual void doEnter(axWidget* aCapture) {}
-    virtual void doLeave(axWidget* aCapture) {}
+    virtual void doEnter(axWidget* aWidget) {}
+    virtual void doLeave(axWidget* aWidget) {}
 };
 
 

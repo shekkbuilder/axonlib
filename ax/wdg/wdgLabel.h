@@ -30,15 +30,8 @@ class wdgLabel : public axWidget
         //axWidget::doPaint(aCanvas,aRect);
       }
 
-    //virtual void doEnter(axWidget* aCapture)
-    //  {
-    //    mListener->onCursor(cu_ArrowLeftRight);
-    //  }
-
-    //virtual void doLeave(axWidget* aCapture)
-    //  {
-    //    mListener->onCursor(DEF_CURSOR);
-    //  }
+    //virtual void doEnter(axWidget* aCapture) { mListener->onCursor(cu_ArrowLeftRight); }
+    //virtual void doLeave(axWidget* aCapture) { mListener->onCursor(DEF_CURSOR); }
 
 };
 

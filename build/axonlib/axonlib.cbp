@@ -200,8 +200,10 @@
 		<Unit filename="../../ax/platform/win32/axWindowWin32.h" />
 		<Unit filename="../../ax/script/axScript.h" />
 		<Unit filename="../../ax/script/axScriptStdlib.h" />
+		<Unit filename="../../ax/wdg/wdgBitmap.h" />
 		<Unit filename="../../ax/wdg/wdgButton.h" />
 		<Unit filename="../../ax/wdg/wdgGroupBox.h" />
+		<Unit filename="../../ax/wdg/wdgImage.h" />
 		<Unit filename="../../ax/wdg/wdgKnob.h" />
 		<Unit filename="../../ax/wdg/wdgLabel.h" />
 		<Unit filename="../../ax/wdg/wdgPages.h" />
@@ -213,6 +215,7 @@
 		<Unit filename="../../ax/wdg/wdgSlider.h" />
 		<Unit filename="../../ax/wdg/wdgTest.h" />
 		<Unit filename="../../ax/wdg/wdgTextList.h" />
+		<Unit filename="../../ax/wdg/wdgValue.h" />
 		<Unit filename="../../test/test_widgets.cpp" />
 		<Extensions>
 			<code_completion />

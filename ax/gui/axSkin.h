@@ -34,9 +34,9 @@ class axSkin
     virtual void drawPanel( axCanvas* aCanvas, axRect aRect) {}
     virtual void drawSizer( axCanvas* aCanvas, axRect aRect) {}
     virtual void drawLabel( axCanvas* aCanvas, axRect aRect, axString aText, int aTextAlign) {}
+    virtual void drawValue(axCanvas* aCanvas, axRect aRect, axString aName, axString aDisp, float aValue) {}
     virtual void drawButton(axCanvas* aCanvas, axRect aRect, axString aText, int aTextAlign, bool aState) {}
     virtual void drawSlider(axCanvas* aCanvas, axRect aRect, float aValue, axString aText1, axString aText2, bool aVertical) {}
-    //virtual void drawSlider(axCanvas* aCanvas, axRect aRect) {}
 };
 
 //----------------------------------------------------------------------
@@ -68,7 +68,7 @@ class axSkinDefault : public axSkin
       }
 
     //--------------------------------------------------
-    //
+    // internal
     //--------------------------------------------------
 
     void fill_back(axCanvas* aCanvas, axRect aRect)
@@ -110,6 +110,8 @@ class axSkinDefault : public axSkin
 
     //--------------------------------------------------
     //
+    //
+    //
     //--------------------------------------------------
 
     virtual void drawPanel(axCanvas* aCanvas, axRect aRect)
@@ -118,15 +120,32 @@ class axSkinDefault : public axSkin
         draw_frame(aCanvas,aRect);
       }
 
+    //----------
+
     virtual void drawSizer(axCanvas* aCanvas, axRect aRect)
       {
         fill_dark(aCanvas,aRect);
       }
 
+    //----------
+
     virtual void drawLabel(axCanvas* aCanvas, axRect aRect, axString aText, int aTextAlign)
       {
         draw_text(aCanvas,aRect,aText,aTextAlign);
       }
+
+    //----------
+
+    virtual void drawValue(axCanvas* aCanvas, axRect aRect, axString aName, axString aDisp, float aValue)
+      {
+        fill_dark( aCanvas,aRect);
+        axRect r = aRect;
+        r.add(3,3,-6,-6);
+        draw_text(aCanvas,r,aName,ta_Left);
+        draw_text(aCanvas,r,aDisp,ta_Right);
+      }
+
+    //----------
 
     virtual void drawButton(axCanvas* aCanvas, axRect aRect, axString aText, int aTextAlign, bool aState)
       {
@@ -134,6 +153,8 @@ class axSkinDefault : public axSkin
         draw_frame(aCanvas,aRect,aState);
         draw_text( aCanvas,aRect,aText,aTextAlign);
       }
+
+    //----------
 
     virtual void drawSlider(axCanvas* aCanvas, axRect aRect, float aValue, axString aText1, axString aText2, bool aVertical)
       {
@@ -144,15 +165,9 @@ class axSkinDefault : public axSkin
           int y2 = aRect.y+size;
           int h1 = size;
           int h2 = aRect.h-size;
-
           fill_dark( aCanvas,axRect(aRect.x, y1, aRect.w, h1 ));
-
           fill_back( aCanvas,axRect(aRect.x, y2, aRect.w, h2 ));
           draw_frame(aCanvas,axRect(aRect.x, y2, aRect.w, h2 ));
-          //axRect r = aRect;
-          //r.add(3,3,-6,-6);
-          //draw_text(aCanvas,r,aText1,ta_Left);
-          //draw_text(aCanvas,r,aText2,ta_Right);
         }
         else
         {
@@ -167,9 +182,7 @@ class axSkinDefault : public axSkin
         }
       }
 
-
-
-
+    //----------
 
 };
 

@@ -43,11 +43,7 @@ class axContainer : public axWidget
     axWidgets mWidgets;
     axWidget* mCapturedWidget;
     axWidget* mHoverWidget;
-    //mouse
-//    axWidget* mClickWidget;
-//    int       mClickX;
-//    int       mClickY;
-//    int       mClickB;
+    axWidget* mModalWidget;
     //layout
     int       mMarginX,  mMarginY;      // container inner space (between outer border & widgets)
     int       mPaddingX, mPaddingY;   // space between wal_Stacked widgets
@@ -66,7 +62,7 @@ class axContainer : public axWidget
 
         mCapturedWidget  = NULL;
         mHoverWidget    = this;//NULL;
-//        mClickWidget    = NULL;
+        mModalWidget = NULL;
         mMarginX = 0;
         mMarginY = 0;
         mPaddingX = 0;
@@ -84,21 +80,31 @@ class axContainer : public axWidget
         deleteWidgets();
       }
 
-    //----------
+    //--------------------------------------------------
 
     inline axRect getContent(void) { return mContent; }
 
-    //----------
+    //--------------------------------------------------
 
-    virtual void  appendWidget(axWidget* aWidget)
+    virtual int appendWidget(axWidget* aWidget)
       {
+        int index = mWidgets.size();
         aWidget->doSetSkin(mSkin,false); // inherit skin
         aWidget->doSetPos( mRect.x + aWidget->getRect().x, mRect.y + aWidget->getRect().y );
         mWidgets.append(aWidget);
-
+        return index;
       }
 
-    virtual void  deleteWidgets(void)
+    //----------
+
+    virtual void removeWidget(int aIndex)
+      {
+        mWidgets.remove(aIndex);
+      }
+
+    //----------
+
+    virtual void deleteWidgets(void)
       {
         for (int i=0; i<mWidgets.size(); i++) delete mWidgets[i];
         mWidgets.clear();
@@ -121,6 +127,12 @@ class axContainer : public axWidget
       {
         mCapturedWidget = NULL;
 //        mClickWidget  = NULL;
+      }
+
+    virtual void goModal(axWidget* aWidget)
+      {
+        mModalWidget = aWidget;
+        //mModal = true;
       }
 
     //--------------------------------------------------
@@ -229,6 +241,9 @@ class axContainer : public axWidget
 
     // realign sub-widgets according to their alignment setting.
     // also, it keeps track of a mContent rectangle, that encapsulates all the sub-widgets
+
+    //TODO. update stackx,stacky when we update the available client area
+    //      so we can interleave them...
 
 /*
 
@@ -353,6 +368,11 @@ class axContainer : public axWidget
                 client.h -= (wh+mPaddingY);
                 break;
 
+              //TODO: TopLeft,TopRight, etc?
+              // update client the 'other' direction
+              // wa_LeftTop, clips available client rect from left,
+              // wa_TopLeft should be from top?
+
               //--- stacked ---
               // stacked widgets does not affect the available client rect
 
@@ -440,10 +460,9 @@ class axContainer : public axWidget
 
     virtual void doMouseDown(int aXpos, int aYpos, int aButton)
       {
-        if (mCapturedWidget)
-        {
-          mCapturedWidget->doMouseDown(aXpos,aYpos,aButton);
-        }
+        if (mModalWidget) mModalWidget->doMouseDown(aXpos,aYpos,aButton);
+        else
+        if (mCapturedWidget) mCapturedWidget->doMouseDown(aXpos,aYpos,aButton);
         else
         {
           if (isActive())
@@ -463,6 +482,8 @@ class axContainer : public axWidget
 
     virtual void doMouseUp(int aXpos, int aYpos, int aButton)
       {
+        if (mModalWidget) mModalWidget->doMouseUp(aXpos,aYpos,aButton);
+        else
         if (mCapturedWidget)
         {
           mCapturedWidget->doMouseUp(aXpos,aYpos,aButton);
@@ -483,10 +504,9 @@ class axContainer : public axWidget
 
     virtual void doMouseMove(int aXpos, int aYpos, int aButton)
       {
-        if (mCapturedWidget)
-        {
-          mCapturedWidget->doMouseMove(aXpos,aYpos,aButton);
-        }
+        if (mModalWidget) mModalWidget->doMouseMove(aXpos,aYpos,aButton);
+        else
+        if (mCapturedWidget) mCapturedWidget->doMouseMove(aXpos,aYpos,aButton);
         else
         {
           axWidget* hover = doFindWidget(aXpos,aYpos);
@@ -505,6 +525,8 @@ class axContainer : public axWidget
 
     virtual void doKeyDown(int aKeyCode, int aState)
       {
+        if (mModalWidget) mModalWidget->doKeyDown(aKeyCode,aState);
+        else
         if (mCapturedWidget) mCapturedWidget->doKeyDown(aKeyCode,aState);
         //axWidget::doKeyDown(aKeyCode,aState);
       }
@@ -513,6 +535,8 @@ class axContainer : public axWidget
 
     virtual void doKeyUp(int aKeyCode, int aState)
       {
+        if (mModalWidget) mModalWidget->doKeyUp(aKeyCode,aState);
+        else
         if (mCapturedWidget) mCapturedWidget->doKeyUp(aKeyCode,aState);
         //axWidget::doKeyUp(aKeyCode,aState);
       }
@@ -521,6 +545,8 @@ class axContainer : public axWidget
 
     //virtual void doEnter(axWidget* aCapture)
     //  {
+    //    if (mModalWidget) mModalWidget->doEnter(axWidget* aCapture);
+    //    else
     //    axWidget::doEnter(aCapture);
     //  }
 
@@ -552,6 +578,7 @@ class axContainer : public axWidget
 
     //virtual void onHint(axString aHint) {}
 
+    // called from wdgSizer
     virtual void onSize(int aDeltaX, int aDeltaY)
       {
         //wtrace("axContainer.onSize");
