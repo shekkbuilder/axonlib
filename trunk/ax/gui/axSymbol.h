@@ -1,10 +1,16 @@
 #ifndef axSymbol_included
 #define axSymbol_included
 //----------------------------------------------------------------------
-
+/*
+  TODO:
+  - rename file to axSymbols.h
+*/
+//----------------------------------------------------------------------
 #include "core/axRect.h"
 #include "gui/axColor.h"
 #include "gui/axCanvas.h"
+
+//----------------------------------------------------------------------
 
 struct sym_item
 {
@@ -15,7 +21,11 @@ struct sym_item
 
 typedef axArray<sym_item> sym_items;
 
-//----------
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
 
 class axSymbols
 {
@@ -30,6 +40,8 @@ class axSymbols
         mSurface = aSurface;
         //axCanvas* can = mSurface->getCanvas();
       }
+
+    //----------
 
     virtual int create(char* aGrid, axRect aRect, axColor aOnColor, axColor aHalfColor) // returns index
       {
@@ -62,6 +74,8 @@ class axSymbols
         mItems.append( sym_item(rx,ry,rw,rh) );
         return num;
       }
+
+    //----------
 
     virtual void draw(axCanvas* aCanvas, int x, int y, int aIndex)
       {

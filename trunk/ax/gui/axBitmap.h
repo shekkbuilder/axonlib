@@ -2,7 +2,14 @@
 #define axBitmap_included
 //----------------------------------------------------------------------
 
-// format: 32 bits, BGRA
+// - linux/ubuntu (32bit), amd phenom (x86 quadcore), nvidia (geforce 8600 gt)
+//   32 bits, bgra
+//   0xAARRGGBB
+//   little endian
+//   buffer[0] = b
+//   buffer[1] = g
+//   buffer[2] = r
+//   buffer[3] = a
 
 #include "axDefines.h"
 #include "core/axMath.h"
@@ -32,16 +39,6 @@ class axBitmap : public axBitmapImpl
 
     //----------
 
-    //axBitmap(int aWidth, int aHeight, unsigned char* aData)
-    //: axBitmapImpl(aWidth, aHeight)
-    //  {
-    //    int size = mWidth*mHeight*4;
-    //    if (!mBuffer) mBuffer = new char[size];
-    //    /*if (mBuffer)*/ memcpy(mBuffer,aData,size);
-    //  }
-
-    //----------
-
     virtual ~axBitmap()
       {
         if (mBuffer) delete[] mBuffer;
@@ -58,9 +55,6 @@ class axBitmap : public axBitmapImpl
         else memset(mBuffer,0,size);
         return mBuffer;
       }
-
-
-
 
     //----------------------------------------
 
