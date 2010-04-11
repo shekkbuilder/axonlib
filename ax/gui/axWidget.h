@@ -35,6 +35,7 @@
 #define wa_Stacked      10
 
 // widget flags
+#define wf_None     0
 #define wf_Active   1
 #define wf_Visible  2
 #define wf_Capture  4
@@ -43,12 +44,13 @@
 #define wf_Vertical 32
 #define wf_Clip     64
 
-// widget options
-#define wo_Fill     1
-#define wo_Border   2
-#define wo_Bevel    4
-#define wo_Image    8
-#define wo_Text     16
+//// widget options
+//#define wo_None     0
+//#define wo_Fill     1
+//#define wo_Border   2
+//#define wo_Bevel    4
+//#define wo_Image    8
+//#define wo_Text     16
 
 //// widget states
 //#define ws_None   0
@@ -70,8 +72,10 @@ class axWidgetListener
 {
   public:
     virtual void onChange(axWidget* aWidget) {}
-    //virtual void onRedraw(axWidget* aWidget) {}
+    virtual void onRedraw(axWidget* aWidget) {}
     virtual void onCursor(int aCursor=DEF_PENWIDTH) {}
+    virtual void onHint(axString aHint) {}
+    virtual void onSize(int aDeltaX, int aDeltaY) {}
 };
 
 //----------------------------------------------------------------------
@@ -97,15 +101,13 @@ class axWidget : public axWidgetListener
     //int               mState;
     axRect            mOrig;
     axSkin*           mSkin;
-    int               mMinWidth;
-    int               mMaxWidth;
-    int               mMinHeight;
-    int               mMaxHeight;
-  protected: // painting
-    int       mOptions;
-    axImage*  mImage;
-    axString  mText;
-    int       mTextAlign;
+    int               mMinWidth, mMinHeight;
+    int               mMaxWidth, mMaxHeight;
+//  protected: // painting
+//    int       mOptions;
+//    axImage*  mImage;
+//    axString  mText;
+//    int       mTextAlign;
   public:
     int     mId;
     void*   mPtr;
@@ -116,7 +118,8 @@ class axWidget : public axWidgetListener
       {
         mListener   = aListener;
         mRect       = aRect;
-        mFlags      = wf_Active | wf_Visible | wf_Capture;// | wf_Clip;
+        //mFlags      = wf_Active | wf_Visible | wf_Capture;// | wf_Clip;
+        setAllFlags(wf_Active|wf_Visible|wf_Capture/*|wf_Clip*/);
         mAlignment  = aAlignment;
         mConnection = -1;
         mParameter  = NULL;
@@ -125,16 +128,16 @@ class axWidget : public axWidgetListener
         mOrig       = mRect;
         mSkin       = NULL;
         mMinWidth  = 0;
-        mMaxWidth  = 999999;
         mMinHeight = 0;
+        mMaxWidth  = 999999;
         mMaxHeight = 999999;
+//        //mOptions    = wo_Fill | wo_Border;
+//        setAllOptions(wo_None);
+//        mImage      = NULL;
+//        mText       = "wdgPanel";
+//        mTextAlign  = ta_Center;
         mId = 0;//aId;
         mPtr = NULL;//aPtr;
-        mOptions    = wo_Fill | wo_Border;
-        mImage      = NULL;
-        mText       = "wdgPanel";
-        mTextAlign  = ta_Center;
-
       }
 
     //virtual ~axWidget()
@@ -148,10 +151,10 @@ class axWidget : public axWidgetListener
     inline void clearFlag(int aFlag)    { mFlags &= ~aFlag; }
     inline bool hasFlag(int aFlag)      { return (mFlags&aFlag); }
 
-    inline void setOption(int aOption)      { mOptions |= aOption; }
-    inline void setAllOptions(int aOptions) { mOptions = aOptions; }
-    inline void clearOption(int aOption)    { mOptions &= ~aOption; }
-    inline bool hasOption(int aOption)      { return (mOptions&aOption); }
+//    inline void setOption(int aOption)      { mOptions |= aOption; }
+//    inline void setAllOptions(int aOptions) { mOptions = aOptions; }
+//    inline void clearOption(int aOption)    { mOptions &= ~aOption; }
+//    inline bool hasOption(int aOption)      { return (mOptions&aOption); }
 
     inline axRect       getRect(void) { return mRect; }
     inline int          getFlags(void) { return mFlags; }
@@ -167,9 +170,9 @@ class axWidget : public axWidgetListener
     inline axParameter* getParameter(void) { return mParameter; }
     inline void         setParameter(axParameter* aParameter) { mParameter=aParameter; }
 
-    inline void setText(axString aText, int aAlign=ta_Center) { mText=aText; mTextAlign=aAlign; }
-    inline void setImage(axImage* aImage) { mImage=aImage; }
-    inline void setSizeLimits(int minw, int minh, int maxw, int maxh) { mMinWidth=minw; mMinHeight=minh; mMaxWidth=maxw; mMaxHeight=maxh; }
+//    inline void setText(axString aText, int aAlign=ta_Center) { mText=aText; mTextAlign=aAlign; }
+//    inline void setImage(axImage* aImage) { mImage=aImage; }
+    inline void setSizeLimits(int minw, int minh, int maxw=999999, int maxh=999999) { mMinWidth=minw; mMinHeight=minh; mMaxWidth=maxw; mMaxHeight=maxh; }
 
     //--------------------------------------------------
     //
@@ -195,14 +198,14 @@ class axWidget : public axWidgetListener
     //
     //--------------------------------------------------
 
-    virtual void doMove(int aXpos, int aYpos)
+    virtual void doSetPos(int aXpos, int aYpos)
       {
         mRect.setPos(aXpos,aYpos);
       }
 
     //----------
 
-    virtual void doResize(int aWidth, int aHeight)
+    virtual void doSetSize(int aWidth, int aHeight)
       {
         if (aWidth < mMinWidth) aWidth = mMinWidth;
         if (aWidth > mMaxWidth) aWidth = mMaxWidth;
@@ -213,57 +216,75 @@ class axWidget : public axWidgetListener
 
     //----------
 
+    //virtual void doMove(int aDeltaX, int aDeltaY)
+    //  {
+    //    int x = mRect.x + aDeltaX;
+    //    int y = mRect.y + aDeltaY;
+    //    mRect.setPos(x,y);
+    //  }
+
+    //----------
+
+    virtual void doResize(int aDeltaX, int aDeltaY)
+      {
+        int w = mRect.w + aDeltaX;
+        int h = mRect.h + aDeltaY;
+        this->doSetSize(w,h);
+      }
+
+    //----------
+
     virtual void doRealign(void)
       {
       }
 
     //----------
 
-    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
-      {
-        if (mSkin)
-        {
-          // --- fill
-          if (mOptions&wo_Fill)
-          {
-            //aCanvas->setBrushColor(mFillColor);
-            aCanvas->setBrushColor( mSkin->mFillColor );
-            aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
-          }
-          // --- image
-          if (mOptions&wo_Image)
-          {
-            aCanvas->drawImage(mImage,0,0,mRect.x,mRect.y,mRect.w,mRect.h);
-          }
-          // --- border
-          if (mOptions&wo_Border)
-          {
-            //aCanvas->setPenColor(mLightColor);
-            aCanvas->setPenColor( mSkin->mBorderColor );
-            aCanvas->drawRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
-          }
-          else
-          // --- bevel
-          if (mOptions&wo_Bevel)
-          {
-            //aCanvas->setPenColor(mLightColor);
-            aCanvas->setPenColor( mSkin->mLightColor );
-            aCanvas->drawLine(mRect.x,   mRect.y,   mRect.x2()-1,mRect.y     );
-            aCanvas->drawLine(mRect.x,   mRect.y,   mRect.x,     mRect.y2()-1);
-            //aCanvas->setPenColor(mDarkColor);
-            aCanvas->setPenColor( mSkin->mDarkColor );
-            aCanvas->drawLine(mRect.x+1, mRect.y2(),mRect.x2(),  mRect.y2()  );
-            aCanvas->drawLine(mRect.x2(),mRect.y+1, mRect.x2(),  mRect.y2()  );
-          }
-          // --- text
-          if (mOptions&wo_Text)
-          {
-            //aCanvas->setPenColor(mTextColor);
-            aCanvas->setTextColor( mSkin->mTextColor );
-            aCanvas->drawText(mRect.x,mRect.y,mRect.x2(),mRect.y2(),mText,mTextAlign);
-          }
-        }
-      }
+    virtual void doPaint(axCanvas* aCanvas, axRect aRect) {}
+//      {
+//        if (mSkin)
+//        {
+//          // --- fill
+//          if (mOptions&wo_Fill)
+//          {
+//            //aCanvas->setBrushColor(mFillColor);
+//            aCanvas->setBrushColor( mSkin->mFillColor );
+//            aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
+//          }
+//          // --- image
+//          if (mOptions&wo_Image)
+//          {
+//            aCanvas->drawImage(mImage,0,0,mRect.x,mRect.y,mRect.w,mRect.h);
+//          }
+//          // --- border
+//          if (mOptions&wo_Border)
+//          {
+//            //aCanvas->setPenColor(mLightColor);
+//            aCanvas->setPenColor( mSkin->mBorderColor );
+//            aCanvas->drawRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
+//          }
+//          else
+//          // --- bevel
+//          if (mOptions&wo_Bevel)
+//          {
+//            //aCanvas->setPenColor(mLightColor);
+//            aCanvas->setPenColor( mSkin->mLightColor );
+//            aCanvas->drawLine(mRect.x,   mRect.y,   mRect.x2()-1,mRect.y     );
+//            aCanvas->drawLine(mRect.x,   mRect.y,   mRect.x,     mRect.y2()-1);
+//            //aCanvas->setPenColor(mDarkColor);
+//            aCanvas->setPenColor( mSkin->mDarkColor );
+//            aCanvas->drawLine(mRect.x+1, mRect.y2(),mRect.x2(),  mRect.y2()  );
+//            aCanvas->drawLine(mRect.x2(),mRect.y+1, mRect.x2(),  mRect.y2()  );
+//          }
+//          // --- text
+//          if (mOptions&wo_Text)
+//          {
+//            //aCanvas->setPenColor(mTextColor);
+//            aCanvas->setTextColor( mSkin->mTextColor );
+//            aCanvas->drawText(mRect.x,mRect.y,mRect.x2(),mRect.y2(),mText,mTextAlign);
+//          }
+//        }
+//      }
 
     //----------
 

@@ -46,17 +46,17 @@ class axWindow : public axWindowImpl
     //
     //----------------------------------------
 
-//    virtual void doMove(int aXpos, int aYpos) {}
+      //virtual void doSetPos(int aXpos, int aYpos) {}
 
-    virtual void doResize(int aWidth, int aHeight)
-      {
-        //trace("axWindow.DoResize " << aWidth << "," << aHeight);
-        //TODO: doRealign
-        mRect.w = aWidth;
-        mRect.h = aHeight;
-        if (mFlags&wf_Align) doRealign(); // widget flags
-      }
+      virtual void doSetSize(int aWidth, int aHeight)
+        {
+          mRect.w = aWidth;
+          mRect.h = aHeight;
+          if (mFlags&wf_Align) doRealign(); // widget flags
+        }
 
+      //virtual void doMove(int aDeltaX, int aDeltaY) {}
+      //virtual void doResize(int aDeltaX, int aDeltaY) {}
       //virtual void doRealign(void) {}
       //virtual void doPaint(axCanvas* aCanvas, axRect aRect) {}
       //virtual void doMouseDown(int aXpos, int aYpos, int aButton) {}
@@ -64,15 +64,21 @@ class axWindow : public axWindowImpl
       //virtual void doMouseMove(int aXpos, int aYpos, int aButton) {}
       //virtual void doKeyDown(int aKeyCode, int aState) {}
       //virtual void doKeyUp(int aKeyCode, int aState) {}
+      //virtual void doEnter(axWidget* aCapture) {}
+      //virtual void doLeave(axWidget* aCapture) {}
 
-      virtual void redrawRect(axRect aRect)         { invalidate( aRect.x, aRect.y, aRect.x2(), aRect.y2() ); }
-      virtual void redrawWidget(axWidget* aWidget)  { redrawRect(aWidget->getRect()); }
-
-      virtual void paramChanged(axParameter* aParameter) { /*wtrace("axWindow.paramChanged");*/ }
+      virtual void redrawAll(void)                        { invalidate( mRect.x, mRect.y, mRect.x2(), mRect.y2() ); }
+      virtual void redrawRect(axRect aRect)               { invalidate( aRect.x, aRect.y, aRect.x2(), aRect.y2() ); }
+      virtual void redrawWidget(axWidget* aWidget)        { redrawRect(aWidget->getRect()); }
+      virtual void paramChanged(axParameter* aParameter)  { /*wtrace("axWindow.paramChanged");*/ }
 
       // axWidgetListener
 
+      virtual void onChange(axWidget* aWidget) { redrawWidget(aWidget); }
+      virtual void onRedraw(axWidget* aWidget) { redrawWidget(aWidget); }
       virtual void onCursor(int aCursor) { setCursor(aCursor); }
+      virtual void onHint(axString aHint) {}
+      virtual void onSize(int aDeltaX, int aDeltaY) { doRealign(); redrawAll(); }
 
 };
 

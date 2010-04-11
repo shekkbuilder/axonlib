@@ -46,7 +46,7 @@ class axEditor : public axWindow
         mPlugin = aPlugin;
         axCanvas* can = getCanvas();
         mDefaultSkin = new axSkinDefault(can);
-        doSetSkin(mDefaultSkin);
+        doSetSkin(mDefaultSkin,true);
       }
 
     virtual ~axEditor()
@@ -72,6 +72,36 @@ class axEditor : public axWindow
 
     //----------
 
+    // only used internally (window/editor?)
+
+    //virtual void redrawAll(void)                        { invalidate( mRect.x, mRect.y, mRect.x2(), mRect.y2() ); }
+    //virtual void redrawRect(axRect aRect)               { invalidate( aRect.x, aRect.y, aRect.x2(), aRect.y2() ); }
+    //virtual void redrawWidget(axWidget* aWidget)        { redrawRect(aWidget->getRect()); }
+
+    // called from axEditor.onChange(axParameter) if editor is open
+    virtual void paramChanged(axParameter* aParameter)
+      {
+        int conn = aParameter->getConnection();
+        if (conn>=0)
+        {
+          axWidget* wdg = mConnections[conn].mWidget;
+          float val = aParameter->doGetValue();
+          wdg->setValue(val);
+          redrawWidget(wdg);
+        }
+      }
+
+
+    //----------
+
+    virtual void doSetSize(int aWidth, int aHeight)
+      {
+        if (mPlugin) mPlugin->notifyResizeEditor(aWidth,aHeight);
+        axWindow::doSetSize(aWidth,aHeight);
+      }
+
+    //----------
+
     virtual void onChange(axWidget* aWidget)
       {
         int conn = aWidget->getConnection();
@@ -91,23 +121,18 @@ class axEditor : public axWindow
         }
       }
 
+    //TODO: dirtyWidgets
+
+    //virtual void onRedraw(axWidget* aWidget) { redrawWidget(aWidget); }
+    //virtual void onCursor(int aCursor) { setCursor(aCursor); }
+    //virtual void onHint(axString aHint) {}
+    //virtual void onSize(int aDeltaX, int aDeltaY)
+
     //----------
 
-    // called from axEditor.onChange(axParameter) if editor is open
-
-    virtual void paramChanged(axParameter* aParameter)
-      {
-        int conn = aParameter->getConnection();
-        if (conn>=0)
-        {
-          axWidget* wdg = mConnections[conn].mWidget;
-          float val = aParameter->doGetValue();
-          wdg->setValue(val);
-          redrawWidget(wdg);
-        }
-      }
 
 };
 
 //----------------------------------------------------------------------
 #endif
+

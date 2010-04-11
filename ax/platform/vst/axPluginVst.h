@@ -953,6 +953,11 @@ class axPluginVst : public axPluginBase
         setParameterAutomated(aParameter->getIndex(),aParameter->getValue());
       }
 
+    //virtual void  notifyResizeEditor(int aWidth, int aHeight)
+    //  {
+    //    //sizeWindow()
+    //  }
+
 
     //--------------------------------------------------
 };

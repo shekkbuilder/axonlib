@@ -6,7 +6,7 @@
 #include <X11/Xutil.h>
 //#include <X11/cursorfont.h>
 #include <pthread.h>
-//#include <unistd.h>   // sleep
+#include <unistd.h>   // sleep
 
 #include "platform/axContext.h"
 #include "axDefines.h"
@@ -530,7 +530,7 @@ class axWindowLinux : public axWindowBase
         } //buffered
         //mRect.w = aWidth;
         //mRect.h = aHeight;
-        //doResize(aWidth,aHeight);
+        //doSetSize(aWidth,aHeight);
       }
 
     //----------
@@ -610,16 +610,37 @@ class axWindowLinux : public axWindowBase
     //
     //----------------------------------------
 
+//#define bu_None    0
+//#define bu_Left    1
+//#define bu_Right   2
+//#define bu_Middle  4
+//#define bu_Shift   8
+//#define bu_Ctrl    16
+//#define bu_Alt     32
+
     int remapButton(int aButton)
       {
-        return aButton;
+        int ret = bu_None;
+        switch (aButton)
+        {
+          case 1: ret = bu_Left;   break;
+          case 2: ret = bu_Middle; break;
+          case 3: ret = bu_Right;  break;
+        }
+        return ret;
       }
 
     //----------
 
     int remapKey(int aKey)
       {
-        return aKey;
+        int ret = 0;
+        if (aKey & 1) ret |= bu_Shift;
+        // 2 CapsLock
+        if (aKey & 4) ret |= bu_Ctrl;
+        if (aKey & 8) ret |= bu_Alt;
+        // 128 Alt Gr
+        return ret;
       }
 
     //----------------------------------------
@@ -646,7 +667,7 @@ class axWindowLinux : public axWindowBase
             }
             //wtrace(":: ConfigureNotify " << w << "," << h);
             resizeBuffer(w,h);
-            doResize(w,h);
+            doSetSize(w,h);
             break;
           case Expose:
             beginPaint();
@@ -684,7 +705,7 @@ class axWindowLinux : public axWindowBase
           case ClientMessage:
             val = ev->xclient.data.l[0];
             //wtrace("ClientMessage " << val);
-            if (val==ts_Timer) { doTimer(); }
+            if (val==ts_Timer) { /*wtrace("timer");*/ doTimer(); }
             break;
           case ButtonPress:
             but = remapButton(ev->xbutton.button);

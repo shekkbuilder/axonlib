@@ -27,7 +27,7 @@ class myEditor : public axEditor
       {
         stopTimer();
       }
-    virtual void onTimer()
+    virtual void doTimer(void)
       {
         //wtrace("onTimer");
         // (timers can happen anytime (triggered from a separate thread)
