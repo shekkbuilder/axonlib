@@ -76,6 +76,8 @@ class axParameter// : public axParameterBase
     inline int  getIndex(void)                      { return mIndex; }
     inline void setIndex(int aNum)                  { mIndex = aNum; }
 
+    inline axString getName(void) { return mName; }
+
     //----------
 
     virtual void setValue(float aValue) { mValue=aValue; }

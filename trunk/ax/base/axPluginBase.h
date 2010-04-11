@@ -21,6 +21,7 @@
 
 class axPluginBase// : public axParameterListener
 {
+  friend class axEditor;
   protected:
     int           mPlugFlags;
     axParameters  mParameters;
@@ -52,6 +53,7 @@ class axPluginBase// : public axParameterListener
     virtual void  setupEditor(int aWidth, int aHeight) {}
     virtual void  setupParameters(void) {}
     virtual void  notifyParamChanged(axParameter* aParameter) {}
+    virtual void  notifyResizeEditor(int aWidth, int aHeight) {}
 
   protected:
 

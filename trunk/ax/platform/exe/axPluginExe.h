@@ -11,8 +11,8 @@
 
 //----------------------------------------------------------------------
 
-class axPluginExe : public axPluginBase,
-                    public axWidgetListener
+class axPluginExe : public axPluginBase//,
+                    //public axWidgetListener
 {
   friend int main(void);
 

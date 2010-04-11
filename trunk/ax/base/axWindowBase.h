@@ -56,7 +56,9 @@ class axWindowBase : public axContainer
 
     //----------
 
-    virtual void doTimer() {}
+    virtual void doTimer(void)
+      {
+      }
 
     //----------
 

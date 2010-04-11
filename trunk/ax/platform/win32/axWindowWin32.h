@@ -91,7 +91,7 @@ class axWindowWin32 : public axWindowBase
 
         if (mWinFlags&AX_WIN_EMBEDDED)
         {
-          AdjustWindowRect(&rc,WS_POPUP,FALSE);
+          //AdjustWindowRect(&rc,WS_POPUP,FALSE);
           mWindow = CreateWindowEx(
             WS_EX_TOOLWINDOW,
             classname,
@@ -433,7 +433,7 @@ class axWindowWin32 : public axWindowBase
           }
           //mRect.w = aWidth;
           //mRect.h = aHeight;
-          //doResize(aWidth,aHeight);
+          //doSetSize(aWidth,aHeight);
         //} //newsize
       }
 
@@ -441,6 +441,7 @@ class axWindowWin32 : public axWindowBase
 
     // The BeginPaint function prepares the specified window for painting
     // and fills a PAINTSTRUCT structure with information about the painting
+    //
     //
     // The BeginPaint function automatically sets the clipping region of the device context
     // to exclude any area outside the update region. The update region is set by the InvalidateRect
@@ -506,6 +507,14 @@ class axWindowWin32 : public axWindowBase
     //
     //----------------------------------------
 
+//#define bu_None    0
+//#define bu_Left    1
+//#define bu_Right   2
+//#define bu_Middle  4
+//#define bu_Shift   8
+//#define bu_Ctrl    16
+//#define bu_Alt     32
+
     int remapButton(int aButton)
       {
         return aButton;
@@ -515,11 +524,11 @@ class axWindowWin32 : public axWindowBase
 
     int remapKey(int aKey)
       {
-        int result = bu_None;
-        if (aKey & MK_SHIFT) result |= bu_Shift;
-        if (aKey & MK_CONTROL) result |= bu_Ctrl;
-        if (GetKeyState(VK_MENU) < 0) result |= bu_Alt;
-        return result;
+        int ret = bu_None;
+        if (aKey & MK_SHIFT)        ret |= bu_Shift;
+        if (aKey & MK_CONTROL)      ret |= bu_Ctrl;
+        if (GetKeyState(VK_MENU)<0) ret |= bu_Alt;
+        return ret;
       }
 
       //------------------------------
@@ -628,7 +637,7 @@ class axWindowWin32 : public axWindowBase
             //{
               //flush();
               resizeBuffer(w,h);
-              doResize(w,h);
+              doSetSize(w,h);
             //}
             //}
             result = 0;
@@ -641,6 +650,7 @@ class axWindowWin32 : public axWindowBase
             }
             break;
           case WM_TIMER:
+            //wtrace("timer " << wParam);
             if (wParam==667)
             {
               //wtrace("axWIndowWin32.eventHandler :: timer");

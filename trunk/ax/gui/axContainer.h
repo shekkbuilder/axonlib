@@ -72,7 +72,9 @@ class axContainer : public axWidget
         mPaddingX = 0;
         mPaddingY = 0;
 
-        mFlags |= wf_Align;
+        setFlag(wf_Align);
+        //mFlags    |= wf_Align;
+        //mOptions  |= wo_Fill | wo_Border;
         //mFlags |= wf_Clip;
 
       }
@@ -91,7 +93,7 @@ class axContainer : public axWidget
     virtual void  appendWidget(axWidget* aWidget)
       {
         aWidget->doSetSkin(mSkin,false); // inherit skin
-        aWidget->doMove( mRect.x + aWidget->getRect().x, mRect.y + aWidget->getRect().y );
+        aWidget->doSetPos( mRect.x + aWidget->getRect().x, mRect.y + aWidget->getRect().y );
         mWidgets.append(aWidget);
 
       }
@@ -157,7 +159,7 @@ class axContainer : public axWidget
 
     //----------
 
-    virtual void doSetSkin(axSkin* aSkin, bool aSubWidgets=true)
+    virtual void doSetSkin(axSkin* aSkin, bool aSubWidgets=false)
       {
         //mSkin = aSkin;
         //axWidget::setSkin(aSkin,aSubWidgets);
@@ -170,7 +172,7 @@ class axContainer : public axWidget
 
     //----------
 
-    virtual void doMove(int aXpos, int aYpos)
+    virtual void doSetPos(int aXpos, int aYpos)
       {
         int deltax = aXpos - mRect.x;
         int deltay = aYpos - mRect.y;
@@ -179,19 +181,33 @@ class axContainer : public axWidget
           axWidget* wdg = mWidgets[i];
           int wx = wdg->getRect().x;
           int wy = wdg->getRect().y;
-          wdg->doMove( wx+deltax, wy+deltay );
+          wdg->doSetPos( wx+deltax, wy+deltay );
         }
         //mRect.setPos(aXpos,aYpos);
-        axWidget::doMove(aXpos,aYpos);
+        axWidget::doSetPos(aXpos,aYpos);
       }
 
     //----------
 
-    virtual void doResize(int aWidth, int aHeight)
+    virtual void doSetSize(int aWidth, int aHeight)
       {
-        //trace("axContaier.doResize");
+        //trace("axContaier.doSetSize");
         //mRect.setSize(aWidth,aHeight);
-        axWidget::doResize(aWidth,aHeight);
+        axWidget::doSetSize(aWidth,aHeight);
+        doRealign();
+      }
+
+    //----------
+
+    //virtual void doMove(int aDeltaX, int aDeltaY)
+    //  {
+    //  }
+
+    virtual void doResize(int aDeltaX, int aDeltaY)
+
+      {
+        axWidget::doResize(aDeltaX,aDeltaY);
+        //mListener->onSize(aDeltaX,aDeltaY);
         doRealign();
       }
 
@@ -205,7 +221,7 @@ class axContainer : public axWidget
           axWidget* wdg = mWidgets[i];
           int wx = wdg->getRect().x;
           int wy = wdg->getRect().y;
-          mWidgets[i]->doMove( wx + dX, wy + dY );
+          mWidgets[i]->doSetPos( wx + dX, wy + dY );
         }
       }
 
@@ -262,48 +278,48 @@ class axContainer : public axWidget
 
               // position relative to container
               case wa_None:
-                wdg->doMove(parent.x+ox,parent.y+oy);
+                wdg->doSetPos(parent.x+ox,parent.y+oy);
                 break;
               //case wal_Fill:
-              //  wdg->doMove( parent.x, parent.y );
-              //  wdg->doResize( parent.w, parent.h );
+              //  wdg->doSetPos(  parent.x, parent.y );
+              //  wdg->doSetSize( parent.w, parent.h );
               //  break;
 
               // stretch to fill entire client area
               case wa_Client:
-                wdg->doMove( client.x, client.y );
-                wdg->doResize( client.w, client.h );
+                wdg->doSetPos( client.x, client.y );
+                wdg->doSetSize( client.w, client.h );
                 break;
 
               //--- stretch ---
 
               // move to left edge, stretch vertical to client area height
               case wa_Left:
-                wdg->doMove( client.x, client.y );
-                wdg->doResize( ww, client.h );
+                wdg->doSetPos( client.x, client.y );
+                wdg->doSetSize( ww, client.h );
                 //ww = wdg->getRect().w;
                 client.x += (ww + mPaddingX);
                 client.w -= (ww + mPaddingX);
                 break;
               // move to right edge, stretch vertical to client area height
               case wa_Right:
-                wdg->doMove( client.x2()-ww+1, client.y );
-                wdg->doResize( ww, client.h );
+                wdg->doSetPos( client.x2()-ww+1, client.y );
+                wdg->doSetSize( ww, client.h );
                 //ww = wdg->getRect().w;
                 client.w -= (ww + mPaddingX);
                 break;
               // move to top, stretch horizontal to client area width
               case wa_Top:
-                wdg->doMove( client.x, client.y );
-                wdg->doResize( client.w, wh );
+                wdg->doSetPos( client.x, client.y );
+                wdg->doSetSize( client.w, wh );
                 //wh = wdg->getRect().h;
                 client.y += (wh + mPaddingY);
                 client.h -= (wh + mPaddingY);
                 break;
               // move to bottom, stretch horizontal to client area width
               case wa_Bottom:
-                wdg->doMove( client.x, client.y2()-wh+1 );
-                wdg->doResize( client.w, wh );
+                wdg->doSetPos( client.x, client.y2()-wh+1 );
+                wdg->doSetSize( client.w, wh );
                 //wh = wdg->getRect().w;
                 client.h -= (wh + mPaddingY);
                 break;
@@ -312,28 +328,28 @@ class axContainer : public axWidget
 
               // move to top-left, no resize
               case wa_LeftTop:
-                wdg->doMove( client.x, client.y );
-                //wdg->doResize( ww, C.h );
+                wdg->doSetPos( client.x, client.y );
+                //wdg->doSetSize( ww, C.h );
                 client.x += (ww + mPaddingX);
                 client.w -= (ww + mPaddingX);
                 break;
               // move to top-right, no resize
               case wa_RightTop:
-                wdg->doMove( client.x2()-ww+1, client.y );
-                //wdg->doResize( ww, C.h );
+                wdg->doSetPos( client.x2()-ww+1, client.y );
+                //wdg->doSetSize( ww, C.h );
                 client.w -= (ww + mPaddingX);
                 break;
               // move to bottom-left, no resize
               case wa_LeftBottom:
-                wdg->doMove( client.x, client.y2()-wh+1 );
-                //wdg->doResize( C.w, wh );
+                wdg->doSetPos( client.x, client.y2()-wh+1 );
+                //wdg->doSetSize( C.w, wh );
                 //C.y += wh;
                 client.h -= (wh+mPaddingY);
                 break;
               // move to bottom-right, no resize
               case wa_RightBottom:
-                wdg->doMove( client.x2()-ww+1, client.y2()-wh+1 );
-                //wdg->doResize( C.w, wh );
+                wdg->doSetPos( client.x2()-ww+1, client.y2()-wh+1 );
+                //wdg->doSetSize( C.w, wh );
                 client.h -= (wh+mPaddingY);
                 break;
 
@@ -342,7 +358,7 @@ class axContainer : public axWidget
 
               // stacked horizontal or vertical (depending on wf_Vertical flag)
               case wa_Stacked:
-                wdg->doMove(stackx,stacky);
+                wdg->doSetPos(stackx,stacky);
                 //TODO: fix
                 int w = ww + mPaddingX;
                 int h = wh + mPaddingY;
@@ -430,12 +446,15 @@ class axContainer : public axWidget
         }
         else
         {
+          if (isActive())
+          {
           axWidget* hover = doFindWidget(aXpos,aYpos);
           if (hover!=this)
           {
             if (mFlags&wf_Capture) mCapturedWidget = hover;
             hover->doMouseDown(aXpos,aYpos,aButton);
-          }
+          } //!hover
+          } //active
         } //!capture
         //axWidget::doMouseDown(aXpos,aYpos,aButton);
       }
@@ -451,8 +470,11 @@ class axContainer : public axWidget
         } //capture
         else
         {
-          axWidget* hover = doFindWidget(aXpos,aYpos);
-          if (hover!=this) hover->doMouseUp(aXpos,aYpos,aButton);
+          if (isActive())
+          {
+            axWidget* hover = doFindWidget(aXpos,aYpos);
+            if (hover!=this) hover->doMouseUp(aXpos,aYpos,aButton);
+          } //active
         }
         //axWidget::doMouseUp(aXpos,aYpos,aButton);
       }
@@ -461,15 +483,21 @@ class axContainer : public axWidget
 
     virtual void doMouseMove(int aXpos, int aYpos, int aButton)
       {
-        axWidget* hover = doFindWidget(aXpos,aYpos);
-        if (hover!=mHoverWidget)
+        if (mCapturedWidget)
         {
-          mHoverWidget->doLeave(mCapturedWidget);
-          mHoverWidget = hover;
-          mHoverWidget->doEnter(mCapturedWidget);
+          mCapturedWidget->doMouseMove(aXpos,aYpos,aButton);
         }
-        if (mCapturedWidget) mCapturedWidget->doMouseMove(aXpos,aYpos,aButton);
-        else if (hover!=this) hover->doMouseMove(aXpos,aYpos,aButton);
+        else
+        {
+          axWidget* hover = doFindWidget(aXpos,aYpos);
+          if (hover!=mHoverWidget)
+          {
+            mHoverWidget->doLeave(mCapturedWidget);
+            mHoverWidget = hover;
+            mHoverWidget->doEnter(mCapturedWidget);
+          }
+          if (hover!=this) hover->doMouseMove(aXpos,aYpos,aButton);
+        }
         //axWidget::doMouseMove(aXpos,aYpos,aButton);
       }
 
@@ -521,6 +549,21 @@ class axContainer : public axWidget
       {
         mListener->onCursor(aCursor);
       }
+
+    //virtual void onHint(axString aHint) {}
+
+    virtual void onSize(int aDeltaX, int aDeltaY)
+      {
+        //wtrace("axContainer.onSize");
+        int w = mRect.w + aDeltaX;
+        int h = mRect.h + aDeltaY;
+        axWidget::doSetSize(w,h);
+        //doSetSize(w,h);
+        mListener->onSize(aDeltaX,aDeltaY);
+        //mListener->onRedraw(this);
+        //doRealign();
+      }
+
 
 };
 

@@ -209,6 +209,7 @@
 		<Unit filename="../../ax/wdg/wdgScrollBar.h" />
 		<Unit filename="../../ax/wdg/wdgScrollBox.h" />
 		<Unit filename="../../ax/wdg/wdgShape.h" />
+		<Unit filename="../../ax/wdg/wdgSizer.h" />
 		<Unit filename="../../ax/wdg/wdgSlider.h" />
 		<Unit filename="../../ax/wdg/wdgTest.h" />
 		<Unit filename="../../ax/wdg/wdgTextList.h" />
