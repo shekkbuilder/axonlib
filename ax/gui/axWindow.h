@@ -78,7 +78,7 @@ class axWindow : public axWindowImpl
       virtual void onRedraw(axWidget* aWidget) { redrawWidget(aWidget); }
       virtual void onCursor(int aCursor) { setCursor(aCursor); }
       virtual void onHint(axString aHint) {}
-      virtual void onSize(int aDeltaX, int aDeltaY) { doRealign(); redrawAll(); }
+      virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY) { doRealign(); redrawAll(); }
 
 };
 

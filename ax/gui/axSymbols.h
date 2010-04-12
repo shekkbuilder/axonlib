@@ -1,5 +1,5 @@
-#ifndef axSymbol_included
-#define axSymbol_included
+#ifndef axSymbols_included
+#define axSymbols_included
 //----------------------------------------------------------------------
 /*
   TODO:

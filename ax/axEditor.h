@@ -4,6 +4,7 @@
 
 #include "axPlugin.h"
 #include "gui/axWindow.h"
+#include "gui/axSkinDefault.h"
 
 //----------------------------------------------------------------------
 //
@@ -131,7 +132,7 @@ class axEditor : public axWindow
     //virtual void onRedraw(axWidget* aWidget) { redrawWidget(aWidget); }
     //virtual void onCursor(int aCursor) { setCursor(aCursor); }
     //virtual void onHint(axString aHint) {}
-    //virtual void onSize(int aDeltaX, int aDeltaY)
+    //virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY)
 
     //----------
 

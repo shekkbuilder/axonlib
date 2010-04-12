@@ -5,7 +5,7 @@
 #include "axPlugin.h"
 #include "axEditor.h"
 
-#include "gui/axSymbol.h"
+#include "gui/axSymbols.h"
 
 #include "wdg/wdgPanel.h"
 #include "wdg/wdgSizer.h"
@@ -18,12 +18,15 @@
 #include "wdg/wdgKnob.h"
 #include "wdg/wdgScrollBar.h"
 #include "wdg/wdgScrollBox.h"
+#include "wdg/wdgGroupBox.h"
 
 //----------------------------------------------------------------------
 //
-//
+// some symbols
 //
 //----------------------------------------------------------------------
+
+// move to axStdSymbols.h ?
 
 char* symbol0 = (char*) "........"
                         "........"
@@ -108,28 +111,26 @@ class myEditor : public axEditor
 {
   friend class myPlugin;
   private:
-    int         mNumTimer;
-    char        timerText[32];
-    char        label_buf[256][8];
-    axBitmap*   mBitmap;
-    axBitmap*   mBitmap2;
-    axSurface*  mImgSurf;
-    axSurface*  mSymSurf;
-    axSymbols*  mSymbols;
-    wdgPanel*   wClient;
-    wdgSizer*   wSizer;
-    wdgPanel*   wLeft;
+    int           mNumTimer;
+    char          timerText[32];
+    char          label_buf[256][8];
+    axBitmap*     mBitmap;
+    axBitmap*     mBitmap2;
+    axSurface*    mImgSurf;
+    axSurface*    mSymSurf;
+    axSymbols*    mSymbols;
+    wdgPanel*     wClient;
+    wdgSizer*     wSizer;
+    wdgPanel*     wLeft;
+    wdgScrollBox* wCenter;
 
-    //wdgPanel*   wCenter;
-    wdgScrollBox*   wCenter;
-
-    wdgPanel*   wRight;
-    wdgLabel*   wNumTimer;
-    wdgLabel*   wNumIdle;
-    wdgLabel*   wNumBlock;
+    wdgPanel*     wRight;
+    wdgLabel*     wNumTimer;
+    wdgLabel*     wNumIdle;
+    wdgLabel*     wNumBlock;
   public: // HACK
-    wdgKnob*    wKnob1;
-    wdgValue*   wVal1;
+    wdgKnob*      wKnob1;
+    wdgValue*     wVal1;
 
   public:
 
@@ -139,9 +140,7 @@ class myEditor : public axEditor
         axCanvas*     can;
         axContainer*  con;
         axWidget*     wdg;
-        //wdgLabel*     lab;
         wdgScrollBar* scr;
-        //wdgScrollBox* sb;
         //-----
         mNumTimer = 0;
         // --- bitmap
@@ -195,7 +194,9 @@ class myEditor : public axEditor
         //appendWidget( wClient = new wdgPanel(this,NULL_RECT,wa_Client) );
         //  wClient->setBorders(10,10,5,5);
         #define wClient this
+
           // --- left ---
+
           wClient->appendWidget( wLeft = new wdgPanel(this,axRect(0,0,200,0),wa_Left) );
             wLeft->setBorders(10,10,5,5);
             wLeft->setFlag(wf_Clip);
@@ -204,7 +205,10 @@ class myEditor : public axEditor
             wLeft->appendWidget(          new wdgLabel(     this,axRect(0,0,  0, 16), wa_Top,          "label ",ta_Right) );
             wLeft->appendWidget(          new wdgPanel(     this,axRect(0,0,  0, 20), wa_Top) );
             wLeft->appendWidget( con =    new wdgPanel(     this,axRect(0,0,  0, 32), wa_Top) );
-              con->appendWidget( new wdgLabel(this,NULL_RECT,wa_Client,"label in panel"));
+              con->appendWidget( new wdgLabel(this,NULL_RECT,wa_Client,"panel"));
+
+            wLeft->appendWidget( new wdgGroupBox(this,axRect(0,0,0,100), wa_Top) );
+
             wLeft->appendWidget(          new wdgSlider(    this,axRect(0,0,  0, 20), wa_Top,          "slider") );
             wLeft->appendWidget( wdg =    new wdgSlider(    this,axRect(0,0, 20,  0 ),wa_Left,         "slider") );
               wdg->setFlag(wf_Vertical);
@@ -218,15 +222,17 @@ class myEditor : public axEditor
             wLeft->appendWidget( scr =    new wdgScrollBar( this,axRect(0,0,  0, 20), wa_Top) );
               scr->setThumbSize(0.2);
             wLeft->appendWidget( con =    new wdgImage(     this,axRect(0,0,100,100), wa_LeftTop,      mImgSurf) );
-              con->appendWidget( new wdgLabel(this,axRect(0,0,100,100),wa_Client,"label in image"));
+              con->appendWidget( new wdgLabel(this,axRect(0,0,100,100),wa_Client,"image [surface]"));
             wLeft->appendWidget( con =    new wdgBitmap(    this,axRect(0,0,100,100), wa_RightBottom,  mBitmap2) );
-              con->appendWidget( new wdgLabel(this,axRect(0,0,100,100),wa_Client,"label in bitmap"));
+              con->appendWidget( new wdgLabel(this,axRect(0,0,100,100),wa_Client,"bitmap"));
 
           // --- sizer ---
+
           wClient->appendWidget( wSizer = new wdgSizer(this,axRect(0,0,5,0),wa_Left) );
             wSizer->setTarget(wLeft);
 
           // --- right ---
+
           wClient->appendWidget( wRight = new wdgPanel(this,axRect(0,0,180,0),wa_Right) );
             wRight->setBorders(10,10,5,5);
             //wRight->setFlag(wf_Clip);
@@ -235,6 +241,7 @@ class myEditor : public axEditor
             wRight->appendWidget( wNumBlock = new wdgLabel( this,axRect(0,0,0,16), wa_Top,"doProcessBlock : 0",ta_Left) );
 
           // --- center ---
+
           //wClient->appendWidget( wCenter = new wdgPanel(this,NULL_RECT,wa_Client) );
           wClient->appendWidget( wCenter = new wdgScrollBox(this,NULL_RECT,wa_Client) );
             wCenter->setBorders(5,5);
@@ -242,22 +249,25 @@ class myEditor : public axEditor
             //wCenter->doSetSkin(mDefaultSkin,true);
             wCenter->setFlag(wf_Clip);
             //wCenter->setFlag(wf_Vertical);
-
             //wCenter->appendWidget( con = new wdgScrollBox(this,NULL_RECT,wa_Client) );
-
             for (int i=0; i<256; i++)
             {
-              wdgKnob* kn;
-              //wCenter->appendWidget( lab = new wdgLabel(this,axRect(0,0,30,20),wa_Stacked) );
-              wCenter->appendWidget( kn = new wdgKnob(this,axRect(0,0,64,30),wa_Stacked) );
+              wdgLabel* la;
+              wCenter->appendWidget( la = new wdgLabel(this,axRect(0,0,30,20),wa_Stacked) );
+              //wdgKnob* kn;
+              //wCenter->appendWidget( kn = new wdgKnob(this,axRect(0,0,64,30),wa_Stacked) );
+              //wdgValue* va;
+              //wCenter->appendWidget( va = new wdgValue(this,axRect(0,0,64,16),wa_Stacked) );
                 sprintf(label_buf[i],"%i",i+1);
-                //lab->setText(label_buf[i],ta_Center);
-                kn->setName(label_buf[i]);
-
+                la->setText(label_buf[i],ta_Center);
+                //kn->setName(label_buf[i]);
+                //va->setName(label_buf[i]);
             }
             wCenter->doSetSkin(mDefaultSkin,true);
             //wCenter->doRealign();
+
           // ---
+
         #undef wClient
 
         //doSetSkin(mDefaultSkin,true);
@@ -387,7 +397,7 @@ class myPlugin : public axPlugin
 
     virtual void  doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3)
       {
-        wtrace("doProcessMidi "/*<<ofs<<" : "<<msg1<<","<<msg2<<","<<msg3*/);
+        wtrace("doProcessMidi "<<ofs<<" : "<<(int)msg1<<","<<(int)msg2<<","<<(int)msg3);
       }
 
     virtual bool  doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize)
@@ -396,9 +406,12 @@ class myPlugin : public axPlugin
         return false;
       }
 
-    //virtual void  doProcessSample(SPL** aInputs, SPL** aOutputs)
-    //  {
-    //  }
+    virtual void  doProcessSample(SPL** aInputs, SPL** aOutputs)
+      {
+        // noise
+        *aOutputs[0] = axRandomSigned();
+        *aOutputs[1] = axRandomSigned();
+      }
 
     //virtual void  doPostProcess(SPL** aInputs, SPL** aOutputs, int aSize)
     //  {

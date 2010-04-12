@@ -6,8 +6,10 @@ platform / os
 - mac support?
 
 - axCanvas[Win32/Linux]
-  clipping rectangles not working properly
-  most problematic on win32
+  clipping rectangles not working properly, most problematic on win32
+  i think it is happening because when we're returning from a
+  container's doPaint, we reset the clipping rectangle.
+  we could perhaps have some rect stack that we can push and pop to/from
   
 ----------------------------------------------------------------------
 gui

@@ -4,13 +4,6 @@
 
 #include "axDefines.h"
 #include "core/axArray.h"
-//#include "base/axColorBase.h"
-
-//----------
-
-//#ifdef AX_LINUX
-//  #include "x11/axColorX11.h"
-//#endif
 
 //----------------------------------------------------------------------
 
@@ -26,7 +19,7 @@
 #define AX_GREEN            0, 255,   0
 #define AX_CYAN             0, 255, 255
 #define AX_BLUE             0,   0, 255
-#define AX_MAGENTA       255,   0, 255
+#define AX_MAGENTA        255,   0, 255
 
 #define AX_RED_DARK       128,   0,   0
 #define AX_ORANGE_DARK    128,  64,   0
