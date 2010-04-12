@@ -16,6 +16,7 @@
 #include "wdg/wdgImage.h"
 #include "wdg/wdgBitmap.h"
 #include "wdg/wdgKnob.h"
+#include "wdg/wdgScrollBar.h"
 
 //----------------------------------------------------------------------
 //
@@ -131,10 +132,11 @@ class myEditor : public axEditor
     myEditor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
       {
+        axCanvas*     can;
         axContainer*  con;
         axWidget*     wdg;
         wdgLabel*     lab;
-        axCanvas*     can;
+        wdgScrollBar* scr;
         //-----
         mNumTimer = 0;
         // --- bitmap
@@ -192,26 +194,33 @@ class myEditor : public axEditor
           wClient->appendWidget( wLeft = new wdgPanel(this,axRect(0,0,200,0),wa_Left) );
             wLeft->setBorders(10,10,5,5);
             wLeft->setFlag(wf_Clip);
-            wLeft->appendWidget(          new wdgLabel( this,axRect(0,0,  0, 16), wa_Top,          "") );
-            wLeft->appendWidget(          new wdgLabel( this,axRect(0,0,  0, 16), wa_Top,          "label ",ta_Left) );
-            wLeft->appendWidget(          new wdgLabel( this,axRect(0,0,  0, 16), wa_Top,          "label ",ta_Right) );
-            wLeft->appendWidget(          new wdgPanel( this,axRect(0,0,  0, 20), wa_Top) );
-            wLeft->appendWidget( con =    new wdgPanel( this,axRect(0,0,  0, 32), wa_Top) );
+            wLeft->appendWidget(          new wdgLabel(     this,axRect(0,0,  0, 16), wa_Top,          "") );
+            wLeft->appendWidget(          new wdgLabel(     this,axRect(0,0,  0, 16), wa_Top,          "label ",ta_Left) );
+            wLeft->appendWidget(          new wdgLabel(     this,axRect(0,0,  0, 16), wa_Top,          "label ",ta_Right) );
+            wLeft->appendWidget(          new wdgPanel(     this,axRect(0,0,  0, 20), wa_Top) );
+            wLeft->appendWidget( con =    new wdgPanel(     this,axRect(0,0,  0, 32), wa_Top) );
               con->appendWidget( new wdgLabel(this,NULL_RECT,wa_Client,"label in panel"));
-            wLeft->appendWidget(          new wdgSlider(this,axRect(0,0,  0, 20), wa_Top,          "slider") );
-            wLeft->appendWidget( wdg =    new wdgSlider(this,axRect(0,0, 20,  0 ),wa_Left,         "slider") );
+            wLeft->appendWidget(          new wdgSlider(    this,axRect(0,0,  0, 20), wa_Top,          "slider") );
+            wLeft->appendWidget( wdg =    new wdgSlider(    this,axRect(0,0, 20,  0 ),wa_Left,         "slider") );
               wdg->setFlag(wf_Vertical);
-            wLeft->appendWidget(          new wdgButton(this,axRect(0,0,  0, 20), wa_Top,          false, "switch OFF","switch ON") );
-            wLeft->appendWidget(          new wdgButton(this,axRect(0,0,  0, 20), wa_Top,          false, "button","release...",ta_Center,bm_Spring) );
-            wLeft->appendWidget( wVal1 =  new wdgValue( this,axRect(0,0, 80, 20), wa_Top,          "value", 0) );
-            wLeft->appendWidget( wKnob1 = new wdgKnob(  this,axRect(0,0, 30, 30), wa_Top,          "knob", 0) );
-            wLeft->appendWidget( con =    new wdgImage( this,axRect(0,0,100,100), wa_LeftTop,      mImgSurf) );
+            wLeft->appendWidget( scr =    new wdgScrollBar( this,axRect(0,0, 20,0 ),wa_Left ) );
+              scr->setFlag(wf_Vertical);
+              scr->setThumbSize(0.4);
+            wLeft->appendWidget(          new wdgButton(    this,axRect(0,0,  0, 20), wa_Top,          false, "switch OFF","switch ON") );
+            wLeft->appendWidget(          new wdgButton(    this,axRect(0,0,  0, 20), wa_Top,          false, "button","release...",ta_Center,bm_Spring) );
+            wLeft->appendWidget( wVal1 =  new wdgValue(     this,axRect(0,0, 80, 20), wa_Top,          "value", 0) );
+            wLeft->appendWidget( wKnob1 = new wdgKnob(      this,axRect(0,0, 30, 30), wa_Top,          "knob", 0) );
+            wLeft->appendWidget( scr =    new wdgScrollBar( this,axRect(0,0,  0, 20), wa_Top) );
+              scr->setThumbSize(0.2);
+            wLeft->appendWidget( con =    new wdgImage(     this,axRect(0,0,100,100), wa_LeftTop,      mImgSurf) );
               con->appendWidget( new wdgLabel(this,axRect(0,0,100,100),wa_Client,"label in image"));
-            wLeft->appendWidget( con =    new wdgBitmap(this,axRect(0,0,100,100), wa_RightBottom,  mBitmap2) );
+            wLeft->appendWidget( con =    new wdgBitmap(    this,axRect(0,0,100,100), wa_RightBottom,  mBitmap2) );
               con->appendWidget( new wdgLabel(this,axRect(0,0,100,100),wa_Client,"label in bitmap"));
+
           // --- sizer ---
           wClient->appendWidget( wSizer = new wdgSizer(this,axRect(0,0,5,0),wa_Left) );
             wSizer->setTarget(wLeft);
+
           // --- right ---
           wClient->appendWidget( wRight = new wdgPanel(this,axRect(0,0,180,0),wa_Right) );
             wRight->setBorders(10,10,5,5);
@@ -219,11 +228,15 @@ class myEditor : public axEditor
             wRight->appendWidget( wNumTimer = new wdgLabel( this,axRect(0,0,0,16), wa_Top,"doTimer : 0",    ta_Left) );
             wRight->appendWidget( wNumIdle  = new wdgLabel( this,axRect(0,0,0,16), wa_Top,"effEditIdle : 0",ta_Left) );
             wRight->appendWidget( wNumBlock = new wdgLabel( this,axRect(0,0,0,16), wa_Top,"doProcessBlock : 0",ta_Left) );
+
           // --- center ---
           wClient->appendWidget( wCenter = new wdgPanel(this,NULL_RECT,wa_Client) );
             wCenter->setBorders(10,10,5,5);
             wCenter->setFlag(wf_Clip);
             //wCenter->setFlag(wf_Vertical);
+//            wCenter->appendWidget( wdg =    new wdgScrollBar( this,axRect(0,0, 20,100 ),wa_Left ) );
+//              wdg->setFlag(wf_Vertical);
+
             for (int i=0; i<50; i++)
             {
               wCenter->appendWidget( lab = new wdgLabel(this,axRect(0,0,20,20),wa_Stacked) );
@@ -329,9 +342,20 @@ class myPlugin : public axPlugin
 
     //---------- plugin ----------
 
-    virtual void  doStateChange(int aState)               { wtrace("doStateChange " << aState); }
-    virtual void  doTransportChange(int aState)           { wtrace("doTransportChange " << aState); }
-    virtual void  doSetProgram(int aProgram)              { wtrace("doSetProgram " << aProgram); }
+    virtual void  doStateChange(int aState)
+      {
+        wtrace("doStateChange " << aState);
+      }
+
+    virtual void  doTransportChange(int aState)
+      {
+        wtrace("doTransportChange " << aState);
+      }
+
+    virtual void  doSetProgram(int aProgram)
+      {
+        wtrace("doSetProgram " << aProgram);
+      }
 
     virtual void  doSetParameter(axParameter* aParameter)
       {
@@ -340,15 +364,30 @@ class myPlugin : public axPlugin
         wtrace("doSetParameter " << aParameter->getName().ptr() << " = " << aParameter->getValue() << " (" << buf << ")");
       }
 
-    //virtual bool  doProcessEvents(void)                   { /*wtrace("doProcessEvents");*/ return false;}
-    virtual void  doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3) { wtrace("doProcessMidi "/*<<ofs<<" : "<<msg1<<","<<msg2<<","<<msg3*/); }
+    //virtual bool  doProcessEvents(void)
+    //  {
+    //    /*wtrace("doProcessEvents");*/
+    //    return false;
+    //  }
+
+    virtual void  doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3)
+      {
+        wtrace("doProcessMidi "/*<<ofs<<" : "<<msg1<<","<<msg2<<","<<msg3*/);
+      }
+
     virtual bool  doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize)
       {
         mNumBlock++;
         return false;
       }
-    //virtual void  doProcessSample(SPL** aInputs, SPL** aOutputs) {}
-    //virtual void  doPostProcess(SPL** aInputs, SPL** aOutputs, int aSize) {}
+
+    //virtual void  doProcessSample(SPL** aInputs, SPL** aOutputs)
+    //  {
+    //  }
+
+    //virtual void  doPostProcess(SPL** aInputs, SPL** aOutputs, int aSize)
+    //  {
+    //  }
 
     //---------- editor ----------
 
@@ -356,10 +395,8 @@ class myPlugin : public axPlugin
       {
         wtrace("doOpenEditor");
         mEditor = new myEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
-
         mEditor->connect(mEditor->wKnob1,pValue1);
         mEditor->connect(mEditor->wVal1,pValue2);
-
         mEditor->show();
         return mEditor;
       }
