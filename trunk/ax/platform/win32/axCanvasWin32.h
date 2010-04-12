@@ -164,7 +164,8 @@ class axCanvasWin32 : public axCanvasBase
 
     virtual void resetPen(void)
       {
-        SelectObject(mDC,mOldPen);
+        HPEN prev = (HPEN)SelectObject(mDC,mOldPen);
+        DeleteObject(prev);
       }
 
     virtual void clearBrush(void)
@@ -174,7 +175,8 @@ class axCanvasWin32 : public axCanvasBase
 
     virtual void resetBrush(void)
       {
-        SelectObject(mDC,mOldBrush);
+        HBRUSH prev = (HBRUSH)SelectObject(mDC,mOldBrush);
+        DeleteObject(prev);
       }
 
     // internal

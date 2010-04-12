@@ -17,6 +17,7 @@
 #include "wdg/wdgBitmap.h"
 #include "wdg/wdgKnob.h"
 #include "wdg/wdgScrollBar.h"
+#include "wdg/wdgScrollBox.h"
 
 //----------------------------------------------------------------------
 //
@@ -118,7 +119,10 @@ class myEditor : public axEditor
     wdgPanel*   wClient;
     wdgSizer*   wSizer;
     wdgPanel*   wLeft;
-    wdgPanel*   wCenter;
+
+    //wdgPanel*   wCenter;
+    wdgScrollBox*   wCenter;
+
     wdgPanel*   wRight;
     wdgLabel*   wNumTimer;
     wdgLabel*   wNumIdle;
@@ -135,8 +139,9 @@ class myEditor : public axEditor
         axCanvas*     can;
         axContainer*  con;
         axWidget*     wdg;
-        wdgLabel*     lab;
+        //wdgLabel*     lab;
         wdgScrollBar* scr;
+        //wdgScrollBox* sb;
         //-----
         mNumTimer = 0;
         // --- bitmap
@@ -230,22 +235,32 @@ class myEditor : public axEditor
             wRight->appendWidget( wNumBlock = new wdgLabel( this,axRect(0,0,0,16), wa_Top,"doProcessBlock : 0",ta_Left) );
 
           // --- center ---
-          wClient->appendWidget( wCenter = new wdgPanel(this,NULL_RECT,wa_Client) );
-            wCenter->setBorders(10,10,5,5);
+          //wClient->appendWidget( wCenter = new wdgPanel(this,NULL_RECT,wa_Client) );
+          wClient->appendWidget( wCenter = new wdgScrollBox(this,NULL_RECT,wa_Client) );
+            wCenter->setBorders(5,5);
+            wCenter->getContainer()->setBorders(10,10,5,5);
+            //wCenter->doSetSkin(mDefaultSkin,true);
             wCenter->setFlag(wf_Clip);
             //wCenter->setFlag(wf_Vertical);
-//            wCenter->appendWidget( wdg =    new wdgScrollBar( this,axRect(0,0, 20,100 ),wa_Left ) );
-//              wdg->setFlag(wf_Vertical);
 
-            for (int i=0; i<50; i++)
+            //wCenter->appendWidget( con = new wdgScrollBox(this,NULL_RECT,wa_Client) );
+
+            for (int i=0; i<256; i++)
             {
-              wCenter->appendWidget( lab = new wdgLabel(this,axRect(0,0,20,20),wa_Stacked) );
+              wdgKnob* kn;
+              //wCenter->appendWidget( lab = new wdgLabel(this,axRect(0,0,30,20),wa_Stacked) );
+              wCenter->appendWidget( kn = new wdgKnob(this,axRect(0,0,64,30),wa_Stacked) );
                 sprintf(label_buf[i],"%i",i+1);
-                lab->setText(label_buf[i],ta_Center);
+                //lab->setText(label_buf[i],ta_Center);
+                kn->setName(label_buf[i]);
+
             }
+            wCenter->doSetSkin(mDefaultSkin,true);
+            //wCenter->doRealign();
           // ---
         #undef wClient
 
+        //doSetSkin(mDefaultSkin,true);
         doRealign();
         startTimer(100);
       }
@@ -328,7 +343,7 @@ class myPlugin : public axPlugin
         mNumBlock = 0;
         describe("test_widgets","ccernn","axonlibe example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);
-        setupEditor(600,600);
+        setupEditor(800,600);
         appendParameter( pValue1 = new axParameter(this,"value1","") );
         appendParameter( pValue2 = new axParameter(this,"value2","") );
         setupParameters();
