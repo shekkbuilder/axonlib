@@ -180,6 +180,9 @@ class axWidget : public axWidgetListener
     //
     //--------------------------------------------------
 
+    //virtual void  doSetValue(float aValue) { mValue=aValue; }
+    //virtual float doGetValue(void) { return mValue; }
+
     virtual axWidget* doFindWidget(int aXpos, int aYpos)
       {
         return this;

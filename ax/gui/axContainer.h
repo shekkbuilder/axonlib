@@ -82,7 +82,12 @@ class axContainer : public axWidget
 
     //--------------------------------------------------
 
-    inline axRect getContent(void) { return mContent; }
+    inline axRect     getContent(void)      { return mContent; }
+
+    //inline int        getNumWidgets(void)   { return mWidgets.size(); }
+    //inline axWidget*  getWidget(int aIndex) { return mWidgets[aIndex]; }
+    virtual int        getNumWidgets(void)   { return mWidgets.size(); }
+    virtual axWidget*  getWidget(int aIndex) { return mWidgets[aIndex]; }
 
     //--------------------------------------------------
 
@@ -435,13 +440,11 @@ class axContainer : public axWidget
         {
           if (mRect.intersects(aRect))
           {
-            axWidget::doPaint(aCanvas,aRect);
-
+            //axWidget::doPaint(aCanvas,aRect);
             if (mFlags&wf_Clip)
             {
               aCanvas->setClipRect(mRect.x+mMarginX,mRect.y+mMarginY,mRect.x2()-mMarginX,mRect.y2()-mMarginY);
             }
-
             for (int i=0; i<mWidgets.size(); i++)
             {
               axWidget* wdg = mWidgets[i];
