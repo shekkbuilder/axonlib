@@ -16,12 +16,21 @@
 
 #define AX_WIN_DEFAULT (AX_WIN_BUFFERED|AX_WIN_MSGTHREAD|AX_WIN_EMBEDDED)
 
-
 // plugin states
 #define ps_Open     1
 #define ps_Close    2
 #define ps_Suspend  3
 #define ps_Resume   4
+
+//#define MAX_CHANS 64
+#define MAX_MIDI_SEND 1024
+
+struct axVstEvents
+{
+  VstInt32  numEvents;
+  VstIntPtr reserved;
+  VstEvent* events[MAX_MIDI_SEND];
+};
 
 //----------------------------------------------------------------------
 
@@ -41,19 +50,30 @@ class axPluginVst : public axPluginBase
 
   private:
     audioMasterCallback audioMaster;
-    AEffect   aeffect;
-    ERect     rect;
+    AEffect       aeffect;
+    ERect         rect;
+    VstTimeInfo*  mTimeInfo;
+    axVstEvents   mMidiEventList;
+    VstEvent      mMidiEvents[MAX_MIDI_SEND];
 //    axContext ctx;//mContext;
   private:
-    char      mEffectName[kVstMaxEffectNameLen];
-    char      mVendorString[kVstMaxVendorStrLen];
-    char      mProductString[kVstMaxProductStrLen];
-    int       mVendorVersion;
+    char        mEffectName[kVstMaxEffectNameLen];
+    char        mVendorString[kVstMaxVendorStrLen];
+    char        mProductString[kVstMaxProductStrLen];
+    int         mVendorVersion;
   //protected:
-    char      mProgramName[kVstMaxProgNameLen];
-    VstInt32  mCurrentProgram;
-    float     mSampleRate;
-    VstInt32  mBlockSize;
+    char        mProgramName[kVstMaxProgNameLen];
+    VstInt32    mCurrentProgram;
+    //float     mSampleRate;
+    //VstInt32  mBlockSize;
+
+    int           mPlayState;
+    double        mSamplePos;
+    double        mSampleRate;
+    double        mBeatPos;
+    double        mTempo;
+    long          mBlockSize;
+
 
   //--------------------------------------------------
   private:
@@ -117,6 +137,9 @@ class axPluginVst : public axPluginBase
         mCurrentProgram = 0;
         mEditorOpen = false;
         mEditorRect = axRect(0,0,256,256);
+        mMidiEventList.numEvents = 0;
+        mMidiEventList.reserved  = 0;
+        for( int i=0; i<MAX_MIDI_SEND; i++ ) mMidiEventList.events[i] = &mMidiEvents[i];
 
         canProcessReplacing();
 
@@ -128,7 +151,8 @@ class axPluginVst : public axPluginBase
         aeffect.setParameter            = setParameter_callback;
         aeffect.getParameter            = getParameter_callback;
         aeffect.processReplacing        = processReplacing_callback;
-        aeffect.processDoubleReplacing  = processDoubleReplacing_callback;
+      //aeffect.processDoubleReplacing  = processDoubleReplacing_callback;
+        aeffect.processDoubleReplacing  = NULL;
         aeffect.flags                   = effFlagsCanReplacing;
         aeffect.version                 = 1;
         aeffect.uniqueID                = AX_MAGIC;
@@ -204,6 +228,7 @@ class axPluginVst : public axPluginBase
     // @see AudioEffect::setParameterAutomated
     void setParameterAutomated(VstInt32 index, float value)
       {
+        //wtrace("  axPluginVst.setParameterAutomated  index: " << index << " value: " << value);
         audioMaster(&aeffect,audioMasterAutomate,index,0,0,value);
 //        setParameter(index,value);
       }
@@ -243,7 +268,26 @@ class axPluginVst : public axPluginBase
 
     //
     //audioMasterGetTime,				            // [return value]: #VstTimeInfo* or null if not supported [value]: request mask  @see VstTimeInfoFlags @see AudioEffectX::getTimeInfo
+    VstTimeInfo* getTime(VstInt32 filter)
+      {
+        if (audioMaster)
+        {
+          VstIntPtr ret = audioMaster (&aeffect,audioMasterGetTime,0,filter,0,0);
+          return FromVstPtr<VstTimeInfo> (ret);
+        }
+        return 0;
+      }
+
     //audioMasterProcessEvents,		          // [ptr]: pointer to #VstEvents  @see VstEvents @see AudioEffectX::sendVstEventsToHost
+    // Can be called inside processReplacing.
+    // param events Fill with VST events
+    // return Returns \e true on success
+    bool processEvents(VstEvents* events)
+      {
+        if (audioMaster) return audioMaster(&aeffect,audioMasterProcessEvents,0,0,events,0)==1;
+        return 0;
+      }
+
     //audioMasterIOChanged,			            // [return value]: 1 if supported  @see AudioEffectX::ioChanged
     //audioMasterSizeWindow,			          // [index]: new width [value]: new height [return value]: 1 if supported  @see AudioEffectX::sizeWindow
     //audioMasterGetSampleRate,		          // [return value]: current sample rate  @see AudioEffectX::updateSampleRate
@@ -272,6 +316,54 @@ class axPluginVst : public axPluginBase
 
     //----------------------------------------
     //
+    // midi
+    //
+    //----------------------------------------
+
+    // [internal]
+    void sendMidiClear(void)
+      {
+        mMidiEventList.numEvents = 0;
+      }
+
+    //----------
+
+    // [internal]
+    void sendMidiAll(void)
+      {
+        int num = mMidiEventList.numEvents;
+        if( num>0 )
+        {
+          //sendVstEventsToHost( (VstEvents*)&mMidiEventList );
+          processEvents( (VstEvents*)&mMidiEventList );
+          sendMidiClear();
+          //mMidiEventList.numEvents = 0;
+        }
+      }
+
+    //----------
+
+    virtual void sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3)
+      {
+        int num = mMidiEventList.numEvents;
+        VstMidiEvent* event = (VstMidiEvent*)( mMidiEventList.events[ num ] );
+        event->type         = kVstMidiType;
+        event->deltaFrames  = offset;
+        event->midiData[0]  = msg1;
+        event->midiData[1]  = msg2;
+        event->midiData[2]  = msg3;
+        event->midiData[3]  = 0;
+        event->byteSize     = sizeof(VstMidiEvent);
+        event->flags        = 0;
+        event->noteLength   = 0;
+        event->noteOffset   = 0;
+        event->detune       = 0;
+        mMidiEventList.numEvents+=1;
+      }
+
+
+    //----------------------------------------
+    //
     // callbacks (host -> plugin)
     //
     //----------------------------------------
@@ -294,18 +386,79 @@ class axPluginVst : public axPluginBase
 
     //----------
 
-    // process 32 bit (single precision) floats (always in a resume state)
-    virtual void processReplacing(float** aInputs, float** aOutputs, VstInt32 aLength)
+//    // process 32 bit (single precision) floats (always in a resume state)
+//    virtual void processReplacing(float** aInputs, float** aOutputs, VstInt32 aLength)
+//      {
+//        doProcessBlock((SPL**)aInputs,(SPL**)aOutputs,aLength);
+//      }
+
+#ifdef AX_MULTICHANNEL
+
+    // multi
+    virtual void processReplacing(float** aInputs, float** aOutputs, int aLength)
       {
-        doProcessBlock((SPL**)aInputs,(SPL**)aOutputs,aLength);
+        //sendMidiClear();
+        #ifdef AX_AUTOSYNC
+          updateTimeInfo();
+          if( mPlayState&1 ) doProcessTransport(mPlayState);
+        #endif
+        mBlockSize = sampleFrames;
+        if ( !doProcessBlock(inputs,outputs,sampleFrames) )
+        {
+          int i;
+          float*  ins[AX_NUMINPUTS];
+          float* outs[AX_NUMOUTPUTS];
+          for( i=0; i<AX_NUMINPUTS;  i++ ) ins[i]  = inputs[i];
+          for( i=0; i<AX_NUMOUTPUTS; i++ ) outs[i] = outputs[i];
+          while (--sampleFrames >= 0)
+          {
+            doProcessSample(ins,outs);
+            for( i=0; i<AX_NUMINPUTS;  i++ ) ins[i]++;
+            for( i=0; i<AX_NUMOUTPUTS; i++ ) outs[i]++;
+          } //sampleflrames
+        } //process_block
+        doPostProcess(inputs,outputs,sampleFrames);
+        sendMidiAll();
       }
+
+#else
+
+    // stereo
+    virtual void processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames)
+      {
+        //sendMidiClear();
+        #ifdef AX_AUTOSYNC
+          updateTimeInfo();
+          if( mPlayState&1 ) doProcessTransport(mPlayState);
+        #endif
+        mBlockSize = sampleFrames;
+        if ( !doProcessBlock(inputs,outputs,sampleFrames) )
+        {
+          float* ins[2];
+          float* outs[2];
+          ins[0]=inputs[0];   ins[1]=inputs[1];
+          outs[0]=outputs[0]; outs[1]=outputs[1];
+          while (--sampleFrames >= 0)
+          {
+            doProcessSample(ins,outs);
+            ins[0]++;   ins[1]++;
+            outs[0]++;  outs[1]++;
+          } //sampleflrames
+        } //process_block
+        doPostProcess(inputs,outputs,sampleFrames);
+        sendMidiAll();
+      }
+
+#endif
+
 
     //----------
 
     // process 64 bit (double precision) floats (always in a resume state)
     virtual void processDoubleReplacing(double** aInputs, double** aOutputs, VstInt32 aLength)
       {
-        doProcessBlock((SPL**)aInputs,(SPL**)aOutputs,aLength);
+        //TODO: need to convert input & output buffers to SPL, and back again
+        //doProcessBlock((SPL**)aInputs,(SPL**)aOutputs,aLength);
       }
 
     //----------------------------------------
@@ -585,9 +738,29 @@ class axPluginVst : public axPluginBase
 // --- vst events ---
 
           case effProcessEvents:
-            //trace("axPluginVst.dispatcher :: effProcessEvents");
-            //v = processEvents ((VstEvents*)ptr);
-            doProcessEvents();
+            {
+              //v = processEvents ((VstEvents*)ptr);
+              //doProcessEvents();
+              //    //TODO: sort?
+              //    // if so, stuff all events into a buffer
+              //    // a) check last item offset, of later, append after previous
+              //    // if before, search from start, and insert (move later)
+              //    // b) sort
+              //    // c) pre-scan VstEvents array
+              VstEvents* ev = (VstEvents*)ptr;
+              //sendMidiClear();
+              int num = ev->numEvents;
+              for (int i=0; i<num; i++)
+              {
+                VstMidiEvent* event = (VstMidiEvent*)ev->events[i];
+                if (event->type==kVstMidiType)
+                {
+                  doProcessMidi( event->deltaFrames, event->midiData[0], event->midiData[1], event->midiData[2] );
+                } //=miditype
+              } //numevents
+              // sort?
+            }
+            v = 1;
             break;
 
 // --- parameters and programs ---
@@ -717,10 +890,26 @@ class axPluginVst : public axPluginBase
             //trace("axPluginVst.dispatcher :: effVendorSpecific");
             //v = vendorSpecific (index, value, ptr, opt);
             break;
+
           case effCanDo:
+            {
             //trace("axPluginVst.dispatcher :: effCanDo");
             //v = canDo ((char*)ptr);
+            char* p = (char*)ptr;
+            wtrace("effCanDo: '" << p << "'");
+            if (!strcmp(p,"sendVstEvents"))        v=1; // plug-in will send Vst events to Host
+            if (!strcmp(p,"sendVstMidiEvent"))     v=1; // plug-in will send MIDI events to Host
+            if (!strcmp(p,"receiveVstEvents"))     v=1; // plug-in can receive MIDI events from Host
+            if (!strcmp(p,"receiveVstMidiEvent"))  v=1; // plug-in can receive MIDI events from Host
+            if (!strcmp(p,"receiveVstTimeInfo"))   v=1; // plug-in can receive Time info from Host
+            //if (strcmp(ptr,"offline"))              return 0; // plug-in supports offline functions (#offlineNotify, #offlinePrepare, #offlineRun)
+            //if (strcmp(ptr,"midiProgramNames"))     return 0; // plug-in supports function #getMidiProgramName ()
+            //if (strcmp(ptr,"bypass"))               return 0; // plug-in supports function #setBypass ()
+            if (!strcmp(p,"hasCockosExtensions"))  v=0xbeef0000;
+            //trace("- axPluginVst.canDo: '" << ptr << "' = " << hex << ret);
+            }
             break;
+
           case effGetTailSize:
             //trace("axPluginVst.dispatcher :: effGetTailSize");
             //v = getGetTailSize ();
@@ -950,7 +1139,12 @@ class axPluginVst : public axPluginBase
 
     virtual void  notifyParamChanged(axParameter* aParameter)
       {
-        setParameterAutomated(aParameter->getIndex(),aParameter->getValue());
+        //wtrace("axPluginVst.notifyParamChanged");
+        int index = aParameter->getIndex();
+        float value = aParameter->getValue();
+        //wtrace("  index: " << index << " value: " << value);
+        //setParameterAutomated(aParameter->getIndex(),aParameter->getValue());
+        setParameterAutomated(index,value);
       }
 
     //virtual void  notifyResizeEditor(int aWidth, int aHeight)
@@ -958,8 +1152,45 @@ class axPluginVst : public axPluginBase
     //    //sizeWindow()
     //  }
 
+    //enum VstTimeInfoFlags
+    //{
+    ////-------------------------------------------------------------------------------------------------------
+    //	kVstTransportChanged     = 1,		///< indicates that play, cycle or record state has changed
+    //	kVstTransportPlaying     = 1 << 1,	///< set if Host sequencer is currently playing
+    //	kVstTransportCycleActive = 1 << 2,	///< set if Host sequencer is in cycle mode
+    //	kVstTransportRecording   = 1 << 3,	///< set if Host sequencer is in record mode
+    //	kVstAutomationWriting    = 1 << 6,	///< set if automation write mode active (record parameter changes)
+    //	kVstAutomationReading    = 1 << 7,	///< set if automation read mode active (play parameter changes)
+
+    //	kVstNanosValid           = 1 << 8,	///< VstTimeInfo::nanoSeconds valid
+    //	kVstPpqPosValid          = 1 << 9,	///< VstTimeInfo::ppqPos valid
+    //	kVstTempoValid           = 1 << 10,	///< VstTimeInfo::tempo valid
+    //	kVstBarsValid            = 1 << 11,	///< VstTimeInfo::barStartPos valid
+    //	kVstCyclePosValid        = 1 << 12,	///< VstTimeInfo::cycleStartPos and VstTimeInfo::cycleEndPos valid
+    //	kVstTimeSigValid         = 1 << 13,	///< VstTimeInfo::timeSigNumerator and VstTimeInfo::timeSigDenominator valid
+    //	kVstSmpteValid           = 1 << 14,	///< VstTimeInfo::smpteOffset and VstTimeInfo::smpteFrameRate valid
+    //	kVstClockValid           = 1 << 15	///< VstTimeInfo::samplesToNextClock valid
+    ////-------------------------------------------------------------------------------------------------------
+    //};
+    //
+
+    virtual void updateTimeInfo(void)
+      {
+        //trace("updateTimeInfo");
+        mTimeInfo   = getTime( kVstPpqPosValid + kVstTempoValid );
+        //trace("..ok. mTimeInfo =  " << hex << mTimeInfo );
+        mPlayState  = mTimeInfo->flags & 0xff;
+        mSamplePos  = mTimeInfo->samplePos;
+        mSampleRate = mTimeInfo->sampleRate;
+        mBeatPos    = mTimeInfo->ppqPos;
+        mTempo      = mTimeInfo->tempo;
+      }
+
 
     //--------------------------------------------------
+
+
+
 };
 
 typedef axPluginVst axPluginImpl;
@@ -1018,7 +1249,7 @@ typedef axPluginVst axPluginImpl;
   #define AX_CONTEXT_INIT(name)                             \
     HINSTANCE instance  = gInstance;                        \
     char*       winname = (char*)MAKE_NAME(name);           \
-    AX_PTRCAST  audio   = NULL;                             \
+    AX_PTRCAST audio = (AX_PTRCAST)audioMaster;     \
     axContext ctx(instance,winname,audio);
 
 /*

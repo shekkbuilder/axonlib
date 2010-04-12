@@ -25,7 +25,7 @@
       {
         mDisplay = aDisplay;
         mWindow  = aWindow;
-        mAudio   = 0;
+        mAudio   = aAudio;
       }
 
   };

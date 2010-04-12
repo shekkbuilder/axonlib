@@ -55,6 +55,9 @@ class axPluginBase// : public axParameterListener
     virtual void  notifyParamChanged(axParameter* aParameter) {}
     virtual void  notifyResizeEditor(int aWidth, int aHeight) {}
 
+    virtual void  updateTimeInfo(void) {}
+
+
   protected:
 
     //----------

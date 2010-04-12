@@ -37,6 +37,7 @@ class axSkin
     virtual void drawValue(axCanvas* aCanvas, axRect aRect, axString aName, axString aDisp, float aValue) {}
     virtual void drawButton(axCanvas* aCanvas, axRect aRect, axString aText, int aTextAlign, bool aState) {}
     virtual void drawSlider(axCanvas* aCanvas, axRect aRect, float aValue, axString aText1, axString aText2, bool aVertical) {}
+    virtual void drawKnob(axCanvas* aCanvas, axRect aRect, axString aName, axString aDisp, float aValue) {}
 };
 
 //----------------------------------------------------------------------
@@ -183,6 +184,25 @@ class axSkinDefault : public axSkin
       }
 
     //----------
+
+    virtual void drawKnob(axCanvas* aCanvas, axRect aRect, axString aName, axString aDisp, float aValue)
+      {
+        int x  = aRect.x;
+        int y  = aRect.y;
+        int size = axMin(aRect.w,aRect.h);
+        aCanvas->setPenColor(mDarkColor);
+        aCanvas->setPenWidth(5);
+        aCanvas->drawArc(x+2,y+2,x+(size-2),y+(size-2),0.6,0.8);
+        aCanvas->resetPen();
+        aCanvas->setPenColor(mLightColor);
+        aCanvas->setPenWidth(5);
+        aCanvas->drawArc(x+2,y+2,x+(size-2),y+(size-2),0.6,aValue*0.8);
+        aCanvas->resetPen();
+        //aCanvas->clearPen();
+        aCanvas->setTextColor(mTextColor);
+        aCanvas->drawText(x+size+5,y,aRect.x2(),aRect.y2(),aDisp,ta_Left);
+      }
+
 
 };
 

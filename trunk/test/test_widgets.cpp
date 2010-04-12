@@ -15,6 +15,7 @@
 #include "wdg/wdgValue.h"
 #include "wdg/wdgImage.h"
 #include "wdg/wdgBitmap.h"
+#include "wdg/wdgKnob.h"
 
 //----------------------------------------------------------------------
 //
@@ -121,6 +122,9 @@ class myEditor : public axEditor
     wdgLabel*   wNumTimer;
     wdgLabel*   wNumIdle;
     wdgLabel*   wNumBlock;
+  public: // HACK
+    wdgKnob*    wKnob1;
+    wdgValue*   wVal1;
 
   public:
 
@@ -188,21 +192,22 @@ class myEditor : public axEditor
           wClient->appendWidget( wLeft = new wdgPanel(this,axRect(0,0,200,0),wa_Left) );
             wLeft->setBorders(10,10,5,5);
             wLeft->setFlag(wf_Clip);
-            wLeft->appendWidget(       new wdgLabel( this,axRect(0,0,  0, 16), wa_Top,          "") );
-            wLeft->appendWidget(       new wdgLabel( this,axRect(0,0,  0, 16), wa_Top,          "label ",ta_Left) );
-            wLeft->appendWidget(       new wdgLabel( this,axRect(0,0,  0, 16), wa_Top,          "label ",ta_Right) );
-            wLeft->appendWidget(       new wdgPanel( this,axRect(0,0,  0, 20), wa_Top) );
-            wLeft->appendWidget( con = new wdgPanel( this,axRect(0,0,  0, 32), wa_Top) );
+            wLeft->appendWidget(          new wdgLabel( this,axRect(0,0,  0, 16), wa_Top,          "") );
+            wLeft->appendWidget(          new wdgLabel( this,axRect(0,0,  0, 16), wa_Top,          "label ",ta_Left) );
+            wLeft->appendWidget(          new wdgLabel( this,axRect(0,0,  0, 16), wa_Top,          "label ",ta_Right) );
+            wLeft->appendWidget(          new wdgPanel( this,axRect(0,0,  0, 20), wa_Top) );
+            wLeft->appendWidget( con =    new wdgPanel( this,axRect(0,0,  0, 32), wa_Top) );
               con->appendWidget( new wdgLabel(this,NULL_RECT,wa_Client,"label in panel"));
-            wLeft->appendWidget(       new wdgSlider(this,axRect(0,0,  0, 20), wa_Top,          "slider") );
-            wLeft->appendWidget( wdg = new wdgSlider(this,axRect(0,0, 20,  0 ),wa_Left,         "slider") );
+            wLeft->appendWidget(          new wdgSlider(this,axRect(0,0,  0, 20), wa_Top,          "slider") );
+            wLeft->appendWidget( wdg =    new wdgSlider(this,axRect(0,0, 20,  0 ),wa_Left,         "slider") );
               wdg->setFlag(wf_Vertical);
-            wLeft->appendWidget(       new wdgButton(this,axRect(0,0,  0, 20), wa_Top,          false, "switch OFF","switch ON") );
-            wLeft->appendWidget(       new wdgButton(this,axRect(0,0,  0, 20), wa_Top,          false, "button","release...",ta_Center,bm_Spring) );
-            wLeft->appendWidget(       new wdgValue( this,axRect(0,0, 80, 20), wa_Top,          "value", 0) );
-            wLeft->appendWidget( con = new wdgImage( this,axRect(0,0,100,100), wa_LeftTop,      mImgSurf) );
+            wLeft->appendWidget(          new wdgButton(this,axRect(0,0,  0, 20), wa_Top,          false, "switch OFF","switch ON") );
+            wLeft->appendWidget(          new wdgButton(this,axRect(0,0,  0, 20), wa_Top,          false, "button","release...",ta_Center,bm_Spring) );
+            wLeft->appendWidget( wVal1 =  new wdgValue( this,axRect(0,0, 80, 20), wa_Top,          "value", 0) );
+            wLeft->appendWidget( wKnob1 = new wdgKnob(  this,axRect(0,0, 30, 30), wa_Top,          "knob", 0) );
+            wLeft->appendWidget( con =    new wdgImage( this,axRect(0,0,100,100), wa_LeftTop,      mImgSurf) );
               con->appendWidget( new wdgLabel(this,axRect(0,0,100,100),wa_Client,"label in image"));
-            wLeft->appendWidget( con = new wdgBitmap(this,axRect(0,0,100,100), wa_RightBottom,  mBitmap2) );
+            wLeft->appendWidget( con =    new wdgBitmap(this,axRect(0,0,100,100), wa_RightBottom,  mBitmap2) );
               con->appendWidget( new wdgLabel(this,axRect(0,0,100,100),wa_Client,"label in bitmap"));
           // --- sizer ---
           wClient->appendWidget( wSizer = new wdgSizer(this,axRect(0,0,5,0),wa_Left) );
@@ -227,6 +232,7 @@ class myEditor : public axEditor
             }
           // ---
         #undef wClient
+
         doRealign();
         startTimer(100);
       }
@@ -277,7 +283,7 @@ class myEditor : public axEditor
 
     virtual void onChange(axWidget* aWidget)
       {
-        wtrace("onChange " << aWidget->getValue() );
+        //wtrace("onChange " << aWidget->getValue() );
         axEditor::onChange(aWidget);
       }
 
@@ -297,6 +303,8 @@ class myPlugin : public axPlugin
     int       mNumBlock;
     char      idleText[32];
     char      blockText[32];
+    axParameter*  pValue1;
+    axParameter*  pValue2;
 
   public:
 
@@ -307,7 +315,10 @@ class myPlugin : public axPlugin
         mNumBlock = 0;
         describe("test_widgets","ccernn","axonlibe example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);
-        setupEditor(600,500);
+        setupEditor(600,600);
+        appendParameter( pValue1 = new axParameter(this,"value1","") );
+        appendParameter( pValue2 = new axParameter(this,"value2","") );
+        setupParameters();
       }
 
     //----------
@@ -318,12 +329,19 @@ class myPlugin : public axPlugin
 
     //---------- plugin ----------
 
-    //virtual void  doStateChange(int aState)               { wtrace("doStateChange " << aState); }
-    //virtual void  doTransportChange(int aState)           { wtrace("doTransportChange " << aState); }
-    //virtual void  doSetProgram(int aProgram)              { wtrace("doSetProgram " << aProgram); }
-    //virtual void  doSetParameter(axParameter* aParameter) { wtrace("doSetParameter " << aParameter->getName().ptr() ); }
+    virtual void  doStateChange(int aState)               { wtrace("doStateChange " << aState); }
+    virtual void  doTransportChange(int aState)           { wtrace("doTransportChange " << aState); }
+    virtual void  doSetProgram(int aProgram)              { wtrace("doSetProgram " << aProgram); }
+
+    virtual void  doSetParameter(axParameter* aParameter)
+      {
+        char buf[32];
+        aParameter->doGetDisplay(buf);
+        wtrace("doSetParameter " << aParameter->getName().ptr() << " = " << aParameter->getValue() << " (" << buf << ")");
+      }
+
     //virtual bool  doProcessEvents(void)                   { /*wtrace("doProcessEvents");*/ return false;}
-    //virtual void  doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3) { wtrace("doProcessMidi "<<ofs<<" : "<<msg1<<","<<msg2<<","<<msg3); }
+    virtual void  doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3) { wtrace("doProcessMidi "/*<<ofs<<" : "<<msg1<<","<<msg2<<","<<msg3*/); }
     virtual bool  doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize)
       {
         mNumBlock++;
@@ -338,6 +356,10 @@ class myPlugin : public axPlugin
       {
         wtrace("doOpenEditor");
         mEditor = new myEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
+
+        mEditor->connect(mEditor->wKnob1,pValue1);
+        mEditor->connect(mEditor->wVal1,pValue2);
+
         mEditor->show();
         return mEditor;
       }
