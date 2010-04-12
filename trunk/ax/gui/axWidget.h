@@ -35,27 +35,14 @@
 #define wa_Stacked      10
 
 // widget flags
-#define wf_None     0
-#define wf_Active   1
-#define wf_Visible  2
-#define wf_Capture  4
-#define wf_Hover    8
-#define wf_Align    16
-#define wf_Vertical 32
-#define wf_Clip     64
-
-//// widget options
-//#define wo_None     0
-//#define wo_Fill     1
-//#define wo_Border   2
-//#define wo_Bevel    4
-//#define wo_Image    8
-//#define wo_Text     16
-
-//// widget states
-//#define ws_None   0
-//#define ws_Hover  1
-//#define ws_Active 2
+#define wf_None         0
+#define wf_Active       1
+#define wf_Visible      2
+#define wf_Capture      4
+#define wf_Hover        8
+#define wf_Align        16
+#define wf_Vertical     32
+#define wf_Clip         64
 
 //----------------------------------------------------------------------
 //
@@ -68,6 +55,8 @@ typedef axArray<axWidget*> axWidgets;
 
 //----------
 
+// used when you need to notify the 'owner' about something
+
 class axWidgetListener
 {
   public:
@@ -75,7 +64,7 @@ class axWidgetListener
     virtual void onRedraw(axWidget* aWidget) {}
     virtual void onCursor(int aCursor=DEF_PENWIDTH) {}
     virtual void onHint(axString aHint) {}
-    virtual void onSize(int aDeltaX, int aDeltaY) {}
+    virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY) {}
 };
 
 //----------------------------------------------------------------------
@@ -98,46 +87,33 @@ class axWidget : public axWidgetListener
     int               mConnection;    // which parameter (if any) this is conected to (set in axEditor.connect)
     axParameter*      mParameter;     // direct access to the parameter (set in axEditor.connect)
     float             mValue;
-    //int               mState;
     axRect            mOrig;
     axSkin*           mSkin;
     int               mMinWidth, mMinHeight;
     int               mMaxWidth, mMaxHeight;
-//  protected: // painting
-//    int       mOptions;
-//    axImage*  mImage;
-//    axString  mText;
-//    int       mTextAlign;
   public:
     int     mId;
     void*   mPtr;
 
   public:
 
-    axWidget(axWidgetListener* aListener, /*int aId, */axRect aRect, int aAlignment=wa_None)
+    axWidget(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
       {
         mListener   = aListener;
         mRect       = aRect;
-        //mFlags      = wf_Active | wf_Visible | wf_Capture;// | wf_Clip;
-        setAllFlags(wf_Active|wf_Visible|wf_Capture/*|wf_Clip*/);
+        mFlags      = wf_Active|wf_Visible|wf_Capture;
         mAlignment  = aAlignment;
         mConnection = -1;
         mParameter  = NULL;
         mValue      = 0;
-        //mState      = ws_None;
         mOrig       = mRect;
         mSkin       = NULL;
-        mMinWidth  = 0;
-        mMinHeight = 0;
-        mMaxWidth  = 999999;
-        mMaxHeight = 999999;
-//        //mOptions    = wo_Fill | wo_Border;
-//        setAllOptions(wo_None);
-//        mImage      = NULL;
-//        mText       = "wdgPanel";
-//        mTextAlign  = ta_Center;
-        mId = 0;//aId;
-        mPtr = NULL;//aPtr;
+        mMinWidth   = 0;
+        mMinHeight  = 0;
+        mMaxWidth   = 999999;
+        mMaxHeight  = 999999;
+        mId         = 0;//aId;
+        mPtr        = NULL;//aPtr;
       }
 
     //virtual ~axWidget()

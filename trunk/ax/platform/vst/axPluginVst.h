@@ -43,6 +43,10 @@ struct axVstEvents
 
 //----------------------------------------------------------------------
 
+
+
+
+
 class axPluginVst : public axPluginBase
 {
   friend AEffect* main_plugin(audioMasterCallback audioMaster);// asm ("main");
@@ -74,12 +78,15 @@ class axPluginVst : public axPluginBase
     double        mTempo;
     long          mBlockSize;
 
-
-  //--------------------------------------------------
   private:
-  //--------------------------------------------------
 
+
+
+
+
+    //----------------------------------------
     // callbacks (host->plugin)
+    //----------------------------------------
 
     static VstIntPtr dispatcher_callback(AEffect* ae, VstInt32 opCode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
       {
@@ -125,9 +132,7 @@ class axPluginVst : public axPluginBase
         plug->processDoubleReplacing(inputs,outputs,sampleFrames);
       }
 
-  //--------------------------------------------------
   protected:
-  //--------------------------------------------------
 
     axPluginVst(axContext* aContext, int aPluginFlags)
     : axPluginBase(aContext, aPluginFlags)
@@ -169,13 +174,18 @@ class axPluginVst : public axPluginBase
       {
       }
 
+    //----------------------------------------
+
   protected:
 
     inline AEffect* getInstance() { return &aeffect; }
 
   private:
-
   //protected:
+
+
+
+
 
     //----------------------------------------
     // AEffect flags
@@ -185,9 +195,7 @@ class axPluginVst : public axPluginBase
     inline void clear_aeFlag(int aFlag) { aeffect.flags |= aFlag; }
     inline void set_aeFlag(int aFlag) { aeffect.flags |= aFlag; }
     inline void set_aeFlag(int aFlag, bool aState) { if (aState) set_aeFlag(aFlag); else clear_aeFlag(aFlag); }
-
     //----------
-
     // tells that processReplacing() could be used. Mandatory in VST 2.4!
     void canProcessReplacing(bool aState=true) { set_aeFlag(effFlagsCanReplacing,aState); }
     // tells that processDoubleReplacing() is implemented.
@@ -199,7 +207,7 @@ class axPluginVst : public axPluginBase
     void noSoundInStop(bool aState=true) { set_aeFlag(effFlagsNoSoundInStop); }
 
     //----------------------------------------
-    // AEffect vars
+    // AEffect fields (variables)
     //----------------------------------------
 
     // Must be called to set the plug-ins unique ID!
@@ -216,6 +224,10 @@ class axPluginVst : public axPluginBase
     inline void setNumPrograms(int aNum) { aeffect.numPrograms=aNum; }
     inline void setNumParams(int aNum) { aeffect.numParams=aNum; }
 
+
+
+
+
     //----------------------------------------
     //
     // audioMaster (plugin -> host)
@@ -226,11 +238,12 @@ class axPluginVst : public axPluginBase
     // [index]: parameter index
     // [opt]: parameter value
     // @see AudioEffect::setParameterAutomated
+
     void setParameterAutomated(VstInt32 index, float value)
       {
         //wtrace("  axPluginVst.setParameterAutomated  index: " << index << " value: " << value);
         audioMaster(&aeffect,audioMasterAutomate,index,0,0,value);
-//        setParameter(index,value);
+        //setParameter(index,value);
       }
 
     //----------
@@ -238,6 +251,7 @@ class axPluginVst : public axPluginBase
     // returns the host's version (for example 2400 for VST 2.4)
     // [return value]: Host VST version (for example 2400 for VST 2.4)
     // @see AudioEffect::getMasterVersion
+
     VstInt32 getMasterVersion(void)
       {
         VstInt32 version = 1;
@@ -251,6 +265,7 @@ class axPluginVst : public axPluginBase
     // returns current unique identifier when loading shell plug-ins
     // [return value]: current unique identifier on shell plug-in
     // @see AudioEffect::getCurrentUniqueId
+
     VstInt32 getCurrentUniqueId()
       {
         VstInt32 id = 0;
@@ -267,7 +282,9 @@ class axPluginVst : public axPluginBase
     // masterIdle
 
     //
-    //audioMasterGetTime,				            // [return value]: #VstTimeInfo* or null if not supported [value]: request mask  @see VstTimeInfoFlags @see AudioEffectX::getTimeInfo
+    // audioMasterGetTime,
+    // [return value]: #VstTimeInfo* or null if not supported [value]: request mask  @see VstTimeInfoFlags @see AudioEffectX::getTimeInfo
+
     VstTimeInfo* getTime(VstInt32 filter)
       {
         if (audioMaster)
@@ -278,10 +295,12 @@ class axPluginVst : public axPluginBase
         return 0;
       }
 
-    //audioMasterProcessEvents,		          // [ptr]: pointer to #VstEvents  @see VstEvents @see AudioEffectX::sendVstEventsToHost
+    //audioMasterProcessEvents,
+    // [ptr]: pointer to #VstEvents  @see VstEvents @see AudioEffectX::sendVstEventsToHost
     // Can be called inside processReplacing.
     // param events Fill with VST events
     // return Returns \e true on success
+
     bool processEvents(VstEvents* events)
       {
         if (audioMaster) return audioMaster(&aeffect,audioMasterProcessEvents,0,0,events,0)==1;
@@ -313,6 +332,10 @@ class axPluginVst : public axPluginBase
     //audioMasterEndEdit,                   // [index]: parameter index  @see AudioEffectX::endEdit
     //audioMasterOpenFileSelector,		      // [ptr]: VstFileSelect* [return value]: 1 if supported  @see AudioEffectX::openFileSelector
     //audioMasterCloseFileSelector,		      // [ptr]: VstFileSelect*  @see AudioEffectX::closeFileSelector
+
+
+
+
 
     //----------------------------------------
     //
@@ -360,6 +383,9 @@ class axPluginVst : public axPluginBase
         event->detune       = 0;
         mMidiEventList.numEvents+=1;
       }
+
+
+
 
 
     //----------------------------------------
@@ -460,6 +486,10 @@ class axPluginVst : public axPluginBase
         //TODO: need to convert input & output buffers to SPL, and back again
         //doProcessBlock((SPL**)aInputs,(SPL**)aOutputs,aLength);
       }
+
+
+
+
 
     //----------------------------------------
     //
@@ -1081,13 +1111,17 @@ class axPluginVst : public axPluginBase
         return v;
       }
 
-    //--------------------------------------------------
-    //
-    // axPluginBase
-    //
-    //--------------------------------------------------
-
   public:
+
+
+
+
+
+    //--------------------------------------------------
+    //
+    // implementation of axPluginBase virtual methods
+    //
+    //--------------------------------------------------
 
     virtual void describe(axString aName, axString aVendor, axString aProduct, int aVersion, unsigned int aID)
       {
@@ -1186,14 +1220,15 @@ class axPluginVst : public axPluginBase
         mTempo      = mTimeInfo->tempo;
       }
 
-
     //--------------------------------------------------
-
-
 
 };
 
 typedef axPluginVst axPluginImpl;
+
+
+
+
 
 //----------------------------------------------------------------------
 //
@@ -1231,11 +1266,7 @@ typedef axPluginVst axPluginImpl;
 
 #endif
 
-
-
-
 //----------------------------------------------------------------------
-
 
 #ifdef WIN32
 
@@ -1283,9 +1314,6 @@ typedef axPluginVst axPluginImpl;
     }
 
 #endif
-
-//----------------------------------------------------------------------
-
 
 //----------------------------------------------------------------------
 #endif

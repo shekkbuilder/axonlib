@@ -6,7 +6,7 @@
 #include "platform/axContext.h"
 #include "base/axSurfaceBase.h"
 
-//----------
+//----------------------------------------------------------------------
 
 #ifdef AX_LINUX
   #include "platform/linux/axSurfaceLinux.h"
@@ -20,16 +20,12 @@
 
 class axSurface : public axSurfaceImpl
 {
-  //friend class axWindowLinux;
   public:
     axSurface(axContext* aContext, int aWidth, int aHeight)
     : axSurfaceImpl(aContext,aWidth,aHeight)
       {
       }
-//    inline int getWidth(void) { return mWidth; }
-//    inline int getHeight(void) { return mHeight; }
-//    inline int getDepth(void) { return mDepth; }
-    //inline axCanvas* getCanvas(void) { return mCanvas; }
+    //virtual ~axSurface() {}
 };
 
 //----------------------------------------------------------------------

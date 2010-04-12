@@ -12,7 +12,6 @@
 struct axFont
 {
   axString  mName;
-  axColor   mColor;
   int       mSize;
   int       mStyle;
 };
@@ -24,7 +23,6 @@ struct axFont
 struct axFont
 {
   axString  mName;
-  axColor   mColor;
   int       mSize;
   int       mStyle;
 };
