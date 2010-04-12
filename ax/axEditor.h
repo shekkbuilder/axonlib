@@ -104,11 +104,16 @@ class axEditor : public axWindow
 
     virtual void onChange(axWidget* aWidget)
       {
+        //wtrace("axEditor.onChange");
         int conn = aWidget->getConnection();
+        //wtrace("  conn = " << conn);
         if (conn>=0)
         {
           axParameter* par = mConnections[conn].mParameter;
+          //wtrace("  par = " << par);
           float val = aWidget->getValue();
+          //wtrace("  val = " << val);
+          //wtrace("  mPlugin = " << mPlugin);
           mPlugin->notifyParamChanged(par);
           par->doSetValue(val);
           #ifdef AX_FORMAT_EXE
