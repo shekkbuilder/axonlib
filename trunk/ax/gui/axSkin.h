@@ -38,6 +38,7 @@ class axSkin
     virtual void drawButton(axCanvas* aCanvas, axRect aRect, axString aText, int aTextAlign, bool aState) {}
     virtual void drawSlider(axCanvas* aCanvas, axRect aRect, float aValue, axString aText1, axString aText2, bool aVertical) {}
     virtual void drawKnob(axCanvas* aCanvas, axRect aRect, axString aName, axString aDisp, float aValue) {}
+    virtual void drawScrollBar(axCanvas* aCanvas, axRect aRect, float aValue, bool aVertical, float aThumbSize) {}
 };
 
 //----------------------------------------------------------------------
@@ -72,7 +73,7 @@ class axSkinDefault : public axSkin
     // internal
     //--------------------------------------------------
 
-    void fill_back(axCanvas* aCanvas, axRect aRect)
+    virtual void fill_back(axCanvas* aCanvas, axRect aRect)
       {
         aCanvas->setBrushColor(mFillColor);
         aCanvas->fillRect(aRect.x,aRect.y,aRect.x2(),aRect.y2());
@@ -83,6 +84,14 @@ class axSkinDefault : public axSkin
     virtual void fill_dark(axCanvas* aCanvas, axRect aRect)
       {
         aCanvas->setBrushColor(mDarkColor);
+        aCanvas->fillRect(aRect.x,aRect.y,aRect.x2(),aRect.y2());
+      }
+
+    //----------
+
+    virtual void fill_light(axCanvas* aCanvas, axRect aRect)
+      {
+        aCanvas->setBrushColor(mLightColor);
         aCanvas->fillRect(aRect.x,aRect.y,aRect.x2(),aRect.y2());
       }
 
@@ -198,11 +207,53 @@ class axSkinDefault : public axSkin
         aCanvas->setPenWidth(5);
         aCanvas->drawArc(x+2,y+2,x+(size-2),y+(size-2),0.6,aValue*0.8);
         aCanvas->resetPen();
-        //aCanvas->clearPen();
-        aCanvas->setTextColor(mTextColor);
-        aCanvas->drawText(x+size+5,y,aRect.x2(),aRect.y2(),aDisp,ta_Left);
+        int th = aCanvas->textHeight("Xj");
+        if (aRect.h >= (2*th))
+        {
+          aCanvas->setTextColor(mTextColor);
+          aCanvas->drawText(x+size+5,y,   aRect.x2(),aRect.y2(),aName,ta_Top|ta_Left);
+          aCanvas->drawText(x+size+5,y+th,aRect.x2(),aRect.y2(),aDisp,ta_Top|ta_Left);
+        //aCanvas->drawText(x+size+5,y,   aRect.x2(),aRect.y2(),aDisp,ta_Bottom|ta_Left);
+        }
+        else
+        {
+          aCanvas->setTextColor(mTextColor);
+          aCanvas->drawText(x+size+5,y,aRect.x2(),aRect.y2(),aDisp,ta_Left);
+        }
       }
 
+    //----------
+
+    virtual void drawScrollBar(axCanvas* aCanvas, axRect aRect, float aValue, bool aVertical, float aThumbSize)
+      {
+        fill_dark(aCanvas,aRect);
+        if (aVertical)
+        {
+          int thumb = (int)((float) aRect.h*aThumbSize);
+          int ipos  = (int)((float)(aRect.h-thumb)*aValue);
+          int x = aRect.x;
+          int y = aRect.y + ipos;
+          int x2 = aRect.x2();
+          int y2 = y + thumb;
+          int w = (x2-x+1);
+          int h = (y2-y+1);
+          fill_back(aCanvas,axRect(x,y,w,h));
+          draw_frame(aCanvas,axRect(x,y,w,h)/*,false*/);
+        }
+        else
+        {
+          int thumb = (int)((float) aRect.w*aThumbSize);
+          int ipos  = (int)((float)(aRect.w-thumb)*aValue);
+          int x = aRect.x + ipos;
+          int y = aRect.y;
+          int x2 = x+thumb;
+          int y2 = aRect.y2();
+          int w = (x2-x+1);
+          int h = (y2-y+1);
+          fill_back(aCanvas,axRect(x,y,w,h));
+          draw_frame(aCanvas,axRect(x,y,w,h)/*,false*/);
+        }
+      }
 
 };
 
