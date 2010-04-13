@@ -9,7 +9,7 @@ class wdgSizer : public axWidget
   protected:
     int prevx,prevy;
     bool mIsDragging;
-    axContainer* mTarget;
+    axWidget* mTarget;
   public:
     wdgSizer(axWidgetListener* aListener, /*int aId, */axRect aRect, int aAlignment=wa_None)
     : axWidget(aListener,/*aId,*/aRect,aAlignment)
@@ -18,7 +18,10 @@ class wdgSizer : public axWidget
         mIsDragging = false;
       }
 
-    inline void setTarget(axContainer* aTarget) { mTarget=aTarget; }
+    inline void setTarget(axWidget* aTarget)
+      {
+        mTarget=aTarget;
+      }
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {

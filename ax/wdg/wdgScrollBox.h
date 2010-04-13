@@ -2,13 +2,15 @@
 #define wdgScrollBox_included
 //----------------------------------------------------------------------
 
-#include "gui/axContainer.h"
+//#include "gui/axContainer.h"
+#include "gui/axWidget.h"
 #include "wdg/wdgScrollBar.h"
 
-class wdgScrollBox : public axContainer
+class wdgScrollBox : public axWidget//axContainer
 {
   protected:
-    axContainer*  wContainer;
+    //axContainer*  wContainer;
+    axWidget*  wContainer;
     wdgScrollBar* wScrollBar;
     int           mScrolledX; // how much we've already scrolled
     int           mScrolledY; // -_"--
@@ -17,10 +19,11 @@ class wdgScrollBox : public axContainer
   public:
 
     wdgScrollBox(axWidgetListener* aListener, /*int aID, */axRect aRect, int aAlignment=wa_None)
-    : axContainer(aListener, /*aID, */aRect, aAlignment)
+    //: axContainer(aListener, /*aID, */aRect, aAlignment)
+    : axWidget(aListener, /*aID, */aRect, aAlignment)
       {
-        axContainer::appendWidget( wScrollBar  = new wdgScrollBar(this,axRect(0,0,15,0),wa_Right ) );
-        axContainer::appendWidget( wContainer  = new axContainer( this,NULL_RECT,       wa_Client ) );
+        axWidget::appendWidget( wScrollBar  = new wdgScrollBar(this,axRect(0,0,15,0),wa_Right ) );
+        axWidget::appendWidget( wContainer  = new axWidget( this,NULL_RECT,       wa_Client ) );
         wScrollBar->setFlag(wf_Vertical);
         wScrollBar->setThumbSize(0.5);
         mScrolledX = mScrolledY = 0;
@@ -36,13 +39,13 @@ class wdgScrollBox : public axContainer
 
     // accessors
 
-    inline axContainer*   getContainer(void) { return wContainer; }
+    inline axWidget*   getContainer(void) { return wContainer; }
     inline wdgScrollBar*  getScrollBar(void) { return wScrollBar; }
 
     //virtual int        getNumWidgets(void)   { return wContainer->getNumWidgets(); }
     //virtual axWidget*  getWidget(int aIndex) { return wContainer->getWidget(aIndex); }
 
-    inline void setContainer(axContainer* c)
+    inline void setContainer(axWidget* c)
     {
       delete wContainer;
       wContainer = c;
@@ -103,7 +106,7 @@ class wdgScrollBox : public axContainer
     virtual int appendWidget(axWidget* aWidget)
       {
         //wtrace("wdgScrollBox.appendWidget");
-        aWidget->doSetSkin(mSkin,false); // inherit skin
+        aWidget->setSkin(mSkin,false); // inherit skin
         int num = wContainer->appendWidget(aWidget);
         //wtrace("  " << aWidget->getRect().x << "," << aWidget->getRect().y );
         return num;
@@ -128,7 +131,7 @@ class wdgScrollBox : public axContainer
 
     virtual void doResize(int aW, int aH)
       {
-        axContainer::doResize(aW,aH);
+        axWidget::doResize(aW,aH);
         calc_thumbsize();
       }
 
@@ -139,7 +142,7 @@ class wdgScrollBox : public axContainer
         //float y = wScrollBar->doGetValue();
         float y = wScrollBar->getValue();
         unscroll();
-        axContainer::doRealign();
+        axWidget::doRealign();
         calc_thumbsize();
         set_scrollpos(0,y);
         //wScrollBar->doSetValue(y);
@@ -151,7 +154,7 @@ class wdgScrollBox : public axContainer
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
         if (mSkin) mSkin->drawPanel(aCanvas,mRect);
-        axContainer::doPaint(aCanvas,aRect);
+        axWidget::doPaint(aCanvas,aRect);
       }
 
     //--------------------------------------------------

@@ -5,7 +5,7 @@
 #include "platform/axContext.h"
 #include "core/axRect.h"
 #include "core/axString.h"
-#include "gui/axContainer.h"
+#include "gui/axWidget.h"
 #include "gui/axSurface.h"
 #include "gui/axCanvas.h"
 
@@ -30,7 +30,7 @@
 //const int bu_Hover   = 1 << 7;
 
 
-class axWindowBase : public axContainer
+class axWindowBase : public axWidget//axContainer
 {
   protected:
     int         mWinFlags;
@@ -42,7 +42,8 @@ class axWindowBase : public axContainer
   public:
 
     axWindowBase(axContext* aContext, axRect aRect, int aWinFlags)
-    : axContainer(NULL,/*-1,*/aRect)
+    //: axContainer(NULL,/*-1,*/aRect,wa_Client)
+    : axWidget(NULL,/*-1,*/aRect,wa_Client)
       {
         //mRect     = aRect;
         mWinFlags = aWinFlags;

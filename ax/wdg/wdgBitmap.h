@@ -4,13 +4,14 @@
 
 #include "gui/axContainer.h"
 
-class wdgBitmap : public axContainer
+class wdgBitmap : public axWidget//axContainer
 {
   protected:
     axBitmap* mBitmap;
   public:
     wdgBitmap(axWidgetListener* aListener, /*int aId, */axRect aRect, int aAlignment=wa_None, axBitmap* aBitmap=NULL)
-    : axContainer(aListener,/*aId,*/aRect,aAlignment)
+    //: axContainer(aListener,/*aId,*/aRect,aAlignment)
+    : axWidget(aListener,/*aId,*/aRect,aAlignment)
       {
         //clearFlag(wf_Active);
         mBitmap = aBitmap;
@@ -27,7 +28,8 @@ class wdgBitmap : public axContainer
         int srcw = mRect.w;
         int srch = mRect.h;
         aCanvas->drawBitmap(mBitmap, dstx,dsty, srcx,srcy,srcw,srch);
-        axContainer::doPaint(aCanvas,aRect);
+        //axContainer::doPaint(aCanvas,aRect);
+        axWidget::doPaint(aCanvas,aRect);
       }
 
     //virtual void doEnter(axWidget* aCapture) { mListener->onCursor(cu_ArrowLeftRight); }
