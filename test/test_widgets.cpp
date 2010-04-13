@@ -138,12 +138,17 @@ class myEditor : public axEditor
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
       {
         axCanvas*     can;
-        //axContainer*  con;
         axWidget*     wdg;
         wdgScrollBar* scr;
+        wdgScrollBox* scb;
+
         //-----
+
         mNumTimer = 0;
+        //setSkin(mDefaultSkin,true);
+
         // --- bitmap
+
         int x,y;
         char* buffer;
         mBitmap = createBitmap(100,100);
@@ -158,12 +163,16 @@ class myEditor : public axEditor
             *buffer++ = 0;
           }
         }
+
         // --- bitmap -> surface
+
         mBitmap->prepare();
         mImgSurf = createSurface(100,100);
         can = mImgSurf->getCanvas();
         can->drawBitmap(mBitmap,0,0,0,0,100,100);
+
         // --- bitmap -> bitmap2
+
         mBitmap2 = createBitmap(100,100);
         mBitmap2->createBuffer( mBitmap->getBuffer() );
         delete mBitmap;
@@ -173,7 +182,9 @@ class myEditor : public axEditor
                           1,0,0,0,  // r
                           0,0,0,0); // a
         mBitmap2->prepare();
+
         // --- symbols
+
         mSymSurf = createSurface(256,256);//new axSurface(aContext,256,256);
         can = mSymSurf->getCanvas();
           can->setBrushColor(can->getColor(AX_GREY));
@@ -190,7 +201,9 @@ class myEditor : public axEditor
           mSymbols->create(symbol6,axRect(48,0,8,8), can->getColor(AX_BLACK  ), can->getColor(AX_GREY_DARK ) );
           mSymbols->create(symbol7,axRect(56,0,8,8), can->getColor(AX_GREEN  ), col2 );
           mSymbols->create(symbol8,axRect(64,0,8,8), can->getColor(AX_RED    ), can->getColor(AX_RED       ) );
+
         //-----------------------------------
+
         //appendWidget( wClient = new wdgPanel(this,NULL_RECT,wa_Client) );
         //  wClient->setBorders(10,10,5,5);
         #define wClient this
@@ -207,10 +220,16 @@ class myEditor : public axEditor
             wLeft->appendWidget( wdg =    new wdgPanel(     this,axRect(0,0,  0, 32), wa_Top) );
               wdg->appendWidget( new wdgLabel(this,NULL_RECT,wa_Client,"panel"));
 
-
             wdgGroupBox* grp;
             wLeft->appendWidget( grp =    new wdgGroupBox(this,axRect(0,0,0,100), wa_Top) );
             grp->setup("test",false,false);
+            //grp->getContainer()->setBorders(5,5,5,5);
+            //grp->setBorders(5,5,5,5);
+            grp->getContainer()->setFlag(wf_Clip);
+
+              grp->appendWidget( scb = new wdgScrollBox(this,NULL_RECT,wa_Client) );
+                scb->getContainer()->setBorders(5,5,5,5);
+                for (int i=0; i<32; i++) scb->appendWidget( new wdgKnob(this,axRect(0,0,64,16),wa_Stacked, "",0) );
 
             wLeft->appendWidget(          new wdgSlider(    this,axRect(0,0,  0, 20), wa_Top,          "slider") );
             wLeft->appendWidget( wdg =    new wdgSlider(    this,axRect(0,0, 20,  0 ),wa_Left,         "slider") );
@@ -238,42 +257,34 @@ class myEditor : public axEditor
 
           wClient->appendWidget( wRight = new wdgPanel(this,axRect(0,0,180,0),wa_Right) );
             wRight->setBorders(10,10,5,5);
-            //wRight->setFlag(wf_Clip);
             wRight->appendWidget( wNumTimer = new wdgLabel( this,axRect(0,0,0,16), wa_Top,"doTimer : 0",    ta_Left) );
             wRight->appendWidget( wNumIdle  = new wdgLabel( this,axRect(0,0,0,16), wa_Top,"effEditIdle : 0",ta_Left) );
             wRight->appendWidget( wNumBlock = new wdgLabel( this,axRect(0,0,0,16), wa_Top,"doProcessBlock : 0",ta_Left) );
 
           // --- center ---
 
-          //wClient->appendWidget( wCenter = new wdgPanel(this,NULL_RECT,wa_Client) );
           wClient->appendWidget( wCenter = new wdgScrollBox(this,NULL_RECT,wa_Client) );
-            wCenter->setBorders(5,5,0,0);
             wCenter->getContainer()->setBorders(10,10,5,5);
-            //wCenter->doSetSkin(mDefaultSkin,true);
             wCenter->setFlag(wf_Clip);
-            //wCenter->setFlag(wf_Vertical);
-            //wCenter->appendWidget( con = new wdgScrollBox(this,NULL_RECT,wa_Client) );
             for (int i=0; i<256; i++)
             {
               wdgLabel* la;
               wCenter->appendWidget( la = new wdgLabel(this,axRect(0,0,30,20),wa_Stacked) );
-              //wdgKnob* kn;
-              //wCenter->appendWidget( kn = new wdgKnob(this,axRect(0,0,64,30),wa_Stacked) );
-              //wdgValue* va;
-              //wCenter->appendWidget( va = new wdgValue(this,axRect(0,0,64,16),wa_Stacked) );
                 sprintf(label_buf[i],"%i",i+1);
                 la->setText(label_buf[i],ta_Center);
-                //kn->setName(label_buf[i]);
-                //va->setName(label_buf[i]);
             }
-            wCenter->setSkin(mDefaultSkin,true);
-            //wCenter->doRealign();
 
           // ---
 
         #undef wClient
 
-        //doSetSkin(mDefaultSkin,true);
+// check this!
+// with the following line, everything looks right
+// the skin should be automatically 'inherited' in axWidget.appendWidget?
+// but that doesn't seem to work correctly?
+
+setSkin(mDefaultSkin,true);
+
         doRealign();
         startTimer(100);
       }
@@ -372,24 +383,24 @@ class myPlugin : public axPlugin
 
     virtual void  doStateChange(int aState)
       {
-        wtrace("doStateChange " << aState);
+        wtrace(":: doStateChange " << aState);
       }
 
     virtual void  doTransportChange(int aState)
       {
-        wtrace("doTransportChange " << aState);
+        wtrace(":: doTransportChange " << aState);
       }
 
     virtual void  doSetProgram(int aProgram)
       {
-        wtrace("doSetProgram " << aProgram);
+        wtrace(":: doSetProgram " << aProgram);
       }
 
     virtual void  doSetParameter(axParameter* aParameter)
       {
         char buf[32];
         aParameter->doGetDisplay(buf);
-        wtrace("doSetParameter " << aParameter->getName().ptr() << " = " << aParameter->getValue() << " (" << buf << ")");
+        wtrace(":: doSetParameter " << aParameter->getName().ptr() << " = " << aParameter->getValue() << " (" << buf << ")");
       }
 
     //virtual bool  doProcessEvents(void)
@@ -400,7 +411,7 @@ class myPlugin : public axPlugin
 
     virtual void  doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3)
       {
-        wtrace("doProcessMidi "<<ofs<<" : "<<(int)msg1<<","<<(int)msg2<<","<<(int)msg3);
+        wtrace(":: doProcessMidi "<<ofs<<" : "<<(int)msg1<<","<<(int)msg2<<","<<(int)msg3);
       }
 
     virtual bool  doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize)
@@ -424,7 +435,7 @@ class myPlugin : public axPlugin
 
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
-        wtrace("doOpenEditor");
+        wtrace(":: doOpenEditor");
         mEditor = new myEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         mEditor->connect(mEditor->wKnob1,pValue1);
         mEditor->connect(mEditor->wVal1,pValue2);
@@ -436,7 +447,7 @@ class myPlugin : public axPlugin
 
     virtual void doCloseEditor(void)
       {
-        wtrace("doCloseEditor");
+        wtrace(":: doCloseEditor");
         mEditor->hide();
         delete mEditor;
         mEditor = NULL;

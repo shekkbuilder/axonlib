@@ -2,7 +2,7 @@
 #define wdgImage_included
 //----------------------------------------------------------------------
 
-#include "gui/axContainer.h"
+#include "gui/axWidget.h"
 
 class wdgImage : public axWidget//axContainer
 {

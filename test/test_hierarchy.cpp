@@ -4,7 +4,7 @@
 #include "platform/axContext.h"
 #include "axPlugin.h"
 #include "axEditor.h"
-#include "gui/axContainer.h"
+#include "gui/axWidget.h"
 
 #include "wdg/wdgPanel.h"
 
@@ -14,27 +14,21 @@
 //
 //----------------------------------------------------------------------
 
-class myContainer : public axContainer
+class myWidget : public axWidget
 {
-  //protected:
-  //  axContainer*  wContainer;
   public:
 
-    myContainer(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
-    : axContainer(aListener,aRect,aAlignment)
+    myWidget(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
+    : axWidget(aListener,aRect,aAlignment)
       {
-        setBorders(10,10,5,5);
+        //setBorders(10,10,5,5);
         appendWidget( new wdgPanel(this,axRect(0,0,32,32),wa_Top) );
-//        axContainer::appendWidget( wContainer = new axContainer(this,axRect(0,0,10,0),wa_Client) );
-//        //doRealign();
       }
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-//        axRect r = wContainer->getRect();
-//        wtrace(r.x<<" ,"<<r.y<<" ,"<<r.w<<" ,"<<r.h);
         if (mSkin) mSkin->drawPanel(aCanvas,mRect);
-        axContainer::doPaint(aCanvas,aRect);
+        axWidget::doPaint(aCanvas,aRect);
       }
 
 //    virtual int appendWidget(axWidget* aWidget)
@@ -59,21 +53,18 @@ class myContainer : public axContainer
 class myEditor : public axEditor
 {
   private:
-    wdgPanel*     pan;
-    myContainer*  con;
+    wdgPanel*     mainpanel;
+    axWidget*     wdg;
 
   public:
 
     myEditor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
     {
-      appendWidget(pan = new wdgPanel(   this,NULL_RECT,             wa_Client) );
-      pan->appendWidget(con = new myContainer(this,axRect(10,10,320,200), wa_None) );
-//          con->setBorders(10,10,5,5);
-          con->appendWidget( new wdgPanel(this,axRect(0,0,10,0),  wa_Left) );
-          con->appendWidget( new wdgPanel(this,axRect(0,0,16,16), wa_Top   ) );
+      appendWidget( mainpanel = new wdgPanel(this,NULL_RECT,wa_Client) );
+        mainpanel->appendWidget(wdg = new wdgPanel(this,axRect(10,10,320,200), wa_None) );
+      //  wdg->appendWidget(new myWidget(this,axRect(10,10,100,100), wa_None) );
       doRealign();
-      //doSetSkin(mDefaultSkin);
       //startTimer(250);
     }
 

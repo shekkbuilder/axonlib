@@ -162,7 +162,6 @@
 		<Unit filename="../../ax/base/axImage.h" />
 		<Unit filename="../../ax/base/axPluginBase.h" />
 		<Unit filename="../../ax/base/axSurfaceBase.h" />
-		<Unit filename="../../ax/base/axWidgetBase.h" />
 		<Unit filename="../../ax/base/axWindowBase.h" />
 		<Unit filename="../../ax/core/axArray.h" />
 		<Unit filename="../../ax/core/axBuffer.h" />
