@@ -4,7 +4,7 @@
 
 #include "axPlugin.h"
 #include "gui/axWindow.h"
-#include "gui/axSkinDefault.h"
+//#include "gui/axSkinDefault.h"
 
 //----------------------------------------------------------------------
 //
@@ -36,8 +36,8 @@ class axEditor : public axWindow
 {
   protected:
     axPlugin*       mPlugin;
-    axSkinDefault*  mDefaultSkin;
     wp_connections  mConnections;
+    //axSkinDefault*  mDefaultSkin;
 
   public:
 
@@ -45,14 +45,14 @@ class axEditor : public axWindow
     : axWindow(aContext,aRect,aWinFlags)
       {
         mPlugin = aPlugin;
-        axCanvas* can = getCanvas();
-        mDefaultSkin = new axSkinDefault(can);
-        setSkin(mDefaultSkin/*,true*/); // no sub-widgets yet?
+        //axCanvas* can = getCanvas();
+        //mDefaultSkin = new axSkinDefault(can);
+        //setSkin(mDefaultSkin/*,true*/); // no sub-widgets yet?
       }
 
     virtual ~axEditor()
       {
-        delete mDefaultSkin;
+        //delete mDefaultSkin;
       }
 
     //----------

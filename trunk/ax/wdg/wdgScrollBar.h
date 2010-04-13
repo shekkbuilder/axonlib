@@ -50,7 +50,7 @@ class wdgScrollBar : public axWidget
       {
         bool vert = hasFlag(wf_Vertical);
         if (mSkin) mSkin->drawScrollBar(aCanvas,mRect,mValue,vert,mThumbSize);
-        else wtrace("no skin");
+        //else wtrace("no skin");
       }
 
     //----------

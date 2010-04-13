@@ -2,7 +2,6 @@
 #define axWidget_included
 //----------------------------------------------------------------------
 
-#include "base/axWidgetBase.h"
 //#include "core/axRect.h"
 #include "gui/axCanvas.h"
 #include "gui/axSkin.h"
@@ -72,8 +71,8 @@ class axWidget : public axWidgetListener
     axRect            mOrig;
     int               mAlignment;
     float             mValue;
-    int               mConnection;    // which parameter (if any) this is conected to (set in axEditor.connect)
-    axParameter*      mParameter;     // direct access to the parameter (set in axEditor.connect)
+    int               mConnection;            // which parameter (if any) this is conected to (set in axEditor.connect)
+    axParameter*      mParameter;             // direct access to the parameter (set in axEditor.connect)
     int               mMinWidth, mMinHeight;
     int               mMaxWidth, mMaxHeight;
     int               mMarginX,  mMarginY;    // container inner space (between outer border & widgets)
@@ -95,39 +94,42 @@ class axWidget : public axWidgetListener
   public:
     axWidget(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
       {
-        mListener       = aListener;
+        mFlags          = wf_Active|wf_Visible|wf_Capture|wf_Align;
         mRect           = aRect;
-        mFlags          = wf_Active|wf_Visible|wf_Capture;
+        mOrig           = mRect;
         mAlignment      = aAlignment;
+        mValue          = 0;
         mConnection     = -1;
         mParameter      = NULL;
-        mValue          = 0;
-        mOrig           = mRect;
-        mSkin           = NULL;
         mMinWidth       = 0;
         mMinHeight      = 0;
         mMaxWidth       = 999999;
         mMaxHeight      = 999999;
-        mId             = 0;      //aId;
-        mPtr            = NULL;   //aPtr;
-        mClient         = mRect;
-        mStackedX       = 0;
-        mStackedY       = 0;
-        mContent        = NULL_RECT;
-        mCapturedWidget = NULL;
-        mHoverWidget    = this;
-        mModalWidget    = NULL;
         mMarginX        = 0;
         mMarginY        = 0;
         mPaddingX       = 0;
         mPaddingY       = 0;
-        setFlag(wf_Align);
+        mSkin           = NULL;
+
+        mListener       = aListener;
+        mCapturedWidget = NULL;
+        mHoverWidget    = this;
+        mModalWidget    = NULL;
+        mClient         = mRect;
+        mContent        = NULL_RECT;
+        mStackedX       = 0;
+        mStackedY       = 0;
+
+        mId             = 0;      //aId;
+        mPtr            = NULL;   //aPtr;
       }
 
     virtual ~axWidget()
       {
         deleteWidgets();
       }
+
+    // flags
 
     inline void         setFlag(int aFlag)                    { mFlags |= aFlag; }
     inline void         setAllFlags(int aFlags)               { mFlags = aFlags; }
@@ -140,8 +142,12 @@ class axWidget : public axWidgetListener
     inline bool         isVisible(void)                       { return (mFlags&wf_Visible); }
     inline bool         canCapture(void)                      { return (mFlags&wf_Capture); }
 
+    // rect
+
     virtual bool        intersects(axRect aRect)              { return mRect.intersects(aRect); }
     virtual bool        contains(int aXpos, int aYpos)        { return mRect.contains(aXpos,aYpos); }
+
+    // parameter
 
     inline float        getValue(void)                        { return mValue; }
     inline void         setValue(float aValue)                { mValue=aValue; }
@@ -158,10 +164,10 @@ class axWidget : public axWidgetListener
     //
     //--------------------------------------------------
 
-    virtual void initMouseState(void)
-      {
-        mCapturedWidget = NULL;
-      }
+    //virtual void initMouseState(void)
+    //  {
+    //    mCapturedWidget = NULL;
+    //  }
 
     //----------
 
@@ -196,7 +202,7 @@ class axWidget : public axWidgetListener
         return mWidgets[aIndex];
       }
 
-    //----------
+    //--------------------------------------------------
 
     virtual int appendWidget(axWidget* aWidget)
       {
@@ -246,19 +252,25 @@ class axWidget : public axWidgetListener
 
     virtual void setSkin(axSkin* aSkin, bool aSub=false)
       {
+        //wtrace("axWidget.setSkin");
         mSkin = aSkin;
         if (aSub) { for (int i=0; i<mWidgets.size(); i++) mWidgets[i]->setSkin(aSkin,aSub); }
       }
 
-    //----------
+    //--------------------------------------------------
+    //
+    // do...
+    //
+    //--------------------------------------------------
+
+    // find first widget that contains x,y
+    // or 'self' is no sub-widgets found or hit
+    //
+    // start searching from end of list, so that widgets that are painted last
+    // (topmost) are found first.
 
     virtual axWidget* doFindWidget(int aXpos, int aYpos)
       {
-        // find first widget that contains x,y
-        // or 'self' is no sub-widgets found or hit
-        //
-        // start searching from end of list, so that widgets that are painted last
-        // (topmost) are found first.
         axWidget* widget = this;
         int num = mWidgets.size();
         if (num>0)
@@ -309,29 +321,35 @@ class axWidget : public axWidgetListener
 
     //----------
 
-    virtual void doMove(int aDeltaX, int aDeltaY)
-      {
-        //mRect.setPos(x,y);
-        int x = mRect.x + aDeltaX;
-        int y = mRect.y + aDeltaY;
-        this->doSetPos(x,y);
-      }
+    // not used??
+
+    //virtual void doMove(int aDeltaX, int aDeltaY)
+    //  {
+    //    //mRect.setPos(x,y);
+    //    int x = mRect.x + aDeltaX;
+    //    int y = mRect.y + aDeltaY;
+    //    this->doSetPos(x,y);
+    //  }
 
     //----------
 
-    virtual void doResize(int aDeltaX, int aDeltaY)
-      {
-        int w = mRect.w + aDeltaX;
-        int h = mRect.h + aDeltaY;
-        this->doSetSize(w,h);
-        //doRealign();
-      }
+    // only used in wdgScrollBox.doResize
+    // (and that is not colled from anywhere???
+
+    //virtual void doResize(int aDeltaX, int aDeltaY)
+    //  {
+    //    int w = mRect.w + aDeltaX;
+    //    int h = mRect.h + aDeltaY;
+    //    this->doSetSize(w,h);
+    //    //doRealign();
+    //  }
 
     //----------
+
+    // move sub-widgets only
 
     virtual void doScroll(int dX, int dY)
       {
-        // move sub-widgets only
         for( int i=0;i<mWidgets.size(); i++ )
         {
           axWidget* wdg = mWidgets[i];
@@ -371,6 +389,8 @@ class axWidget : public axWidgetListener
     TODO:
     - skip widget if not enough space for it?
       (null or negative space left)
+    - break up this (too large) function into smaller pieces
+      to make it easier to follow and see any overview...
 
     */
 
@@ -535,14 +555,15 @@ class axWidget : public axWidgetListener
             for (int i=0; i<mWidgets.size(); i++)
             {
               axWidget* wdg = mWidgets[i];
-              if (wdg->isVisible())
+              //if (wdg->isVisible())
               {
-                if (/*wdg->intersects(aRect) &&*/ wdg->intersects(mRect)) wdg->doPaint(aCanvas,aRect);
+                //if (/*wdg->intersects(aRect) &&*/ wdg->intersects(mRect))
+                  wdg->doPaint(aCanvas,aRect);
               }
             } //for
             if (mFlags&wf_Clip) aCanvas->clearClipRect(); // resetClipRect();
-          }
-        }
+          } //intersect
+        } //visible
       }
 
     //----------
@@ -638,7 +659,9 @@ class axWidget : public axWidgetListener
       }
 
     //--------------------------------------------------
+    //
     // axWidgetListener
+    //
     //--------------------------------------------------
 
     virtual void onChange(axWidget* aWidget)

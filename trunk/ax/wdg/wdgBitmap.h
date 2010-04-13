@@ -2,16 +2,15 @@
 #define wdgBitmap_included
 //----------------------------------------------------------------------
 
-#include "gui/axContainer.h"
+#include "gui/axWidget.h"
 
-class wdgBitmap : public axWidget//axContainer
+class wdgBitmap : public axWidget
 {
   protected:
     axBitmap* mBitmap;
   public:
-    wdgBitmap(axWidgetListener* aListener, /*int aId, */axRect aRect, int aAlignment=wa_None, axBitmap* aBitmap=NULL)
-    //: axContainer(aListener,/*aId,*/aRect,aAlignment)
-    : axWidget(aListener,/*aId,*/aRect,aAlignment)
+    wdgBitmap(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None, axBitmap* aBitmap=NULL)
+    : axWidget(aListener,aRect,aAlignment)
       {
         //clearFlag(wf_Active);
         mBitmap = aBitmap;
@@ -28,7 +27,6 @@ class wdgBitmap : public axWidget//axContainer
         int srcw = mRect.w;
         int srch = mRect.h;
         aCanvas->drawBitmap(mBitmap, dstx,dsty, srcx,srcy,srcw,srch);
-        //axContainer::doPaint(aCanvas,aRect);
         axWidget::doPaint(aCanvas,aRect);
       }
 

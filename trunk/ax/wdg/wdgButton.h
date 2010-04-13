@@ -35,6 +35,8 @@ class wdgButton : public axWidget
     inline void setState(bool aState) { mState=aState; }
     inline bool getState(void) { return mState; }
 
+    //----------
+
     inline void setText(axString aOffText, axString aOnText, int aTextAlign=ta_Center)
       {
         mOffText = aOffText;
@@ -42,7 +44,7 @@ class wdgButton : public axWidget
         mTextAlign = aTextAlign;
       }
 
-    //----------
+    //--------------------------------------------------
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
@@ -76,6 +78,8 @@ class wdgButton : public axWidget
             break;
         } //switch
       }
+
+    //----------
 
     virtual void doMouseUp(int aXpos, int aYpos, int aButton)
       {
@@ -124,16 +128,16 @@ class wdgButton : public axWidget
             break;
         } //switch
 
-
-
       }
 
-    //----------
+    //--------------------------------------------------
 
     virtual void doEnter(axWidget* aCapture)
       {
         mListener->onCursor(cu_Hand);
       }
+
+    //----------
 
     virtual void doLeave(axWidget* aCapture)
       {
