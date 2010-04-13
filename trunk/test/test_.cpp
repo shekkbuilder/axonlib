@@ -5,7 +5,7 @@
 #include "axPlugin.h"
 #include "axEditor.h"
 #include "gui/axContainer.h"
-#include "gui/axSymbol.h"
+#include "gui/axSymbols.h"
 
 //----------------------------------------------------------------------
 //

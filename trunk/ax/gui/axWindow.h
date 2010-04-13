@@ -52,7 +52,8 @@ class axWindow : public axWindowImpl
         {
           mRect.w = aWidth;
           mRect.h = aHeight;
-          if (mFlags&wf_Align) doRealign(); // widget flags
+          // realign widgets if needed/wanted...
+          if (mFlags&wf_Align) doRealign();
         }
 
       //virtual void doMove(int aDeltaX, int aDeltaY) {}
@@ -78,7 +79,11 @@ class axWindow : public axWindowImpl
       virtual void onRedraw(axWidget* aWidget) { redrawWidget(aWidget); }
       virtual void onCursor(int aCursor) { setCursor(aCursor); }
       virtual void onHint(axString aHint) {}
-      virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY) { doRealign(); redrawAll(); }
+      virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY)
+        {
+          if (mFlags&wf_Align) doRealign();
+          /*if (mFlags&wf_Visible)*/ redrawAll();
+        }
 
 };
 

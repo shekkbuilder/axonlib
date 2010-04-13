@@ -47,7 +47,7 @@ class axEditor : public axWindow
         mPlugin = aPlugin;
         axCanvas* can = getCanvas();
         mDefaultSkin = new axSkinDefault(can);
-        doSetSkin(mDefaultSkin,true);
+        setSkin(mDefaultSkin/*,true*/); // no sub-widgets yet?
       }
 
     virtual ~axEditor()

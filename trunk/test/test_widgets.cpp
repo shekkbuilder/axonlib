@@ -138,7 +138,7 @@ class myEditor : public axEditor
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
       {
         axCanvas*     can;
-        axContainer*  con;
+        //axContainer*  con;
         axWidget*     wdg;
         wdgScrollBar* scr;
         //-----
@@ -204,10 +204,13 @@ class myEditor : public axEditor
             wLeft->appendWidget(          new wdgLabel(     this,axRect(0,0,  0, 16), wa_Top,          "label ",ta_Left) );
             wLeft->appendWidget(          new wdgLabel(     this,axRect(0,0,  0, 16), wa_Top,          "label ",ta_Right) );
             wLeft->appendWidget(          new wdgPanel(     this,axRect(0,0,  0, 20), wa_Top) );
-            wLeft->appendWidget( con =    new wdgPanel(     this,axRect(0,0,  0, 32), wa_Top) );
-              con->appendWidget( new wdgLabel(this,NULL_RECT,wa_Client,"panel"));
+            wLeft->appendWidget( wdg =    new wdgPanel(     this,axRect(0,0,  0, 32), wa_Top) );
+              wdg->appendWidget( new wdgLabel(this,NULL_RECT,wa_Client,"panel"));
 
-            wLeft->appendWidget( new wdgGroupBox(this,axRect(0,0,0,100), wa_Top) );
+
+            wdgGroupBox* grp;
+            wLeft->appendWidget( grp =    new wdgGroupBox(this,axRect(0,0,0,100), wa_Top) );
+            grp->setup("test",false,false);
 
             wLeft->appendWidget(          new wdgSlider(    this,axRect(0,0,  0, 20), wa_Top,          "slider") );
             wLeft->appendWidget( wdg =    new wdgSlider(    this,axRect(0,0, 20,  0 ),wa_Left,         "slider") );
@@ -221,10 +224,10 @@ class myEditor : public axEditor
             wLeft->appendWidget( wKnob1 = new wdgKnob(      this,axRect(0,0, 30, 30), wa_Top,          "knob", 0) );
             wLeft->appendWidget( scr =    new wdgScrollBar( this,axRect(0,0,  0, 20), wa_Top) );
               scr->setThumbSize(0.2);
-            wLeft->appendWidget( con =    new wdgImage(     this,axRect(0,0,100,100), wa_LeftTop,      mImgSurf) );
-              con->appendWidget( new wdgLabel(this,axRect(0,0,100,100),wa_Client,"image [surface]"));
-            wLeft->appendWidget( con =    new wdgBitmap(    this,axRect(0,0,100,100), wa_RightBottom,  mBitmap2) );
-              con->appendWidget( new wdgLabel(this,axRect(0,0,100,100),wa_Client,"bitmap"));
+            wLeft->appendWidget( wdg =    new wdgImage(     this,axRect(0,0,100,100), wa_LeftTop,      mImgSurf) );
+              wdg->appendWidget( new wdgLabel(this,axRect(0,0,100,100),wa_Client,"image [surface]"));
+            wLeft->appendWidget( wdg =    new wdgBitmap(    this,axRect(0,0,100,100), wa_RightBottom,  mBitmap2) );
+              wdg->appendWidget( new wdgLabel(this,axRect(0,0,100,100),wa_Client,"bitmap"));
 
           // --- sizer ---
 
@@ -244,7 +247,7 @@ class myEditor : public axEditor
 
           //wClient->appendWidget( wCenter = new wdgPanel(this,NULL_RECT,wa_Client) );
           wClient->appendWidget( wCenter = new wdgScrollBox(this,NULL_RECT,wa_Client) );
-            wCenter->setBorders(5,5);
+            wCenter->setBorders(5,5,0,0);
             wCenter->getContainer()->setBorders(10,10,5,5);
             //wCenter->doSetSkin(mDefaultSkin,true);
             wCenter->setFlag(wf_Clip);
@@ -263,7 +266,7 @@ class myEditor : public axEditor
                 //kn->setName(label_buf[i]);
                 //va->setName(label_buf[i]);
             }
-            wCenter->doSetSkin(mDefaultSkin,true);
+            wCenter->setSkin(mDefaultSkin,true);
             //wCenter->doRealign();
 
           // ---
