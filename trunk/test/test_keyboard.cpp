@@ -6,6 +6,8 @@
 #include "axPlugin.h"
 #include "axEditor.h"
 #include "wdg/wdgPanel.h"
+#include "wdg/wdgOctave.h"
+
 
 //----------------------------------------------------------------------
 //
@@ -16,17 +18,29 @@
 class myEditor : public axEditor
 {
   private:
-    wdgPanel* main_panel;
+    wdgPanel*     main_panel;
+    wdgOctave*  octave1;
 
   public:
 
     myEditor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
     {
-      //axCanvas* canvas = getCanvas();
+      axCanvas* aCanvas = getCanvas();
       appendWidget( main_panel = new wdgPanel(this,NULL_RECT,wa_Client) );
-      setSkin(mDefaultSkin/*,true*/);
+        main_panel->appendWidget( octave1 = new wdgOctave(this,axRect(0,0,200,60),wa_Client) );
+          octave1->setDist(2);
+          //octave1->activate(0);
+          //octave1->activate(3);
+          //octave1->activate(7);
+          octave1->setColors( aCanvas->getColor(255,255,255),
+                              aCanvas->getColor(  0,  0,  0),
+                              aCanvas->getColor(192,192,192),
+                              aCanvas->getColor( 96, 96, 96)
+          );
+      setSkin(mDefaultSkin,true);
       doRealign();
+      octave1->recalc();
       //startTimer(250);
     }
 
@@ -102,4 +116,3 @@ class myPlugin : public axPlugin
 
 //----------------------------------------------------------------------
 AX_ENTRYPOINT(myPlugin)
-

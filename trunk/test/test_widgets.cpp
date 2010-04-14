@@ -1,6 +1,6 @@
 
-#define AX_DEBUG
-#include "core/axDebug.h"
+//#define AX_DEBUG
+//#include "core/axDebug.h"
 
 #include "axPlugin.h"
 #include "axEditor.h"
@@ -210,7 +210,7 @@ class myEditor : public axEditor
 
           // --- left ---
 
-          wClient->appendWidget( wLeft = new wdgPanel(this,axRect(0,0,200,0),wa_Left) );
+          wClient->appendWidget( wLeft = new wdgPanel(this,axRect(0,0,260,0),wa_Left) );
             wLeft->setBorders(10,10,5,5);
             wLeft->setFlag(wf_Clip);
             wLeft->appendWidget(          new wdgLabel(     this,axRect(0,0,  0, 16), wa_Top,          "") );
@@ -222,7 +222,7 @@ class myEditor : public axEditor
 
             wdgGroupBox* grp;
             wLeft->appendWidget( grp =    new wdgGroupBox(this,axRect(0,0,0,100), wa_Top) );
-            grp->setup("test",false,false);
+            //grp->setup("test",false,false);
             //grp->getContainer()->setBorders(5,5,5,5);
             //grp->setBorders(5,5,5,5);
             grp->getContainer()->setFlag(wf_Clip);

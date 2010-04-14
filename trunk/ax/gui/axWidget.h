@@ -1,6 +1,14 @@
 #ifndef axWidget_included
 #define axWidget_included
 //----------------------------------------------------------------------
+/*
+
+TODO:
+- realign, take spacing & borders into account
+- clipping, --"--
+
+*/
+//----------------------------------------------------------------------
 
 //#include "core/axRect.h"
 #include "gui/axCanvas.h"
@@ -66,6 +74,7 @@ class axWidgetListener
 class axWidget : public axWidgetListener
 {
   protected:
+    axString          mName;
     int               mFlags;
     axRect            mRect;
     axRect            mOrig;
@@ -92,8 +101,10 @@ class axWidget : public axWidgetListener
     void*             mPtr;
 
   public:
+
     axWidget(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
       {
+        mName           = "";
         mFlags          = wf_Active|wf_Visible|wf_Capture|wf_Align;
         mRect           = aRect;
         mOrig           = mRect;
@@ -128,6 +139,14 @@ class axWidget : public axWidgetListener
       {
         deleteWidgets();
       }
+
+    //--------------------------------------------------
+    //
+    //
+    //
+    //--------------------------------------------------
+
+    inline void setName(axString aName) { mName=aName; }
 
     // flags
 
@@ -228,7 +247,7 @@ class axWidget : public axWidgetListener
         mWidgets.clear();
       }
 
-    //----------
+    //------------------------------
 
     virtual void setBorders(int aMarginX, int aMarginY, int aPaddingX, int aPaddingY)
       {
@@ -311,8 +330,8 @@ class axWidget : public axWidgetListener
 
     virtual void doSetSize(int aWidth, int aHeight)
       {
-        if (aWidth < mMinWidth) aWidth = mMinWidth;
-        if (aWidth > mMaxWidth) aWidth = mMaxWidth;
+        if (aWidth  < mMinWidth)  aWidth  = mMinWidth;
+        if (aWidth  > mMaxWidth)  aWidth  = mMaxWidth;
         if (aHeight < mMinHeight) aHeight = mMinHeight;
         if (aHeight > mMaxHeight) aHeight = mMaxHeight;
         mRect.setSize(aWidth,aHeight);

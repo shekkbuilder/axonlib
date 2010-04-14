@@ -13,17 +13,16 @@ class wdgValue : public axWidget
     float mClickVal;
     char  mDisp[16];
   protected:
-    axString  mName;
+    //axString  mName;
     float     mSens1;
     float     mSens2;
 
   public:
-    wdgValue(axWidgetListener* aListener, /*int aId, */axRect aRect, int aAlignment=wa_None, axString aName="", float aValue=0)
-    : axWidget(aListener,/*aId,*/aRect,aAlignment)
+    wdgValue(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None, axString aName="", float aValue=0)
+    : axWidget(aListener,aRect,aAlignment)
       {
         mName = aName;
         mValue = aValue;
-
         mIsDragging = false;
         mSens1 = 0.005;
         //if (hasFlag(wf_Vertical)) { if (aRect.w>0) mSens1 = 1.0f/(float)aRect.h; }
@@ -34,7 +33,7 @@ class wdgValue : public axWidget
 
     //----------
 
-    inline void setName(axString aName) { mName=aName; }
+    //inline void setName(axString aName) { mName=aName; }
     inline void setSensitivity(float aSens1, float aSens2) { mSens1=aSens1; mSens2=aSens2; }
 
     //----------
@@ -91,7 +90,6 @@ class wdgValue : public axWidget
         if (mSkin)
         {
           sprintf(mDisp,"%.3f",mValue);
-          //mSkin->drawSlider(aCanvas,mRect,mValue,mName,mDisp,hasFlag(wf_Vertical));
           mSkin->drawValue(aCanvas,mRect,mName,mDisp,mValue);
         }
       }

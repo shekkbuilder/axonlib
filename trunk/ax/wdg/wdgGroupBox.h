@@ -31,7 +31,7 @@ class wdgGroupBox : public axWidget
         axWidget::appendWidget( wTitleBar   = new wdgButton(  this,axRect(0,0,0,20),wa_Top,false,"group box","group box",ta_Center,bm_Spring ) );
         axWidget::appendWidget( wContainer  = new wdgPanel(   this,NULL_RECT,       wa_Client ) );
         mClosed   = false;
-        mClosable = false;
+        mClosable = true;
       }
 
     //virtual ~wdgGroupBox()
@@ -39,28 +39,20 @@ class wdgGroupBox : public axWidget
     //  }
 
     //--------------------------------------------------
-
     // accessors
-    inline axWidget*  getContainer(void) { return wContainer; }
-    inline wdgButton* getHeader(void) { return wTitleBar; }
+
+    inline axWidget*  getContainer(void)  { return wContainer; }
+    inline wdgButton* getHeader(void)     { return wTitleBar; }
 
     //--------------------------------------------------
-
-    virtual int appendWidget(axWidget* aWidget)
-      {
-        return  wContainer->appendWidget(aWidget); // !!!
-      }
-
-
+    // internal
     //--------------------------------------------------
 
-    //TODO: setup heights etc
-
-    void setup(axString aTitle, bool aClosed=false, bool aClosable=false)
-      {
-        mClosed = aClosed;
-        mClosable = aClosable;
-      }
+    //void setup(axString aTitle, bool aClosed=false, bool aClosable=false)
+    //  {
+    //    mClosed = aClosed;
+    //    mClosable = aClosable;
+    //  }
 
     //----------
 
@@ -84,6 +76,17 @@ class wdgGroupBox : public axWidget
       }
 
     //--------------------------------------------------
+    //
+    //--------------------------------------------------
+
+    virtual int appendWidget(axWidget* aWidget)
+      {
+        return  wContainer->appendWidget(aWidget); // !!!
+      }
+
+    //--------------------------------------------------
+    // do...
+    //--------------------------------------------------
 
     //virtual void doPaint(axCanvas* aCanvas, axRect aRect)
     //  {
@@ -96,13 +99,18 @@ class wdgGroupBox : public axWidget
     //  }
 
     //--------------------------------------------------
+    // on...
+    //--------------------------------------------------
 
     virtual void onChange(axWidget* aWidget)
       {
         if (aWidget==wTitleBar)
         {
-          toggle_closed();
-          mListener->onSize(this,0,0);
+          if (mClosable)
+          {
+            toggle_closed();
+            mListener->onSize(this,0,0);
+          }
         }
         mListener->onChange(aWidget);
       }

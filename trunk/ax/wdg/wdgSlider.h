@@ -13,35 +13,40 @@ class wdgSlider : public axWidget
     float mClickVal;
     char  mDisp[16];
   protected:
-    axString  mName;
+    //axString  mName;
     float     mSens1;
     float     mSens2;
 
   public:
-    wdgSlider(axWidgetListener* aListener, /*int aId, */axRect aRect, int aAlignment=wa_None, axString aName="")
-    : axWidget(aListener,/*aId,*/aRect,aAlignment)
+    wdgSlider(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None, axString aName="", float aValue=0)
+    : axWidget(aListener,aRect,aAlignment)
       {
+        mName = aName;
+        mValue = aValue;
         mIsDragging = false;
         //mSens1 = 0.005;
         if (hasFlag(wf_Vertical)) { if (aRect.w>0) mSens1 = 1.0f/(float)aRect.h; }
         else                      { if (aRect.w>0) mSens1 = 1.0f/(float)aRect.w; }
         mSens2 = 0.05;
-        mName = aName;
         //if (aRect.h<aRect.w) setFlag(wf_Vertical);
       }
 
     //----------
 
-    inline void setName(axString aName) { mName=aName; }
-    inline void setSensitivity(float aSens1, float aSens2) { mSens1=aSens1; mSens2=aSens2; }
+    //inline void setName(axString aName) { mName=aName; }
+    inline void setSensitivity(float aSens1, float aSens2)
+      {
+        mSens1=aSens1;
+        mSens2=aSens2;
+      }
 
     //----------
 
     virtual void doSetSize(int aWidth, int aHeight)
       {
+        axWidget::doSetSize(aWidth,aHeight);
         if (hasFlag(wf_Vertical)) { if (aHeight>0) mSens1 = 1.0f/(float)aHeight; }
         else                      { if (aWidth >0) mSens1 = 1.0f/(float)aWidth; }
-        axWidget::doSetSize(aWidth,aHeight);
       }
 
     //----------

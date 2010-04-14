@@ -51,6 +51,8 @@ class wdgScrollBox : public axWidget//axContainer
     //}
 
     //--------------------------------------------------
+    // internal
+    //--------------------------------------------------
 
     void unscroll(void)
       {
@@ -87,6 +89,8 @@ class wdgScrollBox : public axWidget//axContainer
       }
 
     //--------------------------------------------------
+    //
+    //--------------------------------------------------
 
     virtual int appendWidget(axWidget* aWidget)
       {
@@ -94,7 +98,7 @@ class wdgScrollBox : public axWidget//axContainer
       }
 
     //--------------------------------------------------
-    //
+    // do...
     //--------------------------------------------------
 
     virtual void doScroll(int dX, int dY)
@@ -137,8 +141,10 @@ class wdgScrollBox : public axWidget//axContainer
     //  }
 
     //--------------------------------------------------
-    //
+    // on...
     //--------------------------------------------------
+
+    // if scrollbar has changed, we need to move sub-widgets
 
     virtual void onChange(axWidget* aWidget)
       {
@@ -149,10 +155,9 @@ class wdgScrollBox : public axWidget//axContainer
           int i = (int)(scrollable*val);
           int dy = i - mScrolledY;
           doScroll(0,dy);
-          mListener->onChange(this);
+          mListener->onChange(wContainer);
         }
-        else
-          mListener->onChange(aWidget);
+        mListener->onChange(aWidget);
       }
 
 };
