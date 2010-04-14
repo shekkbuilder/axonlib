@@ -28,7 +28,13 @@ TODO:
 #define wa_RightTop     7
 #define wa_LeftBottom   8
 #define wa_RightBottom  9
-#define wa_Stacked      10
+#define wa_TopLeft      10
+#define wa_TopRight     11
+#define wa_BottomLeft   12
+#define wa_BottomRight  13
+//#define wa_Stacked      14
+#define wa_StackedHoriz 15
+#define wa_StackedVert  16
 
 //----------
 
@@ -413,151 +419,538 @@ class axWidget : public axWidgetListener
 
     */
 
+    //TODO: mCintent!
+
     virtual void doRealign(void)
       {
         if (mFlags&wf_Align)
         {
           axRect parent = mRect;
-          mContent.set(parent.x,parent.y,0,0);
-          parent.add( mMarginX, mMarginY, -(mMarginX*2), -(mMarginY*2) ); // spacing (outer border)
+          parent.add( mMarginX, mMarginY, -(mMarginX*2), -(mMarginY*2) );
           axRect client = parent;
-          int largest = 0;
-          int stackx = parent.x + mPaddingX;
-          int stacky = parent.y + mPaddingY;
+
+          mContent.set(parent.x,parent.y,mMarginX*2,mMarginY*2);
+
+          int stackx   = client.x;
+          int stacky   = client.y;
+          int largestw = 0;
+          int largesth = 0;
+
           for( int i=0; i<mWidgets.size(); i++ )
           {
             axWidget* wdg = mWidgets[i];
-            int ox = wdg->mOrig.x;// getOrig().x;//wdg->getRect().x;
-            int oy = wdg->mOrig.y;//getOrig().y;//wdg->getRect().y;
-            int ww = wdg->getRect().w;
-            int wh = wdg->getRect().h;
-            switch (wdg->mAlignment)//getAlignment() )
+            int ww = wdg->getRect().w;  // current widget width
+            int wh = wdg->getRect().h;  // height
+            switch (wdg->mAlignment)
             {
-              // position relative to container
+
+              //  _____
+              // |  _  |
+              // | |_| |
+              // |_____|
+              //
+
               case wa_None:
-                wdg->doSetPos(parent.x+ox,parent.y+oy);
+                wdg->doSetPos(wdg->mOrig.x+parent.x, wdg->mOrig.y+parent.y);
                 break;
-              //case wal_Fill:
-              //  wdg->doSetPos(  parent.x, parent.y );
-              //  wdg->doSetSize( parent.w, parent.h );
-              //  break;
-              // stretch to fill entire client area
+
+              //   _____
+              //  |     |
+              //  |     |
+              //  |_____|
+              //
+
               case wa_Client:
-                wdg->doSetPos( client.x, client.y );
+                wdg->doSetPos(  client.x, client.y );
                 wdg->doSetSize( client.w, client.h );
                 break;
-              //--- stretch ---
-              // move to left edge, stretch vertical to client area height
+
+//----------
+
+              //  _____
+              // |  |
+              // |  |
+              // |__|__
+              //
+
               case wa_Left:
+
                 wdg->doSetPos( client.x, client.y );
                 wdg->doSetSize( ww, client.h );
-                //ww = wdg->getRect().w;
-                client.x += (ww + mPaddingX);
-                client.w -= (ww + mPaddingX);
+                client.x += (ww+mPaddingX);
+                client.w -= (ww+mPaddingX);
+                stackx    = client.x;
+                stacky    = client.y;
+                largesth  = 0;
+
                 break;
-              // move to right edge, stretch vertical to client area height
+
+              //  ______
+              //     |  |
+              //     |  |
+              //  __ |__|
+              //
+
               case wa_Right:
+
                 wdg->doSetPos( client.x2()-ww+1, client.y );
                 wdg->doSetSize( ww, client.h );
-                //ww = wdg->getRect().w;
                 client.w -= (ww + mPaddingX);
                 break;
-              // move to top, stretch horizontal to client area width
+
+              //  ______
+              // |______|
+              // |      |
+              //
+
               case wa_Top:
+
                 wdg->doSetPos( client.x, client.y );
                 wdg->doSetSize( client.w, wh );
-                //wh = wdg->getRect().h;
-                client.y += (wh + mPaddingY);
-                client.h -= (wh + mPaddingY);
+                client.y += (wh+mPaddingY);
+                client.h -= (wh+mPaddingY);
+                stackx    = client.x;
+                stacky    = client.y;
+                largestw  = 0;
                 break;
-              // move to bottom, stretch horizontal to client area width
+
+              //
+              // |      |
+              // |______|
+              // |______|
+              //
+
               case wa_Bottom:
+
                 wdg->doSetPos( client.x, client.y2()-wh+1 );
                 wdg->doSetSize( client.w, wh );
-                //wh = wdg->getRect().w;
-                client.h -= (wh + mPaddingY);
+                client.h -= (wh+mPaddingY);
                 break;
-              //--- move ---
-              // move to top-left, no resize
+
+//----------
+
+              //  __________
+              // |    |
+              // |____|
+              // |    :
+              //      .
+
               case wa_LeftTop:
                 wdg->doSetPos( client.x, client.y );
-                //wdg->doSetSize( ww, C.h );
                 client.x += (ww + mPaddingX);
                 client.w -= (ww + mPaddingX);
+                stackx = client.x;
+                stacky = client.y;
                 break;
-              // move to top-right, no resize
+
+              //  __________
+              //      |     |
+              //      |_____|
+              //      :     |
+              //      .
+
               case wa_RightTop:
+
                 wdg->doSetPos( client.x2()-ww+1, client.y );
-                //wdg->doSetSize( ww, C.h );
                 client.w -= (ww + mPaddingX);
                 break;
-              // move to bottom-left, no resize
-              case wa_LeftBottom:
-                wdg->doSetPos( client.x, client.y2()-wh+1 );
-                //wdg->doSetSize( C.w, wh );
-                //C.y += wh;
-                client.h -= (wh+mPaddingY);
-                break;
-              // move to bottom-right, no resize
-              case wa_RightBottom:
-                wdg->doSetPos( client.x2()-ww+1, client.y2()-wh+1 );
-                //wdg->doSetSize( C.w, wh );
-                client.h -= (wh+mPaddingY);
-                break;
-              //TODO: TopLeft,TopRight, etc?
-              // update client the 'other' direction
-              // wa_LeftTop, clips available client rect from left,
-              // wa_TopLeft should be from top?
-              //--- stacked ---
-              // stacked widgets does not affect the available client rect
-              // stacked horizontal or vertical (depending on wf_Vertical flag)
-              case wa_Stacked:
-                wdg->doSetPos(stackx,stacky);
-                //TODO: fix
-                int w = ww + mPaddingX;
-                int h = wh + mPaddingY;
 
-                if (mFlags&wf_Vertical)
+              //   __________
+              //  |    .     |
+              //  |____:     |
+              //  |    |     |
+              //  |____|_____|
+              //
+
+              case wa_LeftBottom:
+
+                wdg->doSetPos( client.x, client.y2()-wh+1 );
+                client.x += (ww + mPaddingX);
+                client.w -= (ww + mPaddingX);
+                stackx = client.x;
+                stacky = client.y;
+                break;
+
+              //  __________
+              //      .     |
+              //      :_____|
+              //      |     |
+              //  ____|_____|
+              //
+
+              case wa_RightBottom:
+
+                wdg->doSetPos( client.x2()-ww+1, client.y2()-wh+1 );
+                //wdg->doSetSize( ww, client.h );
+                client.w -= (ww + mPaddingX);
+                break;
+
+//----------
+
+              //  __________
+              // |    |
+              // |____|.....
+              // |
+              //
+
+              case wa_TopLeft:
+                wdg->doSetPos( client.x, client.y );
+                client.y += (wh + mPaddingY);
+                client.h -= (wh + mPaddingY);
+                stackx = client.x;
+                stacky = client.y;
+                break;
+
+              //  __________
+              //        |   |
+              //   .....|___|
+              //            |
+              //
+
+              case wa_TopRight:
+
+                wdg->doSetPos( client.x2()-ww+1, client.y );
+                //wdg->doSetSize( ww, client.h );
+                client.y += (wh + mPaddingY);
+                client.h -= (wh + mPaddingY);
+                stackx = client.x;
+                stacky = client.y;
+                break;
+
+              //   __________
+              //  |          |
+              //  |___ ...   |
+              //  |   |      |
+              //  |___| _____|
+              //
+
+              case wa_BottomLeft:
+
+                wdg->doSetPos( client.x, client.y2()-wh+1 );
+                //client.y += (wh + mPaddingY);
+                client.h -= (wh + mPaddingY);
+                break;
+
+              //  __________
+              //      .     |
+              //      :_____|
+              //      |     |
+              //  ____|_____|
+              //
+
+              case wa_BottomRight:
+
+                wdg->doSetPos( client.x2()-ww+1, client.y2()-wh+1 );
+                //wdg->doSetSize( ww, client.h );
+                client.h -= (wh + mPaddingY);
+                break;
+
+//----------
+
+              //  __________________
+              // |    |    |   |
+              // |____|____|___|...... .
+              // |
+              //
+
+              case wa_StackedHoriz:
+
                 {
-                  int remain = parent.y2() - stacky + 1 - wh;
-                  if (remain>=h)
+                  int remain = client.x2() - stackx + 1;
+                  if (remain >= ww)
                   {
-                    stacky+=h;
-                    if(w>largest) largest=w;
+                    // enough space
+                    wdg->doSetPos(stackx,stacky);
+                    stackx += (ww+mPaddingX);
+                    if (wh>largesth) largesth = wh;
+                    int prevy = client.y;
+                    int curry = stacky + (largesth+mPaddingY);
+                    int diff  = curry-prevy;
+                    client.y  = curry;
+                    if (diff>0) client.h -= diff;
                   }
                   else
                   {
-                    stacky = parent.y + mPaddingY;
-                    if (largest>0) stackx += largest;//w;         // largest
-                    else stackx+=w;
-                    largest = 0;//-1;
+                    // not enougb space
+                    stackx    = client.x;
+                    stacky   += (largesth+mPaddingY);
+                    largesth  = wh;
+                    wdg->doSetPos(stackx,stacky);
+                    client.y += (largesth+mPaddingY);
+                    client.h -= (largesth+mPaddingY);
+                    stackx += (ww+mPaddingX);
                   }
-                } //vertical
-                else
+                }
+                break;
+
+              //  ________
+              // |___|
+              // |___|
+              // |___|
+              // |   |
+              // |   :
+              //     .
+
+              case wa_StackedVert:
+
                 {
-                  int remain = parent.x2() - stackx + 1 - ww;
-                  if( remain>=w )
+                  int remain = client.y2() - stacky + 1;
+                  if (remain >= wh)
                   {
-                    stackx+=w;
-                    if(h>largest) largest=h;
+                    // enough space
+                    wdg->doSetPos(stackx,stacky);
+                    stacky += (wh+mPaddingY);
+                    if (ww>largestw) largestw = ww;
+                    int prevx = client.x;
+                    int currx = stackx + (largestw+mPaddingX);
+                    int diff  = currx-prevx;
+                    client.x  = currx;
+                    if (diff>0) client.w -= diff;
                   }
                   else
                   {
-                    stackx = parent.x + mPaddingX;
-                    if (largest>0) stacky += largest;//h;         // largest
-                    else stacky += h;
-                    largest = 0;//-1;
+                    // not enougb space
+                    stackx   += (largestw+mPaddingX);
+                    stacky    = client.y;
+                    largestw  = ww;
+                    wdg->doSetPos(stackx,stacky);
+                    client.x += (largestw+mPaddingX);
+                    client.w -= (largestw+mPaddingX);
+                    stacky   += (wh+mPaddingY);
                   }
-                } //horizontal
-                break; // stacked
-              //---
-            } //switch alignment
+                }
+                break;
+
+              //
+              //
+              //
+              //
+              //
+
+            } // switch alignment
             mContent.combine( wdg->getRect() ); // keep track of outer boundary
             wdg->doRealign();
-          } //for widgets
+          } // for all widgets
           mContent.add(0,0,mMarginX,mMarginY);
-        } //wfl_Align
+        } // if align
       }
+
+    //----------
+
+//    virtual void doRealign(void)
+//      {
+//        if (mFlags&wf_Align)
+//        {
+//          axRect parent = mRect;
+//          mContent.set(parent.x,parent.y,0,0);
+//          parent.add( mMarginX, mMarginY, -(mMarginX*2), -(mMarginY*2) ); // spacing (outer border)
+//          axRect client = parent;
+//          int largestw = 0;
+//          int largesth = 0;
+//          int stackx = parent.x + mPaddingX;
+//          int stacky = parent.y + mPaddingY;
+//          for( int i=0; i<mWidgets.size(); i++ )
+//          {
+//            axWidget* wdg = mWidgets[i];
+//            int ox = wdg->mOrig.x;// getOrig().x;//wdg->getRect().x;
+//            int oy = wdg->mOrig.y;//getOrig().y;//wdg->getRect().y;
+//            int ww = wdg->getRect().w;
+//            int wh = wdg->getRect().h;
+//            switch (wdg->mAlignment)//getAlignment() )
+//            {
+//              // position relative to container
+//              case wa_None:
+//                wdg->doSetPos(parent.x+ox,parent.y+oy);
+//                break;
+//              //case wal_Fill:
+//              //  wdg->doSetPos(  parent.x, parent.y );
+//              //  wdg->doSetSize( parent.w, parent.h );
+//              //  break;
+//              // stretch to fill entire client area
+//              case wa_Client:
+//                wdg->doSetPos( client.x, client.y );
+//                wdg->doSetSize( client.w, client.h );
+//                break;
+//              //--- stretch ---
+//              // move to left edge, stretch vertical to client area height
+//              case wa_Left:
+//                wdg->doSetPos( client.x, client.y );
+//                wdg->doSetSize( ww, client.h );
+//                //ww = wdg->getRect().w;
+//                client.x += (ww + mPaddingX);
+//                client.w -= (ww + mPaddingX);
+//  stackx = client.x;
+//  stacky = parent.y + mPaddingY;
+//                break;
+//              // move to right edge, stretch vertical to client area height
+//              case wa_Right:
+//                wdg->doSetPos( client.x2()-ww+1, client.y );
+//                wdg->doSetSize( ww, client.h );
+//                //ww = wdg->getRect().w;
+//                client.w -= (ww + mPaddingX);
+//                break;
+//              // move to top, stretch horizontal to client area width
+//              case wa_Top:
+//                wdg->doSetPos( client.x, client.y );
+//                wdg->doSetSize( client.w, wh );
+//                //wh = wdg->getRect().h;
+//                client.y += (wh + mPaddingY);
+//                client.h -= (wh + mPaddingY);
+//  stacky = client.y;
+//  stackx = parent.x + mPaddingX;
+//                break;
+//              // move to bottom, stretch horizontal to client area width
+//              case wa_Bottom:
+//                wdg->doSetPos( client.x, client.y2()-wh+1 );
+//                wdg->doSetSize( client.w, wh );
+//                //wh = wdg->getRect().w;
+//                client.h -= (wh + mPaddingY);
+//                break;
+//              //--- move ---
+//              // move to top-left, no resize
+//              case wa_LeftTop:
+//                wdg->doSetPos( client.x, client.y );
+//                //wdg->doSetSize( ww, C.h );
+//                client.x += (ww + mPaddingX);
+//                client.w -= (ww + mPaddingX);
+//  stackx = client.x;
+//  stacky = parent.y + mPaddingY;
+//                break;
+//              // move to top-right, no resize
+//              case wa_RightTop:
+//                wdg->doSetPos( client.x2()-ww+1, client.y );
+//                //wdg->doSetSize( ww, C.h );
+//                client.w -= (ww + mPaddingX);
+//                break;
+//              // move to bottom-left, no resize
+//              case wa_LeftBottom:
+//                wdg->doSetPos( client.x, client.y2()-wh+1 );
+//                //wdg->doSetSize( C.w, wh );
+//                //C.y += wh;
+//                client.h -= (wh+mPaddingY);
+//                break;
+//              // move to bottom-right, no resize
+//              case wa_RightBottom:
+//                wdg->doSetPos( client.x2()-ww+1, client.y2()-wh+1 );
+//                //wdg->doSetSize( C.w, wh );
+//                client.h -= (wh+mPaddingY);
+//                break;
+//
+//              //TODO: TopLeft,TopRight, etc?
+//              // update client the 'other' direction
+//              // wa_LeftTop, clips available client rect from left,
+//              // wa_TopLeft should be from top?
+//              //--- stacked ---
+//              // stacked widgets does not affect the available client rect
+//              // stacked horizontal or vertical (depending on wf_Vertical flag)
+//
+////              case wa_Stacked:
+////                wdg->doSetPos(stackx,stacky);
+////                //TODO: fix
+////                int w = ww + mPaddingX;
+////                int h = wh + mPaddingY;
+////
+////                if (mFlags&wf_Vertical)
+////                {
+////                  int remain = parent.y2() - stacky + 1 - wh;
+////                  if (remain>=h)
+////                  {
+////                    stacky+=h;
+////                    if(w>largest) largest=w;
+////                  }
+////                  else
+////                  {
+////                    stacky = parent.y + mPaddingY;
+////                    if (largest>0) stackx += largest;//w;         // largest
+////                    else stackx+=w;
+////                    largest = 0;//-1;
+////                  }
+////                } //vertical
+////                else
+////                {
+////                  int remain = parent.x2() - stackx + 1 - ww;
+////                  if( remain>=w )
+////                  {
+////                    stackx+=w;
+////                    if(h>largest) largest=h;
+////                  }
+////                  else
+////                  {
+////                    stackx = parent.x + mPaddingX;
+////                    if (largest>0) stacky += largest;//h;         // largest
+////                    else stacky += h;
+////                    largest = 0;//-1;
+////                  }
+////                } //horizontal
+////                break; // stacked
+//
+//              case wa_StackedHoriz:
+//                {
+//                  wdg->doSetPos(stackx,stacky);
+//                  int w = ww + mPaddingX;
+//                  int h = wh + mPaddingY;
+//                  int hremain = parent.x2() - stackx + 1 - ww;
+//                  if (hremain>=w)
+//                  {
+//                    stackx+=w;
+//                    if (h>largesth) largesth=h;
+//                  }
+//                  else
+//                  {
+//                    stackx = parent.x + mPaddingX;
+//                    if (largesth>0) stacky += largesth;//h;         // largest
+//                    else stacky += h;
+//                    largesth = 0;//-1;
+//                    // reduce client height
+//                  }
+//
+//  int newy = stacky + largesth;
+//  int oldy = client.y;
+//  client.y = newy;
+//  int diff = newy - oldy;
+//  client.h -= diff;
+//
+//                }
+//                break; // stackedhoriz
+//
+//              case wa_StackedVert:
+//                {
+//                  wdg->doSetPos(stackx,stacky);
+//
+//                  //TODO: fix
+//                  int w = ww + mPaddingX;
+//                  int h = wh + mPaddingY;
+//                  int vremain = parent.y2() - stacky + 1 - wh;
+//                  if (vremain>=h)
+//                  {
+//                    stacky += h;
+//                    if (w>largestw) largestw = w;
+//                  }
+//                  else
+//                  {
+//                    stacky = parent.y + mPaddingY;
+//                    if (largestw>0) stackx += largestw;//w;         // largest
+//                    else stackx += w;
+//                    largestw = 0;//-1;
+//                  }
+//
+//  int newx = stackx + largestw;
+//  int oldx = client.x;
+//  client.x = newx;
+//  int diff = newx - oldx;
+//  client.w -= diff;
+//
+//                }
+//
+//                break; // stackedvert
+//              //---
+//            } //switch alignment
+//            mContent.combine( wdg->getRect() ); // keep track of outer boundary
+//            wdg->doRealign();
+//          } //for widgets
+//          mContent.add(0,0,mMarginX,mMarginY);
+//        } //wfl_Align
+//      }
 
     //----------
 
