@@ -217,7 +217,7 @@
 		<Unit filename="../../ax/wdg/wdgTest.h" />
 		<Unit filename="../../ax/wdg/wdgTextList.h" />
 		<Unit filename="../../ax/wdg/wdgValue.h" />
-		<Unit filename="../../test/test_keyboard.cpp" />
+		<Unit filename="../../test/test_widgets.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

@@ -229,7 +229,7 @@ class myEditor : public axEditor
 
               grp->appendWidget( scb = new wdgScrollBox(this,NULL_RECT,wa_Client) );
                 scb->getContainer()->setBorders(5,5,5,5);
-                for (int i=0; i<32; i++) scb->appendWidget( new wdgKnob(this,axRect(0,0,64,16),wa_Stacked, "",0) );
+                for (int i=0; i<32; i++) scb->appendWidget( new wdgKnob(this,axRect(0,0,64,16),wa_StackedHoriz, "",0) );
 
             wLeft->appendWidget(          new wdgSlider(    this,axRect(0,0,  0, 20), wa_Top,          "slider") );
             wLeft->appendWidget( wdg =    new wdgSlider(    this,axRect(0,0, 20,  0 ),wa_Left,         "slider") );
@@ -269,7 +269,7 @@ class myEditor : public axEditor
             for (int i=0; i<256; i++)
             {
               wdgLabel* la;
-              wCenter->appendWidget( la = new wdgLabel(this,axRect(0,0,30,20),wa_Stacked) );
+              wCenter->appendWidget( la = new wdgLabel(this,axRect(0,0,30,20),wa_StackedHoriz) );
                 sprintf(label_buf[i],"%i",i+1);
                 la->setText(label_buf[i],ta_Center);
             }

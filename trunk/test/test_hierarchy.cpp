@@ -10,42 +10,6 @@
 
 //----------------------------------------------------------------------
 //
-// container
-//
-//----------------------------------------------------------------------
-
-class myWidget : public axWidget
-{
-  public:
-
-    myWidget(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
-    : axWidget(aListener,aRect,aAlignment)
-      {
-        //setBorders(10,10,5,5);
-        appendWidget( new wdgPanel(this,axRect(0,0,32,32),wa_Top) );
-      }
-
-    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
-      {
-        if (mSkin) mSkin->drawPanel(aCanvas,mRect);
-        axWidget::doPaint(aCanvas,aRect);
-      }
-
-//    virtual int appendWidget(axWidget* aWidget)
-//      {
-//        wtrace("appendWidget");
-//        aWidget->doSetSkin(mSkin,false); // inherit skin
-//        int num = wContainer->appendWidget(aWidget);
-//        //int num = axContainer::appendWidget(aWidget);
-//        return num;
-//      }
-
-    //virtual void doEnter(axWidget* aCapture) { mListener->onCursor(cu_ArrowLeftRight); }
-    //virtual void doLeave(axWidget* aCapture) { mListener->onCursor(DEF_CURSOR); }
-};
-
-//----------------------------------------------------------------------
-//
 // editor
 //
 //----------------------------------------------------------------------
@@ -53,7 +17,7 @@ class myWidget : public axWidget
 class myEditor : public axEditor
 {
   private:
-    wdgPanel*     mainpanel;
+    wdgPanel*     panel;
     axWidget*     wdg;
 
   public:
@@ -61,9 +25,32 @@ class myEditor : public axEditor
     myEditor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
     {
-      appendWidget( mainpanel = new wdgPanel(this,NULL_RECT,wa_Client) );
-        mainpanel->appendWidget(wdg = new wdgPanel(this,axRect(10,10,320,200), wa_None) );
-      //  wdg->appendWidget(new myWidget(this,axRect(10,10,100,100), wa_None) );
+      appendWidget( panel = new wdgPanel(this,NULL_RECT,wa_Client) );
+
+        panel->setBorders(30,30,10,10);
+
+
+        panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,64,64), wa_LeftTop) );
+        panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,64,64), wa_TopLeft) );
+
+        panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,10,10), wa_Top) );
+        panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,10,10), wa_Left) );
+        panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,10,10), wa_Right) );
+        panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,10,10), wa_Bottom) );
+
+        panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,64,64), wa_LeftTop) );
+        panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,64,64), wa_RightTop) );
+
+        //panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,80,80), wa_RightBottom) );
+        //panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,20,20), wa_LeftTop) );
+        //panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,40,40), wa_RightTop) );
+
+        //
+
+        for (int i=0;i<32; i++)
+          panel->appendWidget(wdg = new wdgPanel(this,axRect(10,10,32,32+i*2), wa_StackedVert) );
+
+      setSkin(mDefaultSkin,true);
       doRealign();
       //startTimer(250);
     }
