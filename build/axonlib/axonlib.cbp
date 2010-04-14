@@ -175,7 +175,6 @@
 		<Unit filename="../../ax/gui/axBitmap.h" />
 		<Unit filename="../../ax/gui/axCanvas.h" />
 		<Unit filename="../../ax/gui/axColor.h" />
-		<Unit filename="../../ax/gui/axContainer.h" />
 		<Unit filename="../../ax/gui/axFont.h" />
 		<Unit filename="../../ax/gui/axSkin.h" />
 		<Unit filename="../../ax/gui/axSkinDefault.h" />
@@ -207,6 +206,7 @@
 		<Unit filename="../../ax/wdg/wdgImage.h" />
 		<Unit filename="../../ax/wdg/wdgKnob.h" />
 		<Unit filename="../../ax/wdg/wdgLabel.h" />
+		<Unit filename="../../ax/wdg/wdgOctave.h" />
 		<Unit filename="../../ax/wdg/wdgPages.h" />
 		<Unit filename="../../ax/wdg/wdgPanel.h" />
 		<Unit filename="../../ax/wdg/wdgScrollBar.h" />
@@ -217,7 +217,7 @@
 		<Unit filename="../../ax/wdg/wdgTest.h" />
 		<Unit filename="../../ax/wdg/wdgTextList.h" />
 		<Unit filename="../../ax/wdg/wdgValue.h" />
-		<Unit filename="../../test/test_widgets.cpp" />
+		<Unit filename="../../test/test_keyboard.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

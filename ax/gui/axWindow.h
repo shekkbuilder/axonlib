@@ -59,9 +59,9 @@ class axWindow : public axWindowImpl
 
     virtual void doSetSize(int aWidth, int aHeight)
       {
-        mRect.w = aWidth;
-        mRect.h = aHeight;
-        // realign widgets if needed/wanted...
+        //mRect.w = aWidth;
+        //mRect.h = aHeight;
+        mRect.setSize(aWidth,aHeight);
         if (mFlags&wf_Align) doRealign();
       }
 
