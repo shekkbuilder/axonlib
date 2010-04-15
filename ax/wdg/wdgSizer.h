@@ -11,8 +11,8 @@ class wdgSizer : public axWidget
     bool mIsDragging;
     axWidget* mTarget;
   public:
-    wdgSizer(axWidgetListener* aListener, /*int aId, */axRect aRect, int aAlignment=wa_None)
-    : axWidget(aListener,/*aId,*/aRect,aAlignment)
+    wdgSizer(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
+    : axWidget(aListener,aRect,aAlignment)
       {
         mTarget = NULL;
         mIsDragging = false;

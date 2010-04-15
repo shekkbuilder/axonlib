@@ -9,7 +9,8 @@ class wdgBitmap : public axWidget
   protected:
     axBitmap* mBitmap;
   public:
-    wdgBitmap(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None, axBitmap* aBitmap=NULL)
+    wdgBitmap(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None,
+              axBitmap* aBitmap=NULL)
     : axWidget(aListener,aRect,aAlignment)
       {
         //clearFlag(wf_Active);

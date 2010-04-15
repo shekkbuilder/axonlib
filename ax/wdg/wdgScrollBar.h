@@ -16,7 +16,7 @@ class wdgScrollBar : public axWidget
 
   public:
 
-    wdgScrollBar(axWidgetListener* aListener, /*int aId, */axRect aRect, int aAlignment=wa_None)
+    wdgScrollBar(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
     : axWidget(aListener,aRect,aAlignment)
       {
         is_dragging = false;

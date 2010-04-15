@@ -18,7 +18,8 @@ class wdgSlider : public axWidget
     float     mSens2;
 
   public:
-    wdgSlider(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None, axString aName="", float aValue=0)
+    wdgSlider(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None,
+              axString aName="", float aValue=0)
     : axWidget(aListener,aRect,aAlignment)
       {
         mName = aName;
