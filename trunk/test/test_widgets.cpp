@@ -298,6 +298,7 @@ setSkin(mDefaultSkin,true);
         delete mBitmap2;
         delete mImgSurf;
         delete mSymSurf;
+        delete mSymbols;
       }
 
     //--------------------------------------------------

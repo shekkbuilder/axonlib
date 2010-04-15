@@ -396,13 +396,16 @@ class axWindowLinux : public axWindowBase
 
     //----------
 
+    // valgrind reports memory leak here ('definitely lost')
+    // XStringListToTextProperty, malloc
+
     virtual void setTitle(axString aTitle)
       {
-        XTextProperty window_title_property;
-        char* window_title = aTitle.ptr();
-        XStringListToTextProperty(&window_title,1,&window_title_property);
-        XSetWMName(mDisplay,mWindow,&window_title_property);
-        XFlush(mDisplay);
+//        XTextProperty window_title_property;
+//        char* window_title = aTitle.ptr();
+//        XStringListToTextProperty(&window_title,1,&window_title_property);
+//        XSetWMName(mDisplay,mWindow,&window_title_property);
+//        XFlush(mDisplay);
       }
 
     //----------
@@ -424,6 +427,11 @@ class axWindowLinux : public axWindowBase
       }
 
     //----------
+
+    // another valgrind memory leak report..
+    // i _think_ it originates somewhere here:
+    // XGetDefault, XrmGetStringDatabase,
+    //   _XrmInitParseInfo, _XOpenLC,, _XlcDefaultLoader, _XlcCreateLC, .. realloc
 
     virtual void setCursor(int aCursor)
       {
