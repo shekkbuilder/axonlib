@@ -10,8 +10,9 @@ class wdgLabel : public axWidget
     axString  mText;
     int       mTextAlign;
   public:
-    wdgLabel(axWidgetListener* aListener, /*int aId, */axRect aRect, int aAlignment=wa_None, axString aText="", int aTextAlign=ta_Center)
-    : axWidget(aListener,/*aId,*/aRect,aAlignment)
+    wdgLabel(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None,
+             axString aText="", int aTextAlign=ta_Center)
+    : axWidget(aListener,aRect,aAlignment)
       {
         clearFlag(wf_Active);
         mText = aText;

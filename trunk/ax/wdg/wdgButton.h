@@ -18,9 +18,9 @@ class wdgButton : public axWidget
     int       mMode;
 
   public:
-    wdgButton(axWidgetListener* aListener, /*int aId, */axRect aRect, int aAlignment=wa_None,
+    wdgButton(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None,
               bool aState=false, axString aOffText="Off", axString aOnText="On", int aTextAlign=ta_Center, int aMode=bm_Switch)
-    : axWidget(aListener,/*aId,*/aRect,aAlignment)
+    : axWidget(aListener,aRect,aAlignment)
       {
         mButtonDown = false;
         mMode = aMode;//bm_Switch;

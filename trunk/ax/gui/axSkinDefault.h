@@ -169,8 +169,8 @@ class axSkinDefault : public axSkin
         if (aRect.h >= (2*th))
         {
           aCanvas->setTextColor(mTextColor);
-          aCanvas->drawText(x+size+5,y,   aRect.x2(),aRect.y2(),aName,ta_Top|ta_Left);
-          aCanvas->drawText(x+size+5,y+th,aRect.x2(),aRect.y2(),aDisp,ta_Top|ta_Left);
+          aCanvas->drawText(x+size+8,y,   aRect.x2(),aRect.y2(),aName,ta_Top|ta_Left);
+          aCanvas->drawText(x+size+8,y+th,aRect.x2(),aRect.y2(),aDisp,ta_Top|ta_Left);
         //aCanvas->drawText(x+size+5,y,   aRect.x2(),aRect.y2(),aDisp,ta_Bottom|ta_Left);
         }
         else

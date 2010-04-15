@@ -225,7 +225,7 @@
 		<Unit filename="../../ax/wdg/wdgTest.h" />
 		<Unit filename="../../ax/wdg/wdgTextList.h" />
 		<Unit filename="../../ax/wdg/wdgValue.h" />
-		<Unit filename="../../plugins/test/test_gain_nogui.cpp" />
+		<Unit filename="../../plugins/test/test_gain_gui.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

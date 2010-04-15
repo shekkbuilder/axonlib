@@ -8,9 +8,8 @@
 class wdgPanel : public axWidget//axContainer
 {
   public:
-    wdgPanel(axWidgetListener* aListener, /*int aId, */axRect aRect, int aAlignment=wa_None)
-    //: axContainer(aListener,/*aId,*/aRect,aAlignment)
-    : axWidget(aListener,/*aId,*/aRect,aAlignment)
+    wdgPanel(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
+    : axWidget(aListener,aRect,aAlignment)
       {
       }
 

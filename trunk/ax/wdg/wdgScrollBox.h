@@ -10,7 +10,7 @@
 #include "gui/axWidget.h"
 #include "wdg/wdgScrollBar.h"
 
-class wdgScrollBox : public axWidget//axContainer
+class wdgScrollBox : public axWidget
 {
   protected:
     wdgScrollBar* wScrollBar;
@@ -21,8 +21,8 @@ class wdgScrollBox : public axWidget//axContainer
 
   public:
 
-    wdgScrollBox(axWidgetListener* aListener, /*int aID, */axRect aRect, int aAlignment=wa_None)
-    : axWidget(aListener, /*aID, */aRect, aAlignment)
+    wdgScrollBox(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
+    : axWidget(aListener, aRect, aAlignment)
       {
         axWidget::appendWidget( wScrollBar  = new wdgScrollBar(this,axRect(0,0,15,0),wa_Right ) );
         axWidget::appendWidget( wContainer  = new wdgPanel( this,NULL_RECT,       wa_Client ) );

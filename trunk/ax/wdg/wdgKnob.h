@@ -18,7 +18,8 @@ class wdgKnob : public wdgValue
     float     mSens2;
 
   public:
-    wdgKnob(axWidgetListener* aListener, /*int aId, */axRect aRect, int aAlignment=wa_None, axString aName="", float aValue=0)
+    wdgKnob(axWidgetListener* aListener, /*int aId, */axRect aRect, int aAlignment=wa_None,
+            axString aName="", float aValue=0)
     : wdgValue(aListener,/*aId, */aRect,aAlignment,aName,aValue)
       {
         mName = aName;

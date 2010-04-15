@@ -9,9 +9,9 @@ class wdgImage : public axWidget//axContainer
   protected:
     axImage* mImage;
   public:
-    wdgImage(axWidgetListener* aListener, /*int aId, */axRect aRect, int aAlignment=wa_None, axImage* aImage=NULL)
-    //: axContainer(aListener,/*aId,*/aRect,aAlignment)
-    : axWidget(aListener,/*aId,*/aRect,aAlignment)
+    wdgImage(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None,
+             axImage* aImage=NULL)
+    : axWidget(aListener,aRect,aAlignment)
       {
         //clearFlag(wf_Active);
         mImage = aImage;
@@ -28,7 +28,6 @@ class wdgImage : public axWidget//axContainer
         int srcw = mRect.w;
         int srch = mRect.h;
         aCanvas->drawImage(mImage,dstx,dsty, srcx,srcy,srcw,srch);
-        //axContainer::doPaint(aCanvas,aRect);
         axWidget::doPaint(aCanvas,aRect);
       }
 
