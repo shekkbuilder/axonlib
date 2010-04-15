@@ -103,6 +103,8 @@
 #define axDebug_included
 //----------------------------------------------------------------------
 
+#define _WIN32_WINNT 0x0501
+
 // case: debug enabled
 #ifdef AX_DEBUG
   #include <assert.h>
@@ -118,7 +120,7 @@
     NOTES:
     - the debugger window has to be controlled from a plugin with doProcessState(..)
     */
-    #define _WIN32_WINNT 0x0501   // add this before window.h to use GetConsoleWindow()
+    //#define _WIN32_WINNT 0x0501   // add this before window.h to use GetConsoleWindow()
     #include <windows.h>
     #include <windowsx.h>         // macros
     #include <io.h>

@@ -38,7 +38,6 @@ class axCanvasLinux : public axCanvasBase
     axCanvasLinux(axContext* aContext)
     : axCanvasBase(/*aContext*/)
       {
-        //wtrace("axCanvasLinux.constructor");
         mDisplay  = aContext->mDisplay;
         mDrawable = aContext->mWindow;
         mGC       = XCreateGC(mDisplay,mDrawable,0,&gcvalues);

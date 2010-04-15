@@ -2,6 +2,12 @@
 #define axWindowLinux_included
 //----------------------------------------------------------------------
 
+// valgrind memory leak report..
+// XGetDefault, XrmGetStringDatabase,
+//   _XrmInitParseInfo, _XOpenLC,, _XlcDefaultLoader, _XlcCreateLC, .. realloc
+// my guess it's something to do with the fonts...
+
+
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 //#include <X11/cursorfont.h>
@@ -386,18 +392,18 @@ class axWindowLinux : public axWindowBase
 
     //----------
 
-//    //TODO
-//    virtual void setParentSize(int aWidth, int aHeight)
-//      {
-//        //if (mParent!=0)
-//        //  XResizeWindow(gDP, mParent, aWidth, aHeight);
-//        setSize(aWidth,aHeight);
-//      }
+    ////TODO
+    //virtual void setParentSize(int aWidth, int aHeight)
+    //  {
+    //    //if (mParent!=0)
+    //    //  XResizeWindow(gDP, mParent, aWidth, aHeight);
+    //    setSize(aWidth,aHeight);
+    //  }
 
     //----------
 
-    // valgrind reports memory leak here ('definitely lost')
-    // XStringListToTextProperty, malloc
+// valgrind reports memory leak here ('definitely lost')
+// XStringListToTextProperty, malloc
 
     virtual void setTitle(axString aTitle)
       {
@@ -428,22 +434,11 @@ class axWindowLinux : public axWindowBase
 
     //----------
 
-    // another valgrind memory leak report..
-    // i _think_ it originates somewhere here:
-    // XGetDefault, XrmGetStringDatabase,
-    //   _XrmInitParseInfo, _XOpenLC,, _XlcDefaultLoader, _XlcCreateLC, .. realloc
-
     virtual void setCursor(int aCursor)
       {
         //if( aCursor<0 ) aCursor = DEF_CURSOR;
         if (mWinCursor>=0) resetCursor();
-        //{
-        //  XUndefineCursor(gDP,mWindow);
-        //  XFreeCursor(gDP,mWinCursor);
-        //}
-        //if (aCursor<0)
         //mWinCursor = XCreatePixmapCursor( gDP,bitmapNoData,bitmapNoData,&mBlack,&mBlack,0,0 );
-        //else
         if (aCursor>=0)
         {
           mWinCursor = XCreateFontCursor(mDisplay, aCursor);
@@ -468,12 +463,7 @@ class axWindowLinux : public axWindowBase
 
     virtual void hideCursor(void)
       {
-        //setCursor(-1);
         if (mWinCursor>=0) resetCursor();
-        //{
-        //  XUndefineCursor(gDP,mWindow);
-        //  XFreeCursor(gDP,mWinCursor);
-        //}
         mWinCursor = XCreatePixmapCursor( mDisplay,mBitmapNoData,mBitmapNoData,&mBlack,&mBlack,0,0 );
         XDefineCursor(mDisplay,mWindow,mWinCursor);
       }
