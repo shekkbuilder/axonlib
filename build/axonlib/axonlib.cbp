@@ -56,6 +56,9 @@
 					<Add option="-DAX_FORMAT_EXE" />
 					<Add directory="../../ax" />
 				</Compiler>
+				<Linker>
+					<Add option="-mwindows" />
+				</Linker>
 			</Target>
 			<Target title="win32 plug - debug">
 				<Option output="../../bin/axonlib_debug.dll" prefix_auto="1" extension_auto="0" />
@@ -73,6 +76,9 @@
 					<Add directory="../../ax" />
 					<Add directory="../../../vstsdk24" />
 				</Compiler>
+				<Linker>
+					<Add option="-mwindows" />
+				</Linker>
 			</Target>
 			<Target title="linux app - release">
 				<Option output="../../bin/axonlib" prefix_auto="1" extension_auto="1" />
@@ -123,6 +129,7 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add option="-mwindows" />
 				</Linker>
 			</Target>
 			<Target title="win32 plug - release">
@@ -142,6 +149,7 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add option="-mwindows" />
 				</Linker>
 			</Target>
 		</Build>
