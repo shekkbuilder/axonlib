@@ -234,7 +234,10 @@
 		<Unit filename="../../ax/wdg/wdgSlider.h" />
 		<Unit filename="../../ax/wdg/wdgTextList.h" />
 		<Unit filename="../../ax/wdg/wdgValue.h" />
-		<Unit filename="../../plugins/test/test_gain_guibmp.cpp" />
+		<Unit filename="../../doc/AUTHORS" />
+		<Unit filename="../../doc/FEATURES" />
+		<Unit filename="../../doc/TODO" />
+		<Unit filename="../../plugins/test/test_gain_gui_skin.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
