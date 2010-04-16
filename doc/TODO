@@ -1,59 +1,134 @@
+- makedocs_user
+- makedocs_dev
 
 ----------------------------------------------------------------------
-platform / os
+core:
 ----------------------------------------------------------------------
 
-- mac support?
+- AX_DEBUG defined automatically in debug builds
+  like AX_LINUX, AX_WIN32, could (should?) be defined automatically,
+  but it looks like different compilers (platforms? have different
+  defines?
 
-- axCanvas[Win32/Linux]
-  clipping rectangles not working properly, most problematic on win32
-  i think it is happening because when we're returning from a
-  container's doPaint, we reset the clipping rectangle.
-  we could perhaps have some rect stack that we can push and pop to/from
-  
-----------------------------------------------------------------------
-gui
-----------------------------------------------------------------------
+- internal float2string, or similar
+  get rid of a few sprintf(buf,"%f",var) calls in there...
+  internal memory-copy/clear things (memcpy,memset,strcpy,strdup, etc...
+  (generally, try to remove dependencies of stdlibs)
+  binary size can shrink a bit if we don't need the stdlib, stdio, etc,
+  for small plugins or apps.. no bloat....
 
-- the skin stuff needs a bit more work
-
-- onCursor, automatic mouse cursor changing when hovering over widgets
-  (mHoverCursor)
-  
-- onHint, bubble hints upwards (to editor)
-
-- onAlign, or something, notify owner' that realignment might be
-  necessary (widget moved, resized, etc)
-  
-- separate onChange and onRedraw
-  (should we be able to redraw directly, without going the 'full round'
-  through invalidate, etc?)
+- mac?
 
 ----------------------------------------------------------------------
-widgets
+plugin:
 ----------------------------------------------------------------------
 
-- wdgParam, default parameter controlled
-  can be knob, slider, button, text, etc
+- programs/banks
 
-----------------------------------------------------------------------
-plugin
-----------------------------------------------------------------------
-
-- find default/specific directory (for data files, etc)
-  relative to host or plugin? doesn't really matter,
-  as long as it's stable and working in all hosts (and standalone)
-
-- host id, for ost-dependent things
+- host info (id, name, specific features)
+  for host-dependent things
   (for example, window resizing is handled very different in hosts,
   so we might need to do different things depending on host)
 
+- chunks
+
+- more parameter types, for automatic scaling/transforming
+  cubed, squared, ms, hz, db, etc...
+  
+- dirty-parameters?
+  put needs-to-be-updated parameters in a list,
+  read this list in doProcessBlock, sub-divide block into chunks,
+  and set parameters inbetween these. (event-manager below)
+
+  and we will can avoid getting any direct parameter changes from
+  another thread or something in the middle of out processing() calculations
+
+- event manager (ala voice manager but for all kinds of events)
+
+- find default/specific directory (for data files, etc)
+  relative to host or plugin? doesn't really matter,
+  as long as it's predictable and 'stable' in all hosts (and standalone)
+
 ----------------------------------------------------------------------
-parameters
+gui:
 ----------------------------------------------------------------------
 
-- more parameter types, or automatic scaling/transforming
-  cubed, squared, ms, hz, db, etc...
-  remap mode?
-  
+- dirty-widgets
+
+  things can get busy with fast automation or tweaking. cache updates,
+  (and check if new additions already in list before blindly adding)
+  update all in one when needed (idleEditor, timer, ...)
+
+- resizeable plugin editor
+  dependant on host, different ways for different hosts. and some doesn't
+  support resizing at all.
+
+- png loading simplification & streamlining
+  simplify default bahaviour, keep possibilities for manual low-level control
+
+- fonts
+  platform-independent handling of fonts
+  fontname, size, type (bold, italic, underscore)
+  how to do the 'fontname' on different platforms with different fonts installed,
+  and each handling fonts differently...
+  one way is like web browsers...
+  define a set of std font types to chosse between
+  sans,serif,mono,big,...
+
+- alpha support
+  (glx for linux?)
+  i think it is already there on windows.. but in the interest of total
+  platform independence, it's not activated or ready..
+
+- stretchable bitmaps
+  same as alpha support, it's there in bitblt or stretchblt in windows,
+  but with xlib there's only basic copying of pixel-rectangles. have to
+  look into extensions and stuff... or the glx (opengl) idea..
+
+- axCanvas[Win32/Linux]
+
+  clipping rectangles not working properly (most problematic on win32).
+  i think it is happening because when we're returning from a
+  container's doPaint, we reset the clipping rectangle.
+  we could perhaps have some rect stack that we can push and pop to/from
+
+- the skin stuff needs a bit more work, more polish, more functionality, 
+
+----------------------------------------------------------------------
+widgets:
+----------------------------------------------------------------------
+
+- wdgShape
+  very simple, to draw backgrounds, simple borders around things, ...
+  fill out space in layouts
+
+- wdgPopup
+  route (ala mouse capture) to one specific (ala modal) widget only
+  (can have sub-widgets). handle this new widget as usual,
+  have some close definitions (esc, click, ..),
+
+- wdgDropDown
+  ala popup with some tweaks
+
+- wdgButtonGroup
+    modes: bm_Switches (multiple on-off, getBits)
+           bm_Selector (only one selected, getIndex)
+- wdgPages, aka tabs
+  handles sub-widgets in a specific way. all sized similar to this
+  parent, when we select one of them, we make all others inactive
+  (no mouse/key events) and invisible (no paint events)
+
+- wdgTextList
+  a scrollbox with labels. max number of elements.
+
+----------------------------------------------------------------------
+other:
+----------------------------------------------------------------------
+
+- axScript
+
+  the basic stuff only, so that it's possible to create some
+  program flow, conditionals, external functions, variables, ...
+  [almost there...]
+
 
