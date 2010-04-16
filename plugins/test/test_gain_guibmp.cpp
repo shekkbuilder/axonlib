@@ -11,11 +11,40 @@
 #include "gui/axBitmapLoader.h"
 #include "../img/knob32.h"
 
+#include "par/parFloat.h"
+#include "par/parInteger.h"
+
+#include "dsp/dspDCF.h"
+#include "dsp/dspInterpolate.h"
+#include "dsp/dspOnePole.h"
+#include "dsp/dspPRNG.h"
+#include "dsp/dspRBJ.h"
+#include "dsp/dspRC.h"
+#include "dsp/dspRMS.h"
+#include "dsp/dspSVF.h"
+
+#include "dsp/dsp_Env.h"
+#include "dsp/dsp_Osc.h"
+
+// for the next example:
+// setup (inherit) and use out own editor, instead of genreric axEditor
+
 //----------------------------------------------------------------------
 //
 // skin
 //
 //----------------------------------------------------------------------
+
+/*
+  idea:
+  about skins... we could have some flexibility by considering multiple
+  inheritance. if we have classes like, axSkinImgKnob, and our skin uses
+  them like:
+  class mySkin : public axSkinDefault,
+                 public myImgKnob,
+                 public myImgSlider
+
+*/
 
 class mySkin : public axSkinDefault
 {
@@ -43,6 +72,8 @@ class mySkin : public axSkinDefault
         fill_back(aCanvas,aRect);
         //draw_frame(aCanvas,aRect);
       }
+    // most of this is drawing the text
+    // we could have some text drawing things in the skin
     virtual void drawKnob(axCanvas* aCanvas, axRect aRect,  axString aName, axString aDisp, float aValue)
       {
         if (mKnobImage)
@@ -118,12 +149,12 @@ class myPlugin : public axPlugin
     //----------------------------------------
 
   private:
-    axEditor*   mEditor;
-    wdgPanel*   wPanel;
-    wdgKnob*    w_Gain;
-
-    axSurface*  srf;
-    mySkin*     skin;
+    axEditor*       mEditor;
+    wdgPanel*       wPanel;
+    wdgKnob*        w_Gain;
+    axSurface*      srf;
+    mySkin*         skin;
+    axBitmapLoader  loader;
 
   public:
 
@@ -131,9 +162,9 @@ class myPlugin : public axPlugin
       {
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         axCanvas* canvas = editor->getCanvas();
+    // decoding & initializing the bitmap
         skin = new mySkin(canvas);
         srf = editor->createSurface(32,32*65);
-        axBitmapLoader loader;
         loader.decode((unsigned char*)knob32,knob32_size);
         axBitmap* bitmap = editor->createBitmap( loader.getWidth(), loader.getHeight() );
           bitmap->createBuffer( (char*)loader.getImage() );
@@ -145,6 +176,7 @@ class myPlugin : public axPlugin
         delete bitmap;
         skin->setKnobImage(srf,65,32,32);
         editor->setSkin(skin);
+    //
         editor->appendWidget( wPanel = new wdgPanel(editor,NULL_RECT,wa_Client) );
         wPanel->appendWidget( w_Gain = new wdgKnob( editor,axRect(10,10,100,32),wa_None,"gain",0.75) );
         editor->connect(w_Gain,p_Gain);
