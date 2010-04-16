@@ -181,6 +181,7 @@
 		<Unit filename="../../ax/core/axString.h" />
 		<Unit filename="../../ax/deprecated/axApplication.h" />
 		<Unit filename="../../ax/gui/axBitmap.h" />
+		<Unit filename="../../ax/gui/axBitmapLoader.h" />
 		<Unit filename="../../ax/gui/axCanvas.h" />
 		<Unit filename="../../ax/gui/axColor.h" />
 		<Unit filename="../../ax/gui/axFont.h" />
@@ -222,10 +223,9 @@
 		<Unit filename="../../ax/wdg/wdgShape.h" />
 		<Unit filename="../../ax/wdg/wdgSizer.h" />
 		<Unit filename="../../ax/wdg/wdgSlider.h" />
-		<Unit filename="../../ax/wdg/wdgTest.h" />
 		<Unit filename="../../ax/wdg/wdgTextList.h" />
 		<Unit filename="../../ax/wdg/wdgValue.h" />
-		<Unit filename="../../plugins/test/test_gain_gui.cpp" />
+		<Unit filename="../../plugins/test/test_gain_guibmp.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

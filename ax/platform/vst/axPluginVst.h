@@ -1340,6 +1340,11 @@ typedef axPluginVst axPluginImpl;
   #define AX_CONTEXT_EXIT
 */
 
+//TODO:
+// attach: register window class
+// detach: unregister ..
+// do we need the HINSTANCE anymore?
+
 //hInstance = hInstDll;
 //switch(fdwReason) {
 //    case DLL_PROCESS_ATTACH:
@@ -1352,12 +1357,33 @@ typedef axPluginVst axPluginImpl;
 //        deinitializeLibaries();
 //        break;
 
+  void register_winclass(HINSTANCE aInstance)
+    {
+      //trace("register...");
+    }
+
+  void unregister_winclass(HINSTANCE aInstance)
+    {
+      //trace("unregister...");
+    }
+
   #define AX_ENTRYPOINT(plugclass)                                          \
+                                                                            \
     BOOL APIENTRY DllMain(HINSTANCE hModule,DWORD reason,LPVOID lpReserved) \
     {                                                                       \
       gInstance = hModule;                                                  \
+      switch(reason)                                                        \
+      {                                                                     \
+        case DLL_PROCESS_ATTACH:                                            \
+          register_winclass(hModule);                                       \
+          break;                                                            \
+        case DLL_PROCESS_DETACH:                                            \
+          unregister_winclass(hModule);                                     \
+          break;                                                            \
+      }                                                                     \
       return TRUE;                                                          \
     }                                                                       \
+                                                                            \
     int main(audioMasterCallback audioMaster)                               \
     {                                                                       \
       AX_CONTEXT_INIT(plugclass)                                            \
