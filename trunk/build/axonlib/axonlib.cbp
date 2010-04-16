@@ -158,7 +158,6 @@
 		</Compiler>
 		<Unit filename="../../ax/audio/axGraph.h" />
 		<Unit filename="../../ax/audio/axModule.h" />
-		<Unit filename="../../ax/audio/axModuleStdlib.h" />
 		<Unit filename="../../ax/audio/axVoices.h" />
 		<Unit filename="../../ax/axConfig.h" />
 		<Unit filename="../../ax/axDefines.h" />
@@ -180,6 +179,16 @@
 		<Unit filename="../../ax/core/axRect.h" />
 		<Unit filename="../../ax/core/axString.h" />
 		<Unit filename="../../ax/deprecated/axApplication.h" />
+		<Unit filename="../../ax/dsp/dspDCF.h" />
+		<Unit filename="../../ax/dsp/dspInterpolate.h" />
+		<Unit filename="../../ax/dsp/dspOnePole.h" />
+		<Unit filename="../../ax/dsp/dspPRNG.h" />
+		<Unit filename="../../ax/dsp/dspRBJ.h" />
+		<Unit filename="../../ax/dsp/dspRC.h" />
+		<Unit filename="../../ax/dsp/dspRMS.h" />
+		<Unit filename="../../ax/dsp/dspSVF.h" />
+		<Unit filename="../../ax/dsp/dsp_Env.h" />
+		<Unit filename="../../ax/dsp/dsp_Osc.h" />
 		<Unit filename="../../ax/gui/axBitmap.h" />
 		<Unit filename="../../ax/gui/axBitmapLoader.h" />
 		<Unit filename="../../ax/gui/axCanvas.h" />
