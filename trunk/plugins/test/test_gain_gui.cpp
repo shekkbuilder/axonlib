@@ -27,7 +27,7 @@ class myPlugin : public axPlugin//,
     : axPlugin(aContext, pf_None)
       {
         m_Gain = 0;
-        describe("test_gain_gui","ccernn","axonlib example",0,AX_MAGIC+0x0002);
+        describe("test_gain_gui","ccernn","axonlib example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);
         setupEditor(148,52);
         appendParameter( p_Gain = new axParameter(this,"gain","") );
