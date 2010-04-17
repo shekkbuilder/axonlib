@@ -18,7 +18,7 @@ class myPlugin : public axPlugin
     int           mIndex;
     int           mSize;
 
-  //axParameter*  p_Delay;
+    //axParameter*  p_Delay;
     parFloat*     p_Delay;
     axParameter*  p_Feedback;
     axParameter*  p_Dry;
@@ -76,7 +76,7 @@ class myPlugin : public axPlugin
       }
 
     virtual bool doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize)
-    {
+      {
         updateTimeInfo();
         float srate             = getSampleRate();
         float bpm               = getTempo();
@@ -84,21 +84,21 @@ class myPlugin : public axPlugin
         float samples_per_beat  = srate * seconds_per_beat;   //wtrace("samples_per_beat: " << samples_per_beat);
         mSize                   = m_Delay * samples_per_beat; //wtrace("delay_samples: " << delay_samples);
         return false;
-    }
+      }
 
     virtual void  doProcessSample(SPL** aInputs, SPL** aOutputs)
       {
-        int i2 = mIndex*2;
-        float in0  = *aInputs[0];
-        float in1  = *aInputs[1];
-        float dly0 = mBuffer[i2  ];
-        float dly1 = mBuffer[i2+1];
+        int i2        = mIndex*2;
+        float in0     = *aInputs[0];
+        float in1     = *aInputs[1];
+        float dly0    = mBuffer[i2  ];
+        float dly1    = mBuffer[i2+1];
         mBuffer[i2  ] = in0 + dly0*m_Feedback;;
         mBuffer[i2+1] = in1 + dly1*m_Feedback;;
         mIndex++;
         if (mIndex>=mSize) mIndex = 0;
-        *aOutputs[0] = in0*m_Dry + dly0*m_Wet;
-        *aOutputs[1] = in1*m_Dry + dly1*m_Wet;
+        *aOutputs[0]  = in0*m_Dry + dly0*m_Wet;
+        *aOutputs[1]  = in1*m_Dry + dly1*m_Wet;
       }
 
 };
