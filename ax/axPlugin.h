@@ -3,8 +3,8 @@
 //----------------------------------------------------------------------
 
 #include "axDefines.h"
-#include "base/axPluginBase.h"
 #include "platform/axContext.h"
+#include "base/axPluginBase.h"
 
 #include "axParameter.h"
 //#include "gui/axWidget.h"
@@ -24,11 +24,28 @@
 
 //----------------------------------------------------------------------
 
-class axPlugin : public axPluginBase, public axParameterListener
+/*
+
+this is inherited from Impl, because:
+- axPluginBase defines the interface, the methods that each plugin format implements
+- axPluginVst/Exe, implements these, and are the format spewcific layers
+- axPluginExe/Vst is typedef'd into axPluginImpl
+- axPlugin derives (inherits) from axPluginImpl, and yb that, drgging in the
+  platform specific sub-layers...
+
+- to make all this work, we need to do #define AX_FORMAT_EXE or #define AX_FORMAT_VST,
+  either on the compiler command line (compiler scripts), or in an ide's
+  build target setup
+
+*/
+
+//class axPlugin : public axPluginBase, public axParameterListener
+class axPlugin : public axPluginImpl, public axParameterListener
 {
   public:
     axPlugin(axContext* aContext,int aPluginFlags)
-    : axPluginBase(aContext,aPluginFlags)
+    //: axPluginBase(aContext,aPluginFlags)
+    : axPluginImpl(aContext,aPluginFlags)
       {
       }
 
@@ -62,7 +79,7 @@ class axPlugin : public axPluginBase, public axParameterListener
         if (mEditorOpen && mEditorWindow) mEditorWindow->paramChanged(aParameter);
       }
 
-}
+};
 
 //----------------------------------------------------------------------
 #endif
