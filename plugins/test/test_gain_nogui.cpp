@@ -1,5 +1,5 @@
-#define AX_DEBUG
-#include "core/axDebug.h"
+//#define AX_DEBUG
+//#include "core/axDebug.h"
 
 #include "axPlugin.h"
 

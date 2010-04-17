@@ -113,12 +113,7 @@ class axBitmapLoader
 
     int decode(unsigned char* buffer, unsigned int buffersize)
       {
-        //return 0;
-        //unsigned long width, height;
-        //std::vector<unsigned char> image;
         int error = decodePNG(image, width, height, buffer, buffersize);
-        //axBitmap* bmp = new axBitmap(width,height,&image[0]);
-        //return bmp;
         return error;
       }
 

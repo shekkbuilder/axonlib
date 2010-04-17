@@ -45,6 +45,9 @@ class axParameter// : public axParameterBase
     float     mValue;   // 0..1
     float     mDefault;
     int       mFlags;
+  public:
+    int       mId;
+    void*     mPtr;
 
   public:
 
@@ -58,8 +61,8 @@ class axParameter// : public axParameterBase
         mConnection = -1;
         mFlags      = AX_PAR_DEFAULT;
         mIndex      = -1;
-        //mID         = aID;
-        //mUser       = NULL;
+        mId         = 0;      //aId;
+        mPtr        = NULL;   //aPtr;
       }
 
     //--------------------------------------------------

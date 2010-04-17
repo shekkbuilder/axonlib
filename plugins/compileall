@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# brute force!
+# would be much better with a "for all .cpp files in directory, do compile..."
+# ...later...
+
+#--------------------------------------------------
+
+./compile_vst test/test_gain_nogui
+./compile_vst test/test_gain_gui
+./compile_vst test/test_gain_gui_skin
+
+#--------------------------------------------------
+
+./compile_vst ccernn/fx_tempodelay
+
+

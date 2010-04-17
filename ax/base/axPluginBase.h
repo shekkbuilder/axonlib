@@ -62,6 +62,14 @@ class axPluginBase// : public axParameterListener
 
   public:
 
+    virtual int    getPlayState(void)  { return 0; }
+    virtual double getSamplePos(void)  { return 0; }
+    virtual double getSampleRate(void) { return 0; }
+    virtual double getBeatPos(void)    { return 0; }
+    virtual double getTempo(void)      { return 0; }
+
+    //
+
     // call this to descript your plugin.
     // most of these are directly related to similar vst features
     virtual void  describe(axString aName, axString aVendor, axString aProduct, int aVersion, unsigned int aID) {}
@@ -74,7 +82,7 @@ class axPluginBase// : public axParameterListener
     // (doOpenEditor,doCloseEditor,coIdleEditor will be called)
     virtual void  setupEditor(int aWidth, int aHeight) {}
 
-    /// after appending your parameters (appendParameter), you should call
+    // after appending your parameters (appendParameter), you should call
     // this, to tell the framework how many parameters you have,
     // and to distribute the parameter values.
     // (doSetParameter will be called for each parameter)
