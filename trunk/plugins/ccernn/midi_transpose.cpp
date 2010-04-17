@@ -51,13 +51,4 @@ class myPlugin : public axPlugin
 };
 
 //----------------------------------------------------------------------
-
-#undef MAX_BEATS
-#undef MIN_BPM
-#undef MAX_SRATE
-#undef MAX_SECONDS_PER_BEAT
-#undef MAX_SAMPLES_PER_BEAT
-#undef MAX_DELAY_LENGTH
-
-//----------------------------------------------------------------------
 AX_ENTRYPOINT(myPlugin)
