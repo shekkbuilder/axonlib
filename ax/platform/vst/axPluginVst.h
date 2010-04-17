@@ -1291,7 +1291,7 @@ typedef axPluginVst axPluginImpl;
 
 #ifdef AX_LINUX
 
-  #define __cdecl
+  #define __cdecl __attribute__((cdecl))
   AEffect* main_plugin(audioMasterCallback audioMaster) asm ("main");
   #define main main_plugin
 

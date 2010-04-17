@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "axPlugin.h"
+#include "core/axArray.h"
 #include "gui/axWindow.h"
 //#include "gui/axSkinDefault.h"
 

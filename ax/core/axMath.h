@@ -993,7 +993,7 @@ inline float axCotanf(float value)
 }
 
 /**
- * calculates the cosecant of a a floating point number (fpu)
+ * calculates the cosecant of a floating point number (fpu)
  * @param[in] value float
  * @return value float
  */
@@ -1010,7 +1010,7 @@ inline float axCscf(float value)
 }
 
 /**
- * calculates the secant of a a floating point number (fpu)
+ * calculates the secant of a floating point number (fpu)
  * @param[in] value float
  * @return value float
  */
@@ -1027,7 +1027,7 @@ inline float axSecf(float value)
 }
 
 /**
- * calculates the arccotangent of a a floating point number (fpu)
+ * calculates the arccotangent of a floating point number (fpu)
  * @param[in] value float
  * @return value float
  */
@@ -1044,7 +1044,7 @@ inline float axAcotanf(float value)
 }
 
 /**
- * calculates the arcsecant of a a floating point number (fpu)
+ * calculates the arcsecant of a floating point number (fpu)
  * @param[in] value float
  * @return value float
  */
@@ -1062,7 +1062,7 @@ inline float axAsecf(float value)
 }
 
 /**
- * calculates the arccosecant of a a floating point number (fpu)
+ * calculates the arccosecant of a floating point number (fpu)
  * @param[in] value float
  * @return value float
  */

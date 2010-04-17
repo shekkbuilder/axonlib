@@ -128,7 +128,7 @@ class axSkinDefault : public axSkin
       {
         if (aVertical)
         {
-          int size = (float)aRect.h * (1-aValue);
+          int size = (int)((float)aRect.h * (1-aValue));
           int y1 = aRect.y;
           int y2 = aRect.y+size;
           int h1 = size;
@@ -139,7 +139,7 @@ class axSkinDefault : public axSkin
         }
         else
         {
-          int size = (float)aRect.w * aValue;
+          int size = (int)((float)aRect.w * aValue);
           fill_back( aCanvas,axRect(aRect.x,     aRect.y, size,        aRect.h));
           draw_frame(aCanvas,axRect(aRect.x,     aRect.y, size,        aRect.h));
           fill_dark( aCanvas,axRect(aRect.x+size,aRect.y, aRect.w-size,aRect.h));
@@ -156,7 +156,7 @@ class axSkinDefault : public axSkin
       {
         int x  = aRect.x;
         int y  = aRect.y;
-        int size = axMin(aRect.w,aRect.h);
+        int size = axMinInt(aRect.w,aRect.h);
         aCanvas->setPenColor(mDarkColor);
         aCanvas->setPenWidth(5);
         aCanvas->drawArc(x+2,y+2,x+(size-2),y+(size-2),0.6,0.8);

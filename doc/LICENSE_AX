@@ -6,7 +6,7 @@ I. COPYRIGHT NOTICE
     Project: Axonlib
     Website: http://axonlib.googlecode.com/
                             
-    Copyright (c) 2010 Tor-Helge Skei, Lubomir I. Ivanov et all
+    Copyright (c) 2010 Tor-Helge Skei, Lubomir I. Ivanov et al
 
     -----------------------------------------------------------------------
 
@@ -108,9 +108,9 @@ A: - For commercial binaries you cannot include any source code from the
      the Axonlib License, the GPL or the LGPL (Please read 6. and 7. of the
      Exception notice).
 
-   - If your are releasing the source code modifications under the Axonlib
+   - If you are releasing the source code modifications under the Axonlib
      License the files LICENSE_AX, LICENSE_AXDOCS and PREAMBLE should
-     be also present.
+     also be present.
 
    - You must notify of the use of the Library for all projects. See III.4.
      for details.
@@ -140,7 +140,7 @@ A: Yes, you can, but you have to:
      are part of your library.
 
 Q: Is AXL code compatible with MIT code for example?
-A: Yes, as an extension of the LGPL, AXL is compatible with most known
+A: Yes. As an extension of the LGPL, AXL is compatible with most known
    licenses. Please read more info on LGPL compatibility with other licenses.
 
 Q: Where can I ask more questions?

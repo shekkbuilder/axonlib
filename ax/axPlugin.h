@@ -24,12 +24,11 @@
 
 //----------------------------------------------------------------------
 
-class axPlugin : public axPluginImpl,
-                 public axParameterListener
+class axPlugin : public axPluginBase, public axParameterListener
 {
   public:
     axPlugin(axContext* aContext,int aPluginFlags)
-    : axPluginImpl(aContext,aPluginFlags)
+    : axPluginBase(aContext,aPluginFlags)
       {
       }
 
@@ -63,7 +62,7 @@ class axPlugin : public axPluginImpl,
         if (mEditorOpen && mEditorWindow) mEditorWindow->paramChanged(aParameter);
       }
 
-};
+}
 
 //----------------------------------------------------------------------
 #endif
