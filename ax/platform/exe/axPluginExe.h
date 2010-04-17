@@ -85,14 +85,27 @@ class axPluginExe : public axPluginBase//,
         mPlugFlags |= pf_HasEditor;
       }
 
+//    virtual void setupParameters(void)
+//      {
+//        int num = mParameters.size();
+//        for (int i=0; i<num; i++)
+//        {
+//          doSetParameter(mParameters[i]);
+//        }
+//      }
+
     virtual void setupParameters(void)
       {
         int num = mParameters.size();
+        //setNumParams(num); // vst
         for (int i=0; i<num; i++)
         {
-          doSetParameter(mParameters[i]);
+          axParameter* par = mParameters[i];
+          par->setIndex(i);
+          doSetParameter(par);
         }
       }
+
 
     //virtual void  notifyParamChanged(axParameter* aParameter)
     //  {

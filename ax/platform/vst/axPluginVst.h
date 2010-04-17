@@ -67,6 +67,18 @@ class axPluginVst : public axPluginBase
     double        mTempo;
     long          mBlockSize;
 
+  public:
+
+  // accessors
+
+    inline int    getPlayState(void)  { return mPlayState; }
+    inline double getSamplePos(void)  { return mSamplePos; }
+    inline double getSampleRate(void) { return mSampleRate; }
+    inline double getBeatPos(void)    { return mBeatPos; }
+    inline double getTempo(void)      { return mTempo; }
+
+
+
   private:
 
     //----------------------------------------
@@ -1220,7 +1232,9 @@ class axPluginVst : public axPluginBase
         setNumParams(num); // vst
         for (int i=0; i<num; i++)
         {
-          doSetParameter(mParameters[i]);
+          axParameter* par = mParameters[i];
+          par->setIndex(i);
+          doSetParameter(par);
         }
       }
 

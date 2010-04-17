@@ -48,12 +48,12 @@ class axParameter// : public axParameterBase
 
   public:
 
-    axParameter(axParameterListener* aListener, /*int aID,*/ axString aName, axString aLabel="")
+    axParameter(axParameterListener* aListener, axString aName, axString aLabel="", float aValue=0)
       {
         mListener   = aListener;
         mName       = aName;
         mLabel      = aLabel;
-        mValue      = 0;
+        mValue      = aValue;//0;
         mDefault    = mValue;
         mConnection = -1;
         mFlags      = AX_PAR_DEFAULT;
@@ -80,7 +80,7 @@ class axParameter// : public axParameterBase
 
     //----------
 
-    virtual void setValue(float aValue) { mValue=aValue; }
+    virtual void  setValue(float aValue) { mValue=aValue; }
     virtual float getValue(void)        { return mValue; }
 
     //----------
