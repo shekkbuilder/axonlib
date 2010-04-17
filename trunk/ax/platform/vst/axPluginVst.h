@@ -69,15 +69,11 @@ class axPluginVst : public axPluginBase
 
   public:
 
-  // accessors
-
-    inline int    getPlayState(void)  { return mPlayState; }
-    inline double getSamplePos(void)  { return mSamplePos; }
-    inline double getSampleRate(void) { return mSampleRate; }
-    inline double getBeatPos(void)    { return mBeatPos; }
-    inline double getTempo(void)      { return mTempo; }
-
-
+    virtual int    getPlayState(void)  { return mPlayState; }
+    virtual double getSamplePos(void)  { return mSamplePos; }
+    virtual double getSampleRate(void) { return mSampleRate; }
+    virtual double getBeatPos(void)    { return mBeatPos; }
+    virtual double getTempo(void)      { return mTempo; }
 
   private:
 

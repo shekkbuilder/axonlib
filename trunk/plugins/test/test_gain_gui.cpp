@@ -1,7 +1,7 @@
-#define AX_DEBUG
-#include "core/axDebug.h"
+//#define AX_DEBUG
+//#include "core/axDebug.h"
 
-#define AX_FORMAT_VST
+//#define AX_FORMAT_VST
 
 #include "axPlugin.h"
 #include "axEditor.h"

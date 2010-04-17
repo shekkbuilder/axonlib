@@ -1,10 +1,7 @@
 #ifndef axSymbols_included
 #define axSymbols_included
 //----------------------------------------------------------------------
-/*
-  TODO:
-  - rename file to axSymbols.h
-*/
+
 //----------------------------------------------------------------------
 #include "core/axRect.h"
 #include "gui/axColor.h"

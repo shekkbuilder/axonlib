@@ -237,7 +237,7 @@
 		<Unit filename="../../doc/AUTHORS" />
 		<Unit filename="../../doc/FEATURES" />
 		<Unit filename="../../doc/TODO" />
-		<Unit filename="../../plugins/ccernn/fx_tempodelay.cpp" />
+		<Unit filename="../../plugins/ccernn/midi_transpose.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

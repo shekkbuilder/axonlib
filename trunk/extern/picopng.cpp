@@ -103,7 +103,11 @@ int decodePNG(std::vector<unsigned char>& out_image_32bit, unsigned long& image_
       HuffmanTree codetree, codetreeD, codelengthcodetree; //the code tree for Huffman codes, dist codes, and code length codes
       unsigned long huffmanDecodeSymbol(const unsigned char* in, size_t& bp, const HuffmanTree& codetree, size_t inlength)
       { //decode a single symbol from given list of bits with given code tree. return value is the symbol
-        bool decoded; unsigned long ct;
+
+        //ccernn
+        //bool decoded; unsigned long ct;
+        bool decoded=false; unsigned long ct=0;
+
         for(size_t treepos = 0;;)
         {
           if((bp & 0x07) == 0 && (bp >> 3) > inlength) { error = 10; return 0; } //error: end reached without endcode
