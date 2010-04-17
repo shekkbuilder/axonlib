@@ -138,8 +138,9 @@
     void axDwinDestroy(void) { DestroyWindow(axDtext); axDtext = NULL; }
     // ----------------
     // message listener
-    bool WINAPI axDwinListner(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+    bool WINAPI axDwinListner(HWND hwnd, UINT message)
     {
+      hwnd = hwnd;
       // destroy
       if (message == WM_DESTROY || message == WM_CLOSE) { axDwinDestroy(); }
       return false;

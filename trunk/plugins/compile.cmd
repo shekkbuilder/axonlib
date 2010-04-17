@@ -1,6 +1,24 @@
 :: compile.cmd
-:: ----------------------
 @echo off
+:: --------------------------
+:: user settings here
+:: --------------------------
+:: set path mingw-bin, e.g: c:\mingw\bin\ (with dash at end)
+set mgwpath=
+
+:: set target format AX_FORMAT_EXE / AX_FORMAT_VST
+set tgtformat=AX_FORMAT_VST
+
+:: set warning flags
+set warn=-pedantic -fpermissive -W -Wall -Wno-unused
+
+:: set optimization flags
+set opt=-msse -mfpmath=sse,387 -O3 -Os -fstack-check -fdata-sections -ffunction-sections
+
+:: --------------------------
+:: begin
+:: --------------------------
+:: echo syntax 
 echo ---------------------------------------------------------------------------
 echo @ axonlib compile script for windows
 echo @ usage: compile.cmd [file.cpp]
@@ -9,10 +27,7 @@ echo ---------------------------------------------------------------------------
 if .%1==. goto nofile
 	:: check for 'cpp' extention
 	set tmpfile=%1
-	if not "%tmpfile:~-4%"==".cpp" goto nocpp
-		:: --------------------------
-		:: set path mingw-bin, e.g: c:\mingw\bin\ (with dash at end)
-		set mgwpath=
+	if not "%tmpfile:~-4%"==".cpp" goto nocpp		
 		:: --------------------------
 		:: set target
 		set infile=%1
@@ -27,10 +42,11 @@ if .%1==. goto nofile
 		echo.
 		echo * compiling windows binary for '%1'...
 		echo.		
-		%mgwpath%g++.exe -I%cmdpath%..\ax -I%cmdpath%..\..\vstsdk24 -shared -mwindows -msse -mfpmath=sse,387 -O3 -Os -fstack-check -fdata-sections -ffunction-sections -pedantic -fpermissive -s -Wl,-gc-sections .\%1 -o .\%target% %2 %3 %4
+		%mgwpath%g++.exe -I%cmdpath%..\ax -I%cmdpath%..\..\vstsdk24 -shared -mwindows -D%tgtformat% %warn% %opt% -s -Wl,-gc-sections .\%1 -o .\%target% %2 %3 %4
 		if exist %target% %mgwpath%strip --strip-all %target%
 		:: optional upx
 		rem upx --best %target%
+    
 		:: moving file
 		echo.
 		if not exist %~p0..\BIN md %~p0..\bin
