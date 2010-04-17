@@ -16,6 +16,18 @@
   only tests used wihle developing there.
   none of them is guaranteed to function as the library evolves
 
+- the -W command line argument to the compiler, gives a LOT of
+  unused parameter warnings.. all the base classes are filled with
+  empty virtual methods that does nothing...
+  a) find some way of suppressing these specific warnings
+  b) go through the offending sources,
+     add the 'unused' attribute to the arguments (gcc)
+       http://gcc.gnu.org/onlinedocs/gcc/Variable-Attributes.html#Variable-Attributes
+     int arg1 __attribute__ ((unused))
+     indicating:
+     "..is meant to be possibly unused.
+     GCC will not produce a warning for this.."
+
 ----------------------------------------------------------------------
 core:
 ----------------------------------------------------------------------
