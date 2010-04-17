@@ -1,6 +1,8 @@
 #define AX_DEBUG
 #include "core/axDebug.h"
 
+#define AX_FORMAT_VST
+
 #include "axPlugin.h"
 #include "axEditor.h"
 #include "gui/axSkinDefault.h"
@@ -48,14 +50,14 @@ class mySkin : public axSkinDefault
         if (mKnobImage)
         {
           // bitmap
-          int index = axFloor(aValue*mKnobCount);
-          index = axMin(index,mKnobCount-1);
+          int index = (int)axFloor(aValue*mKnobCount);
+          index = axMinInt(index,mKnobCount-1);
           int ky = mKnobHeight * index;
           aCanvas->drawImage(mKnobImage,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);
           // text (copy/paste from wdgKnob)
           int x  = aRect.x;
           int y  = aRect.y;
-          int size = axMin(aRect.w,aRect.h);
+          int size = axMinInt(aRect.w,aRect.h);
           int th = aCanvas->textHeight("Xj");
           if (aRect.h >= (2*th))
           {

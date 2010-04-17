@@ -56,7 +56,7 @@ class axWindowWin32 : public axWindowBase
         mWinName    = aContext->mWinClassName;
         mParent     = (int)aContext->mWindow;
         mWinCursor  = LoadCursor(NULL,IDC_ARROW);
-        mPrevCursor = NULL;
+        mPrevCursor = 0;
         //wtrace(mWinName.ptr());
         mClickedButton = bu_None;
 

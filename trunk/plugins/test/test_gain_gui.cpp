@@ -1,6 +1,8 @@
 #define AX_DEBUG
 #include "core/axDebug.h"
 
+#define AX_FORMAT_VST
+
 #include "axPlugin.h"
 #include "axEditor.h"
 #include "gui/axSkinDefault.h"
@@ -58,7 +60,7 @@ class myPlugin : public axPlugin//,
       {
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         editor->appendWidget( wPanel = new wdgPanel(editor,NULL_RECT,wa_Client) );
-          wPanel->appendWidget( w_Gain = new wdgKnob( editor,axRect(10,10,128,32),wa_None,"gain",0.75) );
+        wPanel->appendWidget( w_Gain = new wdgKnob( editor,axRect(10,10,128,32),wa_None,"gain",0.75) );
         editor->connect(w_Gain,p_Gain);
         //editor->setSkin(mSkinDefault,true);
         editor->doRealign();
