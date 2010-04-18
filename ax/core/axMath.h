@@ -558,7 +558,7 @@ inline float axPowf(const float x, const float y)
  * @param[in] n int
  * @return result float
  */
-inline float axPow(float x, unsigned int n)
+inline float axPow(float x, unsigned long n)
 {
   float res = 1;
   while (n > 0)

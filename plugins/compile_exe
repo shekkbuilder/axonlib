@@ -11,7 +11,7 @@ function compile_linux
 function compile_win32
 {
   echo - $1.exe
-  `i586-mingw32msvc-g++ -DAX_FORMAT_EXE -I../ax -I../../vstsdk24 -pedantic -fpermissive -Wno-long-long -Wall -mwindows -O3 -Os -msse -mfpmath=sse,387 -fdata-sections -ffunction-sections $1.cpp -s -o $1.exe -Wl,-gc-sections`
+  `i586-mingw32msvc-g++ -DAX_FORMAT_EXE -I../ax -I../../vstsdk24 -pedantic -fpermissive -Wall -mwindows -O3 -Os -msse -mfpmath=sse,387 -fdata-sections -ffunction-sections $1.cpp -s -o $1.exe -Wl,-gc-sections`
   `i586-mingw32msvc-strip --strip-all $1.exe`
 }
 
