@@ -37,12 +37,6 @@
 // @ABCDEFGHIJKLMNOPQRSTUVWXYZ
 //
 
-// fix for vst sdk long long warning iso c++
-#ifdef __int64
-  #undef __int64
-  #define __int64 long
-#endif
-
 // constants
 #define DENORM   10e-30f
 #define LOG2DB   8.65617024533f

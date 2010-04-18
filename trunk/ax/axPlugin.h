@@ -10,6 +10,12 @@
 //#include "gui/axWidget.h"
 #include "gui/axWindow.h"
 
+// fix for vst sdk long long warning iso c++
+#ifdef __int64
+  #undef __int64
+  #define __int64 long
+#endif
+
 //----------
 
 #ifdef AX_FORMAT_VST
