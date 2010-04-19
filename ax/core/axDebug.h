@@ -127,10 +127,7 @@
     #include <stdio.h>            // gcc-4.4.1-tdm
     //#include <fcntl.h>            // for _O_TEXT
     #include <sstream>
-    // ----------------
-    const unsigned int axDwinW = 500;       // debug win width
-    const unsigned int axDwinH = 300;       // debug win height
-    const unsigned int axDtextLimit = 1000; // define maximum text length
+    // ----------------    
     HWND axDtext;                           // edit control handle
 
     // ----------------
@@ -159,7 +156,7 @@
           WS_VISIBLE|WS_BORDER|WS_VSCROLL|WS_HSCROLL|
           ES_READONLY|ES_MULTILINE|ES_WANTRETURN|WS_SIZEBOX|
           ES_AUTOHSCROLL|ES_AUTOVSCROLL,
-          400, 400, axDwinW-5, axDwinH-25, NULL, NULL, NULL, NULL
+          400, 400, 500-5, 300-25, NULL, NULL, NULL, NULL
         );
         //set window properties
         // - on top
@@ -171,7 +168,7 @@
         // - listener
         SetWindowLong(axDtext, DWL_DLGPROC, (long)axDwinListner);
         // - set limit
-        Edit_LimitText(axDtext, axDtextLimit);
+        Edit_LimitText(axDtext, 1000);
       }
     }
 
@@ -198,7 +195,7 @@
         int len = Edit_GetTextLength(axDtext);
 
         // clear a portion (str_len*2) of text if too much already exist
-        if ((len + str_len) >= axDtextLimit)
+        if ((len + str_len) >= 1000)
         {
           Edit_SetSel(axDtext, 0, str_len << 1);
           Edit_ReplaceSel(axDtext, "");
@@ -243,11 +240,10 @@
         // set title
         SetConsoleTitle("axDebug");
         // get handle for console
-        // requires _WIN32_WINNT >= 0x0500 (see above, before windows.h)
+        // requires _WIN32_WINNT >= 0x0500 (set before windows.h)
         HWND hCw = GetConsoleWindow();
         if(hCw != NULL)
 	      {
-          // enable quickedit
           // ENABLE_EXTENDED_FLAGS = 0x0080
           // ENABLE_QUICK_EDIT_MODE = 0x0040
           HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);

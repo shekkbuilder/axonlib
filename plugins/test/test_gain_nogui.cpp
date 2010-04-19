@@ -1,6 +1,4 @@
 //#define AX_DEBUG
-//#include "core/axDebug.h"
-
 #include "axPlugin.h"
 
 class myPlugin : public axPlugin
