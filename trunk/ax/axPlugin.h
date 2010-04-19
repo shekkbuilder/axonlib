@@ -2,6 +2,7 @@
 #define axPlugin_included
 //----------------------------------------------------------------------
 
+#include "core/axDebug.h"
 #include "axDefines.h"
 #include "platform/axContext.h"
 #include "base/axPluginBase.h"

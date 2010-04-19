@@ -1,8 +1,4 @@
 //#define AX_DEBUG
-//#include "core/axDebug.h"
-
-//#define AX_FORMAT_VST
-
 #include "axPlugin.h"
 #include "axEditor.h"
 #include "gui/axSkinDefault.h"
@@ -94,7 +90,7 @@ class myPlugin : public axPlugin
   public:
 
     myPlugin(axContext* aContext)
-    : axPlugin(aContext, pf_None)
+    : axPlugin(aContext, pf_HasEditor)
       {
         m_Gain = 0;
         describe("test_gain_gui_skin","ccernn","axonlib example",0,AX_MAGIC+0x0000);
