@@ -72,7 +72,7 @@ class axWindowWin32 : public axWindowBase
         // what happens when we try to register a window with similar name
         // and shouldn't we unregister it?
         // (or is it done automatically when dll is unloaded?)
-        
+
         char* classname = mWinName.ptr();//(char*)"axonlib";
         //wtrace("window class name:" << classname);
         WNDCLASS wc;
@@ -95,7 +95,7 @@ class axWindowWin32 : public axWindowBase
         // get screen w, h and define a center pos
         const int wPosX = ((GetSystemMetrics(SM_CXSCREEN)-wWidth)>>1) + rc.left;
         const int wPosY = ((GetSystemMetrics(SM_CYSCREEN)-wHeight)>>1) + rc.top;
-        
+
         if (mWinFlags&AX_WIN_EMBEDDED)
         {
           //AdjustWindowRect(&rc,WS_POPUP,FALSE);
@@ -233,6 +233,8 @@ class axWindowWin32 : public axWindowBase
     //  }
 
     //----------
+
+    //TEST
 
     virtual void show(void)
       {
@@ -550,7 +552,7 @@ class axWindowWin32 : public axWindowBase
         //HDC dc;
         LRESULT result = 0;
         int btn = 0;
-        axRect rc;        
+        axRect rc;
         int w,h;
 
         //TRACE("win32 eventHandler. msg=%x\n",message);
@@ -564,7 +566,7 @@ class axWindowWin32 : public axWindowBase
             //wtrace("WM_PAINT\n");
             beginPaint();
             rc = axRect(  mPS.rcPaint.left,
-                          mPS.rcPaint.top,                          
+                          mPS.rcPaint.top,
                           mPS.rcPaint.right -  mPS.rcPaint.left + 2,
                           mPS.rcPaint.bottom - mPS.rcPaint.top  + 2);
             //mCanvas->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
