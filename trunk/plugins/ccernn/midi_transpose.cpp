@@ -27,7 +27,7 @@ class myPlugin : public axPlugin
 
     virtual void doSetParameter(axParameter* aParameter)
       {
-        if (aParameter==p_Transpose) m_Transpose = aParameter->getValue();
+        if (aParameter==p_Transpose) m_Transpose = (int)aParameter->getValue();
       }
 
     //----------

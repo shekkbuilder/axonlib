@@ -220,6 +220,7 @@
 		<Unit filename="../../ax/script/axScriptStdlib.h" />
 		<Unit filename="../../ax/wdg/wdgBitmap.h" />
 		<Unit filename="../../ax/wdg/wdgButton.h" />
+		<Unit filename="../../ax/wdg/wdgButtons.h" />
 		<Unit filename="../../ax/wdg/wdgGroupBox.h" />
 		<Unit filename="../../ax/wdg/wdgImage.h" />
 		<Unit filename="../../ax/wdg/wdgKnob.h" />
@@ -237,7 +238,7 @@
 		<Unit filename="../../doc/AUTHORS" />
 		<Unit filename="../../doc/FEATURES" />
 		<Unit filename="../../doc/TODO" />
-		<Unit filename="../../plugins/ccernn/midi_transpose.cpp" />
+		<Unit filename="../../test/test_widgets.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

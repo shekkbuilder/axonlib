@@ -36,16 +36,13 @@ class axWindowBase : public axWidget//axContainer
     int         mWinFlags;
     axCanvas*   mCanvas;
     axSurface*  mSurface;
-    //axWidget*   mCapturedWidget;
 
   //protected:
   public:
 
     axWindowBase(axContext* aContext, axRect aRect, int aWinFlags)
-    //: axContainer(NULL,/*-1,*/aRect,wa_Client)
     : axWidget(NULL,/*-1,*/aRect,wa_Client)
       {
-        //mRect     = aRect;
         mWinFlags = aWinFlags;
         mCanvas   = NULL;
         mSurface  = NULL;
@@ -66,7 +63,6 @@ class axWindowBase : public axWidget//axContainer
     // canvas/surface
 
     virtual axCanvas*   createCanvas(void)  { return NULL; }
-    //virtual axSurface*  createSurface(void) { return NULL; }
     virtual axSurface*  createSurface(int aWidth, int aHeight) { return NULL; }
     virtual axBitmap*   createBitmap(int aWidth, int aHeight) { return NULL; }
     virtual axCanvas*   getCanvas(void)     { return mCanvas; }

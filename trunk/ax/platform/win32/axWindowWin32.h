@@ -601,7 +601,7 @@ class axWindowWin32 : public axWindowBase
             }
             mClickedButton = btn;
             doMouseDown(short(LOWORD(lParam)), short(HIWORD(lParam)), btn | remapKey(wParam));
-            if( mCapturedWidget ) grabCursor();
+            if (mCapturedWidget) grabCursor();
             break;
           case WM_LBUTTONUP: case WM_RBUTTONUP: case WM_MBUTTONUP:
             switch (message)
@@ -612,7 +612,7 @@ class axWindowWin32 : public axWindowBase
             }
             mClickedButton = bu_None;
             doMouseUp(short(LOWORD(lParam)), short(HIWORD(lParam)), btn | remapKey(wParam));
-            if( !mCapturedWidget ) releaseCursor();
+            if (!mCapturedWidget) releaseCursor();
             break;
           case WM_MOUSEMOVE:
             doMouseMove(short(LOWORD(lParam)), short(HIWORD(lParam)), mClickedButton | remapKey(wParam));
