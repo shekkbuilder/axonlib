@@ -1340,10 +1340,10 @@ typedef axPluginVst axPluginImpl;
   #define MAKESTRING(s) MAKESTRING2(s)
   #define MAKE_NAME(name) MAKESTRING(name) "_window"
 
-  #define AX_CONTEXT_INIT(name)                             \
-    HINSTANCE instance  = gInstance;                        \
-    char*       winname = (char*)MAKE_NAME(name);           \
-    AX_PTRCAST audio = (AX_PTRCAST)audioMaster;     \
+  #define AX_CONTEXT_INIT(name)                     \
+    HINSTANCE  instance = gInstance;                \
+    char*      winname  = (char*)MAKE_NAME(name);   \
+    AX_PTRCAST audio    = (AX_PTRCAST)audioMaster;  \
     axContext ctx(instance,winname,audio);
 
 /*

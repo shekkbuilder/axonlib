@@ -32,6 +32,7 @@ class wdgButton : public axWidget
 
     //----------
 
+    inline void setMode(int aMode) { mMode=aMode; }
     inline void setState(bool aState) { mState=aState; }
     inline bool getState(void) { return mState; }
 
@@ -66,7 +67,7 @@ class wdgButton : public axWidget
             else
             {
               mState = true;
-              //mValue = 1;
+              mValue = 1;
             }
             mListener->onChange(this);
             break;

@@ -30,6 +30,7 @@ class axSurfaceWin32 : public axSurfaceBase
         mCanvas = createCanvas();
         mOldHandle = (HBITMAP)SelectObject((HDC)mCanvas->getHandle(),mBitmap);
       }
+
     virtual ~axSurfaceWin32()
       {
         SelectObject((HDC)mCanvas->getHandle(),mOldHandle);
