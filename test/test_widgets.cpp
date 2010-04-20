@@ -1,5 +1,6 @@
+#define AX_FORMAT_VST
 
-//#define AX_DEBUG
+#define AX_DEBUG
 //#include "core/axDebug.h"
 
 #include "axPlugin.h"
