@@ -44,6 +44,7 @@ class axPluginVst : public axPluginBase
 {
   friend AEffect* main_plugin(audioMasterCallback audioMaster);// asm ("main");
   friend int      main(audioMasterCallback audioMaster);
+  //friend int      VSTPluginMain(audioMasterCallback audioMaster);
 
   private:
     audioMasterCallback audioMaster;
@@ -1298,6 +1299,8 @@ typedef axPluginVst axPluginImpl;
 // main
 //
 //----------------------------------------------------------------------
+
+// testing VSTPluginMain
 
 #ifdef AX_LINUX
 
