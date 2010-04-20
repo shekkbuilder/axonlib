@@ -1,6 +1,6 @@
 
 #define AX_DEBUG
-#include "core/axDebug.h"
+//#include "core/axDebug.h"
 
 #include "platform/axContext.h"
 #include "axPlugin.h"
@@ -41,23 +41,27 @@ class myEditor : public axEditor
       setSkin(mDefaultSkin,true);
       doRealign();
       octave1->recalc();
-      //startTimer(250);
+      startTimer(1000);
     }
 
     //----------
 
     virtual ~myEditor()
       {
-        //stopTimer();
+        stopTimer();
       }
 
     //----------
 
-    //virtual void doTimer()
-    //  {
-    //    wtrace("doTimer...");
-    //    //invalidate(mRect.x,mRect.y,mRect.w,mRect.h); // redraw everything
-    //  }
+    virtual void doTimer()
+      {
+        int num = axRandomInt(11); // 0..11
+        octave1->activate(num);
+        num = axRandomInt(11);
+        octave1->deactivate(num);
+        //wtrace("doTimer...");
+        invalidate(mRect.x,mRect.y,mRect.w,mRect.h); // redraw everything
+      }
 
 };
 
@@ -77,7 +81,8 @@ class myPlugin : public axPlugin
     myPlugin(axContext* aContext)
     : axPlugin(aContext, AX_PLUG_DEFAULT)
       {
-        describe("test_","ccernn","axonlibe example",0,AX_MAGIC+0x0000);
+        axRandomize(418);
+        describe("test_keyboard","ccernn","axonlibe example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);
         setupEditor(640,480);
         //setupParameters();
@@ -109,7 +114,7 @@ class myPlugin : public axPlugin
 
     //virtual void doIdleEditor()
     //  {
-    //    wtrace("...doIdleEditor");
+    //    trace("...doIdleEditor");
     //  }
 
 };
