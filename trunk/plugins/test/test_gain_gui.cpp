@@ -28,6 +28,11 @@ class myPlugin : public axPlugin//,
         setupEditor(148,52+50);
         appendParameter( p_Gain = new axParameter(this,"gain","") );
         setupParameters();
+        
+        // test stdout/debug win32
+        axDstdCreate();
+        trace("hello dbg");
+        trace("number=" << 12.f);
       }
 
     virtual void  doSetParameter(axParameter* aParameter)

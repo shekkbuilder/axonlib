@@ -89,16 +89,17 @@ class axWindowWin32 : public axWindowBase
 
         // --- embedded ---
 
+        // adjust here
+        AdjustWindowRect(&rc,WS_OVERLAPPEDWINDOW|WS_POPUP,FALSE);
         // get w, h
         const int wWidth = (rc.right - rc.left + 1);
         const int wHeight = (rc.bottom - rc.top + 1);
         // get screen w, h and define a center pos
         const int wPosX = ((GetSystemMetrics(SM_CXSCREEN)-wWidth)>>1) + rc.left;
         const int wPosY = ((GetSystemMetrics(SM_CYSCREEN)-wHeight)>>1) + rc.top;
-
+        
         if (mWinFlags&AX_WIN_EMBEDDED)
         {
-          //AdjustWindowRect(&rc,WS_POPUP,FALSE);
           mWindow = CreateWindowEx(
             WS_EX_TOOLWINDOW,
             classname,
@@ -117,16 +118,15 @@ class axWindowWin32 : public axWindowBase
           );
           reparent(mParent);
         } //embedded
-
+        
         // --- windowed ---
 
         else
         {
-          AdjustWindowRect(&rc,WS_OVERLAPPEDWINDOW,FALSE);
           mWindow = CreateWindowEx(
             WS_EX_OVERLAPPEDWINDOW,   // dwExStyle
             classname,                // lpClassName
-            "test",                   // lpWindowName
+            0,                   // lpWindowName
             WS_OVERLAPPEDWINDOW,      // dwStyle
             //mRect.x,mRect.y,          // x,y
             //mRect.w,mRect.h,          // w,h
@@ -328,8 +328,9 @@ class axWindowWin32 : public axWindowBase
 
     //----------
 
-    virtual void setTitle(axString aTitle)
+    virtual void setTitle(axString aTitle)    
       {
+        SetWindowText(mWindow, aTitle.ptr());
       }
 
     //----------

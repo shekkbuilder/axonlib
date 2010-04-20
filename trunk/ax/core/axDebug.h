@@ -39,16 +39,12 @@
  * \code
  * wtrace(var);              // trace a variable
  * wtrace("message");        // trace a message
+ * wtrace(var << "message"); // combined 
  * \endcode
  * wdebug() (win32) examples:
- * \code
- * // minimum 2 parameters of different or same type
- * wdebug("var = ", myvar);
- * wdebug(var1, var2);
- * wdebug(var, " <- text message");
- * wdebug("text", "more text", __LINE__, false); // pass line number, "no new line"
- * wdebug(var, "");
- * wdebug("", var);
+ * wdebug(var);              // trace a variable
+ * wdebug("message");        // trace a message
+ * wdebug(var << "message"); // combined 
  * \endcode
  * <br>
  * linux specific methods: <br>
@@ -120,21 +116,26 @@
     NOTES:
     - the debugger window has to be controlled from a plugin with doProcessState(..)
     */
-    //#define _WIN32_WINNT 0x0501   // add this before window.h to use GetConsoleWindow()
     #include <windows.h>
     #include <windowsx.h>         // macros
     #include <io.h>
-    #include <stdio.h>            // gcc-4.4.1-tdm
-    //#include <fcntl.h>            // for _O_TEXT
+    #include <stdio.h>            // gcc-4.4.1-tdm    
     #include <sstream>
-    // ----------------    
+    
+    // ----------------
     HWND axDtext;                           // edit control handle
+    ostringstream axDoss;                   // string stream for window
 
     // ----------------
     // destroy window
-    void axDwinDestroy(void) { DestroyWindow(axDtext); axDtext = NULL; }
+    #define axDwinDestroy(void) \
+    { \
+      DestroyWindow(axDtext); axDtext = NULL; \
+      axDoss.flush(); \
+    }
+    
     // ----------------
-    // message listener
+    // message listener    
     bool WINAPI axDwinListner(HWND hwnd, UINT message)
     {
       hwnd = hwnd;
@@ -142,7 +143,9 @@
       if (message == WM_DESTROY || message == WM_CLOSE) { axDwinDestroy(); }
       return false;
     }
+    
     // ----------------
+    // *note: text selection highlight is not visible when format = .exe
     // create window
     void axDwinCreate(void)
     {
@@ -172,28 +175,21 @@
       }
     }
 
-    // ----------------
-    // send text to debug window
-    template <typename T0, typename T1>
-    void wdebug(const T0 p0, const T1 p1, const unsigned int lineN=0, bool newline = true)
+    // -------------------
+    // window debug write
+    inline void wdebug_write(void)
     {
-      if (axDtext != NULL) // if window is created
-      {
-        // use a string stream to cast input vars to type std::string
-        ostringstream oss;
-        if (lineN != 0) oss << lineN << " | ";
-        oss << p0 << " " << p1;
-        if (newline) oss << "\r\n";
-        string s2 = oss.str();
-
+        // cast stream to string
+        const string s2 = axDoss.str();
+        // clear
+        axDoss.str("");
+        axDoss.flush();
         // cast std::string to char* then to LPCTSTR (win32)
         const char* string = s2.c_str();
-        LPCTSTR text = (LPCTSTR)string;
-
+        const LPCTSTR text = (LPCTSTR)string;
         // get length of new string & old text
-        int str_len = s2.length();
-        int len = Edit_GetTextLength(axDtext);
-
+        const int str_len = s2.length();
+        unsigned int len = Edit_GetTextLength(axDtext);
         // clear a portion (str_len*2) of text if too much already exist
         if ((len + str_len) >= 1000)
         {
@@ -201,19 +197,22 @@
           Edit_ReplaceSel(axDtext, "");
           len = Edit_GetTextLength(axDtext);
         }
-
         // append the string at the end of the entire text
         Edit_SetSel(axDtext, len, len);
         Edit_ReplaceSel(axDtext, text);
-
         // kill focus
-        SendMessage(axDtext, WM_KILLFOCUS, 0, 0);
-
-        // clear str_stream
-        oss.str("");
-      }
+        SendMessage(axDtext, WM_KILLFOCUS, 0, 0);        
     }
-
+    
+    // -------------------
+    // window debug macro
+    #define wdebug(x) \
+      if (axDtext != NULL) \
+      { \
+        axDoss << "TRC | " << __LINE__ << " | " << x << "\r\n"; \
+        wdebug_write(); \
+      }
+    
     // allocate console and route stdout as seen in example:
     // http://support.microsoft.com/kb/105305
     // --------------------------------------------------------
@@ -275,10 +274,10 @@
         setvbuf(stdout, NULL, _IONBF, 0);
       }
     }
-    // define trace() and msg() to check for axHcrt;
+    
+    // --------------
     #define trace(x) { if (axHcrt != 0) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); } }
-    #define msg(x) { if (axHcrt != 0) { printf("MSG | %i | %s\n", __LINE__, x); } }
-    // 'direct' trace, for WINE
+    #define msg(x) { if (axHcrt != 0) { printf("MSG | %i | %s\n", __LINE__, x); } }    
     #define wtrace(x) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); }
   // ---------
   #endif
@@ -290,9 +289,7 @@
     inline void axDstdDestroy(void) {}
     inline void axDwinCreate(void) {}
     inline void axDwinDestroy(void) {}
-    inline void wdebug(...) {}
-    // 'direct' trace, for WINE
-    //#define wtrace(x) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); }
+    inline void wdebug(...) {}    
     #define wtrace(x) { cout << x << endl; cout.flush(); }
   #endif
 // case: no debug
@@ -306,7 +303,6 @@
   inline void axDwinCreate(void) {}
   inline void axDwinDestroy(void) {}
   inline void wdebug(...) {}
-  // 'direct' trace, for WINE
   #define wtrace(x) ((void)0)
 #endif
 
