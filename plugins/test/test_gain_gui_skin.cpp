@@ -1,4 +1,5 @@
-//#define AX_DEBUG
+#define AX_DEBUG
+
 #include "axPlugin.h"
 #include "axEditor.h"
 #include "gui/axSkinDefault.h"
@@ -96,6 +97,7 @@ class myPlugin : public axPlugin
     myPlugin(axContext* aContext)
     : axPlugin(aContext, pf_HasEditor)
       {
+        trace("myPlugin.constructor()");
         m_Gain = 0;
         describe("test_gain_gui_skin","ccernn","axonlib example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);
@@ -142,10 +144,13 @@ class myPlugin : public axPlugin
         bitmap->createBuffer( (char*)loader.getImage() );   // create bitmap buffer & copy data
         bitmap->convertRgbaBgra();                          // -> bgr.a
         bitmap->setBackground(128,128,128);                 // replace alpha
-//        bitmap->prepare();                                  // prepare bitmap for blitting
+        bitmap->prepare();                                  // prepare bitmap for blitting
         axCanvas* can = srf->getCanvas();
         can->drawBitmap(bitmap,0,0,0,0,32,32*65);           // upload to surface
-        delete bitmap;
+
+        // the following line crashes w7
+
+        //delete bitmap;
 //        //---
         skin->setKnobImage(srf,65,32,32);
 //        editor->setSkin(skin);

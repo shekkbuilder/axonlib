@@ -238,8 +238,7 @@
 		<Unit filename="..\..\doc\AUTHORS" />
 		<Unit filename="..\..\doc\FEATURES" />
 		<Unit filename="..\..\doc\TODO" />
-		<Unit filename="..\..\plugins\test\test_gain_gui.cpp" />
-		<Unit filename="..\..\test\test_alignment.cpp" />
+		<Unit filename="..\..\plugins\test\test_gain_gui_skin.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
