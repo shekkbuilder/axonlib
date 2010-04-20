@@ -120,19 +120,17 @@ echo.
 if exist %target% %mgwpath%strip --strip-all %target%
 
 :: target missing -> error
-if not exist %target% echo # ERR: not compiled!
+if not exist %target% echo. && echo # ERR: not compiled!
 
 :: check if '-nvm'
 if not [%nvm%]==[] goto done
-echo.
 if not exist %~p0..\BIN md %~p0..\bin
-if exist %target% echo moving '%target%' to '%~p0..\bin'
+if exist %target% echo. && echo moving '%target%' to '%~p0..\bin'
 if exist %target%	move %target% %~p0..\bin
 :: --------------------------
 :: done
 :done
-echo.
-echo * done
+echo. && echo * done
 echo ---------------------------------------------------------------------------
 goto end
 

@@ -63,16 +63,16 @@
 #define inv127   (1.0f/127.0f)
 #define inv256   (1.0f/256.0f)
 
-//#define i8    signed char
-//#define u8  unsigned char
-//#define i16   signed short
-//#define u16 unsigned short
-//#define i32   signed int
-//#define u32 unsigned int
-//#define i64   signed long long
-//#define u64 unsigned long long
-//#define f32   float
-//#define f64   double
+#define i8    signed char
+#define u8  unsigned char
+#define i16   signed short
+#define u16 unsigned short
+#define i32   signed int
+#define u32 unsigned int
+#define i64   signed long long
+#define u64 unsigned long long
+#define f32   float
+#define f64   double
 #include <stdint.h>
 
 #define SPL float

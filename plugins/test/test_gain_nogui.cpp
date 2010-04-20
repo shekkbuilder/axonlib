@@ -15,8 +15,19 @@ class myPlugin : public axPlugin
         m_Gain = 0;
         describe("test_gain_nogui","ccernn","axonlib example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);
-        appendParameter( p_Gain = new axParameter(this,"gain","") );
+        appendParameter( p_Gain = new axParameter(this, "gain", "") );
         setupParameters();
+        
+        // test debug for dll (yet again, because now axDebug is included in axPlugin):
+        
+        // since the debug window is created here,
+        // in reaper for examle it should show while rescanning for new plugins
+        // and not unload until reaper is closed.
+        // and no crashes should occur!
+        
+        axDwinCreate();
+        wdebug("hello dbg");
+        wdebug("testnumber=" << 12.f);
       }
 
     virtual void  doSetParameter(axParameter* aParameter)

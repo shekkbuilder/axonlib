@@ -1,4 +1,4 @@
-#define AX_DEBUG
+//#define AX_DEBUG
 
 #include "axPlugin.h"
 #include "axEditor.h"
@@ -101,9 +101,14 @@ class myPlugin : public axPlugin
         m_Gain = 0;
         describe("test_gain_gui_skin","ccernn","axonlib example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);
-        setupEditor(400,400);
+        setupEditor(100,52);
         appendParameter( p_Gain = new axParameter(this,"gain","") );
         setupParameters();
+        
+        // test window debug for exe
+        axDwinCreate();
+        wdebug("hello dbg");
+        wdebug("testnumber=" << 12.f);
       }
 
     virtual void  doSetParameter(axParameter* aParameter)
