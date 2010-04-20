@@ -52,6 +52,8 @@ class axBitmapWin32 : public axBitmapBase
           void* ptr;
           mBitmap = CreateDIBSection(tempdc, &bmi, DIB_RGB_COLORS, &ptr, NULL, 0);
 
+          // this next memcpy seems to crash in w7
+
           if (mBuffer)
           {
             memcpy(ptr,mBuffer,mWidth*mHeight*4);
