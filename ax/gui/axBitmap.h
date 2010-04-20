@@ -39,10 +39,14 @@ class axBitmap : public axBitmapImpl
 
     //----------
 
+    // the mBuffer is handled a bit differently for win32/linux,
+    // depending on if we prepare() the bitmap.
+    // so we delete it in axBitmaplinux/Win32 destructors..
+
     virtual ~axBitmap()
       {
-        if (mBuffer) delete[] mBuffer;
-        mBuffer = NULL;
+        //if (mBuffer) delete[] mBuffer;
+        //mBuffer = NULL;
       }
 
     //----------------------------------------

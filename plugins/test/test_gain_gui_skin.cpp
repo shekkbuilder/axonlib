@@ -128,6 +128,7 @@ class myPlugin : public axPlugin
     axSurface*      srf;
     mySkin*         skin;
     axBitmapLoader  loader;
+    axBitmap*       bitmap;
 
   public:
 
@@ -140,17 +141,14 @@ class myPlugin : public axPlugin
 //      //--- decode & initialize bitmap
         srf = editor->createSurface(32,32*65);
           loader.decode((unsigned char*)knob32,knob32_size);
-        axBitmap* bitmap = editor->createBitmap( loader.getWidth(), loader.getHeight() );
+        /*axBitmap**/ bitmap = editor->createBitmap( loader.getWidth(), loader.getHeight() );
         bitmap->createBuffer( (char*)loader.getImage() );   // create bitmap buffer & copy data
         bitmap->convertRgbaBgra();                          // -> bgr.a
         bitmap->setBackground(128,128,128);                 // replace alpha
         bitmap->prepare();                                  // prepare bitmap for blitting
         axCanvas* can = srf->getCanvas();
         can->drawBitmap(bitmap,0,0,0,0,32,32*65);           // upload to surface
-
-        // the following line crashes w7
-
-        //delete bitmap;
+        delete bitmap;
 //        //---
         skin->setKnobImage(srf,65,32,32);
 //        editor->setSkin(skin);
@@ -173,6 +171,7 @@ class myPlugin : public axPlugin
         delete editor;
         delete skin;
         delete srf;
+        //delete bitmap;
       }
 
     //----------
