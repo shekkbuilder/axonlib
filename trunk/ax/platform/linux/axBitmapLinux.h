@@ -29,6 +29,8 @@ class axBitmapLinux : public axBitmapBase
           mImage->data = NULL;    // we want to delete it ourselves...
           XDestroyImage(mImage);  // frees data too
         }
+        if (mBuffer) delete[] mBuffer;
+        mBuffer = NULL;
       }
 
     //----------

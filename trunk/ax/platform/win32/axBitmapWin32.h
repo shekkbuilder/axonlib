@@ -12,14 +12,14 @@ class axBitmapWin32 : public axBitmapBase
   //  Display* mDisplay;
   protected:
     HBITMAP mBitmap;
-    HWND mWin;
+    //HWND mWin;
 
   public:
 
     axBitmapWin32(axContext* aContext, int aWidth, int aHeight)
     : axBitmapBase(aContext,aWidth,aHeight)
       {
-        mWin = aContext->mWindow;
+        //mWin = aContext->mWindow;
       }
 
     virtual ~axBitmapWin32()
@@ -28,6 +28,8 @@ class axBitmapWin32 : public axBitmapBase
         {
           DeleteObject(mBitmap); // deletes allocated buffer
         }
+        if (!mPrepared && mBuffer) delete[] mBuffer;
+        //mBuffer = NULL;
       }
 
     //----------
@@ -51,8 +53,8 @@ class axBitmapWin32 : public axBitmapBase
           bmi.bmiHeader.biCompression = BI_RGB;           // uncompressed
           bmi.bmiHeader.biSizeImage   = 0;//mWidth*mHeight*4; // size, in bytes, of the image. may be set to zero for BI_RGB bitmaps.
 
-          //HDC tempdc = GetDC(0);
-          HDC tempdc = GetDC(mWin);
+          HDC tempdc = GetDC(0);
+          //HDC tempdc = GetDC(mWin);
 
           void* ptr;
 
@@ -88,10 +90,16 @@ class axBitmapWin32 : public axBitmapBase
 
           if (ptr && mBuffer)
           {
+
             memcpy(ptr,mBuffer,mWidth*mHeight*4);
+            //memset(ptr,255,mWidth*mHeight*4);
+
             //delete[] mBuffer; //caller's responsibility?
             //mBuffer = (char*)ptr;
           }
+
+          // could the following be dangerous?
+
           /*else*/ mBuffer = (char*)ptr;
 
           ReleaseDC(0,tempdc);
