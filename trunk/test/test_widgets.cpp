@@ -175,7 +175,7 @@ class myEditor : public axEditor
 
         mBitmap2 = createBitmap(100,100);
         mBitmap2->createBuffer( mBitmap->getBuffer() );
-        delete mBitmap;
+        //delete mBitmap;
                    // in: b g r a   // out:
         mBitmap2->swizzle(0,0,1,0,  // b
                           0,1,0,0,  // g

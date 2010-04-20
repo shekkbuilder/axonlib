@@ -121,8 +121,12 @@
     #include <io.h>
     #include <stdio.h>            // gcc-4.4.1-tdm    
     #include <sstream>
+<<<<<<< .mine
+    // ----------------
+=======
     
     // ----------------
+>>>>>>> .r212
     HWND axDtext;                           // edit control handle
     ostringstream axDoss;                   // string stream for window
 

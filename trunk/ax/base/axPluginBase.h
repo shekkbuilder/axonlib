@@ -140,7 +140,7 @@ class axPluginBase// : public axParameterListener
     // close and destroy the editor
     virtual void      doCloseEditor(void) {}
     // called regularly when the editor is open
-    /// host decides rate (some hosts is configure-able)
+    // host decides rate (some hosts is configure-able)
     virtual void      doIdleEditor(void) {}
 
     //----------
