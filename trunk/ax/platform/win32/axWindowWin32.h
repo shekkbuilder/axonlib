@@ -234,8 +234,6 @@ class axWindowWin32 : public axWindowBase
 
     //----------
 
-    //TEST
-
     virtual void show(void)
       {
         SetWindowPos(mWindow,0,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_SHOWWINDOW|SWP_NOACTIVATE);
