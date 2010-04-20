@@ -90,5 +90,10 @@
 //#define AX_PTRCAST long
 #define AX_PTRCAST long
 
+// isn't long always 32-bit?
+// is sizeof(int) == sizeof(void*) on 32bit and 64bit?
+// what is a safe way to define an integer with the same
+// size as a pointer (32/64 bit)
+
 //----------------------------------------------------------------------
 #endif

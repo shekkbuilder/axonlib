@@ -28,23 +28,6 @@
 //  |___|___|___|
 //
 
-//// xofs,type
-//static int internal_note_data[12*2] =
-//{
-//   0, 0,
-//   2, 3,
-//   3, 1,
-//   5, 3,
-//   6, 2,
-//   9, 0,
-//  11, 3,
-//  12, 1,
-//  14, 3,
-//  15, 1,
-//  17, 3,
-//  18, 2
-//};
-
 // ofs,type
 static int internal_note_data[12*2] =
 {
@@ -246,9 +229,8 @@ class wdgOctave : public axWidget
         axWidget::doMouseDown(aXpos,aYpos,aButton);
       }
 
-
-    //virtual void doEnter(axWidget* aCapture) { mListener->onCursor(cu_ArrowLeftRight); }
-    //virtual void doLeave(axWidget* aCapture) { mListener->onCursor(DEF_CURSOR); }
+    virtual void doEnter(axWidget* aCapture) { mListener->onCursor(cu_Cross); }
+    virtual void doLeave(axWidget* aCapture) { mListener->onCursor(DEF_CURSOR); }
 
 };
 

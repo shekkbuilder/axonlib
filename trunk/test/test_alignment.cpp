@@ -4,8 +4,9 @@
 #include "platform/axContext.h"
 #include "axPlugin.h"
 #include "axEditor.h"
-#include "gui/axContainer.h"
-#include "gui/axSymbol.h"
+//#include "gui/axContainer.h"
+#include "gui/axSymbols.h"
+#include "wdg/wdgPanel.h"
 
 //----------------------------------------------------------------------
 //
@@ -13,16 +14,16 @@
 //
 //----------------------------------------------------------------------
 
-class myWidget : public axContainer
-{
-  public:
-    myWidget(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
-    : axContainer(aListener,aRect,aAlignment)
-      {
-      }
-    virtual void doEnter(axWidget* aWidget) { /*wtrace("doEnter");*/ onCursor(cu_Hand); }
-    virtual void doLeave(axWidget* aWidget) { /*wtrace("doLeave");*/ onCursor(DEF_CURSOR); }
-};
+//class myWidget : public axWidget//Container
+//{
+//  public:
+//    myWidget(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
+//    : axWidget/*Container*/(aListener,aRect,aAlignment)
+//      {
+//      }
+//    virtual void doEnter(axWidget* aWidget) { /*wtrace("doEnter");*/ onCursor(cu_Hand); }
+//    virtual void doLeave(axWidget* aWidget) { /*wtrace("doLeave");*/ onCursor(DEF_CURSOR); }
+//};
 
 //----------------------------------------------------------------------
 //
@@ -44,7 +45,8 @@ class myEditor : public axEditor
     axColor         mPenColor;
     axColor         mSym1Color;
     axColor         mSym2Color;
-    axContainer*    wClient;
+    //axContainer*    wClient;
+    axWidget*    wClient;
     axSurface*      mSymSurf;
     axSymbols*      mSymbols;
 
@@ -58,32 +60,26 @@ class myEditor : public axEditor
       mPenColor   = can->getColor(AX_GREY_DARK);
       mSym1Color  = can->getColor(AX_WHITE);
       mSym2Color  = can->getColor(AX_GREY_LIGHT);
-      appendWidget(           new axContainer(this,axRect( 0, 0, 100,0  ), wa_Right) );
-      appendWidget(           new axContainer(this,axRect( 0, 0, 0,  50 ), wa_Bottom) );
-      appendWidget(           new axContainer(this,axRect( 0, 0, 50, 0  ), wa_Left) );
-      appendWidget(           new axContainer(this,axRect( 0, 0, 0,  50 ), wa_Top) );
-      appendWidget( wClient = new axContainer(this,NULL_RECT,              wa_Client) );
 
-      this->setAlignment(30,30,10,10);
-      this->clearOption(wo_Bevel);
-      wClient->setAlignment(20,20,10,10);
+      mSkin = new axSkinDefault(can);
+      setSkin(mSkin,true);
+      setBorders(30,30,10,10);
+      appendWidget(           new wdgPanel(this,axRect( 0, 0, 100,0  ), wa_Right) );
+      appendWidget(           new wdgPanel(this,axRect( 0, 0, 0,  50 ), wa_Bottom) );
+      appendWidget(           new wdgPanel(this,axRect( 0, 0, 50, 0  ), wa_Left) );
+      appendWidget(           new wdgPanel(this,axRect( 0, 0, 0,  50 ), wa_Top) );
+      appendWidget( wClient = new wdgPanel(this,NULL_RECT,              wa_Client) );
+
+      wClient->setBorders(20,20,10,10);
       wClient->setFlag(wf_Clip);
-      wClient->clearOption(wo_Bevel);
-      wClient->setOption(wo_Border);
       for (int i=0; i<32; i++)
       {
-        myWidget* w = new myWidget(this,axRect(0,0, 32,32), wa_Stacked);
-        w->clearOption(wo_Bevel);
-        w->setOption(wo_Border);
+        axWidget* w = new axWidget(this,axRect(0,0, 32,32), wa_StackedHoriz);
         wClient->appendWidget(w);
       }
 
       doRealign();
       //startTimer(40); // 25 fps
-
-      mSkin = new axSkinDefault(can);
-      doSetSkin(mSkin,true);
-
       mSymSurf = new axSurface(aContext,256,256);
       can = mSymSurf->getCanvas();
       can->setBrushColor(mBackColor);
