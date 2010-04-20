@@ -180,7 +180,8 @@ class axPluginVst : public axPluginBase
     //----------------------------------------
 
     inline void clear_aeFlags(void)                 { aeffect.flags = 0; }
-    inline void clear_aeFlag(int aFlag)             { aeffect.flags |= aFlag; }
+    //inline void clear_aeFlag(int aFlag)             { aeffect.flags |= aFlag; }
+    inline void clear_aeFlag(int aFlag)             { aeffect.flags &= ~aFlag; }
     inline void set_aeFlag(int aFlag)               { aeffect.flags |= aFlag; }
     inline void set_aeFlag(int aFlag, bool aState)  { if (aState) set_aeFlag(aFlag); else clear_aeFlag(aFlag); }
     //----------
@@ -1334,7 +1335,7 @@ typedef axPluginVst axPluginImpl;
 
 //----------------------------------------------------------------------
 
-#ifdef WIN32
+#ifdef AX_WIN32
 
   // this is read only, so it should be safe?
   static HINSTANCE gInstance;

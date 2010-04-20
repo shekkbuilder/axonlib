@@ -39,12 +39,12 @@
  * \code
  * wtrace(var);              // trace a variable
  * wtrace("message");        // trace a message
- * wtrace(var << "message"); // combined 
+ * wtrace(var << "message"); // combined
  * \endcode
  * wdebug() (win32) examples:
  * wdebug(var);              // trace a variable
  * wdebug("message");        // trace a message
- * wdebug(var << "message"); // combined 
+ * wdebug(var << "message"); // combined
  * \endcode
  * <br>
  * linux specific methods: <br>
@@ -119,14 +119,14 @@
     #include <windows.h>
     #include <windowsx.h>         // macros
     #include <io.h>
-    #include <stdio.h>            // gcc-4.4.1-tdm    
+    #include <stdio.h>            // gcc-4.4.1-tdm
     #include <sstream>
-<<<<<<< .mine
-    // ----------------
-=======
-    
-    // ----------------
->>>>>>> .r212
+//<<<<<<< .mine
+//    // ----------------
+//=======
+//
+//    // ----------------
+//>>>>>>> .r212
     HWND axDtext;                           // edit control handle
     ostringstream axDoss;                   // string stream for window
 
@@ -137,9 +137,9 @@
       DestroyWindow(axDtext); axDtext = NULL; \
       axDoss.flush(); \
     }
-    
+
     // ----------------
-    // message listener    
+    // message listener
     bool WINAPI axDwinListner(HWND hwnd, UINT message)
     {
       hwnd = hwnd;
@@ -147,7 +147,7 @@
       if (message == WM_DESTROY || message == WM_CLOSE) { axDwinDestroy(); }
       return false;
     }
-    
+
     // ----------------
     // *note: text selection highlight is not visible when format = .exe
     // create window
@@ -205,9 +205,9 @@
         Edit_SetSel(axDtext, len, len);
         Edit_ReplaceSel(axDtext, text);
         // kill focus
-        SendMessage(axDtext, WM_KILLFOCUS, 0, 0);        
+        SendMessage(axDtext, WM_KILLFOCUS, 0, 0);
     }
-    
+
     // -------------------
     // window debug macro
     #define wdebug(x) \
@@ -216,7 +216,7 @@
         axDoss << "TRC | " << __LINE__ << " | " << x << "\r\n"; \
         wdebug_write(); \
       }
-    
+
     // allocate console and route stdout as seen in example:
     // http://support.microsoft.com/kb/105305
     // --------------------------------------------------------
@@ -278,10 +278,10 @@
         setvbuf(stdout, NULL, _IONBF, 0);
       }
     }
-    
+
     // --------------
     #define trace(x) { if (axHcrt != 0) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); } }
-    #define msg(x) { if (axHcrt != 0) { printf("MSG | %i | %s\n", __LINE__, x); } }    
+    #define msg(x) { if (axHcrt != 0) { printf("MSG | %i | %s\n", __LINE__, x); } }
     #define wtrace(x) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); }
   // ---------
   #endif
@@ -293,7 +293,7 @@
     inline void axDstdDestroy(void) {}
     inline void axDwinCreate(void) {}
     inline void axDwinDestroy(void) {}
-    inline void wdebug(...) {}    
+    inline void wdebug(...) {}
     #define wtrace(x) { cout << x << endl; cout.flush(); }
   #endif
 // case: no debug
