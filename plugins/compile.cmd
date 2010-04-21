@@ -15,7 +15,7 @@ set axpath=..\ax
 set mgwpath=
 
 :: set warning flags
-set warn=-pedantic -fpermissive -W -Wall -Wno-unused
+set warn=-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long
 
 :: set optimization flags
 set opt=-msse -mfpmath=sse,387 -O3 -Os -fstack-check -fdata-sections -ffunction-sections
@@ -116,7 +116,7 @@ echo * debug is: %dstatus%
 echo.
 
 :: call g++ / strip
-%mgwpath%g++ -I%cmdpath%%axpath% -I%cmdpath%%vstpath% -mwindows -D%tgtformat% %warn% %opt% %dbg% -s -Wl,-gc-sections .\%infile% -o .\%target%
+%mgwpath%g++ -I%cmdpath%%axpath% -I%cmdpath%%vstpath% -mwindows -D%tgtformat% %warn% %opt% %dbg% -s -Wl,-gc-sections .\%infile% ..\ax\mdbg\debugmemory.cpp -o .\%target%
 if exist %target% %mgwpath%strip --strip-all %target%
 
 :: target missing -> error

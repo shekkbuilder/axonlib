@@ -5,7 +5,7 @@ function cross_compile_for_linux
 	echo "--------------------------------------------------"
 	echo - $1.so
 	echo "--------------------------------------------------" 
-	`g++-linux -m32 -D linux -L/_tgz/usr/X11R6/lib -I../ax -I../../vstsdk24 -pedantic -fpermissive -W -Wall -Wno-unused -shared -O3 -Os -msse -mfpmath=sse,387 -fdata-sections -ffunction-sections $1.cpp -s -o $1.so -lpthread -lX11 -Wl,-gc-sections`
+	`g++-linux -m32 -D linux -L/_tgz/usr/X11R6/lib -I../ax -I../../vstsdk24 -pedantic -fpermissive -W -Wall -Wno-unused -Wno-long-long -shared -O3 -Os -msse -mfpmath=sse,387 -fdata-sections -ffunction-sections $1.cpp -s -o $1.so -lpthread -lX11 -Wl,-gc-sections`
 	`strip --strip-all $1.so`
 	mv $1.so  ../bin
 }
@@ -15,7 +15,7 @@ function compile_for_windows
 	echo "--------------------------------------------------"	
 	echo - $1.dll	
 	echo "--------------------------------------------------"
-	`g++ -mwindows -mno-cygwin -I../ax -I../../vstsdk24 -pedantic -fpermissive -W -Wall -Wno-unused -lpthread -shared -O3 -Os -msse -mfpmath=sse,387 -fdata-sections -ffunction-sections $1.cpp -s -o $1.dll -Wl,-gc-sections`
+	`g++ -mwindows -mno-cygwin -I../ax -I../../vstsdk24 -pedantic -fpermissive -W -Wall -Wno-unused -Wno-long-long -lpthread -shared -O3 -Os -msse -mfpmath=sse,387 -fdata-sections -ffunction-sections $1.cpp -s -o $1.dll -Wl,-gc-sections`
 	`strip --strip-all $1.dll`
 	mv $1.dll  ../bin
 }

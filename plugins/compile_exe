@@ -3,7 +3,7 @@
 function compile_linux
 {
   echo - $1
-  `g++ -DAX_FORMAT_EXE -I../ax -I../../vstsdk24 -pedantic -fpermissive -Wall -lX11 -lpthread -O3 -Os -msse -mfpmath=sse,387 -fdata-sections -ffunction-sections $1.cpp -s -o $1 -Wl,-gc-sections`
+  `g++ -DAX_FORMAT_EXE -I../ax -I../../vstsdk24 -pedantic -fpermissive -Wall -W -Wno-unused -Wno-long-long -lX11 -lpthread -O3 -Os -msse -mfpmath=sse,387 -fdata-sections -ffunction-sections $1.cpp -s -o $1 -Wl,-gc-sections`
   `strip --strip-all $1`
 
 }
@@ -11,7 +11,7 @@ function compile_linux
 function compile_win32
 {
   echo - $1.exe
-  `i586-mingw32msvc-g++ -DAX_FORMAT_EXE -I../ax -I../../vstsdk24 -pedantic -fpermissive -Wall -mwindows -O3 -Os -msse -mfpmath=sse,387 -fdata-sections -ffunction-sections $1.cpp -s -o $1.exe -Wl,-gc-sections`
+  `i586-mingw32msvc-g++ -DAX_FORMAT_EXE -I../ax -I../../vstsdk24 -pedantic -fpermissive -Wall -W -Wno-unused -Wno-long-long -mwindows -O3 -Os -msse -mfpmath=sse,387 -fdata-sections -ffunction-sections $1.cpp -s -o $1.exe -Wl,-gc-sections`
   `i586-mingw32msvc-strip --strip-all $1.exe`
 }
 
