@@ -104,11 +104,11 @@ class myPlugin : public axPlugin
         setupEditor(100,52);
         appendParameter( p_Gain = new axParameter(this,"gain","") );
         setupParameters();
-        
+
         // test window debug for exe
         axDwinCreate();
         wdebug("hello dbg");
-        wdebug("testnumber=" << 12.f);
+        //wdebug("testnumber=" << 12.f);
       }
 
     virtual void  doSetParameter(axParameter* aParameter)
@@ -137,13 +137,15 @@ class myPlugin : public axPlugin
 
   public:
 
+    // from axPluginVst.dispatcher  -  context: HWND
+    // axPluginExe.main = main  -  context: instance, winname
+
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         axCanvas* canvas = editor->getCanvas();
         skin = new mySkin(canvas);
         editor->setSkin(skin);
-<<<<<<< .mine
 //      //--- decode & initialize bitmap
         srf = editor->createSurface(32,32*65);
         loader.decode((unsigned char*)knob32,knob32_size);
@@ -176,40 +178,6 @@ class myPlugin : public axPlugin
         mEditor = NULL;
         delete editor;
         delete skin;
-=======
-//      //--- decode & initialize bitmap
-        srf = editor->createSurface(32,32*65);
-          loader.decode((unsigned char*)knob32,knob32_size);
-        /*axBitmap**/ bitmap = editor->createBitmap( loader.getWidth(), loader.getHeight() );
-        bitmap->createBuffer( (char*)loader.getImage() );   // create bitmap buffer & copy data
-        bitmap->convertRgbaBgra();                          // -> bgr.a
-        bitmap->setBackground(128,128,128);                 // replace alpha
-        bitmap->prepare();                                  // prepare bitmap for blitting
-        axCanvas* can = srf->getCanvas();
-        can->drawBitmap(bitmap,0,0,0,0,32,32*65);           // upload to surface
-        delete bitmap;
-//        //---
-        skin->setKnobImage(srf,65,32,32);
-//        editor->setSkin(skin);
-        editor->appendWidget( wPanel = new wdgPanel(editor,NULL_RECT,wa_Client) );
-        wPanel->appendWidget( w_Gain = new wdgKnob( editor,axRect(10,10,100,32),wa_None,"gain",0.75) );
-        editor->connect(w_Gain,p_Gain);
-        editor->doRealign();
-        editor->show();
-        mEditor = editor;
-        return mEditor;
-      }
-
-    //----------
-
-    virtual void doCloseEditor(void)
-      {
-        axEditor* editor = mEditor;
-        mEditor->hide();
-        mEditor = NULL;
-        delete editor;
-        delete skin;
->>>>>>> .r212
         delete srf;
         //delete bitmap;
       }

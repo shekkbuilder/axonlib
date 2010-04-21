@@ -128,10 +128,12 @@ class axPluginVst : public axPluginBase
 
   protected:
 
+  axContext* mContext;
+
     axPluginVst(axContext* aContext, int aPluginFlags)
     : axPluginBase(aContext, aPluginFlags)
       {
-
+        mContext = aContext;
         audioMaster = (audioMasterCallback)aContext->mAudio;
         mCurrentProgram = 0;
         mEditorOpen = false;
@@ -656,10 +658,15 @@ class axPluginVst : public axPluginBase
                 axContext ctx(disp,win);
               #endif
               #ifdef AX_WIN32
-                HWND win = (HWND)ptr;
-                axContext ctx(win);
+                //HWND win = (HWND)ptr;
+                //axContext ctx(win);
+                axContext ctx;
+                ctx.mInstance     = mContext->mInstance;
+                ctx.mWinClassName = mContext->mWinClassName;
+                ctx.mWindow       = (HWND)ptr;
               #endif
               mEditorWindow = doOpenEditor(&ctx);
+              //mEditorWindow->reparent((int)win);
               mEditorOpen = true;
               v = 1;
               }
