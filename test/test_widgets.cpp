@@ -1,6 +1,5 @@
-#define AX_FORMAT_VST
-
-#define AX_DEBUG
+//#define AX_FORMAT_VST
+//#define AX_DEBUG
 //#include "core/axDebug.h"
 
 #include "axPlugin.h"
@@ -332,7 +331,7 @@ setSkin(mDefaultSkin,true);
       }
 
     //--------------------------------------------------
-    //
+    //|
     //--------------------------------------------------
 
     virtual void onChange(axWidget* aWidget)
@@ -385,24 +384,24 @@ class myPlugin : public axPlugin
 
     virtual void  doStateChange(int aState)
       {
-        wtrace(":: doStateChange " << aState);
+        //wtrace(":: doStateChange " << aState);
       }
 
     virtual void  doTransportChange(int aState)
       {
-        wtrace(":: doTransportChange " << aState);
+        //wtrace(":: doTransportChange " << aState);
       }
 
     virtual void  doSetProgram(int aProgram)
       {
-        wtrace(":: doSetProgram " << aProgram);
+        //wtrace(":: doSetProgram " << aProgram);
       }
 
     virtual void  doSetParameter(axParameter* aParameter)
       {
-        char buf[32];
-        aParameter->doGetDisplay(buf);
-        wtrace(":: doSetParameter " << aParameter->getName().ptr() << " = " << aParameter->getValue() << " (" << buf << ")");
+        //char buf[32];
+        //aParameter->doGetDisplay(buf);
+        //wtrace(":: doSetParameter " << aParameter->getName().ptr() << " = " << aParameter->getValue() << " (" << buf << ")");
       }
 
     //virtual bool  doProcessEvents(void)
@@ -413,7 +412,7 @@ class myPlugin : public axPlugin
 
     virtual void  doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3)
       {
-        wtrace(":: doProcessMidi "<<ofs<<" : "<<(int)msg1<<","<<(int)msg2<<","<<(int)msg3);
+        //wtrace(":: doProcessMidi "<<ofs<<" : "<<(int)msg1<<","<<(int)msg2<<","<<(int)msg3);
       }
 
     virtual bool  doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize)
@@ -437,7 +436,7 @@ class myPlugin : public axPlugin
 
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
-        wtrace(":: doOpenEditor");
+        //wtrace(":: doOpenEditor");
         mEditor = new myEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         mEditor->connect(mEditor->wKnob1,pValue1);
         mEditor->connect(mEditor->wVal1,pValue2);
@@ -449,7 +448,7 @@ class myPlugin : public axPlugin
 
     virtual void doCloseEditor(void)
       {
-        wtrace(":: doCloseEditor");
+        //wtrace(":: doCloseEditor");
         mEditor->hide();
         delete mEditor;
         mEditor = NULL;
