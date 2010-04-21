@@ -89,11 +89,13 @@ class axWindowWin32 : public axWindowBase
 
         // --- embedded ---
 
-        // adjust here
-        AdjustWindowRect(&rc,WS_OVERLAPPEDWINDOW|WS_POPUP,FALSE);
+        // adjust rect for exe
+        #ifdef AX_FORMAT_EXE
+          AdjustWindowRect(&rc,WS_OVERLAPPEDWINDOW|WS_POPUP,FALSE);
+        #endif
         // get w, h
-        const int wWidth = (rc.right - rc.left + 1);
-        const int wHeight = (rc.bottom - rc.top + 1);
+        const int wWidth = (rc.right - rc.left - 1);    // -1 reduces the window dim by 1 px  
+        const int wHeight = (rc.bottom - rc.top - 1);
         // get screen w, h and define a center pos
         const int wPosX = ((GetSystemMetrics(SM_CXSCREEN)-wWidth)>>1) + rc.left;
         const int wPosY = ((GetSystemMetrics(SM_CYSCREEN)-wHeight)>>1) + rc.top;
@@ -104,11 +106,9 @@ class axWindowWin32 : public axWindowBase
             WS_EX_TOOLWINDOW,
             classname,
             0,
-            WS_POPUP,
-            //mRect.x,mRect.y,
-            //mRect.w,mRect.h,
-            wPosX, // center x
-            wPosY,  // center y
+            WS_POPUP,            
+            wPosX,          // center x
+            wPosY,          // center y
             wWidth,
             wHeight,
             0,
@@ -126,12 +126,10 @@ class axWindowWin32 : public axWindowBase
           mWindow = CreateWindowEx(
             WS_EX_OVERLAPPEDWINDOW,   // dwExStyle
             classname,                // lpClassName
-            0,                   // lpWindowName
-            WS_OVERLAPPEDWINDOW,      // dwStyle
-            //mRect.x,mRect.y,          // x,y
-            //mRect.w,mRect.h,          // w,h
-            wPosX, // center x
-            wPosY,  // center y
+            0,                        // lpWindowName
+            WS_OVERLAPPEDWINDOW,      // dwStyle            
+            wPosX,                    // center x
+            wPosY,                    // center y
             wWidth,
             wHeight,
             0,                        // hWndParent
@@ -139,6 +137,8 @@ class axWindowWin32 : public axWindowBase
             mInstance,                // hInstance
             0                         // lpParam
           );
+          SetFocus(mWindow);
+          // LoadIcon(mInstance, "axicon");          
         }
 
         // ---
