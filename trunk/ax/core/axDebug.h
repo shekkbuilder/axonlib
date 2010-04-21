@@ -289,25 +289,25 @@
   #ifdef linux
     #define trace(x) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); }
     #define msg(x) { printf("msg | %i | %s\n", __LINE__, x); }
+    #define wtrace(x) { cout << x << endl; cout.flush(); }
+    #define wdebug(x) ((void)0)
     inline void axDstdCreate(void) {}
     inline void axDstdDestroy(void) {}
     inline void axDwinCreate(void) {}
-    inline void axDwinDestroy(void) {}
-    inline void wdebug(...) {}
-    #define wtrace(x) { cout << x << endl; cout.flush(); }
+    inline void axDwinDestroy(void) {}    
   #endif
 // case: no debug
 #else
   #define NDEBUG
   #define trace(x) ((void)0)
   #define msg(x) ((void)0)
-  #define assert(x) ((void)0)
+  #define assert(x) ((void)0)  
+  #define wtrace(x) ((void)0)
+  #define wdebug(x) ((void)0)
   inline void axDstdCreate(void) {}
   inline void axDstdDestroy(void) {}
   inline void axDwinCreate(void) {}
   inline void axDwinDestroy(void) {}
-  inline void wdebug(...) {}
-  #define wtrace(x) ((void)0)
 #endif
 
 //----------------------------------------------------------------------

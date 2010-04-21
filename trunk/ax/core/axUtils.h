@@ -32,7 +32,7 @@ TODO:
 #define axUtils_included
 
 #include <memory.h> // memset
-#include "axMath.h"
+#include "core/axMath.h"
 #include "axDefines.h"
 #include <sstream>
 using namespace std;
@@ -302,6 +302,29 @@ inline float axQ2Octaves(const float q)
 {
   return 1.4426950408889634f * axSinhf(0.5f * q);
 }
+
+/**
+ * denormalize
+ * @param[in] x - any expression or variable
+ */
+#define axDenorm(x) { (x) + DENORM }
+
+/**
+ * call the 'rdtsc' (Read Time Stamp Counter) instruction
+ * usage:
+ * \code
+ * unsigned long long startValue = axRdtsc();
+ * //some code here...
+ * unsigned long long endValue = axRdtsc();
+ * unsigned long long diff = endValue - startValue;
+ * \endcode
+ */
+inline u64 axRdtsc()
+{
+  u64 x;
+  __asm__ __volatile__ ( "rdtsc;" : "=A" (x) );
+  return x;
+}  
 
 /**
  * radix algorithm
