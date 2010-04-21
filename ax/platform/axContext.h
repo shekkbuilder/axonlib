@@ -21,6 +21,7 @@
     Window      mWindow;//mParent;
     AX_PTRCAST  mAudio;
 
+    axContext() {}
     axContext(Display* aDisplay, Window aWindow, AX_PTRCAST aAudio=0)
       {
         mDisplay = aDisplay;
@@ -43,6 +44,7 @@
     char*       mWinClassName;
     AX_PTRCAST  mAudio;
 
+    axContext() {}
     axContext(HINSTANCE aInstance, char* aName, AX_PTRCAST aAudio=0)
       {
         mInstance     = aInstance;
