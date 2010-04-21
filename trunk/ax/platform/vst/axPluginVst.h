@@ -42,9 +42,8 @@ struct axVstEvents
 
 class axPluginVst : public axPluginBase
 {
-  friend AEffect* main_plugin(audioMasterCallback audioMaster);// asm ("main");
+  friend AEffect* main_plugin(audioMasterCallback audioMaster);
   friend int      main(audioMasterCallback audioMaster);
-  //friend int      VSTPluginMain(audioMasterCallback audioMaster);
 
   private:
     audioMasterCallback audioMaster;
@@ -1344,6 +1343,14 @@ typedef axPluginVst axPluginImpl;
 
 #ifdef AX_WIN32
 
+  //#ifdef __GNUC__
+  //  //#define __cdecl __attribute__((cdecl))
+  //  //AEffect* main_plugin(audioMasterCallback audioMaster) ;//asm ("main");
+  //  // /*__declspec(dllexport)*/ int main_plugin(audioMasterCallback audioMaster);// asm("main");
+  //  /*__declspec(dllexport)*/ AEffect* main_plugin(audioMasterCallback audioMaster);// asm("main");
+  //  #define main main_plugin
+  //#endif
+
   // this is read only, so it should be safe?
   static HINSTANCE gInstance;
 
@@ -1360,23 +1367,6 @@ typedef axPluginVst axPluginImpl;
 /*
   #define AX_CONTEXT_EXIT
 */
-
-//TODO:
-// attach: register window class
-// detach: unregister ..
-// do we need the HINSTANCE anymore?
-
-//hInstance = hInstDll;
-//switch(fdwReason) {
-//    case DLL_PROCESS_ATTACH:
-//        initMyLibraries();
-//        if(initLibrariesFailed) {
-//            return FALSE;
-//        }
-//        break;
-//    case DLL_PROCESS_DETACH:
-//        deinitializeLibaries();
-//        break;
 
   void register_winclass(HINSTANCE aInstance)
     {
