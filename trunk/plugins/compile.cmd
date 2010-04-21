@@ -17,6 +17,9 @@ set mgwpath=
 :: set warning flags
 set warn=-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long
 
+:: set resource file
+set resfile=rc_default.rc
+
 :: set optimization flags
 set opt=-msse -mfpmath=sse,387 -O3 -Os -fstack-check -fdata-sections -ffunction-sections
 
@@ -41,6 +44,7 @@ if not exist %vstpath% goto novstsdk
 set dstatus=OFF
 set nvm=
 set dbg=
+set res=
 
 :: check for not move 
 if [%2]==[-nvm] set nvm=yes
@@ -64,12 +68,19 @@ if [%4]==[-exe] goto exetarget
 
 :: format is dll
 :dlltarget
+echo ---------------------------------------------------------------------------
 set ext=.dll
 set tgtformat=AX_FORMAT_VST -shared
 goto begin
 
 :: format is exe
 :exetarget
+echo ---------------------------------------------------------------------------
+echo preparing resources...
+if exist %resfile%.o del %resfile%.o
+%mgwpath%windres -i %resfile% -o %resfile%.o
+if not exist %resfile%.o goto nores
+set res=%resfile%.o
 set ext=.exe
 set tgtformat=AX_FORMAT_EXE
 goto begin
@@ -99,7 +110,6 @@ goto end
 :: begin
 :: --------------------------
 :begin
-echo ---------------------------------------------------------------------------
 :: set target
 call set target=%%infile:%srcext%=%%
 set target=%target%%ext%
@@ -116,7 +126,7 @@ echo * debug is: %dstatus%
 echo.
 
 :: call g++ / strip
-%mgwpath%g++ -I%cmdpath%%axpath% -I%cmdpath%%vstpath% -mwindows -D%tgtformat% %warn% %opt% %dbg% -s -Wl,-gc-sections .\%infile% ..\ax\mdbg\debugmemory.cpp -o .\%target%
+%mgwpath%g++ -I%cmdpath%%axpath% -I%cmdpath%%vstpath% -mwindows -D%tgtformat% %warn% %opt% %dbg% -s -Wl,-gc-sections .\%infile% %res% -o .\%target%
 if exist %target% %mgwpath%strip --strip-all %target%
 
 :: target missing -> error
@@ -149,6 +159,11 @@ goto end
 :novstsdk
 echo.
 echo ### ERR: cannot find vst sdk in '%vstpath%'
+goto end
+:: ----------------------------------------------------------------------------
+:nores
+echo.
+echo ### ERR: cannot create resource file '%resfile%.o'
 goto end
 :: ----------------------------------------------------------------------------
 :end
