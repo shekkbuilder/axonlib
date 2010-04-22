@@ -157,7 +157,7 @@
           WS_VISIBLE|WS_BORDER|WS_VSCROLL|WS_HSCROLL|
           ES_READONLY|ES_MULTILINE|ES_WANTRETURN|WS_SIZEBOX|
           ES_AUTOHSCROLL|ES_AUTOVSCROLL,
-          400, 400, 500-5, 300-25, NULL, NULL, NULL, NULL
+          400, 400, 440-5, 320-25, NULL, NULL, NULL, NULL
         );
         //set window properties
         // - on top
@@ -257,7 +257,7 @@
           SetConsoleCtrlHandler(NULL, true);
           // set always on top
           SetWindowPos(hCw, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);          
-          // disable close button and 
+          // disable close button 
 		      HMENU hMenu = GetSystemMenu(hCw, 0);          
 		      if(hMenu != NULL)
 		      {
