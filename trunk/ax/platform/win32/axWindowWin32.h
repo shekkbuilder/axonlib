@@ -81,7 +81,11 @@ class axWindowWin32 : public axWindowBase
         wc.lpfnWndProc    = &eventProc;
         wc.hInstance      = mInstance;
         wc.lpszClassName  = classname;
-        wc.hCursor        = (HICON)mWinCursor;//LoadCursor(NULL, IDC_ARROW);
+        wc.hCursor        = (HICON)mWinCursor; //LoadCursor(NULL, IDC_ARROW);        
+        // rc_default.rc: axicon ICON "rc_axlogo.ico"     
+        HICON hIcon = LoadIcon(mInstance, "axicon");
+        if (hIcon) wc.hIcon = hIcon;
+        					
         RegisterClass(&wc);
 
         //RECT rc = {mRect.x,mRect.y,mRect.x2(),mRect.y2()};
@@ -137,8 +141,7 @@ class axWindowWin32 : public axWindowBase
             mInstance,                // hInstance
             0                         // lpParam
           );
-          SetFocus(mWindow);
-          // LoadIcon(mInstance, "axicon");          
+          SetFocus(mWindow);                    
         }
 
         // ---
