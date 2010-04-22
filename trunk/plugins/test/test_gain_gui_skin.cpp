@@ -1,4 +1,6 @@
-#define AX_DEBUG
+//#define AX_DEBUG
+#define AX_DEBUG_AUTO_STD
+#define AX_DEBUG_AUTO_WIN
 
 #include "axPlugin.h"
 #include "axEditor.h"
@@ -105,10 +107,7 @@ class myPlugin : public axPlugin
         appendParameter( p_Gain = new axParameter(this,"gain","") );
         setupParameters();
 
-        //axDwinCreate();
-        //wdebug("hello dbg");
-
-        axDstdCreate();
+        wdebug("hello dbg");        
         trace("hello dbg");
       }
 

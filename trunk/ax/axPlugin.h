@@ -56,11 +56,30 @@ class axPlugin : public axPluginImpl, public axParameterListener
     //: axPluginBase(aContext,aPluginFlags)
     : axPluginImpl(aContext,aPluginFlags)
       {
+        // auto open debug (win32)
+        #ifdef AX_WIN32
+          #ifdef AX_DEBUG_AUTO_STD
+            axDstdCreate();
+          #endif
+          #ifdef AX_DEBUG_AUTO_WIN
+            axDwinCreate();
+          #endif
+        #endif
       }
 
     virtual ~axPlugin()
       {
         deleteParameters();
+        
+        // auto close debug (win32)
+        #ifdef AX_WIN32
+          #ifdef AX_DEBUG_AUTO_STD
+            axDstdDestroy();
+          #endif
+          #ifdef AX_DEBUG_AUTO_WIN
+            axDwinDestroy();          
+          #endif
+        #endif
       }
 
     //----------

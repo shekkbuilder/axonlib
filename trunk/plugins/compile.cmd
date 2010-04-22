@@ -4,7 +4,7 @@
 :: -----------------------------------------------------------------------------
 :: *** user settings here
 :: -----------------------------------------------------------------------------
-:: set path to vstsdk, e.g: c:\vstsdk24\ (or relative to the compile.cmd)
+:: set path to vstsdk, e.g: c:\vstsdk24\ (or relative to compile.cmd)
 set vstpath=..\..\vstsdk24
 
 :: set path to axonlib headers
@@ -17,7 +17,7 @@ set mgwpath=
 :: set warning flags
 set warn=-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long
 
-:: set resource file
+:: set resource file (leave blank for no resources)
 set resfile=rc_default.rc
 
 :: set optimization flags
@@ -49,7 +49,7 @@ set nvm=
 set dbg=
 set res=
 
-:: check for not move 
+:: check for 'not move' 
 if [%2]==[-nvm] set nvm=yes
 if [%3]==[-nvm] set nvm=yes
 if [%4]==[-nvm] set nvm=yes
@@ -73,19 +73,21 @@ if [%4]==[-exe] goto exetarget
 :dlltarget
 echo ---------------------------------------------------------------------------
 set ext=.dll
-set tgtformat=AX_FORMAT_VST -shared
+set tgtformat=-DAX_FORMAT_VST -shared
 goto begin
 
 :: format is exe
 :exetarget
 echo ---------------------------------------------------------------------------
+if [%resfile%]==[] goto exenores
 echo preparing resources...
 if exist %resfile%.o del %resfile%.o
 %mgwpath%windres -i %resfile% -o %resfile%.o
 if not exist %resfile%.o goto nores
 set res=%resfile%.o
+:exenores
 set ext=.exe
-set tgtformat=AX_FORMAT_EXE
+set tgtformat=-DAX_FORMAT_EXE
 goto begin
 
 :: set debug
@@ -129,7 +131,7 @@ echo * debug is: %dstatus%
 echo.
 
 :: call g++ / strip
-%mgwpath%g++ -I%cmdpath%%axpath% -I%cmdpath%%vstpath% -mwindows -D%tgtformat% %warn% %opt% %dbg% %linker% .\%infile% %res% -o .\%target%
+%mgwpath%g++ -I%cmdpath%%axpath% -I%cmdpath%%vstpath% -mwindows %tgtformat% %warn% %opt% %dbg% %linker% .\%infile% %res% -o .\%target%
 if exist %target% %mgwpath%strip --strip-all %target%
 
 :: target missing -> error
