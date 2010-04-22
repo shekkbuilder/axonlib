@@ -93,16 +93,22 @@ class axWindowWin32 : public axWindowBase
 
         // --- embedded ---
 
-        // adjust rect for exe
-        #ifdef AX_FORMAT_EXE
-          AdjustWindowRect(&rc,WS_OVERLAPPEDWINDOW|WS_POPUP,FALSE);
-        #endif
         // get w, h
-        const int wWidth = (rc.right - rc.left - 1);    // -1 reduces the window dim by 1 px  
-        const int wHeight = (rc.bottom - rc.top - 1);
-        // get screen w, h and define a center pos
-        const int wPosX = ((GetSystemMetrics(SM_CXSCREEN)-wWidth)>>1) + rc.left;
-        const int wPosY = ((GetSystemMetrics(SM_CYSCREEN)-wHeight)>>1) + rc.top;
+        const u32 wWidth = (rc.right - rc.left - 1);  // -1 reduces the window dim by 1 px  
+        const u32 wHeight = (rc.bottom - rc.top - 1);
+        
+        #ifdef AX_FORMAT_EXE
+          // adjust rect for exe
+          AdjustWindowRect(&rc,WS_OVERLAPPEDWINDOW|WS_POPUP,FALSE);
+          // get screen w, h and define a center pos
+          const u32 wPosX = ((GetSystemMetrics(SM_CXSCREEN)-wWidth)>>1) + rc.left;
+          const u32 wPosY = ((GetSystemMetrics(SM_CYSCREEN)-wHeight)>>1) + rc.top;
+        #endif        
+        #ifdef AX_FORMAT_VST
+          // no centering for vst
+          const u32 wPosX = rc.left;
+          const u32 wPosY = rc.top;
+        #endif
         
         if (mWinFlags&AX_WIN_EMBEDDED)
         {
