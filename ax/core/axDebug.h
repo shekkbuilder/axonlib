@@ -121,12 +121,7 @@
     #include <io.h>
     #include <stdio.h>            // gcc-4.4.1-tdm
     #include <sstream>
-//<<<<<<< .mine
-//    // ----------------
-//=======
-//
-//    // ----------------
-//>>>>>>> .r212
+    
     HWND axDtext;                           // edit control handle
     ostringstream axDoss;                   // string stream for window
 
@@ -142,7 +137,6 @@
     // message listener
     bool WINAPI axDwinListner(HWND hwnd, UINT message)
     {
-      hwnd = hwnd;
       // destroy
       if (message == WM_DESTROY || message == WM_CLOSE) { axDwinDestroy(); }
       return false;
@@ -172,10 +166,13 @@
         HFONT hfDefault;
         hfDefault = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
         SendMessage(axDtext, WM_SETFONT, (WPARAM)hfDefault, MAKELPARAM(FALSE, 0));
+        //icon
+        HICON hIcon = LoadIcon((HINSTANCE)GetModuleHandle(NULL), "axicon");
+        if (hIcon) SendMessage(axDtext, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
         // - listener
         SetWindowLong(axDtext, DWL_DLGPROC, (long)axDwinListner);
         // - set limit
-        Edit_LimitText(axDtext, 1000);
+        Edit_LimitText(axDtext, 1000);       
       }
     }
 
@@ -225,13 +222,13 @@
 
     // ----------------
     // destroy console
-    void axDstdDestroy(void)
-    {
-      FreeConsole();
-      close((int)axSfile);
-      axHcrt = 0;
+    #define axDstdDestroy(void) \
+    { \
+      FreeConsole(); \
+      close((int)axSfile); \
+      axHcrt = 0; \
     }
-
+    
     // ----------------
     // create console
     void axDstdCreate(void)
@@ -259,9 +256,9 @@
           // disable ctrl+c
           SetConsoleCtrlHandler(NULL, true);
           // set always on top
-          SetWindowPos(hCw, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
-          // disable close button (otherwise crash if clicked)
-		      HMENU hMenu = GetSystemMenu(hCw, 0);
+          SetWindowPos(hCw, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);          
+          // disable close button and 
+		      HMENU hMenu = GetSystemMenu(hCw, 0);          
 		      if(hMenu != NULL)
 		      {
             DeleteMenu(hMenu, SC_CLOSE, MF_BYCOMMAND);

@@ -23,6 +23,9 @@ set resfile=rc_default.rc
 :: set optimization flags
 set opt=-msse -mfpmath=sse,387 -O3 -Os -fstack-check -fdata-sections -ffunction-sections
 
+:: linker options
+set linker=-s -Wl,-gc-sections
+
 :: -----------------------------------------------------------------------------
 :: *** end of user settings
 :: -----------------------------------------------------------------------------
@@ -126,7 +129,7 @@ echo * debug is: %dstatus%
 echo.
 
 :: call g++ / strip
-%mgwpath%g++ -I%cmdpath%%axpath% -I%cmdpath%%vstpath% -mwindows -D%tgtformat% %warn% %opt% %dbg% -s -Wl,-gc-sections .\%infile% %res% -o .\%target%
+%mgwpath%g++ -I%cmdpath%%axpath% -I%cmdpath%%vstpath% -mwindows -D%tgtformat% %warn% %opt% %dbg% %linker% .\%infile% %res% -o .\%target%
 if exist %target% %mgwpath%strip --strip-all %target%
 
 :: target missing -> error
