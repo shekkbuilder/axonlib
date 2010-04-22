@@ -18,16 +18,11 @@ class myPlugin : public axPlugin
         appendParameter( p_Gain = new axParameter(this, "gain", "") );
         setupParameters();
         
-        // test debug for dll (yet again, because now axDebug is included in axPlugin):
-        
-        // since the debug window is created here,
-        // in reaper for examle it should show while rescanning for new plugins
-        // and not unload until reaper is closed.
-        // and no crashes should occur!
-        
         axDwinCreate();
-        wdebug("hello dbg");
-        wdebug("testnumber=" << 12.f);
+        wdebug("hello dbg");        
+        
+        axDstdCreate();
+        trace("hello dbg");        
       }
 
     virtual void  doSetParameter(axParameter* aParameter)

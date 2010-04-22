@@ -105,10 +105,11 @@ class myPlugin : public axPlugin
         appendParameter( p_Gain = new axParameter(this,"gain","") );
         setupParameters();
 
-        // test window debug for exe
         axDwinCreate();
-        wdebug("hello dbg");
-        //wdebug("testnumber=" << 12.f);
+        wdebug("hello dbg");        
+        
+        axDstdCreate();
+        trace("hello dbg");
       }
 
     virtual void  doSetParameter(axParameter* aParameter)
