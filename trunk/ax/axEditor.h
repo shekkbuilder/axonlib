@@ -45,10 +45,12 @@ class axEditor : public axWindow
     axEditor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
     : axWindow(aContext,aRect,aWinFlags)
       {
+        trace("- axEditor.constructor");
         mPlugin = aPlugin;
         //axCanvas* can = getCanvas();
         //mDefaultSkin = new axSkinDefault(can);
         //setSkin(mDefaultSkin/*,true*/); // no sub-widgets yet?
+        trace("- axEditor.constructor OK");
       }
 
     virtual ~axEditor()

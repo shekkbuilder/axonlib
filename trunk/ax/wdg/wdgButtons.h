@@ -7,13 +7,15 @@
 
 //----------------------------------------------------------------------
 
-// bitton mode
+// button mode
 #define bm_Single   0
 #define bm_Multi    1
 
 //----------------------------------------------------------------------
 
 typedef axArray<wdgButton*> wdgButtonList;
+
+//----------------------------------------------------------------------
 
 class wdgButtons : public axWidget
 {
@@ -26,14 +28,14 @@ class wdgButtons : public axWidget
     wdgButtons(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
     : axWidget(aListener, aRect, aAlignment)
       {
-        mButtonMode = bm_Multi;
+        mButtonMode = bm_Single;//bm_Multi;
         mButtonValue = 0;
       }
 
     void appendButton(wdgButton* aButton)
       {
         int num = mButtons.size();
-        wtrace("num: " << num);
+        //wtrace("num: " << num);
         aButton->mId = num;
         aButton->setMode( bm_Switch );
         mButtons.append(aButton);
@@ -49,6 +51,7 @@ class wdgButtons : public axWidget
 
     inline void setBit(int aBit) { mButtonValue|=aBit; }
     inline bool getBit(int aBit) { return (mButtonValue&aBit); }
+    inline bool getValue(void)   { return mButtonValue; }
 
     void toggle(int aIndex)
       {
@@ -73,7 +76,7 @@ class wdgButtons : public axWidget
               if (num!=mButtonValue)
               {
                 mButtonValue = num;
-                wtrace("mButtonValue: " << mButtonValue);
+                //wtrace("mButtonValue: " << mButtonValue);
                 for (int i=0; i<mButtons.size(); i++)
                 {
                   wdgButton* btn = mButtons[i];
