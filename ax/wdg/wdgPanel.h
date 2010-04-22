@@ -15,8 +15,11 @@ class wdgPanel : public axWidget//axContainer
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-        if (mSkin) mSkin->drawPanel(aCanvas,mRect);
-        axWidget::doPaint(aCanvas,aRect);
+        if (isVisible() && mSkin)
+        {
+          mSkin->drawPanel(aCanvas,mRect);
+          axWidget::doPaint(aCanvas,aRect);
+        }
       }
     //virtual void doEnter(axWidget* aCapture) { mListener->onCursor(cu_ArrowLeftRight); }
     //virtual void doLeave(axWidget* aCapture) { mListener->onCursor(DEF_CURSOR); }

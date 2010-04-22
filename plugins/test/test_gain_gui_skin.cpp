@@ -1,4 +1,4 @@
-//#define AX_DEBUG
+#define AX_DEBUG
 
 #include "axPlugin.h"
 #include "axEditor.h"
@@ -105,11 +105,17 @@ class myPlugin : public axPlugin
         appendParameter( p_Gain = new axParameter(this,"gain","") );
         setupParameters();
 
-        axDwinCreate();
-        wdebug("hello dbg");        
-        
+        //axDwinCreate();
+        //wdebug("hello dbg");
+
         axDstdCreate();
         trace("hello dbg");
+      }
+
+    virtual ~myPlugin()
+      {
+        axDstdDestroy();
+        //axDwinDestroy();
       }
 
     virtual void  doSetParameter(axParameter* aParameter)
@@ -143,12 +149,19 @@ class myPlugin : public axPlugin
 
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
+        trace("- new axEditor");
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
+        trace("OK");
+        //trace("- getCanvas");
         axCanvas* canvas = editor->getCanvas();
+        //trace("- new mySkin");
         skin = new mySkin(canvas);
+        //trace("- setSkin");
         editor->setSkin(skin);
 //      //--- decode & initialize bitmap
+        //trace("- createSurface");
         srf = editor->createSurface(32,32*65);
+        //trace("- decoding png");
         loader.decode((unsigned char*)knob32,knob32_size);
         /*axBitmap**/ bitmap = editor->createBitmap( loader.getWidth(), loader.getHeight() );
         bitmap->createBuffer( (char*)loader.getImage() );   // create bitmap buffer & copy data
@@ -164,8 +177,11 @@ class myPlugin : public axPlugin
         editor->appendWidget( wPanel = new wdgPanel(editor,NULL_RECT,wa_Client) );
         wPanel->appendWidget( w_Gain = new wdgKnob( editor,axRect(10,10,100,32),wa_None,"gain",0.75) );
         editor->connect(w_Gain,p_Gain);
+        //trace("- doRealign");
         editor->doRealign();
+        //trace("- show");
         editor->show();
+        //trace("axWindow.doOpenEditor OK");
         mEditor = editor;
         return mEditor;
       }

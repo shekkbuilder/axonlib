@@ -165,6 +165,7 @@ class axWidget : public axWidgetListener
 
     inline bool         isActive(void)                        { return (mFlags&wf_Active); }
     inline bool         isVisible(void)                       { return (mFlags&wf_Visible); }
+    inline bool         isClipping(void)                      { return (mFlags&wf_Clip); }
     inline bool         canCapture(void)                      { return (mFlags&wf_Capture); }
 
     // rect
@@ -743,24 +744,27 @@ class axWidget : public axWidgetListener
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-        if (mFlags&wf_Visible)
+        //if (mFlags&wf_Visible)
+        if (isVisible()) // self
         {
-          if (mRect.intersects(aRect))
+          if (mRect.intersects(aRect)) // self
           {
-            if (mFlags&wf_Clip)
+            //if (mFlags&wf_Clip)
+            if (isClipping()) // self
             {
               aCanvas->setClipRect(mRect.x+mMarginX,mRect.y+mMarginY,mRect.x2()-mMarginX,mRect.y2()-mMarginY);
             }
             for (int i=0; i<mWidgets.size(); i++)
             {
               axWidget* wdg = mWidgets[i];
-              //if (wdg->isVisible())
+              if (wdg->isVisible())
               {
-                //if (/*wdg->intersects(aRect) &&*/ wdg->intersects(mRect))
+                if (/*wdg->intersects(aRect) &&*/ wdg->intersects(mRect))
                   wdg->doPaint(aCanvas,aRect);
               }
             } //for
-            if (mFlags&wf_Clip) aCanvas->clearClipRect(); // resetClipRect();
+            //if (mFlags&wf_Clip) aCanvas->clearClipRect(); // resetClipRect();
+            if (isClipping()) aCanvas->clearClipRect(); // resetClipRect();
           } //intersect
         } //visible
       }
@@ -781,9 +785,9 @@ class axWidget : public axWidgetListener
             {
               if (mFlags&wf_Capture) mCapturedWidget = hover;
               hover->doMouseDown(aXpos,aYpos,aButton);
-            } //!hover
-          } //active
-        } //!capture
+            } // !hover
+          } // active
+        } // !capture
       }
 
     //----------

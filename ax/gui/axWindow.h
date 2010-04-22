@@ -32,9 +32,11 @@ class axWindow : public axWindowImpl
     axWindow(axContext* aContext, axRect aRect, int aWinFlags)
     : axWindowImpl(aContext,aRect,aWinFlags)
       {
+        trace("- axWindow.constructor");
         axCanvas* can = getCanvas();
         mDefaultSkin = new axSkinDefault(can);
         setSkin(mDefaultSkin/*,true*/); // no sub-widgets yet?
+        trace("- axWindow.constructor OK");
       }
 
     virtual ~axWindow()

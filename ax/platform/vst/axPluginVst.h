@@ -52,6 +52,7 @@ class axPluginVst : public axPluginBase
     VstTimeInfo*  mTimeInfo;
     axVstEvents   mMidiEventList;
     VstEvent      mMidiEvents[MAX_MIDI_SEND];
+    axContext     mContext;
   private:
     char          mEffectName[kVstMaxEffectNameLen];
     char          mVendorString[kVstMaxVendorStrLen];
@@ -127,12 +128,12 @@ class axPluginVst : public axPluginBase
 
   protected:
 
-  axContext* mContext;
+  //axContext* mContext;
 
     axPluginVst(axContext* aContext, int aPluginFlags)
     : axPluginBase(aContext, aPluginFlags)
       {
-        mContext = aContext;
+        mContext = *aContext;
         audioMaster = (audioMasterCallback)aContext->mAudio;
         mCurrentProgram = 0;
         mEditorOpen = false;
@@ -660,8 +661,8 @@ class axPluginVst : public axPluginBase
                 //HWND win = (HWND)ptr;
                 //axContext ctx(win);
                 axContext ctx;
-                ctx.mInstance     = mContext->mInstance;
-                ctx.mWinClassName = mContext->mWinClassName;
+                ctx.mInstance     = mContext.mInstance;
+                ctx.mWinClassName = mContext.mWinClassName;
                 ctx.mWindow       = (HWND)ptr;
               #endif
               mEditorWindow = doOpenEditor(&ctx);
