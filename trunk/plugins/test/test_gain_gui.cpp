@@ -29,10 +29,11 @@ class myPlugin : public axPlugin//,
         appendParameter( p_Gain = new axParameter(this,"gain","") );
         setupParameters();
         
-        // test stdout/debug win32
+        axDwinCreate();
+        wdebug("hello dbg");        
+        
         axDstdCreate();
         trace("hello dbg");
-        trace("number=" << 12.f);
       }
 
     virtual void  doSetParameter(axParameter* aParameter)
