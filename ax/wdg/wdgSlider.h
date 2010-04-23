@@ -19,15 +19,25 @@ class wdgSlider : public axWidget
 
   public:
     wdgSlider(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None,
-              axString aName="", float aValue=0)
+              axString aName="", float aValue=0, bool aVertical=false)
     : axWidget(aListener,aRect,aAlignment)
       {
         mName = aName;
         mValue = aValue;
         mIsDragging = false;
-        //mSens1 = 0.005;
-        if (hasFlag(wf_Vertical)) { if (aRect.w>0) mSens1 = 1.0f/(float)aRect.h; }
-        else                      { if (aRect.w>0) mSens1 = 1.0f/(float)aRect.w; }
+        mSens1 = 0.005;
+        //if (hasFlag(wf_Vertical)) { if (aRect.h>0) mSens1 = 1.0f/(float)aRect.h; }
+        //else                      { if (aRect.w>0) mSens1 = 1.0f/(float)aRect.w; }
+        if (aVertical)
+        {
+          setFlag(wf_Vertical);
+          if (aRect.w>0) mSens1 = 1.0f/(float)aRect.h;
+        }
+        else
+        {
+          clearFlag(wf_Vertical);
+          if (aRect.w>0) mSens1 = 1.0f/(float)aRect.w;
+        }
         mSens2 = 0.05;
         //if (aRect.h<aRect.w) setFlag(wf_Vertical);
       }

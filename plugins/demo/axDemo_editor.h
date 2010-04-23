@@ -85,7 +85,7 @@ class axDemo_editor : public axEditor
           int id = w_PageSelect->getValue();
           w_RightPanel->setPage(id,true);
         }
-        //plugin->changedParam
+        //todo: plugin.param
         axEditor::onChange(aWidget);
       }
 

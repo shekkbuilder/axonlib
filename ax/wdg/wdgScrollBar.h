@@ -16,11 +16,15 @@ class wdgScrollBar : public axWidget
 
   public:
 
-    wdgScrollBar(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
+    wdgScrollBar(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None,
+                 float aValue=0, bool aVertical=false)
     : axWidget(aListener,aRect,aAlignment)
       {
         is_dragging = false;
         mThumbSize = 0.5;
+        mValue = aValue;
+        if (aVertical) setFlag(wf_Vertical);
+        else clearFlag(wf_Vertical);
         //if ( aRect.w < aRect.h   ) setFlag(wf_Vertical);
         //else clearFlag(wf_Vertical);
       }
