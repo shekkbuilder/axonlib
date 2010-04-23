@@ -38,24 +38,24 @@ class axEditor : public axWindow
   protected:
     axPlugin*       mPlugin;
     wp_connections  mConnections;
-    //axSkinDefault*  mDefaultSkin;
+    axSkinDefault*  mDefaultSkin;
 
   public:
 
     axEditor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
     : axWindow(aContext,aRect,aWinFlags)
       {
-        trace("- axEditor.constructor");
+        //trace("- axEditor.constructor");
         mPlugin = aPlugin;
-        //axCanvas* can = getCanvas();
-        //mDefaultSkin = new axSkinDefault(can);
-        //setSkin(mDefaultSkin/*,true*/); // no sub-widgets yet?
-        trace("- axEditor.constructor OK");
+        axCanvas* can = getCanvas();
+        mDefaultSkin = new axSkinDefault(can);
+        setSkin(mDefaultSkin/*,true*/); // no sub-widgets yet?
+        //trace("- axEditor.constructor OK");
       }
 
     virtual ~axEditor()
       {
-        //delete mDefaultSkin;
+        delete mDefaultSkin;
       }
 
     //----------

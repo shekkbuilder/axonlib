@@ -52,13 +52,13 @@ class axWindowBase : public axWidget//axContainer
       {
       }
 
-    //----------
+    //--------------------------------------------------
 
     virtual void doTimer(void)
       {
       }
 
-    //----------
+    //--------------------------------------------------
 
     // canvas/surface
 
