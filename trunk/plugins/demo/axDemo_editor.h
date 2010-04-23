@@ -85,8 +85,17 @@ class axDemo_editor : public axEditor
           int id = w_PageSelect->getValue();
           w_RightPanel->setPage(id,true);
         }
+        //plugin->changedParam
         axEditor::onChange(aWidget);
       }
+
+    //--------------------------------------------------
+
+    virtual void doTimer(void)
+      {
+        trace("doTimer");
+      }
+
 };
 
 //----------------------------------------------------------------------

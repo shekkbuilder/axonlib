@@ -24,24 +24,24 @@
 class axWindow : public axWindowImpl
 
 {
-  protected:
-    axSkinDefault*  mDefaultSkin;
+  //protected:
+  //  axSkinDefault*  mDefaultSkin;
 
   public:
 
     axWindow(axContext* aContext, axRect aRect, int aWinFlags)
     : axWindowImpl(aContext,aRect,aWinFlags)
       {
-        trace("- axWindow.constructor");
-        axCanvas* can = getCanvas();
-        mDefaultSkin = new axSkinDefault(can);
-        setSkin(mDefaultSkin/*,true*/); // no sub-widgets yet?
-        trace("- axWindow.constructor OK");
+        //trace("- axWindow.constructor");
+        //axCanvas* can = getCanvas();
+        //mDefaultSkin = new axSkinDefault(can);
+        //setSkin(mDefaultSkin/*,true*/); // no sub-widgets yet?
+        //trace("- axWindow.constructor OK");
       }
 
     virtual ~axWindow()
       {
-        delete mDefaultSkin;
+        //delete mDefaultSkin;
       }
 
     //----------------------------------------

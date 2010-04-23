@@ -1,5 +1,5 @@
-#define AX_DEBUG
-#define AX_DEBUG_AUTO_STD
+//#define AX_DEBUG
+//#define AX_DEBUG_AUTO_STD
 
 #include "axPlugin.h"
 #include "axDemo_editor.h"
@@ -26,6 +26,8 @@ class axDemo : public axPlugin
         setupParameters();
       }
 
+    //----------
+
     virtual ~axDemo()
       {
       }
@@ -37,42 +39,57 @@ class axDemo : public axPlugin
         trace(":: doStateChange " << aState);
       }
 
+    //----------
+
     virtual void  doTransportChange(int aState)
       {
         trace(":: doTransportChange " << aState);
       }
+
+    //----------
 
     virtual void  doSetProgram(int aProgram)
       {
         trace(":: doSetProgram " << aProgram);
       }
 
+    //---------- param/midi ----------
+
     virtual void  doSetParameter(axParameter* aParameter)
       {
         char buf[32];
         aParameter->doGetDisplay(buf);
         trace(":: doSetParameter " << aParameter->getName().ptr() << " = " << aParameter->getValue() << " (" << buf << ")");
+        //todo: graph.param
       }
 
-    //virtual bool  doProcessEvents(void) { return false; }
+    //----------
 
     virtual void  doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3)
       {
         trace(":: doProcessMidi "<<ofs<<" : "<<(int)msg1<<","<<(int)msg2<<","<<(int)msg3);
+        //todo: graph.midi
       }
+
+    //---------- audio ----------
 
     //virtual bool  doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize)
     //  {
     //    return false;
     //  }
 
+    //----------
+
     virtual void  doProcessSample(SPL** aInputs, SPL** aOutputs)
       {
         //*aOutputs[0] = *aInputs[0];
         //*aOutputs[1] = *aInputs[0];
-        *aOutputs[0] = axRandomSigned() * 0.5;
-        *aOutputs[1] = axRandomSigned() * 0.5;
+        *aOutputs[0] = axRandomSigned() * 0.25;
+        *aOutputs[1] = axRandomSigned() * 0.25;
+        //todo: graph.process
       }
+
+    //----------
 
     //virtual void  doPostProcess(SPL** aInputs, SPL** aOutputs, int aSize)
     //  {
@@ -90,6 +107,7 @@ class axDemo : public axPlugin
         mEditor->connect(mEditor->w_Page_widgets->w4,p4);
         mEditor->connect(mEditor->w_Page_widgets->w5,p5);
         mEditor->show();
+        mEditor->startTimer(500);
         return mEditor;
       }
 
@@ -98,6 +116,7 @@ class axDemo : public axPlugin
     virtual void doCloseEditor(void)
       {
         //wtrace(":: doCloseEditor");
+        mEditor->stopTimer();
         mEditor->hide();
         delete mEditor;
         mEditor = NULL;
@@ -109,6 +128,8 @@ class axDemo : public axPlugin
       {
         //trace("doIdleEditor");
       }
+
+    //--------------------------------------------------
 
 };
 
