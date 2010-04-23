@@ -39,7 +39,7 @@ class axDemo_editor : public axEditor
 
         //----- left side, the page selectors
 
-        appendWidget( w_LeftPanel = new wdgPanel(this,axRect(0,0,100,0),wa_Left) );
+        appendWidget( w_LeftPanel = new wdgPanel(this,axRect(0,0,150,0),wa_Left) );
           w_LeftPanel->appendWidget( w_PageSelect = new wdgButtons(this,NULL_RECT,wa_Client) );
             w_PageSelect->setBorders(5,5,2,2);
             w_PageSelect->appendButton(new wdgButton(w_PageSelect,axRect(0,0,80,20),wa_Top,false,"canvas", "[ canvas ]", ta_Center,bm_Switch) );

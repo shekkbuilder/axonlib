@@ -16,9 +16,24 @@
 
 class axSkin
 {
+  protected:
+    axColor mFillColor;
+    axColor mLightColor;
+    axColor mDarkColor;
+    axColor mTextColor;
   public:
-    axSkin(axCanvas* aCanvas) {}
+    axSkin(axCanvas* aCanvas)
+      {
+        mFillColor  = aCanvas->getColor(AX_GREY);
+        mLightColor = aCanvas->getColor(AX_GREY_LIGHT);
+        mDarkColor  = aCanvas->getColor(AX_GREY_DARK);
+        mTextColor  = aCanvas->getColor(AX_WHITE);
+      }
     virtual ~axSkin() {}
+    virtual axColor getFillColor(void)  { return mFillColor; }
+    virtual axColor getDarkColor(void)  { return mDarkColor; }
+    virtual axColor getLightColor(void) { return mLightColor; }
+    virtual axColor getTextColor(void)  { return mTextColor; }
     virtual void drawPanel(     axCanvas* aCanvas, axRect aRect)  {}
     virtual void drawSizer(     axCanvas* aCanvas, axRect aRect)  {}
     virtual void drawLabel(     axCanvas* aCanvas, axRect aRect,  axString aText, int aTextAlign) {}

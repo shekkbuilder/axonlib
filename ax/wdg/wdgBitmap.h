@@ -17,7 +17,11 @@ class wdgBitmap : public axWidget
         mBitmap = aBitmap;
       }
 
+    //----------
+
     inline void setBitmap(axBitmap* aBitmap) { mBitmap = aBitmap; }
+
+    //----------
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {

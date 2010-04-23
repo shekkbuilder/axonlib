@@ -1,5 +1,5 @@
-//#define AX_DEBUG
-//#define AX_DEBUG_AUTO_STD
+#define AX_DEBUG
+#define AX_DEBUG_AUTO_STD
 
 #include "axPlugin.h"
 #include "axDemo_editor.h"
@@ -99,7 +99,7 @@ class axDemo : public axPlugin
 
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
-        //wtrace(":: doOpenEditor");
+        //trace(":: doOpenEditor");
         mEditor = new axDemo_editor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         mEditor->connect(mEditor->w_Page_widgets->w1,p1);
         mEditor->connect(mEditor->w_Page_widgets->w2,p2);
@@ -107,7 +107,7 @@ class axDemo : public axPlugin
         mEditor->connect(mEditor->w_Page_widgets->w4,p4);
         mEditor->connect(mEditor->w_Page_widgets->w5,p5);
         mEditor->show();
-        mEditor->startTimer(500);
+        //mEditor->startTimer(500);
         return mEditor;
       }
 
@@ -115,8 +115,8 @@ class axDemo : public axPlugin
 
     virtual void doCloseEditor(void)
       {
-        //wtrace(":: doCloseEditor");
-        mEditor->stopTimer();
+        //trace(":: doCloseEditor");
+        //mEditor->stopTimer();
         mEditor->hide();
         delete mEditor;
         mEditor = NULL;

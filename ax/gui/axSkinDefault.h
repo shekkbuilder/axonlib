@@ -7,20 +7,20 @@
 class axSkinDefault : public axSkin
 {
   protected:
-    axColor mFillColor;
-    axColor mLightColor;
-    axColor mDarkColor;
-    axColor mTextColor;
+    //axColor mFillColor;
+    //axColor mLightColor;
+    //axColor mDarkColor;
+    //axColor mTextColor;
 
   public:
 
     axSkinDefault(axCanvas* aCanvas)
     : axSkin(aCanvas)
       {
-        mFillColor    = aCanvas->getColor(AX_GREY);
-        mLightColor   = aCanvas->getColor(AX_GREY_LIGHT);
-        mDarkColor    = aCanvas->getColor(AX_GREY_DARK);
-        mTextColor    = aCanvas->getColor(AX_WHITE);
+        //mFillColor    = aCanvas->getColor(AX_GREY);
+        //mLightColor   = aCanvas->getColor(AX_GREY_LIGHT);
+        //mDarkColor    = aCanvas->getColor(AX_GREY_DARK);
+        //mTextColor    = aCanvas->getColor(AX_WHITE);
       }
 
     virtual ~axSkinDefault()

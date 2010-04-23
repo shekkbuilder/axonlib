@@ -10,6 +10,7 @@
 #include "wdg/wdgScrollBar.h"
 #include "wdg/wdgKnob.h"
 #include "wdg/wdgOctave.h"
+#include "wdg/wdgGrid.h"
 
 //----------------------------------------------------------------------
 
@@ -38,27 +39,24 @@ class axDemo_page_widgets : public wdgPanel
       }
     void setupWidgets(axWidgetListener* aListener)
     {
-      //axWidget *panel;
       wdgPanel* panel;
-      //appendWidget( panel = new axWidget(aListener,axRect(200,0),wa_Left) );
-      appendWidget( panel = new wdgPanel(aListener,axRect(200,0),wa_Left) );
+      appendWidget( panel = new wdgPanel(aListener,axRect(150,0),wa_Left) );
       panel->setBorders(10,10,5,5);
-        panel->appendWidget(      new wdgLabel(     aListener,axRect(150,20), wa_TopLeft, "label", ta_Left ) );
-        panel->appendWidget(      new wdgButton(    aListener,axRect(150,20), wa_TopLeft, false, "spring", "[ spring ]", ta_Center, bm_Spring ) );
-        panel->appendWidget( w1 = new wdgButton(    aListener,axRect(150,20), wa_TopLeft, false, "switch", "[ switch ]", ta_Center, bm_Switch ) );
-        panel->appendWidget( w2 = new wdgValue(     aListener,axRect(150,20), wa_TopLeft, "value", 0 ) );
-        panel->appendWidget( w3 = new wdgSlider(    aListener,axRect(150,20), wa_TopLeft, "slider", 0 ) );
-        panel->appendWidget( w4 = new wdgScrollBar( aListener,axRect(150,20), wa_TopLeft  ) );
-        panel->appendWidget( w5 = new wdgKnob(      aListener,axRect(150,32), wa_TopLeft, "knob", 0.3 ) );
-        panel->appendWidget(      new wdgKnob(      aListener,axRect(150,16), wa_TopLeft, "knob", 0.2 ) );
+        panel->appendWidget(      new wdgLabel(     aListener,axRect(128, 20), wa_TopLeft, "label", ta_Left ) );
+        panel->appendWidget(      new wdgButton(    aListener,axRect(128, 20), wa_TopLeft, false, "spring", "[ spring ]", ta_Center, bm_Spring ) );
+        panel->appendWidget( w1 = new wdgButton(    aListener,axRect(128, 20), wa_TopLeft, false, "switch", "[ switch ]", ta_Center, bm_Switch ) );
+        panel->appendWidget( w2 = new wdgValue(     aListener,axRect(128, 20), wa_TopLeft, "value", 0 ) );
+        panel->appendWidget( w3 = new wdgSlider(    aListener,axRect(128, 20), wa_TopLeft, "slider", 0 ) );
+        panel->appendWidget( w4 = new wdgScrollBar( aListener,axRect(128, 20), wa_TopLeft  ) );
+        panel->appendWidget( w5 = new wdgKnob(      aListener,axRect(128, 32), wa_TopLeft, "knob", 0.3 ) );
+        panel->appendWidget(      new wdgKnob(      aListener,axRect(128, 16), wa_TopLeft, "knob", 0.2 ) );
+        panel->appendWidget(      new wdgOctave(    aListener,axRect(128, 64), wa_TopLeft  ) );
+        panel->appendWidget(      new wdgGrid(      aListener,axRect(128,128), wa_TopLeft) );
 
-        panel->appendWidget(      new wdgOctave(    aListener,axRect(150,50), wa_TopLeft  ) );
-
-      //appendWidget( panel = new axWidget(aListener,axRect(200,0),wa_Left) );
-      appendWidget( panel = new wdgPanel(aListener,axRect(200,0),wa_Left) );
-      panel->setBorders(5,5,2,2);
-        panel->appendWidget(      new wdgSlider(    aListener,axRect(20,150), wa_LeftTop, "v.slider", 0, true ) );
-        panel->appendWidget(      new wdgScrollBar( aListener,axRect(20,150), wa_LeftTop, 0, true ) );
+      appendWidget( panel = new wdgPanel(aListener,axRect(100,0),wa_Left) );
+      panel->setBorders(10,10,5,5);
+        panel->appendWidget(      new wdgSlider(    aListener,axRect( 16,128), wa_LeftTop, "v.slider", 0, true ) );
+        panel->appendWidget(      new wdgScrollBar( aListener,axRect( 16,128), wa_LeftTop, 0, true ) );
 
 
 
