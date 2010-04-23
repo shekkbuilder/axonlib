@@ -18,6 +18,7 @@ class wdgValue : public axWidget
     float     mSens2;
 
   public:
+
     wdgValue(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None,
              axString aName="", float aValue=0)
     : axWidget(aListener,aRect,aAlignment)

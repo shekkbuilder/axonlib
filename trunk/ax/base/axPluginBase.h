@@ -119,7 +119,7 @@ class axPluginBase// : public axParameterListener
     virtual void      doSetParameter(axParameter* aParameter) {}
 
     // not used
-    virtual bool      doProcessEvents(void) {return false;}
+    //virtual bool      doProcessEvents(void) {return false;}
 
     // this will be called for each incoming midi message, before doProcessBlock
     virtual void      doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3) {}
@@ -137,8 +137,10 @@ class axPluginBase// : public axParameterListener
 
     // create and open your editor
     virtual axWindow* doOpenEditor(axContext* aContext) { return NULL; }
+
     // close and destroy the editor
     virtual void      doCloseEditor(void) {}
+
     // called regularly when the editor is open
     // host decides rate (some hosts is configure-able)
     virtual void      doIdleEditor(void) {}

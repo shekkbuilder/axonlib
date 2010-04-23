@@ -49,13 +49,24 @@ class wdgButton : public axWidget
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-        if (mSkin) mSkin->drawButton(aCanvas,mRect,mState?mOnText:mOffText,mTextAlign,mState);
+        bool state = false;;
+        switch (mMode)
+        {
+          case bm_Switch:
+            state = (mValue>0.5);
+            break;
+          case bm_Spring:
+            state = mState;
+            break;
+        }
+        if (mSkin) mSkin->drawButton(aCanvas,mRect,mState?mOnText:mOffText,mTextAlign,state);
       }
 
     //----------
 
     virtual void doMouseDown(int aXpos, int aYpos, int aButton)
       {
+        if (mValue>=0.5) mState=true; else mState=false;
         switch (mMode)
         {
           case bm_Switch:
