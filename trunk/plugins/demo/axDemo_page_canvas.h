@@ -35,6 +35,7 @@ class axDemo_page_canvas : public wdgPanel
         axColor cyan    = aCanvas->getColor(  0,255,255);
         axColor yellow  = aCanvas->getColor(255,255,  0);
         axColor green   = aCanvas->getColor(  0,255,  0);
+
         int x = mRect.x+16;
         int y = mRect.y+16;
 
