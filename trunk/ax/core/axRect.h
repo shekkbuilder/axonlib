@@ -22,6 +22,7 @@ struct axRect
 
   axRect() { }
   axRect(int i) { x=i; y=i; w=i; h=i; }
+  axRect(int aW, int aH) { x=0; y=0; w=aW; h=aH; }
   axRect(int aX, int aY, int aW, int aH) { x=aX; y=aY; w=aW; h=aH; }
 
   //----------------------------------------

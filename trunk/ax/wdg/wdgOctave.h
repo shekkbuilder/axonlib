@@ -69,6 +69,7 @@ class wdgOctave : public axWidget
         mDist   = 2;
         mRatio  = 0.7;
         for (int i=0;i<12;i++) mActiveMap[i]=false;
+        recalc();
       }
 
     inline void setDist(int aDist)      { mDist=aDist+1; }
@@ -148,6 +149,13 @@ class wdgOctave : public axWidget
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
+
+        // test/debug
+        mWhiteCol       = aCanvas->getColor(255,255,255);
+        mWhiteColActive = aCanvas->getColor(192,192,192);
+        mBlackCol       = aCanvas->getColor(  0,  0,  0);
+        mBlackColActive = aCanvas->getColor( 96, 96, 96);
+
         for (int note=0; note<12; note++)
         {
           int n2 = note*2;
@@ -229,7 +237,7 @@ class wdgOctave : public axWidget
         axWidget::doMouseDown(aXpos,aYpos,aButton);
       }
 
-    virtual void doEnter(axWidget* aCapture) { mListener->onCursor(cu_Cross); }
+    virtual void doEnter(axWidget* aCapture) { mListener->onCursor(cu_Finger); }
     virtual void doLeave(axWidget* aCapture) { mListener->onCursor(DEF_CURSOR); }
 
 };

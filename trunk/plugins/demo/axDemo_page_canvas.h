@@ -15,14 +15,17 @@ class axDemo_page_canvas : public wdgPanel
   private:
 
   public:
+
     axDemo_page_canvas(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
     : wdgPanel(aListener,aRect,aAlignment)
       {
         //appendWidget( w_Panel = new wdgPanel(this,NULL_RECT,wa_Client));
       }
+
     virtual ~axDemo_page_canvas()
       {
       }
+
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
         wdgPanel::doPaint(aCanvas,aRect);
