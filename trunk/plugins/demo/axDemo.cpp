@@ -1,5 +1,5 @@
-#define AX_DEBUG
-#define AX_DEBUG_AUTO_STD
+//#define AX_DEBUG
+//#define AX_DEBUG_AUTO_STD
 
 #include "axPlugin.h"
 #include "axDemo_editor.h"
@@ -17,7 +17,7 @@ class axDemo : public axPlugin
       {
         describe("axDemo","ccernn","axonlib example",0,AX_MAGIC+0xFFFF);
         setupAudio(2,2,false);
-        setupEditor(640,480);
+        setupEditor(500,350);
         appendParameter( p1 = new axParameter(this,"p1","") );
         appendParameter( p2 = new axParameter(this,"p2","") );
         appendParameter( p3 = new axParameter(this,"p3","") );
@@ -99,7 +99,7 @@ class axDemo : public axPlugin
 
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
-        //trace(":: doOpenEditor");
+        trace(":: doOpenEditor");
         mEditor = new axDemo_editor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         mEditor->connect(mEditor->w_Page_widgets->w1,p1);
         mEditor->connect(mEditor->w_Page_widgets->w2,p2);
@@ -115,7 +115,7 @@ class axDemo : public axPlugin
 
     virtual void doCloseEditor(void)
       {
-        //trace(":: doCloseEditor");
+        trace(":: doCloseEditor");
         //mEditor->stopTimer();
         mEditor->hide();
         delete mEditor;

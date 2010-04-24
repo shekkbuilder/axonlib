@@ -237,7 +237,7 @@ class axWidget : public axWidgetListener
     virtual int appendWidget(axWidget* aWidget)
       {
         int index = mWidgets.size();
-        aWidget->setSkin(mSkin,false);
+        aWidget->applySkin(mSkin,true,true);
         aWidget->doSetPos( mRect.x + aWidget->getRect().x, mRect.y + aWidget->getRect().y );
         mWidgets.append(aWidget);
         return index;
@@ -280,11 +280,12 @@ class axWidget : public axWidgetListener
 
     //----------
 
-    virtual void setSkin(axSkin* aSkin, bool aSub=false)
+    virtual void applySkin(axSkin* aSkin, bool aSub=false, bool aOnlyIfNull=false)
       {
         //wtrace("axWidget.setSkin");
-        mSkin = aSkin;
-        if (aSub) { for (int i=0; i<mWidgets.size(); i++) mWidgets[i]->setSkin(aSkin,aSub); }
+        if (aOnlyIfNull) { if (!mSkin) mSkin=aSkin; }
+        else mSkin = aSkin;
+        if (aSub) { for (int i=0; i<mWidgets.size(); i++) mWidgets[i]->applySkin(aSkin,aSub,aOnlyIfNull); }
       }
 
     //--------------------------------------------------
@@ -434,7 +435,7 @@ class axWidget : public axWidgetListener
           parent.add( mMarginX, mMarginY, -(mMarginX*2), -(mMarginY*2) );
           axRect client = parent;
 
-          mContent.set(parent.x,parent.y,mMarginX*2,mMarginY*2);
+          mContent.set(0,0,0,0);//mMarginX*2,mMarginY*2);
 
           int stackx   = client.x;
           int stacky   = client.y;
@@ -736,7 +737,7 @@ class axWidget : public axWidgetListener
             mContent.combine( wdg->getRect() ); // keep track of outer boundary
             wdg->doRealign();
           } // for all widgets
-          mContent.add(0,0,mMarginX,mMarginY);
+          //mContent.add(-mMarginX,-mMarginY,mMarginX*2,mMarginY*2);
         } // if align
       }
 
