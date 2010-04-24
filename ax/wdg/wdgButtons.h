@@ -51,7 +51,7 @@ class wdgButtons : public axWidget
 
     inline void setBit(int aBit) { mButtonValue|=aBit; }
     inline bool getBit(int aBit) { return (mButtonValue&aBit); }
-    inline bool getValue(void)   { return mButtonValue; }
+    inline int  getValue(void)   { return mButtonValue; }
 
     void toggle(int aIndex)
       {

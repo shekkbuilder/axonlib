@@ -2,6 +2,8 @@
 #define axPlugin_included
 //----------------------------------------------------------------------
 
+//TODO: updateList (dirtyParameters)
+
 #include "core/axDebug.h"
 #include "axDefines.h"
 #include "platform/axContext.h"
@@ -70,14 +72,14 @@ class axPlugin : public axPluginImpl, public axParameterListener
     virtual ~axPlugin()
       {
         deleteParameters();
-        
+
         // auto close debug (win32)
         #ifdef AX_WIN32
           #ifdef AX_DEBUG_AUTO_STD
             axDstdDestroy();
           #endif
           #ifdef AX_DEBUG_AUTO_WIN
-            axDwinDestroy();          
+            axDwinDestroy();
           #endif
         #endif
       }

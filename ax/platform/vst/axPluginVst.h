@@ -934,7 +934,7 @@ class axPluginVst : public axPluginBase
             //trace("axPluginVst.dispatcher :: effCanDo");
             //v = canDo ((char*)ptr);
             char* p = (char*)ptr;
-            wtrace("effCanDo: '" << p << "'");
+            //trace("effCanDo: '" << p << "'");
             if (!strcmp(p,"sendVstEvents"))        v=1; // plug-in will send Vst events to Host
             if (!strcmp(p,"sendVstMidiEvent"))     v=1; // plug-in will send MIDI events to Host
             if (!strcmp(p,"receiveVstEvents"))     v=1; // plug-in can receive MIDI events from Host
@@ -944,7 +944,7 @@ class axPluginVst : public axPluginBase
             //if (strcmp(ptr,"midiProgramNames"))     return 0; // plug-in supports function #getMidiProgramName ()
             //if (strcmp(ptr,"bypass"))               return 0; // plug-in supports function #setBypass ()
             if (!strcmp(p,"hasCockosExtensions"))  v=0xbeef0000;
-            //trace("- axPluginVst.canDo: '" << ptr << "' = " << hex << ret);
+            trace("- axPluginVst.effCanDo: '" << p << "' (return: " << hex << v << dec << ")");
             }
             break;
 

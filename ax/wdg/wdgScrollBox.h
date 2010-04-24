@@ -94,7 +94,9 @@ class wdgScrollBox : public axWidget
 
     virtual int appendWidget(axWidget* aWidget)
       {
-        return wContainer->appendWidget(aWidget);
+        int index = wContainer->appendWidget(aWidget);
+        return index;
+
       }
 
     //--------------------------------------------------
@@ -110,6 +112,7 @@ class wdgScrollBox : public axWidget
         }
         mScrolledX += dX;
         mScrolledY += dY;
+        //axWidget::doScroll(dX,dY);
       }
 
     //----------
