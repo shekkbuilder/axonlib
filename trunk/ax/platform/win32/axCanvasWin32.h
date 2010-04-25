@@ -474,6 +474,18 @@ class axCanvasWin32 : public axCanvasBase
     // bitmap
     //--------------------------------------------------
 
+    //BOOL BitBlt(
+    //  HDC hdcDest,  // Handle to the destination device context.
+    //  int nXDest,   // logical x-coordinate of the upper-left corner of the destination rectangle.
+    //  int nYDest,   // logical y-coordinate of the upper-left corner of the destination rectangle.
+    //  int nWidth,   // logical width of the source and destination rectangles.
+    //  int nHeight,  // logical height of the source and the destination rectangles.
+    //  HDC hdcSrc,   // Handle to the source device context.
+    //  int nXSrc,    // logical x-coordinate of the upper-left corner of the source rectangle.
+    //  int nYSrc,    // logical y-coordinate of the upper-left corner of the source rectangle.
+    //  DWORD dwRop   // raster-operation code.
+    //);
+
     virtual void drawBitmap(axBitmap* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
         HDC tempdc = CreateCompatibleDC(mDC);

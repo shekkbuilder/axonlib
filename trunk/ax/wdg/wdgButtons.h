@@ -2,6 +2,8 @@
 #define wdgButtons_included
 //----------------------------------------------------------------------
 
+//NOTE:uses the axButton's mId as index into (internal) list of buttons
+
 #include "wdg/wdgButton.h"
 #include "core/axArray.h"
 
@@ -20,41 +22,55 @@ typedef axArray<wdgButton*> wdgButtonList;
 class wdgButtons : public axWidget
 {
   protected:
+    axWidget*     wContainer;
     int           mButtonMode;
-    wdgButtonList mButtons;
     int           mButtonValue;
+    wdgButtonList mButtons;
   public:
 
     wdgButtons(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
     : axWidget(aListener, aRect, aAlignment)
       {
+        appendWidget( wContainer = new axWidget(this,NULL_RECT,wa_Client) );
         mButtonMode = bm_Single;//bm_Multi;
         mButtonValue = 0;
       }
 
+    //--------------------------------------------------
+
+    // accessors
+    inline axWidget* getContainer(void) { return wContainer; }
+
+    //--------------------------------------------------
+
     void appendButton(wdgButton* aButton)
       {
         int num = mButtons.size();
-        //wtrace("num: " << num);
         aButton->mId = num;
-        aButton->setMode( bm_Switch );
+        aButton->setListener(this);
+        aButton->setMode(bm_Switch);
         mButtons.append(aButton);
-        appendWidget(aButton);
+        wContainer->appendWidget(aButton);
       }
+
+    //----------
 
     inline void setMode(int aMode)
       {
         mButtonMode=aMode;
-        // hack
-        if (aMode==bm_Single && mButtonValue==0) toggle(0);
+        if (aMode==bm_Single && mButtonValue==0) toggle(0); // hack?
       }
+
+    //----------
 
     inline void setBit(int aBit) { mButtonValue|=aBit; }
     inline bool getBit(int aBit) { return (mButtonValue&aBit); }
-    inline int  getValue(void)   { return mButtonValue; }
+    inline int  getVal(void)     { return mButtonValue; }
+
+    //----------
 
     void toggle(int aIndex)
-      {
+       {
         wdgButton* btn = mButtons[aIndex];
         bool state = btn->getState();
         if (state)
@@ -65,18 +81,18 @@ class wdgButtons : public axWidget
         else { btn->setState(true); btn->setValue(1); }
       }
 
+    //--------------------------------------------------
+
     virtual void onChange(axWidget* aWidget)
       {
+        int index = aWidget->mId;
         switch (mButtonMode)
         {
           case bm_Single:
             {
-              int num = aWidget->mId;
-              // this fails if value = 0, and we click on first button (index=0)
-              if (num!=mButtonValue)
+              //if (index!=mButtonValue)
               {
-                mButtonValue = num;
-                //wtrace("mButtonValue: " << mButtonValue);
+                mButtonValue = index;
                 for (int i=0; i<mButtons.size(); i++)
                 {
                   wdgButton* btn = mButtons[i];
@@ -84,26 +100,24 @@ class wdgButtons : public axWidget
                   else { btn->setState(true); btn->setValue(1); }
                 }
                 mListener->onChange(this);
+                //mListener->onRedraw(this);
               }
             }
             break;
           case bm_Multi:
             {
-              int num = aWidget->mId;
-              unsigned int bit = 1 << num;
-              wdgButton* btn = mButtons[num];
+              unsigned int bit = 1 << index;
+              wdgButton* btn = mButtons[index];
               if (btn->getState()) mButtonValue |= bit;
               else mButtonValue &= ~bit;
-              wtrace("mButtonValue: " << mButtonValue);
               mListener->onChange(this);
             }
             break;
-        }
+        } // switch
+
       }
 
 };
-
-
 
 //----------------------------------------------------------------------
 #endif
