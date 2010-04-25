@@ -81,11 +81,11 @@ class axWindowWin32 : public axWindowBase
         wc.lpfnWndProc    = &eventProc;
         wc.hInstance      = mInstance;
         wc.lpszClassName  = classname;
-        wc.hCursor        = (HICON)mWinCursor; //LoadCursor(NULL, IDC_ARROW);        
-        // rc_default.rc: axicon ICON "rc_axlogo.ico"     
+        wc.hCursor        = (HICON)mWinCursor; //LoadCursor(NULL, IDC_ARROW);
+        // rc_default.rc: axicon ICON "rc_axlogo.ico"
         HICON hIcon = LoadIcon(mInstance, "axicon");
         if (hIcon) wc.hIcon = hIcon;
-        					
+
         RegisterClass(&wc);
 
         //RECT rc = {mRect.x,mRect.y,mRect.x2(),mRect.y2()};
@@ -94,29 +94,29 @@ class axWindowWin32 : public axWindowBase
         // --- embedded ---
 
         // get w, h
-        const u32 wWidth = (rc.right - rc.left - 1);  // -1 reduces the window dim by 1 px  
+        const u32 wWidth = (rc.right - rc.left - 1);  // -1 reduces the window dim by 1 px
         const u32 wHeight = (rc.bottom - rc.top - 1);
-        
+
         #ifdef AX_FORMAT_EXE
           // adjust rect for exe
           AdjustWindowRect(&rc,WS_OVERLAPPEDWINDOW|WS_POPUP,FALSE);
           // get screen w, h and define a center pos
           const u32 wPosX = ((GetSystemMetrics(SM_CXSCREEN)-wWidth)>>1) + rc.left;
           const u32 wPosY = ((GetSystemMetrics(SM_CYSCREEN)-wHeight)>>1) + rc.top;
-        #endif        
+        #endif
         #ifdef AX_FORMAT_VST
           // no centering for vst
           const u32 wPosX = rc.left;
           const u32 wPosY = rc.top;
         #endif
-        
+
         if (mWinFlags&AX_WIN_EMBEDDED)
         {
           mWindow = CreateWindowEx(
             WS_EX_TOOLWINDOW,
             classname,
             0,
-            WS_POPUP,            
+            WS_POPUP,
             wPosX,          // center x
             wPosY,          // center y
             wWidth,
@@ -128,7 +128,7 @@ class axWindowWin32 : public axWindowBase
           );
           reparent(mParent);
         } //embedded
-        
+
         // --- windowed ---
 
         else
@@ -137,7 +137,7 @@ class axWindowWin32 : public axWindowBase
             WS_EX_OVERLAPPEDWINDOW,   // dwExStyle
             classname,                // lpClassName
             0,                        // lpWindowName
-            WS_OVERLAPPEDWINDOW,      // dwStyle            
+            WS_OVERLAPPEDWINDOW,      // dwStyle
             wPosX,                    // center x
             wPosY,                    // center y
             wWidth,
@@ -147,7 +147,7 @@ class axWindowWin32 : public axWindowBase
             mInstance,                // hInstance
             0                         // lpParam
           );
-          SetFocus(mWindow);                    
+          SetFocus(mWindow);
         }
 
         // ---
@@ -337,7 +337,7 @@ class axWindowWin32 : public axWindowBase
 
     //----------
 
-    virtual void setTitle(axString aTitle)    
+    virtual void setTitle(axString aTitle)
       {
         SetWindowText(mWindow, aTitle.ptr());
       }

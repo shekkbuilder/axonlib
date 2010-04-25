@@ -1,6 +1,5 @@
-//#define AX_FORMAT_VST
-//#define AX_DEBUG
-//#include "core/axDebug.h"
+#define AX_DEBUG
+#define AX_DEBUG_AUTO_STD
 
 #include "axPlugin.h"
 #include "axEditor.h"
@@ -227,9 +226,11 @@ class myEditor : public axEditor
             //grp->setBorders(5,5,5,5);
             grp->getContainer()->setFlag(wf_Clip);
 
+              wdgPanel* panel;
               grp->appendWidget( scb = new wdgScrollBox(this,NULL_RECT,wa_Client) );
-                scb->getContainer()->setBorders(5,5,5,5);
-                for (int i=0; i<32; i++) scb->appendWidget( new wdgKnob(this,axRect(0,0,64,16),wa_StackedHoriz, "",0) );
+                scb->appendWidget( panel = new wdgPanel(this,NULL_RECT,wa_Client) );
+                panel->setBorders(5,5,5,5);
+                for (int i=0; i<32; i++) panel->appendWidget( new wdgKnob(this,axRect(0,0,64,16),wa_StackedHoriz, "",0) );
 
             wLeft->appendWidget(          new wdgSlider(    this,axRect(0,0,  0, 20), wa_Top,          "slider") );
             wLeft->appendWidget( wdg =    new wdgSlider(    this,axRect(0,0, 20,  0 ),wa_Left,         "slider") );
@@ -283,7 +284,7 @@ class myEditor : public axEditor
 // the skin should be automatically 'inherited' in axWidget.appendWidget?
 // but that doesn't seem to work correctly?
 
-setSkin(mDefaultSkin,true);
+applySkin(mDefaultSkin,true);
 
         doRealign();
         startTimer(100);

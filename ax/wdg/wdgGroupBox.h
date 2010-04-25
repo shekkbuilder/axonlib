@@ -17,7 +17,8 @@ class wdgGroupBox : public axWidget
   //protected:
   protected:
     wdgButton*  wTitleBar;
-    wdgPanel*   wContainer;
+    //wdgPanel*   wContainer;
+    axWidget*   wContainer;
     bool        mClosed;
     bool        mClosable;
 
@@ -28,8 +29,9 @@ class wdgGroupBox : public axWidget
     wdgGroupBox(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
     : axWidget(aListener, aRect, aAlignment)
       {
-        axWidget::appendWidget( wTitleBar   = new wdgButton(  this,axRect(0,0,0,20),wa_Top,false,"group box","group box",ta_Center,bm_Spring ) );
-        axWidget::appendWidget( wContainer  = new wdgPanel(   this,NULL_RECT,       wa_Client ) );
+        axWidget::appendWidget( wTitleBar = new wdgButton(this,axRect(0,0,0,20),wa_Top,false,"group box","group box",ta_Center,bm_Spring ) );
+        //axWidget::appendWidget( wContainer = new wdgPanel(this,NULL_RECT,wa_Client ) );
+        axWidget::appendWidget( wContainer = new axWidget(this,NULL_RECT,wa_Client ) );
         mClosed   = false;
         mClosable = true;
       }

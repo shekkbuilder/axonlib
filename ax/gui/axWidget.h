@@ -153,6 +153,7 @@ class axWidget : public axWidgetListener
     //--------------------------------------------------
 
     inline void setName(axString aName) { mName=aName; }
+    inline void setListener(axWidgetListener* aListener) { mListener=aListener; }
 
     // flags
 
@@ -238,7 +239,7 @@ class axWidget : public axWidgetListener
       {
         int index = mWidgets.size();
         aWidget->applySkin(mSkin,true,true);
-        aWidget->doSetPos( mRect.x + aWidget->getRect().x, mRect.y + aWidget->getRect().y );
+        //aWidget->doSetPos( mRect.x + aWidget->getRect().x, mRect.y + aWidget->getRect().y );
         mWidgets.append(aWidget);
         return index;
       }
@@ -315,6 +316,7 @@ class axWidget : public axWidgetListener
               {
                 widget = w->doFindWidget(aXpos,aYpos);
                 if (widget!=w) return widget;
+                else return w;
               } //contains
             } //active
           } //for num
@@ -386,7 +388,7 @@ class axWidget : public axWidgetListener
           axWidget* wdg = mWidgets[i];
           int wx = wdg->getRect().x;
           int wy = wdg->getRect().y;
-          mWidgets[i]->doSetPos( wx + dX, wy + dY );
+          wdg->doSetPos( wx + dX, wy + dY );
         }
       }
 
@@ -425,8 +427,6 @@ class axWidget : public axWidgetListener
 
     */
 
-    //TODO: mCintent!
-
     virtual void doRealign(void)
       {
         if (mFlags&wf_Align)
@@ -435,7 +435,8 @@ class axWidget : public axWidgetListener
           parent.add( mMarginX, mMarginY, -(mMarginX*2), -(mMarginY*2) );
           axRect client = parent;
 
-          mContent.set(0,0,0,0);//mMarginX*2,mMarginY*2);
+          //mContent.set(0,0,0,0);//mMarginX*2,mMarginY*2);
+          mContent.set( mRect.x, mRect.y,0,0);
 
           int stackx   = client.x;
           int stacky   = client.y;
@@ -753,7 +754,8 @@ class axWidget : public axWidgetListener
             //if (mFlags&wf_Clip)
             if (isClipping()) // self
             {
-              aCanvas->setClipRect(mRect.x+mMarginX,mRect.y+mMarginY,mRect.x2()-mMarginX,mRect.y2()-mMarginY);
+              //aCanvas->setClipRect(mRect.x+mMarginX,mRect.y+mMarginY,mRect.x2()-mMarginX,mRect.y2()-mMarginY);
+              aCanvas->setClipRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
             }
             for (int i=0; i<mWidgets.size(); i++)
             {

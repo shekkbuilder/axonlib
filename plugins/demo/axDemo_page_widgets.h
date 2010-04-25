@@ -32,7 +32,8 @@ class axDemo_page_widgets : public wdgPanel
     axDemo_page_widgets(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
     : wdgPanel(aListener,aRect,aAlignment)
       {
-        //setupWidgets(aListener);
+        setBorders(5,5,2,2);
+        setupWidgets(aListener);
       }
 
     virtual ~axDemo_page_widgets()

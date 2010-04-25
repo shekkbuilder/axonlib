@@ -1,5 +1,5 @@
 #define AX_DEBUG
-#include "core/axDebug.h"
+#define AX_DEBUG_AUTO_STD
 
 #include "platform/axContext.h"
 #include "axPlugin.h"
@@ -7,6 +7,8 @@
 #include "gui/axWidget.h"
 
 #include "wdg/wdgPanel.h"
+#include "wdg/wdgScrollBox.h"
+#include "wdg/wdgButtons.h"
 
 //----------------------------------------------------------------------
 //
@@ -18,41 +20,20 @@ class myEditor : public axEditor
 {
   private:
     wdgPanel*     panel;
-    axWidget*     wdg;
+    wdgScrollBox* scroll;
+    wdgButtons*   buttons;
 
   public:
 
     myEditor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
     {
-      appendWidget( panel = new wdgPanel(this,NULL_RECT,wa_Client) );
-
-        panel->setBorders(30,30,10,10);
-
-
-        panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,64,64), wa_LeftTop) );
-        panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,64,64), wa_TopLeft) );
-
-        panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,10,10), wa_Top) );
-        panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,10,10), wa_Left) );
-        panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,10,10), wa_Right) );
-        panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,10,10), wa_Bottom) );
-
-        panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,64,64), wa_LeftTop) );
-        panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,64,64), wa_RightTop) );
-
-        //panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,80,80), wa_RightBottom) );
-        //panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,20,20), wa_LeftTop) );
-        //panel->appendWidget(wdg = new wdgPanel(this,axRect(0,0,40,40), wa_RightTop) );
-
-        //
-
-        for (int i=0;i<32; i++)
-          panel->appendWidget(wdg = new wdgPanel(this,axRect(10,10,32,32+i*2), wa_StackedVert) );
-
-      setSkin(mDefaultSkin,true);
+      appendWidget( panel = new wdgPanel(this,NULL_RECT,wa_Client));
+        panel->appendWidget( scroll = new wdgScrollBox(this,axRect(100,200,200,200),wa_None) );
+          scroll->appendWidget( buttons = new wdgButtons(this,axRect(0,0,150,400),wa_None)  );
+            for (int i=0; i<20; i++)
+              buttons->appendButton( new wdgButton(buttons,axRect(0,20),wa_Top,false,"off","on"  ) );
       doRealign();
-      //startTimer(250);
     }
 
     //----------
