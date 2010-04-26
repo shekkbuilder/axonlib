@@ -4,19 +4,20 @@
   (but some needs to be redone because of changes)
 
 - makedocs_dev
-  - show things they need to know for extending the library,
-    or making their own sub-classes of things like widgets,
-    parameters, ...
+  show things they need to know for extending the library,
+  or making their own sub-classes of things like widgets,
+  parameters, ...
 
 - makedocs_user
-  - hide protected things, so they see only the things they need to
-    focus on, only what is needed to make a plugin with the library.
+  hide protected things, so they see only the things they need to
+  focus on, only what is needed to make a plugin with the library.
 
 - remove 'test' directory.
   only tests used wihle developing there.
   none of them is guaranteed to function as the library evolves
 
-- the -W command line argument to the compiler, gives a LOT of
+- [done?]
+  the -W command line argument to the compiler, gives a LOT of
   unused parameter warnings.. all the base classes are filled with
   empty virtual methods that does nothing...
   a) find some way of suppressing these specific warnings
@@ -81,12 +82,11 @@ gui:
 ----------------------------------------------------------------------
 
 - dirty-widgets
-
   things can get busy with fast automation or tweaking. cache updates,
   (and check if new additions already in list before blindly adding)
   update all in one when needed (idleEditor, timer, ...)
 
-- resizeable plugin editor
+- resizeable editor (vst)
   dependant on host, different ways for different hosts. and some doesn't
   support resizing at all.
 
@@ -113,7 +113,6 @@ gui:
   look into extensions and stuff... or the glx (opengl) idea..
 
 - axCanvas[Win32/Linux]
-
   clipping rectangles not working properly (most problematic on win32).
   i think it is happening because when we're returning from a
   container's doPaint, we reset the clipping rectangle.
@@ -121,6 +120,9 @@ gui:
 
 - the skin stuff needs a bit more work, more polish, more functionality,
   and it needs to be solidified, 'cast in stone',
+
+- mouse cursor is not set correctly in non-client areas of windows
+  in win7 (standalone)
 
 ----------------------------------------------------------------------
 widgets:
@@ -138,14 +140,6 @@ widgets:
 - wdgDropDown
   ala popup with some tweaks
 
-- wdgButtonGroup
-    modes: bm_Switches (multiple on-off, getBits)
-           bm_Selector (only one selected, getIndex)
-- wdgPages, aka tabs
-  handles sub-widgets in a specific way. all sized similar to this
-  parent, when we select one of them, we make all others inactive
-  (no mouse/key events) and invisible (no paint events)
-
 - wdgTextList
   a scrollbox with labels. max number of elements.
 
@@ -154,9 +148,7 @@ other:
 ----------------------------------------------------------------------
 
 - axScript
-
   the basic stuff only, so that it's possible to create some
   program flow, conditionals, external functions, variables, ...
   [almost there...]
-
 

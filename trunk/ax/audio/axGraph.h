@@ -4,7 +4,7 @@
 /*
   graph = collection of modules
   called once per sample
-  your plugin, or a sample accurate event scheduler, takes care of
+  your plugin (or a sample accurate event scheduler) takes care of
   sample/event timing
 */
 //----------------------------------------------------------------------
@@ -76,11 +76,11 @@ class axGraph : public axModule,
 
     // TODO:
     //    make execlist based on which modules' output are needed first,
-    // a    nd the pin type/rate
+    //    and the pin type/rate
     // idea:
     //    a primitive version of this is quite simple:
     //    start with a mdule, append it onto the 'todo' queue/list,
-    //    then: repeatedly, until todo is empty:
+    //    then: repeatedly, until todo list is empty:
     //    - get (and remove) module from todo queue
     //    - append the modules that are connected to its input pins to the todo queue,
     //    - append module to execlist (and remove from todo)
@@ -88,12 +88,11 @@ class axGraph : public axModule,
     //    then, postprocess the execlist by reversing it,
     //    or by executing it 'in reverse'.
 
-    // naive compile: if module is active, pu it into execlist
-
+    // naive compile: if module is active, put it into execlist
     virtual int doCompile(void)
       {
         return 0;
-        /*if (mCompiled)*/ mExecList.clear();
+        mExecList.clear();
         for (int i=0; i<mModules.size(); i++)
         {
           if (mModules[i]->isActive()) mExecList.append(mModules[i]);
@@ -103,17 +102,19 @@ class axGraph : public axModule,
 
     //----------
 
-    virtual int doExecute(SPL** aInputs, SPL** aOutputs)
+
+    //virtual int doExecute(SPL** aInputs, SPL** aOutputs)
+    virtual /*int*/void doExecute(/*SPL** aInputs, SPL** aOutputs*/)
       {
         if (mCompiled)
         {
           for (int i=0; i<mExecList.size(); i++)
           {
-            mExecList[i]->doExecute(aInputs,aOutputs);
+            mExecList[i]->doExecute();//aInputs,aOutputs);
           }
-          return 0;
+          //return 0;
         }
-        else return -1;
+        //else return -1;
       }
 
 };

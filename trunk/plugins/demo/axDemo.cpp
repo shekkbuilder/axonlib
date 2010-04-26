@@ -1,5 +1,3 @@
-//#if 0
-
 #define AX_DEBUG
 #define AX_DEBUG_AUTO_STD
 
@@ -11,6 +9,7 @@ class axDemo : public axPlugin
 {
   private:
     axDemo_editor* mEditor;
+    axDemo_graph*  mGraph;
     //axEditor* mEditor;
     axParameter   *p1,*p2,*p3,*p4,*p5;
   public:
@@ -18,6 +17,8 @@ class axDemo : public axPlugin
     axDemo(axContext* aContext)
     : axPlugin(aContext, pf_HasEditor)
       {
+        mGraph = new axDemo_graph("axDemo graph");
+        mGraph->doCompile();
         describe("axDemo","ccernn","axonlib example",0,AX_MAGIC+0xFFFF);
         setupAudio(2,2,false);
         setupEditor(500,350);
@@ -63,7 +64,11 @@ class axDemo : public axPlugin
         char buf[32];
         aParameter->doGetDisplay(buf);
         trace(":: doSetParameter " << aParameter->getName().ptr() << " = " << aParameter->getValue() << " (" << buf << ")");
-        //todo: graph.param
+        //todo: send param to graph
+        if (aParameter==p5)
+        {
+          //mGraph->param = p5->doGetValue();
+        }
       }
 
     //----------
@@ -71,7 +76,14 @@ class axDemo : public axPlugin
     virtual void  doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3)
       {
         trace(":: doProcessMidi "<<ofs<<" : "<<(int)msg1<<","<<(int)msg2<<","<<(int)msg3);
-        //todo: graph.midi
+        //todo: send midi to graph
+        int msg = (msg1 & 0xf0) >> 4;
+        if (msg==9)
+        {
+          //if (msg3>0) mGraph->gate->doSignal(2,st_Gate,1);
+          //else mGraph->gate->doSignal(2,st_Gate,0);
+        }
+        //else if (msg==8) mGraph->gate->doSignal(2,st_Gate,0);
       }
 
     //---------- audio ----------
@@ -90,6 +102,8 @@ class axDemo : public axPlugin
         *aOutputs[0] = axRandomSigned() * 0.25;
         *aOutputs[1] = axRandomSigned() * 0.25;
         //todo: graph.process
+        //mGraph->doExecute(aInputs,aOutputs);
+
       }
 
     //----------
@@ -138,5 +152,3 @@ class axDemo : public axPlugin
 
 //----------------------------------------------------------------------
 AX_ENTRYPOINT(axDemo)
-
-//#endif

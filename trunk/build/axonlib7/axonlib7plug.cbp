@@ -148,6 +148,9 @@
 		<Unit filename="..\..\ax\wdg\wdgSlider.h" />
 		<Unit filename="..\..\ax\wdg\wdgTextList.h" />
 		<Unit filename="..\..\ax\wdg\wdgValue.h" />
+		<Unit filename="..\..\doc\AUTHORS" />
+		<Unit filename="..\..\doc\FEATURES" />
+		<Unit filename="..\..\doc\TODO" />
 		<Unit filename="..\..\plugins\demo\axDemo.cpp" />
 		<Unit filename="..\..\plugins\demo\axDemo_editor.h" />
 		<Unit filename="..\..\plugins\demo\axDemo_graph.h" />
