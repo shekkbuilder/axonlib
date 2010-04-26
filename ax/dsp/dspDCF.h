@@ -41,10 +41,8 @@
 class dspDCF
 {
   private:
-    /*@{*/
-    float x1, y1; /**< temp variables */ 
-    float R;      /**< filter coefficient */
-    /*@}*/
+    float x1, y1; 
+    float R;
 
   public:
     /**
@@ -55,6 +53,7 @@ class dspDCF
       x1 = y1 = 0;
       setup(0.999f);
     }
+    
     /**
      * sets filter coeff. suggested range [0.99 - 1]
      * @param[in] inR float  
@@ -63,17 +62,16 @@ class dspDCF
     {
       R = inR;
     }
+    
     /**
      * process input sample with filter
      * @param[in] in float
      * @return result float
      */
-    virtual float process(float in)    
+    virtual float process(const float in)    
     {
-      float x = in;
-      float y;
-      y = x - x1 + R*y1 + DENORM;
-      x1 = x;
+      const float y = in - x1 + R*y1 + DENORM;
+      x1 = in;
       y1 = y;
       return y - DENORM;
     }

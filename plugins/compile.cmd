@@ -45,14 +45,14 @@ if not exist %vstpath% goto novstsdk
 
 :: default values
 set dstatus=OFF
-set nvm=
+set nmv=
 set dbg=
 set res=
 
 :: check for 'not move' 
-if [%2]==[-nvm] set nvm=yes
-if [%3]==[-nvm] set nvm=yes
-if [%4]==[-nvm] set nvm=yes
+if [%2]==[-nmv] set nmv=yes
+if [%3]==[-nmv] set nmv=yes
+if [%4]==[-nmv] set nmv=yes
 
 :: check for debug
 if [%2]==[-d] goto setdebug
@@ -102,10 +102,10 @@ echo.
 echo ---------------------------------------------------------------------------
 echo * axonlib compile script for windows
 echo.
-echo usage: compile.cmd [file.cpp] [-h] [-exe or -dll] [-nvm] [-d]
+echo usage: compile.cmd [file.cpp] [-h] [-exe or -dll] [-nmv] [-d]
 echo -exe : create an executable
 echo -dll : create a dll (default)
-echo -nvm : do not move result to ..\bin
+echo -nmv : do not move result to ..\bin
 echo -d : enable debug mode
 echo -h : show this help message
 echo ---------------------------------------------------------------------------
@@ -137,8 +137,8 @@ if exist %target% %mgwpath%strip --strip-all %target%
 :: target missing -> error
 if not exist %target% echo. && echo # ERR: not compiled!
 
-:: check if '-nvm'
-if not [%nvm%]==[] goto done
+:: check if '-nmv'
+if not [%nmv%]==[] goto done
 if not exist %~p0..\BIN md %~p0..\bin
 if exist %target% echo. && echo moving '%target%' to '%~p0..\bin'
 if exist %target%	move %target% %~p0..\bin
@@ -153,7 +153,7 @@ goto end
 :: ----------------------------------------------------------------------------
 :nocpp
 echo.
-echo ### ERR: first argument has to be a c++ file
+echo ### ERR: first argument has to be a .cpp file
 goto end
 :: ----------------------------------------------------------------------------
 :noax
