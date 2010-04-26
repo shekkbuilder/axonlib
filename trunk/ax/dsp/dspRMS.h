@@ -68,7 +68,7 @@ class dspRMS
      * @param[in] in float
      * @return float rms value 
      */
-    virtual float process(const float in)    
+    virtual float process(const float in)
     {
       fout = a0*in*in + b1*fout + DENORM;
       return axSqrtf(fout);

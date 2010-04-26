@@ -48,16 +48,18 @@
  * \endcode
  * <br>
  * linux specific methods: <br>
- * -------------------------------- <br>
+ * -------------------------------- <br>   
  * wtrace() - trace for wine <br>
  *
  * win32 specific methods: <br>
  * -------------------------------- <br>
- * on windows you should manually create a debug window (console or gui) and
- * destroy it when the plugin is beeing closed.
+ * on windows you can manually create a debug window (console or gui) and
+ * destroy it when the dll/exe is beeing closed or you can use
+ * the flags AX_DEBUG_AUTO_STD (auto create/destroy debug console)
+ * or AX_DEBUG_AUTO_WIN (auto create/destroy debug gui window).  
  * <br>
  * <br>
- * <b>gui window (inefficient):</b> <br>
+ * <b>winapi window (inefficient):</b> <br>
  * axDwinCreate() - create a winapi debug window <br>
  * axDwinDestroy() - destroy the winapi debug window  <br>
  * wdebug() is a method which is used to append text into the gui debug
@@ -72,6 +74,12 @@
  * <br>
  * example in a vst plugin: <br>
  * \code
+ * // automatic
+ * #define AX_DEBUG           // or call from command line: g++ ... -DAX_DEBUG 
+ * #define AX_DEBUG_AUTO_WIN
+ * #define AX_DEBUG_AUTO_STD
+ *     
+ * // manual 
  * virtual void doProcessState(int aState) // overwride default method
     {
       #if defined(AX_DEBUG) && defined(WIN32) // check for win32 and ax_debug
@@ -81,7 +89,7 @@
             axDstdCreate();                             // create console
             axDwinCreate();                             // create debug gui
             trace("axLogf(2.24)=" << axLogf(2.24));     // test trace()
-            wdebug("axLogf(2.24)=", axLogf(2.24));      // test wdebug()
+            wdebug("axLogf(2.24)=" << axLogf(2.24));    // test wdebug()
           break;
           case pst_Close:                               // - on plugin close
             axDstdDestroy();                            // destroy console
@@ -91,30 +99,28 @@
       #endif
     }
  * \endcode
- * <i>note: debug windows are shared between plugins.</i><br><br>
- * <br> see /plugins/liteon/_cpuidtest.cpp for complete example.
+ * <i>notes: debug windows are shared between plugin instances and
+ * only one console can be allocated per process.<i><br><br> 
 */
 
 #ifndef axDebug_included
 #define axDebug_included
 //----------------------------------------------------------------------
 
-#define _WIN32_WINNT 0x0501
-
 // case: debug enabled
 #ifdef AX_DEBUG
+  
+  #define _WIN32_WINNT 0x0501
   #include <assert.h>
   #include <iostream>
+  #include "core/axUtils.h"
   using namespace std;
-  // trace() & msg() defined bellow
 
   // case: windows
   #ifdef WIN32
-    /**
-     * creates a winapi debugger window (unsafe / slow)
+    /*
+     * creates a winapi debugger window (slow)
      *
-    NOTES:
-    - the debugger window has to be controlled from a plugin with doProcessState(..)
     */
     #include <windows.h>
     #include <windowsx.h>         // macros
@@ -122,8 +128,8 @@
     #include <stdio.h>            // gcc-4.4.1-tdm
     #include <sstream>
     
-    HWND axDtext;                           // edit control handle
-    ostringstream axDoss;                   // string stream for window
+    HWND axDtext;                 // edit control handle
+    ostringstream axDoss;         // string stream for window
 
     // ----------------
     // destroy window
@@ -143,7 +149,6 @@
     }
 
     // ----------------
-    // *note: text selection highlight is not visible when format = .exe
     // create window
     void axDwinCreate(void)
     {
@@ -210,13 +215,16 @@
     #define wdebug(x) \
       if (axDtext != NULL) \
       { \
-        axDoss << "TRC | " << __LINE__ << " | " << x << "\r\n"; \
+        axDoss << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << "\r\n"; \
         wdebug_write(); \
       }
 
-    // allocate console and route stdout as seen in example:
-    // http://support.microsoft.com/kb/105305
-    // --------------------------------------------------------
+    /*
+     * create a console debugger window (only one instance per process, fast)      
+     * allocates console and routes stdout as seen in example:
+     * http://support.microsoft.com/kb/105305     
+     * 
+     */    
     unsigned int axHcrt = 0;                  // crt handle
     FILE *axSfile;                            // file stream
 
@@ -277,22 +285,24 @@
     }
 
     // --------------
-    #define trace(x) { if (axHcrt != 0) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); } }
-    #define msg(x) { if (axHcrt != 0) { printf("MSG | %i | %s\n", __LINE__, x); } }
-    #define wtrace(x) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); }
-  // ---------
+    #define trace(x) { if (axHcrt != 0) { cout << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << endl; cout.flush(); } }
+    #define msg(x) { if (axHcrt != 0) { printf("[%s|%ui] %s\n", axGetFileName(__FILE__), __LINE__, x); } }
+    #define wtrace(x) { cout << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << endl; cout.flush(); }
+    // --------- 
   #endif
+  
   // case: linux
   #ifdef linux
-    #define trace(x) { cout << "TRC | " << __LINE__ << " | " << x << endl; cout.flush(); }
-    #define msg(x) { printf("msg | %i | %s\n", __LINE__, x); }
-    #define wtrace(x) { cout << x << endl; cout.flush(); }
+    #define trace(x) { cout << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << endl; cout.flush(); }
+    #define msg(x) { printf("[%s|%ui] %s\n", axGetFileName(__FILE__), __LINE__, x); }
+    #define wtrace(x) { cout << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << endl; cout.flush(); }
     #define wdebug(x) ((void)0)
     inline void axDstdCreate(void) {}
     inline void axDstdDestroy(void) {}
     inline void axDwinCreate(void) {}
-    inline void axDwinDestroy(void) {}    
+    inline void axDwinDestroy(void) {}
   #endif
+  
 // case: no debug
 #else
   #define NDEBUG

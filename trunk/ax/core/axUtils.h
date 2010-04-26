@@ -36,16 +36,34 @@ TODO:
 #include "axDefines.h"
 #include <sstream>
 using namespace std;
+#include <stdio.h>
+
+/**
+ return the filename from the __FILE__ flag:
+ (can be used for any path as well)
+ \code
+  printf("%s\n", axGetFileName(__FILE__));
+ \endcode
+ @param[in] path const char*
+ @return const char*
+ */
+inline const char* axGetFileName(const char* path)
+{
+  const char *slash, *backslash;
+  slash = strrchr(path, '/');
+  backslash = strrchr(path, '\\') + 1;
+  if (slash) return slash + 1;
+    return backslash;
+}
 
 /**
  * swap the values of two variables <br>
  \code
- * unsigned int x = 5; // the type of the first variable is used as a base
- * int y = 2;
+ * origin: http://graphics.stanford.edu/~seander/bithacks.html
+ * note: type of first variable is used 
+ * float x = 5.f;
+ * float y = 3.f;
  * axSpaw(x, y);
- * float xf = 5.f;
- * float yf = 3.f;
- * axSpaw(xf, yf);
  * \endcode
  * @param[in] x type-unsafe
  * @param[in] y type-unsafe
@@ -75,32 +93,22 @@ template<class T, size_t N> T decay_array_to_subtype(T (&a)[N]);
 #define axGetArrSize(x) (sizeof(x)/sizeof(decay_array_to_subtype(x)))
 
 /**
- * fast bit reverse algorithm <br>
- * origin: http://www.jjj.de/fxt/fxtpage.html
+ * bit reverse algorithm <br>
+ * origin: http://graphics.stanford.edu/~seander/bithacks.html
  * \code
- * unsigned int b = 0x0000000f;
- * unsigned int result = axBitReverse(b); // result = 0xf0000000;
+ * unsigned int b = 0x0000000a;
+ * unsigned int result = axBitReverse(b); // result = 0xa0000000;
  * \endcode
- * @param[in] x long int
- * @return x long int
+ * @param[in] x unsigned int
+ * @return x unsigned int
  */
-inline long int axBitReverse(long int x)
+inline unsigned int axBitReverse(unsigned int x)
 {
-  __asm__ __volatile__ ("":::);
-  __asm__
-  (
-    "movl %0, %%eax;"         "andl $0xaaaaaaaa, %%eax;"    "shrl $1, %%eax;"
-    "andl $0x55555555, %0;"    "shll $1, %0;"                "orl %%eax, %0;"
-    "movl %0, %%eax;"          "andl $0xcccccccc, %%eax;"    "shrl $2, %%eax;"
-    "andl $0x33333333, %0;"    "shll $2, %0;"                "orl %%eax, %0;"
-    "movl %0, %%eax;"          "andl $0xf0f0f0f0, %%eax;"    "shrl $4, %%eax;"
-    "andl $0x0f0f0f0f, %0;"    "shll $4, %0;"                "orl %%eax, %0;"
-    "movl %0, %%eax;"          "andl $0xff00ff00, %%eax;"    "shrl $8, %%eax;"
-    "andl $0x00ff00ff, %0;"    "shll $8, %0;"                "orl %%eax, %0;"
-    "movl %0, %%eax;"          "andl $0xffff0000, %%eax;"    "shrl $16, %%eax;"
-    "andl $0x0000ffff, %0;"   "shll $16, %0;"                "orl %%eax, %0;"
-    : "=m" (x)  :    : "eax"
-  );
+  x = ((x >> 1) & 0x55555555) | ((x & 0x55555555) << 1);
+  x = ((x >> 2) & 0x33333333) | ((x & 0x33333333) << 2);
+  x = ((x >> 4) & 0x0F0F0F0F) | ((x & 0x0F0F0F0F) << 4);
+  x = ((x >> 8) & 0x00FF00FF) | ((x & 0x00FF00FF) << 8);
+  x = ( x >> 16             ) | ( x               << 16);
   return x;
 }
 
@@ -117,10 +125,7 @@ inline long int axBitReverse(long int x)
  * @param[in] bit unsigned int - which bit
  * @return unsigned int - 0x0 / 0x1
  */
-inline unsigned int axGetBit(long int x, unsigned int bit)
-{
-  return 1 & (x >> bit);
-}
+#define axGetBit(x, bit) ( 1 & ((x) >> (bit)) )
 
 /**
  * returns a binary representation of an integer as string
@@ -152,10 +157,7 @@ inline const char* axGetBinaryString(long int x, unsigned int bits=32)
  * @param[in] lin float
  * @return result float
  */
-inline float axLin2DB(const float lin)
-{
-  return LOG2DB*axLogf(lin);
-}
+#define axLin2DB(lin) ( LOG2DB*axLogf( (lin) ) ) 
 
 /**
  * converts decibel value to linear
@@ -166,10 +168,7 @@ inline float axLin2DB(const float lin)
  * @param[in] dB float
  * @return result float
  */
-inline float axDB2Lin(const float dB)
-{
-  return axExpf(DB2LOG*dB);
-}
+#define axDB2Lin(dB) ( axExpf( DB2LOG*(dB) ) )
 
 /**
  * sums a set (array) of dBFS values

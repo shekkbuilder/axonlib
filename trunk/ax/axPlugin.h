@@ -4,22 +4,15 @@
 
 //TODO: updateList (dirtyParameters)
 
-#include "core/axDebug.h"
 #include "axDefines.h"
+#include "core/axDebug.h"
+#include "core/axMemory.h"
 #include "platform/axContext.h"
 #include "base/axPluginBase.h"
 
 #include "axParameter.h"
 //#include "gui/axWidget.h"
 #include "gui/axWindow.h"
-
-/*
-// fix for vst sdk long long warning iso c++
-#ifdef __int64
-  #undef __int64
-  #define __int64 long
-#endif
-*/
 
 //----------
 

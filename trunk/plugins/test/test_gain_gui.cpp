@@ -1,6 +1,10 @@
-//#define AX_DEBUG
+#ifndef AX_DEBUG
+  #define AX_DEBUG
+#endif
 #define AX_DEBUG_AUTO_STD
-#define AX_DEBUG_AUTO_WIN
+// -- enable mem debug test
+#define AX_DEBUG_MEMORY
+// --
 
 #include "axPlugin.h"
 #include "axEditor.h"
@@ -32,8 +36,13 @@ class myPlugin : public axPlugin//,
         appendParameter( p_Gain = new axParameter(this,"gain","") );
         setupParameters();
         
-        wdebug("hello dbg");
-        trace("hello dbg");
+        trace("### hello dbg");
+        
+        int* ptr = new int;
+        
+        char* str = new char[256];
+        strcpy(str, "some text");
+        delete [] str;
       }
 
     virtual void  doSetParameter(axParameter* aParameter)
