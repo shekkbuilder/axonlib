@@ -11,8 +11,7 @@
   - graph.connect() connects two such pins, from output to input,
   - initially, the modules are processed in the order they are appended to the graph
   - compile() genertes a new module list, sorted by 'execution order'
-  - execute() executes this list (or the initial,
-    non-sorted list if compile() has not been called
+  - execute() executes this list (or the initial, non-sorted list if compile() has not been called
   - a module can have additional functions, like the process() from 'the old' dspXXX classes
   - a plugin has-a, or is-a graph, so that we just insert modules into the graph, and connect them to make a plugin
     (can later be done visually with an editor that has "save as .cpp")
@@ -47,11 +46,12 @@
 
 // pin type
 #define pt_None   0   // const
-#define pt_Signal 1   // static
-#define pt_Audio  2   // dynamic
+#define pt_Signal 1   // static     Parameters, Midi, ..
+#define pt_Data   2   // dynamic    Audio
 
 // signal types
-#define st_Tick   0
+#define st_None   0
+#define st_Gate   1
 
 // module flags
 #define mf_None   0
@@ -61,24 +61,30 @@
 
 /*
   a pin is essentially a ptr to a sample (and some helpers)
-  input pins: points directly to the value from the destination module/pin
+  input pins: points directly to the value from/in the destination module/pin
   output pins: points to the pin output value (internally in module)
   these are manipulated in connect(), and doCompile(), etc...
-  to point as close as possibly to the 'real data'
+  to point directly (or as close as possibly) to the 'real data'
 */
 
 class axPin
 {
   protected:
-    SPL*  mPinPtr;
     int   mPinType;
     int   mPinDir;
+    SPL*  mPinPtr;
   public:
-    axPin() { mPinDir=pd_Output; mPinType=pt_Audio; }
+    //axPin() { mPinDir=pd_Output; mPinType=pt_Data; }
+    axPin(int aType, int aDir, SPL* aPtr=NULL)
+      {
+        mPinDir  = aDir;
+        mPinType = aType;
+        mPinPtr  = aPtr;
+      }
     virtual void  setPtr(SPL* aPtr) { mPinPtr=aPtr; }
-    virtual SPL*  getPtr(void) { return mPinPtr; }
-    virtual int   getDir(void) { return mPinDir; }
-    virtual int   getType(void) { return mPinType; }
+    virtual SPL*  getPtr(void)      { return mPinPtr; }
+    virtual int   getDir(void)      { return mPinDir; }
+    virtual int   getType(void)     { return mPinType; }
 };
 
 typedef axArray<axPin*> axPins;
@@ -117,7 +123,7 @@ class axModule
       {
         mListener = aListener;
         mName = aName;
-        mFlags = mf_None;
+        mFlags = mf_Active;//mf_None;
       }
 
     virtual ~axModule()
@@ -139,19 +145,28 @@ class axModule
 
     // graph setup
 
-    virtual int connectPin(axPin* mDstPin, axPin* aSrcPin, axModule* aSrcMod) { return 0; }
-    virtual int connectDirect(axPin* mDstPin, SPL* aSource) { return 0; }
+    //virtual int connectPin(axPin* mDstPin, axPin* aSrcPin, axModule* aSrcMod) { return 0; }
+    //virtual int connectDirect(axPin* mDstPin, SPL* aSource) { return 0; }
+    virtual int connectPin(int mDstPin, int aSrcPin, axModule* aSrcMod) { return 0; }
+    virtual int connectDirect(int mDstPin, SPL* aSource) { return 0; }
 
     // runtime
 
-    // send signal to module, aValue = ptr to 'something', depending on signal type.
+    // send signal to module
     // events, execution flow opposite of audio.
+    // modules send events to their outputs
     // for parameters, midi notes, etc,
     // ex: midi module can send note event to oscillator, gate event to envelope, etc..
     // also, for conditional execution
     // (ex: multiple signal outputs, one of them selected depending on some input)
+    // aIndex = pin input index (which pin the signal is for)
+    // aType  = signal type
+    // aNum   = number (note, ctrl, etc..)
+    // aVal   = depending on number
 
-    virtual void doSignal(int aType=0, PTR aValue=NULL) {}
+    //virtual void doSignal(int aType=0, PTR aValue=NULL) {}
+    virtual void doSignal(int aIndex, int aType, int aNum=0, float aVal=0) {}
+
 
     // process
 
@@ -172,7 +187,8 @@ class axModule
     // so this kind of 'optimization' could be as effective as
     // the normal process() funtions with pointer to the samples
 
-    virtual int doExecute(SPL** aInputs, SPL** aOutputs) { return 0; }
+    //virtual /*int*/void doExecute(SPL** aInputs, SPL** aOutputs) { /*return 0;*/ }
+    virtual void doExecute(void) {}
 
 };
 
@@ -184,8 +200,9 @@ typedef axArray<axModule*> axModules;
   so that the ptrs in the pins aren't used when calling the execlist?
   that could make editing the graph at runtime safer? or more predictable?
 
-  modScript . public axModule
-  opModule : public axOpcode
+  can-do:
+    modScript : public axModule
+    opModule  : public axOpcode
 
 
 
