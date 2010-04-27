@@ -88,40 +88,74 @@ class axWindowWin32 : public axWindowBase
 
         RegisterClass(&wc);
 
-        //RECT rc = {mRect.x,mRect.y,mRect.x2(),mRect.y2()};
-        RECT rc = { mRect.x, mRect.y, mRect.w, mRect.h };
+        // The AdjustWindowRectEx function calculates the required size of the
+        // window rectangle, based on the desired client-rectangle size.
+        // The window rectangle can then be passed to the CreateWindow function
+        // to create a window whose client area is the desired size.
+        // To specify an extended window style, use the AdjustWindowRectEx function.
 
-        // --- embedded ---
+        // BOOL AdjustWindowRectEx(
+        //   __inout  LPRECT lpRect,
+        //   __in     DWORD dwStyle,
+        //   __in     BOOL bMenu,
+        //   __in     DWORD dwExStyle
+        // );
 
-        // get w, h
-        const u32 wWidth = (rc.right - rc.left - 1);  // -1 reduces the window dim by 1 px
-        const u32 wHeight = (rc.bottom - rc.top - 1);
+        // lpRect: Pointer to a RECT  structure that contains the coordinates of
+        // the top-left and bottom-right corners of the desired client area.
+        // When the function returns, the structure contains the coordinates of
+        // the top-left and bottom-right corners of the window to accommodate
+        // the desired client area.
+        // dwStyle: Specifies the window style of the window whose required size
+        // is to be calculated. Note that you cannot specify the WS_OVERLAPPED style.
+        // bMenu: Specifies whether the window has a menu.
+        // dwExStyle: Specifies the extended window style of the window whose
+        // required size is to be calculated. For more information, see CreateWindowEx.
 
-        #ifdef AX_FORMAT_EXE
-          // adjust rect for exe
-          AdjustWindowRect(&rc,WS_OVERLAPPEDWINDOW|WS_POPUP,FALSE);
-          // get screen w, h and define a center pos
-          const u32 wPosX = ((GetSystemMetrics(SM_CXSCREEN)-wWidth)>>1) + rc.left;
-          const u32 wPosY = ((GetSystemMetrics(SM_CYSCREEN)-wHeight)>>1) + rc.top;
-        #endif
-        #ifdef AX_FORMAT_VST
-          // no centering for vst
-          const u32 wPosX = rc.left;
-          const u32 wPosY = rc.top;
-        #endif
+        // --- adjust window size ---
 
-        if (mWinFlags&AX_WIN_EMBEDDED)
+        // Remarks
+        // By convention, the right and bottom edges of the rectangle are normally
+        // considered exclusive. In other words, the pixel whose coordinates are
+        // (right,bottom) lies immediately outside of the the rectangle.
+        // For example, when RECT is passed to the FillRect function, the rectangle
+        // is filled up to, but not including, the right column and bottom row of pixels.
+
+        RECT rc = { mRect.x, mRect.y, mRect.x2()+1, mRect.y2()+1 }; // left, top, right, bottom
+
+//        //RECT rc = {mRect.x,mRect.y,mRect.x2(),mRect.y2()};
+//        RECT rc = { mRect.x, mRect.y, mRect.w, mRect.h };
+//        // get w, h
+//        const u32 wWidth = (rc.right - rc.left - 1);  // -1 reduces the window dim by 1 px
+//        const u32 wHeight = (rc.bottom - rc.top - 1);
+//        #ifdef AX_FORMAT_EXE
+//          // adjust rect for exe
+//          AdjustWindowRect(&rc,WS_OVERLAPPEDWINDOW|WS_POPUP,FALSE);
+//          // get screen w, h and define a center pos
+//          const u32 wPosX = ((GetSystemMetrics(SM_CXSCREEN)-wWidth)>>1) + rc.left;
+//          const u32 wPosY = ((GetSystemMetrics(SM_CYSCREEN)-wHeight)>>1) + rc.top;
+//        #endif
+//        #ifdef AX_FORMAT_VST
+//          // no centering for vst
+//          const u32 wPosX = rc.left;
+//          const u32 wPosY = rc.top;
+//        #endif
+
+        // --- create window ---
+
+        if (mWinFlags&AX_WIN_EMBEDDED) // embedded ---
         {
+          AdjustWindowRectEx(&rc,/*WS_OVERLAPPEDWINDOW|*/WS_POPUP,FALSE,WS_EX_TOOLWINDOW);
           mWindow = CreateWindowEx(
             WS_EX_TOOLWINDOW,
             classname,
             0,
             WS_POPUP,
-            wPosX,          // center x
-            wPosY,          // center y
-            wWidth,
-            wHeight,
-            0,
+            rc.left,//wPosX,          // center x
+            rc.top,//wPosY,          // center y
+            rc.right-rc.left-1,//wWidth,
+            rc.bottom-rc.top-1,//wHeight,
+            0,//(HWND)mParent,//0,
             0,
             mInstance,
             0
@@ -129,19 +163,20 @@ class axWindowWin32 : public axWindowBase
           reparent(mParent);
         } //embedded
 
-        // --- windowed ---
-
-        else
+        else // windowed ---
         {
+          AdjustWindowRectEx(&rc,WS_OVERLAPPEDWINDOW,FALSE,WS_EX_OVERLAPPEDWINDOW);
+          const u32 wPosX = ((GetSystemMetrics(SM_CXSCREEN)-mRect.w)>>1) + rc.left;
+          const u32 wPosY = ((GetSystemMetrics(SM_CYSCREEN)-mRect.h)>>1) + rc.top;
           mWindow = CreateWindowEx(
             WS_EX_OVERLAPPEDWINDOW,   // dwExStyle
             classname,                // lpClassName
             0,                        // lpWindowName
             WS_OVERLAPPEDWINDOW,      // dwStyle
-            wPosX,                    // center x
-            wPosY,                    // center y
-            wWidth,
-            wHeight,
+            wPosX,          // center x
+            wPosY,          // center y
+            rc.right-rc.left+1,//wWidth,
+            rc.bottom-rc.top+1,//wHeight,
             0,                        // hWndParent
             0,                        // hMenu
             mInstance,                // hInstance
@@ -154,20 +189,8 @@ class axWindowWin32 : public axWindowBase
 
         SetWindowLong(mWindow,GWL_USERDATA,(int)this);
         //DragAcceptFiles(mWindow,true);
-
-        // --- canvas ---
-
-        //axContext ctx((int)mWindow);
-        //mCanvas = new axCanvas(&ctx);
         mCanvas = createCanvas();
-
-        // --- surface ---
-
-        if (aWinFlags & AX_WIN_BUFFERED)
-        {
-          //mSurface = new axSurface(aContext,mRect.w,mRect.h);
-          mSurface = createSurface(mRect.w,mRect.h);
-        }
+        if (aWinFlags & AX_WIN_BUFFERED) mSurface = createSurface(mRect.w,mRect.h);
 
       }
 
@@ -266,7 +289,9 @@ class axWindowWin32 : public axWindowBase
 
     virtual void setSize(int aWidth, int aHeight)
       {
-        SetWindowPos(mWindow,HWND_TOP,0,0,aWidth,aHeight,SWP_NOMOVE);
+        int w = aWidth-1;
+        int h = aHeight-1;
+        SetWindowPos(mWindow,HWND_TOP,0,0,w,h, SWP_NOMOVE);
         //SetWindowPos(mWindow,0,0,0,aWidth,aHeight,SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOZORDER);
       }
 
