@@ -51,6 +51,7 @@ class wdgSizer : public axWidget
           int deltay = aYpos - prevy;
           //mListener->onSize(deltax,deltay);
           if (mTarget) mTarget->onSize(this,deltax,deltay);
+          else mListener->onSize(this,deltax,deltay);
           prevx = aXpos;
           prevy = aYpos;
         }

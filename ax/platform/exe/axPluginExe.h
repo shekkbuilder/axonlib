@@ -111,6 +111,13 @@ class axPluginExe : public axPluginBase//,
     //  {
     //  }
 
+    virtual void  notifyResizeEditor(int aWidth, int aHeight)
+      {
+        mEditorRect.w = aWidth;
+        mEditorRect.h = aHeight;
+        //sizeWindow(aWidth, aHeight); // vst
+      }
+
 
 };
 

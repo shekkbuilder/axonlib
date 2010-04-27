@@ -4,6 +4,12 @@
 #include "axPlugin.h"
 #include "par/parInteger.h"
 
+/*
+  todo: add a list of keys that should NOT have their note offs transposed.
+        when we change the transpose parameter, mark all currently active
+        voices as 'don't transpose note off'
+*/
+
 //----------------------------------------------------------------------
 
 class myPlugin : public axPlugin

@@ -59,6 +59,8 @@
 
 //----------------------------------------------------------------------
 
+class axModule;
+
 /*
   a pin is essentially a ptr to a sample (and some helpers)
   input pins: points directly to the value from/in the destination module/pin
@@ -70,21 +72,27 @@
 class axPin
 {
   protected:
-    int   mPinType;
-    int   mPinDir;
-    SPL*  mPinPtr;
+    axModule* mOwner;
+    axString  mName;
+    int       mType;
+    int       mDir;
+    SPL*      mPtr;
   public:
     //axPin() { mPinDir=pd_Output; mPinType=pt_Data; }
-    axPin(int aType, int aDir, SPL* aPtr=NULL)
+    axPin(axModule *aOwner, axString aName, int aType, int aDir, SPL* aPtr=NULL)
       {
-        mPinDir  = aDir;
-        mPinType = aType;
-        mPinPtr  = aPtr;
+        mOwner = aOwner;
+        mName = aName;
+        mDir  = aDir;
+        mType = aType;
+        mPtr  = aPtr;
       }
-    virtual void  setPtr(SPL* aPtr) { mPinPtr=aPtr; }
-    virtual SPL*  getPtr(void)      { return mPinPtr; }
-    virtual int   getDir(void)      { return mPinDir; }
-    virtual int   getType(void)     { return mPinType; }
+    inline void       setPtr(SPL* aPtr) { mPtr=aPtr; }
+    inline SPL*       getPtr(void)      { return mPtr; }
+    inline int        getDir(void)      { return mDir; }
+    inline int        getType(void)     { return mType; }
+    inline axModule*  getOwner(void)    { return mOwner; }
+    inline axString   getName(void)     { return mName; }
 };
 
 typedef axArray<axPin*> axPins;
@@ -166,9 +174,6 @@ class axModule
 
     //virtual void doSignal(int aType=0, PTR aValue=NULL) {}
     virtual void doSignal(int aIndex, int aType, int aNum=0, float aVal=0) {}
-
-
-    // process
 
     virtual void doProcess(SPL** aInputs, SPL** aOutputs) {}
 

@@ -30,6 +30,7 @@ class axDemo_editor : public axEditor
     wdgPanel*             w_LeftPanel;
     wdgPages*             w_RightPanel;
     wdgSizer*             w_Sizer;
+    wdgSizer*             w_WinSizer;
     wdgPanel*             w_Status;
     wdgScrollBox*         w_Scroll;
     wdgButtons*           w_Select;
@@ -71,12 +72,14 @@ class axDemo_editor : public axEditor
 
         //----- [resizer] -----
 
-        appendWidget( w_Sizer = new wdgSizer(this,axRect(0,0,5,0),wa_Left) );
+        appendWidget( w_Sizer = new wdgSizer(this,axRect(5,0),wa_Left) );
           w_Sizer->setTarget(w_LeftPanel);
 
         //----- bottom [status panel] -----
 
-        appendWidget( w_Status = new wdgPanel(this,axRect(0,0,0,20),wa_Bottom) );
+        appendWidget( w_Status = new wdgPanel(this,axRect(0,20),wa_Bottom) );
+          w_Status->appendWidget( w_WinSizer = new wdgSizer(this,axRect(10,10),wa_RightBottom) );
+            //w_WinSizer->setTarget(this);
 
         //----- right [pages, aka tabs] -----
 
@@ -113,12 +116,37 @@ class axDemo_editor : public axEditor
         {
           //trace("axDemo_editor.onChange");
           int id = w_Select->getVal();
+          //resizeWindow(100+id*100,300);
           w_RightPanel->setPage(id,true); // redraw
 
         }
         //todo: plugin.param
         axEditor::onChange(aWidget);
       }
+
+    //--------------------------------------------------
+
+    virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY)
+      {
+        if (aWidget==w_WinSizer)
+        {
+          {
+            trace("onSize " << aDeltaX << "," << aDeltaY);
+            axRect R = mPlugin->getEditorRect();
+            trace("       " << R.w << "," << R.h);
+            //trace("       " << mRect.w << "," << mRect.h);
+            resizeWindow( R.w + aDeltaX, R.h + aDeltaY );
+            //axWindow::onSize(aWidget, aDeltaX, aDeltaY);
+          }
+        }
+        else
+        axEditor::onSize(aWidget, aDeltaX, aDeltaY);
+        //int w = mRect.w + aDeltaX;
+        //int h = mRect.h + aDeltaY;
+        //axWidget::doSetSize(w,h);
+        //mListener->onSize(aWidget,aDeltaX,aDeltaY);
+      }
+
 
     //--------------------------------------------------
 

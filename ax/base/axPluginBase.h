@@ -62,6 +62,10 @@ class axPluginBase// : public axParameterListener
 
   public:
 
+    //inline int getFlags(void)         { return mPlugFlags; }
+    inline axRect getEditorRect(void) { return mEditorRect; }
+    inline bool isEditorOpen(void)    { return mEditorOpen; }
+
     virtual int    getPlayState(void)  { return 0; }
     virtual double getSamplePos(void)  { return 0; }
     virtual double getSampleRate(void) { return 0; }
@@ -100,6 +104,8 @@ class axPluginBase// : public axParameterListener
     // call this to get updated info about project tempo,
     // current time (in beats), samplerate, etc...
     virtual void  updateTimeInfo(void) {}
+
+    //virtual void resizeEditor(int aWidth, int aHeight) { mEditorRect.w=aWidth; mEditorRect.h=aHeight; }
 
 
   protected:

@@ -182,30 +182,30 @@ class axPluginVst : public axPluginBase
     //----------------------------------------
 
     inline void clear_aeFlags(void)                 { aeffect.flags = 0; }
-    //inline void clear_aeFlag(int aFlag)             { aeffect.flags |= aFlag; }
     inline void clear_aeFlag(int aFlag)             { aeffect.flags &= ~aFlag; }
     inline void set_aeFlag(int aFlag)               { aeffect.flags |= aFlag; }
     inline void set_aeFlag(int aFlag, bool aState)  { if (aState) set_aeFlag(aFlag); else clear_aeFlag(aFlag); }
+
     //----------
 
     void canProcessReplacing(bool aState=true)  { set_aeFlag(effFlagsCanReplacing,aState); }        // tells that processReplacing() could be used. Mandatory in VST 2.4!
     void canDoubleReplacing(bool aState=true)   { set_aeFlag(effFlagsCanDoubleReplacing,aState); }  // tells that processDoubleReplacing() is implemented.
-    void programsAreChunks(bool aState=true)    { set_aeFlag(effFlagsProgramChunks); }              // program data is handled in formatless chunks (using getChunk-setChunks)
-    void isSynth(bool aState=true)              { set_aeFlag(effFlagsIsSynth); }
-    void hasEditor(bool aState=true)            { set_aeFlag(effFlagsHasEditor); }
-    void noSoundInStop(bool aState=true)        { set_aeFlag(effFlagsNoSoundInStop); }
+    void programsAreChunks(bool aState=true)    { set_aeFlag(effFlagsProgramChunks,aState); }              // program data is handled in formatless chunks (using getChunk-setChunks)
+    void isSynth(bool aState=true)              { set_aeFlag(effFlagsIsSynth,aState); }
+    void hasEditor(bool aState=true)            { set_aeFlag(effFlagsHasEditor,aState); }
+    void noSoundInStop(bool aState=true)        { set_aeFlag(effFlagsNoSoundInStop,aState); }
 
     //----------------------------------------
     // AEffect fields (variables)
     //----------------------------------------
 
-    inline void setUniqueID(int aID)        { aeffect.uniqueID=aID; }         // Must be called to set the plug-ins unique ID!
-    inline void setNumInputs(int aNum)      { aeffect.numInputs=aNum; }       // set the number of inputs the plug-in will handle. For a plug-in which could change its IO configuration, this number is the maximun available inputs.
-    inline void setNumOutputs(int aNum)     { aeffect.numOutputs=aNum; }      // set the number of outputs the plug-in will handle. For a plug-in which could change its IO configuration, this number is the maximun available ouputs.
-    inline void setInitialDelay(int aDelay) { aeffect.initialDelay=aDelay; }  // use to report the plug-in's latency (Group Delay)
-    inline void setVersion(int aVer)        { aeffect.version=aVer; }
-    inline void setNumPrograms(int aNum)    { aeffect.numPrograms=aNum; }
-    inline void setNumParams(int aNum)      { aeffect.numParams=aNum; }
+    inline void setUniqueID(int aID)        { aeffect.uniqueID = aID; }         // Must be called to set the plug-ins unique ID!
+    inline void setNumInputs(int aNum)      { aeffect.numInputs = aNum; }       // set the number of inputs the plug-in will handle. For a plug-in which could change its IO configuration, this number is the maximun available inputs.
+    inline void setNumOutputs(int aNum)     { aeffect.numOutputs = aNum; }      // set the number of outputs the plug-in will handle. For a plug-in which could change its IO configuration, this number is the maximun available ouputs.
+    inline void setInitialDelay(int aDelay) { aeffect.initialDelay = aDelay; }  // use to report the plug-in's latency (Group Delay)
+    inline void setVersion(int aVer)        { aeffect.version = aVer; }
+    inline void setNumPrograms(int aNum)    { aeffect.numPrograms = aNum; }
+    inline void setNumParams(int aNum)      { aeffect.numParams = aNum; }
 
     //----------------------------------------
     //
@@ -267,18 +267,20 @@ class axPluginVst : public axPluginBase
     // Give idle time to Host application, e.g. if plug-in editor is doing mouse tracking in a modal loop.
     void masterIdle(void)
       {
-        if (audioMaster) audioMaster (&aeffect,audioMasterIdle,0,0,0,0);
+        if (audioMaster) audioMaster(&aeffect,audioMasterIdle,0,0,0,0);
       }
 
     //
     // audioMasterGetTime,
-    // [return value]: #VstTimeInfo* or null if not supported [value]: request mask  @see VstTimeInfoFlags @see AudioEffectX::getTimeInfo
+    // [value]: request mask
+    // [return value]: #VstTimeInfo* or null if not supported
+    // @see VstTimeInfoFlags @see AudioEffectX::getTimeInfo
 
     VstTimeInfo* getTime(VstInt32 filter)
       {
         if (audioMaster)
         {
-          VstIntPtr ret = audioMaster (&aeffect,audioMasterGetTime,0,filter,0,0);
+          VstIntPtr ret = audioMaster(&aeffect,audioMasterGetTime,0,filter,0,0);
           return FromVstPtr<VstTimeInfo> (ret);
         }
         return 0;
@@ -295,7 +297,7 @@ class axPluginVst : public axPluginBase
     bool processEvents(VstEvents* events)
       {
         if (audioMaster) return audioMaster(&aeffect,audioMasterProcessEvents,0,0,events,0)==1;
-        return 0;
+        return false;
       }
 
     //----------
@@ -303,7 +305,18 @@ class axPluginVst : public axPluginBase
     //TODO:
 
     //audioMasterIOChanged,			            // [return value]: 1 if supported  @see AudioEffectX::ioChanged
-    //audioMasterSizeWindow,			          // [index]: new width [value]: new height [return value]: 1 if supported  @see AudioEffectX::sizeWindow
+
+    //audioMasterSizeWindow,
+    // [index]: new width
+    // [value]: new height
+    // [return value]: 1 if supported  @see AudioEffectX::sizeWindow
+
+    bool sizeWindow(int aWidth, int aHeight)
+      {
+        if (audioMaster) return audioMaster(&aeffect,audioMasterSizeWindow,aWidth,aHeight,0,0)==1;
+        return false;
+      }
+
     //audioMasterGetSampleRate,		          // [return value]: current sample rate  @see AudioEffectX::updateSampleRate
     //audioMasterGetBlockSize,		          // [return value]: current block size  @see AudioEffectX::updateBlockSize
     //audioMasterGetInputLatency,		        // [return value]: input latency in audio samples  @see AudioEffectX::getInputLatency
@@ -1255,16 +1268,22 @@ class axPluginVst : public axPluginBase
         setParameterAutomated(index,value);
       }
 
-    //virtual void  notifyResizeEditor(int aWidth, int aHeight)
-    //  {
-    //    //sizeWindow()
-    //  }
+    //----------
+
+    virtual void  notifyResizeEditor(int aWidth, int aHeight)
+      {
+        //axPluginBase::notifyResizeEditor(aWidth,aHeight); // editor rect
+        mEditorRect.w = aWidth;
+        mEditorRect.h = aHeight;
+        sizeWindow(aWidth, aHeight); // vst
+      }
+
+    //----------
 
     virtual void updateTimeInfo(void)
       {
         //enum VstTimeInfoFlags
         //{
-        ////-------------------------------------------------------------------------------------------------------
         //	kVstTransportChanged     = 1,		///< indicates that play, cycle or record state has changed
         //	kVstTransportPlaying     = 1 << 1,	///< set if Host sequencer is currently playing
         //	kVstTransportCycleActive = 1 << 2,	///< set if Host sequencer is in cycle mode
@@ -1280,7 +1299,6 @@ class axPluginVst : public axPluginBase
         //	kVstTimeSigValid         = 1 << 13,	///< VstTimeInfo::timeSigNumerator and VstTimeInfo::timeSigDenominator valid
         //	kVstSmpteValid           = 1 << 14,	///< VstTimeInfo::smpteOffset and VstTimeInfo::smpteFrameRate valid
         //	kVstClockValid           = 1 << 15	///< VstTimeInfo::samplesToNextClock valid
-        ////-------------------------------------------------------------------------------------------------------
         //};
         //trace("updateTimeInfo");
         mTimeInfo   = getTime( kVstPpqPosValid + kVstTempoValid );
@@ -1291,8 +1309,6 @@ class axPluginVst : public axPluginBase
         mBeatPos    = mTimeInfo->ppqPos;
         mTempo      = mTimeInfo->tempo;
       }
-
-    //--------------------------------------------------
 
 };
 
