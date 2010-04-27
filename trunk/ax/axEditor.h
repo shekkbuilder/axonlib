@@ -2,6 +2,8 @@
 #define axEditor_included
 //----------------------------------------------------------------------
 
+#define AX_WIDGET_NOUPDATELIST
+
 //TODO: updateList (dirtyWidgets)
 
 #include "axPlugin.h"
@@ -41,6 +43,10 @@ class axEditor : public axWindow
     axPlugin*       mPlugin;
     wp_connections  mConnections;
     axSkinDefault*  mDefaultSkin;
+    #ifndef AX_WIDGET_NOUPDATELIST
+    axWidgets       mUpdateList;
+    #endif
+
 
   public:
 
@@ -95,8 +101,75 @@ class axEditor : public axWindow
         }
       }
 
+    //----------------------------------------
+
+      // this one needs more work. specific hosts might need specific actions...
+      // - axWindow.setSize()
+      // - set size of rect that will be returned in effEditGetRect
+      // - vst function sizeWindow()
+      // various hosts react differently to these, and we need to do a host-check at startup,
+      // and do more testing to see which host require what.
+
+    void resizeWindow(int aWidth, int aHeight)
+      {
+        mRect.w = aWidth;
+        mRect.h = aHeight;
+        /*axWindow::*/setSize(aWidth,aHeight);  // resize os window
+        //resizeBuffer(aWidth,aHeight);
+        //doRealign();
+        //mPlugin->mWidth = aWidth;
+        //mPlugin->mHeight = aHeight;
+        mPlugin->notifyResizeEditor(aWidth,aHeight);
+        //mPlugin->sizeWindow(aWidth, aHeight);  // let vst host know (request to resize window), Expose
+      }
+
+    //----------------------------------------
+
+    #ifndef AX_WIDGET_NOUPDATELIST
+
+    void clearUpdates(void)
+      {
+        //mutex_dirty.lock();
+        mUpdateList.clear(false);
+        //mutex_dirty.unlock();
+      }
 
     //----------
+
+    void appendUpdate(axWidget* aWidget)
+      {
+        for( int i=0; i<mUpdateList.size(); i++ ) if( mUpdateList[i]==aWidget ) return;
+        //mutex_dirty.lock();
+        mUpdateList.append(aWidget);
+        //mutex_dirty.unlock();
+      }
+
+    //----------
+
+    // if we're inside this redrawDirty (because of idleEditor),
+    // we can't append new widgets to it!!
+    // dangerous if we don't manage the redrawDirty ourselves...
+    //
+    // we might need a redrawLock here
+
+    void redrawUpdates(void)
+      {
+        //mutex_dirty.lock();
+        int num = mUpdateList.size();
+        for( int i=0; i<num; i++ )
+        {
+          axWidget* wdg = mUpdateList[i];
+          redrawWidget(wdg);
+        }
+        clearUpdates();
+        //mutex_dirty.unlock();
+        //flush();
+
+      }
+
+    #endif // AX_WIDGET_NOUPDATELIST
+
+    //----------------------------------------
 
     virtual void doSetSize(int aWidth, int aHeight)
       {
@@ -106,39 +179,47 @@ class axEditor : public axWindow
 
     //----------
 
-    virtual void onChange(axWidget* aWidget)
+    //[internal]
+    inline void internal_redraw(axWidget* aWidget)
       {
-        //wtrace("axEditor.onChange");
-        int conn = aWidget->getConnection();
-        //wtrace("  conn = " << conn);
-        if (conn>=0)
-        {
-          axParameter* par = mConnections[conn].mParameter;
-          //wtrace("  par = " << par);
-          float val = aWidget->getValue();
-          //wtrace("  val = " << val);
-          //wtrace("  mPlugin = " << mPlugin);
-          mPlugin->notifyParamChanged(par);
-          par->doSetValue(val);
-          #ifdef AX_FORMAT_EXE
+        #ifdef AX_FORMAT_EXE
+          redrawWidget(aWidget);
+        #else
+          #ifndef AX_WIDGET_NOUPDATELIST
+            appendUpdate(aWidget);
+          #else
             redrawWidget(aWidget);
           #endif
-        }
-        else
-        {
-          redrawWidget(aWidget);
-        }
+        #endif
       }
-
-    //TODO: dirtyWidgets
-
-    //virtual void onRedraw(axWidget* aWidget) { redrawWidget(aWidget); }
-    //virtual void onCursor(int aCursor) { setCursor(aCursor); }
-    //virtual void onHint(axString aHint) {}
-    //virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY)
 
     //----------
 
+    virtual void onChange(axWidget* aWidget)
+      {
+        int conn = aWidget->getConnection();
+        if (conn>=0)
+        {
+          axParameter* par = mConnections[conn].mParameter;
+          float val = aWidget->getValue();
+          mPlugin->notifyParamChanged(par);
+          par->doSetValue(val);
+        }
+        internal_redraw(aWidget);
+      }
+
+    //----------
+
+    virtual void onRedraw(axWidget* aWidget)
+      {
+        internal_redraw(aWidget);
+      }
+
+    //----------
+
+    //virtual void onCursor(int aCursor) { setCursor(aCursor); }
+    //virtual void onHint(axString aHint) {}
+    //virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY)
 
 };
 

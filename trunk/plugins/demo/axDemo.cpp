@@ -1,6 +1,8 @@
 #define AX_DEBUG
 #define AX_DEBUG_AUTO_STD
 
+#define AX_WIDGET_UPDATELIST
+
 #include "axPlugin.h"
 #include "axDemo_editor.h"
 #include "axDemo_graph.h"
@@ -99,8 +101,8 @@ class axDemo : public axPlugin
       {
         //*aOutputs[0] = *aInputs[0];
         //*aOutputs[1] = *aInputs[0];
-        *aOutputs[0] = axRandomSigned() * 0.25;
-        *aOutputs[1] = axRandomSigned() * 0.25;
+        *aOutputs[0] = axRandomSigned() * 0.1;
+        *aOutputs[1] = axRandomSigned() * 0.1;
         //todo: graph.process
         //mGraph->doExecute(aInputs,aOutputs);
 
@@ -143,6 +145,9 @@ class axDemo : public axPlugin
 
     virtual void doIdleEditor()
       {
+        #ifndef AX_WIDGET_NOUPDATELIST
+        if (mEditor) mEditor->redrawUpdates();
+        #endif
         //trace("doIdleEditor");
       }
 
