@@ -1,6 +1,3 @@
-#ifndef AX_DEBUG
-  #define AX_DEBUG
-#endif
 #define AX_DEBUG_AUTO_STD
 // -- enable mem debug test
 #define AX_DEBUG_MEMORY

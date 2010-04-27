@@ -109,7 +109,6 @@
 
 // case: debug enabled
 #ifdef AX_DEBUG
-  
   #define _WIN32_WINNT 0x0501
   #include <assert.h>
   #include <iostream>

@@ -39,7 +39,7 @@ using namespace std;
 #include <stdio.h>
 
 /**
- return the filename from the __FILE__ flag:
+ return the filename from the __FILE__ flag: <br>
  (can be used for any path as well)
  \code
   printf("%s\n", axGetFileName(__FILE__));
@@ -299,7 +299,7 @@ inline float axOctaves2Q(const float n)
  */
 inline float axQ2Octaves(const float q)
 {
-  return 1.4426950408889634f * axSinhf(0.5f * q);
+  return 1.4426950408889634f * axSinhf(0.5f * (q));
 }
 
 /**

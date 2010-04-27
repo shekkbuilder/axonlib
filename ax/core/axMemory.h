@@ -3,7 +3,7 @@
 #define axMemory_included
 
 // --------------------
-#ifdef AX_DEBUG_MEMORY
+#if defined(AX_DEBUG) && defined(AX_DEBUG_MEMORY)
 
 #ifndef cu32
   #define cu32 const u32
