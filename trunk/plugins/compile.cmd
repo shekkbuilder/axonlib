@@ -21,14 +21,23 @@ set warn=-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long
 set resfile=rc_default.rc
 
 :: set optimization flags
-set opt=-msse -mfpmath=sse,387 -O3 -Os -fstack-check -fdata-sections -ffunction-sections
+set opt=-msse -mfpmath=sse,387 -O3 -Os -fstack-check
 
 :: linker options
-set linker=-s -Wl,-gc-sections
+set linker=-fdata-sections -ffunction-sections -Wl,-gc-sections -s
 
 :: -----------------------------------------------------------------------------
 :: *** end of user settings
 :: -----------------------------------------------------------------------------
+
+:: default values
+set dstatus=OFF
+set gccdstatus=OFF
+set nmv=
+set dbg=
+set res=
+set gccdbg=
+set cmdline=
 
 :: check for file input
 if [%1]==[] goto syntax
@@ -43,31 +52,50 @@ if not "%infile:~-4%"=="%srcext%" goto nocpp
 if not exist %axpath% goto noax
 if not exist %vstpath% goto novstsdk
 
-:: default values
-set dstatus=OFF
-set nmv=
-set dbg=
-set res=
-
 :: check for 'not move' 
 if [%2]==[-nmv] set nmv=yes
 if [%3]==[-nmv] set nmv=yes
 if [%4]==[-nmv] set nmv=yes
+if [%5]==[-nmv] set nmv=yes
 
-:: check for debug
-if [%2]==[-d] goto setdebug
-if [%3]==[-d] goto setdebug
-if [%4]==[-d] goto setdebug
+:: check for lib debug mode
+if [%2]==[-d] goto setlibdebug
+if [%3]==[-d] goto setlibdebug
+if [%4]==[-d] goto setlibdebug
+if [%5]==[-d] goto setlibdebug
+
+:getgccdebug
+:: check for gcc debug mode
+if [%2]==[-g] goto setgccdebug
+if [%3]==[-g] goto setgccdebug
+if [%4]==[-g] goto setgccdebug
+if [%5]==[-g] goto setgccdebug
 
 :: get the tgt format
 :getformat
-
 if [%2]==[-dll] goto dlltarget
 if [%3]==[-dll] goto dlltarget
 if [%4]==[-dll] goto dlltarget
+if [%5]==[-dll] goto dlltarget
 if [%2]==[-exe] goto exetarget
 if [%3]==[-exe] goto exetarget
 if [%4]==[-exe] goto exetarget
+if [%5]==[-exe] goto exetarget
+
+:: set lib debug
+:setlibdebug
+set dbg=-DAX_DEBUG
+set dstatus=ON
+goto getgccdebug
+
+:: set gcc debug
+:setgccdebug
+set gccdbg=-DDEBUG -gstabs
+set gccdstatus=ON
+set resfile=
+set linker=
+set opt=-O3
+goto getformat
 
 :: format is dll
 :dlltarget
@@ -90,24 +118,19 @@ set ext=.exe
 set tgtformat=-DAX_FORMAT_EXE
 goto begin
 
-:: set debug
-:setdebug
-set dbg=-DAX_DEBUG
-set dstatus=ON
-goto getformat
-
 :: echo syntax 
 :syntax
 echo.
 echo ---------------------------------------------------------------------------
 echo * axonlib compile script for windows
 echo.
-echo usage: compile.cmd [file.cpp] [-h] [-exe or -dll] [-nmv] [-d]
-echo -exe : create an executable
-echo -dll : create a dll (default)
-echo -nmv : do not move result to ..\bin
-echo -d : enable debug mode
-echo -h : show this help message
+echo usage: compile.cmd [file.cpp] [-h] [-exe | -dll] [-nmv] [-d]
+echo  -exe : create an executable
+echo  -dll : create a dll (default)
+echo  -nmv : do not move result to ..\bin
+echo  -d : enable library debug mode
+echo  -g : enable gcc debug mode (-gstabs)
+echo  -h : show this help message
 echo ---------------------------------------------------------------------------
 goto end
 
@@ -127,19 +150,32 @@ if exist %target% del %target%
 echo.
 echo * compiling windows binary for '%infile%'...
 echo * format is: %ext%
-echo * debug is: %dstatus%
-echo.
+echo * lib debug is: %dstatus%
+echo * gcc debug is: %gccdstatus%
 
-:: call g++ / strip
-%mgwpath%g++ -I%cmdpath%%axpath% -I%cmdpath%%vstpath% -mwindows %tgtformat% %warn% %opt% %dbg% %linker% .\%infile% %res% -o .\%target%
-if exist %target% %mgwpath%strip --strip-all %target%
+:compile
+echo.
+set cmdline=%mgwpath%g++ -I%cmdpath%%axpath% -I%cmdpath%%vstpath% -mwindows %tgtformat% %opt% %warn% %gccdbg% %dbg% %linker% .\%infile% %res% -o .\%target%
+:: show cmdline
+echo command line is: %cmdline% && echo.
+:: call g++
+%cmdline%
 
 :: target missing -> error
-if not exist %target% echo. && echo # ERR: not compiled!
+if not exist %target% echo. && echo # ERR: not compiled! && goto done
+if not [%gccdstatus%]==[] goto printsize 
+
+:: call strip
+echo striping...
+if exist %target% %mgwpath%strip --strip-all %target%
+
+:printsize
+:: call size
+%mgwpath%size %target%
 
 :: check if '-nmv'
 if not [%nmv%]==[] goto done
-if not exist %~p0..\BIN md %~p0..\bin
+if not exist %~p0..\bin md %~p0..\bin
 if exist %target% echo. && echo moving '%target%' to '%~p0..\bin'
 if exist %target%	move %target% %~p0..\bin
 :: --------------------------

@@ -757,7 +757,7 @@ inline float axInvSqrtf(float value)
  */
 inline float axInvSqrt(const float x)
 {
-  float xhalf = 0.5f*x;
+  float halfx = 0.5f*x;
   union
   {
     float j;
@@ -765,7 +765,7 @@ inline float axInvSqrt(const float x)
   } u;
   u.j = x;
   u.i = 0x5f3759df - (u.i >> 1); // good initial guess
-  return u.j*(1.5f - u.j*u.j*xhalf) + 0.001f; // newton iteration  
+  return u.j*(1.5f - u.j*u.j*halfx) + 0.001f; // newton iteration  
 }
 
 /**
