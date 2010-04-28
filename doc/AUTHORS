@@ -7,8 +7,11 @@ liteon
 ----------
 
 lode vandevenne
-  LodePNG
+  LodePNG / PicoPNG
 
 jorgen aase
   some initial lowlevel linux/win32 system code based on his synth4 example
   (and kickstarted this axonlib project)
+
+makoto matsumoto, takuji nishimura, richard j. wagner et al
+  marsenne twister: initial work and implementations

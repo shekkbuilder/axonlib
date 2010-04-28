@@ -27,7 +27,8 @@ class axArray
 			{
 		  	mRealSize = SIZE_INIT;
 			  mSize = 0;
-			  mArray = (_T*)malloc(mRealSize*sizeof(_T));
+			  //mArray = (_T*)malloc(mRealSize*sizeof(_T));        
+        mArray = (_T*) operator new ( mRealSize*sizeof(_T) );
 			}
 
     // copy constructor.
@@ -38,7 +39,8 @@ class axArray
 
     axArray(const axArray& aArray)
       {
-        mArray = (_T*)malloc(sizeof(_T)*aArray.mRealSize);
+        //mArray = (_T*)malloc(sizeof(_T)*aArray.mRealSize);
+        mArray = (_T*) operator new ( sizeof(_T)*aArray.mRealSize );
         memcpy(mArray, aArray.mArray, sizeof(_T)*aArray.mRealSize);
         mRealSize = aArray.mRealSize;
         mSize = aArray.mSize;
