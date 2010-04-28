@@ -81,6 +81,7 @@ if [%2]==[-exe] goto exetarget
 if [%3]==[-exe] goto exetarget
 if [%4]==[-exe] goto exetarget
 if [%5]==[-exe] goto exetarget
+goto :dlltarget
 
 :: set lib debug
 :setlibdebug
@@ -124,7 +125,7 @@ echo.
 echo ---------------------------------------------------------------------------
 echo * axonlib compile script for windows
 echo.
-echo usage: compile.cmd [file.cpp] [-h] [-exe | -dll] [-nmv] [-d]
+echo usage: compile.cmd [file.cpp] [-h] [-exe or -dll] [-nmv] [-d]
 echo  -exe : create an executable
 echo  -dll : create a dll (default)
 echo  -nmv : do not move result to ..\bin

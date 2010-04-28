@@ -14,11 +14,11 @@
 • simple to make custom widgets
 • resizeable plugin window/editor (in selected hosts)
 • low level gfx (gdi/xlib) canvas, surface, bitmap, ...
-• png-decoding from memory (include png directly in exe/plugin)
+• png-decoding from memory with (include png directly in exe/plugin)
 • scripts, stack-based, 4th inspired, rudimentary compilation (bytecode)
 • modular audio graph, with connectable dsp modules
 • polyphonic voice manager, event scheduler
 • heavily optimized math functions and approximations..
 • everything (almost) is optional (no bloat...)
+• mersenne twister implementation, customized for small binary size impact
 • [plus a lot of forgotten things, and all the small details...]
-
