@@ -136,7 +136,9 @@ class axModule
 
     virtual ~axModule()
       {
+        #ifndef AX_NOAUTODELETE
         deletePins();
+        #endif
       }
 
     // init

@@ -29,7 +29,9 @@ class axGraph : public axModule,
 
     virtual ~axGraph()
       {
+        #ifndef AX_NOAUTODELETE
         deleteModules();
+        #endif
       }
 
     //----------

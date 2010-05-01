@@ -1270,7 +1270,7 @@ class axPluginVst : public axPluginBase
       {
         mHostInfo.name    = "unknown";
         mHostInfo.id      = 0;
-        mHostInfo.format  = "VST";
+        mHostInfo.format  = "vst";
         return &mHostInfo;
       }
 

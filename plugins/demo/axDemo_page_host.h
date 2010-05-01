@@ -41,8 +41,8 @@ class axDemo_page_host : public wdgPanel
           int x = mRect.x;
           int y = mRect.y;
           aCanvas->setTextColor(text);
-          aCanvas->drawText(x+10,y+10,"host");    aCanvas->drawText(x+100,y+10,mHostInfo->name);
-          aCanvas->drawText(x+10,y+25,"format");  aCanvas->drawText(x+100,y+25,mHostInfo->format);
+          aCanvas->drawText(x+10,y+10,"host");    aCanvas->drawText(x+80,y+10,mHostInfo->name);
+          aCanvas->drawText(x+10,y+25,"format");  aCanvas->drawText(x+80,y+25,mHostInfo->format);
         }
       }
 

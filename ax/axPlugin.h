@@ -70,7 +70,9 @@ class axPlugin : public axPluginImpl, public axParameterListener
 
     virtual ~axPlugin()
       {
+        #ifndef AX_NOAUTODELETE
         deleteParameters();
+        #endif
 
         // auto close debug (win32)
         #ifdef AX_WIN32

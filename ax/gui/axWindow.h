@@ -83,7 +83,9 @@ class axWindow : public axWindowImpl
     //
     //----------------------------------------
 
-    //virtual void doSetPos(int aXpos, int aYpos) {}
+    //virtual void doSetPos(int aXpos, int aYpos)
+    //  {
+    //  }
 
     virtual void doSetSize(int aWidth, int aHeight)
       {
@@ -93,10 +95,18 @@ class axWindow : public axWindowImpl
         if (mFlags&wf_Align) doRealign();
       }
 
-    //virtual void doMove(int aDeltaX, int aDeltaY) {}
-    //virtual void doResize(int aDeltaX, int aDeltaY) {}
-    //virtual void doRealign(void) {}
-    //virtual void doPaint(axCanvas* aCanvas, axRect aRect) {}
+    //virtual void doMove(int aDeltaX, int aDeltaY)
+    //  {
+    //  }
+    //virtual void doResize(int aDeltaX, int aDeltaY)
+    //  {
+    //  }
+    //virtual void doRealign(void)
+    //  {
+    //  }
+    //virtual void doPaint(axCanvas* aCanvas, axRect aRect)
+    //  {
+    //  }
 
     virtual void doMouseDown(int aXpos, int aYpos, int aButton)
       {
@@ -128,20 +138,27 @@ class axWindow : public axWindowImpl
         else axWidget::doKeyUp(aKeyCode,aState);
       }
 
-    //virtual void doEnter(axWidget* aCapture) {}
-    //virtual void doLeave(axWidget* aCapture) {}
+    //virtual void doEnter(axWidget* aCapture)
+    //  {
+    //  }
+    //virtual void doLeave(axWidget* aCapture)
+    //  {
+    //  }
 
+    //----------------------------------------
     // axWidgetListener
+    //----------------------------------------
 
-    virtual void onChange(axWidget* aWidget) { redrawWidget(aWidget); }
-    virtual void onRedraw(axWidget* aWidget) { redrawWidget(aWidget); }
-    virtual void onCursor(int aCursor) { setCursor(aCursor); }
-    virtual void onHint(axString aHint) {}
+    virtual void onChange(axWidget* aWidget)  { redrawWidget(aWidget); }
+    virtual void onRedraw(axWidget* aWidget)  { redrawWidget(aWidget); }
+    virtual void onCursor(int aCursor)        { setCursor(aCursor); }
+    virtual void onHint(axString aHint)       {}
 
     virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY)
       {
         if (mFlags&wf_Align) doRealign();
-        /*if (mFlags&wf_Visible)*/ redrawAll();
+        //if (mFlags&wf_Visible)
+          redrawAll();
       }
 
     virtual void onModal(bool aModal, axWidget* aWidget)

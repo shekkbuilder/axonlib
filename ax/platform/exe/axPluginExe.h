@@ -17,8 +17,9 @@ class axPluginExe : public axPluginBase//,
   friend int main(void);
 
   protected:
-    axString  mTitle;
-    char      mTitleBuffer[256];
+    axString    mTitle;
+    char        mTitleBuffer[256];
+    axHostInfo  mHostInfo;
 
   protected:
 
@@ -63,6 +64,14 @@ class axPluginExe : public axPluginBase//,
     //- timer thread for doIdleEditor
 
     //--------------------------------------------------
+
+    virtual axHostInfo* getHostInfo(void)
+      {
+        mHostInfo.name    = "standalone";
+        mHostInfo.id      = 0;
+        mHostInfo.format  = "exe";
+        return &mHostInfo;
+      }
 
     virtual void describe(axString aName, axString aVendor, axString aProduct, int aVersion, unsigned int aID)
       {
