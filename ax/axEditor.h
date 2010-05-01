@@ -46,7 +46,8 @@ class axEditor : public axWindow
     #ifndef AX_WIDGET_NOUPDATELIST
     axWidgets       mUpdateList;
     #endif
-
+    //axWidget*       mModalWidget;
+    //int             mModalIndex;
 
   public:
 
@@ -57,6 +58,9 @@ class axEditor : public axWindow
         axCanvas* can = getCanvas();
         mDefaultSkin = new axSkinDefault(can);
         applySkin(mDefaultSkin);
+        //mModalWidget = NULL;
+        //mModalIndex  = -1;
+
       }
 
     virtual ~axEditor()
@@ -107,20 +111,28 @@ class axEditor : public axWindow
       // - axWindow.setSize()
       // - set size of rect that will be returned in effEditGetRect
       // - vst function sizeWindow()
-      // various hosts react differently to these, and we need to do a host-check at startup,
+      // various hosts rfeact differently to these, and we need to do a host-check at startup,
       // and do more testing to see which host require what.
 
     void resizeWindow(int aWidth, int aHeight)
       {
         mRect.w = aWidth;
         mRect.h = aHeight;
-        /*axWindow::*/setSize(aWidth,aHeight);  // resize os window
+
+        // axWindow::setSize not needed for reaper, (effEditRect)
+        // but if commented out, our window woon't be told to resize
+        // same thing with energy xt2 (it supports sizeWindow
+        // (only if host doesn't do any resizing?)
+        // standalone needs it..
+        // todo: #ifdef AX_FORMAT_...
+        //#ifdef AX_FORMAT_EXE
+        axWindow::setSize(aWidth,aHeight); // double resize!
+        //#endif
+        //#ifdef AX_FORMAT_VST
         //resizeBuffer(aWidth,aHeight);
-        //doRealign();
-        //mPlugin->mWidth = aWidth;
-        //mPlugin->mHeight = aHeight;
+        //doSetSize(aWidth,aHeight);
+        //#endif
         mPlugin->notifyResizeEditor(aWidth,aHeight);
-        //mPlugin->sizeWindow(aWidth, aHeight);  // let vst host know (request to resize window), Expose
       }
 
     //----------------------------------------
@@ -171,14 +183,6 @@ class axEditor : public axWindow
 
     //----------------------------------------
 
-    virtual void doSetSize(int aWidth, int aHeight)
-      {
-        if (mPlugin) mPlugin->notifyResizeEditor(aWidth,aHeight);
-        axWindow::doSetSize(aWidth,aHeight);
-      }
-
-    //----------
-
     //[internal]
     inline void internal_redraw(axWidget* aWidget)
       {
@@ -193,7 +197,19 @@ class axEditor : public axWindow
         #endif
       }
 
-    //----------
+    //--------------------------------------------------
+    // do
+    //--------------------------------------------------
+
+    virtual void doSetSize(int aWidth, int aHeight)
+      {
+        if (mPlugin) mPlugin->notifyResizeEditor(aWidth,aHeight);
+        axWindow::doSetSize(aWidth,aHeight);
+      }
+
+    //--------------------------------------------------
+    // on
+    //--------------------------------------------------
 
     virtual void onChange(axWidget* aWidget)
       {

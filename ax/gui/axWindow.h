@@ -24,8 +24,10 @@
 class axWindow : public axWindowImpl
 
 {
-  //protected:
+  protected:
   //  axSkinDefault*  mDefaultSkin;
+    axWidget*         mModalWidget;
+    int               mModalIndex;
 
   public:
 
@@ -37,6 +39,8 @@ class axWindow : public axWindowImpl
         //mDefaultSkin = new axSkinDefault(can);
         //setSkin(mDefaultSkin/*,true*/); // no sub-widgets yet?
         //trace("- axWindow.constructor OK");
+        mModalWidget = NULL;
+        mModalIndex  = -1;
       }
 
     virtual ~axWindow()
@@ -56,6 +60,26 @@ class axWindow : public axWindowImpl
     virtual void paramChanged(axParameter* aParameter)  { /*wtrace("axWindow.paramChanged");*/ }
 
     //----------------------------------------
+
+    virtual void goModal(axWidget* aWidget)
+      {
+        mModalWidget = aWidget;
+        mModalIndex = appendWidget(mModalWidget);
+        redrawAll();
+      }
+
+    //----------
+
+    void unModal(void)
+      {
+        removeWidget(mModalIndex);
+        delete mModalWidget;
+        mModalWidget = NULL;
+        redrawAll();
+      }
+
+
+    //----------------------------------------
     //
     //----------------------------------------
 
@@ -73,11 +97,37 @@ class axWindow : public axWindowImpl
     //virtual void doResize(int aDeltaX, int aDeltaY) {}
     //virtual void doRealign(void) {}
     //virtual void doPaint(axCanvas* aCanvas, axRect aRect) {}
-    //virtual void doMouseDown(int aXpos, int aYpos, int aButton) {}
-    //virtual void doMouseUp(int aXpos, int aYpos, int aButton) {}
-    //virtual void doMouseMove(int aXpos, int aYpos, int aButton) {}
-    //virtual void doKeyDown(int aKeyCode, int aState) {}
-    //virtual void doKeyUp(int aKeyCode, int aState) {}
+
+    virtual void doMouseDown(int aXpos, int aYpos, int aButton)
+      {
+        if (mModalWidget) mModalWidget->doMouseDown(aXpos,aYpos,aButton);
+        else axWidget::doMouseDown(aXpos,aYpos,aButton);
+      }
+
+    virtual void doMouseUp(int aXpos, int aYpos, int aButton)
+      {
+        if (mModalWidget) mModalWidget->doMouseUp(aXpos,aYpos,aButton);
+        else axWidget::doMouseUp(aXpos,aYpos,aButton);
+      }
+
+    virtual void doMouseMove(int aXpos, int aYpos, int aButton)
+      {
+        if (mModalWidget) mModalWidget->doMouseMove(aXpos,aYpos,aButton);
+        else axWidget::doMouseMove(aXpos,aYpos,aButton);
+      }
+
+    virtual void doKeyDown(int aKeyCode, int aState)
+      {
+        if (mModalWidget) mModalWidget->doKeyDown(aKeyCode,aState);
+        else axWidget::doKeyDown(aKeyCode,aState);
+      }
+
+    virtual void doKeyUp(int aKeyCode, int aState)
+      {
+        if (mModalWidget) mModalWidget->doKeyUp(aKeyCode,aState);
+        else axWidget::doKeyUp(aKeyCode,aState);
+      }
+
     //virtual void doEnter(axWidget* aCapture) {}
     //virtual void doLeave(axWidget* aCapture) {}
 
@@ -93,6 +143,14 @@ class axWindow : public axWindowImpl
         if (mFlags&wf_Align) doRealign();
         /*if (mFlags&wf_Visible)*/ redrawAll();
       }
+
+    virtual void onModal(bool aModal, axWidget* aWidget)
+      {
+        trace("onModal");
+        if (aModal) goModal(aWidget);
+        else unModal();
+      }
+
 
 };
 

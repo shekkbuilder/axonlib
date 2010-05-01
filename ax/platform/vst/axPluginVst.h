@@ -46,6 +46,7 @@ class axPluginVst : public axPluginBase
   friend int      main(audioMasterCallback audioMaster);
 
   private:
+    axHostInfo    mHostInfo;
     audioMasterCallback audioMaster;
     AEffect       aeffect;
     ERect         rect;
@@ -72,7 +73,7 @@ class axPluginVst : public axPluginBase
 
     virtual int    getPlayState(void)  { return mPlayState; }
     virtual double getSamplePos(void)  { return mSamplePos; }
-    virtual double getSampleRate(void) { return mSampleRate; }
+    //virtual double getSampleRate(void) { return mSampleRate; }
     virtual double getBeatPos(void)    { return mBeatPos; }
     virtual double getTempo(void)      { return mTempo; }
 
@@ -174,8 +175,8 @@ class axPluginVst : public axPluginBase
 
     inline AEffect* getInstance() { return &aeffect; }
 
-  private:
-  //protected:
+  //private:
+  protected:
 
     //----------------------------------------
     // AEffect flags
@@ -259,18 +260,17 @@ class axPluginVst : public axPluginBase
 
     //----------
 
-    // give idle time to Host application
+    // Give idle time to Host application,
+    // e.g. if plug-in editor is doing mouse tracking in a modal loop.
     // no arguments
     // @see AudioEffect::masterIdle
     // masterIdle
 
-    // Give idle time to Host application, e.g. if plug-in editor is doing mouse tracking in a modal loop.
     void masterIdle(void)
       {
         if (audioMaster) audioMaster(&aeffect,audioMasterIdle,0,0,0,0);
       }
 
-    //
     // audioMasterGetTime,
     // [value]: request mask
     // [return value]: #VstTimeInfo* or null if not supported
@@ -286,8 +286,6 @@ class axPluginVst : public axPluginBase
         return 0;
       }
 
-    //----------
-
     //audioMasterProcessEvents,
     // [ptr]: pointer to #VstEvents  @see VstEvents @see AudioEffectX::sendVstEventsToHost
     // Can be called inside processReplacing.
@@ -300,11 +298,9 @@ class axPluginVst : public axPluginBase
         return false;
       }
 
-    //----------
-
-    //TODO:
-
-    //audioMasterIOChanged,			            // [return value]: 1 if supported  @see AudioEffectX::ioChanged
+    //audioMasterIOChanged,
+    // [return value]: 1 if supported
+    // @see AudioEffectX::ioChanged
 
     //audioMasterSizeWindow,
     // [index]: new width
@@ -317,29 +313,107 @@ class axPluginVst : public axPluginBase
         return false;
       }
 
-    //audioMasterGetSampleRate,		          // [return value]: current sample rate  @see AudioEffectX::updateSampleRate
-    //audioMasterGetBlockSize,		          // [return value]: current block size  @see AudioEffectX::updateBlockSize
-    //audioMasterGetInputLatency,		        // [return value]: input latency in audio samples  @see AudioEffectX::getInputLatency
-    //audioMasterGetOutputLatency,	        // [return value]: output latency in audio samples  @see AudioEffectX::getOutputLatency
-    //audioMasterGetCurrentProcessLevel,	  // [return value]: current process level  @see VstProcessLevels
-    //audioMasterGetAutomationState,		    // [return value]: current automation state  @see VstAutomationStates
-    //audioMasterOfflineStart,			        // [index]: numNewAudioFiles [value]: numAudioFiles [ptr]: #VstAudioFile*  @see AudioEffectX::offlineStart
-    //audioMasterOfflineRead,				        // [index]: bool readSource [value]: #VstOfflineOption* @see VstOfflineOption [ptr]: #VstOfflineTask*  @see VstOfflineTask @see AudioEffectX::offlineRead
-    //audioMasterOfflineWrite,			        // @see audioMasterOfflineRead @see AudioEffectX::offlineRead
-    //audioMasterOfflineGetCurrentPass,	    // @see AudioEffectX::offlineGetCurrentPass
-    //audioMasterOfflineGetCurrentMetaPass, // @see AudioEffectX::offlineGetCurrentMetaPass
-    //audioMasterGetVendorString,			      // [ptr]: char buffer for vendor string, limited to #kVstMaxVendorStrLen  @see AudioEffectX::getHostVendorString
-    //audioMasterGetProductString,		      // [ptr]: char buffer for vendor string, limited to #kVstMaxProductStrLen  @see AudioEffectX::getHostProductString
-    //audioMasterGetVendorVersion,		      // [return value]: vendor-specific version  @see AudioEffectX::getHostVendorVersion
-    //audioMasterVendorSpecific,			      // no definition, vendor specific handling  @see AudioEffectX::hostVendorSpecific
-    //audioMasterCanDo,					            // [ptr]: "can do" string [return value]: 1 for supported
-    //audioMasterGetLanguage,				        // [return value]: language code  @see VstHostLanguage
-    //audioMasterGetDirectory,			        // [return value]: FSSpec on MAC, else char*  @see AudioEffectX::getDirectory
-    //audioMasterUpdateDisplay,			        // no arguments
-    //audioMasterBeginEdit,                 // [index]: parameter index  @see AudioEffectX::beginEdit
-    //audioMasterEndEdit,                   // [index]: parameter index  @see AudioEffectX::endEdit
-    //audioMasterOpenFileSelector,		      // [ptr]: VstFileSelect* [return value]: 1 if supported  @see AudioEffectX::openFileSelector
-    //audioMasterCloseFileSelector,		      // [ptr]: VstFileSelect*  @see AudioEffectX::closeFileSelector
+    //audioMasterGetSampleRate,
+    // [return value]: current sample rate
+    // @see AudioEffectX::updateSampleRate
+
+    virtual double getSampleRate(void)
+      {
+        if (audioMaster)
+        {
+          VstIntPtr res = audioMaster (&aeffect, audioMasterGetSampleRate, 0, 0, 0, 0);
+          if (res>0) mSampleRate = (float)res;
+        }
+        return mSampleRate;
+      }
+
+    //audioMasterGetBlockSize,
+    // [return value]: current block size
+    // @see AudioEffectX::updateBlockSize
+
+    //audioMasterGetInputLatency,
+    // [return value]: input latency in audio samples
+    // @see AudioEffectX::getInputLatency
+
+    //audioMasterGetOutputLatency,
+    // [return value]: output latency in audio samples
+    // @see AudioEffectX::getOutputLatency
+
+    //audioMasterGetCurrentProcessLevel,
+    // [return value]: current process level
+    // @see VstProcessLevels
+
+    //audioMasterGetAutomationState,
+    // [return value]: current automation state
+    // @see VstAutomationStates
+
+    //audioMasterOfflineStart,
+    // [index]: numNewAudioFiles [value]: numAudioFiles [ptr]: #VstAudioFile*
+    // @see AudioEffectX::offlineStart
+
+    //audioMasterOfflineRead,
+    // [index]: bool readSource [value]: #VstOfflineOption*
+    // @see VstOfflineOption [ptr]: #VstOfflineTask*
+    // @see VstOfflineTask
+    // @see AudioEffectX::offlineRead
+
+    //audioMasterOfflineWrite,
+    // @see audioMasterOfflineRead
+    // @see AudioEffectX::offlineRead
+
+    //audioMasterOfflineGetCurrentPass,
+    // @see AudioEffectX::offlineGetCurrentPass
+
+    //audioMasterOfflineGetCurrentMetaPass,
+    // @see AudioEffectX::offlineGetCurrentMetaPass
+
+    //audioMasterGetVendorString,
+    // [ptr]: char buffer for vendor string, limited to #kVstMaxVendorStrLen
+    // @see AudioEffectX::getHostVendorString
+
+    //audioMasterGetProductString,
+    // [ptr]: char buffer for vendor string, limited to #kVstMaxProductStrLen
+    // @see AudioEffectX::getHostProductString
+
+    //audioMasterGetVendorVersion,
+    // [return value]: vendor-specific version
+    // @see AudioEffectX::getHostVendorVersion
+
+    //audioMasterVendorSpecific,
+    // no definition, vendor specific handling
+    // @see AudioEffectX::hostVendorSpecific
+
+    //audioMasterCanDo,
+    // [ptr]: "can do" string
+    // [return value]: 1 for supported
+
+    //audioMasterGetLanguage,
+    // [return value]: language code
+    // @see VstHostLanguage
+
+    //audioMasterGetDirectory,
+    // [return value]: FSSpec on MAC, else char*
+    // @see AudioEffectX::getDirectory
+
+    //audioMasterUpdateDisplay,
+    // no arguments
+
+    //audioMasterBeginEdit,
+    // [index]: parameter index
+    // @see AudioEffectX::beginEdit
+
+    //audioMasterEndEdit,
+    // [index]: parameter index
+    // @see AudioEffectX::endEdit
+
+    //audioMasterOpenFileSelector,
+    // [ptr]: VstFileSelect*
+    // [return value]: 1 if supported
+    // @see AudioEffectX::openFileSelector
+
+    //audioMasterCloseFileSelector,
+    // [ptr]: VstFileSelect*
+    // @see AudioEffectX::closeFileSelector
 
     //----------------------------------------
     //
@@ -360,6 +434,7 @@ class axPluginVst : public axPluginBase
     // and clear the list
     void sendMidiAll(void)
       {
+        //trace("sendMidiAll");
         int num = mMidiEventList.numEvents;
         if( num>0 )
         {
@@ -371,30 +446,8 @@ class axPluginVst : public axPluginBase
         }
       }
 
-    //----------
-
+  //private:
   protected:
-
-    // append midi event to list
-    virtual void sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3)
-      {
-        int num = mMidiEventList.numEvents;
-        VstMidiEvent* event = (VstMidiEvent*)( mMidiEventList.events[ num ] );
-        event->type         = kVstMidiType;
-        event->deltaFrames  = offset;
-        event->midiData[0]  = msg1;
-        event->midiData[1]  = msg2;
-        event->midiData[2]  = msg3;
-        event->midiData[3]  = 0;
-        event->byteSize     = sizeof(VstMidiEvent);
-        event->flags        = 0;
-        event->noteLength   = 0;
-        event->noteOffset   = 0;
-        event->detune       = 0;
-        mMidiEventList.numEvents+=1;
-      }
-
-  private:
 
     //----------------------------------------
     //
@@ -1208,6 +1261,19 @@ class axPluginVst : public axPluginBase
     //
     //--------------------------------------------------
 
+    //virtual axSystemInfo* getSystemInfo(void)
+    //  {
+    //    return NULL;
+    //  }
+
+    virtual axHostInfo* getHostInfo(void)
+      {
+        mHostInfo.name    = "unknown";
+        mHostInfo.id      = 0;
+        mHostInfo.format  = "VST";
+        return &mHostInfo;
+      }
+
     virtual void describe(axString aName, axString aVendor, axString aProduct, int aVersion, unsigned int aID)
       {
         #ifdef AX_DEBUG
@@ -1310,6 +1376,26 @@ class axPluginVst : public axPluginBase
         mTempo      = mTimeInfo->tempo;
       }
 
+    //----------
+
+    // append midi event to list
+    virtual void sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3)
+      {
+        int num = mMidiEventList.numEvents;
+        VstMidiEvent* event = (VstMidiEvent*)( mMidiEventList.events[ num ] );
+        event->type         = kVstMidiType;
+        event->deltaFrames  = offset;
+        event->midiData[0]  = msg1;
+        event->midiData[1]  = msg2;
+        event->midiData[2]  = msg3;
+        event->midiData[3]  = 0;
+        event->byteSize     = sizeof(VstMidiEvent);
+        event->flags        = 0;
+        event->noteLength   = 0;
+        event->noteOffset   = 0;
+        event->detune       = 0;
+        mMidiEventList.numEvents+=1;
+      }
 };
 
 typedef axPluginVst axPluginImpl;

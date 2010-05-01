@@ -33,6 +33,22 @@
 
 //----------------------------------------------------------------------
 
+struct axSystemInfo
+{
+  axString  os;
+  int       cpuid;
+  char*     cpuidstr;
+};
+
+struct axHostInfo
+{
+  axString name;
+  int      id;
+  axString format;
+};
+
+//----------------------------------------------------------------------
+
 class axPluginBase// : public axParameterListener
 {
   friend class axEditor;
@@ -62,17 +78,18 @@ class axPluginBase// : public axParameterListener
 
   public:
 
-    //inline int getFlags(void)         { return mPlugFlags; }
-    inline axRect getEditorRect(void) { return mEditorRect; }
-    inline bool isEditorOpen(void)    { return mEditorOpen; }
+    //inline int     getFlags(void)       { return mPlugFlags; }
+    inline axRect   getEditorRect(void) { return mEditorRect; }
+    inline bool     isEditorOpen(void)  { return mEditorOpen; }
 
-    virtual int    getPlayState(void)  { return 0; }
-    virtual double getSamplePos(void)  { return 0; }
-    virtual double getSampleRate(void) { return 0; }
-    virtual double getBeatPos(void)    { return 0; }
-    virtual double getTempo(void)      { return 0; }
+    virtual int     getPlayState(void)  { return 0; }
+    virtual double  getSamplePos(void)  { return 0; }
+    virtual double  getSampleRate(void) { return 0; }
+    virtual double  getBeatPos(void)    { return 0; }
+    virtual double  getTempo(void)      { return 0; }
 
-    //
+    virtual axSystemInfo* getSystemInfo(void) { return NULL; }
+    virtual axHostInfo*   getHostInfo(void)   { return NULL; }
 
     // call this to descript your plugin.
     // most of these are directly related to similar vst features
@@ -105,56 +122,49 @@ class axPluginBase// : public axParameterListener
     // current time (in beats), samplerate, etc...
     virtual void  updateTimeInfo(void) {}
 
-    //virtual void resizeEditor(int aWidth, int aHeight) { mEditorRect.w=aWidth; mEditorRect.h=aHeight; }
-
+    //
+    virtual void sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3) {}
 
   protected:
 
-    //----------
-
     // this will be called when the plugins is suspend/resume, and open/close
-    virtual void      doStateChange(int aState) {}
+    virtual void doStateChange(int aState) {}
 
     // transport state has changed
-    virtual void      doTransportChange(int aState) {}
+    virtual void doTransportChange(int aState) {}
 
     // set new program
-    virtual void      doSetProgram(int aProgram) {}
+    virtual void doSetProgram(int aProgram) {}
 
     // parameter calue has changed, grab new value here
-    virtual void      doSetParameter(axParameter* aParameter) {}
+    virtual void doSetParameter(axParameter* aParameter) {}
 
     // not used
-    //virtual bool      doProcessEvents(void) {return false;}
+    //virtual bool doProcessEvents(void) {return false;}
 
     // this will be called for each incoming midi message, before doProcessBlock
-    virtual void      doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3) {}
+    virtual void doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3) {}
 
     // process a block of samples. return true if you did all needed work,
     // or false if doProcessSample should be called for each sample
-    virtual bool      doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize) {return false;}
+    virtual bool doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize) {return false;}
 
     // process one sample.
     // only called if you returned true from doProcessBlock
-    virtual void      doProcessSample(SPL** aInputs, SPL** aOutputs) {}
+    virtual void doProcessSample(SPL** aInputs, SPL** aOutputs) {}
 
     // called after current block is finished, do any eventual post-processing here
-    virtual void      doPostProcess(SPL** aInputs, SPL** aOutputs, int aSize) {}
+    virtual void doPostProcess(SPL** aInputs, SPL** aOutputs, int aSize) {}
 
     // create and open your editor
     virtual axWindow* doOpenEditor(axContext* aContext) { return NULL; }
 
     // close and destroy the editor
-    virtual void      doCloseEditor(void) {}
+    virtual void doCloseEditor(void) {}
 
     // called regularly when the editor is open
     // host decides rate (some hosts is configure-able)
-    virtual void      doIdleEditor(void) {}
-
-    //----------
-
-    //virtual void onChange(axParameter* aParameter) { trace("axPluginBase.onChange(par)"); }
-
+    virtual void doIdleEditor(void) {}
 
 };
 

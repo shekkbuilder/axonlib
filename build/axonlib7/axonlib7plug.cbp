@@ -15,6 +15,7 @@
 					<Add option="-g" />
 					<Add option="-shared" />
 					<Add option="-DAX_FORMAT_VST" />
+					<Add option="-DAX_DEBUG" />
 				</Compiler>
 				<Linker>
 					<Add option="-shared" />
@@ -43,6 +44,7 @@
 				<Compiler>
 					<Add option="-g" />
 					<Add option="-DAX_FORMAT_EXE" />
+					<Add option="-DAX_DEBUG" />
 				</Compiler>
 			</Target>
 			<Target title="win32 exe release">

@@ -1,6 +1,3 @@
-//#define AX_DEBUG
-//#include "core/axDebug.h"
-
 #include "axPlugin.h"
 #include "par/parFloat.h"
 
@@ -71,7 +68,7 @@ class myPlugin : public axPlugin
     //----------
 
     //[internal]
-    int calcSize(float delay, float tempo, float srate)
+    inline int calcSize(float delay, float tempo, float srate)
       {
         float sec_per_beat = 60 / tempo;
         float spl_per_beat = srate * sec_per_beat;
@@ -109,12 +106,12 @@ class myPlugin : public axPlugin
 
 //----------------------------------------------------------------------
 
-#undef MAX_BEATS
-#undef MIN_BPM
-#undef MAX_SRATE
-#undef MAX_SECONDS_PER_BEAT
-#undef MAX_SAMPLES_PER_BEAT
-#undef MAX_DELAY_LENGTH
+//#undef MAX_BEATS
+//#undef MIN_BPM
+//#undef MAX_SRATE
+//#undef MAX_SECONDS_PER_BEAT
+//#undef MAX_SAMPLES_PER_BEAT
+//#undef MAX_DELAY_LENGTH
 
 //----------------------------------------------------------------------
 AX_ENTRYPOINT(myPlugin)

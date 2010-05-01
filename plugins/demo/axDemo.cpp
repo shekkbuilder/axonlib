@@ -1,8 +1,3 @@
-#define AX_DEBUG
-#define AX_DEBUG_AUTO_STD
-
-#define AX_WIDGET_UPDATELIST
-
 #include "axPlugin.h"
 #include "axDemo_editor.h"
 #include "axDemo_graph.h"
@@ -12,7 +7,6 @@ class axDemo : public axPlugin
   private:
     axDemo_editor* mEditor;
     axDemo_graph*  mGraph;
-    //axEditor* mEditor;
     axParameter   *p1,*p2,*p3,*p4,*p5;
   public:
 
@@ -23,13 +17,15 @@ class axDemo : public axPlugin
         mGraph->doCompile();
         describe("axDemo","ccernn","axonlib example",0,AX_MAGIC+0xFFFF);
         setupAudio(2,2,false);
-        setupEditor(500,350);
+        setupEditor(350,450);
         appendParameter( p1 = new axParameter(this,"p1","",0.2) );
         appendParameter( p2 = new axParameter(this,"p2","",0.4) );
         appendParameter( p3 = new axParameter(this,"p3","",0.6) );
         appendParameter( p4 = new axParameter(this,"p4","",0.8) );
         appendParameter( p5 = new axParameter(this,"p5","",1.0) );
         setupParameters();
+        char* caps = axCpuCapsString();
+        trace("cpu caps: " << caps);
       }
 
     //----------
@@ -120,6 +116,7 @@ class axDemo : public axPlugin
       {
         trace(":: doOpenEditor");
         mEditor = new axDemo_editor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
+        mEditor->setup(getSystemInfo(),getHostInfo());
         mEditor->connect(mEditor->w_Page_widgets->w1,p1);
         mEditor->connect(mEditor->w_Page_widgets->w2,p2);
         mEditor->connect(mEditor->w_Page_widgets->w3,p3);

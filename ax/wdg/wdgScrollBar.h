@@ -61,22 +61,25 @@ class wdgScrollBar : public axWidget
 
     virtual void doMouseDown(int aX, int aY, int aB)
       {
-        is_dragging = true;
-        int thumbsize,numpixels;
-        if (hasFlag(wf_Vertical))
+        if (aB==bu_Left)
         {
-          thumbsize = (int)((float)mRect.h*mThumbSize);
-          numpixels = mRect.h - thumbsize;
+          is_dragging = true;
+          int thumbsize,numpixels;
+          if (hasFlag(wf_Vertical))
+          {
+            thumbsize = (int)((float)mRect.h*mThumbSize);
+            numpixels = mRect.h - thumbsize;
+          }
+          else
+          {
+            thumbsize = (int)((float)mRect.w*mThumbSize);
+            numpixels = mRect.w - thumbsize;
+          }
+          if (numpixels<=0) numpixels = 1;  // HACK
+          pixel_size = 1.0f/(float)numpixels;
+          clickx = aX;
+          clicky = aY;
         }
-        else
-        {
-          thumbsize = (int)((float)mRect.w*mThumbSize);
-          numpixels = mRect.w - thumbsize;
-        }
-        if (numpixels<=0) numpixels = 1;  // HACK
-        pixel_size = 1.0f/(float)numpixels;
-        clickx = aX;
-        clicky = aY;
       }
 
 
@@ -84,7 +87,7 @@ class wdgScrollBar : public axWidget
 
     virtual void doMouseUp(int aX, int aY, int aB)
       {
-        is_dragging = false;
+        if (aB==bu_Left) is_dragging = false;
       }
 
     //----------
