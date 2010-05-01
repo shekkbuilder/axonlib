@@ -16,6 +16,7 @@
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-DAX_FORMAT_EXE" />
+					<Add option="-DAX_DEBUG" />
 					<Add directory="../../ax" />
 				</Compiler>
 				<Linker>
@@ -52,6 +53,7 @@
 					<Add option="-g" />
 					<Add option="-shared" />
 					<Add option="-DAX_FORMAT_VST" />
+					<Add option="-DAX_DEBUG" />
 					<Add directory="../../ax" />
 					<Add directory="../../../vstsdk24" />
 				</Compiler>
@@ -90,6 +92,7 @@
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-DAX_FORMAT_EXE" />
+					<Add option="-DAX_DEBUG" />
 					<Add directory="../../ax" />
 				</Compiler>
 				<Linker>
@@ -125,6 +128,7 @@
 					<Add option="-shared" />
 					<Add option="-mwindows" />
 					<Add option="-DAX_FORMAT_VST" />
+					<Add option="-DAX_DEBUG" />
 					<Add directory="../../ax" />
 					<Add directory="../../../vstsdk24" />
 				</Compiler>

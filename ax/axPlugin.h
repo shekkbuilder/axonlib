@@ -8,6 +8,7 @@
 #include "axDefines.h"
 #include "core/axDebug.h"
 #include "core/axMemory.h"
+#include "core/axUtils.h"
 #include "platform/axContext.h"
 #include "base/axPluginBase.h"
 
