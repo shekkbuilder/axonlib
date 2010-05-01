@@ -4,24 +4,39 @@
 
 #include "gui/axWidget.h"
 
+// sizer direction
+#define sd_None       0
+#define sd_Horizontal 1
+#define sd_Vertical   2
+#define sd_All        3
+
 class wdgSizer : public axWidget
 {
   protected:
-    int prevx,prevy;
-    bool mIsDragging;
+    int       prevx,prevy;
+    bool      mIsDragging;
     axWidget* mTarget;
+    int       mSizeCursor;
+    int       mDirection;
+
   public:
-    wdgSizer(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
+    wdgSizer(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None, int aDirection=sd_Horizontal)
     : axWidget(aListener,aRect,aAlignment)
       {
-        mTarget = NULL;
+        mTarget     = NULL;
         mIsDragging = false;
+        mDirection  = aDirection;
+        switch(mDirection)
+        {
+          case sd_None:       mSizeCursor = DEF_CURSOR;        break;
+          case sd_Horizontal: mSizeCursor = cu_ArrowLeftRight; break;
+          case sd_Vertical:   mSizeCursor = cu_ArrowUpDown;    break;
+          case sd_All:        mSizeCursor = cu_Move;           break;
+        }
       }
 
-    inline void setTarget(axWidget* aTarget)
-      {
-        mTarget=aTarget;
-      }
+    inline void setTarget(axWidget* aTarget) { mTarget=aTarget; }
+    inline void setCursor(int aCursor) { mSizeCursor=aCursor; }
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
@@ -31,16 +46,17 @@ class wdgSizer : public axWidget
 
     virtual void doMouseDown(int aXpos, int aYpos, int aButton)
       {
-        mIsDragging = true;
-        prevx = aXpos;
-        prevy = aYpos;
-        //axWidget::doMouseDown(aXpos,aYpos,aButton);
+        if (aButton==bu_Left)
+        {
+          mIsDragging = true;
+          prevx = aXpos;
+          prevy = aYpos;
+        }
       }
 
     virtual void doMouseUp(int aXpos, int aYpos, int aButton)
       {
-        mIsDragging = false;
-        //axWidget::doMouseUp(aXpos,aYpos,aButton);
+        if (aButton==bu_Left) mIsDragging = false;
       }
 
     virtual void doMouseMove(int aXpos, int aYpos, int aButton)
@@ -49,7 +65,8 @@ class wdgSizer : public axWidget
         {
           int deltax = aXpos - prevx;
           int deltay = aYpos - prevy;
-          //mListener->onSize(deltax,deltay);
+          if (mDirection==sd_Horizontal) deltay=0;
+          if (mDirection==sd_Vertical)   deltax=0;
           if (mTarget) mTarget->onSize(this,deltax,deltay);
           else mListener->onSize(this,deltax,deltay);
           prevx = aXpos;
@@ -58,7 +75,8 @@ class wdgSizer : public axWidget
         //axWidget::doMouseMove(aXpos,aYpos,aButton);
       }
 
-    virtual void doEnter(axWidget* aCapture) { mListener->onCursor(cu_ArrowLeftRight); }
+    //virtual void doEnter(axWidget* aCapture) { mListener->onCursor(cu_ArrowLeftRight); }
+    virtual void doEnter(axWidget* aCapture) { mListener->onCursor(mSizeCursor); }
     virtual void doLeave(axWidget* aCapture) { mListener->onCursor(DEF_CURSOR); }
 
 };

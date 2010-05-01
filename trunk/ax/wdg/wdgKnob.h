@@ -50,17 +50,20 @@ class wdgKnob : public wdgValue
 
     virtual void doMouseDown(int aXpos, int aYpos, int aButton)
       {
-        mIsDragging = true;
-        mClickX = aXpos;
-        mClickY = aYpos;
-        mClickVal = mValue;
+        if (aButton==bu_Left)
+        {
+          mIsDragging = true;
+          mClickX = aXpos;
+          mClickY = aYpos;
+          mClickVal = mValue;
+        }
       }
 
     //----------
 
     virtual void doMouseUp(int aXpos, int aYpos, int aButton)
       {
-        mIsDragging = false;
+        if (aButton==bu_Left) mIsDragging = false;
       }
 
     //----------

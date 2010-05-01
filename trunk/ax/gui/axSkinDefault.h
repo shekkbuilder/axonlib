@@ -193,8 +193,8 @@ class axSkinDefault : public axSkin
           int y = aRect.y + ipos;
           int x2 = aRect.x2();
           int y2 = y + thumb;
-          int w = (x2-x+1);
-          int h = (y2-y+1);
+          int w = (x2-x+0);
+          int h = (y2-y+0);
           fill_back(aCanvas,axRect(x,y,w,h));
           draw_frame(aCanvas,axRect(x,y,w,h)/*,false*/);
         }
@@ -206,10 +206,10 @@ class axSkinDefault : public axSkin
           int y = aRect.y;
           int x2 = x+thumb;
           int y2 = aRect.y2();
-          int w = (x2-x+1);
-          int h = (y2-y+1);
+          int w = (x2-x+0);
+          int h = (y2-y+0);
           fill_back(aCanvas,axRect(x,y,w,h));
-          draw_frame(aCanvas,axRect(x,y,w,h)/*,false*/);
+          draw_frame(aCanvas,axRect(x,y,w+1,h+1)/*,false*/);
         }
       }
 

@@ -1,6 +1,3 @@
-//#define AX_DEBUG
-//#include "core/axDebug.h"
-
 #include "axPlugin.h"
 #include "par/parInteger.h"
 

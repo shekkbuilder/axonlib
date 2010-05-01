@@ -2,15 +2,15 @@
  * This file is part of Axonlib.
  *
  * Axonlib is free software: you can redistribute it and/or modify
- * it under the terms of the Axonlib License, either version 1.0 
+ * it under the terms of the Axonlib License, either version 1.0
  * of the License, or (at your option) any later version.
  *
  * Axonlib is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE_AX for more details.
- *  
- * You should have received a copy of the Axonlib License 
+ *
+ * You should have received a copy of the Axonlib License
  * If not, see <http://axonlib.googlecode.com/>.
  */
 
@@ -60,7 +60,7 @@ inline const char* axGetFileName(const char* path)
  * swap the values of two variables <br>
  \code
  * origin: http://graphics.stanford.edu/~seander/bithacks.html
- * note: type of first variable is used 
+ * note: type of first variable is used
  * float x = 5.f;
  * float y = 3.f;
  * axSpaw(x, y);
@@ -157,7 +157,7 @@ inline const char* axGetBinaryString(long int x, unsigned int bits=32)
  * @param[in] lin float
  * @return result float
  */
-#define axLin2DB(lin) ( LOG2DB*axLogf( (lin) ) ) 
+#define axLin2DB(lin) ( LOG2DB*axLogf( (lin) ) )
 
 /**
  * converts decibel value to linear
@@ -281,6 +281,58 @@ inline void axCPUID(const int fcall=33139, int* eax=0, int* ebx=0, int* ecx=0, i
   }
 }
 
+#define cc_SSE3     0x0001
+#define cc_SSSE3    0x0002
+#define cc_FPU      0x0004
+#define cc_CMOV     0x0008
+#define cc_SSE      0x0010
+#define cc_SSE2     0x0020
+#define cc_SSE4A    0x0040
+#define cc_SSE5     0x0080
+#define cc_MMX      0x0100
+#define cc_MMXEXT   0x0200
+#define cc_3DNOW    0x0400
+#define cc_3DNOWEXT 0x0800
+
+int axCpuCaps(void)
+{
+  int caps = 0;
+  axCPUID();
+  if (__AX_SSE3__)      caps |= cc_SSE3;
+  if (__AX_SSSE3__)     caps |= cc_SSSE3;
+  if (__AX_FPU__)       caps |= cc_FPU;
+  if (__AX_CMOV__)      caps |= cc_CMOV;
+  if (__AX_SSE__)       caps |= cc_SSE;
+  if (__AX_SSE4A__)     caps |= cc_SSE4A;
+  if (__AX_SSE5__)      caps |= cc_SSE5;
+  if (__AX_MMX__)       caps |= cc_MMX;
+  if (__AX_MMXEXT__)    caps |= cc_MMXEXT;
+  if (__AX_3DNOW__)     caps |= cc_3DNOW;
+  if (__AX_3DNOWEXT__)  caps |= cc_3DNOWEXT;
+  return caps;
+}
+
+static char cpustringbuf[256];
+
+char* axCpuCapsString(void)
+{
+  axCPUID();
+  sprintf(cpustringbuf,"%s%s%s%s%s%s%s%s%s%s%s%s",
+          __AX_SSE3__     ? "SSE3 "     : "" ,
+          __AX_SSSE3__    ? "SSSE3 "    : "" ,
+          __AX_FPU__      ? "FPU "      : "" ,
+          __AX_CMOV__     ? "CMOV "     : "" ,
+          __AX_SSE__      ? "SSE "      : "" ,
+          __AX_SSE2__     ? "SSE2 "     : "" ,
+          __AX_SSE4A__    ? "SSE4A "    : "" ,
+          __AX_SSE5__     ? "SSE5 "     : "" ,
+          __AX_MMX__      ? "MMX "      : "" ,
+          __AX_MMXEXT__   ? "MMXEXT "   : "" ,
+          __AX_3DNOW__    ? "3DNOW "    : "" ,
+          __AX_3DNOWEXT__ ? "3DNOWEXT " : "" );
+  return cpustringbuf;
+}
+
 /**
  * conversation from bandwidth (octaves) to q factor
  * @param[in] n float - length in octaves
@@ -323,7 +375,7 @@ inline u64 axRdtsc()
   u64 x;
   __asm__ __volatile__ ( "rdtsc;" : "=A" (x) );
   return x;
-}  
+}
 
 /**
  * radix algorithm

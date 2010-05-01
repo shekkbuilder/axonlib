@@ -51,12 +51,19 @@ class axDemo_editor : public axEditor
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
       {
 
+        //----- bottom [status panel] -----
+
+        appendWidget( w_Status = new wdgPanel(this,axRect(0,20),wa_Bottom) );
+          #ifdef AX_FORMAT_VST
+          w_Status->appendWidget( w_WinSizer = new wdgSizer(this,axRect(10,10),wa_RightBottom,sd_All) );
+          //w_WinSizer->setCursor(cu_Move);
+          #endif
+            //w_WinSizer->setTarget(this);
+
         //----- left [page Buttons] -----
 
-        appendWidget( w_LeftPanel = new wdgPanel(this,axRect(0,0,150,0),wa_Left) );
-
+        appendWidget( w_LeftPanel = new wdgPanel(this,axRect(0,0,100,0),wa_Left) );
         w_LeftPanel->appendWidget( w_Scroll = new wdgScrollBox(this,NULL_RECT,wa_Client) );
-
           w_Scroll->appendWidget( w_Select = new wdgButtons(this,axRect(0,180+26),wa_Top) );
             w_Select->getContainer()->setBorders(5,5,2,2);
             w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"canvas", "canvas" ) );
@@ -72,14 +79,18 @@ class axDemo_editor : public axEditor
 
         //----- [resizer] -----
 
-        appendWidget( w_Sizer = new wdgSizer(this,axRect(5,0),wa_Left) );
+        appendWidget( w_Sizer = new wdgSizer(this,axRect(5,0),wa_Left,sd_Horizontal) );
           w_Sizer->setTarget(w_LeftPanel);
+          //w_Sizer->setCursor(cu_ArrowLeftRight);
 
-        //----- bottom [status panel] -----
-
-        appendWidget( w_Status = new wdgPanel(this,axRect(0,20),wa_Bottom) );
-          w_Status->appendWidget( w_WinSizer = new wdgSizer(this,axRect(10,10),wa_RightBottom) );
-            //w_WinSizer->setTarget(this);
+//        //----- bottom [status panel] -----
+//
+//        appendWidget( w_Status = new wdgPanel(this,axRect(0,20),wa_Bottom) );
+//          #ifdef AX_FORMAT_VST
+//          w_Status->appendWidget( w_WinSizer = new wdgSizer(this,axRect(10,10),wa_RightBottom) );
+//          w_WinSizer->setCursor(cu_Move);
+//          #endif
+//            //w_WinSizer->setTarget(this);
 
         //----- right [pages, aka tabs] -----
 
@@ -110,6 +121,16 @@ class axDemo_editor : public axEditor
 
     //--------------------------------------------------
 
+    void setup(axSystemInfo* aSystemInfo, axHostInfo* aHostInfo)
+      {
+        w_Page_system->setup(aSystemInfo);
+        w_Page_host->setup(aHostInfo);
+      }
+
+    //--------------------------------------------------
+    // on
+    //--------------------------------------------------
+
     virtual void onChange(axWidget* aWidget)
       {
         if (aWidget==w_Select)
@@ -118,7 +139,6 @@ class axDemo_editor : public axEditor
           int id = w_Select->getVal();
           //resizeWindow(100+id*100,300);
           w_RightPanel->setPage(id,true); // redraw
-
         }
         //todo: plugin.param
         axEditor::onChange(aWidget);
@@ -128,6 +148,7 @@ class axDemo_editor : public axEditor
 
     virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY)
       {
+        #ifdef AX_FORMAT_VST
         if (aWidget==w_WinSizer)
         {
           {
@@ -140,6 +161,7 @@ class axDemo_editor : public axEditor
           }
         }
         else
+        #endif
         axEditor::onSize(aWidget, aDeltaX, aDeltaY);
         //int w = mRect.w + aDeltaX;
         //int h = mRect.h + aDeltaY;
@@ -147,13 +169,28 @@ class axDemo_editor : public axEditor
         //mListener->onSize(aWidget,aDeltaX,aDeltaY);
       }
 
-
+    //--------------------------------------------------
+    // do
     //--------------------------------------------------
 
     virtual void doTimer(void)
       {
         trace("doTimer");
       }
+
+    virtual void doKeyDown(int aKeyCode, int aState)
+      {
+        if (mModalWidget) unModal();
+        else axEditor::doKeyDown(aKeyCode,aState);
+      }
+
+    virtual void doMouseDown(int aXpos, int aYpos, int aButton)
+      {
+        if (mModalWidget && (aButton==bu_Right)) unModal();
+        else axEditor::doMouseDown(aXpos,aYpos,aButton);
+      }
+
+    //--------------------------------------------------
 
 };
 

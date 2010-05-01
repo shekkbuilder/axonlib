@@ -4,6 +4,7 @@
 
 //TODO: updateList (dirtyParameters)
 
+#include "axConfig.h"
 #include "axDefines.h"
 #include "core/axDebug.h"
 #include "core/axMemory.h"
@@ -46,6 +47,8 @@ this is inherited from Impl, because:
 //class axPlugin : public axPluginBase, public axParameterListener
 class axPlugin : public axPluginImpl, public axParameterListener
 {
+  protected:
+    axSystemInfo mSystemInfo;
   public:
     axPlugin(axContext* aContext,int aPluginFlags)
     //: axPluginBase(aContext,aPluginFlags)
@@ -60,6 +63,8 @@ class axPlugin : public axPluginImpl, public axParameterListener
             axDwinCreate();
           #endif
         #endif
+        //updateSampleRate();
+        //updateTimeInfo();
       }
 
     virtual ~axPlugin()
@@ -77,7 +82,22 @@ class axPlugin : public axPluginImpl, public axParameterListener
         #endif
       }
 
-    //----------
+    //--------------------------------------------------
+
+    virtual axSystemInfo* getSystemInfo(void)
+      {
+        #ifdef AX_LINUX
+          mSystemInfo.os = "linux";
+        #endif
+        #ifdef AX_WIN32
+          mSystemInfo.os = "win32";
+        #endif
+        mSystemInfo.cpuid    = axCpuCaps();
+        mSystemInfo.cpuidstr = axCpuCapsString();
+        return &mSystemInfo;
+      }
+
+    //--------------------------------------------------
 
     inline void appendParameter(axParameter* aParameter)
       {
@@ -85,6 +105,8 @@ class axPlugin : public axPluginImpl, public axParameterListener
         aParameter->setIndex(index);
         mParameters.append(aParameter);
       }
+
+    //----------
 
     inline void deleteParameters(void)
       {
@@ -95,6 +117,8 @@ class axPlugin : public axPluginImpl, public axParameterListener
     //  {
     //    return mParameters[aIndex];
     //  }
+
+    //--------------------------------------------------
 
     virtual void onChange(axParameter* aParameter)
       {

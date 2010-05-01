@@ -69,6 +69,7 @@ class axWidgetListener
     virtual void onCursor(int aCursor=DEF_PENWIDTH) {}
     virtual void onHint(axString aHint) {}
     virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY) {}
+    virtual void onModal(bool aModal, axWidget* aWidget) {}
 };
 
 //----------------------------------------------------------------------
@@ -98,7 +99,8 @@ class axWidget : public axWidgetListener
     axWidgets         mWidgets;
     axWidget*         mCapturedWidget;
     axWidget*         mHoverWidget;
-    axWidget*         mModalWidget;
+    //axWidget*         mModalWidget;
+    //int               mModalIndex;
     axRect            mClient;                // current Client area
     axRect            mContent;               // rect encapsulating all sub-widgets (updated in doRealign)
     int               mStackedX, mStackedY;   // where to put next wal_Stacked widget
@@ -131,7 +133,8 @@ class axWidget : public axWidgetListener
         mListener       = aListener;
         mCapturedWidget = NULL;
         mHoverWidget    = this;
-        mModalWidget    = NULL;
+        //mModalWidget    = NULL;
+        //mModalIndex     = -1;
         mClient         = mRect;
         mContent        = NULL_RECT;
         mStackedX       = 0;
@@ -200,12 +203,17 @@ class axWidget : public axWidgetListener
 
     //virtual void goModal(axWidget* aWidget)
     //  {
+    //    //unCapture();
     //    mModalWidget = aWidget;
-    //    //mModal = true;
     //  }
 
     //virtual void unCapture(void)
     //  {
+    //    if (mCapturedWidget)
+    //    {
+    //      mCapturedWidget=NULL;
+    //      for (int i=0; i<mWidgets.size(); i++) mWidgets[i]->unCapture();
+    //    }
     //  }
 
     //--------------------------------------------------
@@ -776,8 +784,8 @@ class axWidget : public axWidgetListener
 
     virtual void doMouseDown(int aXpos, int aYpos, int aButton)
       {
-        if (mModalWidget) mModalWidget->doMouseDown(aXpos,aYpos,aButton);
-        else
+        //if (mModalWidget) mModalWidget->doMouseDown(aXpos,aYpos,aButton);
+        //else
         if (mCapturedWidget) mCapturedWidget->doMouseDown(aXpos,aYpos,aButton);
         else
         {
@@ -797,8 +805,8 @@ class axWidget : public axWidgetListener
 
     virtual void doMouseUp(int aXpos, int aYpos, int aButton)
       {
-        if (mModalWidget) mModalWidget->doMouseUp(aXpos,aYpos,aButton);
-        else
+        //if (mModalWidget) mModalWidget->doMouseUp(aXpos,aYpos,aButton);
+        //else
         if (mCapturedWidget)
         {
           mCapturedWidget->doMouseUp(aXpos,aYpos,aButton);
@@ -818,8 +826,8 @@ class axWidget : public axWidgetListener
 
     virtual void doMouseMove(int aXpos, int aYpos, int aButton)
       {
-        if (mModalWidget) mModalWidget->doMouseMove(aXpos,aYpos,aButton);
-        else
+        //if (mModalWidget) mModalWidget->doMouseMove(aXpos,aYpos,aButton);
+        //else
         if (mCapturedWidget) mCapturedWidget->doMouseMove(aXpos,aYpos,aButton);
         else
         {
@@ -838,8 +846,8 @@ class axWidget : public axWidgetListener
 
     virtual void doKeyDown(int aKeyCode, int aState)
       {
-        if (mModalWidget) mModalWidget->doKeyDown(aKeyCode,aState);
-        else
+        //if (mModalWidget) mModalWidget->doKeyDown(aKeyCode,aState);
+        //else
         if (mCapturedWidget) mCapturedWidget->doKeyDown(aKeyCode,aState);
       }
 
@@ -847,8 +855,8 @@ class axWidget : public axWidgetListener
 
     virtual void doKeyUp(int aKeyCode, int aState)
       {
-        if (mModalWidget) mModalWidget->doKeyUp(aKeyCode,aState);
-        else
+        //if (mModalWidget) mModalWidget->doKeyUp(aKeyCode,aState);
+        //else
         if (mCapturedWidget) mCapturedWidget->doKeyUp(aKeyCode,aState);
       }
 
@@ -905,6 +913,13 @@ class axWidget : public axWidgetListener
         int h = mRect.h + aDeltaY;
         axWidget::doSetSize(w,h);
         mListener->onSize(aWidget,aDeltaX,aDeltaY);
+      }
+
+    //----------
+
+    virtual void onModal(bool aModal, axWidget* aWidget)
+      {
+        mListener->onModal(aModal,aWidget);
       }
 
 };

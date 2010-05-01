@@ -185,56 +185,59 @@ class wdgOctave : public axWidget
 
     virtual void doMouseDown(int aXpos, int aYpos, int aButton)
       {
-        int hit = -1;
-        axRect rec;
-        for (int note=0;note<12;note++)
+        if (aButton==bu_Left)
         {
-          int n4 = note*4;
-          rec.x =  mRect.x + mNoteRects1[n4  ];
-          rec.y =  mRect.y + mNoteRects1[n4+1];
-          rec.w = (mRect.x + mNoteRects1[n4+2]) - rec.x;
-          rec.h = (mRect.y + mNoteRects1[n4+3]) - rec.y;
-          if (rec.contains(aXpos,aYpos))
+          int hit = -1;
+          axRect rec;
+          for (int note=0;note<12;note++)
           {
-            hit = note;
-            if (mActiveMap[note])
+            int n4 = note*4;
+            rec.x =  mRect.x + mNoteRects1[n4  ];
+            rec.y =  mRect.y + mNoteRects1[n4+1];
+            rec.w = (mRect.x + mNoteRects1[n4+2]) - rec.x;
+            rec.h = (mRect.y + mNoteRects1[n4+3]) - rec.y;
+            if (rec.contains(aXpos,aYpos))
             {
-              deactivate(note);
-              mListener->onRedraw(this);
-            }
-            else
-            {
-              activate(note);
-              mListener->onRedraw(this);
-            }
-          } //contains
-          if (hit<0) // check lower part?
-          {
-            int n2 = note*2;
-            int type = internal_note_data[n2+1];
-            if (type<3) //0,1,2 = white keys
-            {
-              rec.x =  mRect.x + mNoteRects2[n4  ];
-              rec.y =  mRect.y + mNoteRects2[n4+1];
-              rec.w = (mRect.x + mNoteRects2[n4+2]) - rec.x;
-              rec.h = (mRect.y + mNoteRects2[n4+3]) - rec.y;
-              if (rec.contains(aXpos,aYpos))
+              hit = note;
+              if (mActiveMap[note])
               {
-                if (mActiveMap[note])
+                deactivate(note);
+                mListener->onRedraw(this);
+              }
+              else
+              {
+                activate(note);
+                mListener->onRedraw(this);
+              }
+            } //contains
+            if (hit<0) // check lower part?
+            {
+              int n2 = note*2;
+              int type = internal_note_data[n2+1];
+              if (type<3) //0,1,2 = white keys
+              {
+                rec.x =  mRect.x + mNoteRects2[n4  ];
+                rec.y =  mRect.y + mNoteRects2[n4+1];
+                rec.w = (mRect.x + mNoteRects2[n4+2]) - rec.x;
+                rec.h = (mRect.y + mNoteRects2[n4+3]) - rec.y;
+                if (rec.contains(aXpos,aYpos))
                 {
-                  deactivate(note);
-                  mListener->onChange(this);
-                }
-                else
-                {
-                  activate(note);
-                  mListener->onChange(this);
-                }
-              } //contains
-            } //type 0,1,2
-          } //hit
-        } // for note
-        axWidget::doMouseDown(aXpos,aYpos,aButton);
+                  if (mActiveMap[note])
+                  {
+                    deactivate(note);
+                    mListener->onChange(this);
+                  }
+                  else
+                  {
+                    activate(note);
+                    mListener->onChange(this);
+                  }
+                } //contains
+              } //type 0,1,2
+            } //hit
+          } // for note
+        }
+        //axWidget::doMouseDown(aXpos,aYpos,aButton);
       }
 
     virtual void doEnter(axWidget* aCapture) { mListener->onCursor(cu_Finger); }

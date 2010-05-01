@@ -66,47 +66,53 @@ class wdgButton : public axWidget
 
     virtual void doMouseDown(int aXpos, int aYpos, int aButton)
       {
-        if (mValue>=0.5) mState=true; else mState=false;
-        switch (mMode)
+        if (aButton==bu_Left)
         {
-          case bm_Switch:
-            if (mState)
-            {
-              mState = false;
-              mValue = 0;
-            }
-            else
-            {
+          if (mValue>=0.5) mState=true; else mState=false;
+          switch (mMode)
+          {
+            case bm_Switch:
+              if (mState)
+              {
+                mState = false;
+                mValue = 0;
+              }
+              else
+              {
+                mState = true;
+                mValue = 1;
+              }
+              mListener->onChange(this);
+              break;
+            case bm_Spring:
+              mButtonDown = true;
               mState = true;
-              mValue = 1;
-            }
-            mListener->onChange(this);
-            break;
-          case bm_Spring:
-            mButtonDown = true;
-            mState = true;
-            //mValue = 1;
-            mListener->onRedraw(this);
-            break;
-        } //switch
+              //mValue = 1;
+              mListener->onRedraw(this);
+              break;
+          } //switch
+        } //bu_Left
       }
 
     //----------
 
     virtual void doMouseUp(int aXpos, int aYpos, int aButton)
       {
-        switch (mMode)
+        if (aButton==bu_Left)
         {
-          case bm_Switch:
-            break;
-          case bm_Spring:
-            mButtonDown = false;
-            mState = false;
-            //mValue = 0;
-            if (mRect.contains(aXpos,aYpos)) mListener->onChange(this);
-            else mListener->onRedraw(this);
-            break;
-        }
+          switch (mMode)
+          {
+            case bm_Switch:
+              break;
+            case bm_Spring:
+              mButtonDown = false;
+              mState = false;
+              //mValue = 0;
+              if (mRect.contains(aXpos,aYpos)) mListener->onChange(this);
+              else mListener->onRedraw(this);
+              break;
+          } //switch
+        } //bu_Left
       }
 
     //----------
