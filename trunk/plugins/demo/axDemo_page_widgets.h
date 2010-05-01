@@ -75,24 +75,22 @@ class axDemo_page_widgets : public wdgPanel
     wdgSlider*    w3;
     wdgScrollBar* w4;
     wdgKnob*      w5;
-    wdgButton* bu;
-
-    int mx,my;
-    axWidget* modal;
-    popupButton *mb1,*mb2,*mb3,*mb4,*mb5;
+    wdgButton*    bu;
+    int           mx,my;
+    axWidget*     modal;
+    popupButton   *mb1,*mb2,*mb3,*mb4,*mb5;
 
   public:
 
     axDemo_page_widgets(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
     : wdgPanel(aListener,aRect,aAlignment)
       {
-        modal = NULL;
-        setBorders(5,5,2,2);
-        //setupWidgets(aListener);
-        //wdgButton* bu;
         axWidget* widget;
         wdgPanel* panel;
         wdgScrollBox* scroll;
+
+        modal = NULL;
+        setBorders(5,5,2,2);
 
         appendWidget( scroll = new wdgScrollBox(aListener,axRect(0,200),wa_Top) );
           widget = scroll->getContainer();//->setBorders(10,10,5,5);
@@ -101,7 +99,7 @@ class axDemo_page_widgets : public wdgPanel
           widget->setBorders(10,10,5,5);
           widget->appendWidget(      new wdgSlider(    aListener,axRect( 16,200), wa_Left,"v.slider", 0.5, true ) );
           widget->appendWidget(      new wdgLabel(     aListener,axRect(128, 20), wa_Top, "label", ta_Left ) );
-          widget->appendWidget( bu = new wdgButton(    this/*aListener*/,axRect(128, 20), wa_Top, false, "spring", "spring", ta_Center, bm_Spring ) );
+          widget->appendWidget( bu = new wdgButton(    this,     axRect(128, 20), wa_Top, false, "spring", "spring", ta_Center, bm_Spring ) );
           widget->appendWidget( w1 = new wdgButton(    aListener,axRect(128, 20), wa_Top, false, "switch", "switch", ta_Center, bm_Switch ) );
           widget->appendWidget( w2 = new wdgValue(     aListener,axRect( 80, 20), wa_TopLeft, "value", 0 ) );
           widget->appendWidget( w3 = new wdgSlider(    aListener,axRect(128, 20), wa_Top, "slider", 0 ) );
@@ -118,31 +116,43 @@ class axDemo_page_widgets : public wdgPanel
 
       }
 
+    //----------
+
     virtual ~axDemo_page_widgets()
       {
       }
+
+    //--------------------------------------------------
+    // on..
+    //--------------------------------------------------
 
     virtual void onChange(axWidget* aWidget)
       {
         mListener->onChange(aWidget);
         if (aWidget==bu)
         {
-          int x = bu->getRect().x + 10;
-          int y = bu->getRect().y + 10;
-          //TODO: wdgButtons
-          modal = new wdgPanel(this,axRect(x,y,80,110),wa_None);
+          int x = bu->getRect().x + 5;//0;
+          int y = bu->getRect().y + 5;//20;
+          modal = new wdgPanel(this,axRect(x,y,80,5*16+10),wa_None);
           modal->setBorders(5,5,0,0);
-          modal->appendWidget( mb1 = new popupButton(this,axRect(0,20),wa_Top) );
-          modal->appendWidget( mb2 = new popupButton(this,axRect(0,20),wa_Top) );
-          modal->appendWidget( mb3 = new popupButton(this,axRect(0,20),wa_Top) );
-          modal->appendWidget( mb4 = new popupButton(this,axRect(0,20),wa_Top) );
-          modal->appendWidget( mb5 = new popupButton(this,axRect(0,20),wa_Top) );
+          modal->appendWidget( mb1 = new popupButton(this,axRect(0,16),wa_Top) );
+          modal->appendWidget( mb2 = new popupButton(this,axRect(0,16),wa_Top) );
+          modal->appendWidget( mb3 = new popupButton(this,axRect(0,16),wa_Top) );
+          modal->appendWidget( mb4 = new popupButton(this,axRect(0,16),wa_Top) );
+          modal->appendWidget( mb5 = new popupButton(this,axRect(0,16),wa_Top) );
           modal->doRealign();
-          mListener->onCursor(DEF_CURSOR);
+          mListener->onCursor(DEF_CURSOR); // ?
           mListener->onModal(true,modal);
         }
         if (aWidget==mb1 || aWidget==mb2 || aWidget==mb3 || aWidget==mb4 || aWidget==mb5)
         {
+          int sel = 0;
+               if (aWidget==mb1) sel=1;
+          else if (aWidget==mb2) sel=2;
+          else if (aWidget==mb3) sel=3;
+          else if (aWidget==mb4) sel=4;
+          else if (aWidget==mb5) sel=5;
+          trace("sel: " << sel);
           mListener->onModal(false,NULL);
         }
       }

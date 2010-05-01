@@ -54,43 +54,32 @@ class axDemo_editor : public axEditor
         //----- bottom [status panel] -----
 
         appendWidget( w_Status = new wdgPanel(this,axRect(0,20),wa_Bottom) );
-          #ifdef AX_FORMAT_VST
+          //#ifdef AX_FORMAT_VST
           w_Status->appendWidget( w_WinSizer = new wdgSizer(this,axRect(10,10),wa_RightBottom,sd_All) );
-          //w_WinSizer->setCursor(cu_Move);
-          #endif
-            //w_WinSizer->setTarget(this);
+          //#endif
+          //w_WinSizer->setTarget(this);
 
         //----- left [page Buttons] -----
 
         appendWidget( w_LeftPanel = new wdgPanel(this,axRect(0,0,100,0),wa_Left) );
-        w_LeftPanel->appendWidget( w_Scroll = new wdgScrollBox(this,NULL_RECT,wa_Client) );
-          w_Scroll->appendWidget( w_Select = new wdgButtons(this,axRect(0,180+26),wa_Top) );
-            w_Select->getContainer()->setBorders(5,5,2,2);
-            w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"canvas", "canvas" ) );
-            w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"widgets","widgets") );
-            w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"system", "system" ) );
-            w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"host",   "host"   ) );
-            w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"sync",   "sync"   ) );
-            w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"params", "params" ) );
-            w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"audio",  "audio"  ) );
-            w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"midi",   "midi"   ) );
-            w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"bitmaps","bitmaps") );
-            w_Select->setMode(bm_Single);
+          w_LeftPanel->appendWidget( w_Scroll = new wdgScrollBox(this,NULL_RECT,wa_Client) );
+            w_Scroll->appendWidget( w_Select = new wdgButtons(this,axRect(0,180+26),wa_Top) );
+              w_Select->getContainer()->setBorders(5,5,2,2);
+              w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"canvas", "canvas" ) );
+              w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"widgets","widgets") );
+              w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"system", "system" ) );
+              w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"host",   "host"   ) );
+              w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"sync",   "sync"   ) );
+              w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"params", "params" ) );
+              w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"audio",  "audio"  ) );
+              w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"midi",   "midi"   ) );
+              w_Select->appendButton(new wdgButton(w_Select,axRect(0,20),wa_Top,false,"bitmaps","bitmaps") );
+              w_Select->setMode(bm_Single);
 
         //----- [resizer] -----
 
         appendWidget( w_Sizer = new wdgSizer(this,axRect(5,0),wa_Left,sd_Horizontal) );
           w_Sizer->setTarget(w_LeftPanel);
-          //w_Sizer->setCursor(cu_ArrowLeftRight);
-
-//        //----- bottom [status panel] -----
-//
-//        appendWidget( w_Status = new wdgPanel(this,axRect(0,20),wa_Bottom) );
-//          #ifdef AX_FORMAT_VST
-//          w_Status->appendWidget( w_WinSizer = new wdgSizer(this,axRect(10,10),wa_RightBottom) );
-//          w_WinSizer->setCursor(cu_Move);
-//          #endif
-//            //w_WinSizer->setTarget(this);
 
         //----- right [pages, aka tabs] -----
 
@@ -135,38 +124,26 @@ class axDemo_editor : public axEditor
       {
         if (aWidget==w_Select)
         {
-          //trace("axDemo_editor.onChange");
           int id = w_Select->getVal();
-          //resizeWindow(100+id*100,300);
-          w_RightPanel->setPage(id,true); // redraw
+          w_RightPanel->setPage(id,true);
         }
         //todo: plugin.param
         axEditor::onChange(aWidget);
       }
 
-    //--------------------------------------------------
+    //----------
 
     virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY)
       {
-        #ifdef AX_FORMAT_VST
+        //#ifdef AX_FORMAT_VST
         if (aWidget==w_WinSizer)
         {
-          {
-            trace("onSize " << aDeltaX << "," << aDeltaY);
-            axRect R = mPlugin->getEditorRect();
-            trace("       " << R.w << "," << R.h);
-            //trace("       " << mRect.w << "," << mRect.h);
-            resizeWindow( R.w + aDeltaX, R.h + aDeltaY );
-            //axWindow::onSize(aWidget, aDeltaX, aDeltaY);
-          }
+          axRect R = mPlugin->getEditorRect();
+          resizeWindow( R.w + aDeltaX, R.h + aDeltaY );
         }
         else
-        #endif
+        //#endif
         axEditor::onSize(aWidget, aDeltaX, aDeltaY);
-        //int w = mRect.w + aDeltaX;
-        //int h = mRect.h + aDeltaY;
-        //axWidget::doSetSize(w,h);
-        //mListener->onSize(aWidget,aDeltaX,aDeltaY);
       }
 
     //--------------------------------------------------
@@ -178,19 +155,21 @@ class axDemo_editor : public axEditor
         trace("doTimer");
       }
 
+    //----------
+
     virtual void doKeyDown(int aKeyCode, int aState)
       {
         if (mModalWidget) unModal();
         else axEditor::doKeyDown(aKeyCode,aState);
       }
 
+    //----------
+
     virtual void doMouseDown(int aXpos, int aYpos, int aButton)
       {
         if (mModalWidget && (aButton==bu_Right)) unModal();
         else axEditor::doMouseDown(aXpos,aYpos,aButton);
       }
-
-    //--------------------------------------------------
 
 };
 

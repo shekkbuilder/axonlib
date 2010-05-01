@@ -42,7 +42,8 @@ class axDemo_page_system : public wdgPanel
           int x = mRect.x;
           int y = mRect.y;
           aCanvas->setTextColor(text);
-          aCanvas->drawText(x+10,y+10,"cpu caps");  aCanvas->drawText(x+100,y+10,mSystemInfo->cpuidstr);
+          aCanvas->drawText(x+10,y+10,"cpuid"); aCanvas->drawText(x+80,y+10,mSystemInfo->cpuidstr);
+          aCanvas->drawText(x+10,y+25,"os");    aCanvas->drawText(x+80,y+25,mSystemInfo->os);
         }
       }
 

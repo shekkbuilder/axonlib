@@ -146,7 +146,9 @@ class axWidget : public axWidgetListener
 
     virtual ~axWidget()
       {
+        #ifndef AX_NOAUTODELETE
         deleteWidgets();
+        #endif
       }
 
     //--------------------------------------------------

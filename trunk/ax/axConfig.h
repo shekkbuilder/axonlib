@@ -13,6 +13,8 @@
 //#define LITTLE_ENDIAN           // axMath.h
 //#define AX_WIDGET_NOUPDATELIST  // axEditor.h
 
+//#define AX_NOAUTODELETE
+
 
 //----------------------------------------------------------------------
 #endif

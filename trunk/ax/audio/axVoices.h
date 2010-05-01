@@ -156,7 +156,9 @@ class axVoiceManager
 
     virtual ~axVoiceManager()
       {
+        #ifndef AX_NOAUTODELETE
         deleteVoices();
+        #endif
       }
 
     //----------------------------------------

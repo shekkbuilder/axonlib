@@ -281,6 +281,8 @@ inline void axCPUID(const int fcall=33139, int* eax=0, int* ebx=0, int* ecx=0, i
   }
 }
 
+//-----
+
 #define cc_SSE3     0x0001
 #define cc_SSSE3    0x0002
 #define cc_FPU      0x0004
@@ -318,20 +320,22 @@ char* axCpuCapsString(void)
 {
   axCPUID();
   sprintf(cpustringbuf,"%s%s%s%s%s%s%s%s%s%s%s%s",
-          __AX_SSE3__     ? "SSE3 "     : "" ,
-          __AX_SSSE3__    ? "SSSE3 "    : "" ,
-          __AX_FPU__      ? "FPU "      : "" ,
-          __AX_CMOV__     ? "CMOV "     : "" ,
-          __AX_SSE__      ? "SSE "      : "" ,
-          __AX_SSE2__     ? "SSE2 "     : "" ,
-          __AX_SSE4A__    ? "SSE4A "    : "" ,
-          __AX_SSE5__     ? "SSE5 "     : "" ,
-          __AX_MMX__      ? "MMX "      : "" ,
-          __AX_MMXEXT__   ? "MMXEXT "   : "" ,
-          __AX_3DNOW__    ? "3DNOW "    : "" ,
-          __AX_3DNOWEXT__ ? "3DNOWEXT " : "" );
+          __AX_SSE3__     ? "sse3 "     : "" ,
+          __AX_SSSE3__    ? "ssse3 "    : "" ,
+          __AX_FPU__      ? "fpu "      : "" ,
+          __AX_CMOV__     ? "cmov "     : "" ,
+          __AX_SSE__      ? "sse "      : "" ,
+          __AX_SSE2__     ? "sse2 "     : "" ,
+          __AX_SSE4A__    ? "sse4a "    : "" ,
+          __AX_SSE5__     ? "sse5 "     : "" ,
+          __AX_MMX__      ? "mmx "      : "" ,
+          __AX_MMXEXT__   ? "mmxext "   : "" ,
+          __AX_3DNOW__    ? "3dnow "    : "" ,
+          __AX_3DNOWEXT__ ? "3dnowext " : "" );
   return cpustringbuf;
 }
+
+//-----
 
 /**
  * conversation from bandwidth (octaves) to q factor
