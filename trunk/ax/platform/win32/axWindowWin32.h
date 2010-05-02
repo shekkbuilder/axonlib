@@ -121,7 +121,7 @@ class axWindowWin32 : public axWindowBase
         // For example, when RECT is passed to the FillRect function, the rectangle
         // is filled up to, but not including, the right column and bottom row of pixels.
 
-        RECT rc = { mRect.x, mRect.y, mRect.x2()+1, mRect.y2()+1 }; // left, top, right, bottom
+        RECT rc = { mRect.x, mRect.y, mRect.x2(), mRect.y2() }; // left, top, right, bottom
 
 //        //RECT rc = {mRect.x,mRect.y,mRect.x2(),mRect.y2()};
 //        RECT rc = { mRect.x, mRect.y, mRect.w, mRect.h };
@@ -152,10 +152,10 @@ class axWindowWin32 : public axWindowBase
             0,
             WS_POPUP,
             rc.left,//wPosX,          // center x
-            rc.top,//wPosY,          // center y
-            rc.right-rc.left-1,//wWidth,
-            rc.bottom-rc.top-1,//wHeight,
-            0,//(HWND)mParent,//0,
+            rc.top,//wPosY,           // center y
+            rc.right-rc.left,         //wWidth,
+            rc.bottom-rc.top,         //wHeight,
+            0,                        //(HWND)mParent,//0,
             0,
             mInstance,
             0
@@ -166,17 +166,17 @@ class axWindowWin32 : public axWindowBase
         else // windowed ---
         {
           AdjustWindowRectEx(&rc,WS_OVERLAPPEDWINDOW,FALSE,WS_EX_OVERLAPPEDWINDOW);
-          const u32 wPosX = ((GetSystemMetrics(SM_CXSCREEN)-mRect.w)>>1) + rc.left;
-          const u32 wPosY = ((GetSystemMetrics(SM_CYSCREEN)-mRect.h)>>1) + rc.top;
+          culong wPosX = ((GetSystemMetrics(SM_CXSCREEN)-mRect.w)>>1) + rc.left;
+          culong wPosY = ((GetSystemMetrics(SM_CYSCREEN)-mRect.h)>>1) + rc.top;
           mWindow = CreateWindowEx(
             WS_EX_OVERLAPPEDWINDOW,   // dwExStyle
             classname,                // lpClassName
             0,                        // lpWindowName
             WS_OVERLAPPEDWINDOW,      // dwStyle
-            wPosX,          // center x
-            wPosY,          // center y
-            rc.right-rc.left+1,//wWidth,
-            rc.bottom-rc.top+1,//wHeight,
+            wPosX,                    // center x
+            wPosY,                    // center y
+            rc.right-rc.left,         //wWidth,
+            rc.bottom-rc.top,         //wHeight,
             0,                        // hWndParent
             0,                        // hMenu
             mInstance,                // hInstance

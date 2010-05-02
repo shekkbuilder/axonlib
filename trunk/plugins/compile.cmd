@@ -21,10 +21,10 @@ set warn=-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long
 set resfile=rc_default.rc
 
 :: set optimization flags
-set opt=-msse -mfpmath=sse,387 -O3 -Os -fstack-check
+set opt= -msse -mfpmath=sse,387 -O3 -Os
 
 :: linker options
-set linker=-fdata-sections -ffunction-sections -Wl,-gc-sections -s
+set linker=-fstack-check -fdata-sections -ffunction-sections -Wl,-gc-sections -s
 
 :: -----------------------------------------------------------------------------
 :: *** end of user settings
@@ -166,13 +166,13 @@ echo command line is: %cmdline% && echo.
 if not exist %target% echo. && echo # ERR: not compiled! && goto done
 if not [%gccdstatus%]==[] goto printsize 
 
-:: call strip
-echo striping...
-if exist %target% %mgwpath%strip --strip-all %target%
+:: call strip (no need if '-s' is passed to g++)
+rem echo striping...
+rem if exist %target% %mgwpath%strip --strip-all %target%
 
 :printsize
-:: call size
-%mgwpath%size %target%
+:: target file size
+for %%I in (%target%) do echo * filesize: %%~zI bytes
 
 :: check if '-nmv'
 if not [%nmv%]==[] goto done

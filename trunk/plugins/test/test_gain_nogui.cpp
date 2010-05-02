@@ -3,12 +3,14 @@
 #define AX_DEBUG_AUTO_WIN
 
 #include "axPlugin.h"
+#include "core/axRand.h"
 
 class myPlugin : public axPlugin
 {
   private:
     axParameter*  p_Gain;
     float         m_Gain;
+    axRandSinf    axsin;         
 
   public:
 
@@ -17,12 +19,12 @@ class myPlugin : public axPlugin
       {
         m_Gain = 0;
         describe("test_gain_nogui","ccernn","axonlib example",0,AX_MAGIC+0x0000);
-        setupAudio(2,2,false);
+        setupAudio(2, 2, false);
         appendParameter( p_Gain = new axParameter(this, "gain", "") );
         setupParameters();
         
-        wdebug("hello dbg");        
-        trace("hello dbg");        
+        wdebug("hello dbg");
+        trace("hello dbg");
       }
 
     virtual void  doSetParameter(axParameter* aParameter)
@@ -32,8 +34,10 @@ class myPlugin : public axPlugin
 
     virtual void  doProcessSample(SPL** aInputs, SPL** aOutputs)
       {
-        *aOutputs[0] = *aInputs[0] * m_Gain;
-        *aOutputs[1] = *aInputs[1] * m_Gain;
+        SPL spl0 = *aInputs[0];
+        SPL spl1 = *aInputs[1];        
+        *aOutputs[0] = ( spl0 + axsin.randSigned() ) * m_Gain;
+        *aOutputs[1] = ( spl1 + axRand() ) * m_Gain;
       }
 
 };
