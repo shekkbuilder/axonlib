@@ -109,10 +109,12 @@
 
 // case: debug enabled
 #ifdef AX_DEBUG
+  
+  #include "core/axUtils.h"
+  
   #define _WIN32_WINNT 0x0501
   #include <assert.h>
-  #include <iostream>
-  #include "core/axUtils.h"
+  #include <iostream>  
   using namespace std;
 
   // case: windows

@@ -21,8 +21,15 @@
  * \brief pseudo-random number generator
  */
 
+
+// ####################################################
+// depreciated
+
+
 #ifndef dspPRNG_included
 #define dspPRNG_included
+
+#include "axDefines.h"
 
 /**
  * \brief pseudo-random number generator
@@ -39,7 +46,7 @@
  * float value = prng.process(); // value = random[-1, +1]
  * \endcode    
  */
-class dspPRNG
+__deprecated class dspPRNG
 {
   private:
   /** variables */
@@ -55,7 +62,7 @@ class dspPRNG
     /**
      * reset the prng
      */
-    virtual void reset(void)
+    __deprecated virtual void reset(void)
     {
       axRandomize();              // randomize seed for rand()
       x = axRandom(999.f);        // return random seed for PRNG0 (0..999.f)
@@ -66,7 +73,7 @@ class dspPRNG
      * return a random float number [-1, +1]
      * @return float
      */
-    inline float process(void)
+    __deprecated inline float process(void)
     {
       __asm__ __volatile__("":::);
       __asm__

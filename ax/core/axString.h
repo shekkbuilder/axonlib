@@ -3,7 +3,8 @@
 //----------------------------------------------------------------------
 // char* wrapper
 
-#include <string.h>
+//#include <string.h>
+#include "axStdlib.h"
 
 //----------------------------------------------------------------------
 
@@ -21,9 +22,9 @@ class axString
     char*    ptr()                        { return mText; }
     void     set(char* txt)               { mText = txt; }
     bool     empty()                      { return mText[0]==0; }
-    int      length()                     { return strlen(mText); }
+    int      length()                     { return axStrlen(mText); } // return strlen(mText);
 
-    char     operator [] (int i)          { return mText[i]; }
+    char     operator [] (unsigned int i)          { return mText[i]; }
 
     void     operator = (axString str)    { mText = str.mText; }
   //void     operator = (axString& str)   { mText = str.mText; }

@@ -5,6 +5,8 @@
 #include "wdg/wdgPanel.h"
 #include "axDemo_skin.h"
 
+#include "core/axRand.h"
+
 //----------------------------------------------------------------------
 
 class axDemo_page_canvas : public wdgPanel
@@ -43,15 +45,13 @@ class axDemo_page_canvas : public wdgPanel
 
         for (int i=0; i<100; i++)
         {
-          aCanvas->setPenColor( aCanvas->getColor(axRandomInt(255),
-                                                  axRandomInt(255),
-                                                  axRandomInt(255)) );
-          aCanvas->drawPoint( x+axRandomInt(15),
-                              y+axRandomInt(15) );
+          aCanvas->setPenColor( aCanvas->getColor(axRandInt(255),
+                                                  axRandInt(255),
+                                                  axRandInt(255)) );
+          
+          aCanvas->drawPoint( x + axRandInt(15), y + axRandInt(15) );
         }
-
-        // lines
-
+        
         aCanvas->setPenColor(white);
         aCanvas->drawLine( x+16,y,x+31,y+15);
         aCanvas->setPenColor(green);

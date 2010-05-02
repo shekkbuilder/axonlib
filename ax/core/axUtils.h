@@ -21,6 +21,9 @@
 
 /*
 TODO:
+  lii:  i've started writing some of these in axStdLib.h, but they can be here
+        as well.
+  
   axMemcpy, axMemsey
   axStrCpy,Strdup, etc...
   strcmp
@@ -31,12 +34,23 @@ TODO:
 #ifndef axUtils_included
 #define axUtils_included
 
-#include <memory.h> // memset
-#include "core/axMath.h"
 #include "axDefines.h"
+#include "axStdlib.h"
+#include "core/axMath.h"
+
+#ifdef AX_USE_HOT_INLINE
+  #define __axutils_inline __hotinline
+#else
+  #define __axutils_inline inline
+#endif
+
+//strip:
+// --------
+#include <memory.h>
+#include <stdio.h>
 #include <sstream>
 using namespace std;
-#include <stdio.h>
+// --------
 
 /**
  return the filename from the __FILE__ flag: <br>
@@ -47,9 +61,11 @@ using namespace std;
  @param[in] path const char*
  @return const char*
  */
-inline const char* axGetFileName(const char* path)
+__axutils_inline const char* axGetFileName(const char* path)
 {
   const char *slash, *backslash;
+  //slash = axStrrchr(path, '/');
+  //backslash = axStrrchr(path, '\\') + 1;
   slash = strrchr(path, '/');
   backslash = strrchr(path, '\\') + 1;
   if (slash) return slash + 1;
@@ -102,14 +118,18 @@ template<class T, size_t N> T decay_array_to_subtype(T (&a)[N]);
  * @param[in] x unsigned int
  * @return x unsigned int
  */
-inline unsigned int axBitReverse(unsigned int x)
+__axutils_inline unsigned int axBitReverse(unsigned int v)
 {
-  x = ((x >> 1) & 0x55555555) | ((x & 0x55555555) << 1);
-  x = ((x >> 2) & 0x33333333) | ((x & 0x33333333) << 2);
-  x = ((x >> 4) & 0x0F0F0F0F) | ((x & 0x0F0F0F0F) << 4);
-  x = ((x >> 8) & 0x00FF00FF) | ((x & 0x00FF00FF) << 8);
-  x = ( x >> 16             ) | ( x               << 16);
-  return x;
+  unsigned int r = v;
+  int s = sizeof(v) * CHAR_BIT - 1;
+  for (v >>= 1; v; v >>= 1)
+  {   
+    r <<= 1;
+    r |= v & 1;
+    s--;
+  }
+  r <<= s;
+  return r;
 }
 
 /**
@@ -138,13 +158,18 @@ inline unsigned int axBitReverse(unsigned int x)
  * @param[in] bits unsigned int - length (default = 32)
  * @return const char*
  */
-inline const char* axGetBinaryString(long int x, unsigned int bits=32)
+/*
+// ###### remove or replace with a version that does not use OSS
+*/
+__deprecated __axutils_inline const char* axGetBinaryString(long int x, unsigned int bits=32)
 {
   ostringstream oss;
   for (unsigned int i=0; i<bits; i++) oss << (1 & (x >> i));
   const char* cstr = oss.str().c_str();
   return cstr;
 }
+
+// ------------------------------------------------------
 
 /**
  * converts linear value to decibel
@@ -180,7 +205,7 @@ inline const char* axGetBinaryString(long int x, unsigned int bits=32)
  * @param[in] ar float* - array of floats
  * @return result float
  */
-inline float axSumDB(unsigned int n, const float* ar)
+__axutils_inline float axSumDB(unsigned int n, const float* ar)
 {
   float sum = 0.f;
   for (unsigned int i=0; i<n; i++) sum += axDB2Lin(ar[i]);
@@ -235,45 +260,45 @@ __AX_SSE4A__, __AX_SSE5__, __AX_MMX__, __AX_MMXEXT__, __AX_3DNOW__, __AX_3DNOWEX
  * http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/25481.pdf <br>
  * http://www.intel.com/Assets/PDF/appnote/241618.pdf
  */
-inline void axCPUID(const int fcall=33139, int* eax=0, int* ebx=0, int* ecx=0, int* edx=0)
+__axutils_inline void axCPUID(const int fcall=33139, int* eax=0, int* ebx=0, int* ecx=0, int* edx=0)
 {
   // no function call (default)
   // ----------------------------
-  if (fcall == 33139)  // 33139 = a default number
+  if (fcall == 33139)  // 33139 = some default number
   {
     int a, b, c, d;
     // -----------------
     // 0x00000001
-    __asm__ __volatile__
+    __asmv
     (
       "cpuid;"
       : "=a" (a), "=b" (b), "=c" (c), "=d" (d) : "a" (0x00000001)
     );
-    __AX_SSE3__   = 1 & (c >> 0);
-    __AX_SSSE3__  = 1 & (c >> 9);
-    __AX_FPU__    = 1 & (d >> 0);
-    __AX_CMOV__   = 1 & (d >> 15);
-    __AX_SSE__    = 1 & (d >> 25);
-    __AX_SSE2__   = 1 & (d >> 26);
+    __AX_SSE3__   = axGetBit(c, 0);
+    __AX_SSSE3__  = axGetBit(c, 9);
+    __AX_FPU__    = axGetBit(d, 0);
+    __AX_CMOV__   = axGetBit(d, 15);
+    __AX_SSE__    = axGetBit(d, 25);
+    __AX_SSE2__   = axGetBit(d, 26);
     // -----------------
     // 0x80000001
-    __asm__ __volatile__
+    __asmv
     (
       "cpuid;"
       : "=a" (a), "=b" (b), "=c" (c), "=d" (d) : "a" (0x80000001)
     );
-    __AX_SSE4A__    = 1 & (c >> 4);
-    __AX_SSE5__     = 1 & (c >> 11);
-    __AX_MMX__      = 1 & (d >> 23);
-    __AX_MMXEXT__   = 1 & (d >> 22);
-    __AX_3DNOW__    = 1 & (d >> 31);
-    __AX_3DNOWEXT__ = 1 & (d >> 30);
+    __AX_SSE4A__    = axGetBit(c, 4);
+    __AX_SSE5__     = axGetBit(c, 11);
+    __AX_MMX__      = axGetBit(d, 23);
+    __AX_MMXEXT__   = axGetBit(d, 22);
+    __AX_3DNOW__    = axGetBit(d, 31);
+    __AX_3DNOWEXT__ = axGetBit(d, 30);
   }
   // user defined call
   // -----------------
   else
   {
-    __asm__ __volatile__
+    __asmv
     (
       "cpuid;"
       : "=a" (*eax), "=b" (*ebx), "=c" (*ecx), "=d" (*edx) : "a" (fcall)
@@ -319,6 +344,7 @@ static char cpustringbuf[256];
 char* axCpuCapsString(void)
 {
   axCPUID();
+  // ## note: sprintf() is current used as __builtin_spritf()
   sprintf(cpustringbuf,"%s%s%s%s%s%s%s%s%s%s%s%s",
           __AX_SSE3__     ? "sse3 "     : "" ,
           __AX_SSSE3__    ? "ssse3 "    : "" ,
@@ -342,7 +368,7 @@ char* axCpuCapsString(void)
  * @param[in] n float - length in octaves
  * @return q_factor float
  */
-inline float axOctaves2Q(const float n)
+__axutils_inline float axOctaves2Q(const float n)
 {
   const float _pow2n = axPowf(2.f, n);
   return -axSqrtf(_pow2n) / (1.f - _pow2n);
@@ -353,7 +379,7 @@ inline float axOctaves2Q(const float n)
  * @param[in] q float - q factor
  * @return octaves float
  */
-inline float axQ2Octaves(const float q)
+__axutils_inline float axQ2Octaves(const float q)
 {
   return 1.4426950408889634f * axSinhf(0.5f * (q));
 }
@@ -374,12 +400,26 @@ inline float axQ2Octaves(const float q)
  * unsigned long long diff = endValue - startValue;
  * \endcode
  */
-inline u64 axRdtsc()
-{
-  u64 x;
-  __asm__ __volatile__ ( "rdtsc;" : "=A" (x) );
-  return x;
-}
+// # note:  use CPUID as serializing instruction to prevent out of order
+//          execution for cpu cycle measurement.
+
+#ifdef __AX64__
+  // 64bit untested 
+  static __axutils_inline unsigned long long axRdtsc(void)
+  {
+    unsigned low, high;
+    __asmv ( "cpuid;" "rdtsc;" : "=a" (low), "=d" (high) );
+    return ( (low) | ( (unsigned long)(high) << 32 ) );
+  }
+#endif
+#ifdef __AX32__
+  static __axutils_inline unsigned long long axRdtsc(void)
+  {
+    unsigned long long val;
+    __asmv ( "cpuid;" "rdtsc;" : "=A" (val) );
+    return val;
+  }
+#endif
 
 /**
  * radix algorithm
@@ -388,18 +428,21 @@ inline u64 axRdtsc()
  * @param[in] N long
  * @param[in] byte int
  */
-inline void axRadix (long *source, long *dest, long N, int byte)
+__axutils_inline void axRadix(long *source, long *dest, unsigned long N, int byte)
 {
-  int i;
+  unsigned int i;
   long count[256];
   long index[256];
-  memset (count, 0, sizeof (count));
-  for ( i=0; i<N; i++ ) count[((source[i])>>(byte*8))&0xff]++;
-  index[0]=0;
-  for ( i=1; i<256; i++ ) index[i]=index[i-1]+count[i-1];
-  for ( i=0; i<N; i++ ) dest[index[((source[i])>>(byte*8))&0xff]++] = source[i];
+  //axMemset(count, 0, sizeof(count));
+  memset(count, 0, sizeof(count));
+  for (i=0; i<N; i++)
+    count[ ((source[i]) >> (byte*8)) & 0xff ]++;
+  index[0] = 0;
+  for (i=1; i<256; i++)
+    index[i] = index[i-1]+count[i-1];
+  for (i=0; i<N; i++)
+    dest[ index[ ((source[i])>>(byte*8))&0xff ]++ ] = source[i];
 }
-
 
 //i = 1;
 //loop( size-1,
@@ -414,6 +457,7 @@ inline void axRadix (long *source, long *dest, long N, int byte)
 //  );
 //  i += 1;
 //);
+
 
 //---------------------
 #endif

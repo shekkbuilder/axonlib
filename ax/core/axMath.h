@@ -40,76 +40,76 @@
   *some comparisons may use a weighting function to reduce the number
   of iterations <br>    
   <br>
-  <table>
-  <tr>
-  <td>
-  axFloor: 5ms <br>
-  floorf: 25ms <br>
-  
-  axRound: 6ms <br>
-  roundf: 42ms <br>
-  
-  axAbs: 36ms <br>
-  fabs: 63ms <br>
-  
-  axLog2: 7ms <br>
-  axLog2f: 69ms <br>
-  log2f: 75ms <br>
-  
-  axLogf: 20ms <br>
-  logf: 80ms <br>
-   
-  axLog10: 30ms <br>
-  axLog10f: 69ms <br>
-  log10f: 75ms <br>
+  <table>  <tr>  <td>
+  axFloor: 5ms <br>  floorf: 25ms <br>  
+  axRound: 6ms <br>  roundf: 42ms <br>  
+  axAbs: 36ms <br>  fabs: 63ms <br>  
+  axLog2: 7ms <br>  axLog2f: 69ms <br>  log2f: 75ms <br>  
+  axLogf: 20ms <br>  logf: 80ms <br>   
+  axLog10: 30ms <br>  axLog10f: 69ms <br>  log10f: 75ms <br>
   </td>
   <td>
-  axPowf: 96ms <br>
-  powf: 161ms <br>
-  
-  axExp: 3ms <br>
-  axExpf: 34ms <br>
-  expf: 137ms <br>
-  
-  axSqrt: <1ms <br>
-  axSqrtf: <1ms <br>
-  sqrtf: 27ms <br>
-  
-  axSin: 56ms <br>
-  axSinf: 98ms <br>
-  sinf: 114ms <br>
-  
-  axAcosf: <1ms <br>
-  acosf: 75ms <br>
-  
-  axTanhf: 70ms <br>
-  tanf: 194ms <br>
-  </td>
-  </tr>
-  </table>
+  axPowf: 96ms <br>  powf: 161ms <br>  
+  axExp: 3ms <br>  axExpf: 34ms <br>  expf: 137ms <br>  
+  axSqrt: <1ms <br>  axSqrtf: <1ms <br>  sqrtf: 27ms <br>  
+  axSin: 56ms <br>  axSinf: 98ms <br>  sinf: 114ms <br>  
+  axAcosf: <1ms <br>  acosf: 75ms <br>  
+  axTanhf: 70ms <br>  tanf: 194ms <br>
+  </td>  </tr>  </table>
   <br>
   */
 
+// -----------------------------------------------------------------------------
 #ifndef axMath_included
 #define axMath_included
 
+#include "axDefines.h"
+
+#ifdef AX_USE_HOT_INLINE
+  #define __axmath_inline __hotinline
+#else
+  #define __axmath_inline inline
+#endif
+
+//strip:
+//---------------
 #include <math.h>
 #include <time.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#include "axDebug.h"
-#include "axDefines.h"
+//----
 
+
+// ### set ( | test only) some deprecated warnings on compile time
+__deprecated float fabs(float x) { return __builtin_fabs(x); }
+__deprecated float sinf(float x) { return __builtin_sinf(x); }
+__deprecated float cosf(float x) { return __builtin_cosf(x); }
+__deprecated float tanf(float x) { return __builtin_tanf(x); }
+__deprecated int sin(int x) { return __builtin_sin(x); }
+__deprecated int cos(int x) { return __builtin_cos(x); }
+__deprecated int tan(int x) { return __builtin_tan(x); }
+__deprecated int pow(int x, int y) { return __builtin_pow(x, y); }
+__deprecated float powf(double x, float y) { return __builtin_powf(x, y); }
+
+/**
+ * invert of x: (x^2)
+ */
+#define axInv(x) (1/(x))
+
+
+// #### deprecated (?)
 /**
  * square of x: (x^2)
  */
 #define axSqr(x) ((x)*(x))
+// ####  ------------
 
 /**
  * cube of x: (x^3)
  */
 #define axCube(x) ((x)*(x)*(x))
 
+// #### deprecated
 /**
  * newton step 1 (newton's method) <br>
  * as seen in axInvSqrt <br>
@@ -118,7 +118,9 @@
  * \endcode
 */
 #define axNewtonStep(x) { (x) = (x)*(1.5f - (x)*0.5f)*(x)*(x); }
+// ####  ------------
 
+// #### deprecated
 /**
  * newton step 2 (newton's method) <br>
  * \code
@@ -126,6 +128,7 @@
  * \endcode
 */
 #define axNewtonStep2(y, x) { (y)=((y)+(x)/(y))*0.5f; }
+// #### -------------
 
 /**
  * convert radians to degrees <br>
@@ -154,7 +157,7 @@
  * @param[in] value float
  * @return result float
  */
-inline float axFloor(const float value)
+__axmath_inline float axFloor(const float value)
 {
   return (float)(int)(value);
 }
@@ -164,7 +167,7 @@ inline float axFloor(const float value)
  * @param[in] value float
  * @return result float
  */
-inline float axCeil(const float value)
+__axmath_inline float axCeil(const float value)
 {
   return (float)(int)(value + 1.f);
 }
@@ -174,7 +177,7 @@ inline float axCeil(const float value)
  * @param[in] value float
  * @return result float
 */
-inline float axRound(const float value)
+__axmath_inline float axRound(const float value)
 {
   return (float)(int)(value + 0.5f);
 }
@@ -194,7 +197,7 @@ inline float axRound(const float value)
  * @param[in] intpart float* - pointer to integer part variable
  * @return float - fractional part
  */
-inline float axModf(const float value, float* intpart)
+__axmath_inline float axModf(const float value, float* intpart)
 {
   *intpart = (float)(int)value;
   return (value - *intpart);
@@ -212,10 +215,10 @@ inline float axModf(const float value, float* intpart)
  * @param[in] x float - numerator (divident)
  * @param[in] y float - denominator (devisor or modulus)
  */
-inline float axFmod(const float x, const float y)
+__axmath_inline float axFmod(const float x, const float y)
   {
   register float value;
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     // gets remainder; copy floating point status register into ax register;
@@ -232,7 +235,7 @@ inline float axFmod(const float x, const float y)
  * @param[in] value float
  * @return value float
 */
-inline float axAbs(const float value)
+__axmath_inline float axAbs(const float value)
 {
   // alt: fpu fabs is slower
   union
@@ -250,11 +253,11 @@ inline float axAbs(const float value)
  * @param[in] value float
  * @return value float
 */
-inline float axNeg(float value)
+__axmath_inline float axNeg(float value)
 {
   if (value != 0.f)
   {
-    //__asm__ __volatile__ ("":::);
+    //__asmv ("":::);
     __asm__ ( "xorl $0x80000000, %0;"    : "=r" (value)    : "0" (value) );
     return value;
   } else { return 0.f; }
@@ -265,11 +268,11 @@ inline float axNeg(float value)
  * @param[in] value float
  * @return value float
 */
-inline float axSign(const float value)
+__axmath_inline float axSign(const float value)
 {
   if (value != 0.f)
   {
-    int p = (int)value;    
+    int p = (int)value;
     return (1 | (p >> 31));
   } else { return 0.f; }
 }
@@ -280,7 +283,7 @@ inline float axSign(const float value)
  * @param[in] b float
  * @return result float
  */
-inline float axMin(const float a, const float b)
+__axmath_inline float axMin(const float a, const float b)
 {
   return (a < b) ? a : b;
 }
@@ -291,7 +294,7 @@ inline float axMin(const float a, const float b)
  * @param[in] b float
  * @return result float
  */
-inline float axMax(const float a, const float b)
+__axmath_inline float axMax(const float a, const float b)
 {
   return (a > b) ? a : b;
 }
@@ -302,9 +305,10 @@ inline float axMax(const float a, const float b)
  * @param[in] limit float
  * @return result float
  */
-inline float axLimit(const float input, const float limit)
+__axmath_inline float axLimit(const float input, const float limit)
 {
-  return axMin(axMax(input, -limit), limit);
+  register float _t = (input > -limit) ? input : -limit;
+  return (_t > limit) ? _t : limit;
 }
 
 /**
@@ -313,7 +317,7 @@ inline float axLimit(const float input, const float limit)
  * @param[in] b int
  * @return result float
  */
-inline int axMinInt(const int a, const int b)
+__axmath_inline int axMinInt(const int a, const int b)
 {
   return (a < b) ? a : b;
 }
@@ -324,7 +328,7 @@ inline int axMinInt(const int a, const int b)
  * @param[in] b int
  * @return result float
  */
-inline int axMaxInt(const int a, const int b)
+__axmath_inline int axMaxInt(const int a, const int b)
 {
   return (a > b) ? a : b;
 }
@@ -335,9 +339,10 @@ inline int axMaxInt(const int a, const int b)
  * @param[in] limit int
  * @return a_or_b float
  */
-inline int axLimitInt(const int input, const int limit)
+__axmath_inline int axLimitInt(const int input, const int limit)
 {
-  return axMinInt(axMaxInt(input, -limit), limit);
+  register float _t = (input > -limit) ? input : -limit;
+  return (_t > limit) ? _t : limit;
 }
 
 /**
@@ -347,7 +352,7 @@ inline int axLimitInt(const int input, const int limit)
  * @param[in] c float
  * @return result float
  */
-inline float axCalcStep(const float a, const float b, const float c)
+__deprecated __axmath_inline float axCalcStep(const float a, const float b, const float c)
 {
   return axMin(axFloor(a*b), c - 1);
 }
@@ -359,16 +364,23 @@ inline float axCalcStep(const float a, const float b, const float c)
  * @param[in] c float
  * @return result float
  */
-inline float axCalcValuep(const float a, const float b, const float c)
+__deprecated __axmath_inline float axCalcValuep(const float a, const float b, const float c)
 {
   return (a*b + c);
 }
+
+// ###################################
+// depreciated stdlib.h -> rand()
+// 
+// using: axRand.h
+// ###################################
 
 /**
  * passes a seed to the random number generator
  * @param[in] aSeed int default value -> use ctime
  */
-inline void axRandomize(const int aSeed = (unsigned)time(0))
+ 
+__deprecated __axmath_inline void axRandomize(const int aSeed = (unsigned)time(0))
 {
     srand(aSeed);
 }
@@ -378,7 +390,8 @@ inline void axRandomize(const int aSeed = (unsigned)time(0))
  * @param[in] f float default value (1)
  * @return result float
  */
-inline float axRandom(const float f = 1)
+
+__deprecated __axmath_inline float axRandom(const float f = 1)
 {
   return (f * (float)rand() / (float)RAND_MAX);
 }
@@ -388,18 +401,21 @@ inline float axRandom(const float f = 1)
  * @param[in] i int
  * @return result int
  */
-inline int axRandomInt(const int i)
+
+__deprecated __axmath_inline int axRandomInt(const int i)
 {
   //const float f = axRandom(i + 1);
   //return axMinInt(i, (int)axFloor(f));
-  return axMinInt(i, (int)axFloor(axRandom(i + 1)));
+  return axMinInt
+    (i, (int)axFloor( (i + 1) * (float)rand() / (float)RAND_MAX ) );
 }
 
 /**
  * returns a random floating point number between [-1..1]
  * @return result float
  */
-inline float axRandomSigned(void)
+ 
+__deprecated __axmath_inline float axRandomSigned(void)
 {
   return (2 * (float)rand() / (float)RAND_MAX) - 1;
 }
@@ -410,24 +426,28 @@ inline float axRandomSigned(void)
  * @param[in] aHigh float
  * @return result float
  */
-inline float axRandom(const float aLow, const float aHigh)
+ 
+__deprecated __axmath_inline float axRandom(const float aLow, const float aHigh)
 {
-  /*
-    float range = aHigh-aLow;
-    float rnd = axRandom();
-    return aLow + rnd*range;
-  */
-  return aLow + axRandom()*(aHigh - aLow);
+  
+    //float range = aHigh-aLow;
+    //float rnd = axRandom();
+    //return aLow + rnd*range;
+  
+  return aLow + ( (float)rand() / (float)RAND_MAX ) *(aHigh - aLow);
 }
+
+// #####################
+
 
 /**
  * calculates the logarithm base 2 of a floating point number (fpu)
  * @param[in] value float
  * @return value float
  */
-inline float axLog2f(float value)
+__axmath_inline float axLog2f(float value)
 {
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fld1;"   "fxch;"  "fyl2x;"
@@ -442,9 +462,9 @@ inline float axLog2f(float value)
  * @param[in] val float
  * @return result float
  */
-inline float axLog2(float val)
+__axmath_inline float axLog2(const float val)
 {
-  if (val > 0)
+  if (val > 0.f)
   {
     union
     {
@@ -456,7 +476,9 @@ inline float axLog2(float val)
     u.i &= ~(255 << 23);
     u.i += 127 << 23;
     return (0.05f + u.j + (float)log_2);
-  } else { return 0.f; }
+  }
+  else
+    return 0.f;
 }
 
 /**
@@ -464,9 +486,9 @@ inline float axLog2(float val)
  * @param[in] value float
  * @return value float
  */
-inline float axLogf(float value)
+__axmath_inline float axLogf(float value)
 {
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fld %0;"    "fldln2;"    "fxch;"    "fyl2x;"
@@ -482,7 +504,7 @@ inline float axLogf(float value)
  * @param[in] val float
  * @return result float
  */
-inline float axLog(const float &val)
+__axmath_inline float axLog(const float &val)
 {
   return (axLog2(val)*0.69314718f);
 }
@@ -492,9 +514,9 @@ inline float axLog(const float &val)
  * @param[in] value float
  * @return value float
  */
-inline float axLog10f(float value)
+__axmath_inline float axLog10f(float value)
 {
-  __asm__ __volatile__("":::);
+  //__asmv("":::);
   __asm__
   (
     "fldlg2;"    "fxch;"    "fyl2x;"
@@ -508,7 +530,7 @@ inline float axLog10f(float value)
  * @param[in] x float
  * @return value float
  */
-inline float axLog10(const float x)
+__axmath_inline float axLog10(const float x)
 {
   // log10(e) = 0.4342945239647
   // also: log10(x) = log2(x) - ln(x)
@@ -529,10 +551,10 @@ inline float axLog10(const float x)
  * @param[in] y float - exponent
  * @return float
  */
-inline float axPowf(const float x, const float y)
+__axmath_inline float axPowf(const float x, const float y)
 {
   register float value, exponent;
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fld1;"                       // |
@@ -558,9 +580,9 @@ inline float axPowf(const float x, const float y)
  * @param[in] n int
  * @return result float
  */
-inline float axPow(float x, unsigned long n)
+__axmath_inline float axPow(float x, unsigned long n)
 {
-  float res = 1;
+  register float res = 1;
   while (n > 0)
   {
     if (n & 1) res *= x;
@@ -575,10 +597,10 @@ inline float axPow(float x, unsigned long n)
  * @param[in] x float input value
  * @return value float
  */
-inline float axExpf(const float x)
+__axmath_inline float axExpf(const float x)
 {
   register float value, exponent;
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fldl2e;"               // e^x = 2^(x*log2(e))
@@ -603,7 +625,7 @@ inline float axExpf(const float x)
  * @param[in] exponent float
  * @return result float
  */
-inline float axExp(const float exponent)
+__axmath_inline float axExp(const float exponent)
 {
   union
   {
@@ -636,10 +658,10 @@ inline float axExp(const float exponent)
  * @param[in] y float - exponent
  * @return value float
  */
-inline float axFscale(const float x, const float y)
+__axmath_inline float axFscale(const float x, const float y)
 {
   register float value;
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fscale;"  : "=t" (value) : "0" (x), "u" (y)
@@ -666,10 +688,10 @@ inline float axFscale(const float x, const float y)
  * @param[in] _exp float* - pointer to the exponent variable
  * @return sig float - value of significand
  */
-inline float axFxtract(float value, float* _exp)
+__axmath_inline float axFxtract(float value, float* _exp)
 {
   register float sig;
-  __asm__ __volatile__("":::);
+  __asmv("":::);
   __asm__
   (
     "fxtract;"   :"=t"(sig), "=u"(*_exp)   :"0"(value)
@@ -684,11 +706,11 @@ inline float axFxtract(float value, float* _exp)
  * @param[in] root long
  * @return value float
  */
-inline float axNrt(float value, long root)
+__axmath_inline float axNrt(float value, long root)
 {
   // alt: newton-ramson, is still slower than the fpu axPowf
   // xn = (1/n)*((n-1)*xn + x/pow(xn, n-1));
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "subl $0x3f800000, %0;"    "subl $1, %2;"
@@ -704,9 +726,9 @@ inline float axNrt(float value, long root)
  * @param[in] value float
  * @return value float
  */
-inline float axSqrtf(float value)
+__axmath_inline float axSqrtf(float value)
 {
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fsqrt;"    : "=t" (value)    : "0" (value)
@@ -720,9 +742,9 @@ inline float axSqrtf(float value)
  * @param[in] x float
  * @return value float
  */
-inline float axSqrt(const float x)
+__axmath_inline float axSqrt(const float x)
 {
-  float halfx = x*0.5;
+  const float halfx = x*0.5;
   union
   {
     int i;
@@ -738,9 +760,9 @@ inline float axSqrt(const float x)
  * @param[in] value float
  * @return value float
  */
-inline float axInvSqrtf(float value)
+__axmath_inline float axInvSqrtf(float value)
 {
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fsqrt;"  "fld1;"   "fdivp;"
@@ -755,9 +777,9 @@ inline float axInvSqrtf(float value)
  * @param[in] x float
  * @return result float
  */
-inline float axInvSqrt(const float x)
+__axmath_inline float axInvSqrt(const float x)
 {
-  float halfx = 0.5f*x;
+  const float halfx = 0.5f*x;
   union
   {
     float j;
@@ -773,9 +795,9 @@ inline float axInvSqrt(const float x)
  * @param[in] value float
  * @return value float
  */
-inline float axSinf(float value)
+__axmath_inline float axSinf(float value)
 {
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fsin;"    : "=t" (value)    : "0" (value)
@@ -788,7 +810,7 @@ inline float axSinf(float value)
  * @param[in] x float
  * @return result float
  */
-inline float axSin(float x)
+__axmath_inline float axSin(float x)
 {
   x = x * (1.2732395447f - 0.4052847345f * axAbs(x));
   return 0.225f * (x * axAbs(x) - x) + x;
@@ -799,9 +821,9 @@ inline float axSin(float x)
  * @param[in] value float
  * @return value float
  */
-inline float axCosf(float value)
+__axmath_inline float axCosf(float value)
 {
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fcos;"    : "=t" (value)    : "0" (value)
@@ -814,7 +836,7 @@ inline float axCosf(float value)
  * @param[in] x float
  * @return result float
  */
-inline float axCos(float x)
+__axmath_inline float axCos(const float x)
 {
   const float x2 = x*x;
   return (15120 + x2*(-6900 + 313*x2)) / (15120 + x2*(660 + 13*x2));
@@ -825,9 +847,9 @@ inline float axCos(float x)
  * @param[in] value float
  * @return value float
  */
-inline float axTanf(float value)
+__axmath_inline float axTanf(float value)
 {
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fptan;"  "fstp %1;"
@@ -841,7 +863,7 @@ inline float axTanf(float value)
  * @param[in] x float
  * @return result float
  */
-inline float axTan(float x)
+__axmath_inline float axTan(const float x)
 {
   const float x2 = x*x;
   return (x*(105 - 10*x2)) / (105 - x2*(45 - x2));
@@ -861,9 +883,9 @@ inline float axTan(float x)
  * @param[in] cos float* pointer to cos value
  * @return void
  */
-inline void axSinCosf(const float x, float* sin, float* cos)
+__axmath_inline void axSinCosf(const float x, float* sin, float* cos)
 {
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fsincos;" : "=t" (*cos), "=u" (*sin) : "0" (x)
@@ -875,11 +897,11 @@ inline void axSinCosf(const float x, float* sin, float* cos)
  * @param[in] value float
  * @return value float
  */
-inline float axAsinf(float value)
+__axmath_inline float axAsinf(float value)
 {
   // asin(x)=atan(sqrt(x*x/(1-x*x)))
   register float tmp;
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fld %0;"    "fld %0;"    "fmulp;"    "fst %1;"    "fld1;"    "fsubp;"
@@ -894,7 +916,7 @@ inline float axAsinf(float value)
  * @param[in] x float
  * @return result float
  */
-inline float axAsin(const float x)
+__axmath_inline float axAsin(const float x)
 {
   return M_PI_2 - axSqrtf(1 - x)*(1.5707288 - x*(0.2121144 + x*(0.0742610 -
   x*(0.0187293 + 0.395*x))));
@@ -905,11 +927,11 @@ inline float axAsin(const float x)
  * @param[in] value float
  * @return value float
  */
-inline float axAcosf(float value)
+__axmath_inline float axAcosf(float value)
 {
   // acos(x) = atan(sqrt((1-x*x)/(x*x)))
   register float tmp;
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fld %0;"    "fld %0;"    "fmulp;"    "fst %1;"    "fld1;"    "fsubp;"
@@ -924,7 +946,7 @@ inline float axAcosf(float value)
  * @param[in] x float
  * @return result float
  */
-inline float axAcos(const float x)
+__axmath_inline float axAcos(const float x)
 {
   const float x2 = x*x;
   return x*(x2*(-0.55*x2 + 0.097) - 1.008) + 1.571;
@@ -935,10 +957,10 @@ inline float axAcos(const float x)
  * @param[in] value float
  * @return value float
  */
-inline float axAtanf(float value)
+__axmath_inline float axAtanf(float value)
 {
   // from partial tangens
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fld1;"    "fpatan;"    : "=t" (value)    : "0" (value)
@@ -951,7 +973,7 @@ inline float axAtanf(float value)
  * @param[in] x float
  * @return result float
  */
-inline float axAtan(const float x)
+__axmath_inline float axAtan(const float x)
 {
   const float x2 = x*x;
   return (x*(105 + 55*x2)) / (105 + x2*(90 + 9*x2));
@@ -964,10 +986,10 @@ inline float axAtan(const float x)
  * @param[in] y float - y coordinate
  * @return value float
  */
-inline float axAtan2f(const float y, const float x)
+__axmath_inline float axAtan2f(const float y, const float x)
 {
   register float value;
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fpatan;"    "fld %%st(0);"    : "=t" (value) : "0" (x), "u" (y)
@@ -980,10 +1002,10 @@ inline float axAtan2f(const float y, const float x)
  * @param[in] value float
  * @return value float
  */
-inline float axCotanf(float value)
+__axmath_inline float axCotanf(float value)
 {
   // cotan(x) = 1/tan(x)
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fsincos;"    "fdivrp;"
@@ -997,10 +1019,10 @@ inline float axCotanf(float value)
  * @param[in] value float
  * @return value float
  */
-inline float axCscf(float value)
+__axmath_inline float axCscf(float value)
 {
   // csc(x) = 1/sin(x)
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fsin;"   "fld1;"   "fdivrp;"
@@ -1014,10 +1036,10 @@ inline float axCscf(float value)
  * @param[in] value float
  * @return value float
  */
-inline float axSecf(float value)
+__axmath_inline float axSecf(float value)
 {
   // sec(x) = 1/cos(x)
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fcos;"   "fld1;"   "fdivrp;"
@@ -1031,10 +1053,10 @@ inline float axSecf(float value)
  * @param[in] value float
  * @return value float
  */
-inline float axAcotanf(float value)
+__axmath_inline float axAcotanf(float value)
 {
   // arccotan(x) = atan(1/x)
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fld1;"   "fxch;"   "fpatan;"
@@ -1048,10 +1070,10 @@ inline float axAcotanf(float value)
  * @param[in] value float
  * @return value float
  */
-inline float axAsecf(float value)
+__axmath_inline float axAsecf(float value)
 {
   // asec(x) = atan(sqrt(x*x-1))
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
   "fld %0;"   "fmulp;"    "fld1;"   "fsubp;"    "fsqrt;"
@@ -1066,10 +1088,10 @@ inline float axAsecf(float value)
  * @param[in] value float
  * @return value float
  */
-inline float axAcscf(float value)
+__axmath_inline float axAcscf(float value)
 {
   // acsc(x) = atan(sqrt(1/(x*x-1)))
-  //__asm__ __volatile__ ("":::);
+  //__asmv ("":::);
   __asm__
   (
     "fld %0;"   "fmulp;"    "fld1;"   "fsubp;"    "fld1;"   "fdivrp;"
@@ -1084,7 +1106,7 @@ inline float axAcscf(float value)
  * @param[in] x float
  * @return result float
  */
-inline float axSinhf(const float x)
+__axmath_inline float axSinhf(const float x)
 {
   if(x >= 0.0f)
   {
@@ -1103,7 +1125,7 @@ inline float axSinhf(const float x)
  * @param[in] x float
  * @return result float
  */
-inline float axSinh(const float x)
+__axmath_inline float axSinh(const float x)
 {
   const float x2 = x*x;
   return x*(x2*(0.012*x2 + 0.156) + 1.004);
@@ -1114,7 +1136,7 @@ inline float axSinh(const float x)
  * @param[in] x float
  * @return result float
  */
-inline float axCoshf(const float x)
+__axmath_inline float axCoshf(const float x)
 {
   const float _e = axExpf(axAbs(x));
   return (_e + 1.0f/_e)*0.5f;
@@ -1125,7 +1147,7 @@ inline float axCoshf(const float x)
  * @param[in] x float
  * @return result float
  */
-inline float axCosh(const float x)
+__axmath_inline float axCosh(const float x)
 {
   const float x2 = x*x;
   return x2*(0.065*x2 + 0.428) + 1.025;
@@ -1136,7 +1158,7 @@ inline float axCosh(const float x)
  * @param[in] value const float
  * @return result float
  */
-inline float axTanhf(const float value)
+__axmath_inline float axTanhf(const float value)
 {
   if (value > 50)
     return 1;
@@ -1155,7 +1177,7 @@ inline float axTanhf(const float value)
  * @param[in] x float
  * @return result float
  */
-inline float axTanh(const float x)
+__axmath_inline float axTanh(const float x)
 {
   const float x2 = x*x;
   return x*(27 + x2) / (27 + 9*x2);
@@ -1172,7 +1194,7 @@ inline float axTanh(const float x)
  * @param ar float* - array of floats
  * @return float
  */
-inline float axAvrg(const unsigned int n, const float* ar)
+__axmath_inline float axAvrg(const unsigned int n, const float* ar)
 {
   float total = 0;
   for(unsigned int i = 0; i < n; i++) total += ar[i];
@@ -1190,7 +1212,7 @@ inline float axAvrg(const unsigned int n, const float* ar)
  * @param ar int* - array of integers
  * @return int
  */
-inline int axAvrgInt(const unsigned int n, const int* ar)
+__axmath_inline int axAvrgInt(const unsigned int n, const int* ar)
 {
   int total = 0;
   for(unsigned int i = 0; i < n; i++) total += ar[i];
@@ -1209,7 +1231,7 @@ inline int axAvrgInt(const unsigned int n, const int* ar)
  *
  * @return float
  */
-inline float axRMS(const unsigned int n, const float* ar)
+__axmath_inline float axRMS(const unsigned int n, const float* ar)
 {
   float numr = 0;
   for (unsigned int i=0; i<n; i++) numr += axSqr(ar[i]); // ar[i] * ar[i]

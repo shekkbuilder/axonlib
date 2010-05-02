@@ -6,6 +6,7 @@
 
 #include "axConfig.h"
 #include "axDefines.h"
+#include "axStdlib.h"
 #include "core/axDebug.h"
 #include "core/axMemory.h"
 #include "core/axUtils.h"

@@ -2,6 +2,8 @@
 #include "axDemo_editor.h"
 #include "axDemo_graph.h"
 
+#include "core/axRand.h"
+
 class axDemo : public axPlugin
 {
   private:
@@ -97,8 +99,8 @@ class axDemo : public axPlugin
       {
         //*aOutputs[0] = *aInputs[0];
         //*aOutputs[1] = *aInputs[0];
-        *aOutputs[0] = axRandomSigned() * 0.1;
-        *aOutputs[1] = axRandomSigned() * 0.1;
+        *aOutputs[0] = axRandSigned() * 0.1f;
+        *aOutputs[1] = axRandSigned() * 0.1f;
         //todo: graph.process
         //mGraph->doExecute(aInputs,aOutputs);
 

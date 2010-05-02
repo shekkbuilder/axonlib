@@ -137,24 +137,24 @@ class axPluginBase// : public axParameterListener
     virtual void doSetProgram(int aProgram) {}
 
     // parameter calue has changed, grab new value here
-    virtual void doSetParameter(axParameter* aParameter) {}
+    virtual void __hot doSetParameter(axParameter* aParameter) {}
 
     // not used
     //virtual bool doProcessEvents(void) {return false;}
 
     // this will be called for each incoming midi message, before doProcessBlock
-    virtual void doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3) {}
+    virtual void __hot doProcessMidi(int ofs, unsigned char msg1, unsigned char msg2, unsigned char msg3) {}
 
     // process a block of samples. return true if you did all needed work,
     // or false if doProcessSample should be called for each sample
-    virtual bool doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize) {return false;}
+    virtual bool __hot doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize) {return false;}
 
     // process one sample.
     // only called if you returned true from doProcessBlock
-    virtual void doProcessSample(SPL** aInputs, SPL** aOutputs) {}
+    virtual void __hot doProcessSample(SPL** aInputs, SPL** aOutputs) {}
 
     // called after current block is finished, do any eventual post-processing here
-    virtual void doPostProcess(SPL** aInputs, SPL** aOutputs, int aSize) {}
+    virtual void __hot doPostProcess(SPL** aInputs, SPL** aOutputs, int aSize) {}
 
     // create and open your editor
     virtual axWindow* doOpenEditor(axContext* aContext) { return NULL; }
