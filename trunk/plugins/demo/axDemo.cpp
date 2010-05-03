@@ -29,8 +29,8 @@ class axDemo : public axPlugin
         appendParameter( p4 = new axParameter(this,"p4","",0.8) );
         appendParameter( p5 = new axParameter(this,"p5","",1.0) );
         setupParameters();
-        char* caps = axCpuCapsString();
-        trace("cpu caps: " << caps);
+        //char* caps = axCpuCapsString();
+        //trace("cpu caps: " << caps);
       }
 
     //----------

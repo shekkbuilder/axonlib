@@ -2,8 +2,6 @@
 #define wdgButtons_included
 //----------------------------------------------------------------------
 
-//NOTE:uses the axButton's mId as index into (internal) list of buttons
-
 #include "wdg/wdgButton.h"
 #include "core/axArray.h"
 
@@ -46,7 +44,8 @@ class wdgButtons : public axWidget
     void appendButton(wdgButton* aButton)
       {
         int num = mButtons.size();
-        aButton->mId = num;
+        //aButton->mId = num;
+        aButton->setIndex(num);
         aButton->setListener(this);
         aButton->setMode(bm_Switch);
         mButtons.append(aButton);
@@ -85,7 +84,8 @@ class wdgButtons : public axWidget
 
     virtual void onChange(axWidget* aWidget)
       {
-        int index = aWidget->mId;
+        //int index = aWidget->mId;
+        int index = aWidget->getIndex();
         switch (mButtonMode)
         {
           case bm_Single:

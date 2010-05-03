@@ -141,21 +141,21 @@
 
 /*
   ccernn:
-  [linux] the three commented lines below conflicts with sys/types.h
-  (will test in in win7 after i've commit'ed, so i can update in w7)
+  [linux/gcc] the three commented lines below conflicts with sys/types.h
+  :: problems in win7.
 */
 
 #define cchar       const     char
 #define uchar       unsigned  char
 #define cuchar      const     unsigned  char
 #define cshort      const     short
-//#define ushort      unsigned  short
+  //#define ushort      unsigned  short
 #define cushort     const     unsigned  short
 #define cint        const     int
-//#define uint        unsigned  int
+  //#define uint        unsigned  int
 #define cuint       const     unsigned  int
 #define clong       const     long
-//#define ulong       unsigned  long
+  //#define ulong       unsigned  long
 #define culong      const     unsigned  long
 #define clonglong   const     long      long
 #define ulonglong   unsigned  long      long
@@ -191,6 +191,7 @@
 #endif
 
 // ccernn [linux] __shared gives problem with pthreadtypes.h
+// obviously no problem in windows (no pthreads)
 
 // attributes
 // -----------------------------------------------------------------------------
@@ -239,8 +240,9 @@
 
 // builtin functions
 // -----------------------------------------------------------------------------
-// ccernn: i get errors when i compile wirth mingw32
-//#define sprintf __builtin_sprintf
+// ccernn: i get errors when i compile with mingw32 in linux
+// (partially solved it by manually replacing all occurences of printf with __builtin_sprintf)
+#define sprintf __builtin_sprintf
 
 // ........
 // ........
