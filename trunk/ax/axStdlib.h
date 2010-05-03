@@ -61,7 +61,7 @@ inline T* axRealloc(T* dest, const unsigned int oldlen, const unsigned int newle
   if (oldlen < newlen)
     _len = oldlen;
   else
-    _len = newlen;   
+    _len = newlen;
   for (unsigned int i = 0; i < _len; i++)
     _dest[i] = dest[i];
   delete[] dest;

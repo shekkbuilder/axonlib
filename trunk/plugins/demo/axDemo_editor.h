@@ -45,11 +45,17 @@ class axDemo_editor : public axEditor
     axDemo_page_midi*     w_Page_midi;
     axDemo_page_bitmaps*  w_Page_bitmaps;
 
+    axBitmap* bitmap;
+
   public:
 
     axDemo_editor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
       {
+
+        bitmap = createBitmap(320,200);
+        bitmap->createBuffer();
+        bitmap->prepare();
 
         //----- bottom [status panel] -----
 
@@ -92,13 +98,13 @@ class axDemo_editor : public axEditor
           w_RightPanel->appendPage( w_Page_params  = new axDemo_page_params( this,NULL_RECT,wa_Client) );
           w_RightPanel->appendPage( w_Page_audio   = new axDemo_page_audio(  this,NULL_RECT,wa_Client) );
           w_RightPanel->appendPage( w_Page_midi    = new axDemo_page_midi(   this,NULL_RECT,wa_Client) );
-          w_RightPanel->appendPage( w_Page_bitmaps = new axDemo_page_bitmaps(this,NULL_RECT,wa_Client) );
+          w_RightPanel->appendPage( w_Page_bitmaps = new axDemo_page_bitmaps(this,NULL_RECT,wa_Client,bitmap) );
           w_RightPanel->setPage(0,false);
 
         //----- and then put everything in place -----
 
         doRealign();
-        startTimer(1000);
+        startTimer(50);
       }
 
     //----------
@@ -152,7 +158,8 @@ class axDemo_editor : public axEditor
 
     virtual void doTimer(void)
       {
-        trace("doTimer");
+        //trace("doTimer");
+        w_Page_bitmaps->timer_tick();
       }
 
     //----------

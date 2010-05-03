@@ -93,7 +93,8 @@ class wdgKnob : public wdgValue
       {
         if (mSkin)
         {
-          sprintf(mDisp,"%.3f",mValue);
+          //sprintf(mDisp,"%.3f",mValue);
+          __builtin_sprintf(mDisp,"%.3f",mValue);
           mSkin->drawKnob(aCanvas,mRect,mName,mDisp,mValue);
         }
       }

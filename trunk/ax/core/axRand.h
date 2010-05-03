@@ -27,7 +27,7 @@
 #endif
 
 /*
-  ------------------------------------------------------------------------------  
+  ------------------------------------------------------------------------------
   axRand()
   - "rdtsc" 64 bit register dependant
   - constantly seeded from "rdtsc"
@@ -79,12 +79,12 @@ __axrandinline unsigned long axRandInt(void)
 { _AXRAND; return ( a * b ); }
 
 __axrandinline unsigned long axRandInt(const unsigned long s)
-{ _AXRAND; 
+{ _AXRAND;
   return (unsigned long)( _AXRAND_FLOAT_C ); }
 
 /*
-  ------------------------------------------------------------------------------  
-  axRandSinf() 
+  ------------------------------------------------------------------------------
+  axRandSinf()
   - non-uniform, trigonometric, "negative" distribution
     (more values towards min, max)
   - uses class constructor
@@ -118,7 +118,7 @@ class axRandSinf
 {
   private:
     float x, y;
-    
+
   public:
     axRandSinf(void)
     {
@@ -132,28 +132,28 @@ class axRandSinf
       #ifdef __AX32__
         register unsigned long _x;
         __asmv ( "rdtsc;" : "=a" (_x) );
-      #endif      
+      #endif
       x = (float)(_x >> 16);
       y = 1.f;
     }
-    
+
     axRandSinf(const unsigned long _x)  { x = (float)_x; }
     axRandSinf(const float _x)          { x = _x;        }
-    
+
     ~axRandSinf() {}
-        
+
     __axrandinline float rand(void)
     { _AXRANDSINF; return _AXRANDSINF_SHIFT; }
-    
+
     __axrandinline float rand(const float _top)
     { _AXRANDSINF; return _top * _AXRANDSINF_SHIFT; }
-    
+
     __axrandinline float randSigned(void)
     { _AXRANDSINF; return y; }
-        
+
     __axrandinline unsigned long randInt(void)
     { _AXRANDSINF;  return (unsigned long) AXRAND_MAX * _AXRANDSINF_SHIFT; }
-    
+
     __axrandinline unsigned long randInt(const unsigned long _top)
     { _AXRANDSINF; return (unsigned long) ( _top * _AXRANDSINF_SHIFT ); }
 };

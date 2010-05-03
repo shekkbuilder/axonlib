@@ -7,7 +7,7 @@
   #define __AX32__
 #endif
 
-#if defined (__x86_64) || (__LP64__)  || defined (_WIN64) 
+#if defined (__x86_64) || (__LP64__)  || defined (_WIN64)
   #define __AX64__
 #endif
 
@@ -108,14 +108,14 @@
     #define ci16  const           short
     #define u16         unsigned  short
     #define cu16  const unsigned  short
-    
+
     #define f32                   float
     #define cf32  const           float
     #define f64                   double
     #define cf64  const           double
     #define lf64                  long double
     #define clf64 const           long double
-    
+
   #ifdef (__AX32__)
     #define i32                   int
     #define ci32  const           int
@@ -130,7 +130,7 @@
     #define u64         unsigned  long long
     #define cu64  const unsigned  long long
   #endif
-  
+
   #ifdef (__AX64__)
     //---
   #endif
@@ -138,17 +138,24 @@
 
 // architecture 'safe' aliases
 // -----------------------------------------------------------------------------
+
+/*
+  ccernn:
+  [linux] the three commented lines below conflicts with sys/types.h
+  (will test in in win7 after i've commit'ed, so i can update in w7)
+*/
+
 #define cchar       const     char
 #define uchar       unsigned  char
 #define cuchar      const     unsigned  char
 #define cshort      const     short
-#define ushort      unsigned  short
+//#define ushort      unsigned  short
 #define cushort     const     unsigned  short
 #define cint        const     int
-#define uint        unsigned  int
+//#define uint        unsigned  int
 #define cuint       const     unsigned  int
 #define clong       const     long
-#define ulong       unsigned  long
+//#define ulong       unsigned  long
 #define culong      const     unsigned  long
 #define clonglong   const     long      long
 #define ulonglong   unsigned  long      long
@@ -183,12 +190,14 @@
   #define false 0
 #endif
 
+// ccernn [linux] __shared gives problem with pthreadtypes.h
+
 // attributes
 // -----------------------------------------------------------------------------
 #define __aligned(x)              __attribute__ ((aligned (x)))
 #define __alignedmax              __attribute__ ((aligned))
 #define __packed                  __attribute__ ((packed))
-#define __shared                  __attribute__ ((shared))
+//#define __shared                  __attribute__ ((shared))
 #define __section(name)           __attribute__ ((section (name)))
 #define __used                    __attribute__ ((used))
 #define __unused                  __attribute__ ((unused))
@@ -230,7 +239,8 @@
 
 // builtin functions
 // -----------------------------------------------------------------------------
-#define sprintf __builtin_sprintf
+// ccernn: i get errors when i compile wirth mingw32
+//#define sprintf __builtin_sprintf
 
 // ........
 // ........
@@ -271,7 +281,7 @@ etc..
 
 some info:
 http://www.safercode.com/blog/2009/03/10/portable-code-how-to-check-if-a-machine-is-32-bit-or-64-bit.html
-  
+
 */
 
 

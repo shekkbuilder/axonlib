@@ -1,3 +1,6 @@
+//#define AX_DEBUG_MEMORY
+//#include "core/axMemory.h"
+
 #include "axPlugin.h"
 #include "axDemo_editor.h"
 #include "axDemo_graph.h"
@@ -19,7 +22,7 @@ class axDemo : public axPlugin
         mGraph->doCompile();
         describe("axDemo","ccernn","axonlib example",0,AX_MAGIC+0xFFFF);
         setupAudio(2,2,false);
-        setupEditor(350,450);
+        setupEditor(430,500);
         appendParameter( p1 = new axParameter(this,"p1","",0.2) );
         appendParameter( p2 = new axParameter(this,"p2","",0.4) );
         appendParameter( p3 = new axParameter(this,"p3","",0.6) );
