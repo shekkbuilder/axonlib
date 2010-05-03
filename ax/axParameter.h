@@ -128,7 +128,7 @@ class axParameter// : public axParameterBase
     virtual void doGetDisplay(char* buf)
       {
         float val = getValue();
-        sprintf(buf,"%.3f",val);
+        __builtin_sprintf(buf,"%.3f",val);
       }
 
 };

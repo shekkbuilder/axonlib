@@ -2,18 +2,18 @@
  * This file is part of Axonlib.
  *
  * Axonlib is free software: you can redistribute it and/or modify
- * it under the terms of the Axonlib License, either version 1.0 
+ * it under the terms of the Axonlib License, either version 1.0
  * of the License, or (at your option) any later version.
  *
  * Axonlib is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE_AX for more details.
- *  
- * You should have received a copy of the Axonlib License 
+ *
+ * You should have received a copy of the Axonlib License
  * If not, see <http://axonlib.googlecode.com/>.
  */
- 
+
 /**
  * \file axMath.h
  * \brief math approximations and routines
@@ -24,10 +24,10 @@
  * such versions use FPU instructions for the calculation (FPU x87 required).
  * the versions without 'f' suffix are most likely less cpu heavy approximations,
  * but with reduced accuracy and acceptable input range (e.g. axCos). <br>
- * <br> 
+ * <br>
  * <b>notes:</b> <br> <br>
  * gcc 4.x outperforms 3.x many times with -O2, -O3 <br>
- * you can get gcc 4.x for windows at http://www.tdragon.net/recentgcc/    
+ * you can get gcc 4.x for windows at http://www.tdragon.net/recentgcc/
   <br>
   <br>
   <b>short performance table for axMath.h</b>: <br>
@@ -38,22 +38,22 @@
   iterations: 10e+5 or more <br>
   <br>
   *some comparisons may use a weighting function to reduce the number
-  of iterations <br>    
+  of iterations <br>
   <br>
   <table>  <tr>  <td>
-  axFloor: 5ms <br>  floorf: 25ms <br>  
-  axRound: 6ms <br>  roundf: 42ms <br>  
-  axAbs: 36ms <br>  fabs: 63ms <br>  
-  axLog2: 7ms <br>  axLog2f: 69ms <br>  log2f: 75ms <br>  
-  axLogf: 20ms <br>  logf: 80ms <br>   
+  axFloor: 5ms <br>  floorf: 25ms <br>
+  axRound: 6ms <br>  roundf: 42ms <br>
+  axAbs: 36ms <br>  fabs: 63ms <br>
+  axLog2: 7ms <br>  axLog2f: 69ms <br>  log2f: 75ms <br>
+  axLogf: 20ms <br>  logf: 80ms <br>
   axLog10: 30ms <br>  axLog10f: 69ms <br>  log10f: 75ms <br>
   </td>
   <td>
-  axPowf: 96ms <br>  powf: 161ms <br>  
-  axExp: 3ms <br>  axExpf: 34ms <br>  expf: 137ms <br>  
-  axSqrt: <1ms <br>  axSqrtf: <1ms <br>  sqrtf: 27ms <br>  
-  axSin: 56ms <br>  axSinf: 98ms <br>  sinf: 114ms <br>  
-  axAcosf: <1ms <br>  acosf: 75ms <br>  
+  axPowf: 96ms <br>  powf: 161ms <br>
+  axExp: 3ms <br>  axExpf: 34ms <br>  expf: 137ms <br>
+  axSqrt: <1ms <br>  axSqrtf: <1ms <br>  sqrtf: 27ms <br>
+  axSin: 56ms <br>  axSinf: 98ms <br>  sinf: 114ms <br>
+  axAcosf: <1ms <br>  acosf: 75ms <br>
   axTanhf: 70ms <br>  tanf: 194ms <br>
   </td>  </tr>  </table>
   <br>
@@ -79,17 +79,19 @@
 #include <stdlib.h>
 //----
 
+//ccernn: the followingf three commented lines gave compile errors in mingw32
 
 // ### set ( | test only) some deprecated warnings on compile time
 __deprecated float fabs(float x) { return __builtin_fabs(x); }
-__deprecated float sinf(float x) { return __builtin_sinf(x); }
-__deprecated float cosf(float x) { return __builtin_cosf(x); }
-__deprecated float tanf(float x) { return __builtin_tanf(x); }
+//__deprecated float sinf(float x) { return __builtin_sinf(x); }
+//__deprecated float cosf(float x) { return __builtin_cosf(x); }
+//__deprecated float tanf(float x) { return __builtin_tanf(x); }
 __deprecated int sin(int x) { return __builtin_sin(x); }
 __deprecated int cos(int x) { return __builtin_cos(x); }
 __deprecated int tan(int x) { return __builtin_tan(x); }
 __deprecated int pow(int x, int y) { return __builtin_pow(x, y); }
 __deprecated float powf(double x, float y) { return __builtin_powf(x, y); }
+
 
 /**
  * invert of x: (x^2)
@@ -245,7 +247,7 @@ __axmath_inline float axAbs(const float value)
   } u;
   u.j = value;
   u.i &= 0x7fffffff;
-  return u.j;  
+  return u.j;
 }
 
 /**
@@ -371,7 +373,7 @@ __deprecated __axmath_inline float axCalcValuep(const float a, const float b, co
 
 // ###################################
 // depreciated stdlib.h -> rand()
-// 
+//
 // using: axRand.h
 // ###################################
 
@@ -379,7 +381,7 @@ __deprecated __axmath_inline float axCalcValuep(const float a, const float b, co
  * passes a seed to the random number generator
  * @param[in] aSeed int default value -> use ctime
  */
- 
+
 __deprecated __axmath_inline void axRandomize(const int aSeed = (unsigned)time(0))
 {
     srand(aSeed);
@@ -414,7 +416,7 @@ __deprecated __axmath_inline int axRandomInt(const int i)
  * returns a random floating point number between [-1..1]
  * @return result float
  */
- 
+
 __deprecated __axmath_inline float axRandomSigned(void)
 {
   return (2 * (float)rand() / (float)RAND_MAX) - 1;
@@ -426,14 +428,14 @@ __deprecated __axmath_inline float axRandomSigned(void)
  * @param[in] aHigh float
  * @return result float
  */
- 
+
 __deprecated __axmath_inline float axRandom(const float aLow, const float aHigh)
 {
-  
+
     //float range = aHigh-aLow;
     //float rnd = axRandom();
     //return aLow + rnd*range;
-  
+
   return aLow + ( (float)rand() / (float)RAND_MAX ) *(aHigh - aLow);
 }
 
@@ -748,10 +750,10 @@ __axmath_inline float axSqrt(const float x)
   union
   {
     int i;
-    float j;    
+    float j;
   } u;
   u.j = x;
-  u.i = (0xbe6ec85f - u.i) >> 1;   // good initial guess  
+  u.i = (0xbe6ec85f - u.i) >> 1;   // good initial guess
   return x*u.j*(1.5f - u.j*u.j*halfx) + 0.001f; // newton iteration
 }
 
@@ -787,7 +789,7 @@ __axmath_inline float axInvSqrt(const float x)
   } u;
   u.j = x;
   u.i = 0x5f3759df - (u.i >> 1); // good initial guess
-  return u.j*(1.5f - u.j*u.j*halfx) + 0.001f; // newton iteration  
+  return u.j*(1.5f - u.j*u.j*halfx) + 0.001f; // newton iteration
 }
 
 /**

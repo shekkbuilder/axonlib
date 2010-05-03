@@ -12,9 +12,10 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-pedantic" />
 					<Add option="-Wall" />
 					<Add option="-g" />
+					<Add option="-Wno-unused" />
+					<Add option="-Wno-long-long" />
 					<Add option="-DAX_FORMAT_EXE" />
 					<Add option="-DAX_DEBUG" />
 					<Add directory="../../ax" />
@@ -31,6 +32,8 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O3" />
+					<Add option="-Wno-unused" />
+					<Add option="-Wno-long-long" />
 					<Add option="-DAX_FORMAT_EXE" />
 					<Add directory="../../ax" />
 				</Compiler>
@@ -48,10 +51,11 @@
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-pedantic" />
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-shared" />
+					<Add option="-Wno-unused" />
+					<Add option="-Wno-long-long" />
 					<Add option="-DAX_FORMAT_VST" />
 					<Add option="-DAX_DEBUG" />
 					<Add directory="../../ax" />
@@ -72,6 +76,8 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-shared" />
+					<Add option="-Wno-unused" />
+					<Add option="-Wno-long-long" />
 					<Add option="-DAX_FORMAT_VST" />
 					<Add directory="../../ax" />
 					<Add directory="../../../vstsdk24" />
@@ -88,9 +94,10 @@
 				<Option type="1" />
 				<Option compiler="mingw32" />
 				<Compiler>
-					<Add option="-pedantic" />
 					<Add option="-Wall" />
 					<Add option="-g" />
+					<Add option="-Wno-unused" />
+					<Add option="-Wno-long-long" />
 					<Add option="-DAX_FORMAT_EXE" />
 					<Add option="-DAX_DEBUG" />
 					<Add directory="../../ax" />
@@ -107,6 +114,8 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-mwindows" />
+					<Add option="-Wno-unused" />
+					<Add option="-Wno-long-long" />
 					<Add option="-DAX_FORMAT_EXE" />
 					<Add directory="../../ax" />
 				</Compiler>
@@ -127,6 +136,8 @@
 					<Add option="-g" />
 					<Add option="-shared" />
 					<Add option="-mwindows" />
+					<Add option="-Wno-unused" />
+					<Add option="-Wno-long-long" />
 					<Add option="-DAX_FORMAT_VST" />
 					<Add option="-DAX_DEBUG" />
 					<Add directory="../../ax" />
@@ -147,6 +158,8 @@
 					<Add option="-O3" />
 					<Add option="-shared" />
 					<Add option="-mwindows" />
+					<Add option="-Wno-unused" />
+					<Add option="-Wno-long-long" />
 					<Add option="-DAX_FORMAT_VST" />
 					<Add directory="../../ax" />
 					<Add directory="../../../vstsdk24" />
@@ -168,6 +181,7 @@
 		<Unit filename="../../ax/axEditor.h" />
 		<Unit filename="../../ax/axParameter.h" />
 		<Unit filename="../../ax/axPlugin.h" />
+		<Unit filename="../../ax/axStdlib.h" />
 		<Unit filename="../../ax/base/axBitmapBase.h" />
 		<Unit filename="../../ax/base/axCanvasBase.h" />
 		<Unit filename="../../ax/base/axImage.h" />
@@ -179,9 +193,12 @@
 		<Unit filename="../../ax/core/axDebug.h" />
 		<Unit filename="../../ax/core/axList.h" />
 		<Unit filename="../../ax/core/axMath.h" />
+		<Unit filename="../../ax/core/axMemory.h" />
 		<Unit filename="../../ax/core/axPoint.h" />
+		<Unit filename="../../ax/core/axRand.h" />
 		<Unit filename="../../ax/core/axRect.h" />
 		<Unit filename="../../ax/core/axString.h" />
+		<Unit filename="../../ax/core/axUtils.h" />
 		<Unit filename="../../ax/deprecated/axApplication.h" />
 		<Unit filename="../../ax/dsp/dspDCF.h" />
 		<Unit filename="../../ax/dsp/dspInterpolate.h" />

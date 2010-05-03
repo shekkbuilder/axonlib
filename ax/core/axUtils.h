@@ -23,7 +23,7 @@
 TODO:
   lii:  i've started writing some of these in axStdLib.h, but they can be here
         as well.
-  
+
   axMemcpy, axMemsey
   axStrCpy,Strdup, etc...
   strcmp
@@ -123,7 +123,7 @@ __axutils_inline unsigned int axBitReverse(unsigned int v)
   unsigned int r = v;
   int s = sizeof(v) * CHAR_BIT - 1;
   for (v >>= 1; v; v >>= 1)
-  {   
+  {
     r <<= 1;
     r |= v & 1;
     s--;
@@ -345,7 +345,8 @@ char* axCpuCapsString(void)
 {
   axCPUID();
   // ## note: sprintf() is current used as __builtin_spritf()
-  sprintf(cpustringbuf,"%s%s%s%s%s%s%s%s%s%s%s%s",
+  //sprintf(cpustringbuf,"%s%s%s%s%s%s%s%s%s%s%s%s",
+  __builtin_sprintf(cpustringbuf,"%s%s%s%s%s%s%s%s%s%s%s%s",
           __AX_SSE3__     ? "sse3 "     : "" ,
           __AX_SSSE3__    ? "ssse3 "    : "" ,
           __AX_FPU__      ? "fpu "      : "" ,
@@ -404,7 +405,7 @@ __axutils_inline float axQ2Octaves(const float q)
 //          execution for cpu cycle measurement.
 
 #ifdef __AX64__
-  // 64bit untested 
+  // 64bit untested
   static __axutils_inline unsigned long long axRdtsc(void)
   {
     unsigned low, high;

@@ -2,6 +2,16 @@
 #ifndef axMemory_included
 #define axMemory_included
 
+#include "axDefines.h"  // u32
+#include <stddef.h>     // size_t
+#include <iostream>     // cout
+//#include <fstream>
+using namespace std;
+
+// hmmm. in linux, if i don't have the following line, the compiler complaints about not finding
+// axGetFileName, but if i _do_ have it, it says "new" needs another argument (string?)
+#include "core/axUtils.h"
+
 // ###: decide that to do with this header:
 //  * rename to axMemoryDebug
 //  * temporary remove from the lib
@@ -58,19 +68,19 @@ void operator delete(void* ptr, size_t size, const char* file, culong line)
   cout << "[" << axGetFileName(file) << "|" << line << "] delete[], ";
   axTotalAllocMem -= size;
   cout << static_cast<void*>(ptr) << ", " << size << ", "
-  << axTotalAllocMem << "\n";  
-  if (ptr == NULL) throw "delete failed!";  
+  << axTotalAllocMem << "\n";
+  if (ptr == NULL) throw "delete failed!";
   return ::operator delete[](ptr);
 }
 
 void operator delete[](void* ptr, size_t size, const char* file, culong line)
 {
-  cout << "[" << axGetFileName(file) << "|" << line << "] delete[], ";  
+  cout << "[" << axGetFileName(file) << "|" << line << "] delete[], ";
   axTotalAllocMem -= size;
   cout << static_cast<void*>(ptr) << ", " << size << ", "
-  << axTotalAllocMem << "\n";  
-  if (ptr == NULL) throw "delete[] failed!";  
-  return ::operator delete[](ptr);  
+  << axTotalAllocMem << "\n";
+  if (ptr == NULL) throw "delete[] failed!";
+  return ::operator delete[](ptr);
 }
 
 // override stdlib functions
@@ -85,7 +95,7 @@ void* axMalloc(size_t size, const char* file, culong line)
     << axTotalAllocMem << "\n";
     return ptr;
   }
-  throw "malloc() failed!";  
+  throw "malloc() failed!";
 }
 
 // ######### not called ?
@@ -99,7 +109,7 @@ void* axCalloc(size_t size, const char* file, culong line)
     << axTotalAllocMem << "\n";
     return ptr;
   }
-  throw "calloc() failed!";  
+  throw "calloc() failed!";
 }
 
 // ######### not called ?

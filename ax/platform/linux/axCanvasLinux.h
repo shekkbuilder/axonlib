@@ -206,7 +206,7 @@ class axCanvasLinux : public axCanvasBase
     // angle 2 = 'distance' 0..1, counter-clockwise
     virtual void drawArc(int aX1, int aY1, int aX2, int aY2, float aAngle1, float aAngle2)
       {
-        if( fabs(aAngle2) >= 0.01/*EPSILON*/ )
+        if( axAbs(aAngle2) >= 0.01/*EPSILON*/ )
         {
           // start angle = 12 o'clock
           float a1 = -aAngle1 + 0.25;
@@ -222,7 +222,7 @@ class axCanvasLinux : public axCanvasBase
     // angle 2 = 'distance' 0..1, counter-clockwise
     virtual void fillArc(int aX1, int aY1, int aX2, int aY2, float aAngle1, float aAngle2)
       {
-        if( fabs(aAngle2) >= 0.01/*EPSILON*/ )
+        if( axAbs(aAngle2) >= 0.01/*EPSILON*/ )
         {
           // start angle = 12 o'clock
           float a1 = -aAngle1 + 0.25;

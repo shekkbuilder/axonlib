@@ -363,7 +363,7 @@ class axCanvasWin32 : public axCanvasBase
     // angle 2 = 'distance' 0..1, counter-clockwise
     virtual void drawArc(int aX1, int aY1, int aX2, int aY2, float aAngle1, float aAngle2)
       {
-        if( fabs(aAngle2) >= 0.01/*EPSILON*/ )
+        if( axAbs(aAngle2) >= 0.01/*EPSILON*/ )
         {
           float a1 = aAngle1 -= 0.25;
           float a2 = a1 + aAngle2;
@@ -392,7 +392,7 @@ class axCanvasWin32 : public axCanvasBase
     // angle 2 = 'distance' 0..1, counter-clockwise
     virtual void fillArc(int aX1, int aY1, int aX2, int aY2, float aAngle1, float aAngle2)
       {
-        if( fabs(aAngle2) >= 0.01/*EPSILON*/ )
+        if( axAbs(aAngle2) >= 0.01/*EPSILON*/ )
         {
           clearPen();
           float a1 = aAngle1 -= 0.25;
