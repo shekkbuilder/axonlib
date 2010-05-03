@@ -99,11 +99,10 @@ class axWidget : public axWidgetListener
     axWidgets         mWidgets;
     axWidget*         mCapturedWidget;
     axWidget*         mHoverWidget;
-    //axWidget*         mModalWidget;
-    //int               mModalIndex;
     axRect            mClient;                // current Client area
     axRect            mContent;               // rect encapsulating all sub-widgets (updated in doRealign)
     int               mStackedX, mStackedY;   // where to put next wal_Stacked widget
+    int               mIndex;
   public:
     int               mId;
     void*             mPtr;
@@ -140,6 +139,8 @@ class axWidget : public axWidgetListener
         mStackedX       = 0;
         mStackedY       = 0;
 
+        mIndex = -1;
+
         mId             = 0;      //aId;
         mPtr            = NULL;   //aPtr;
       }
@@ -159,6 +160,9 @@ class axWidget : public axWidgetListener
 
     inline void setName(axString aName) { mName=aName; }
     inline void setListener(axWidgetListener* aListener) { mListener=aListener; }
+
+    inline int  getIndex(void)                      { return mIndex; }
+    inline void setIndex(int aNum)                  { mIndex = aNum; }
 
     // flags
 

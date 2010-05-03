@@ -16,27 +16,9 @@
   only tests used wihle developing there.
   none of them is guaranteed to function as the library evolves
 
-- [done?]
-  the -W command line argument to the compiler, gives a LOT of
-  unused parameter warnings.. all the base classes are filled with
-  empty virtual methods that does nothing...
-  a) find some way of suppressing these specific warnings
-  b) go through the offending sources,
-     add the 'unused' attribute to the arguments (gcc)
-       http://gcc.gnu.org/onlinedocs/gcc/Variable-Attributes.html#Variable-Attributes
-     int arg1 __attribute__ ((unused))
-     indicating:
-     "..is meant to be possibly unused.
-     GCC will not produce a warning for this.."
-
 ----------------------------------------------------------------------
 core:
 ----------------------------------------------------------------------
-
-- AX_DEBUG defined automatically in debug builds
-  like AX_LINUX, AX_WIN32, could (should?) be defined automatically,
-  but it looks like different compilers (platforms? have different
-  defines?
 
 - internal float2string, or similar
   get rid of a few sprintf(buf,"%f",var) calls in there...
@@ -46,6 +28,8 @@ core:
   for small plugins or apps.. no bloat....
 
 - mac?
+
+- axAtomic
 
 ----------------------------------------------------------------------
 plugin:
@@ -81,15 +65,6 @@ plugin:
 gui:
 ----------------------------------------------------------------------
 
-- dirty-widgets
-  things can get busy with fast automation or tweaking. cache updates,
-  (and check if new additions already in list before blindly adding)
-  update all in one when needed (idleEditor, timer, ...)
-
-- resizeable editor (vst)
-  dependant on host, different ways for different hosts. and some doesn't
-  support resizing at all.
-
 - png loading simplification & streamlining
   simplify default bahaviour, keep possibilities for manual low-level control
 
@@ -124,6 +99,11 @@ gui:
 - mouse cursor is not set correctly in non-client areas of windows
   in win7 (standalone)
 
+- cursor shape constants
+
+- some issues with window resizing. resizing via window borders and
+  via wdgSizer. some rect/variables not in sync?
+
 ----------------------------------------------------------------------
 widgets:
 ----------------------------------------------------------------------
@@ -131,14 +111,6 @@ widgets:
 - wdgShape
   very simple, to draw backgrounds, simple borders around things, ...
   fill out space in layouts
-
-- wdgPopup
-  route (ala mouse capture) to one specific (ala modal) widget only
-  (can have sub-widgets). handle this new widget as usual,
-  have some close definitions (esc, click, ..),
-
-- wdgDropDown
-  ala popup with some tweaks
 
 - wdgTextList
   a scrollbox with labels. max number of elements.

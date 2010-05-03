@@ -12,6 +12,7 @@
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-shared" />
 					<Add option="-DAX_FORMAT_VST" />
@@ -29,11 +30,17 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-shared" />
+					<Add option="-msse" />
+					<Add option="-mfpmath=sse,387" />
 					<Add option="-DAX_FORMAT_VST" />
 				</Compiler>
 				<Linker>
-					<Add option="-s" />
 					<Add option="-shared" />
+					<Add option="-fstack-check" />
+					<Add option="-fdata-sections" />
+					<Add option="-ffunction-sections" />
+					<Add option="-gc-sections" />
+					<Add option="-s" />
 				</Linker>
 			</Target>
 			<Target title="win32 exe debug">
@@ -42,6 +49,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-DAX_FORMAT_EXE" />
 					<Add option="-DAX_DEBUG" />
@@ -54,16 +62,21 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-msse" />
+					<Add option="-mfpmath=sse,387" />
 					<Add option="-DAX_FORMAT_EXE" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add option="-fstack-check" />
+					<Add option="-fdata-sections" />
+					<Add option="-ffunction-sections" />
+					<Add option="-gc-sections" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add option="-mwindows" />
 			<Add directory="..\..\ax" />
 			<Add directory="..\..\..\vstsdk24" />
 		</Compiler>
@@ -89,6 +102,7 @@
 		<Unit filename="..\..\ax\core\axDebug.h" />
 		<Unit filename="..\..\ax\core\axList.h" />
 		<Unit filename="..\..\ax\core\axMath.h" />
+		<Unit filename="..\..\ax\core\axMemory.h" />
 		<Unit filename="..\..\ax\core\axPoint.h" />
 		<Unit filename="..\..\ax\core\axRect.h" />
 		<Unit filename="..\..\ax\core\axString.h" />

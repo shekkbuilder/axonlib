@@ -52,7 +52,7 @@ if not "%infile:~-4%"=="%srcext%" goto nocpp
 if not exist %axpath% goto noax
 if not exist %vstpath% goto novstsdk
 
-:: check for 'not move' 
+:: check for 'not move'
 if [%2]==[-nmv] set nmv=yes
 if [%3]==[-nmv] set nmv=yes
 if [%4]==[-nmv] set nmv=yes
@@ -119,7 +119,7 @@ set ext=.exe
 set tgtformat=-DAX_FORMAT_EXE
 goto begin
 
-:: echo syntax 
+:: echo syntax
 :syntax
 echo.
 echo ---------------------------------------------------------------------------
@@ -164,7 +164,7 @@ echo command line is: %cmdline% && echo.
 
 :: target missing -> error
 if not exist %target% echo. && echo # ERR: not compiled! && goto done
-if not [%gccdstatus%]==[] goto printsize 
+if not [%gccdstatus%]==[] goto printsize
 
 :: call strip (no need if '-s' is passed to g++)
 rem echo striping...
