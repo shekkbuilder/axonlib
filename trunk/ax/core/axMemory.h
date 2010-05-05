@@ -2,8 +2,19 @@
 #ifndef axMemory_included
 #define axMemory_included
 
+
+// /////////////////////////////////////////////////////////////////////////////
+
+
+// ### could be now deprecated
+
+
+// /////////////////////////////////////////////////////////////////////////////
+
+// --------------------
+#if defined (AX_DEBUG) && defined (AX_DEBUG_MEMORY)
+
 #include "axDefines.h"  // u32
-#include <stddef.h>     // size_t
 #include <iostream>     // cout
 //#include <fstream>
 using namespace std;
@@ -11,15 +22,6 @@ using namespace std;
 // hmmm. in linux, if i don't have the following line, the compiler complaints about not finding
 // axGetFileName, but if i _do_ have it, it says "new" needs another argument (string?)
 #include "core/axUtils.h"
-
-// ###: decide that to do with this header:
-//  * rename to axMemoryDebug
-//  * temporary remove from the lib
-//  * leave it the way it is and improve some of the overrired
-//    ( | make them work)
-
-// --------------------
-#if defined (AX_DEBUG) && defined (AX_DEBUG_MEMORY)
 
 #ifndef ulong
   #define ulong unsigned long
@@ -33,7 +35,7 @@ ulong axTotalAllocMem = 0;
 
 // override new
 // -----------------
-void* operator new(size_t size, const char* file, culong line)
+void* operator new(unsigned int size, const char* file, culong line)
 {
   cout << "[" << axGetFileName(file) << "|" << line << "] new, ";
   if (void* ptr = ::operator new(size, std::nothrow))
@@ -46,7 +48,7 @@ void* operator new(size_t size, const char* file, culong line)
   throw "new failed!";
 }
 
-void* operator new[](size_t size, const char* file, culong line)
+void* operator new[](unsigned int size, const char* file, culong line)
 {
   cout << "[" << axGetFileName(file) << "|" << line << "] new[], ";
   if (void* ptr = ::operator new(size, std::nothrow))
@@ -63,7 +65,7 @@ void* operator new[](size_t size, const char* file, culong line)
 // -----------------
 // ### seems not to work !
 
-void operator delete(void* ptr, size_t size, const char* file, culong line)
+void operator delete(void* ptr, unsigned int size, const char* file, culong line)
 {
   cout << "[" << axGetFileName(file) << "|" << line << "] delete[], ";
   axTotalAllocMem -= size;
@@ -73,7 +75,7 @@ void operator delete(void* ptr, size_t size, const char* file, culong line)
   return ::operator delete[](ptr);
 }
 
-void operator delete[](void* ptr, size_t size, const char* file, culong line)
+void operator delete[](void* ptr, unsigned int size, const char* file, culong line)
 {
   cout << "[" << axGetFileName(file) << "|" << line << "] delete[], ";
   axTotalAllocMem -= size;
@@ -85,7 +87,7 @@ void operator delete[](void* ptr, size_t size, const char* file, culong line)
 
 // override stdlib functions
 // ----------------------------
-void* axMalloc(size_t size, const char* file, culong line)
+void* axMalloc(unsigned int size, const char* file, culong line)
 {
   cout << "[" << axGetFileName(file) << "|" << line << "] malloc(), ";
   if (void* ptr = ::operator new(size, std::nothrow))
@@ -99,7 +101,7 @@ void* axMalloc(size_t size, const char* file, culong line)
 }
 
 // ######### not called ?
-void* axCalloc(size_t size, const char* file, culong line)
+void* axCalloc(unsigned int size, const char* file, culong line)
 {
   cout << "[" << axGetFileName(file) << "|" << line << "] calloc(), ";
   if (void* ptr = ::operator new(size, std::nothrow))
@@ -124,7 +126,7 @@ void axFree(void* ptr, const char* file, culong line)
   free(ptr);
 }
 
-//void* operator realloc(void* ptr, size_t size, const char* file, culong line)
+//void* operator realloc(void* ptr, unsigned int size, const char* file, culong line)
 
 // define all macros here
 // --------------------------

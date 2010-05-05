@@ -19,23 +19,12 @@
  * \brief contains various utility methods.
  */
 
-/*
-TODO:
-  lii:  i've started writing some of these in axStdLib.h, but they can be here
-        as well.
-
-  axMemcpy, axMemsey
-  axStrCpy,Strdup, etc...
-  strcmp
-  sprintf (doesn't need to be that advanced..)
-  stdlib & std replacements
-*/
-
 #ifndef axUtils_included
 #define axUtils_included
 
 #include "axDefines.h"
 #include "axStdlib.h"
+#include "core/axMalloc.h"
 #include "core/axMath.h"
 
 #ifdef AX_USE_HOT_INLINE
@@ -159,7 +148,7 @@ __axutils_inline unsigned int axBitReverse(unsigned int v)
  * @return const char*
  */
 /*
-// ###### remove or replace with a version that does not use OSS
+// ###### deprecated by axItoa()
 */
 __deprecated __axutils_inline const char* axGetBinaryString(long int x, unsigned int bits=32)
 {
@@ -260,7 +249,8 @@ __AX_SSE4A__, __AX_SSE5__, __AX_MMX__, __AX_MMXEXT__, __AX_3DNOW__, __AX_3DNOWEX
  * http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/25481.pdf <br>
  * http://www.intel.com/Assets/PDF/appnote/241618.pdf
  */
-__axutils_inline void axCPUID(const int fcall=33139, int* eax=0, int* ebx=0, int* ecx=0, int* edx=0)
+__axutils_inline void axCPUID(const int fcall=33139, int* eax=0, int* ebx=0,
+  int* ecx=0, int* edx=0)
 {
   // no function call (default)
   // ----------------------------
@@ -444,21 +434,6 @@ __axutils_inline void axRadix(long *source, long *dest, unsigned long N, int byt
   for (i=0; i<N; i++)
     dest[ index[ ((source[i])>>(byte*8))&0xff ]++ ] = source[i];
 }
-
-//i = 1;
-//loop( size-1,
-//  cur = buf[i];
-//  j = i;
-//  buf[j-1] > cur ? (
-//    while(
-//      buf[j] = buf[j-1];
-//      j -= 1;
-//      ( (j>0) && (buf[j-1]>cur) )
-//    );
-//  );
-//  i += 1;
-//);
-
 
 //---------------------
 #endif

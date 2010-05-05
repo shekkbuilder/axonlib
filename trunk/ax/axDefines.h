@@ -1,6 +1,12 @@
 #ifndef axDefines_included
 #define axDefines_included
 
+/*
+TODO:
+  - write correct types and limits for __AX64__
+  - clean attributes and definitions that give problems 
+*/
+
 // architechture
 // -----------------------------------------------------------------------------
 #if defined  (__i386__) || defined (_X86_) || defined (__X86__)
@@ -143,19 +149,25 @@
   ccernn:
   [linux/gcc] the three commented lines below conflicts with sys/types.h
   :: problems in win7.
+  
+  lii:
+  these should work now with #undef before the new #define
 */
 
 #define cchar       const     char
 #define uchar       unsigned  char
 #define cuchar      const     unsigned  char
 #define cshort      const     short
-  //#define ushort      unsigned  short
+#undef ushort
+#define ushort      unsigned  short
 #define cushort     const     unsigned  short
-#define cint        const     int
-  //#define uint        unsigned  int
+#define cint        const     int  
+#undef uint
+#define uint        unsigned  int
 #define cuint       const     unsigned  int
 #define clong       const     long
-  //#define ulong       unsigned  long
+#undef  ulong
+#define ulong       unsigned  long
 #define culong      const     unsigned  long
 #define clonglong   const     long      long
 #define ulonglong   unsigned  long      long
@@ -193,12 +205,14 @@
 // ccernn [linux] __shared gives problem with pthreadtypes.h
 // obviously no problem in windows (no pthreads)
 
+// lii: wonder if ___shared (3 ' _ ' lines) will work.
+
 // attributes
 // -----------------------------------------------------------------------------
 #define __aligned(x)              __attribute__ ((aligned (x)))
 #define __alignedmax              __attribute__ ((aligned))
 #define __packed                  __attribute__ ((packed))
-//#define __shared                  __attribute__ ((shared))
+#define ___shared                 __attribute__ ((shared))
 #define __section(name)           __attribute__ ((section (name)))
 #define __used                    __attribute__ ((used))
 #define __unused                  __attribute__ ((unused))
