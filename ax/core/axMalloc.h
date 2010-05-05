@@ -244,7 +244,7 @@ __axmalloc_inline char *axMalloc (register int size)
 /**
  * axFree
  */
-__axmalloc_inline void axFree(register char* ptr)
+__axmalloc_inline void axFree (register char* ptr)
 {
   int b = *(int*)(ptr-4);
   *(char**)ptr = buckets[b];
@@ -254,7 +254,7 @@ __axmalloc_inline void axFree(register char* ptr)
 /**
  * axRealloc
  */  
-__axmalloc_inline char* axRealloc(register char* ptr,
+__axmalloc_inline char* axRealloc (register char* ptr,
   register const unsigned int size)
 {
   char* newptr;
