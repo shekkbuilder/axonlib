@@ -16,26 +16,26 @@
 
 //------------------------------------------------------------------------------
 
-/*  
+/*
   ==============================================================================
-  axStdlib.h  
+  axStdlib.h
     a collection of optimized methods for memory and string manipulation
     to replace the default ones in C.
-  
+
     code in open source projects like MINGW, MINIX & DJGPP and used for
     refference.
-    
+
     for more information remove the "ax" prefix from a method's name
     and use google to search.
-    
-  ==============================================================================  
+
+  ==============================================================================
   NOTE:
     all methods are tested (mingw32-gcc-tdm-4.4.1) with the examples
     from the website "cplusplus.com" and should work as espected.
     not much error checking going on, so the methods should be used properly
     (by the book), with "low level" programming precautions in mind.
-    
-  ==============================================================================  
+
+  ==============================================================================
   TODO:
   - add more eccentric str* methods if needed
   - deprecate the use of most (all) stdlib / string.h / memory.h methods across
@@ -289,7 +289,7 @@ __axstdlib_inline char* axStrstr (register const char* s1,
 
 /**
  * axStrspn
- */ 
+ */
 __axstdlib_inline unsigned int axStrspn(register const char* s1,
   register const char* s2)
 {
@@ -309,7 +309,7 @@ __axstdlib_inline unsigned int axStrspn(register const char* s1,
 
 /**
  * axStrcspn
- */ 
+ */
 __axstdlib_inline unsigned int axStrcspn(register const char* s1,
   register const char* s2)
 {
@@ -334,9 +334,9 @@ __axstdlib_inline char* axStrpbrk(register const char* s1,
   {
     _s1 = s2;
     while (*_s1 && *_s1 != *s1)
-      _s1++;      
+      _s1++;
     if (*_s1)
-      return (char*) s1;    
+      return (char*) s1;
   }
   return (char*) NULL;
 }
@@ -374,7 +374,7 @@ __axstdlib_inline char* axStrtok(register char *str, const char *spr)
 
 /**
  * axItoa
- */ 
+ */
 __axstdlib_inline char* axItoa(int n, register char* str,
   unsigned int base = 10)
 {
@@ -383,8 +383,8 @@ __axstdlib_inline char* axItoa(int n, register char* str,
   register int i;
   register unsigned int v;
   register char* sp;
-  int s;  
-  if (base > 36 || base <= 1)    
+  int s;
+  if (base > 36 || base <= 1)
     return NULL;
   s = (base == 10 && n < 0);
   if (s)

@@ -1,5 +1,5 @@
-//#define AX_DEBUG_MEMORY
-//#include "core/axMemory.h"
+#define AX_DEBUG_MEMORY
+#include "core/axMemory.h"
 
 #include "axPlugin.h"
 #include "axDemo_editor.h"

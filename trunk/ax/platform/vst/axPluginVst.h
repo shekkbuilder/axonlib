@@ -1278,7 +1278,7 @@ class axPluginVst : public axPluginBase
       {
         #ifdef AX_DEBUG
           char buf[256];
-          sprintf(buf,"%s%s",aName.ptr(),(char*)"_debug");
+          __builtin_sprintf(buf,"%s%s",aName.ptr(),(char*)"_debug");
           strncpy(mEffectName,buf,kVstMaxEffectNameLen);
         #else
           strncpy(mEffectName,aName.ptr(),kVstMaxEffectNameLen);

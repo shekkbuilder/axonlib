@@ -16,20 +16,20 @@
 
 /*
   axMalloc.h
-  
+
   ==============================================================================
   Axonlib's own memory allocation routines: axMalloc, axRealloc, axFree
   ==============================================================================
   based on code by:
     DJ Delorie (DJGPP)
-      http://www.delorie.com/djgpp/malloc/      
+      http://www.delorie.com/djgpp/malloc/
     where licensing permits use in the case of Axonlib:
-      http://www.delorie.com/djgpp/dl/ofc/simtel/v2/copying.dj    
-    
+      http://www.delorie.com/djgpp/dl/ofc/simtel/v2/copying.dj
+
   and the following article by Joerg Walter, Doug Lea et al (available in the
   public domain):
     http://www.genesys-e.de/jwalter/mix4win.htm
-    
+
   original file header by DJ Dolorie from here bellow:
   ==============================================================================
 */
@@ -46,26 +46,26 @@ STATISTICS:
       cpu:
         amd athlon 1800+
       compiler (mingw-gcc-tdm-4.4.1):
-         -O3 -s -msse -mfpmath=sse,387 
+         -O3 -s -msse -mfpmath=sse,387
       code:
         char* ptr = malloc(2000000); free(ptr);
       n of iterations:
-        100000       
+        100000
 
       stdlib malloc:
         724 ms
       axonlib malloc:
         2 ms !!!
-    ----------------------------------------------------------    
+    ----------------------------------------------------------
       binary size overhead:
-        axStdlib.h + axMalloc.h ~= 400 bytes      
+        axStdlib.h + axMalloc.h ~= 400 bytes
     ============================================================================
 TODO:
-  - conclude if more speed optimizations are possible  
+  - conclude if more speed optimizations are possible
   - fragmentation level tests
   - windows 7 test (ccernn)
   - thread safety tests (disable the mutex and make the winapi calls directly)
-  - check if possible to use implementation with axMutex  
+  - check if possible to use implementation with axMutex
   - linux: research on mmap vs sbrk in regard of speed
     ============================================================================
 */
@@ -83,24 +83,24 @@ TODO:
 
 /*
   from here bellow adapted version of Joerg Walter's MMAP emulation
-  for windows with mutex.  
+  for windows with mutex.
 */
 #ifdef WIN32
   #undef _WIN32_WINNT
   #define _WIN32_WINNT 0x0501
-  #include "windows.h"  
-  
+  #include "windows.h"
+
   static long g_sl;
-  
+
   /*
-  // inline these two 
-  __axmalloc_inline void slwait (long* sl)  
+  // inline these two
+  __axmalloc_inline void slwait (long* sl)
     while ( InterlockedCompareExchange( sl, 1, 0) != 0 )
-      Sleep(0);  
-   __axmalloc_inline void slrelease (long* sl)  
-    InterlockedExchange( sl, 0 );  
+      Sleep(0);
+   __axmalloc_inline void slrelease (long* sl)
+    InterlockedExchange( sl, 0 );
   */
-  
+
   __axmalloc_inline long getpagesize (void)
   {
     static long g_pagesize = 0;
@@ -112,7 +112,7 @@ TODO:
     }
     return g_pagesize;
   }
-  
+
   __axmalloc_inline long getregionsize (void)
   {
     static long g_regionsize = 0;
@@ -124,7 +124,7 @@ TODO:
     }
     return g_regionsize;
   }
-  
+
   __axmalloc_inline void* axMmap (long size)
   {
     register void* ptr = NULL;
@@ -133,17 +133,17 @@ TODO:
     //slwait(&g_sl);
     while ( InterlockedCompareExchange( &g_sl, 1, 0) != 0 )
       Sleep(0);
-    if (!g_pagesize) 
+    if (!g_pagesize)
       g_pagesize = getpagesize();
-    if (!g_regionsize) 
+    if (!g_regionsize)
       g_regionsize = getregionsize();
     ptr = VirtualAlloc(ptr, size,
-      MEM_RESERVE | MEM_COMMIT | MEM_TOP_DOWN, PAGE_READWRITE);    
+      MEM_RESERVE | MEM_COMMIT | MEM_TOP_DOWN, PAGE_READWRITE);
     //slrelease (&g_sl);
     InterlockedExchange( &g_sl, 0 );
     return ptr;
   }
-  
+
   /*
   // ### MUNMAP emulation is currently disabled
   __axmalloc_inline long axMunmap (void *ptr,
@@ -155,9 +155,9 @@ TODO:
     //slwait(&g_sl);
     while ( InterlockedCompareExchange( sl, 1, 0) != 0 )
       Sleep(0);
-    if (!g_pagesize) 
+    if (!g_pagesize)
       g_pagesize = getpagesize ();
-    if (!g_regionsize) 
+    if (!g_regionsize)
       g_regionsize = getregionsize ();
     if (!VirtualFree (ptr, 0,  MEM_RELEASE) )
       rc = 0;
@@ -171,7 +171,7 @@ TODO:
 
 #ifdef linux
   // may be needed for sbrk()
-  // #include "unistd.h"
+   #include "unistd.h"
 #endif
 
 /**
@@ -184,12 +184,12 @@ int bucket2size[32] = {0};
 static __axmalloc_inline int size2bucket(int size)
 {
   int rv = 0x1f;
-  int bit = ~0x10;  
+  int bit = ~0x10;
   if (size < 4) size = 4;
   size = (size+3)&~3;
   unsigned int i = 0;
   while (i<5)
-  {  
+  {
     if (bucket2size[rv&bit] >= size)
       rv &= bit;
     bit>>=1;
@@ -201,7 +201,7 @@ static __axmalloc_inline int size2bucket(int size)
 static __axmalloc_inline void init_buckets()
 {
   register unsigned b = 0;
-  while (b<32)  
+  while (b<32)
   {
     bucket2size[b] = (1<<b);
     b++;
@@ -210,7 +210,7 @@ static __axmalloc_inline void init_buckets()
 
 /**
  * axMalloc
- */ 
+ */
 __axmalloc_inline char *axMalloc (register int size)
 {
   register char* rv;
@@ -229,13 +229,16 @@ __axmalloc_inline char *axMalloc (register int size)
   #ifdef linux
     // use sbrk on linux
     // or linux's mmap() from "sys/mman.h" ?
+
     rv = (char*)sbrk(size);
+    //rv = (char*)mmap(size);
+
   #endif
   #ifdef WIN32
     // emulate on windows
     rv = (char*)axMmap(size);
   #endif
-  
+
   *(int*)rv = b;
   rv += 4;
   return rv;
@@ -253,7 +256,7 @@ __axmalloc_inline void axFree (register char* ptr)
 
 /**
  * axRealloc
- */  
+ */
 __axmalloc_inline char* axRealloc (register char* ptr,
   register const unsigned int size)
 {
@@ -271,7 +274,7 @@ __axmalloc_inline char* axRealloc (register char* ptr,
   register unsigned int _sz = oldsize;
   while (_sz--)
     *_d++ = *_s++;
-  // ---------------      
+  // ---------------
   axFree(ptr);
   return newptr;
 }

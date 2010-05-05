@@ -112,7 +112,7 @@ class parFloat : public axParameter
     virtual void  doGetDisplay(char* buf)
       {
         //sprintf(buf,"%f",getValue());
-        sprintf(buf,"%.2f",getValue());
+        __builtin_sprintf(buf,"%.2f",getValue());
       }
 
     //--------------------------------------------------

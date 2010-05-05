@@ -2,7 +2,7 @@
 #define axParameter_included
 //----------------------------------------------------------------------
 
-#include <stdio.h> // sprintf (doGetDisplay)
+//#include <stdio.h> // sprintf (doGetDisplay)
 #include "core/axString.h"
 
 // kVstMaxParamStrLen     8
