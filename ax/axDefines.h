@@ -4,7 +4,7 @@
 /*
 TODO:
   - write correct types and limits for __AX64__
-  - clean attributes and definitions that give problems 
+  - clean attributes and definitions that give problems
 */
 
 // architechture
@@ -149,25 +149,82 @@ TODO:
   ccernn:
   [linux/gcc] the three commented lines below conflicts with sys/types.h
   :: problems in win7.
-  
+
   lii:
   these should work now with #undef before the new #define
+
+ccernn:
+
+compile (in linux) to a linux app generates:
+
+||=== axonlib, linux app - debug ===|
+/usr/include/sys/types.h|151|error: duplicate ‘unsigned’|
+/usr/include/sys/types.h|151|error: declaration does not declare anything|
+/usr/include/sys/types.h|152|error: duplicate ‘unsigned’|
+/usr/include/sys/types.h|152|error: duplicate ‘short’|
+/usr/include/sys/types.h|152|error: declaration does not declare anything|
+/usr/include/sys/types.h|153|error: duplicate ‘unsigned’|
+/usr/include/sys/types.h|153|error: multiple types in one declaration|
+/usr/include/sys/types.h|153|error: declaration does not declare anything|
+||=== Build finished: 8 errors, 0 warnings ===|
+
+the relevant lines (149-154) from types.h:
+
+// #ifdef __USE_MISC
+// // Old compatibility names for C types.
+// typedef unsigned long int ulong;
+// typedef unsigned short int ushort;
+// typedef unsigned int uint;
+// #endif
+
+don't know where __USE_MISC is defined, some system things that shouldn't be messed with, i guessa...
+
+also error if we do something like this:
+#ifndef ushort
+  #define ushort unsigned  short
+#endif
+
+with the commented lines, no errors...
+also, compiling to a win32 app = no errors..
+so it's a _in_ linu8x, _to_ linux thing...
+so, i tried some #ifdefs...
+
+is this safe & a good thing to do?
+could there be consequences, or could we risk different definitions of ushort, etc, in different compilers...
+hmmm...
+
+
 */
 
 #define cchar       const     char
 #define uchar       unsigned  char
 #define cuchar      const     unsigned  char
 #define cshort      const     short
-#undef ushort
-#define ushort      unsigned  short
+
+//#undef ushort
+//#define ushort      unsigned  short
+#ifndef AX_LINUX
+  #define ushort      unsigned  short
+#endif
+
 #define cushort     const     unsigned  short
-#define cint        const     int  
-#undef uint
-#define uint        unsigned  int
+#define cint        const     int
+
+//#undef uint
+//#define uint        unsigned  int
+#ifndef AX_LINUX
+  #define uint        unsigned  int
+#endif
+
 #define cuint       const     unsigned  int
 #define clong       const     long
-#undef  ulong
-#define ulong       unsigned  long
+
+//#undef  ulong
+//#define ulong       unsigned  long
+#ifndef AX_LINUX
+  #define ulong       unsigned  long
+#endif
+
 #define culong      const     unsigned  long
 #define clonglong   const     long      long
 #define ulonglong   unsigned  long      long
@@ -256,7 +313,7 @@ TODO:
 // -----------------------------------------------------------------------------
 // ccernn: i get errors when i compile with mingw32 in linux
 // (partially solved it by manually replacing all occurences of printf with __builtin_sprintf)
-#define sprintf __builtin_sprintf
+//#define sprintf __builtin_sprintf
 
 // ........
 // ........

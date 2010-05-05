@@ -136,14 +136,13 @@
 					<Add option="-g" />
 					<Add option="-shared" />
 					<Add option="-mwindows" />
-					<Add option="-Wno-unused" />
-					<Add option="-Wno-long-long" />
 					<Add option="-DAX_FORMAT_VST" />
 					<Add option="-DAX_DEBUG" />
 					<Add directory="../../ax" />
 					<Add directory="../../../vstsdk24" />
 				</Compiler>
 				<Linker>
+					<Add option="-shared" />
 					<Add option="-mwindows" />
 				</Linker>
 			</Target>
