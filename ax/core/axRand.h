@@ -21,9 +21,9 @@
 #include "axDefines.h"
 
 #ifdef AX_USE_HOT_INLINE
-  #define __axrandinline __hotinline
+  #define __axrand_inline __hotinline
 #else
-  #define __axrandinline inline
+  #define __axrand_inline inline
 #endif
 
 /*
@@ -66,19 +66,19 @@
   a = ( (a * -29999531) & -30000469 ) * 20000469; \
   b = ( (b * -20000085) & -19999915 ) * 19999915;
 
-__axrandinline float axRand(void)
+__axrand_inline float axRand(void)
 { _AXRAND; return _AXRAND_FLOAT; }
 
-__axrandinline float axRand(const float s)
+__axrand_inline float axRand(const float s)
 { _AXRAND;  return _AXRAND_FLOAT_C; }
 
-__axrandinline float axRandSigned(void)
+__axrand_inline float axRandSigned(void)
 { _AXRAND; return ( 2.f * _AXRAND_FLOAT - 1.f ); }
 
-__axrandinline unsigned long axRandInt(void)
+__axrand_inline unsigned long axRandInt(void)
 { _AXRAND; return ( a * b ); }
 
-__axrandinline unsigned long axRandInt(const unsigned long s)
+__axrand_inline unsigned long axRandInt(const unsigned long s)
 { _AXRAND;
   return (unsigned long)( _AXRAND_FLOAT_C ); }
 
@@ -142,19 +142,19 @@ class axRandSinf
 
     ~axRandSinf() {}
 
-    __axrandinline float rand(void)
+    __axrand_inline float rand(void)
     { _AXRANDSINF; return _AXRANDSINF_SHIFT; }
 
-    __axrandinline float rand(const float _top)
+    __axrand_inline float rand(const float _top)
     { _AXRANDSINF; return _top * _AXRANDSINF_SHIFT; }
 
-    __axrandinline float randSigned(void)
+    __axrand_inline float randSigned(void)
     { _AXRANDSINF; return y; }
 
-    __axrandinline unsigned long randInt(void)
+    __axrand_inline unsigned long randInt(void)
     { _AXRANDSINF;  return (unsigned long) AXRAND_MAX * _AXRANDSINF_SHIFT; }
 
-    __axrandinline unsigned long randInt(const unsigned long _top)
+    __axrand_inline unsigned long randInt(const unsigned long _top)
     { _AXRANDSINF; return (unsigned long) ( _top * _AXRANDSINF_SHIFT ); }
 };
 

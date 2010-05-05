@@ -22,14 +22,28 @@ core:
 
 - internal float2string, or similar
   get rid of a few sprintf(buf,"%f",var) calls in there...
-  internal memory-copy/clear things (memcpy,memset,strcpy,strdup, etc...
-  (generally, try to remove dependencies of stdlibs)
-  binary size can shrink a bit if we don't need the stdlib, stdio, etc,
-  for small plugins or apps.. no bloat....
 
 - mac?
 
 - axAtomic
+
+- deprecate all methods and types from the standard library and other headers:
+  "math.h", "string.h", "memory.h", "malloc.h", that are used locally.  
+
+- provide local alternatives for most methods and types in stdlib.   
+  
+- investigate the possibility of system calls localization:
+  os dependent exit(), abort(), assert(), time()...etc
+
+- (on a later stage) investigate more into the possibility of excluding the
+  standard libraries when linking is possible. may require a lot work for the
+  os dependent code and to make it all portable. how would that work for users?
+  ...etc
+
+- solidifying and documenting possible methods for debugging memory problems
+  and bugs using operator / function overriding and external tools such
+  as valgrind (linux), dr. memory (win32), objdump, ndisasm and addr2line
+  (binutils).
 
 ----------------------------------------------------------------------
 plugin:
