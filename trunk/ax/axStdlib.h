@@ -52,6 +52,7 @@
 #define axStdlib_included
 
 #include "axDefines.h"
+#include "core/axMalloc.h"
 
 #ifdef AX_USE_HOT_INLINE
   #define __axstdlib_inline __hotinline
@@ -400,7 +401,7 @@ __axstdlib_inline char* axItoa(int n, register char* str,
       *_tmp++ = i + 'a' - 10;
   }
   if (str == 0)
-    //str = (char*) axMalloc( (_tmp - tmp) + s + 1 );
+    str = (char*) axMalloc( (_tmp - tmp) + s + 1 );
   sp = str;
   if (s)
     *sp++ = '-';
