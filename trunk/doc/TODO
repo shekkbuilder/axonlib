@@ -20,23 +20,23 @@
 core:
 ----------------------------------------------------------------------
 
-- internal float2string, or similar
-  get rid of a few sprintf(buf,"%f",var) calls in there...
-
 - mac?
 
 - axAtomic
 
+- integrate a debug mode in the memory allocator methods
+
 - deprecate all methods and types from the standard library and other headers:
   "math.h", "string.h", "memory.h", "malloc.h", that are used locally.  
 
-- provide local alternatives for most methods and types in stdlib.   
+- provide local alternatives for most methods and types in stdlib.
+  edit: well there are a lot but i think the most useful ones are covered
   
 - investigate the possibility of system calls localization:
   os dependent exit(), abort(), assert(), time()...etc
 
 - (on a later stage) investigate more into the possibility of excluding the
-  standard libraries when linking is possible. may require a lot work for the
+  standard libraries when linking is possible. may require a lot of work for the
   os dependent code and to make it all portable. how would that work for users?
   ...etc
 
@@ -60,7 +60,7 @@ plugin:
 
 - more parameter types, for automatic scaling/transforming
   cubed, squared, ms, hz, db, etc...
-
+  
 - dirty-parameters?
   put needs-to-be-updated parameters in a list,
   read this list in doProcessBlock, sub-divide block into chunks,
