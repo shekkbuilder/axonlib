@@ -19,6 +19,8 @@
 • modular audio graph, with connectable dsp modules
 • polyphonic voice manager, event scheduler
 • heavily optimized math functions and approximations..
-• everything (almost) is optional (no bloat...)
 • mersenne twister implementation, customized for small binary size impact
+• builtin, fast memory allocator routines
+• builtin routines for string and memory manipulation
+• everything (almost) is optional (no bloat...)
 • [plus a lot of forgotten things, and all the small details...]

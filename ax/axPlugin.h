@@ -7,8 +7,8 @@
 #include "axConfig.h"
 #include "axDefines.h"
 #include "core/axDebug.h" // < - should be define before Utils because of _WINNT
-//#include "axStdlib.h"
-//#include "core/axMalloc.h"
+#include "axStdlib.h"
+#include "core/axMalloc.h"
 //#include "core/axMemory.h"
 #include "core/axUtils.h"
 #include "platform/axContext.h"

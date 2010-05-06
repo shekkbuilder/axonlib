@@ -22,8 +22,8 @@
     a collection of optimized methods for memory and string manipulation
     to replace the default ones in C.
 
-    code in open source projects like MINGW, MINIX & DJGPP and used for
-    refference.
+    code in open source projects like MINGW, MINIX, DJGPP and GCC used for
+    reference.
 
     for more information remove the "ax" prefix from a method's name
     and use google to search.
@@ -31,7 +31,7 @@
   ==============================================================================
   NOTE:
     all methods are tested (mingw32-gcc-tdm-4.4.1) with the examples
-    from the website "cplusplus.com" and should work as espected.
+    from the website "cplusplus.com" and should work as expected.
     not much error checking going on, so the methods should be used properly
     (by the book), with "low level" programming precautions in mind.
 
@@ -59,6 +59,23 @@
 #else
   #define __axstdlib_inline inline
 #endif
+
+/*
+  ------------------------------------------------------------------------------
+  general
+  ------------------------------------------------------------------------------
+*/
+
+/**
+  * axIsDigit
+  */
+#define axIsDigit(c)  ( ( (c) > 47 && (c) < 58 ) ? 1 : 0 )
+
+/**
+  * axIsLetter
+  */
+#define axIsLetter(c) \
+( ( ((c) > 64 && (c) < 91) || ((c) > 96 && (c) < 123) ) ? 1 : 0 )  
 
 /*
   ------------------------------------------------------------------------------
@@ -158,10 +175,10 @@ __axstdlib_inline void* axMemset (register void* dest, register int val,
  */
 __axstdlib_inline unsigned int axStrlen (register char* str)
 {
-	register unsigned int num = 0;
-	while (*str++)
+  register unsigned int num = 0;
+  while (*str++)
     num++;
-	return num;
+  return num;
 }
 
 /**
@@ -290,7 +307,7 @@ __axstdlib_inline char* axStrstr (register const char* s1,
 /**
  * axStrspn
  */
-__axstdlib_inline unsigned int axStrspn(register const char* s1,
+__axstdlib_inline unsigned int axStrspn (register const char* s1,
   register const char* s2)
 {
   register const char *_s1, *_s2;
@@ -310,15 +327,19 @@ __axstdlib_inline unsigned int axStrspn(register const char* s1,
 /**
  * axStrcspn
  */
-__axstdlib_inline unsigned int axStrcspn(register const char* s1,
+__axstdlib_inline unsigned int axStrcspn (register const char* s1,
   register const char* s2)
 {
   register const char *_s1, *_s2;
-  for (_s1 = s1; *_s1; _s1++)
+  _s1 = s1;
+  while (*_s1)
   {
-    for(_s2 = s2; *_s2 != *_s1 && *_s2; _s2++);
+    _s2 = s2;
+    while (*_s2 != *_s1 && *_s2)
+      _s2++;
     if (*_s2)
       break;
+    _s1++;
   }
   return _s1 - s1;
 }
@@ -326,7 +347,7 @@ __axstdlib_inline unsigned int axStrcspn(register const char* s1,
 /**
  * axStrpbrk
  */
-__axstdlib_inline char* axStrpbrk(register const char* s1,
+__axstdlib_inline char* axStrpbrk (register const char* s1,
   register const char* s2)
 {
   register const char* _s1;
@@ -344,10 +365,10 @@ __axstdlib_inline char* axStrpbrk(register const char* s1,
 /**
  * axStrtok
  */
-__axstdlib_inline char* axStrtok(register char *str, const char *spr)
+__axstdlib_inline char* axStrtok (register char *str, const char *spr)
 {
   register char *s1, *s2;
-  // static buffer = kaboom ? but there is no recursion ...
+  // static buffer = kaboom ?
   static char* _save;
   // --
   if (str == NULL)
@@ -375,7 +396,7 @@ __axstdlib_inline char* axStrtok(register char *str, const char *spr)
 /**
  * axItoa
  */
-__axstdlib_inline char* axItoa(int n, register char* str,
+__axstdlib_inline char* axItoa (int n, register char* str,
   unsigned int base = 10)
 {
   char tmp[33];
@@ -414,9 +435,9 @@ __axstdlib_inline char* axItoa(int n, register char* str,
 /**
  * axAtoi
  */
-__axstdlib_inline int axAtoi(register const char* s)
+__axstdlib_inline int axAtoi (register const char* s)
 {
-  static const char digits[] = "0123456789";
+  const char digits[] = "0123456789";
   register unsigned val = 0;
   register int neg = 0;
   while (*s == ' ' || *s == '\t')
@@ -429,18 +450,136 @@ __axstdlib_inline int axAtoi(register const char* s)
     s++;
   while (*s)
   {
-    const char *where;
+    const char *w;
     unsigned digit;
-    where = axStrchr(digits, *s);
+    w = axStrchr(digits, *s);
     if (where == NULL)
       break;
-    digit = (where - digits);
+    digit = (w - digits);
     val = val*10 + digit;
     s++;
   }
   if (neg)
     return -val;
   return val;
+}
+
+/**
+ * axFtoa
+ */
+__axstdlib_inline char* axFtoa (register char* st, register float f,
+  const unsigned int d = 2, const unsigned int fg = 0)
+{
+  // rather scary looking and has rouding error...
+  // ...well at least is many (~48!) times faster than:
+  // one operator 'sprintf(charbuffer, "%f", floatvalue)';
+  register unsigned int i;
+  register int _z;
+  register int exp = 0;
+  if (f < 0)
+  {
+   *st++ = '-';    f = -f;
+  }
+  else
+    if (fg & 1) *st++ = '+';
+    if (fg & 2) *st++ = ' ';
+  if (f)
+  {
+    while (f < 1)
+    {
+      f *=10;   exp--;
+    }
+    while (f >= 10)
+    {
+      f /= 10;  exp++;
+    }
+  }
+  while ( (exp > 0) && (exp < 7) )
+  {
+    *st++ = '0' + f;
+    _z = f;  f -= _z;  f *= 10;  exp--;
+  }
+  *st++ = '0' + f;
+  _z = f;  f -= _z;  f *= 10;
+  if (d > 0)
+  {
+    *st++ = '.';
+    i = 0;
+    while (i < d)
+    {
+      *st++ = '0' + f;
+      _z = f;      f -= _z;      f *= 10;      i++;
+    }
+  }
+  if (exp != 0)
+  {
+    *st++ = 'e';
+    if (exp < 0)
+    {
+      *st++ = '-'; exp = -exp;
+    }
+    else
+      *st++ = '+';
+    register int expd10 = exp/10;
+    *st++ = '0' + expd10;
+    *st++ = '0' + (exp -= expd10 * 10);
+  }
+  *st++ = 0;
+  return st;
+} 
+
+/**
+  * axAtof
+  */
+__axstdlib_inline float axAtof (register char* s)
+{
+  // well not much other ways to do that, so a bit slow...
+  register float a = 0.f;
+  register int e = 0;
+  register unsigned int c;
+  float _asign = 1.f;
+  if ( s[0] == '-' )
+  {
+    _asign = -1.f; *s++;
+  }
+  while ( (c = *s++) != '\0' && axIsDigit(c) )  
+    a = a*10.f + (c - '0');  
+  if (c == '.')
+    while ( (c = *s++) != '\0' && axIsDigit(c) )
+    {
+      a = a*10.f + (c - '0');
+      e = e-1;
+    }  
+  if (c == 'e' || c == 'E')
+  {
+    int sign = 1;
+    register int i = 0;
+    c = *s++;
+    if (c == '+')
+      c = *s++;
+    else if (c == '-')
+    {
+      c = *s++;
+      sign = -1;
+    }
+    while ( axIsDigit(c) )
+    {
+      i = i*10 + (c - '0');
+      c = *s++;
+    }
+    e += i*sign;
+  }
+  while (e > 0)
+  {
+    a *= 10.f;
+    e--;
+  }
+  while (e < 0)
+  {
+    a *= 0.1f;
+    e++;
+  }
+  return a*_asign;
 }
 
 //------------------------------------------------------------------------------
