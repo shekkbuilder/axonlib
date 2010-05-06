@@ -112,6 +112,7 @@ class axDemo_editor : public axEditor
     virtual ~axDemo_editor()
       {
         stopTimer();
+        delete bitmap;
       }
 
     //--------------------------------------------------

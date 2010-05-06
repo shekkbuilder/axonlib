@@ -36,6 +36,7 @@ class axDemo_page_bitmaps : public wdgPanel
 
     virtual ~axDemo_page_bitmaps()
       {
+        delete mVoxel;
       }
 
     void timer_tick(void)

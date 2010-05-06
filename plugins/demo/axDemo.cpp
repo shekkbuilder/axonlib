@@ -1,5 +1,5 @@
-#define AX_DEBUG_MEMORY
-#include "core/axMemory.h"
+//#define AX_DEBUG_MEMORY
+//#include "core/axMemory.h"
 
 #include "core/axRand.h"
 
@@ -48,6 +48,7 @@ class axDemo : public axPlugin
 
     virtual ~axDemo()
       {
+        delete mGraph;
       }
 
     //---------- plugin ----------
