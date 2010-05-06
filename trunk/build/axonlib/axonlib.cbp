@@ -271,6 +271,7 @@
 		<Unit filename="../../plugins/demo/axDemo_page_system.h" />
 		<Unit filename="../../plugins/demo/axDemo_page_widgets.h" />
 		<Unit filename="../../plugins/demo/axDemo_skin.h" />
+		<Unit filename="../../plugins/demo/voxel.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
