@@ -81,6 +81,11 @@ TODO:
   #define __axmalloc_inline inline
 #endif
 
+#if defined (AX_DEBUG) && defined (AX_DEBUG_MEMORY)
+  //#define AX_MALLOC_DEBUG
+  //#include "axDebug.h"
+#endif
+
 /*
   from here bellow adapted version of Joerg Walter's MMAP emulation
   for windows with mutex.
@@ -278,5 +283,10 @@ __axmalloc_inline char* axRealloc (register char* ptr,
   axFree(ptr);
   return newptr;
 }
+
+#ifdef AX_MALLOC_DEBUG
+  // ..override here  
+  //#define free free(__FILE__, __LINE__)
+#endif
 
 #endif
