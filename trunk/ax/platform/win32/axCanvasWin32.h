@@ -102,7 +102,7 @@ class axCanvasWin32 : public axCanvasBase
 
         //if (mPen)   DeleteObject(mPen);
         //if (mBrush) DeleteObject(mBrush);
-        //if (mFont)  DeleteObject(mFont);
+        if (mFont)  DeleteObject(mFont);
 
         if (mWinHandle) ReleaseDC((HWND)mWinHandle,mDC);
         else DeleteDC(mDC);

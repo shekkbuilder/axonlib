@@ -198,16 +198,18 @@ class axWindowWin32 : public axWindowBase
 
     ~axWindowWin32()
       {
+        //if (mWinCursor>=0) XFreeCursor(mDisplay,mWinCursor);
         DestroyWindow(mWindow);
+        if (mCanvas) delete mCanvas;
+        if (mSurface) delete mSurface;
+
         // can this be dangerous if moutlple plugin instances uses the plugin?
         // or is there some reference-counting going on?
-
         //http://msdn.microsoft.com/en-us/library/ms644899%28v=VS.85%29.aspx
         //UnregisterClass:
         //  If the function succeeds, the return value is nonzero.
         //  If the class could not be found or if a window still exists
         //  that was created with the class, the return value is zero
-
         // unregister window?
         // what if multiple instances is using the same window?
         UnregisterClass( mWinName.ptr(), mInstance);
