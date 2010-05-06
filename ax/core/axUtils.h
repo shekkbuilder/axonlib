@@ -435,5 +435,11 @@ __axutils_inline void axRadix(long *source, long *dest, unsigned long N, int byt
     dest[ index[ ((source[i])>>(byte*8))&0xff ]++ ] = source[i];
 }
 
-//---------------------
+//----------
+
+const int i = 1;
+#define axBigEndian() ((*(char*)&i)==0)
+#define axLittleEndian() ((*(char*)&i)==1)
+
+//----------------------------------------------------------------------
 #endif

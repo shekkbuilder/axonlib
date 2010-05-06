@@ -60,6 +60,8 @@ class wdgGrid : public axWidget
       }
 
     //--------------------------------------------------
+    // "grid listener"
+    //--------------------------------------------------
 
     virtual void on_ClickCell(int aX, int aY, int aB) {}
     virtual void on_DrawCell(axCanvas* aCanvas, axRect aRect, int aX, int aY) {}

@@ -84,6 +84,7 @@
 			<Add option="-mwindows" />
 		</Linker>
 		<Unit filename="..\..\ax\audio\axGraph.h" />
+		<Unit filename="..\..\ax\audio\axLibaam.h" />
 		<Unit filename="..\..\ax\audio\axModule.h" />
 		<Unit filename="..\..\ax\audio\axVoices.h" />
 		<Unit filename="..\..\ax\axConfig.h" />
@@ -101,9 +102,11 @@
 		<Unit filename="..\..\ax\core\axBuffer.h" />
 		<Unit filename="..\..\ax\core\axDebug.h" />
 		<Unit filename="..\..\ax\core\axList.h" />
+		<Unit filename="..\..\ax\core\axMalloc.h" />
 		<Unit filename="..\..\ax\core\axMath.h" />
 		<Unit filename="..\..\ax\core\axMemory.h" />
 		<Unit filename="..\..\ax\core\axPoint.h" />
+		<Unit filename="..\..\ax\core\axRand.h" />
 		<Unit filename="..\..\ax\core\axRect.h" />
 		<Unit filename="..\..\ax\core\axString.h" />
 		<Unit filename="..\..\ax\core\axUtils.h" />
@@ -150,6 +153,7 @@
 		<Unit filename="..\..\ax\wdg\wdgBitmap.h" />
 		<Unit filename="..\..\ax\wdg\wdgButton.h" />
 		<Unit filename="..\..\ax\wdg\wdgButtons.h" />
+		<Unit filename="..\..\ax\wdg\wdgGrid.h" />
 		<Unit filename="..\..\ax\wdg\wdgGroupBox.h" />
 		<Unit filename="..\..\ax\wdg\wdgImage.h" />
 		<Unit filename="..\..\ax\wdg\wdgKnob.h" />
@@ -162,7 +166,6 @@
 		<Unit filename="..\..\ax\wdg\wdgShape.h" />
 		<Unit filename="..\..\ax\wdg\wdgSizer.h" />
 		<Unit filename="..\..\ax\wdg\wdgSlider.h" />
-		<Unit filename="..\..\ax\wdg\wdgTextList.h" />
 		<Unit filename="..\..\ax\wdg\wdgValue.h" />
 		<Unit filename="..\..\doc\AUTHORS" />
 		<Unit filename="..\..\doc\FEATURES" />

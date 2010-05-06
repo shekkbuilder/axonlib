@@ -1,11 +1,13 @@
 #define AX_DEBUG_MEMORY
 #include "core/axMemory.h"
 
+#include "core/axRand.h"
+
 #include "axPlugin.h"
 #include "axDemo_editor.h"
 #include "axDemo_graph.h"
 
-#include "core/axRand.h"
+//#include "audio/axLibaam.h"
 
 class axDemo : public axPlugin
 {
@@ -31,6 +33,15 @@ class axDemo : public axPlugin
         setupParameters();
         //char* caps = axCpuCapsString();
         //trace("cpu caps: " << caps);
+
+//  char buffer[17];
+//  float2string(PI,buffer,10);
+//  trace("float2string(PI) = '" << buffer << "'");
+//  int2string(418,buffer,10);
+//  trace("int2string(418) = '" << buffer << "'");
+  if (axBigEndian()) trace("big endian");
+  if (axLittleEndian()) trace("little endian");
+
       }
 
     //----------
@@ -117,10 +128,14 @@ class axDemo : public axPlugin
 
     //---------- editor ----------
 
+// #define AX_WIN_DEFAULT ( AX_WIN_BUFFERED
+//                        | AX_WIN_MSGTHREAD
+//                        | AX_WIN_EMBEDDED)
+
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
         trace(":: doOpenEditor");
-        mEditor = new axDemo_editor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
+        mEditor = new axDemo_editor(this,aContext,mEditorRect,AX_WIN_DEFAULT/*AX_WIN_MSGTHREAD | AX_WIN_MSGDELETE*/ );
         mEditor->setup(getSystemInfo(),getHostInfo());
         mEditor->connect(mEditor->w_Page_widgets->w1,p1);
         mEditor->connect(mEditor->w_Page_widgets->w2,p2);
@@ -144,6 +159,8 @@ class axDemo : public axPlugin
       }
 
     //----------
+
+    //this should be in axEditor?
 
     virtual void doIdleEditor()
       {
