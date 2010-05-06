@@ -453,7 +453,7 @@ __axstdlib_inline int axAtoi (register const char* s)
     const char *w;
     unsigned digit;
     w = axStrchr(digits, *s);
-    if (where == NULL)
+    if (w == NULL)
       break;
     digit = (w - digits);
     val = val*10 + digit;
