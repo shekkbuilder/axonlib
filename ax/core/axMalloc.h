@@ -246,10 +246,13 @@ __axmalloc_inline void* axMalloc (register unsigned int size)
  */
 __axmalloc_inline void axFree (void* _ptr)
 {
-  register unsigned char* ptr = (unsigned char*)_ptr;
-  unsigned int b = *(unsigned int*)(ptr-4);
-  *(unsigned char**)ptr = buckets[b];
-  buckets[b] = ptr;
+  if (_ptr != NULL)
+  {
+    register unsigned char* ptr = (unsigned char*)_ptr;
+    unsigned int b = *(unsigned int*)(ptr-4);
+    *(unsigned char**)ptr = buckets[b];
+    buckets[b] = ptr;
+  }
 }
 
 /**
@@ -282,7 +285,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
       unsigned int oldsize = bucket2size[*(unsigned int*)(ptr-4)];
       if (size <= oldsize)
         return ptr;
-      newptr = (char*) _axMalloc(size * sizeof(_ptr));
+      newptr = (char*) axMalloc(size * sizeof(_ptr));
       // -- memcpy
       while (oldsize--)
         *ptr++ = *newptr++;
@@ -365,7 +368,6 @@ __axmalloc_inline void* axRealloc (void* _ptr,
   #define axMalloc(s)     axMallocDebug   (s, __FILE__, __LINE__)
   #define axRealloc(p, s) axReallocDebug  (p, s, __FILE__, __LINE__)
   #define axFree(p)       axFreeDebug     (p, __FILE__, __LINE__)  
-  #define _axMalloc axMalloc
   
 #endif
 
