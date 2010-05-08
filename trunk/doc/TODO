@@ -24,14 +24,9 @@ core:
 
 - axAtomic
 
-- integrate a debug mode in the memory allocator methods
-
 - deprecate all methods and types from the standard library and other headers:
   "math.h", "string.h", "memory.h", "malloc.h", that are used locally.  
 
-- provide local alternatives for most methods and types in stdlib.
-  edit: well there are a lot but i think the most useful ones are covered
-  
 - investigate the possibility of system calls localization:
   os dependent exit(), abort(), assert(), time()...etc
 
