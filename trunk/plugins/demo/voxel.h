@@ -276,7 +276,7 @@ class CVoxel
         int a,b,h,u0,v0,u1,v1,h0,h1,h2,h3;
         /* Clear offscreen buffer */
         //memset(Video,0,320*200*4);
-        memset(Video,128,320*200*4);
+        axMemset(Video,128,320*200*4);
         /* Initialize last-y and last-color arrays */
         for ( d=0; d<320; d++ )
         {
