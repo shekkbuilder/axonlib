@@ -1,4 +1,20 @@
+// ### deprecated by picopng.c ???
+
 #include <vector>
+
+#ifdef AX_DEBUG
+  #include "core/axDebug.h"
+#endif
+
+// lii:
+// pico png is using vector.resize(), which alone will produce the
+// 40 kb overhead
+// could be replaced eventually with lower level methods such as:
+// axArray / axRealloc?
+
+// update:
+// alternatevely here is a C port of picopng:
+// http://forge.voodooprojects.org/p/chameleon/source/tree/44/trunk/i386/boot2/picopng.c
 
 int decodePNG(std::vector<unsigned char>& out_image_32bit, unsigned long& image_width, unsigned long& image_height, const unsigned char* in_png, unsigned long in_size)
 {
@@ -340,6 +356,7 @@ int decodePNG(std::vector<unsigned char>& out_image_32bit, unsigned long& image_
       if(info.colorType != 6 || info.bitDepth != 8) //conversion needed
       {
         std::vector<unsigned char> data = out;
+        // edit (lii): check if convert is called()        
         error = convert(out, &data[0], info, info.width, info.height);
       }
     }
@@ -437,7 +454,7 @@ int decodePNG(std::vector<unsigned char>& out_image_32bit, unsigned long& image_
     }
     int convert(std::vector<unsigned char>& out, const unsigned char* in, Info& infoIn, unsigned long w, unsigned long h)
     { //converts from any color type to 32-bit. return value = LodePNG error code
-      size_t numpixels = w * h, bp = 0;
+      size_t numpixels = w * h, bp = 0;            
       out.resize(numpixels * 4);
       unsigned char* out_ = out.empty() ? 0 : &out[0]; //faster if compiled without optimization
       if(infoIn.bitDepth == 8 && infoIn.colorType == 0) //greyscale

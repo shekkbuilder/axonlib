@@ -14,13 +14,19 @@
  * If not, see <http://axonlib.googlecode.com/>.
  */
 
+/*
+  axonlib's builtin random number generators
+  64 bit integers are used so you might need to disable the 'long long'
+  warning in g++: -Wno-long-long
+*/
+
 #ifndef axRand_included
 #define axRand_included
 //------------------------------------------------------------------------------
 
 #include "axDefines.h"
 
-#ifdef AX_USE_HOT_INLINE
+#ifdef AX_HOT_INLINE_RAND
   #define __axrand_inline __hotinline
 #else
   #define __axrand_inline inline

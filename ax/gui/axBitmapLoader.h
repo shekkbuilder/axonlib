@@ -6,7 +6,9 @@
 #include "axBitmap.h"
 #include "axSurface.h"
 
-#include "../extern/picopng.cpp"
+//#include "../extern/picopng.cpp"
+// lii: try to use picopng.c instead
+#include "../extern/picopng.h"
 
 //----------------------------------------------------------------------
 
@@ -93,27 +95,32 @@ class axBitmapLoader
 {
   public:
     unsigned long width, height;
-    std::vector<unsigned char> image;
+    //std::vector<unsigned char> image;
+    // lii: pass this pointer when using getImage instead 
+    unsigned char* local_buffer;
 
   public:
 
     axBitmapLoader()
       {
         width = 0;
-        height = 0;
+        height = 0;       
       }
 
     //----------
 
     inline int            getWidth(void)  { return width; }
     inline int            getHeight(void) { return height; }
-    inline unsigned char* getImage(void)  { return &image[0]; }
+    //inline unsigned char* getImage(void)  { return &image[0]; }
+    inline unsigned char* getImage(void)  { return local_buffer; }
 
     //----------
 
     int decode(unsigned char* buffer, unsigned int buffersize)
       {
-        int error = decodePNG(image, width, height, buffer, buffersize);
+        local_buffer = buffer; // (test) set address here
+        //int error = decodePNG(image, width, height, buffer, buffersize);
+        int error = (int)PNG_decode(buffer, buffersize);
         return error;
       }
 
