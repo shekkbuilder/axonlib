@@ -59,7 +59,7 @@ class axDemo_page_bitmaps : public wdgPanel
       {
         wdgPanel::doPaint(aCanvas,aRect);
         mVoxel->View(x,y,a);
-        memcpy(mBitmap->getBuffer(),mVoxel->getBuffer(),320*200*4);
+        axMemcpy(mBitmap->getBuffer(),(int)mVoxel->getBuffer(),320*200*4);
         aCanvas->drawBitmap(mBitmap,mRect.x,mRect.y2()-200,0,0,320,200);
       }
 

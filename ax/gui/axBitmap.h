@@ -54,9 +54,11 @@ class axBitmap : public axBitmapImpl
     char* createBuffer(char* aData=NULL)
       {
         int size = mWidth*mHeight*4;
+        // malloc ?
         mBuffer = new char[size];
-        if (aData) memcpy(mBuffer,aData,size);
-        else memset(mBuffer,0,size);
+       
+        if (aData) axMemcpy(mBuffer,(int)aData,size);
+        else axMemset(mBuffer,0,size);
         return mBuffer;
       }
 

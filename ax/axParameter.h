@@ -113,14 +113,14 @@ class axParameter// : public axParameterBase
 
     virtual void doGetName(char* buf)
       {
-        strcpy(buf,mName.ptr());
+        axStrcpy(buf,mName.ptr());
       }
 
     //----------
 
     virtual void doGetLabel(char* buf)
       {
-        strcpy(buf,mLabel.ptr());
+        axStrcpy(buf,mLabel.ptr());
       }
 
     //----------

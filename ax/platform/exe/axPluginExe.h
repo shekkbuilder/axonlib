@@ -2,6 +2,7 @@
 #define axPluginExe_included
 //----------------------------------------------------------------------
 
+#include "axStdlib.h"
 #include "platform/axContext.h"
 #include "core/axRect.h"
 #include "gui/axWindow.h"
@@ -76,11 +77,11 @@ class axPluginExe : public axPluginBase//,
     virtual void describe(axString aName, axString aVendor, axString aProduct, int aVersion, unsigned int aID)
       {
         char* pos = mTitleBuffer;
-        strcpy(pos,aName.ptr());
+        axStrcpy(pos,aName.ptr());
         pos += aName.length();
-        strcpy(pos," :: ");
+        axStrcpy(pos," :: ");
         pos += 4;
-        strcpy(pos,aVendor.ptr());
+        axStrcpy(pos,aVendor.ptr());
         mTitle = mTitleBuffer;
       }
 

@@ -231,7 +231,7 @@ __axmalloc_inline void* axMalloc (register unsigned int size)
   // os specific calls
   #ifdef linux
     //rv = (char*)mmap(rv, size); // #include "sys/mman.h"
-    rv = (char*)sbrk(size);   // sbrk = legacy
+    rv = (unsigned char*)sbrk(size);   // sbrk = legacy
   #endif
   #ifdef WIN32
     rv = (unsigned char*)axMmap(size);
@@ -297,6 +297,16 @@ __axmalloc_inline void* axRealloc (void* _ptr,
 }
 
 // -----------------------------------------------------------------------------
+// override axMalloc with stdlib's malloc if parameter set
+// -----------------------------------------------------------------------------
+#ifdef AX_NO_MALLOC
+	#include "stdlib.h"
+	#define axMalloc malloc
+	#define axRealloc realloc
+	#define axFree free
+#endif
+
+// -----------------------------------------------------------------------------
 // enable local debug
 // -----------------------------------------------------------------------------
 #if defined (AX_DEBUG) && defined (AX_DEBUG_MEM)
@@ -355,8 +365,13 @@ __axmalloc_inline void* axRealloc (void* _ptr,
   __axmalloc_inline void axFreeDebug
   (void* _ptr, const char* _file, const unsigned int _line)
   {
-    register unsigned char* ptr = (unsigned char*)_ptr;
-    unsigned int _size = bucket2size[*(unsigned int*)(ptr-4)];
+    unsigned int _size;
+    #ifdef AX_NO_MALLOC
+			_size = 0;
+    #else
+			register unsigned char* ptr = (unsigned char*)_ptr;
+			_size = bucket2size[*(unsigned int*)(ptr-4)];			
+    #endif
     _axMemTotal -= _size;
     std::cout << "[" << _axGetFileName(_file) << "|" << _line <<
     "] axFree, " <<  (void*)&_ptr <<

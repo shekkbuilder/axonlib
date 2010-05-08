@@ -405,6 +405,10 @@ class axWindowLinux : public axWindowBase
 // valgrind reports memory leak here ('definitely lost')
 // XStringListToTextProperty, malloc
 
+// lii:
+// there could be malloc() in XStringListToTextProperty(),
+// so 'free(window_title);' might be needed after XFlush(..); ?
+
     virtual void setTitle(axString aTitle)
       {
 //        XTextProperty window_title_property;
