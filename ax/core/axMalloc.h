@@ -58,7 +58,7 @@ STATISTICS:
         2 ms !!!
     ----------------------------------------------------------
       binary size overhead:
-        axStdlib.h + axMalloc.h ~= 400 bytes
+        axMalloc.h ~= 400 bytes
     ============================================================================
 TODO:
   - conclude if more speed optimizations are possible

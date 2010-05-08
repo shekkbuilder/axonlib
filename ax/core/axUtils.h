@@ -35,10 +35,10 @@
 
 //strip:
 // --------
-#include <memory.h>
-#include <stdio.h>
-#include <sstream>
-using namespace std;
+//#include <memory.h>
+//#include <stdio.h>
+//#include <sstream>
+//using namespace std;
 // --------
 
 /**
@@ -133,30 +133,6 @@ __axutils_inline unsigned int axBitReverse(unsigned int v)
  * @return unsigned int - 0x0 / 0x1
  */
 #define axGetBit(x, bit) ( 1 & ((x) >> (bit)) )
-
-/**
- * returns a binary representation of an integer as string
- * \code
- * const char* str = axGetBinaryString(-211);
- * cout << str << endl;                        // 10110100111111111111111111111111
- * cout << axGetBinaryString(0xf0, 8) << endl; // 00001111
- * \endcode
- * @param[in] x long int - input value
- * @param[in] bits unsigned int - length (default = 32)
- * @return const char*
- */
-/*
-// ###### deprecated by axItoa()
-*/
-__deprecated __axutils_inline const char* axGetBinaryString(long int x, unsigned int bits=32)
-{
-  ostringstream oss;
-  for (unsigned int i=0; i<bits; i++) oss << (1 & (x >> i));
-  const char* cstr = oss.str().c_str();
-  return cstr;
-}
-
-// ------------------------------------------------------
 
 /**
  * converts linear value to decibel
@@ -422,8 +398,7 @@ __axutils_inline void axRadix(long *source, long *dest, unsigned long N, int byt
   unsigned int i;
   long count[256];
   long index[256];
-  //axMemset(count, 0, sizeof(count));
-  memset(count, 0, sizeof(count));
+  axMemset(count, 0, sizeof(count));  
   for (i=0; i<N; i++)
     count[ ((source[i]) >> (byte*8)) & 0xff ]++;
   index[0] = 0;

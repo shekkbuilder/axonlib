@@ -40,11 +40,9 @@
   - add more eccentric str* methods if needed
   - deprecate the use of most (all) stdlib / string.h / memory.h methods across
     axonlib
-  - test binary size impact and optimization level when including this header
   - more performance tests. check if methods in here are redundant in regard
     of speed. (slower than the ones in stdlib). so far all have been
     more efficient.
-  - axFtoa(), axAtof() for "string <-> float" conversations
   ==============================================================================
 */
 
@@ -54,7 +52,7 @@
 #include "axDefines.h"
 #include "core/axMalloc.h"
 
-#ifdef AX_USE_HOT_INLINE
+#ifdef AX_HOT_INLINE_STDLIB
   #define __axstdlib_inline __hotinline
 #else
   #define __axstdlib_inline inline
@@ -470,9 +468,6 @@ __axstdlib_inline int axAtoi (register const char* s)
 __axstdlib_inline char* axFtoa (register char* st, register float f,
   const unsigned int d = 2, const unsigned int fg = 0)
 {
-  // rather scary looking and has rouding error...
-  // ...well at least is many (~48!) times faster than:
-  // one operator 'sprintf(charbuffer, "%f", floatvalue)';
   register unsigned int i;
   register int _z;
   register int exp = 0;
@@ -533,7 +528,6 @@ __axstdlib_inline char* axFtoa (register char* st, register float f,
   */
 __axstdlib_inline float axAtof (register char* s)
 {
-  // well not much other ways to do that, so a bit slow...
   register float a = 0.f;
   register int e = 0;
   register unsigned int c;
