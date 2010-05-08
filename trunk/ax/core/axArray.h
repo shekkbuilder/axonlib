@@ -2,9 +2,9 @@
 #define axArray_included
 //----------------------------------------------------------------------
 
-//#include <stdlib.h> // malloc, realloc, free
 #include <axDefines.h>
 #include <axStdlib.h>
+#include <core/axMalloc.h>
 
 #define SIZE_INIT 16  ///< initial size of array
 #define SIZE_MULT 2   ///< amount to increase/decrease the array size when needed (multiplier)
@@ -31,8 +31,7 @@ class axArray
 		  	mTsize = sizeof(_T);
         mRealSize = SIZE_INIT;
 			  mSize = 0;
-			  mArray = (_T*)malloc(mRealSize*mTsize);
-        //mArray = (_T*) operator new ( mRealSize*mTsize );
+			  mArray = (_T*)axMalloc(mRealSize*mTsize);        
 			}
 
     // copy constructor.
@@ -40,14 +39,11 @@ class axArray
       initializes array from another array (copies data)
       \param aArray the other array you want to copy
     */
-
     axArray(const axArray& aArray)
       {
         mTsize = sizeof(_T);
-        mArray = (_T*)malloc(mTsize*aArray.mRealSize);
-        //mArray = (_T*) operator new ( mTsize*aArray.mRealSize );
-        memcpy(mArray, aArray.mArray, mTsize*aArray.mRealSize);
-        //axMemcpy(mArray, aArray.mArray, mTsize*aArray.mRealSize);
+        mArray = (_T*)axMalloc(mTsize*aArray.mRealSize);        
+        axMemcpy(mArray, aArray.mArray, mTsize*aArray.mRealSize);        
         mRealSize = aArray.mRealSize;
         mSize = aArray.mSize;
       }
@@ -61,8 +57,7 @@ class axArray
       {
         if (mArray)
         {
-          //delete [] mArray;
-          free(mArray);
+          axFree(mArray);
           mArray = NULL;
         }
       }
@@ -116,9 +111,8 @@ class axArray
           return *this;
         if (aArray.mSize==0)
           clear();
-        setSize(aArray.mSize);
-        //axMmcpy(mArray, aArray.mArray, mTsize*aArray.mSize);
-        memcpy(mArray, aArray.mArray, mTsize*aArray.mSize);
+        setSize(aArray.mSize);        
+        axMemcpy(mArray, aArray.mArray, mTsize*aArray.mSize);
         return *this;
       }
 
@@ -140,9 +134,7 @@ class axArray
         mSize = 0;
         if (aErase)
         {
-          mArray = (_T*)realloc(mArray, mTsize*SIZE_INIT);
-          //delete[] mArray;
-          //mArray = (_T*) operator new ( mTsize*SIZE_INIT );
+          mArray = (_T*)axRealloc((char*)mArray, mTsize*SIZE_INIT);          
           mRealSize = SIZE_INIT;
         }
       }
@@ -157,12 +149,7 @@ class axArray
         mSize++;
         if (mSize > mRealSize)
         {
-          mArray = (_T*)realloc(mArray, mTsize*mRealSize);
-          /*
-          mArray = (_T*)axRealloc(mArray, mTsize*mRealSize,
-          mTsize*(mRealSize *= SIZE_MULT));
-          */
-          
+          mArray = (_T*)axRealloc(mArray, mTsize*mRealSize);                    
         }
         mArray[mSize-1] = aItem;
       }
@@ -175,12 +162,10 @@ class axArray
       {
         if (aSize != 0)
         {
-          if ( (aSize>mRealSize) || (aSize<mRealSize/2) )
-          //if ( (mSize>mRealSize) || (mSize<mRealSize/SIZE_MULT) )
+          if ( (aSize>mRealSize) || (aSize<mRealSize/2) )          
           {
             mRealSize = aSize;
-            mArray = (_T*)realloc(mArray, mTsize*mSize);
-            //mArray = (_T*)axRealloc(mArray, mTsize*mSize, mTsize*aSize);
+            mArray = (_T*)axRealloc(mArray, mTsize*mSize);            
             mSize = aSize;
           }
         }

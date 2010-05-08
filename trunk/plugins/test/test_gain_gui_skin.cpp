@@ -1,6 +1,8 @@
 //#define AX_DEBUG
 #define AX_DEBUG_AUTO_STD
-#define AX_DEBUG_AUTO_WIN
+
+#define AX_DEBUG_MEM
+#define AX_DEBUG_PNG
 
 #include "axPlugin.h"
 #include "axEditor.h"
@@ -156,7 +158,7 @@ class myPlugin : public axPlugin
         //trace("- new mySkin");
         skin = new mySkin(canvas);
         //trace("- setSkin");
-        editor->setSkin(skin);
+        // editor->setSkin(skin);
 //      //--- decode & initialize bitmap
         //trace("- createSurface");
         srf = editor->createSurface(32,32*65);
@@ -182,6 +184,15 @@ class myPlugin : public axPlugin
         editor->show();
         //trace("axWindow.doOpenEditor OK");
         mEditor = editor;
+        
+        
+        int* test_axrlc = NULL;
+        int c = 64;
+        test_axrlc = (int*)axRealloc (test_axrlc, 64 * sizeof(int));
+        if (test_axrlc)
+          trace("test: *** realloc_ok");       
+        axFree(test_axrlc);
+        
         return mEditor;
       }
 

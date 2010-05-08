@@ -27,7 +27,7 @@
 #include "core/axMalloc.h"
 #include "core/axMath.h"
 
-#ifdef AX_USE_HOT_INLINE
+#ifdef AX_HOT_INLINE_UTILS
   #define __axutils_inline __hotinline
 #else
   #define __axutils_inline inline
@@ -53,10 +53,8 @@ using namespace std;
 __axutils_inline const char* axGetFileName(const char* path)
 {
   const char *slash, *backslash;
-  //slash = axStrrchr(path, '/');
-  //backslash = axStrrchr(path, '\\') + 1;
-  slash = strrchr(path, '/');
-  backslash = strrchr(path, '\\') + 1;
+  slash = axStrrchr(path, '/');
+  backslash = axStrrchr(path, '\\') + 1;
   if (slash) return slash + 1;
     return backslash;
 }
