@@ -1,6 +1,7 @@
 //#define AX_DEBUG
 #define AX_DEBUG_AUTO_STD
 
+#define AX_NO_MALLOC
 #define AX_DEBUG_MEM
 #define AX_DEBUG_PNG
 
