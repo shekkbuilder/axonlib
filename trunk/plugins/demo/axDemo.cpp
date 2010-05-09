@@ -34,11 +34,14 @@ class axDemo : public axPlugin
         //char* caps = axCpuCapsString();
         //trace("cpu caps: " << caps);
 
-//  char buffer[17];
-//  float2string(PI,buffer,10);
-//  trace("float2string(PI) = '" << buffer << "'");
-//  int2string(418,buffer,10);
-//  trace("int2string(418) = '" << buffer << "'");
+  char buffer[17];
+
+  axFtoa(buffer,PI);
+  trace("axFtoa(PI) = '" << buffer << "'");
+
+  axItoa(418,buffer);
+  trace("axItoa(418) = '" << buffer << "'");
+
   if (axBigEndian()) trace("big endian");
   if (axLittleEndian()) trace("little endian");
 

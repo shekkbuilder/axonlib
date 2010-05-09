@@ -93,35 +93,51 @@
 
 class axBitmapLoader
 {
+  private:
+    PNG_info_t*     mPngInfo;
   public:
-    unsigned long width, height;
+    unsigned long   mWidth;
+    unsigned long   mHeight;
+    unsigned char*  mImage;
     //std::vector<unsigned char> image;
-    // lii: pass this pointer when using getImage instead 
-    unsigned char* local_buffer;
+    // lii: pass this pointer when using getImage instead
+    //unsigned char* local_buffer;
 
   public:
 
     axBitmapLoader()
       {
-        width = 0;
-        height = 0;       
+        mPngInfo  = NULL;
+        mWidth    = 0;
+        mHeight   = 0;
+        mImage    = NULL;
+      }
+
+    virtual ~axBitmapLoader()
+      {
+        if (mPngInfo) axFree(mPngInfo);
       }
 
     //----------
 
-    inline int            getWidth(void)  { return width; }
-    inline int            getHeight(void) { return height; }
-    //inline unsigned char* getImage(void)  { return &image[0]; }
-    inline unsigned char* getImage(void)  { return local_buffer; }
+    inline int            getWidth(void)  { return mWidth; }
+    inline int            getHeight(void) { return mHeight; }
+    inline unsigned char* getImage(void)  { return &mImage[0]; }
+    //inline unsigned char* getImage(void)  { return local_buffer; }
 
     //----------
 
     int decode(unsigned char* buffer, unsigned int buffersize)
       {
-        local_buffer = buffer; // (test) set address here
+        //local_buffer = buffer; // (test) set address here
         //int error = decodePNG(image, width, height, buffer, buffersize);
-        int error = (int)PNG_decode(buffer, buffersize);
-        return error;
+        //int error = (int)PNG_decode(buffer, buffersize);
+        if (mPngInfo) axFree(mPngInfo);
+        PNG_info_t* mPngInfo = PNG_decode(buffer, buffersize);
+        mWidth  = mPngInfo->width;
+        mHeight = mPngInfo->height;
+        mImage  = mPngInfo->image->data;
+        return (int)mPngInfo;
       }
 
     //----------

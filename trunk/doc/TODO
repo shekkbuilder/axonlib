@@ -16,6 +16,21 @@
   only tests used wihle developing there.
   none of them is guaranteed to function as the library evolves
 
+- update the linux compile scripts to be as great as neolit123's
+  awesome windows compile.cmd
+- compileall script that compiles all .cpp files found in a specified
+  directory
+
+- examine possibilities for upx (or something else) compression of
+  linux shared libraries (.so)
+
+- point out that some of the 'extern' files might use other licenses than
+  the axonlib itself, and that projects using them must obey these
+  licenses (gpl, ..)
+
+- makefiles?
+  would it really help anything, since it's mainly .h files?
+
 ----------------------------------------------------------------------
 core:
 ----------------------------------------------------------------------
@@ -23,9 +38,10 @@ core:
 - mac?
 
 - axAtomic
+  thread-safe atomic instructions for light-weight mutex alternative.
 
 - deprecate all methods and types from the standard library and other headers:
-  "math.h", "string.h", "memory.h", "malloc.h", that are used locally.  
+  "math.h", "string.h", "memory.h", "malloc.h", that are used locally.
 
 - investigate the possibility of system calls localization:
   os dependent exit(), abort(), assert(), time()...etc
@@ -55,7 +71,7 @@ plugin:
 
 - more parameter types, for automatic scaling/transforming
   cubed, squared, ms, hz, db, etc...
-  
+
 - dirty-parameters?
   put needs-to-be-updated parameters in a list,
   read this list in doProcessBlock, sub-divide block into chunks,
@@ -85,11 +101,13 @@ gui:
   one way is like web browsers...
   define a set of std font types to chosse between
   sans,serif,mono,big,...
+  there's an interesting ttf parser and renderer here: http://nothings.org/
 
 - alpha support
   (glx for linux?)
   i think it is already there on windows.. but in the interest of total
   platform independence, it's not activated or ready..
+  look into xrender and/or composite stuff on linux.
 
 - stretchable bitmaps
   same as alpha support, it's there in bitblt or stretchblt in windows,
@@ -103,12 +121,14 @@ gui:
   we could perhaps have some rect stack that we can push and pop to/from
 
 - the skin stuff needs a bit more work, more polish, more functionality,
-  and it needs to be solidified, 'cast in stone',
+  and it needs to be solidified, 'cast in stone'...
 
 - mouse cursor is not set correctly in non-client areas of windows
   in win7 (standalone)
 
-- cursor shape constants
+- more cursor shape constants. missiong a few on windows
+  (window resizing, finger vs hand, ...)
+  even better: user-defined cursor shapes
 
 - some issues with window resizing. resizing via window borders and
   via wdgSizer. some rect/variables not in sync?
@@ -133,3 +153,7 @@ other:
   program flow, conditionals, external functions, variables, ...
   [almost there...]
 
+-axModular
+  same thing, but for modular audio ala reaktor/synthedit
+  initially with code (connect, compile, execute), but later adding
+  an editor-like thing on top of it (perhaps with "export to .cpp")
