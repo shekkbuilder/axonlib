@@ -300,10 +300,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
 // override axMalloc with stdlib's malloc if parameter set
 // -----------------------------------------------------------------------------
 #ifdef AX_NO_MALLOC
-	#include "stdlib.h"
-	#define axMalloc malloc
-	#define axRealloc realloc
-	#define axFree free
+  #include "stdlib.h"
 #endif
 
 // -----------------------------------------------------------------------------
@@ -339,7 +336,11 @@ __axmalloc_inline void* axRealloc (void* _ptr,
   __axmalloc_inline void* axMallocDebug
   (register unsigned int _size, const char* _file, const unsigned int _line)
   {
-    void* _ptr = axMalloc(_size);
+    #ifdef AX_NO_MALLOC
+      void* _ptr = malloc(_size);
+    #else 
+      void* _ptr = axMalloc(_size);
+    #endif        
     _axMemTotal += _size;
     std::cout << "[" << _axGetFileName(_file) << "|" << _line <<
     "] axMalloc, " <<  (void*)&_ptr <<
@@ -350,9 +351,13 @@ __axmalloc_inline void* axRealloc (void* _ptr,
   // realloc debug
   __axmalloc_inline void* axReallocDebug
   (void* _ptr, register const unsigned int _size,
-    const char* _file, const unsigned int _line)  
+    const char* _file, const unsigned int _line)
   {
-    void* _ptr0 = axRealloc(_ptr, _size);
+    #ifdef AX_NO_MALLOC
+      void* _ptr0 = realloc(_ptr, _size);
+    #else
+      void* _ptr0 = axRealloc(_ptr, _size);
+    #endif       
     _axMemTotal += _size;
     std::cout << "[" << _axGetFileName(_file) << "|" << _line <<
     "] axRealloc, f: " <<  (void*)&_ptr <<
@@ -367,23 +372,37 @@ __axmalloc_inline void* axRealloc (void* _ptr,
   {
     unsigned int _size;
     #ifdef AX_NO_MALLOC
-			_size = 0;
+      _size = 0;
     #else
-			register unsigned char* ptr = (unsigned char*)_ptr;
-			_size = bucket2size[*(unsigned int*)(ptr-4)];			
+      register unsigned char* ptr = (unsigned char*)_ptr;
+      _size = bucket2size[*(unsigned int*)(ptr-4)];			
     #endif
     _axMemTotal -= _size;
     std::cout << "[" << _axGetFileName(_file) << "|" << _line <<
     "] axFree, " <<  (void*)&_ptr <<
     ", " << _size << ", " << _axMemTotal << "\n";
-    axFree(_ptr);
+    #ifdef AX_NO_MALLOC
+      free(_ptr);
+    #else  
+      axFree(_ptr);
+    #endif
   }
   
   // macro overrides here
   #define axMalloc(s)     axMallocDebug   (s, __FILE__, __LINE__)
   #define axRealloc(p, s) axReallocDebug  (p, s, __FILE__, __LINE__)
-  #define axFree(p)       axFreeDebug     (p, __FILE__, __LINE__)  
+  #define axFree(p)       axFreeDebug     (p, __FILE__, __LINE__)
   
+  #define malloc(s)       axMallocDebug   (s, __FILE__, __LINE__)
+  #define realloc(p, s)   axReallocDebug  (p, s, __FILE__, __LINE__)
+  #define free(p)         axFreeDebug     (p, __FILE__, __LINE__) 
+  
+#else // case: no debug
+  #ifdef AX_NO_MALLOC // override just in case  
+    #define axMalloc malloc
+    #define axRalloc realloc
+    #define axFree   free
+  #endif
 #endif
 
 #endif // axMalloc_included
