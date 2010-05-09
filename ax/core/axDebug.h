@@ -48,7 +48,7 @@
  * \endcode
  * <br>
  * linux specific methods: <br>
- * -------------------------------- <br>   
+ * -------------------------------- <br>
  * wtrace() - trace for wine <br>
  *
  * win32 specific methods: <br>
@@ -56,7 +56,7 @@
  * on windows you can manually create a debug window (console or gui) and
  * destroy it when the dll/exe is beeing closed or you can use
  * the flags AX_DEBUG_AUTO_STD (auto create/destroy debug console)
- * or AX_DEBUG_AUTO_WIN (auto create/destroy debug gui window).  
+ * or AX_DEBUG_AUTO_WIN (auto create/destroy debug gui window).
  * <br>
  * <br>
  * <b>winapi window (inefficient):</b> <br>
@@ -75,11 +75,11 @@
  * example in a vst plugin: <br>
  * \code
  * // automatic
- * #define AX_DEBUG           // or call from command line: g++ ... -DAX_DEBUG 
+ * #define AX_DEBUG           // or call from command line: g++ ... -DAX_DEBUG
  * #define AX_DEBUG_AUTO_WIN
  * #define AX_DEBUG_AUTO_STD
- *     
- * // manual 
+ *
+ * // manual
  * virtual void doProcessState(int aState) // overwride default method
     {
       #if defined(AX_DEBUG) && defined(WIN32) // check for win32 and ax_debug
@@ -100,7 +100,7 @@
     }
  * \endcode
  * <i>notes: debug windows are shared between plugin instances and
- * only one console can be allocated per process.<i><br><br> 
+ * only one console can be allocated per process.<i><br><br>
 */
 
 #ifndef axDebug_included
@@ -109,11 +109,11 @@
 
 // case: debug enabled
 #ifdef AX_DEBUG
-  
+
   #define _WIN32_WINNT 0x0501
-  
+
   #include <assert.h>
-  #include <iostream>  
+  #include <iostream>
   #include "core/axUtils.h"
   using namespace std;
 
@@ -128,7 +128,7 @@
     #include <io.h>
     #include <stdio.h>            // gcc-4.4.1-tdm
     #include <sstream>
-    
+
     HWND axDtext;                 // edit control handle
     ostringstream axDoss;         // string stream for window
 
@@ -178,7 +178,7 @@
         // - listener
         SetWindowLong(axDtext, DWL_DLGPROC, (long)axDwinListner);
         // - set limit
-        Edit_LimitText(axDtext, 1000);       
+        Edit_LimitText(axDtext, 1000);
       }
     }
 
@@ -221,11 +221,11 @@
       }
 
     /*
-     * create a console debugger window (only one instance per process, fast)      
+     * create a console debugger window (only one instance per process, fast)
      * allocates console and routes stdout as seen in example:
-     * http://support.microsoft.com/kb/105305     
-     * 
-     */    
+     * http://support.microsoft.com/kb/105305
+     *
+     */
     unsigned int axHcrt = 0;                  // crt handle
     FILE *axSfile;                            // file stream
 
@@ -237,7 +237,7 @@
       close((int)axSfile); \
       axHcrt = 0; \
     }
-    
+
     // ----------------
     // create console
     void axDstdCreate(void)
@@ -265,9 +265,9 @@
           // disable ctrl+c
           SetConsoleCtrlHandler(NULL, true);
           // set always on top
-          SetWindowPos(hCw, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);          
-          // disable close button 
-		      HMENU hMenu = GetSystemMenu(hCw, 0);          
+          SetWindowPos(hCw, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
+          // disable close button
+		      HMENU hMenu = GetSystemMenu(hCw, 0);
 		      if(hMenu != NULL)
 		      {
             DeleteMenu(hMenu, SC_CLOSE, MF_BYCOMMAND);
@@ -289,9 +289,9 @@
     #define trace(x) { if (axHcrt != 0) { cout << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << endl; cout.flush(); } }
     #define msg(x) { if (axHcrt != 0) { printf("[%s|%ui] %s\n", axGetFileName(__FILE__), __LINE__, x); } }
     #define wtrace(x) { cout << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << endl; cout.flush(); }
-    // --------- 
+    // ---------
   #endif
-  
+
   // case: linux
   #ifdef linux
     #define trace(x) { cout << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << endl; cout.flush(); }
@@ -303,13 +303,13 @@
     inline void axDwinCreate(void) {}
     inline void axDwinDestroy(void) {}
   #endif
-  
+
 // case: no debug
 #else
   #define NDEBUG
   #define trace(x) ((void)0)
   #define msg(x) ((void)0)
-  #define assert(x) ((void)0)  
+  #define assert(x) ((void)0)
   #define wtrace(x) ((void)0)
   #define wdebug(x) ((void)0)
   inline void axDstdCreate(void) {}
@@ -320,3 +320,59 @@
 
 //----------------------------------------------------------------------
 #endif
+
+/*
+
+// from: http://www.skynet.ie/~caolan/Fragments/C++StaticAssert.html
+// google search term: "static assert"
+//
+//C++ Static Assert
+// StaticAssert is like assert for C++, except that the test is done at compile time.
+// Of course this can only be done when the test is possible at compile time.
+//
+// const char *stiName = { "Normal" };
+// StaticAssert((sizeof(stiName) / sizeof(stiName)) == 100, WrongSizeOfArray);
+//
+// Here the array is one element in size, and we have a StaticAssert that will fail
+// if the array is not 100 in size with an error of WrongSizeOfArray.
+//
+// ----------
+//
+// Lifted direct from:
+// Modern C++ Design: Generic Programming and Design Patterns Applied
+// Section 2.1
+// by Andrei Alexandrescu
+
+namespace ww // change this? (ccernn)
+{
+  template<bool> class compile_time_check
+    {
+      public:
+        compile_time_check(...) {}
+    };
+  template<> class compile_time_check<false>
+    {
+    };
+}
+
+// Similiar to assert, StaticAssert is only in operation when NDEBUG is not
+// defined. It will test its first argument at compile time and on failure
+// report the error message of the second argument, which must be a valid c++
+// classname. i.e. no spaces, punctuation or reserved keywords.
+
+#ifndef NDEBUG // todo: if AX_DEBUG? (ccernn)
+#define StaticAssert(test, errormsg) \
+do \
+{ \
+  struct ERROR_##errormsg {}; \
+  typedef ww::compile_time_check< (test)!=0 > tmplimpl; \
+  tmplimpl aTemp = tmplimpl(ERROR_##errormsg()); \
+  sizeof(aTemp); \
+} while (0)
+#else
+#define StaticAssert(test, errormsg) \
+  do {} while (0)
+#endif
+#endif
+
+*/

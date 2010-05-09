@@ -32,11 +32,11 @@ class myPlugin : public axPlugin//,
         setupEditor(200,200);
         appendParameter( p_Gain = new axParameter(this,"gain","") );
         setupParameters();
-        
+
         trace("### hello dbg");
-        
-        int* ptr = new int;
-        
+
+        //int* ptr = new int; // warning: unused variable
+
         char* str = new char[256];
         strcpy(str, "some text");
         delete [] str;

@@ -118,7 +118,6 @@ class axEditor : public axWindow
       {
         mRect.w = aWidth;
         mRect.h = aHeight;
-
         // axWindow::setSize not needed for reaper, (effEditRect)
         // but if commented out, our window woon't be told to resize
         // same thing with energy xt2 (it supports sizeWindow
@@ -136,6 +135,14 @@ class axEditor : public axWindow
       }
 
     //----------------------------------------
+
+    /*
+      axArray.append looks like can be dangerous,
+      because it increases the size before the item itself is added to the array..
+      if a thread is reading the array size just after it has been increased,
+      but before the item has been properly set up and written to the array buffer,
+      things could go wrong...
+    */
 
     #ifndef AX_WIDGET_NOUPDATELIST
 
@@ -161,8 +168,10 @@ class axEditor : public axWindow
     // if we're inside this redrawDirty (because of idleEditor),
     // we can't append new widgets to it!!
     // dangerous if we don't manage the redrawDirty ourselves...
-    //
     // we might need a redrawLock here
+    // or we need to be very certain about which thread is adding
+    // widgets to the array, and which is reading from the list...
+    // appendUpdate vs redrawUpdates
 
     void redrawUpdates(void)
       {

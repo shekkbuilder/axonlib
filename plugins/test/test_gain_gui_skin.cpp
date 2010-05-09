@@ -1,17 +1,14 @@
-//#define AX_DEBUG
-#define AX_DEBUG_AUTO_STD
-
+//#define AX_DEBUG_AUTO_STD
 #define AX_NO_MALLOC
 #define AX_DEBUG_MEM
 #define AX_DEBUG_PNG
 
 #include "axPlugin.h"
 #include "axEditor.h"
-#include "gui/axSkinDefault.h"
-//#include "gui/axSkin.h"
 #include "wdg/wdgPanel.h"
 #include "wdg/wdgKnob.h"
 
+#include "gui/axSkinDefault.h"
 #include "gui/axBitmapLoader.h"
 #include "../img/knob32.h"
 
@@ -23,9 +20,12 @@
 
 class mySkin : public axSkinDefault
 {
+  private:
+    axBitmapLoader  loader;
+    axBitmap*       bitmap;
   public:
-    axImage*  mKnobImage;
-    int       mKnobCount, mKnobWidth, mKnobHeight;
+    axSurface*  mKnobImage;
+    int         mKnobCount, mKnobWidth, mKnobHeight;
   public:
     mySkin(axCanvas* aCanvas)
     : axSkinDefault(aCanvas)
@@ -35,21 +35,32 @@ class mySkin : public axSkinDefault
         mKnobWidth  = 0;
         mKnobHeight = 0;
       }
-    inline void setKnobImage(axImage* aImage, int aCount, int aWidth, int aHeight)
+    virtual ~mySkin()
       {
-        mKnobImage  = aImage;
-        mKnobCount  = aCount;
-        mKnobWidth  = aWidth;
-        mKnobHeight = aHeight;
+        if (mKnobImage) delete mKnobImage;
+      }
+    inline void loadKnobBitmap(axEditor* aEditor, unsigned char* buffer, int size)
+      {
+        mKnobWidth  = 32;
+        mKnobHeight = 32;
+        mKnobCount  = 65;
+        mKnobImage = aEditor->createSurface(mKnobWidth,mKnobHeight*mKnobCount);
+        loader.decode(buffer,size);
+        bitmap = aEditor->createBitmap( loader.getWidth(), loader.getHeight() );
+        bitmap->createBuffer( (char*)loader.getImage() );                   // create bitmap buffer & copy data
+        bitmap->convertRgbaBgra();                                          // -> bgr.a
+        bitmap->setBackground(128,128,128);                                 // replace alpha (bgr)
+        bitmap->prepare();                                                  // prepare bitmap for blitting
+        axCanvas* can = mKnobImage->getCanvas();
+        can->drawBitmap(bitmap,0,0,0,0,mKnobWidth,mKnobHeight*mKnobCount);  // upload to surface
+        delete bitmap;
       }
     virtual void drawPanel(axCanvas* aCanvas, axRect aRect)
       {
         fill_back(aCanvas,aRect);
-        //draw_frame(aCanvas,aRect);
       }
     virtual void drawKnob(axCanvas* aCanvas, axRect aRect,  axString aName, axString aDisp, float aValue)
       {
-
         if (mKnobImage)
         {
           // bitmap
@@ -75,8 +86,7 @@ class mySkin : public axSkinDefault
           }
         } //knobimage
         else
-
-        axSkinDefault::drawKnob(aCanvas,aRect,aName,aDisp,aValue);
+          axSkinDefault::drawKnob(aCanvas,aRect,aName,aDisp,aValue);
       }
 };
 
@@ -106,11 +116,10 @@ class myPlugin : public axPlugin
         m_Gain = 0;
         describe("test_gain_gui_skin","ccernn","axonlib example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);
-        setupEditor(100,52);
+        setupEditor(128,64);
         appendParameter( p_Gain = new axParameter(this,"gain","") );
         setupParameters();
-
-        wdebug("hello dbg");        
+        wdebug("hello dbg");
         trace("hello dbg");
       }
 
@@ -136,13 +145,10 @@ class myPlugin : public axPlugin
     //----------------------------------------
 
   private:
-    axEditor*       mEditor;
-    wdgPanel*       wPanel;
+    axEditor*       m_Editor;
+    mySkin*         m_Skin;
+    wdgPanel*       w_Panel;
     wdgKnob*        w_Gain;
-    axSurface*      srf;
-    mySkin*         skin;
-    axBitmapLoader  loader;
-    axBitmap*       bitmap;
 
   public:
 
@@ -151,63 +157,35 @@ class myPlugin : public axPlugin
 
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
-        trace("- new axEditor");
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
-        trace("OK");
-        //trace("- getCanvas");
         axCanvas* canvas = editor->getCanvas();
-        //trace("- new mySkin");
-        skin = new mySkin(canvas);
-        //trace("- setSkin");
-        // editor->setSkin(skin);
-//      //--- decode & initialize bitmap
-        //trace("- createSurface");
-        srf = editor->createSurface(32,32*65);
-        //trace("- decoding png");
-        loader.decode((unsigned char*)knob32,knob32_size);
-        /*axBitmap**/ bitmap = editor->createBitmap( loader.getWidth(), loader.getHeight() );
-        bitmap->createBuffer( (char*)loader.getImage() );   // create bitmap buffer & copy data
-        bitmap->convertRgbaBgra();                          // -> bgr.a
-        bitmap->setBackground(128,128,128);                 // replace alpha
-        bitmap->prepare();                                  // prepare bitmap for blitting
-        axCanvas* can = srf->getCanvas();
-        can->drawBitmap(bitmap,0,0,0,0,32,32*65);           // upload to surface
-        delete bitmap;
-//        //---
-        skin->setKnobImage(srf,65,32,32);
-//        editor->setSkin(skin);
-        editor->appendWidget( wPanel = new wdgPanel(editor,NULL_RECT,wa_Client) );
-        wPanel->appendWidget( w_Gain = new wdgKnob( editor,axRect(10,10,100,32),wa_None,"gain",0.75) );
+        m_Skin = new mySkin(canvas);
+        m_Skin->loadKnobBitmap(editor,(unsigned char*)knob32,knob32_size);
+        editor->applySkin(m_Skin);
+        editor->appendWidget( w_Panel = new wdgPanel(editor,NULL_RECT,wa_Client) );
+        w_Panel->appendWidget( w_Gain = new wdgKnob( editor,axRect(10,10,100,32),wa_None,"gain",0.75) );
         editor->connect(w_Gain,p_Gain);
-        //trace("- doRealign");
         editor->doRealign();
-        //trace("- show");
         editor->show();
-        //trace("axWindow.doOpenEditor OK");
-        mEditor = editor;
-        
-        
-        int* test_axrlc = NULL;
-        int c = 64;
-        test_axrlc = (int*)axRealloc (test_axrlc, 64 * sizeof(int));
-        if (test_axrlc)
-          trace("test: *** realloc_ok");       
-        axFree(test_axrlc);
-        
-        return mEditor;
+        m_Editor = editor;
+        //int* test_axrlc = NULL;
+        //int c = 64; // warning: unused variable
+        //test_axrlc = (int*)axRealloc (test_axrlc, 64 * sizeof(int));
+        //if (test_axrlc)
+        //  trace("test: *** realloc_ok");
+        //axFree(test_axrlc);
+        return m_Editor;
       }
 
     //----------
 
     virtual void doCloseEditor(void)
       {
-        axEditor* editor = mEditor;
-        mEditor->hide();
-        mEditor = NULL;
+        m_Editor->hide();
+        axEditor* editor = m_Editor;
+        m_Editor = NULL;
         delete editor;
-        delete skin;
-        delete srf;
-        //delete bitmap;
+        delete m_Skin;
       }
 
     //----------

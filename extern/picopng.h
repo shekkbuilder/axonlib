@@ -33,9 +33,9 @@
 // - adapted the code for use in axonlib (axonlib.googlecode.com)
 //    - custom debugger
 //    - custom memory allocator
-//  
+//
 // TODO:
-// - (done?) fix all warning - typecasting / -Wall 
+// - (done?) fix all warning - typecasting / -Wall
 // - test methods PNG_decode(), etc..
 // /////////////////////////////////////////////////////////////////////////////
 
@@ -123,8 +123,8 @@ void png_alloc_remove_node(png_alloc_node_t *node)
 		png_alloc_head = node->next;
 	if (node == png_alloc_tail)
 		png_alloc_tail = node->prev;
-	node->prev = NULL; 
-  node->next = NULL; 
+	node->prev = NULL;
+  node->next = NULL;
   node->addr = NULL;
 	axFree(node);
 }
@@ -1141,10 +1141,10 @@ PNG_info_t *PNG_decode(const uint8_t *in, uint32_t size)
     cout << "[" << axGetFileName(_file) << "|" << _line <<
     "] PNG_decode, " <<  (void*)&in << ", " << size << endl;
     return PNG_decode(in, size);
-  }    
-  
+  }
+
   #define PNG_decode(p, s) PNG_decode_DEBUG(p, s, __FILE__, __LINE__)
-   
+
 #endif
 
 #endif
