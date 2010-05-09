@@ -362,7 +362,7 @@ __axutils_inline float axDenorm(register float n)
     unsigned int i;
   } u;
   u.f = n;
-  if ( !(u.i & 0x78000000) ) n = 0.f;
+  if ( !(u.i & 0x7f800000) ) n = 0.f;
   return n;
 }
 
