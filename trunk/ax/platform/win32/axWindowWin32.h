@@ -708,7 +708,12 @@ class axWindowWin32 : public axWindowBase
             break;
           case WM_SETCURSOR:
             //wtrace("WM_SETCURSOR");
-            SetCursor(mWinCursor);
+            if (LOWORD(lParam)==HTCLIENT)
+            {
+              SetCursor(mWinCursor);
+              result = 1;
+            }
+            else result = DefWindowProc(hWnd,message,wParam,lParam);
             break;
           default:
             result = DefWindowProc(hWnd,message,wParam,lParam);
