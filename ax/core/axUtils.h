@@ -350,10 +350,21 @@ __axutils_inline float axQ2Octaves(const float q)
 }
 
 /**
- * denormalize
- * @param[in] x - any expression or variable
+ * denormalize input value
+ * @param[in] n float
+ * @return n float denormalized value
  */
-#define axDenorm(x) { (x) + DENORM }
+__axutils_inline float axDenorm(register float n)
+{
+  register union
+  {
+    float f;
+    unsigned int i;
+  } u;
+  u.f = n;
+  if ( !(u.i & 0x78000000) ) n = 0.f;
+  return n;
+}
 
 /**
  * call the 'rdtsc' (Read Time Stamp Counter) instruction

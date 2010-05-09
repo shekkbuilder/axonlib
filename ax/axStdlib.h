@@ -156,7 +156,7 @@ __axstdlib_inline void* axMemmove (register void* dst, register const void* src,
 __axstdlib_inline void* axMemset (register void* dest, register int val,
   register unsigned int len)
 {
-	register unsigned char _v = (unsigned char) val;
+  register unsigned char _v = (unsigned char) val;
   register char* _d = (char*) dest;
   while (len--)
     *_d++ = _v;
