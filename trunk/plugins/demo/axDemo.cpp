@@ -39,7 +39,7 @@ class axDemo : public axPlugin
   axFtoa(buffer,PI);
   trace("axFtoa(PI) = '" << buffer << "'");
 
-  axItoa(418,buffer);
+  axItoa(buffer,418);
   trace("axItoa(418) = '" << buffer << "'");
 
   if (axBigEndian()) trace("big endian");

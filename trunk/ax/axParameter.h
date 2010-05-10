@@ -84,11 +84,11 @@ class axParameter// : public axParameterBase
     //----------
 
     virtual void  setValue(float aValue) { mValue=aValue; }
-    virtual float getValue(void)        { return mValue; }
+    virtual float getValue(void)         { return mValue; }
 
-    inline float getValue2(void) { float n=getValue(); return n*n; }
-    inline float getValue3(void) { float n=getValue(); return n*n*n; }
-    inline float getValue3i(void) { float n=getValue(); return (n>0) ? n*n*n : 0; }
+    /*virtual*/inline float getValue2(void)  { float n=getValue(); return n*n; }
+    /*virtual*/inline float getValue3(void)  { float n=getValue(); return n*n*n; }
+    /*virtual*/inline float getValue3i(void) { float n=getValue(); return (n>0) ? 1.0f/(n*n*n) : 0; }
 
     //----------
 
@@ -132,7 +132,8 @@ class axParameter// : public axParameterBase
     virtual void doGetDisplay(char* buf)
       {
         float val = getValue();
-        __builtin_sprintf(buf,"%.3f",val);
+        //__builtin_sprintf(buf,"%.3f",val);
+        axFtoa(buf,val);
       }
 
 };

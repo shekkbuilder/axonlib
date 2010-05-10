@@ -73,7 +73,7 @@
   * axIsLetter
   */
 #define axIsLetter(c) \
-( ( ((c) > 64 && (c) < 91) || ((c) > 96 && (c) < 123) ) ? 1 : 0 )  
+( ( ((c) > 64 && (c) < 91) || ((c) > 96 && (c) < 123) ) ? 1 : 0 )
 
 /*
   ------------------------------------------------------------------------------
@@ -395,7 +395,8 @@ __axstdlib_inline char* axStrtok (register char *str, const char *spr)
 /**
  * axItoa
  */
-__axstdlib_inline char* axItoa (int n, register char* str,
+//__axstdlib_inline char* axItoa (int n, register char* str,
+__axstdlib_inline char* axItoa (register char* str, int n,
   unsigned int base = 10)
 {
   char tmp[33];
@@ -467,7 +468,7 @@ __axstdlib_inline int axAtoi (register const char* s)
  * axFtoa
  */
 __axstdlib_inline char* axFtoa (register char* st, register float f,
-  const unsigned int d = 2, const unsigned int fg = 0)
+  const unsigned int d = 2, const unsigned int fg = 0, const bool e = false)
 {
   register unsigned int i;
   register int _z;
@@ -481,6 +482,8 @@ __axstdlib_inline char* axFtoa (register char* st, register float f,
     if (fg & 2) *st++ = ' ';
   if (f)
   {
+    if (e)
+    {
     while (f < 1)
     {
       f *=10;   exp--;
@@ -489,12 +492,16 @@ __axstdlib_inline char* axFtoa (register char* st, register float f,
     {
       f /= 10;  exp++;
     }
+    }//e
   }
-  while ( (exp > 0) && (exp < 7) )
+  if (e)
   {
-    *st++ = '0' + f;
-    _z = f;  f -= _z;  f *= 10;  exp--;
-  }
+    while ( (exp > 0) && (exp < 7) )
+    {
+      *st++ = '0' + f;
+      _z = f;  f -= _z;  f *= 10;  exp--;
+    }
+  }//e
   *st++ = '0' + f;
   _z = f;  f -= _z;  f *= 10;
   if (d > 0)
@@ -507,22 +514,25 @@ __axstdlib_inline char* axFtoa (register char* st, register float f,
       _z = f;      f -= _z;      f *= 10;      i++;
     }
   }
-  if (exp != 0)
+  if (e)
   {
-    *st++ = 'e';
-    if (exp < 0)
+    if (exp != 0)
     {
-      *st++ = '-'; exp = -exp;
+      *st++ = 'e';
+      if (exp < 0)
+      {
+        *st++ = '-'; exp = -exp;
+      }
+      else
+        *st++ = '+';
+      register int expd10 = exp/10;
+      *st++ = '0' + expd10;
+      *st++ = '0' + (exp -= expd10 * 10);
     }
-    else
-      *st++ = '+';
-    register int expd10 = exp/10;
-    *st++ = '0' + expd10;
-    *st++ = '0' + (exp -= expd10 * 10);
-  }
+  }//e
   *st++ = 0;
   return st;
-} 
+}
 
 /**
   * axAtof
@@ -537,14 +547,14 @@ __axstdlib_inline float axAtof (register char* s)
   {
     _asign = -1.f; *s++;
   }
-  while ( (c = *s++) != '\0' && axIsDigit(c) )  
-    a = a*10.f + (c - '0');  
+  while ( (c = *s++) != '\0' && axIsDigit(c) )
+    a = a*10.f + (c - '0');
   if (c == '.')
     while ( (c = *s++) != '\0' && axIsDigit(c) )
     {
       a = a*10.f + (c - '0');
       e = e-1;
-    }  
+    }
   if (c == 'e' || c == 'E')
   {
     int sign = 1;

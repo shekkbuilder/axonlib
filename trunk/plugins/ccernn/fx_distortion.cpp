@@ -1,6 +1,7 @@
 #include "axPlugin.h"
 #include "par/parInteger.h"
 #include "par/parFloat.h"
+#include "dsp/dspRC.h"
 
 //----------------------------------------------------------------------
 
@@ -16,17 +17,20 @@ class myPlugin : public axPlugin
 {
   private:
   // process
+    dspRC       flt0,flt1;
   //'internal' parameters
     int         m_Type;
     float       m_Thr;
     float       m_Pre;
     float       m_Post;
+    float       m_Flt;
     float       m_Vol;
   //vst parameters
     parInteger* p_Type;
     parFloat*   p_Thr;
     parFloat*   p_Pre;
     parFloat*   p_Post;
+    parFloat*   p_Flt;
     parFloat*   p_Vol;
 
   public:
@@ -40,6 +44,7 @@ class myPlugin : public axPlugin
         appendParameter( p_Thr  = new parFloat(  this,"threshold", "", 1       ) );
         appendParameter( p_Pre  = new parFloat(  this,"pre gain",  "", 1, 1,2  ) );
         appendParameter( p_Post = new parFloat(  this,"post gain", "", 1, 0,2  ) );
+        appendParameter( p_Flt  = new parFloat(  this,"filter",    "", 1, 0,1  ) );
         appendParameter( p_Vol  = new parFloat(  this,"volume",    "", 1, 0,1  ) );
         setupParameters();
       }
@@ -52,9 +57,10 @@ class myPlugin : public axPlugin
         {
           case 0: m_Type  = (int)aParameter->getValue();  break;
           case 1: m_Thr   =      aParameter->getValue3(); break;
-          case 2: m_Pre   =      aParameter->getValue2();  break;
-          case 3: m_Post  =      aParameter->getValue2();  break;
-          case 4: m_Vol   =      aParameter->getValue2();  break;
+          case 2: m_Pre   =      aParameter->getValue3(); break;
+          case 3: m_Post  =      aParameter->getValue3(); break;
+          case 4: m_Flt   =      aParameter->getValue3(); flt0.setWeight(m_Flt); flt1.setWeight(m_Flt); break;
+          case 5: m_Vol   =      aParameter->getValue3(); break;
         }
       }
 
@@ -73,6 +79,10 @@ class myPlugin : public axPlugin
             out1 = axMin(axMax(out1,-m_Thr),m_Thr);
             break;
         }
+        flt0.setTarget(out0);
+        flt1.setTarget(out1);
+        out0 = flt0.process(out0);
+        out1 = flt1.process(out1);
         out0 *= m_Post;
         out1 *= m_Post;
         // filter?

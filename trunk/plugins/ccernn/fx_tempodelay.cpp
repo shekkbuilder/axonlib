@@ -1,5 +1,8 @@
 #include "axPlugin.h"
+#include "axEditor.h"
 #include "par/parFloat.h"
+#include "wdg/wdgPanel.h"
+#include "wdg/wdgKnob.h"
 
 //----------------------------------------------------------------------
 
@@ -27,23 +30,32 @@ class myPlugin : public axPlugin
     float         m_Wet;
   //vst parameters
     parFloat*     p_Delay;
-    axParameter*  p_Feedback;
-    axParameter*  p_Dry;
-    axParameter*  p_Wet;
+    parFloat*  p_Feedback;
+    parFloat*  p_Dry;
+    parFloat*  p_Wet;
+  //editor
+    axEditor*     m_Editor;
+    wdgPanel*     w_Panel;
+    wdgKnob*      w_Delay;
+    wdgKnob*      w_Feedback;
+    wdgKnob*      w_Dry;
+    wdgKnob*      w_Wet;
 
   public:
 
     myPlugin(axContext* aContext)
     : axPlugin(aContext, pf_None)
       {
+
         mIndex = 0;
         mSize  = 0;
         describe("fx_tempodelay","ccernn","axonlib example",2,AX_MAGIC+0x1001);
         setupAudio(2,2,false);
-        appendParameter( p_Delay    = new parFloat(   this,"delay",   "",0.75, 0.25, MAX_BEATS, 0.25 ) );
-        appendParameter( p_Feedback = new axParameter(this,"feedback","",0.75 ) );
-        appendParameter( p_Dry      = new axParameter(this,"dry",     "",0.75 ) );
-        appendParameter( p_Wet      = new axParameter(this,"wet",     "",0.4  ) );
+        setupEditor(148,163);
+        appendParameter( p_Delay    = new parFloat(this,"delay",   "",0.75, 0.25, MAX_BEATS, 0.25 ) );
+        appendParameter( p_Feedback = new parFloat(this,"feedback","",0.75 ) );
+        appendParameter( p_Dry      = new parFloat(this,"dry",     "",0.75 ) );
+        appendParameter( p_Wet      = new parFloat(this,"wet",     "",0.4  ) );
         setupParameters();
       }
 
@@ -54,7 +66,7 @@ class myPlugin : public axPlugin
         int index = aParameter->getIndex();
         float val = aParameter->getValue();
         axString name = aParameter->getName();
-        //wtrace("doSetParameter(" << index << ") = " << val << "  [" <<  name.ptr() << "]" );
+        trace("doSetParameter(" << index << ") = " << val << "  [" <<  name.ptr() << "]" );
         switch(index)
         {
           // be careful with that index, eugene!
@@ -94,13 +106,64 @@ class myPlugin : public axPlugin
         float in1 = *aInputs[1];
         float dly0 = mBuffer[i2  ];
         float dly1 = mBuffer[i2+1];
-        mBuffer[i2  ] = in0 + dly0*m_Feedback;;
-        mBuffer[i2+1] = in1 + dly1*m_Feedback;;
+        mBuffer[i2  ] = in0 + dly0*m_Feedback;
+        mBuffer[i2+1] = in1 + dly1*m_Feedback;
         mIndex++;
         if (mIndex>=mSize) mIndex = 0;
         *aOutputs[0] = in0*m_Dry + dly0*m_Wet;
         *aOutputs[1] = in1*m_Dry + dly1*m_Wet;
       }
+
+    //--------------------------------------------------
+    // editor
+    //--------------------------------------------------
+
+    virtual axWindow* doOpenEditor(axContext* aContext)
+      {
+        trace(":: doOpenEditor");
+        axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
+          //mEditor->setup(getSystemInfo(),getHostInfo());
+          editor->appendWidget(  w_Panel = new wdgPanel(editor,NULL_RECT,wa_Client) );
+          w_Panel->setBorders(10,10,5,5);
+            w_Panel->appendWidget( w_Delay    = new wdgKnob(editor,axRect(128,32),wa_TopLeft,"delay"    ) );
+            w_Panel->appendWidget( w_Feedback = new wdgKnob(editor,axRect(128,32),wa_TopLeft,"feedback" ) );
+            w_Panel->appendWidget( w_Dry      = new wdgKnob(editor,axRect(128,32),wa_TopLeft,"dry"      ) );
+            w_Panel->appendWidget( w_Wet      = new wdgKnob(editor,axRect(128,32),wa_TopLeft,"wet"      ) );
+
+        editor->connect(w_Delay,   p_Delay);
+        editor->connect(w_Feedback,p_Feedback);
+        editor->connect(w_Dry,     p_Dry);
+        editor->connect(w_Wet,     p_Wet);
+
+        editor->doRealign();
+        editor->show();
+        //editor->startTimer(500);
+        m_Editor = editor;
+        return m_Editor;
+      }
+
+    //----------
+
+    virtual void doCloseEditor(void)
+      {
+        trace(":: doCloseEditor");
+        //mEditor->stopTimer();
+        m_Editor->hide();
+        delete m_Editor;
+        m_Editor = NULL;
+      }
+
+    //----------
+
+    virtual void doIdleEditor()
+      {
+        #ifndef AX_WIDGET_NOUPDATELIST
+        if (m_Editor) m_Editor->redrawUpdates();
+        #endif
+        //trace("doIdleEditor");
+      }
+
+
 
 };
 

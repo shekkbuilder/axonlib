@@ -310,19 +310,33 @@ char* axCpuCapsString(void)
   axCPUID();
   // ## note: sprintf() is current used as __builtin_spritf()
   //sprintf(cpustringbuf,"%s%s%s%s%s%s%s%s%s%s%s%s",
-  __builtin_sprintf(cpustringbuf,"%s%s%s%s%s%s%s%s%s%s%s%s",
-          __AX_SSE3__     ? "sse3 "     : "" ,
-          __AX_SSSE3__    ? "ssse3 "    : "" ,
-          __AX_FPU__      ? "fpu "      : "" ,
-          __AX_CMOV__     ? "cmov "     : "" ,
-          __AX_SSE__      ? "sse "      : "" ,
-          __AX_SSE2__     ? "sse2 "     : "" ,
-          __AX_SSE4A__    ? "sse4a "    : "" ,
-          __AX_SSE5__     ? "sse5 "     : "" ,
-          __AX_MMX__      ? "mmx "      : "" ,
-          __AX_MMXEXT__   ? "mmxext "   : "" ,
-          __AX_3DNOW__    ? "3dnow "    : "" ,
-          __AX_3DNOWEXT__ ? "3dnowext " : "" );
+//  __builtin_sprintf(cpustringbuf,"%s%s%s%s%s%s%s%s%s%s%s%s",
+//          __AX_SSE3__     ? "sse3 "     : "" ,
+//          __AX_SSSE3__    ? "ssse3 "    : "" ,
+//          __AX_FPU__      ? "fpu "      : "" ,
+//          __AX_CMOV__     ? "cmov "     : "" ,
+//          __AX_SSE__      ? "sse "      : "" ,
+//          __AX_SSE2__     ? "sse2 "     : "" ,
+//          __AX_SSE4A__    ? "sse4a "    : "" ,
+//          __AX_SSE5__     ? "sse5 "     : "" ,
+//          __AX_MMX__      ? "mmx "      : "" ,
+//          __AX_MMXEXT__   ? "mmxext "   : "" ,
+//          __AX_3DNOW__    ? "3dnow "    : "" ,
+//          __AX_3DNOWEXT__ ? "3dnowext " : "" );
+  cpustringbuf[0] = 0;
+  //axStrcat(cpustringbuf,(char*)"balls ");
+  if (__AX_SSE3__)     axStrcat(cpustringbuf,(char*)"sse3 ");
+  if (__AX_SSSE3__)    axStrcat(cpustringbuf,(char*)"ssse3 ");
+  if (__AX_FPU__)      axStrcat(cpustringbuf,(char*)"fpu ");
+  if (__AX_CMOV__)     axStrcat(cpustringbuf,(char*)"cmov ");
+  if (__AX_SSE__)      axStrcat(cpustringbuf,(char*)"sse ");
+  if (__AX_SSE2__)     axStrcat(cpustringbuf,(char*)"sse2 ");
+  if (__AX_SSE4A__)    axStrcat(cpustringbuf,(char*)"sse4a ");
+  if (__AX_SSE5__)     axStrcat(cpustringbuf,(char*)"sse5 ");
+  if (__AX_MMX__)      axStrcat(cpustringbuf,(char*)"mmx ");
+  if (__AX_MMXEXT__)   axStrcat(cpustringbuf,(char*)"mmxext ");
+  if (__AX_3DNOW__)    axStrcat(cpustringbuf,(char*)"3dnow ");
+  if (__AX_3DNOWEXT__) axStrcat(cpustringbuf,(char*)"3dnowext ");
   return cpustringbuf;
 }
 
@@ -409,7 +423,7 @@ __axutils_inline void axRadix(long *source, long *dest, unsigned long N, int byt
   unsigned int i;
   long count[256];
   long index[256];
-  axMemset(count, 0, sizeof(count));  
+  axMemset(count, 0, sizeof(count));
   for (i=0; i<N; i++)
     count[ ((source[i]) >> (byte*8)) & 0xff ]++;
   index[0] = 0;

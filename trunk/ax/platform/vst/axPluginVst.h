@@ -1278,15 +1278,23 @@ class axPluginVst : public axPluginBase
       {
         #ifdef AX_DEBUG
           char buf[256];
-          __builtin_sprintf(buf,"%s%s",aName.ptr(),(char*)"_debug");
-          strncpy(mEffectName,buf,kVstMaxEffectNameLen);
+          //__builtin_sprintf(buf,"%s%s",aName.ptr(),(char*)"_debug");
+          //strncpy(mEffectName,buf,kVstMaxEffectNameLen);
+          buf[0] = 0;
+          axStrcat(buf,aName.ptr());
+          axStrcat(buf,(char*)"_debug");
+          axStrncpy(mEffectName,buf,kVstMaxEffectNameLen);
         #else
-          strncpy(mEffectName,aName.ptr(),kVstMaxEffectNameLen);
+          //strncpy(mEffectName,aName.ptr(),kVstMaxEffectNameLen);
+          axStrncpy(mEffectName,aName.ptr(),kVstMaxEffectNameLen);
         #endif
-        strncpy(mVendorString,aVendor.ptr(),kVstMaxVendorStrLen);
-        strncpy(mProductString,aProduct.ptr(),kVstMaxProductStrLen);
+        //strncpy(mVendorString,aVendor.ptr(),kVstMaxVendorStrLen);
+        //strncpy(mProductString,aProduct.ptr(),kVstMaxProductStrLen);
+        axStrncpy(mVendorString,aVendor.ptr(),kVstMaxVendorStrLen);
+        axStrncpy(mProductString,aProduct.ptr(),kVstMaxProductStrLen);
         mVendorVersion = aVersion;
         setUniqueID(aID);
+        trace(buf);
       }
 
     //----------

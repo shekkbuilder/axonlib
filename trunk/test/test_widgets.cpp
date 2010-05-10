@@ -271,7 +271,8 @@ class myEditor : public axEditor
             {
               wdgLabel* la;
               wCenter->appendWidget( la = new wdgLabel(this,axRect(0,0,30,20),wa_StackedHoriz) );
-                sprintf(label_buf[i],"%i",i+1);
+                //sprintf(label_buf[i],"%i",i+1);
+                axItoa(label_buf[i],i+1);
                 la->setText(label_buf[i],ta_Center);
             }
 
@@ -309,7 +310,8 @@ applySkin(mDefaultSkin,true);
     virtual void doTimer(void)
       {
         mNumTimer++;
-        sprintf(timerText,"doTimer : %i",mNumTimer);
+        //sprintf(timerText,"doTimer : %i",mNumTimer);
+        axItoa(timerText,mNumTimer);
         wNumTimer->setText(timerText,ta_Left);
         onRedraw(wNumTimer);
       }
