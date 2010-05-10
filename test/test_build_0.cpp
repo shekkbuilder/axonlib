@@ -46,7 +46,8 @@ class myWidget : public axContainer
           aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
           aCanvas->selectFont(0);
           if (mParameter) { mParameter->doGetDisplay(buf); }
-          else sprintf(buf,"%.3f",mValue);
+          //else sprintf(buf,"%.3f",mValue);
+          else axFtoa(buf,mValue);
           aCanvas->drawText(mRect.x,mRect.y,mRect.x2(),mRect.y2(),buf,ta_Center);
         //}
         axWidget::doPaint(aCanvas,aRect);

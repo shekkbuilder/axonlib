@@ -174,7 +174,6 @@
 		<Unit filename="..\..\extern\mtrand.h" />
 		<Unit filename="..\..\extern\picopng.h" />
 		<Unit filename="..\..\plugins\SERIALS" />
-		<Unit filename="..\..\plugins\ccernn\fx_distortion.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

@@ -216,6 +216,16 @@ class axEditor : public axWindow
         axWindow::doSetSize(aWidth,aHeight);
       }
 
+    //----------
+
+//    virtual void doIdleEditor()
+//      {
+//        #ifndef AX_WIDGET_NOUPDATELIST
+//        if (mEditor) mEditor->redrawUpdates();
+//        #endif
+//        //trace("doIdleEditor");
+//      }
+
     //--------------------------------------------------
     // on
     //--------------------------------------------------

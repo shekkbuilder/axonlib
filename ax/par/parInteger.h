@@ -90,7 +90,8 @@ class parInteger : public axParameter
       {
         int i = getInt();
         if( mStrings ) strcpy( buf, mStrings[i] );
-        else __builtin_sprintf( buf, "%i", (int)i );
+        //else __builtin_sprintf( buf, "%i", (int)i );
+        else axItoa(buf,i);
       }
 
     //--------------------------------------------------

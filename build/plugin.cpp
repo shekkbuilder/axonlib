@@ -20,12 +20,12 @@
 
 //----- no gui -----
 
-//#include "..\plugins\ccernn\fx_tempodelay.cpp"
 //#include "..\plugins\ccernn\midi_transpose.cpp"
-#include "..\plugins\ccernn\fx_distortion.cpp"
+//#include "..\plugins\ccernn\fx_distortion.cpp"
 
 //----- gui -----
 
+#include "..\plugins\ccernn\fx_tempodelay.cpp"
 
 
 //----------------------------------------------------------------------
