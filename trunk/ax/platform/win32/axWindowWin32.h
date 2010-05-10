@@ -18,6 +18,8 @@ LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 #define cu_ArrowRight      cu_Arrow
 #define cu_ArrowUpDown     ((int)IDC_SIZENS)
 #define cu_ArrowLeftRight  ((int)IDC_SIZEWE)
+#define cu_ArrowDiagLeft   ((int)IDC_SIZENESW)
+#define cu_ArrowDiagRight  ((int)IDC_SIZENWSE)
 #define cu_Move            ((int)IDC_SIZEALL)
 #define cu_Wait            ((int)IDC_WAIT)
 #define cu_ArrowWait       ((int)IDC_APPSTARTING)
@@ -29,7 +31,22 @@ LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 #define cu_Question        cu_Arrow
 #define cu_Ibeam           cu_Arrow
 
+
+
 #define DEF_CURSOR    cu_Arrow
+
+// #DEFINE idc_arrow       (32512)
+// #DEFINE idc_ibeam       (32513)
+// #DEFINE idc_wait        (32514)
+// #DEFINE idc_cross       (32515)
+// #DEFINE idc_uparrow     (32516)
+// #DEFINE idc_size        (32640)
+// #DEFINE idc_icon        (32641)
+// #DEFINE idc_sizenwse    (32642)
+// #DEFINE idc_sizenesw    (32643)
+// #DEFINE idc_sizewe      (32644)
+// #DEFINE idc_sizens      (32645)
+
 
 //----------------------------------------------------------------------
 

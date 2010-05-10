@@ -1,7 +1,6 @@
-//#define AX_DEBUG_AUTO_STD
-#define AX_NO_MALLOC
-#define AX_DEBUG_MEM
-#define AX_DEBUG_PNG
+//#define AX_NO_MALLOC // hangs when compiled in release-build ??
+//#define AX_DEBUG_MEM
+//#define AX_DEBUG_PNG
 
 #include "axPlugin.h"
 #include "axEditor.h"
@@ -39,11 +38,11 @@ class mySkin : public axSkinDefault
       {
         if (mKnobImage) delete mKnobImage;
       }
-    inline void loadKnobBitmap(axEditor* aEditor, unsigned char* buffer, int size)
+    inline void loadKnobBitmap(axEditor* aEditor, unsigned char* buffer, int size, int w, int h, int n)
       {
-        mKnobWidth  = 32;
-        mKnobHeight = 32;
-        mKnobCount  = 65;
+        mKnobWidth  = w;//32;
+        mKnobHeight = h;//32;
+        mKnobCount  = n;//65;
         mKnobImage = aEditor->createSurface(mKnobWidth,mKnobHeight*mKnobCount);
         loader.decode(buffer,size);
         bitmap = aEditor->createBitmap( loader.getWidth(), loader.getHeight() );
@@ -160,7 +159,7 @@ class myPlugin : public axPlugin
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         axCanvas* canvas = editor->getCanvas();
         m_Skin = new mySkin(canvas);
-        m_Skin->loadKnobBitmap(editor,(unsigned char*)knob32,knob32_size);
+        m_Skin->loadKnobBitmap(editor,(unsigned char*)knob32,knob32_size,32,32,65);
         editor->applySkin(m_Skin);
         editor->appendWidget( w_Panel = new wdgPanel(editor,NULL_RECT,wa_Client) );
         w_Panel->appendWidget( w_Gain = new wdgKnob( editor,axRect(10,10,100,32),wa_None,"gain",0.75) );

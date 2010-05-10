@@ -6,7 +6,7 @@
 
 //#define AX_AUTOSYNC             // axPluginVst.h
 //#define AX_DEBUG                // axDebug.h
-#define AX_DEBUG_AUTO_STD       // axDebug.h
+//#define AX_DEBUG_AUTO_STD       // axDebug.h
 //#define AX_DEBUG_AUTO_WIN       // axDebug.h
 //#define AX_DEBUG_MEMORY         // axMemory.h
 //#define AX_FORMAT_EXE           // axEditor.h
