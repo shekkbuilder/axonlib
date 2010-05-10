@@ -34,9 +34,11 @@
 #define cu_ArrowRight      112
 #define cu_ArrowUpDown     116
 #define cu_ArrowLeftRight  108
+#define cu_ArrowDiagLeft   12
+#define cu_ArrowDiagRight  14
 #define cu_Move            52
 #define cu_Wait            150
-#define cu_ArrowWait      -1
+#define cu_ArrowWait       26
 #define cu_Hand            58
 #define cu_Finger          60
 #define cu_Cross           0

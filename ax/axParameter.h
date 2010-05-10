@@ -86,6 +86,10 @@ class axParameter// : public axParameterBase
     virtual void  setValue(float aValue) { mValue=aValue; }
     virtual float getValue(void)        { return mValue; }
 
+    inline float getValue2(void) { float n=getValue(); return n*n; }
+    inline float getValue3(void) { float n=getValue(); return n*n*n; }
+    inline float getValue3i(void) { float n=getValue(); return (n>0) ? n*n*n : 0; }
+
     //----------
 
     virtual void doReset(void)

@@ -31,7 +31,7 @@ class wdgSizer : public axWidget
           case sd_None:       mSizeCursor = DEF_CURSOR;        break;
           case sd_Horizontal: mSizeCursor = cu_ArrowLeftRight; break;
           case sd_Vertical:   mSizeCursor = cu_ArrowUpDown;    break;
-          case sd_All:        mSizeCursor = cu_Move;           break;
+          case sd_All:        mSizeCursor = cu_ArrowDiagRight; break;//Move;           break;
         }
       }
 
