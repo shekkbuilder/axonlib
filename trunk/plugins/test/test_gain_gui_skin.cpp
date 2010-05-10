@@ -1,5 +1,6 @@
-//#define AX_NO_MALLOC // hangs when compiled in release-build ??
-//#define AX_DEBUG_MEM
+#define AX_DEBUG_AUTO_STD
+#define AX_NO_MALLOC
+#define AX_DEBUG_MEM
 //#define AX_DEBUG_PNG
 
 #include "axPlugin.h"

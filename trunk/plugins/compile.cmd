@@ -21,7 +21,7 @@ set warn=-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long
 set resfile=rc_default.rc
 
 :: set optimization flags
-set opt= -msse -mfpmath=sse,387 -O3 -Os
+set opt=-msse -mfpmath=sse,387 -O3 -Os
 
 :: linker options
 set linker=-fstack-check -fdata-sections -ffunction-sections -Wl,-gc-sections -s

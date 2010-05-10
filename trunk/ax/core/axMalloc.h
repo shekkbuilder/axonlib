@@ -81,6 +81,16 @@ TODO:
   #define __axmalloc_inline inline
 #endif
 
+#ifdef AX_NO_MALLOC // no malloc / use stdlib.h malloc  
+  #include "stdlib.h"
+  #ifndef AX_DEBUG_MEM
+    #define axMalloc    malloc
+    #define axRealloc   realloc
+    #define axFree      free    
+  #endif
+
+#else // use axMalloc
+
 /*
   from here bellow adapted version of Joerg Walter's MMAP emulation
   for windows with mutex.
@@ -266,8 +276,6 @@ __axmalloc_inline void axFree (void* _ptr)
 // --------------------------
 // ### added case handling
 
-// #define axRealloc realloc
-#define _axMalloc axMalloc
 __axmalloc_inline void* axRealloc (void* _ptr,
   register const unsigned int size)
 {  
@@ -296,12 +304,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
   return _ptr;
 }
 
-// -----------------------------------------------------------------------------
-// override axMalloc with stdlib's malloc if parameter set
-// -----------------------------------------------------------------------------
-#ifdef AX_NO_MALLOC
-  #include "stdlib.h"
-#endif
+#endif // ax_no_malloc
 
 // -----------------------------------------------------------------------------
 // enable local debug
@@ -342,9 +345,13 @@ __axmalloc_inline void* axRealloc (void* _ptr,
       void* _ptr = axMalloc(_size);
     #endif        
     _axMemTotal += _size;
-    std::cout << "[" << _axGetFileName(_file) << "|" << _line <<
-    "] axMalloc, " <<  (void*)&_ptr <<
-    ", " << _size << ", " << _axMemTotal << "\n";
+    std::cout << "[" << _axGetFileName(_file) << "|" << _line << "] " << 
+    #ifdef AX_NO_MALLOC
+      "malloc, " <<
+    #else  
+      "axMalloc, " <<
+    #endif
+    (void*)&_ptr << ", " << _size << ", " << _axMemTotal << "\n";
     return _ptr;
   }
   
@@ -359,9 +366,13 @@ __axmalloc_inline void* axRealloc (void* _ptr,
       void* _ptr0 = axRealloc(_ptr, _size);
     #endif       
     _axMemTotal += _size;
-    std::cout << "[" << _axGetFileName(_file) << "|" << _line <<
-    "] axRealloc, f: " <<  (void*)&_ptr <<
-    "t: " << (void*)&_ptr0 <<
+    std::cout << "[" << _axGetFileName(_file) << "|" << _line << "] " <<
+    #ifdef AX_NO_MALLOC
+      "realloc, " <<
+    #else  
+      "axRealloc, " <<
+    #endif
+    "f: " <<  (void*)&_ptr << "t: " << (void*)&_ptr0 <<
     ", " << _size << ", " << _axMemTotal << "\n";
     return _ptr0;
   }
@@ -378,12 +389,16 @@ __axmalloc_inline void* axRealloc (void* _ptr,
       _size = bucket2size[*(unsigned int*)(ptr-4)];			
     #endif
     _axMemTotal -= _size;
-    std::cout << "[" << _axGetFileName(_file) << "|" << _line <<
-    "] axFree, " <<  (void*)&_ptr <<
-    ", " << _size << ", " << _axMemTotal << "\n";
+    std::cout << "[" << _axGetFileName(_file) << "|" << _line << "] " <<    
+    #ifdef AX_NO_MALLOC
+      "free, " <<
+    #else  
+      "axFree, " <<
+    #endif
+    (void*)&_ptr << ", " << _size << ", " << _axMemTotal << "\n";
     #ifdef AX_NO_MALLOC
       free(_ptr);
-    #else  
+    #else
       axFree(_ptr);
     #endif
   }
@@ -397,12 +412,6 @@ __axmalloc_inline void* axRealloc (void* _ptr,
   #define realloc(p, s)   axReallocDebug  (p, s, __FILE__, __LINE__)
   #define free(p)         axFreeDebug     (p, __FILE__, __LINE__) 
   
-#else // case: no debug
-  #ifdef AX_NO_MALLOC // override just in case  
-    #define axMalloc malloc
-    #define axRalloc realloc
-    #define axFree   free
-  #endif
-#endif
+#endif // ax_debug && ax_debug_mem
 
 #endif // axMalloc_included

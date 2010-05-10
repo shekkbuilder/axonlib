@@ -183,7 +183,7 @@ __axstdlib_inline unsigned int axStrlen (register char* str)
 /**
  * axStrcpy
  */
-__axstdlib_inline char* axStrcpy (register char *dest, register const char* src)
+__axstdlib_inline char* axStrcpy (register char* dest, register const char* src)
 {
   while ( (*dest++ = *src++) );
   return dest;
@@ -195,9 +195,19 @@ __axstdlib_inline char* axStrcpy (register char *dest, register const char* src)
 __axstdlib_inline char* axStrncpy (register char* dest,
   register const char* src, unsigned int n)
 {
-  while ( n-- && (*dest++ = *src++) != '\0' )
-    continue;
+  while ( n-- && (*dest++ = *src++) != '\0' );
   return dest;
+}
+
+/**
+ * axStrdup
+ */
+__axstdlib_inline char* axStrdup (register char* src)
+{
+  register char* dst = (char*) axMalloc(axStrlen(src) + 1);
+  if (!dst) return NULL;
+  axStrcpy (dst, src);
+  return dst;
 }
 
 /**
@@ -395,7 +405,6 @@ __axstdlib_inline char* axStrtok (register char *str, const char *spr)
 /**
  * axItoa
  */
-//__axstdlib_inline char* axItoa (int n, register char* str,
 __axstdlib_inline char* axItoa (register char* str, int n,
   unsigned int base = 10)
 {
@@ -484,15 +493,15 @@ __axstdlib_inline char* axFtoa (register char* st, register float f,
   {
     if (e)
     {
-    while (f < 1)
-    {
-      f *=10;   exp--;
-    }
-    while (f >= 10)
-    {
-      f /= 10;  exp++;
-    }
-    }//e
+      while (f < 1)
+      {
+        f *=10;   exp--;
+      }
+      while (f >= 10)
+      {
+        f /= 10;  exp++;
+      }
+    } // e
   }
   if (e)
   {
@@ -501,7 +510,7 @@ __axstdlib_inline char* axFtoa (register char* st, register float f,
       *st++ = '0' + f;
       _z = f;  f -= _z;  f *= 10;  exp--;
     }
-  }//e
+  } // e
   *st++ = '0' + f;
   _z = f;  f -= _z;  f *= 10;
   if (d > 0)
@@ -529,7 +538,7 @@ __axstdlib_inline char* axFtoa (register char* st, register float f,
       *st++ = '0' + expd10;
       *st++ = '0' + (exp -= expd10 * 10);
     }
-  }//e
+  } //e
   *st++ = 0;
   return st;
 }
