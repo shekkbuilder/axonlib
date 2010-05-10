@@ -376,7 +376,9 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     #endif
 
           //ccernn
+          #ifndef AX_NO_MALLOC
           _axMemTotal -= old_size;
+          #endif
           //
 
     _axMemTotal += _size;
