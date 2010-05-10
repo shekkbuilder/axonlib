@@ -83,7 +83,7 @@ TODO:
 
 #ifdef AX_NO_MALLOC // no malloc / use stdlib.h malloc  
   #include "stdlib.h"
-  #ifndef AX_DEBUG_MEM
+  #ifndef AX_DEBUG
     #define axMalloc    malloc
     #define axRealloc   realloc
     #define axFree      free    
