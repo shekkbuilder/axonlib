@@ -81,10 +81,10 @@ TODO:
 #endif
 
 #ifdef AX_NO_MALLOC     // no axMalloc - use stdlib.h malloc
-  #include "stdlib.h"  
+  #include "stdlib.h"
   #define axMalloc    malloc
   #define axRealloc   realloc
-  #define axFree      free  
+  #define axFree      free
 
 #else // use axMalloc
 
@@ -301,7 +301,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
 // -----------------------------------------------------------------------------
 #if defined (AX_DEBUG) && defined (AX_DEBUG_MEM)
   #include <iostream>
-  
+
   /*
     malloc_usable_size() will be used to determine the real, allocated
     size by the standard methods, since what is passed as _size_ may not be
@@ -309,8 +309,16 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     counter (_axMemTotal)
   */
   #ifdef AX_NO_MALLOC
-    #include "malloc.h" // malloc_usable_size()  
-  #endif  
+    #include "malloc.h" // malloc_usable_size()
+  #endif
+
+    //
+    // http://stackoverflow.com/questions/1913853/why-is-used-in-delete-delete-to-free-dynamically-allocated-array
+    // "...platform, the _msize (windows), malloc_usable_size (linux) or malloc_size (osx) functions will tell you ..."
+    //
+    #ifdef AX_WIN32
+      #define malloc_usable_size _msize
+    #endif
 
   static unsigned int _axMemTotal = 0;
 
@@ -344,7 +352,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     #else
       void* _ptr = axMalloc(_size);
       _axMemTotal += _size;
-    #endif    
+    #endif
     std::cout << "[" << _axGetFileName(_file) << "|" << _line << "] " <<
     #ifdef AX_NO_MALLOC
       "malloc, " <<
@@ -370,7 +378,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
       void* _ptr0 = axRealloc(_ptr, _size);
       _axMemTotal -= old_size;
       _axMemTotal += _size;
-    #endif        
+    #endif
     std::cout << "[" << _axGetFileName(_file) << "|" << _line << "] " <<
     #ifdef AX_NO_MALLOC
       "realloc, " <<
@@ -407,26 +415,26 @@ __axmalloc_inline void* axRealloc (void* _ptr,
       axFree(_ptr);
     #endif
   }
-  
+
   // clear previous definitions (if any)
   #ifdef AX_NO_MALLOC
     #undef axMalloc
     #undef axRealloc
     #undef axFree
   #endif
-  
+
   // macro overrides here
   #define axMalloc(s)     axMallocDebug   (s, __FILE__, __LINE__)
   #define axRealloc(p, s) axReallocDebug  (p, s, __FILE__, __LINE__)
   #define axFree(p)       axFreeDebug     (p, __FILE__, __LINE__)
-  
+
   // same for the standard methods if 'AX_NO_MALLOC'
   #ifdef AX_NO_MALLOC
     #define malloc(s)       axMallocDebug   (s, __FILE__, __LINE__)
     #define realloc(p, s)   axReallocDebug  (p, s, __FILE__, __LINE__)
     #define free(p)         axFreeDebug     (p, __FILE__, __LINE__)
   #endif
-  
+
 #endif // ax_debug && ax_debug_mem
 
 #endif // axMalloc_included
