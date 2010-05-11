@@ -33,13 +33,12 @@
   #define __axutils_inline inline
 #endif
 
-//strip:
-// --------
-//#include <memory.h>
-//#include <stdio.h>
-//#include <sstream>
-//using namespace std;
-// --------
+// -------------------------------------------
+#define axStrExpand(x) #x
+/**
+ * convert macro value to string: ( "value" )
+ */
+#define axStr(x) axStrExpand(x)
 
 /**
  return the filename from the __FILE__ flag: <br>

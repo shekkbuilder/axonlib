@@ -9,7 +9,6 @@
 #include "core/axDebug.h" // < - should be define before Utils because of _WINNT
 #include "axStdlib.h"
 #include "core/axMalloc.h"
-//#include "core/axMemory.h"
 #include "core/axUtils.h"
 #include "platform/axContext.h"
 #include "base/axPluginBase.h"
@@ -76,13 +75,13 @@ class axPlugin : public axPluginImpl, public axParameterListener
         deleteParameters();
         #endif
 
-        // auto close debug (win32)
-        #ifdef AX_WIN32
-          #ifdef AX_DEBUG_AUTO_STD
-            axDstdDestroy();
-          #endif
+        // auto close debug (win32)        
+        #ifdef AX_WIN32          
           #ifdef AX_DEBUG_AUTO_WIN
             axDwinDestroy();
+          #endif          
+          #ifdef AX_DEBUG_AUTO_STD
+            axDstdDestroy();
           #endif
         #endif
       }

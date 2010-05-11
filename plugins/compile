@@ -1,35 +1,172 @@
 #!/bin/bash
+# ==============================================================================
+# linux / axonlib / compile / bash
+#
+# - not finished
+# ==============================================================================
 
-echo
-echo deprecated!
-echo use compile_vst or compile_exe
-echo
+# ------------------------------------------------------------------------------
+# user settings
+# ------------------------------------------------------------------------------
+# vst path
+vstpath="../../vstsdk24"
 
-## 
-## function compile_linux
-## {
-##   echo - $1.so
-##   `g++ -I../ax -I../../vstsdk24 -pedantic -fpermissive -W -Wall -lX11 -lpthread -shared -O3 -Os -msse -mfpmath=sse,387 -fdata-sections ## -ffunction-sections $1.cpp -s -o $1.so -Wl,-gc-sections`
-##   `strip --strip-all $1.so`
-## 
-## }
-## 
-## function compile_win32
-## {
-##   echo - $1.dll
-##   `i586-mingw32msvc-g++ -I../ax -I../../vstsdk24 -pedantic -fpermissive -W -Wall -mwindows -shared -O3 -Os -msse -mfpmath=sse,387 -## fdata-sections -ffunction-sections $1.cpp -s -o $1.dll -Wl,-gc-sections`
-  ## `i586-mingw32msvc-strip --strip-all $1.dll`
-## }
-## 
-## compile_linux $1
-## compile_win32 $1
-## 
-## mv $1.dll ../bin
-## mv $1.so  ../bin
-## 
-## # echo name of script is $0
-## # echo first argument is $1
-## # echo second argument is $2
-## # echo seventeenth argument is $17
-## # echo number of arguments is $#
+# axonlib 'ax' path
+axpath="../ax"
+
+# g++ command
+gpp="g++"
+
+# mingw command
+mingw="i586-mingw32msvc-g++"
+
+# windres command
+windres="i586-mingw32msvc-windres"
+
+# set resource file (leave blank for no resources)
+resfile="rc_default.rc"
+
+# warning flags
+warn="-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long"
+
+# set optimization flags
+opt="-msse -mfpmath=sse,387 -O3 -Os"
+
+# linker options
+linker="-fstack-check -fdata-sections -ffunction-sections -Wl,-gc-sections -s"
+
+# --------------------------------------------------------- end of user settings
+
+# ----------------------------------------
+# shelp screen function
+# ----------------------------------------
+function show_help
+{
+  echo ""
+  echo "-------------------------------------------------------------------------------"
+  echo "* axonlib compile script for linux"
+  echo ""
+  echo "usage: ./compile [file.cpp] [-h] [-linux or -win32] [-exe or -lib] [-nmv] [-d]"  
+  echo "-linux : target linux (default)"
+  echo "-win32 : target windows using mingw"
+  echo "-exe : create an executable"
+  echo "-lib : create a libirary file (default)"
+  echo "-nmv : do not move result to ../bin"
+  echo "-d : enable library debug mode"
+  echo "-g : enable gcc debug mode (-gstabs)"
+  echo "-h : show this help message"
+  echo "-------------------------------------------------------------------------------"
+  echo ""
+}
+
+# ----------------------------------------
+# errors
+# ----------------------------------------
+# nocpp
+function nocpp
+{
+  echo
+  echo "### ERR: first argument has to be a .cpp file"
+  echo
+  exit
+}
+# noax
+function noax
+{
+  echo
+  echo "### ERR: cannot find axonlib headers in '$axpath'"
+  echo
+  exit
+}
+# novstsdk
+function novst
+{
+  echo
+  echo "### ERR: cannot find vst sdk in '$vstpath%'"
+  echo
+  exit
+}
+# nores
+function novst
+{
+  echo
+  echo "### ERR: cannot create resource file '%resfile%.o'"
+  echo
+  exit
+}
+
+
+# begin checking parameters
+if [ "$1" != "" ];
+then
+  if [ "$1" != "-h" ];
+  then
+    # ------------------------- defaults
+    compiler=$gpp
+    format="-DAX_FORMAT_VST"
+    
+    # ------------------------- get extension    
+    ext=${1: -4}
+    
+    # ------------------------- check if extension is .cpp
+    if [ "$ext" != ".cpp" ];
+    then
+      nocpp
+    else
+      # ------------------------- strip extension
+      file = ${1%.*p}
+      if [ "$2" == "-win32" ];
+      then
+        compiler=$mingw  
+      fi
+      if [ "$3" == "-win32" ];
+      then
+        compiler=$mingw  
+      fi
+      if [ "$4" == "-win32" ];
+      then
+        compiler=$mingw  
+      fi
+      if [ "$5" == "-win32" ];
+      then
+        compiler=$mingw  
+      fi
+      if [ "$6" == "-win32" ];
+      then
+        compiler=$mingw  
+      fi
+      # ------------------------- check if format exe
+      if [ "$2" == "-exe" ];
+      then
+        format=-DAX_FORMAT_EXE
+      fi
+      if [ "$3" == "-exe" ];
+      then
+        format=-DAX_FORMAT_EXE
+      fi
+      if [ "$4" == "-exe" ];
+      then
+        format=-DAX_FORMAT_EXE
+      fi
+      if [ "$5" == "-exe" ];
+      then
+        format=-DAX_FORMAT_EXE
+      fi
+      if [ "$6" == "-exe" ];
+      then
+        format=-DAX_FORMAT_EXE
+      fi  
+    fi                               # if [${file: -4} != ".cpp" ]; then nocpp
+  fi
+else
+  # if no first parameter show help
+  show_help
+fi
+
+# command line
+
+# ......................
+
+
+
 

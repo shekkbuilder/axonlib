@@ -711,6 +711,14 @@ class axWindowWin32 : public axWindowBase
             if (!(mWinFlags&AX_WIN_EMBEDDED))
             {
               //trace("Quit");
+              /*              
+              note:
+                one issue here is that, there is no know way to pause the
+                console for a while before closing. this way the windows user
+                could see the last bit of messages such as free() and other
+                'exit' related ones.
+                a log file debug method might be needed on windows after all.. 
+              */
               PostQuitMessage(0);
             }
             break;
