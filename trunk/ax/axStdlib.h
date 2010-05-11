@@ -213,7 +213,7 @@ __axstdlib_inline char* axStrdup (register char* src)
 /**
  * axStrchr
  */
-__axstdlib_inline char* axStrchr (register const char *str,
+__axstdlib_inline char* axStrchr (register const char* str,
   register const int c)
 {
   while (*str && *str != c)
