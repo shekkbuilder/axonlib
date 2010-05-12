@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "### deprecated: /plugins/compile (bash) can be used"
+
 function compile_linux
 {
   echo - $1

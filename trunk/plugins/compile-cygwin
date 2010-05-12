@@ -1,35 +1,8 @@
 #!/bin/bash
 
-function cross_compile_for_linux
-{
-	echo "--------------------------------------------------"
-	echo - $1.so
-	echo "--------------------------------------------------" 
-	`g++-linux -m32 -D linux -L/_tgz/usr/X11R6/lib -I../ax -I../../vstsdk24 -pedantic -fpermissive -W -Wall -Wno-unused -Wno-long-long -shared -O3 -Os -msse -mfpmath=sse,387 -fdata-sections -ffunction-sections $1.cpp -s -o $1.so -lpthread -lX11 -Wl,-gc-sections`
-	`strip --strip-all $1.so`
-	mv $1.so  ../bin
-}
-
-function compile_for_windows
-{
-	echo "--------------------------------------------------"	
-	echo - $1.dll	
-	echo "--------------------------------------------------"
-	`g++ -mwindows -mno-cygwin -I../ax -I../../vstsdk24 -pedantic -fpermissive -W -Wall -Wno-unused -Wno-long-long -lpthread -shared -O3 -Os -msse -mfpmath=sse,387 -fdata-sections -ffunction-sections $1.cpp -s -o $1.dll -Wl,-gc-sections`
-	`strip --strip-all $1.dll`
-	mv $1.dll  ../bin
-}
-
-# compile for windows from cygwin
-compile_for_windows $1
-
-# compile for linux from cygwin
-#
-# **** notes (tested on winxpsp2->ubuntu jj):
-# - get a cygwin->linux cross-compiler (gcc) that uses libstdc++6.
-# - get a linux precompiled binaries of the 'X11-dev libs' package.
-# - make sure that 'axonlib/ax' links to the X11 headers (a symbolic link will do)
-# - if the linker does not find X11 (-lX11), you can include the whole lib with '-L <path>'
-
-# cross_compile_for_linux $1
-
+echo "*** notes: compile for linux from cygwin"
+echo "get a cygwin->linux cross-compiler (gcc) that uses libstdc++6."
+echo "get a linux precompiled binaries of the 'X11-dev' package."
+echo "make sure that 'axonlib/ax' links to the X11 headers (a symbolic link will do)"
+echo "modify the compile (bash) script"
+echo "if the linker does not find X11 (-lX11), you can include the whole lib with '-L<path>'"
