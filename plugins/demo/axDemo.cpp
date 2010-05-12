@@ -1,5 +1,5 @@
-#define AX_NO_MALLOC
-#define AX_DEBUG_MEM
+//#define AX_NO_MALLOC
+//#define AX_DEBUG_MEM
 #define AX_DEBUG_AUTO_STD
 
 #include "core/axRand.h"
@@ -25,7 +25,7 @@ class axDemo : public axPlugin
         mGraph->doCompile();
         describe("axDemo","ccernn","axonlib example",0,AX_MAGIC+0xFFFF);
         setupAudio(2,2,false);
-        setupEditor(430,500);
+        setupEditor(500,500);
         appendParameter( p1 = new axParameter(this,"p1","",0.2) );
         appendParameter( p2 = new axParameter(this,"p2","",0.4) );
         appendParameter( p3 = new axParameter(this,"p3","",0.6) );
@@ -165,7 +165,7 @@ class axDemo : public axPlugin
 
     //----------
 
-    //this should be in axEditor?
+    //this should be in axEditor? (axPlugin...)
 
     virtual void doIdleEditor()
       {

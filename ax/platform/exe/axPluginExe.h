@@ -123,6 +123,7 @@ class axPluginExe : public axPluginBase//,
 
     virtual void  notifyResizeEditor(int aWidth, int aHeight)
       {
+        //trace("axPluginExe.notifyResizeEditor: " << aWidth << "," << aHeight);
         mEditorRect.w = aWidth;
         mEditorRect.h = aHeight;
         //sizeWindow(aWidth, aHeight); // vst

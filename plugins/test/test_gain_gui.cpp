@@ -5,7 +5,7 @@
 
 #include "axPlugin.h"
 #include "axEditor.h"
-#include "gui/axSkinDefault.h"
+//#include "gui/axSkinDefault.h"
 #include "wdg/wdgPanel.h"
 #include "wdg/wdgKnob.h"
 

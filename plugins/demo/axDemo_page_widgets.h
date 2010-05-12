@@ -109,7 +109,7 @@ class axDemo_page_widgets : public wdgPanel
           widget->appendWidget(      new wdgOctave(    aListener,axRect(128, 40), wa_Top  ) );
           widget->appendWidget(      new wdgGrid(      aListener,axRect(128,128), wa_Top) );
 
-        appendWidget( w_Sizer = new wdgSizer(aListener,axRect(0,5),wa_Top,sd_Vertical) );
+        appendWidget( w_Sizer = new wdgSizer(aListener,axRect(0,5),wa_Top,sm_Vertical) );
           w_Sizer->setTarget(scroll);
 
         appendWidget( panel = new wdgPanel(aListener,axRect(0,100),wa_Client) );

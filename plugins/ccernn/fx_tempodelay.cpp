@@ -1,5 +1,6 @@
 #include "axPlugin.h"
 #include "axEditor.h"
+#include "skins/axSkinBasic.h"
 #include "par/parFloat.h"
 #include "wdg/wdgPanel.h"
 #include "wdg/wdgKnob.h"
@@ -20,9 +21,9 @@ class myPlugin : public axPlugin
 {
   private:
   // process
-    SPL           mBuffer[MAX_DELAY_LENGTH*2]; // totally 12mb (1.5m*sizeof(float)*2)
-    int           mIndex;
-    int           mSize;
+    SPL           m_Buffer[MAX_DELAY_LENGTH*2]; // totally 12mb (1.5m*sizeof(float)*2)
+    int           m_Index;
+    int           m_Size;
   //'internal' parameters
     float         m_Delay;
     float         m_Feedback;
@@ -30,11 +31,12 @@ class myPlugin : public axPlugin
     float         m_Wet;
   //vst parameters
     parFloat*     p_Delay;
-    parFloat*  p_Feedback;
-    parFloat*  p_Dry;
-    parFloat*  p_Wet;
+    parFloat*     p_Feedback;
+    parFloat*     p_Dry;
+    parFloat*     p_Wet;
   //editor
     axEditor*     m_Editor;
+    axSkinBasic*  m_Skin;
     wdgPanel*     w_Panel;
     wdgKnob*      w_Delay;
     wdgKnob*      w_Feedback;
@@ -47,8 +49,8 @@ class myPlugin : public axPlugin
     : axPlugin(aContext, pf_None)
       {
 
-        mIndex = 0;
-        mSize  = 0;
+        m_Index = 0;
+        m_Size  = 0;
         describe("fx_tempodelay","ccernn","axonlib example",2,AX_MAGIC+0x1001);
         setupAudio(2,2,false);
         setupEditor(148,163);
@@ -92,8 +94,8 @@ class myPlugin : public axPlugin
     virtual bool doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize)
       {
         updateTimeInfo(); // get timing info from host
-        mSize = calcSize( m_Delay, getTempo(), getSampleRate() );
-        while (mIndex>=mSize) mIndex-=mSize;
+        m_Size = calcSize( m_Delay, getTempo(), getSampleRate() );
+        while (m_Index>=m_Size) m_Index-=m_Size;
         return false; // we want doProcessSample
       }
 
@@ -101,15 +103,15 @@ class myPlugin : public axPlugin
 
     virtual void  doProcessSample(SPL** aInputs, SPL** aOutputs)
       {
-        int i2 = mIndex*2;
+        int i2 = m_Index*2;
         float in0 = *aInputs[0];
         float in1 = *aInputs[1];
-        float dly0 = mBuffer[i2  ];
-        float dly1 = mBuffer[i2+1];
-        mBuffer[i2  ] = in0 + dly0*m_Feedback;
-        mBuffer[i2+1] = in1 + dly1*m_Feedback;
-        mIndex++;
-        if (mIndex>=mSize) mIndex = 0;
+        float dly0 = m_Buffer[i2  ];
+        float dly1 = m_Buffer[i2+1];
+        m_Buffer[i2  ] = in0 + dly0*m_Feedback;
+        m_Buffer[i2+1] = in1 + dly1*m_Feedback;
+        m_Index++;
+        if (m_Index>=m_Size) m_Index = 0;
         *aOutputs[0] = in0*m_Dry + dly0*m_Wet;
         *aOutputs[1] = in1*m_Dry + dly1*m_Wet;
       }
@@ -122,6 +124,9 @@ class myPlugin : public axPlugin
       {
         trace(":: doOpenEditor");
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
+        axCanvas* canvas = editor->getCanvas();
+        m_Skin = new axSkinBasic(canvas);
+        editor->applySkin(m_Skin);
           //mEditor->setup(getSystemInfo(),getHostInfo());
           editor->appendWidget(  w_Panel = new wdgPanel(editor,NULL_RECT,wa_Client) );
           w_Panel->setBorders(10,10,5,5);
@@ -151,6 +156,7 @@ class myPlugin : public axPlugin
         m_Editor->hide();
         delete m_Editor;
         m_Editor = NULL;
+        delete m_Skin;
       }
 
     //----------

@@ -1,12 +1,10 @@
-#ifndef axSkinDefault_included
-#define axSkinDefault_included
+#ifndef axSkinBasic_included
+#define axSkinBasic_included
 //----------------------------------------------------------------------
-
-#error deprecated!
 
 #include "gui/axSkin.h"
 
-class axSkinDefault : public axSkin
+class axSkinBasic : public axSkin
 {
   protected:
     //axColor mFillColor;
@@ -16,7 +14,7 @@ class axSkinDefault : public axSkin
 
   public:
 
-    axSkinDefault(axCanvas* aCanvas)
+    axSkinBasic(axCanvas* aCanvas)
     : axSkin(aCanvas)
       {
         //mFillColor    = aCanvas->getColor(AX_GREY);
@@ -25,7 +23,7 @@ class axSkinDefault : public axSkin
         //mTextColor    = aCanvas->getColor(AX_WHITE);
       }
 
-    virtual ~axSkinDefault()
+    virtual ~axSkinBasic()
       {
       }
 
@@ -80,7 +78,7 @@ class axSkinDefault : public axSkin
 
     //--------------------------------------------------
     //
-    //
+    // draw...
     //
     //--------------------------------------------------
 
