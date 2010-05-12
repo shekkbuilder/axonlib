@@ -302,23 +302,13 @@ __axmalloc_inline void* axRealloc (void* _ptr,
 #if defined (AX_DEBUG) && defined (AX_DEBUG_MEM)
   #include <iostream>
 
-  /*
-    malloc_usable_size() will be used to determine the real, allocated
-    size by the standard methods, since what is passed as _size_ may not be
-    the actual size we need to add or substract from the total
-    counter (_axMemTotal)
-  */
   #ifdef AX_NO_MALLOC
-    #include "malloc.h" // malloc_usable_size()
+    #include "malloc.h" // malloc_usable_size() / _msize
   #endif
 
-    //
-    // http://stackoverflow.com/questions/1913853/why-is-used-in-delete-delete-to-free-dynamically-allocated-array
-    // "...platform, the _msize (windows), malloc_usable_size (linux) or malloc_size (osx) functions will tell you ..."
-    //
-    #ifdef AX_WIN32
-      #define malloc_usable_size _msize
-    #endif
+  #ifdef AX_WIN32
+    #define malloc_usable_size _msize
+  #endif
 
   static unsigned int _axMemTotal = 0;
 

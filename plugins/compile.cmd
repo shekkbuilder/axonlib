@@ -125,7 +125,7 @@ echo.
 echo ---------------------------------------------------------------------------
 echo * axonlib compile script for windows
 echo.
-echo usage: compile.cmd [file.cpp] [-h] [-exe or -dll] [-nmv] [-d]
+echo usage: compile.cmd [file.cpp] [-h] [-exe or -dll] [-nmv] [-d] [-g]
 echo  -exe : create an executable
 echo  -dll : create a dll (default)
 echo  -nmv : do not move result to ..\bin
