@@ -68,7 +68,7 @@ class axWidgetListener
     virtual void onRedraw(axWidget* aWidget) {}
     virtual void onCursor(int aCursor=DEF_PENWIDTH) {}
     virtual void onHint(axString aHint) {}
-    virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY) {}
+    virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY, int aMode) {}
     virtual void onModal(bool aModal, axWidget* aWidget) {}
 };
 
@@ -913,12 +913,12 @@ class axWidget : public axWidgetListener
     //----------
 
     // called from wdgSizer
-    virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY)
+    virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY, int aMode)
       {
         int w = mRect.w + aDeltaX;
         int h = mRect.h + aDeltaY;
         axWidget::doSetSize(w,h);
-        mListener->onSize(aWidget,aDeltaX,aDeltaY);
+        mListener->onSize(aWidget,aDeltaX,aDeltaY,aMode);
       }
 
     //----------

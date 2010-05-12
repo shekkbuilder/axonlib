@@ -4,11 +4,12 @@
 
 #include "gui/axWidget.h"
 
-// sizer direction
-#define sd_None       0
-#define sd_Horizontal 1
-#define sd_Vertical   2
-#define sd_All        3
+// sizer modes
+
+#define sm_Window    -1
+#define sm_None       0
+#define sm_Horizontal 1
+#define sm_Vertical   2
 
 class wdgSizer : public axWidget
 {
@@ -17,21 +18,21 @@ class wdgSizer : public axWidget
     bool      mIsDragging;
     axWidget* mTarget;
     int       mSizeCursor;
-    int       mDirection;
+    int       mMode;
 
   public:
-    wdgSizer(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None, int aDirection=sd_Horizontal)
+    wdgSizer(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None, int aMode=sm_None)
     : axWidget(aListener,aRect,aAlignment)
       {
         mTarget     = NULL;
         mIsDragging = false;
-        mDirection  = aDirection;
-        switch(mDirection)
+        mMode       = aMode;
+        switch (mMode)
         {
-          case sd_None:       mSizeCursor = DEF_CURSOR;        break;
-          case sd_Horizontal: mSizeCursor = cu_ArrowLeftRight; break;
-          case sd_Vertical:   mSizeCursor = cu_ArrowUpDown;    break;
-          case sd_All:        mSizeCursor = cu_ArrowDiagRight; break;//Move;           break;
+          case sm_None:       mSizeCursor = DEF_CURSOR;        break;
+          case sm_Horizontal: mSizeCursor = cu_ArrowLeftRight; break;
+          case sm_Vertical:   mSizeCursor = cu_ArrowUpDown;    break;
+          case sm_Window:     mSizeCursor = cu_ArrowDiagRight; break;
         }
       }
 
@@ -65,10 +66,10 @@ class wdgSizer : public axWidget
         {
           int deltax = aXpos - prevx;
           int deltay = aYpos - prevy;
-          if (mDirection==sd_Horizontal) deltay=0;
-          if (mDirection==sd_Vertical)   deltax=0;
-          if (mTarget) mTarget->onSize(this,deltax,deltay);
-          else mListener->onSize(this,deltax,deltay);
+          if (mMode==sm_Horizontal) deltay=0;
+          if (mMode==sm_Vertical)   deltax=0;
+          if (mTarget) mTarget->onSize(this,deltax,deltay,mMode);
+          else mListener->onSize(this,deltax,deltay,mMode);
           prevx = aXpos;
           prevy = aYpos;
         }

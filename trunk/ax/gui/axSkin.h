@@ -30,10 +30,14 @@ class axSkin
         mTextColor  = aCanvas->getColor(AX_WHITE);
       }
     virtual ~axSkin() {}
+
     virtual axColor getFillColor(void)  { return mFillColor; }
     virtual axColor getDarkColor(void)  { return mDarkColor; }
     virtual axColor getLightColor(void) { return mLightColor; }
     virtual axColor getTextColor(void)  { return mTextColor; }
+
+    //TODO: mode
+
     virtual void drawPanel(     axCanvas* aCanvas, axRect aRect)  {}
     virtual void drawSizer(     axCanvas* aCanvas, axRect aRect)  {}
     virtual void drawLabel(     axCanvas* aCanvas, axRect aRect,  axString aText, int aTextAlign) {}

@@ -10,7 +10,7 @@
 #include "wdg/wdgButtons.h"
 #include "wdg/wdgScrollBox.h"
 
-//#include "axDemo_skin.h"
+#include "axDemo_skin.h"
 #include "axDemo_page_canvas.h"
 #include "axDemo_page_widgets.h"
 #include "axDemo_page_system.h"
@@ -27,6 +27,8 @@ class axDemo_editor : public axEditor
 {
   friend class axDemo;
   private:
+    axDemo_skin*          m_Skin;
+
     wdgPanel*             w_LeftPanel;
     wdgPages*             w_RightPanel;
     wdgSizer*             w_Sizer;
@@ -45,7 +47,7 @@ class axDemo_editor : public axEditor
     axDemo_page_midi*     w_Page_midi;
     axDemo_page_bitmaps*  w_Page_bitmaps;
 
-    axBitmap* bitmap;
+    axBitmap* m_Bitmap;
 
   public:
 
@@ -53,15 +55,20 @@ class axDemo_editor : public axEditor
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
       {
 
-        bitmap = createBitmap(320,200);
-        bitmap->createBuffer();
-        bitmap->prepare();
+        axCanvas* canvas = getCanvas();
+        m_Skin = new axDemo_skin(canvas);
+        //m_Skin->loadSkinBitmap(editor,(unsigned char*)demo_skin,demo_skin_size);
+        applySkin(m_Skin);
+
+        m_Bitmap = createBitmap(320,200);
+        m_Bitmap->createBuffer();
+        m_Bitmap->prepare();
 
         //----- bottom [status panel] -----
 
         appendWidget( w_Status = new wdgPanel(this,axRect(0,20),wa_Bottom) );
           //#ifdef AX_FORMAT_VST
-          w_Status->appendWidget( w_WinSizer = new wdgSizer(this,axRect(10,10),wa_RightBottom,sd_All) );
+          w_Status->appendWidget( w_WinSizer = new wdgSizer(this,axRect(10,10),wa_RightBottom,sm_Window) );
           //#endif
           //w_WinSizer->setTarget(this);
 
@@ -84,7 +91,7 @@ class axDemo_editor : public axEditor
 
         //----- [resizer] -----
 
-        appendWidget( w_Sizer = new wdgSizer(this,axRect(5,0),wa_Left,sd_Horizontal) );
+        appendWidget( w_Sizer = new wdgSizer(this,axRect(5,0),wa_Left,sm_Horizontal) );
           w_Sizer->setTarget(w_LeftPanel);
 
         //----- right [pages, aka tabs] -----
@@ -98,7 +105,7 @@ class axDemo_editor : public axEditor
           w_RightPanel->appendPage( w_Page_params  = new axDemo_page_params( this,NULL_RECT,wa_Client) );
           w_RightPanel->appendPage( w_Page_audio   = new axDemo_page_audio(  this,NULL_RECT,wa_Client) );
           w_RightPanel->appendPage( w_Page_midi    = new axDemo_page_midi(   this,NULL_RECT,wa_Client) );
-          w_RightPanel->appendPage( w_Page_bitmaps = new axDemo_page_bitmaps(this,NULL_RECT,wa_Client,bitmap) );
+          w_RightPanel->appendPage( w_Page_bitmaps = new axDemo_page_bitmaps(this,NULL_RECT,wa_Client,m_Bitmap) );
           w_RightPanel->setPage(0,false);
 
         //----- and then put everything in place -----
@@ -112,7 +119,8 @@ class axDemo_editor : public axEditor
     virtual ~axDemo_editor()
       {
         stopTimer();
-        delete bitmap;
+        delete m_Bitmap;
+        delete m_Skin;
       }
 
     //--------------------------------------------------
@@ -140,18 +148,23 @@ class axDemo_editor : public axEditor
 
     //----------
 
-    virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY)
-      {
-        //#ifdef AX_FORMAT_VST
-        if (aWidget==w_WinSizer)
-        {
-          axRect R = mPlugin->getEditorRect();
-          resizeWindow( R.w + aDeltaX, R.h + aDeltaY );
-        }
-        else
-        //#endif
-        axEditor::onSize(aWidget, aDeltaX, aDeltaY);
-      }
+//    virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY)
+//      {
+//        //trace("axDemo_editor.onSize:" << aDeltaX << "," << aDeltaY);
+//        //#ifdef AX_FORMAT_VST
+//        if (aWidget==w_WinSizer)
+//        {
+//          //trace("::: w_WinSizer" << aWidget);
+//          axRect R = mPlugin->getEditorRect();
+//          resizeWindow( R.w + aDeltaX, R.h + aDeltaY );
+//        }
+//        else
+//        {
+//        //#endif
+//          //trace("::: ! w_WinSizer" << aWidget);
+//          axEditor::onSize(aWidget, aDeltaX, aDeltaY);
+//        }
+//      }
 
     //--------------------------------------------------
     // do

@@ -63,19 +63,22 @@ class axWindowWin32 : public axWindowBase
     int         mPrevCursor;
     int         mClickedButton;
     int         mParent;
+    int         mAdjustWidth, mAdjustHeight;
 
   public:
     axWindowWin32(axContext* aContext, axRect aRect, int aWinFlags)
     : axWindowBase(aContext,aRect,aWinFlags)
       {
-        //wtrace("axWindowWin32.constructor()");
+        //trace("axWindowWin32.constructor()");
         mInstance   = aContext->mInstance;
         mWinName    = aContext->mWinClassName;
         mParent     = (int)aContext->mWindow;
         mWinCursor  = LoadCursor(NULL,IDC_ARROW);
         mPrevCursor = 0;
-        //wtrace(mWinName.ptr());
+        //trace(mWinName.ptr());
         mClickedButton = bu_None;
+        //mAdjustWidth = 0;
+        //mAdjustHeight = 0;
 
         // --- register window class ---
 
@@ -91,7 +94,7 @@ class axWindowWin32 : public axWindowBase
         // (or is it done automatically when dll is unloaded?)
 
         char* classname = mWinName.ptr();//(char*)"axonlib";
-        //wtrace("window class name:" << classname);
+        //trace("window class name:" << classname);
         WNDCLASS wc;
         memset(&wc,0,sizeof(wc));
         wc.style          = CS_HREDRAW | CS_VREDRAW;
@@ -110,14 +113,14 @@ class axWindowWin32 : public axWindowBase
         // The window rectangle can then be passed to the CreateWindow function
         // to create a window whose client area is the desired size.
         // To specify an extended window style, use the AdjustWindowRectEx function.
-
+        //
         // BOOL AdjustWindowRectEx(
         //   __inout  LPRECT lpRect,
         //   __in     DWORD dwStyle,
         //   __in     BOOL bMenu,
         //   __in     DWORD dwExStyle
         // );
-
+        //
         // lpRect: Pointer to a RECT  structure that contains the coordinates of
         // the top-left and bottom-right corners of the desired client area.
         // When the function returns, the structure contains the coordinates of
@@ -138,7 +141,9 @@ class axWindowWin32 : public axWindowBase
         // For example, when RECT is passed to the FillRect function, the rectangle
         // is filled up to, but not including, the right column and bottom row of pixels.
 
+        //trace("width/height: " << mRect.w << "," << mRect.h);
         RECT rc = { mRect.x, mRect.y, mRect.x2(), mRect.y2() }; // left, top, right, bottom
+        //trace("RECT rc: " << rc.left << "," << rc.top << " : " << rc.right << "," << rc.bottom);
 
 //        //RECT rc = {mRect.x,mRect.y,mRect.x2(),mRect.y2()};
 //        RECT rc = { mRect.x, mRect.y, mRect.w, mRect.h };
@@ -163,6 +168,7 @@ class axWindowWin32 : public axWindowBase
         if (mWinFlags&AX_WIN_EMBEDDED) // embedded ---
         {
           AdjustWindowRectEx(&rc,/*WS_OVERLAPPEDWINDOW|*/WS_POPUP,FALSE,WS_EX_TOOLWINDOW);
+          //trace("adjusted rc (embedded): " << rc.left << "," << rc.top << " : " << rc.right << "," << rc.bottom);
           mWindow = CreateWindowEx(
             WS_EX_TOOLWINDOW,
             classname,
@@ -170,8 +176,8 @@ class axWindowWin32 : public axWindowBase
             WS_POPUP,
             rc.left,//wPosX,          // center x
             rc.top,//wPosY,           // center y
-            rc.right-rc.left,         //wWidth,
-            rc.bottom-rc.top,         //wHeight,
+            rc.right-rc.left+1,         //wWidth,
+            rc.bottom-rc.top+1,         //wHeight,
             0,                        //(HWND)mParent,//0,
             0,
             mInstance,
@@ -183,6 +189,7 @@ class axWindowWin32 : public axWindowBase
         else // windowed ---
         {
           AdjustWindowRectEx(&rc,WS_OVERLAPPEDWINDOW,FALSE,WS_EX_OVERLAPPEDWINDOW);
+          //trace("adjusted rc (windowed): " << rc.left << "," << rc.top << " : " << rc.right << "," << rc.bottom);
           culong wPosX = ((GetSystemMetrics(SM_CXSCREEN)-mRect.w)>>1) + rc.left;
           culong wPosY = ((GetSystemMetrics(SM_CYSCREEN)-mRect.h)>>1) + rc.top;
           mWindow = CreateWindowEx(
@@ -192,8 +199,8 @@ class axWindowWin32 : public axWindowBase
             WS_OVERLAPPEDWINDOW,      // dwStyle
             wPosX,                    // center x
             wPosY,                    // center y
-            rc.right-rc.left,         //wWidth,
-            rc.bottom-rc.top,         //wHeight,
+            rc.right-rc.left+1,         //wWidth,
+            rc.bottom-rc.top+1,         //wHeight,
             0,                        // hWndParent
             0,                        // hMenu
             mInstance,                // hInstance
@@ -201,6 +208,15 @@ class axWindowWin32 : public axWindowBase
           );
           SetFocus(mWindow);
         }
+
+        mAdjustWidth = (rc.right - rc.left + 1) - mRect.w;
+        mAdjustHeight = (rc.bottom - rc.top + 1) - mRect.h;
+        //trace("mAdjustWidth: " << mAdjustWidth << ", mAdjustHeight: " << mAdjustHeight);
+
+        //mRect.x = rc.left;
+        //mRect.y = rc.top;
+        //mRect.w = (rc.right-rc.left);
+        //mRect.h = (rc.bottom-rc.top);
 
         // ---
 
@@ -242,12 +258,16 @@ class axWindowWin32 : public axWindowBase
         return new axCanvas(&ctx);
       }
 
+    //----------
+
     virtual axSurface* createSurface(int aWidth, int aHeight)
       {
         //axContext ctx(mParent);
         axContext ctx(mWindow);
         return new axSurface(&ctx,aWidth,aHeight);
       }
+
+    //----------
 
     virtual axBitmap* createBitmap(int aWidth, int aHeight)
       {
@@ -260,10 +280,10 @@ class axWindowWin32 : public axWindowBase
     // low level
     //----------------------------------------
 
-    virtual void flush(void)
-      {
-        //GdiFlush();
-      }
+    //virtual void flush(void)
+    //  {
+    //    //GdiFlush();
+    //  }
 
     //----------
 
@@ -287,13 +307,16 @@ class axWindowWin32 : public axWindowBase
 
     virtual void show(void)
       {
-        SetWindowPos(mWindow,0,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_SHOWWINDOW|SWP_NOACTIVATE);
+        //trace("show");
+        //SetWindowPos(mWindow,0,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_SHOWWINDOW|SWP_NOACTIVATE);
+        ShowWindow(mWindow,SW_SHOW);
       }
 
     //----------
 
     virtual void hide(void)
       {
+        //trace("hide");
         ShowWindow(mWindow,SW_HIDE);
       }
 
@@ -308,8 +331,9 @@ class axWindowWin32 : public axWindowBase
 
     virtual void setSize(int aWidth, int aHeight)
       {
-        int w = aWidth-1;
-        int h = aHeight-1;
+        //trace("setSize: " << aWidth << "," << aHeight);
+        int w = aWidth + mAdjustWidth + 0;
+        int h = aHeight + mAdjustHeight + 0;
         SetWindowPos(mWindow,HWND_TOP,0,0,w,h, SWP_NOMOVE);
         //SetWindowPos(mWindow,0,0,0,aWidth,aHeight,SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOZORDER);
       }
@@ -390,6 +414,7 @@ class axWindowWin32 : public axWindowBase
 
     virtual void reparent(int aParent)
       {
+        //trace("reparent");
         mParent = aParent;
         SetWindowLong(mWindow,GWL_STYLE,(GetWindowLong(mWindow,GWL_STYLE)&~WS_POPUP)|WS_CHILD);
         SetParent(mWindow, (HWND)aParent);
@@ -479,6 +504,7 @@ class axWindowWin32 : public axWindowBase
 
     virtual void resizeBuffer(int aWidth, int aHeight)
       {
+        //trace("axWindowWin32.resizeBuffer: " << aWidth << "," << aHeight);
         //if( aWidth!=mRect.w || aHeight!=mRect.h )
         //{
           if (mWinFlags&AX_WIN_BUFFERED)
@@ -606,6 +632,7 @@ class axWindowWin32 : public axWindowBase
         int btn = 0;
         axRect rc;
         int w,h;
+        int left,top,right,bottom;
 
         //TRACE("win32 eventHandler. msg=%x\n",message);
 
@@ -617,6 +644,11 @@ class axWindowWin32 : public axWindowBase
           case WM_PAINT:
             //wtrace("WM_PAINT\n");
             beginPaint();
+            left   = mPS.rcPaint.left;
+            top    = mPS.rcPaint.top;
+            right  = mPS.rcPaint.right;
+            bottom = mPS.rcPaint.bottom;
+            //trace("WM_PAINT. RECT: " << left << "," << top << " : " << right << "," << bottom);
             rc = axRect(  mPS.rcPaint.left,
                           mPS.rcPaint.top,
                           mPS.rcPaint.right -  mPS.rcPaint.left + 2,
@@ -682,7 +714,7 @@ class axWindowWin32 : public axWindowBase
             doKeyDown(wParam,lParam);
             break;
           case WM_SIZE:
-            //TRACE("WM_SIZE\n");
+            //trace("WM_SIZE\n");
             //lParam:
             //  The low-order word of lParam specifies the new width of the client area.
             //  The high-order word of lParam specifies the new height of the client area.
@@ -691,6 +723,14 @@ class axWindowWin32 : public axWindowBase
             //int y = ev->xconfigure.y;
             w = short(LOWORD(lParam));
             h = short(HIWORD(lParam));
+            //trace("WM_SIZE: " << w << "," << h);
+
+            //if (!(mWinFlags&AX_WIN_EMBEDDED))
+            //{
+            //  w += mAdjustWidth;
+            //  h += mAdjustHeight;
+            //}
+
             //if (w!=mRect.w || h!=mRect.h)
             //{
             //// hack: ignore this if there is other WM_SIZE messages in the queue
@@ -711,13 +751,13 @@ class axWindowWin32 : public axWindowBase
             if (!(mWinFlags&AX_WIN_EMBEDDED))
             {
               //trace("Quit");
-              /*              
+              /*
               note:
                 one issue here is that, there is no know way to pause the
                 console for a while before closing. this way the windows user
                 could see the last bit of messages such as free() and other
                 'exit' related ones.
-                a log file debug method might be needed on windows after all.. 
+                a log file debug method might be needed on windows after all..
               */
               PostQuitMessage(0);
             }

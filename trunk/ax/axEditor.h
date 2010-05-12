@@ -9,7 +9,7 @@
 #include "axPlugin.h"
 #include "core/axArray.h"
 #include "gui/axWindow.h"
-//#include "gui/axSkinDefault.h"
+#include "skins/axSkinBasic.h"
 
 //----------------------------------------------------------------------
 //
@@ -42,7 +42,8 @@ class axEditor : public axWindow
   protected:
     axPlugin*       mPlugin;
     wp_connections  mConnections;
-    axSkinDefault*  mDefaultSkin;
+    //axSkinDefault*  mDefaultSkin;
+    axSkinBasic*    mDefaultSkin;
     #ifndef AX_WIDGET_NOUPDATELIST
     axWidgets       mUpdateList;
     #endif
@@ -55,8 +56,8 @@ class axEditor : public axWindow
     : axWindow(aContext,aRect,aWinFlags)
       {
         mPlugin = aPlugin;
-        axCanvas* can = getCanvas();
-        mDefaultSkin = new axSkinDefault(can);
+        axCanvas* canvas = getCanvas();
+        mDefaultSkin = new axSkinBasic(canvas);
         applySkin(mDefaultSkin);
         //mModalWidget = NULL;
         //mModalIndex  = -1;
@@ -111,11 +112,12 @@ class axEditor : public axWindow
       // - axWindow.setSize()
       // - set size of rect that will be returned in effEditGetRect
       // - vst function sizeWindow()
-      // various hosts rfeact differently to these, and we need to do a host-check at startup,
+      // various hosts react differently to these, and we need to do a host-check at startup,
       // and do more testing to see which host require what.
 
     void resizeWindow(int aWidth, int aHeight)
       {
+        //trace("axEditor.resizeWindow: " << aWidth << "," << aHeight);
         mRect.w = aWidth;
         mRect.h = aHeight;
         // axWindow::setSize not needed for reaper, (effEditRect)
@@ -131,7 +133,7 @@ class axEditor : public axWindow
         //resizeBuffer(aWidth,aHeight);
         //doSetSize(aWidth,aHeight);
         //#endif
-        mPlugin->notifyResizeEditor(aWidth,aHeight);
+//        mPlugin->notifyResizeEditor(aWidth,aHeight);
       }
 
     //----------------------------------------
@@ -212,6 +214,7 @@ class axEditor : public axWindow
 
     virtual void doSetSize(int aWidth, int aHeight)
       {
+        //trace("axEditor.doSetSize: " << aWidth << "," << aHeight);
         if (mPlugin) mPlugin->notifyResizeEditor(aWidth,aHeight);
         axWindow::doSetSize(aWidth,aHeight);
       }
@@ -252,9 +255,29 @@ class axEditor : public axWindow
 
     //----------
 
-    //virtual void onCursor(int aCursor) { setCursor(aCursor); }
-    //virtual void onHint(axString aHint) {}
-    //virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY)
+    //virtual void onCursor(int aCursor)
+    //  {
+    //    setCursor(aCursor);
+    //  }
+
+    //----------
+
+    //virtual void onHint(axString aHint)
+    //  {
+    //  }
+
+    //----------
+
+    virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY, int aMode)
+      {
+        if (aMode<0)
+        {
+          axRect R = mPlugin->getEditorRect();
+          resizeWindow( R.w + aDeltaX, R.h + aDeltaY );
+        }
+        else axWindow::onSize(aWidget,aDeltaX,aDeltaY,aMode);
+      }
+
 
 };
 

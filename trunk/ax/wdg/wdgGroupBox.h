@@ -111,7 +111,7 @@ class wdgGroupBox : public axWidget
           if (mClosable)
           {
             toggle_closed();
-            mListener->onSize(this,0,0);
+            mListener->onSize(this,0,0,0);
           }
         }
         mListener->onChange(aWidget);

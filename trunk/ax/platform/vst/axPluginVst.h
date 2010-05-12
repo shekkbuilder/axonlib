@@ -699,13 +699,13 @@ class axPluginVst : public axPluginBase
           // 13
           case effEditGetRect:
 
-            //trace("axPluginVst.dispatcher :: effEditGetRect");
             if (mPlugFlags&pf_HasEditor)
             {
               rect.left     = mEditorRect.x;
               rect.top      = mEditorRect.y;
-              rect.right    = mEditorRect.x2();
-              rect.bottom   = mEditorRect.y2();
+              rect.right    = mEditorRect.x2()+1;
+              rect.bottom   = mEditorRect.y2()+1;
+              //trace("effEditGetRect: " << rect.left << "," << rect.top << " : " << rect.right << "," << rect.bottom);
               *(ERect**)ptr = &rect;
               v = 1;
             }
@@ -1010,7 +1010,7 @@ class axPluginVst : public axPluginBase
             //if (strcmp(ptr,"midiProgramNames"))     return 0; // plug-in supports function #getMidiProgramName ()
             //if (strcmp(ptr,"bypass"))               return 0; // plug-in supports function #setBypass ()
             if (!strcmp(p,"hasCockosExtensions"))  v=0xbeef0000;
-            trace("- axPluginVst.effCanDo: '" << p << "' (return: " << hex << v << dec << ")");
+            trace("effCanDo: '" << p << "' (return: " << hex << v << dec << ")");
             }
             break;
 
@@ -1294,7 +1294,7 @@ class axPluginVst : public axPluginBase
         axStrncpy(mProductString,aProduct.ptr(),kVstMaxProductStrLen);
         mVendorVersion = aVersion;
         setUniqueID(aID);
-        trace(buf);
+        //trace(buf);
       }
 
     //----------
@@ -1346,6 +1346,7 @@ class axPluginVst : public axPluginBase
 
     virtual void  notifyResizeEditor(int aWidth, int aHeight)
       {
+        //trace("axPluginVst.notifyResizeEditor: " << aWidth << "," << aHeight);
         //axPluginBase::notifyResizeEditor(aWidth,aHeight); // editor rect
         mEditorRect.w = aWidth;
         mEditorRect.h = aHeight;

@@ -124,16 +124,15 @@ gui:
 - the skin stuff needs a bit more work, more polish, more functionality,
   and it needs to be solidified, 'cast in stone'...
 
-- [fixed?]
-  mouse cursor is not set correctly in non-client areas of windows
-  in win7 (standalone)
-
 - more cursor shape constants. missiong a few on windows
   (window resizing, finger vs hand, ...)
   even better: user-defined cursor shapes
 
 - some issues with window resizing. resizing via window borders and
   via wdgSizer. some rect/variables not in sync?
+
+- don't propagate change if widget/parameter value not changed
+  (no repeatedly sending 0's, etc..)
 
 ----------------------------------------------------------------------
 widgets:

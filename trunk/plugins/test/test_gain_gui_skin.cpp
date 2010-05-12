@@ -8,7 +8,7 @@
 #include "wdg/wdgPanel.h"
 #include "wdg/wdgKnob.h"
 
-#include "gui/axSkinDefault.h"
+#include "gui/axSkin.h"
 #include "gui/axBitmapLoader.h"
 #include "../img/knob32.h"
 
@@ -18,7 +18,7 @@
 //
 //----------------------------------------------------------------------
 
-class mySkin : public axSkinDefault
+class mySkin : public axSkin//Default
 {
   private:
     axBitmapLoader  loader;
@@ -28,7 +28,7 @@ class mySkin : public axSkinDefault
     int         mKnobCount, mKnobWidth, mKnobHeight;
   public:
     mySkin(axCanvas* aCanvas)
-    : axSkinDefault(aCanvas)
+    : axSkin/*Default*/(aCanvas)
       {
         mKnobImage  = NULL;
         mKnobCount  = 0;
@@ -57,7 +57,8 @@ class mySkin : public axSkinDefault
       }
     virtual void drawPanel(axCanvas* aCanvas, axRect aRect)
       {
-        fill_back(aCanvas,aRect);
+        aCanvas->setBrushColor(mFillColor);
+        aCanvas->fillRect(aRect.x,aRect.y,aRect.x2(),aRect.y2());
       }
     virtual void drawKnob(axCanvas* aCanvas, axRect aRect,  axString aName, axString aDisp, float aValue)
       {
@@ -85,8 +86,8 @@ class mySkin : public axSkinDefault
             aCanvas->drawText(x+size+5,y,aRect.x2(),aRect.y2(),aDisp,ta_Left);
           }
         } //knobimage
-        else
-          axSkinDefault::drawKnob(aCanvas,aRect,aName,aDisp,aValue);
+        //else
+        //  axSkinDefault::drawKnob(aCanvas,aRect,aName,aDisp,aValue);
       }
 };
 

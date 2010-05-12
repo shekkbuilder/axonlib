@@ -5,7 +5,7 @@
 #include "axDefines.h"
 #include "base/axWindowBase.h"
 //#include "gui/axSkin.h"
-#include "gui/axSkinDefault.h"
+//#include "gui/axSkinDefault.h"
 #include "platform/axContext.h"
 #include "axParameter.h"
 
@@ -89,6 +89,7 @@ class axWindow : public axWindowImpl
 
     virtual void doSetSize(int aWidth, int aHeight)
       {
+        //trace("axWindow.doSetSize: " << aWidth << "," << aHeight);
         //mRect.w = aWidth;
         //mRect.h = aHeight;
         mRect.setSize(aWidth,aHeight);
@@ -154,7 +155,7 @@ class axWindow : public axWindowImpl
     virtual void onCursor(int aCursor)        { setCursor(aCursor); }
     virtual void onHint(axString aHint)       {}
 
-    virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY)
+    virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY, int aMode)
       {
         if (mFlags&wf_Align) doRealign();
         //if (mFlags&wf_Visible)

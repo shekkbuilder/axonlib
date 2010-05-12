@@ -127,7 +127,6 @@
 		<Unit filename="..\..\ax\gui\axColor.h" />
 		<Unit filename="..\..\ax\gui\axFont.h" />
 		<Unit filename="..\..\ax\gui\axSkin.h" />
-		<Unit filename="..\..\ax\gui\axSkinDefault.h" />
 		<Unit filename="..\..\ax\gui\axSurface.h" />
 		<Unit filename="..\..\ax\gui\axSymbols.h" />
 		<Unit filename="..\..\ax\gui\axWidget.h" />
@@ -150,6 +149,7 @@
 		<Unit filename="..\..\ax\platform\win32\axWindowWin32.h" />
 		<Unit filename="..\..\ax\script\axScript.h" />
 		<Unit filename="..\..\ax\script\axScriptStdlib.h" />
+		<Unit filename="..\..\ax\skins\axSkinBasic.h" />
 		<Unit filename="..\..\ax\wdg\wdgBitmap.h" />
 		<Unit filename="..\..\ax\wdg\wdgButton.h" />
 		<Unit filename="..\..\ax\wdg\wdgButtons.h" />
