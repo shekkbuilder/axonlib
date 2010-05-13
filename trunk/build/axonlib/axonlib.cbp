@@ -173,6 +173,7 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="../../ax/audio/axGraph.h" />
+		<Unit filename="../../ax/audio/axLibaam.h" />
 		<Unit filename="../../ax/audio/axModule.h" />
 		<Unit filename="../../ax/audio/axVoices.h" />
 		<Unit filename="../../ax/axConfig.h" />
@@ -191,6 +192,7 @@
 		<Unit filename="../../ax/core/axBuffer.h" />
 		<Unit filename="../../ax/core/axDebug.h" />
 		<Unit filename="../../ax/core/axList.h" />
+		<Unit filename="../../ax/core/axMalloc.h" />
 		<Unit filename="../../ax/core/axMath.h" />
 		<Unit filename="../../ax/core/axMemory.h" />
 		<Unit filename="../../ax/core/axPoint.h" />

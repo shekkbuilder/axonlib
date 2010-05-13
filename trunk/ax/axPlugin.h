@@ -98,6 +98,7 @@ class axPlugin : public axPluginImpl, public axParameterListener
         #endif
         mSystemInfo.cpuid    = axCpuCaps();
         mSystemInfo.cpuidstr = axCpuCapsString();
+        mSystemInfo.bigend   = axBigEndian();
         return &mSystemInfo;
       }
 

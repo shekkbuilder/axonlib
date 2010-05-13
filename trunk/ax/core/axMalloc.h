@@ -178,7 +178,7 @@ TODO:
 
 #ifdef linux
   // may be needed for sbrk()
-  //#include "unistd.h"
+  #include "unistd.h"
 #endif
 
 /**

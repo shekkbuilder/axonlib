@@ -153,6 +153,8 @@ class wdgButton : public axWidget
     virtual void doEnter(axWidget* aCapture)
       {
         mListener->onCursor(cu_Hand);
+        if (mMode==bm_Switch) mListener->onHint("wdgButton [switch]");
+        if (mMode==bm_Spring) mListener->onHint("wdgButton [spring]");
       }
 
     //----------
@@ -160,6 +162,7 @@ class wdgButton : public axWidget
     virtual void doLeave(axWidget* aCapture)
       {
         mListener->onCursor(DEF_CURSOR);
+        mListener->onHint("");
       }
 
     //----------

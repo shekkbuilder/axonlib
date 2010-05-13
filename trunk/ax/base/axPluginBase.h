@@ -49,10 +49,13 @@
 
 struct axSystemInfo
 {
-  axString  os;
-  int       cpuid;
-  char*     cpuidstr;
+  axString  os;       // win32, linux, ..
+  int       cpuid;    // cpu caps, bits
+  char*     cpuidstr; // cpu caps, string format
+  bool      bigend;   // big endian? else little endian
 };
+
+//----------
 
 struct axHostInfo
 {
