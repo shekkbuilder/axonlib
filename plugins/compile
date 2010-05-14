@@ -19,10 +19,12 @@ axpath="../ax"
 gpp="g++"
 
 # mingw command
-mingw="mingw32-g++"
+#mingw="mingw32-g++"
+mingw="i586-mingw32msvc-g++"
 
 # windres command
-windres="mingw32-g++"
+#windres="mingw32-g++"
+mingw="i586-mingw32msvc-g++"
 
 # set windows PE resource file (leave blank for no resources)
 # axonlib provides an example 'plugins/rc_default.rc' that adds an icon
@@ -32,7 +34,6 @@ resfile=""
 # warning flags
 warn="-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long"
 
-# set optimization flags
 opt="-msse -mfpmath=sse,387 -O3 -Os"
 
 # linker options
@@ -198,7 +199,7 @@ else
     
     # ------------------------- command line (compile)
     echo ""
-    _cmdline="$compiler $1 -o $file$fmt_ext -I$vstpath -I$axpath $tgt $res $gccdebug $libdebug $warn $opt $linker"
+    _cmdline="$compiler $1 -o $file$fmt_ext -I$vstpath -I$axpath $tgt $res $gccdebug $libdebug $warn $opt $linker $format"
     echo "command line is: $_cmdline"
     echo ""
     `$_cmdline`
