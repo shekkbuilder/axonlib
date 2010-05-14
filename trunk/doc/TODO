@@ -16,8 +16,6 @@
   only tests used wihle developing there.
   none of them is guaranteed to function as the library evolves
 
-- update the linux compile scripts to be as great as neolit123's
-  awesome windows compile.cmd
 - compileall script that compiles all .cpp files found in a specified
   directory
 

@@ -1,9 +1,6 @@
 #!/bin/bash
 # ==============================================================================
 # linux - axonlib - compile - bash
-#
-# TODO:
-# - 
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -42,7 +39,7 @@ linker="-fstack-check -fdata-sections -ffunction-sections -Wl,-gc-sections -s"
 # ------------------------- end of user settings -------------------------------
 
 # ----------------------------------------
-# shelp screen function
+# help screen
 # ----------------------------------------
 function show_help
 {
@@ -77,7 +74,7 @@ function showerr
 # begin checking parameters
 if [ "$1" == "" ] || [ "$1" == "-h" ];
 then
-  # ------------------------- shpw help
+  # ------------------------- show help
   show_help
 else
   # ------------------------- defaults
@@ -143,7 +140,7 @@ else
         
     echo "-------------------------------------------------------------------------------"
     
-    # ------------------------- enable gcc debug
+    # ------------------------- resource file (mingw32-windres)
     if [ "$resfile" != "" ] && [ "$compiler" == "$mingw" ];
     then      
       echo "preparing resources..."
@@ -234,7 +231,7 @@ else
       
     else
       showerr "# ERR: not compiled!"
-    fi    
+    fi
   fi
 fi
 

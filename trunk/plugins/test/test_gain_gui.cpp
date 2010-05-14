@@ -1,7 +1,5 @@
-#define AX_DEBUG_AUTO_STD
-// -- enable mem debug test
-#define AX_DEBUG_MEMORY
-// --
+//#define AX_DEBUG_AUTO_STD
+//#define AX_DEBUG_MEMORY
 
 #include "axPlugin.h"
 #include "axEditor.h"
@@ -33,13 +31,9 @@ class myPlugin : public axPlugin//,
         appendParameter( p_Gain = new axParameter(this,"gain","") );
         setupParameters();
 
-        trace("### hello dbg");
-
-        //int* ptr = new int; // warning: unused variable
-
-        char* str = new char[256];
-        strcpy(str, "some text");
-        delete [] str;
+        int a=1, b=1;
+        axAssert(a-b);        
+        //axStaticAssert(a-b);
       }
 
     virtual void  doSetParameter(axParameter* aParameter)
