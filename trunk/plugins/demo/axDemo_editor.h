@@ -2,7 +2,13 @@
 #define axDemo_editor_included
 //----------------------------------------------------------------------
 
+/*
+  this one has the layout of the gui, the pages/tabs, status bar,
+  etc.
+*/
+
 #include "axEditor.h"
+#include "gui/axSymbols.h"
 
 #include "wdg/wdgPanel.h"
 #include "wdg/wdgPages.h"
@@ -23,11 +29,18 @@
 
 //----------------------------------------------------------------------
 
+unsigned char demo_skin[] = {};
+int           demo_skin_size = 0;
+
+//----------------------------------------------------------------------
+
 class axDemo_editor : public axEditor
 {
   friend class axDemo;
   private:
     axDemo_skin*          m_Skin;
+    axBitmap*             m_VoxelBitmap;
+    axSymbols*            m_Symbols;
 
     wdgPanel*             w_LeftPanel;
     wdgPages*             w_RightPanel;
@@ -47,7 +60,6 @@ class axDemo_editor : public axEditor
     axDemo_page_midi*     w_Page_midi;
     axDemo_page_bitmaps*  w_Page_bitmaps;
 
-    axBitmap* m_Bitmap;
 
   public:
 
@@ -57,19 +69,17 @@ class axDemo_editor : public axEditor
 
         axCanvas* canvas = getCanvas();
         m_Skin = new axDemo_skin(canvas);
-        //m_Skin->loadSkinBitmap(editor,(unsigned char*)demo_skin,demo_skin_size);
         applySkin(m_Skin);
-
-        m_Bitmap = createBitmap(320,200);
-        m_Bitmap->createBuffer();
-        m_Bitmap->prepare();
+        //m_Skin->loadSkinBitmap(this,(unsigned char*)demo_skin,demo_skin_size);
+        //m_Symbols = new axSymbols(m_Skin->getSurface());
+        m_VoxelBitmap = createBitmap(320,200);
+        m_VoxelBitmap->createBuffer();
+        m_VoxelBitmap->prepare();
 
         //----- bottom [status panel] -----
 
         appendWidget( w_Status = new wdgPanel(this,axRect(0,20),wa_Bottom) );
-          //#ifdef AX_FORMAT_VST
           w_Status->appendWidget( w_WinSizer = new wdgSizer(this,axRect(10,10),wa_RightBottom,sm_Window) );
-          //#endif
           //w_WinSizer->setTarget(this);
 
         //----- left [page Buttons] -----
@@ -97,6 +107,7 @@ class axDemo_editor : public axEditor
         //----- right [pages, aka tabs] -----
 
         appendWidget( w_RightPanel = new wdgPages(this,NULL_RECT,wa_Client) );
+        //w_RightPanel->setLimits(100,100);//,9999,9999);
           w_RightPanel->appendPage( w_Page_canvas  = new axDemo_page_canvas( this,NULL_RECT,wa_Client) );
           w_RightPanel->appendPage( w_Page_widgets = new axDemo_page_widgets(this,NULL_RECT,wa_Client) );
           w_RightPanel->appendPage( w_Page_system  = new axDemo_page_system( this,NULL_RECT,wa_Client) );
@@ -105,7 +116,7 @@ class axDemo_editor : public axEditor
           w_RightPanel->appendPage( w_Page_params  = new axDemo_page_params( this,NULL_RECT,wa_Client) );
           w_RightPanel->appendPage( w_Page_audio   = new axDemo_page_audio(  this,NULL_RECT,wa_Client) );
           w_RightPanel->appendPage( w_Page_midi    = new axDemo_page_midi(   this,NULL_RECT,wa_Client) );
-          w_RightPanel->appendPage( w_Page_bitmaps = new axDemo_page_bitmaps(this,NULL_RECT,wa_Client,m_Bitmap) );
+          w_RightPanel->appendPage( w_Page_bitmaps = new axDemo_page_bitmaps(this,NULL_RECT,wa_Client,m_VoxelBitmap) );
           w_RightPanel->setPage(0,false);
 
         //----- and then put everything in place -----
@@ -119,7 +130,8 @@ class axDemo_editor : public axEditor
     virtual ~axDemo_editor()
       {
         stopTimer();
-        delete m_Bitmap;
+        delete m_Symbols;
+        delete m_VoxelBitmap;
         delete m_Skin;
       }
 
@@ -135,6 +147,7 @@ class axDemo_editor : public axEditor
     // on
     //--------------------------------------------------
 
+    // change page
     virtual void onChange(axWidget* aWidget)
       {
         if (aWidget==w_Select)
@@ -146,38 +159,21 @@ class axDemo_editor : public axEditor
         axEditor::onChange(aWidget);
       }
 
-    //----------
-
-//    virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY)
-//      {
-//        //trace("axDemo_editor.onSize:" << aDeltaX << "," << aDeltaY);
-//        //#ifdef AX_FORMAT_VST
-//        if (aWidget==w_WinSizer)
-//        {
-//          //trace("::: w_WinSizer" << aWidget);
-//          axRect R = mPlugin->getEditorRect();
-//          resizeWindow( R.w + aDeltaX, R.h + aDeltaY );
-//        }
-//        else
-//        {
-//        //#endif
-//          //trace("::: ! w_WinSizer" << aWidget);
-//          axEditor::onSize(aWidget, aDeltaX, aDeltaY);
-//        }
-//      }
-
     //--------------------------------------------------
     // do
     //--------------------------------------------------
 
+    // send timer tick to our bitmap page
+    // (the voxel landscape)
     virtual void doTimer(void)
       {
-        //trace("doTimer");
         w_Page_bitmaps->timer_tick();
       }
 
     //----------
 
+    // optional:
+    // close modal popup windiw when a key is pressed
     virtual void doKeyDown(int aKeyCode, int aState)
       {
         if (mModalWidget) unModal();
@@ -186,6 +182,8 @@ class axDemo_editor : public axEditor
 
     //----------
 
+    // optional:
+    // close modal popup windiw when a right mouse button is pressed
     virtual void doMouseDown(int aXpos, int aYpos, int aButton)
       {
         if (mModalWidget && (aButton==bu_Right)) unModal();

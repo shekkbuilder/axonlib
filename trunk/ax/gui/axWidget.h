@@ -285,7 +285,7 @@ class axWidget : public axWidgetListener
 
     //----------
 
-    virtual void setLimits(int aMinW, int aMinH, int aMaxW, int aMaxH)
+    virtual void setLimits(int aMinW, int aMinH, int aMaxW=999999, int aMaxH=999999)
       {
         mMinWidth   = aMinW;
         mMinHeight  = aMinH;

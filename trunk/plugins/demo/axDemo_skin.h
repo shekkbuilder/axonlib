@@ -16,34 +16,37 @@ class axDemo_skin : public axSkinBasic
 {
   friend class axDemo;
   private:
-    axBitmapLoader loader;
-    //axBitmap*       bitmap;
-    axSurface*     skinsrf;
+    axBitmapLoader m_Loader;
+    axSurface*     m_SkinSrf;
 
   public:
 
     axDemo_skin(axCanvas* aCanvas)
     : axSkinBasic(aCanvas)
       {
-        skinsrf = NULL;
+        m_SkinSrf = NULL;
       }
 
     virtual ~axDemo_skin()
       {
-        if (skinsrf) delete skinsrf;
+        if (m_SkinSrf) delete m_SkinSrf;
       }
+
+    //--------------------------------------------------
+
+    axSurface* getSurface(void) { return m_SkinSrf; }
 
     //--------------------------------------------------
     // internal
     //--------------------------------------------------
 
-    axSurface* loadBitmap(axEditor* aEditor, unsigned char* buffer, int size/*, int w, int h, int n*/)
+    axSurface* loadBitmap(axEditor* aEditor, unsigned char* aBuffer, int aSize)
       {
-        loader.decode(buffer,size);
-        int width = loader.getWidth();
-        int height = loader.getHeight();
+        m_Loader.decode(aBuffer,aSize);
+        int width = m_Loader.getWidth();
+        int height = m_Loader.getHeight();
         axBitmap* bitmap = aEditor->createBitmap(width,height);
-        bitmap->createBuffer( (char*)loader.getImage() );    // create bitmap buffer & copy data
+        bitmap->createBuffer( (char*)m_Loader.getImage() );    // create bitmap buffer & copy data
         bitmap->convertRgbaBgra();                           // -> bgr.a
         bitmap->setBackground(BACKGROUND_COLOR/*128,128,128*/);                  // replace alpha (bgr)
         bitmap->prepare();                                   // prepare bitmap for blitting
@@ -59,7 +62,7 @@ class axDemo_skin : public axSkinBasic
 
     void loadSkinBitmap(axEditor* aEditor, unsigned char* buffer, int size)
       {
-        skinsrf = loadBitmap(aEditor,buffer,size);
+        m_SkinSrf = loadBitmap(aEditor,buffer,size);
       }
 
 

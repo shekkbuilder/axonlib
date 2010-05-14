@@ -42,8 +42,9 @@ class axDemo_page_system : public wdgPanel
           int x = mRect.x;
           int y = mRect.y;
           aCanvas->setTextColor(text);
-          aCanvas->drawText(x+10,y+10,"cpuid"); aCanvas->drawText(x+80,y+10,mSystemInfo->cpuidstr);
-          aCanvas->drawText(x+10,y+25,"os");    aCanvas->drawText(x+80,y+25,mSystemInfo->os);
+          aCanvas->drawText(x+10,y+10,"os");      aCanvas->drawText(x+80,y+10,mSystemInfo->os);
+          aCanvas->drawText(x+10,y+25,"cpuid");   aCanvas->drawText(x+80,y+25,mSystemInfo->cpuidstr);
+          aCanvas->drawText(x+10,y+40,"endian");  aCanvas->drawText(x+80,y+40,mSystemInfo->bigend?"big":"little");
         }
       }
 

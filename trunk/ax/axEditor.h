@@ -273,7 +273,11 @@ class axEditor : public axWindow
         if (aMode<0)
         {
           axRect R = mPlugin->getEditorRect();
-          resizeWindow( R.w + aDeltaX, R.h + aDeltaY );
+          int w = R.w + aDeltaX; //mRect.w + aDeltaX;
+          int h = R.h + aDeltaY; //mRect.h + aDeltaY;
+          //axWidget::doSetSize(w,h);
+          //resizeWindow( R.w + aDeltaX, R.h + aDeltaY );
+          resizeWindow(w,h);
         }
         else axWindow::onSize(aWidget,aDeltaX,aDeltaY,aMode);
       }
