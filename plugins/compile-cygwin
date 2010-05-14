@@ -1,8 +1,0 @@
-#!/bin/bash
-
-echo "*** notes: compile for linux from cygwin"
-echo "get a cygwin->linux cross-compiler (gcc) that uses libstdc++6."
-echo "get a linux precompiled binaries of the 'X11-dev' package."
-echo "make sure that 'axonlib/ax' links to the X11 headers (a symbolic link will do)"
-echo "modify the compile (bash) script"
-echo "if the linker does not find X11 (-lX11), you can include the whole lib with '-L<path>'"

@@ -14,6 +14,15 @@
  * If not, see <http://axonlib.googlecode.com/>.
  */
 
+/*
+TODO:  - writing debug logs on windows e.g:
+         #define AX_LOG_FILE logfile.log
+         this is going to be useful for logging assertion of gui programs
+         and for logging _all_ stdout messages, since allocated consoles
+         ( with AllocConsole() ) are closed prematurely.
+       - investigate alternatives.
+*/
+
 /**
  * @file axDebug.h
  * \brief debugger methods
@@ -112,9 +121,9 @@
 
   #define _WIN32_WINNT 0x0501
 
-  #include <assert.h>
-  #include <iostream>
+  #include "core/axAssert.h"
   #include "core/axUtils.h"
+  #include <iostream>
   using namespace std;
 
   // case: windows
@@ -310,6 +319,8 @@
   #define trace(x) ((void)0)
   #define msg(x) ((void)0)
   #define assert(x) ((void)0)
+  #define axAssert(x) ((void)0)
+  #define axStaticAssert(x) ((void)0)
   #define wtrace(x) ((void)0)
   #define wdebug(x) ((void)0)
   inline void axDstdCreate(void) {}
@@ -320,6 +331,34 @@
 
 //----------------------------------------------------------------------
 #endif
+
+/*
+  lii:
+  
+  propsal:
+    
+  axAssert.h now includes two local methods for static and runtime assertion, 
+  based on GCC attributes and __builtin_ functions.
+  
+  i haven't examined closely the method bellow, but i've noticed it did not
+  compile with GCC:  
+  g++ -pedantic -W -Wall -Wextra test.cpp -O3 -s -o test.exe
+  StaticAssert(0, "error test");
+  
+  with 2 commond errors related to "#" (attribute to string) and to the
+  do{} while(0) sequence in macros.  
+  but looks like that even if this method is adapted, one of its major downsides
+  would be that it will bloat the code a lot when used.  
+  
+  on the other hand i wrote axStaticAssert() with assembler in mind and its as
+  lighweight as possible. it does have one issue:  
+    - non portable -> GCC 4.4.x or above (requires the 'exit' function
+      attribute)
+  
+  if version (user's) compiler is less than 4.4.x a warning is returned tha
+  axStaticAssert() is disabled. 
+  
+*/
 
 /*
 

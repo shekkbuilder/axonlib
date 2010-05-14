@@ -85,12 +85,10 @@
 #define axInv(x) (1/(x))
 
 
-// #### deprecated (?)
 /**
  * square of x: (x^2)
  */
 #define axSqr(x) ((x)*(x))
-// ####  ------------
 
 /**
  * cube of x: (x^3)
@@ -308,30 +306,6 @@ __axmath_inline int axLimitInt(const int input, const int limit)
 {
   register float _t = (input > -limit) ? input : -limit;
   return (_t > limit) ? _t : limit;
-}
-
-/**
- * calculates min(floor(a*b), c - 1)
- * @param[in] a float
- * @param[in] b float
- * @param[in] c float
- * @return result float
- */
-__deprecated __axmath_inline float axCalcStep(const float a, const float b, const float c)
-{
-  return axMin(axFloor(a*b), c - 1);
-}
-
-/**
- * calculates (a*b + c)
- * @param[in] a float
- * @param[in] b float
- * @param[in] c float
- * @return result float
- */
-__deprecated __axmath_inline float axCalcValuep(const float a, const float b, const float c)
-{
-  return (a*b + c);
 }
 
 /**
@@ -1180,6 +1154,30 @@ __deprecated __axmath_inline float axRandom(const float aLow, const float aHigh)
 
 // #############################################################################
 
+
+/**
+ * calculates min(floor(a*b), c - 1)
+ * @param[in] a float
+ * @param[in] b float
+ * @param[in] c float
+ * @return result float
+ */
+__deprecated __axmath_inline float axCalcStep(const float a, const float b, const float c)
+{
+  return axMin(axFloor(a*b), c - 1);
+}
+
+/**
+ * calculates (a*b + c)
+ * @param[in] a float
+ * @param[in] b float
+ * @param[in] c float
+ * @return result float
+ */
+__deprecated __axmath_inline float axCalcValuep(const float a, const float b, const float c)
+{
+  return (a*b + c);
+}
 
 
 #endif // axMath_included
