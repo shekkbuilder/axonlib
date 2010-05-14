@@ -6,12 +6,15 @@
 
 #--------------------------------------------------
 
-./compile_vst test/test_gain_nogui
-./compile_vst test/test_gain_gui
-./compile_vst test/test_gain_gui_skin
+./compile test/test_gain_nogui.cpp $1 $2
+./compile test/test_gain_gui.cpp $1 $2
+./compile test/test_gain_gui_skin.cpp $1 $2
+
+./compile demo/axDemo.cpp $1 $2
 
 #--------------------------------------------------
 
-./compile_vst ccernn/fx_tempodelay
-
+./compile ccernn/fx_distortion.cpp $1 $2
+./compile ccernn/fx_tempodelay.cpp $1 $2
+./compile ccernn/midi_transpose.cpp $1 $2
 
