@@ -473,73 +473,96 @@ __axstdlib_inline int axAtoi (register const char* s)
   return val;
 }
 
-/**
+/*
  * axFtoa
+ *
+ * TODO:
+ * - check for more optimizations?
+ *   - ~10 times faster than sprintf().
+ *   - ~3 times faster than vstsdk's float2string().
+ *   
+ * axFtoa(string, floatnumber, maximumchars, flag)
+ * 
+ * flag:
+ * 0 - show minus sign only
+ * 1 - show minus or plus sign
+ * 2 - show minus sign or indent positive values with one space
+ *  
+ * 'maximumchars' is the maximum number of characters including the
+ * sign and decimal point.
+ * allocated memory for 'string' should be >= 'maximumchars'
+ * 
  */
-__axstdlib_inline char* axFtoa (register char* st, register float f,
-  const unsigned int d = 2, const unsigned int fg = 0, const bool e = false)
+__axstdlib_inline char* axFtoa (register char* st, register double f,
+  register int maxlen = 5, const unsigned int fg = 0) //, const bool e = false)
 {
   register unsigned int i;
-  register int _z;
   register int exp = 0;
+  register int j = 0;
+  register int z;
   if (f < 0)
   {
-   *st++ = '-';    f = -f;
+   *st++ = '-';   j++;    f = -f;
   }
   else
-    if (fg & 1) *st++ = '+';
-    if (fg & 2) *st++ = ' ';
+  {
+    if (fg == 1) { *st++ = '+';  j++; }
+    if (fg == 2) { *st++ = ' ';  j++; }
+  }
   if (f)
   {
-    if (e)
+    while (f < 1.f)
     {
-      while (f < 1)
-      {
-        f *=10;   exp--;
-      }
-      while (f >= 10)
-      {
-        f /= 10;  exp++;
-      }
-    } // e
-  }
-  if (e)
-  {
-    while ( (exp > 0) && (exp < 7) )
-    {
-      *st++ = '0' + f;
-      _z = f;  f -= _z;  f *= 10;  exp--;
+      f *= 10.f;   exp--;
     }
-  } // e
-  *st++ = '0' + f;
-  _z = f;  f -= _z;  f *= 10;
-  if (d > 0)
-  {
-    *st++ = '.';
-    i = 0;
-    while (i < d)
+    while ( (f >= 10.f && exp < maxlen) || exp < 0 )
     {
-      *st++ = '0' + f;
-      _z = f;      f -= _z;      f *= 10;      i++;
+      f *= 0.1f;  exp++;
     }
   }
-  if (e)
+  if (exp > maxlen-(j+1))
   {
-    if (exp != 0)
+    maxlen -= j;
+    while (maxlen--)
+      *st++ = '9';
+  }
+  else
+  {
+    while ( (exp > 0) && (exp <= maxlen) && j < maxlen-1 )
     {
-      *st++ = 'e';
-      if (exp < 0)
-      {
-        *st++ = '-'; exp = -exp;
-      }
-      else
-        *st++ = '+';
-      register int expd10 = exp/10;
-      *st++ = '0' + expd10;
-      *st++ = '0' + (exp -= expd10 * 10);
+      *st++ = '0' + f;
+      z = f;  f -= z;  f *= 10.f;  exp--;  j++;
     }
-  } //e
-  *st++ = 0;
+    *st++ = '0' + f;
+    z = f;   f -= z;   f *= 10.f;   j++;
+    if (j < maxlen-1)
+    {
+      *st++ = '.';  j++;
+      i = 0;
+      while (j < maxlen)
+      {
+        *st++ = '0' + f;
+        z = f;   f -= z;    f *= 10.f;    i++;    j++;
+      }
+    }
+    *st++ = 0;
+  }
+  /*
+  // note: exponent output is disabled. instead it writes the maximum integer.  
+  if (exp != 0 && e)
+  {
+    *st++ = 'e';
+    if (exp < 0)
+    {
+      *st++ = '-'; exp = -exp;
+    }
+    else
+      *st++ = '+';
+    register int expd10 = exp/10;
+    *st++ = '0' + expd10;
+    *st++ = '0' + (exp -= expd10 * 10);
+  }
+  */
   return st;
 }
 
