@@ -27,7 +27,7 @@
 
 // -----------------------------------------------------------------------------
 // run time assertion
-bool _axAssert(const bool e, const char* file, const unsigned int line)
+bool _axAssert()
 #if (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 4)
   __attribute__(( optimize(0) ))
 #endif
