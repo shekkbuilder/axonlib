@@ -11,8 +11,8 @@ set vstpath=..\..\vstsdk24
 :: e.g: c:\axonlib\ax (or relative to the compile.cmd)
 set axpath=..\ax
 
-:: set path to mingw-bin, e.g: c:\mingw\bin\ (with dash at end)
-set mgwpath=
+:: set path to mingw-bin, e.g: c:\mingw\bin\g++ (with dash at end)
+set mgwpath=g++
 
 :: set warning flags
 set warn=-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long
@@ -38,6 +38,7 @@ set dbg=
 set res=
 set gccdbg=
 set cmdline=
+set v=
 
 :: check for file input
 if [%1]==[] goto syntax
@@ -57,12 +58,21 @@ if [%2]==[-nmv] set nmv=yes
 if [%3]==[-nmv] set nmv=yes
 if [%4]==[-nmv] set nmv=yes
 if [%5]==[-nmv] set nmv=yes
+if [%6]==[-nmv] set nmv=yes
+
+:: check for verbose
+if [%2]==[-v] set v=yes
+if [%3]==[-v] set v=yes
+if [%4]==[-v] set v=yes
+if [%5]==[-v] set v=yes
+if [%6]==[-v] set v=yes
 
 :: check for lib debug mode
 if [%2]==[-d] goto setlibdebug
 if [%3]==[-d] goto setlibdebug
 if [%4]==[-d] goto setlibdebug
 if [%5]==[-d] goto setlibdebug
+if [%6]==[-d] goto setlibdebug
 
 :getgccdebug
 :: check for gcc debug mode
@@ -70,6 +80,7 @@ if [%2]==[-g] goto setgccdebug
 if [%3]==[-g] goto setgccdebug
 if [%4]==[-g] goto setgccdebug
 if [%5]==[-g] goto setgccdebug
+if [%6]==[-g] goto setgccdebug
 
 :: get the tgt format
 :getformat
@@ -77,10 +88,12 @@ if [%2]==[-dll] goto dlltarget
 if [%3]==[-dll] goto dlltarget
 if [%4]==[-dll] goto dlltarget
 if [%5]==[-dll] goto dlltarget
+if [%6]==[-dll] goto dlltarget
 if [%2]==[-exe] goto exetarget
 if [%3]==[-exe] goto exetarget
 if [%4]==[-exe] goto exetarget
 if [%5]==[-exe] goto exetarget
+if [%6]==[-exe] goto exetarget
 goto :dlltarget
 
 :: set lib debug
@@ -100,14 +113,14 @@ goto getformat
 
 :: format is dll
 :dlltarget
-echo ---------------------------------------------------------------------------
+if not [%v%]==[] echo ---------------------------------------------------------------------------
 set ext=.dll
 set tgtformat=-DAX_FORMAT_VST -shared
 goto begin
 
 :: format is exe
 :exetarget
-echo ---------------------------------------------------------------------------
+if not [%v%]==[] echo ---------------------------------------------------------------------------
 if [%resfile%]==[] goto exenores
 echo preparing resources...
 if exist %resfile%.o del %resfile%.o
@@ -131,6 +144,7 @@ echo  -dll : create a dll (default)
 echo  -nmv : do not move result to ..\bin
 echo  -d : enable library debug mode
 echo  -g : enable gcc debug mode (-gstabs)
+echo  -v : verbose
 echo  -h : show this help message
 echo ---------------------------------------------------------------------------
 goto end
@@ -150,15 +164,15 @@ if exist %target% del %target%
 :: echo settings
 echo.
 echo * compiling windows binary for '%infile%'...
-echo * format is: %ext%
-echo * lib debug is: %dstatus%
-echo * gcc debug is: %gccdstatus%
+if not [%v%]==[] echo * format is: %ext%
+if not [%v%]==[] echo * lib debug is: %dstatus%
+if not [%v%]==[] echo * gcc debug is: %gccdstatus%
 
 :compile
-echo.
-set cmdline=%mgwpath%g++ -I%cmdpath%%axpath% -I%cmdpath%%vstpath% -mwindows %tgtformat% %opt% %warn% %gccdbg% %dbg% %linker% .\%infile% %res% -o .\%target%
+if not [%v%]==[] echo.
+set cmdline=%mgwpath% -I%cmdpath%%axpath% -I%cmdpath%%vstpath% -mwindows %tgtformat% %opt% %warn% %gccdbg% %dbg% %linker% .\%infile% %res% -o .\%target%
 :: show cmdline
-echo command line is: %cmdline% && echo.
+if not [%v%]==[] echo command line is: %cmdline% && echo.
 :: call g++
 %cmdline%
 
@@ -172,18 +186,17 @@ rem if exist %target% %mgwpath%strip --strip-all %target%
 
 :printsize
 :: target file size
-for %%I in (%target%) do echo * filesize: %%~zI bytes
+if not [%v%]==[] for %%I in (%target%) do echo * filesize: %%~zI bytes
 
 :: check if '-nmv'
 if not [%nmv%]==[] goto done
 if not exist %~p0..\bin md %~p0..\bin
-if exist %target% echo. && echo moving '%target%' to '%~p0..\bin'
+if exist %target% if not [%v%]==[] echo. && echo moving '%target%' to '%~p0..\bin'
 if exist %target%	move %target% %~p0..\bin
 :: --------------------------
 :: done
 :done
-echo. && echo * done
-echo ---------------------------------------------------------------------------
+if not [%v%]==[] echo. && echo * done
 goto end
 
 :: errors
@@ -209,3 +222,4 @@ echo ### ERR: cannot create resource file '%resfile%.o'
 goto end
 :: ----------------------------------------------------------------------------
 :end
+if not [%v%]==[] echo ---------------------------------------------------------------------------
