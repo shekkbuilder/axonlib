@@ -1,6 +1,0 @@
-#!/bin/bash
-
-rm *.so
-rm *.dll
-
-

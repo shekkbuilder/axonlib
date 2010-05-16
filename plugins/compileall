@@ -1,20 +1,30 @@
 #!/bin/bash
+# ==============================================================================
+# linux - axonlib - compileall - bash
+# ==============================================================================
 
-# brute force!
-# would be much better with a "for all .cpp files in directory, do compile..."
-# ...later...
+echo ""
+echo "axonlib 'compileall' script for linux"
+echo "-------------------------------------------------------------------------"
+echo "syntax: "
+echo " ./compileall [path (no '/' at end)] [compile flags (see ./compile)]"
 
-#--------------------------------------------------
+if [ -d "$1/" ];
+then
+  echo ""
+else
+  echo ""
+  echo "## ERR: path not found - '$1/'"
+  exit
+fi
 
-./compile test/test_gain_nogui.cpp $1 $2
-./compile test/test_gain_gui.cpp $1 $2
-./compile test/test_gain_gui_skin.cpp $1 $2
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+for _f in ${1}/*
+do
+  ./compile "$_f" $2 $3 $4 $5 $6 $7 $8 $9 $10
+done
+IFS=$SAVEIFS
 
-./compile demo/axDemo.cpp $1 $2
-
-#--------------------------------------------------
-
-./compile ccernn/fx_distortion.cpp $1 $2
-./compile ccernn/fx_tempodelay.cpp $1 $2
-./compile ccernn/midi_transpose.cpp $1 $2
-
+echo ""
+echo "** all done!"
