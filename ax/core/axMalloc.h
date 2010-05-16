@@ -18,7 +18,8 @@
   axMalloc.h
 
   ==============================================================================
-  Axonlib's own memory allocation routines: axMalloc, axRealloc, axFree
+  Axonlib's own memory allocation routines:
+  axMalloc, axCalloc, axRealloc, axFree
   ==============================================================================
   based on code by:
     DJ Delorie (DJGPP)
@@ -71,8 +72,6 @@ TODO:
 
 #ifndef axMalloc_included
 #define axMalloc_included
-
-#include "axStdlib.h"
 
 #ifdef AX_HOT_INLINE_MALLOC
   #define __axmalloc_inline __hotinline
@@ -186,7 +185,7 @@ TODO:
   routines (malloc1.c)
 */
 
-unsigned char *buckets[32] = {0};
+unsigned char* buckets[32] = {0};
 unsigned int bucket2size[32] = {0};
 
 static __axmalloc_inline unsigned int size2bucket(unsigned size)
@@ -194,13 +193,13 @@ static __axmalloc_inline unsigned int size2bucket(unsigned size)
   int rv = 0x1f;
   int bit = ~0x10;
   if (size < 4) size = 4;
-  size = (size+3)&~3;
+  size = (size + 3) & ~3;
   unsigned int i = 0;
   while (i<5)
   {
-    if (bucket2size[rv&bit] >= size)
+    if (bucket2size[rv & bit] >= size)
       rv &= bit;
-    bit>>=1;
+    bit >>= 1;
     i++;
   }
   return rv;
@@ -209,9 +208,9 @@ static __axmalloc_inline unsigned int size2bucket(unsigned size)
 static __axmalloc_inline void init_buckets()
 {
   register unsigned int b = 0;
-  while (b<32)
+  while (b < 32)
   {
-    bucket2size[b] = (1<<b);
+    bucket2size[b] = (1 << b);
     b++;
   }
 }
@@ -246,6 +245,25 @@ __axmalloc_inline void* axMalloc (register unsigned int size)
   *(unsigned int*)rv = b;
   rv += 4;
   return (void*)rv;
+}
+
+/**
+ * axCalloc
+ */ 
+__axmalloc_inline void* axCalloc (register const unsigned int n,
+  register unsigned int size)
+{
+  size *= n;
+  if (size <= 0)
+    return NULL;
+  else
+  {
+    void* ptr = axMalloc(size);
+    register char* cptr = (char*) ptr;
+    while (size--)
+      *cptr++ = 0;
+    return ptr;
+  }
 }
 
 /**
