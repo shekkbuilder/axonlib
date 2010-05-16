@@ -11,14 +11,17 @@ set vstpath=..\..\vstsdk24
 :: e.g: c:\axonlib\ax (or relative to the compile.cmd)
 set axpath=..\ax
 
-:: set path to mingw-bin, e.g: c:\mingw\bin\g++ (with dash at end)
+:: set g++ path, e.g: c:\mingw\bin\g++
 set mgwpath=g++
+
+:: set windres path, e.g: c:\mingw\bin\windres
+set windrespath=windres
 
 :: set warning flags
 set warn=-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long
 
 :: set resource file (leave blank for no resources)
-set resfile=rc_default.rc
+set resfile="rc_default.rc"
 
 :: set optimization flags
 set opt=-msse -mfpmath=sse,387 -O3 -Os
@@ -47,7 +50,15 @@ if [%1]==[-h] goto syntax
 :: check for cpp file
 set infile=%1
 set srcext=.cpp
-if not "%infile:~-4%"=="%srcext%" goto nocpp
+
+:: remove quotes
+set infile=###%infile%###
+set infile=%infile:"###=%
+set infile=%infile:###"=%
+set infile=%infile:###=%
+
+:: check extesion
+if not "%infile:~-4%"=="%srcext%" goto nocpp 
 
 :: check includes
 if not exist %axpath% goto noax
@@ -124,7 +135,7 @@ if not [%v%]==[] echo ----------------------------------------------------------
 if [%resfile%]==[] goto exenores
 echo preparing resources...
 if exist %resfile%.o del %resfile%.o
-%mgwpath%windres -i %resfile% -o %resfile%.o
+%windrespath% -i %resfile% -o %resfile%.o
 if not exist %resfile%.o goto nores
 set res=%resfile%.o
 :exenores
@@ -170,14 +181,14 @@ if not [%v%]==[] echo * gcc debug is: %gccdstatus%
 
 :compile
 if not [%v%]==[] echo.
-set cmdline=%mgwpath% -I%cmdpath%%axpath% -I%cmdpath%%vstpath% -mwindows %tgtformat% %opt% %warn% %gccdbg% %dbg% %linker% .\%infile% %res% -o .\%target%
+set cmdline=%mgwpath% -I%cmdpath%%axpath% -I%cmdpath%%vstpath% -mwindows %tgtformat% %opt% %warn% %gccdbg% %dbg% %linker% "%infile%" %res% -o "%target%"
 :: show cmdline
 if not [%v%]==[] echo command line is: %cmdline% && echo.
 :: call g++
 %cmdline%
 
 :: target missing -> error
-if not exist %target% echo. && echo # ERR: not compiled! && goto done
+if not exist "%target%" echo. && echo # ERR: not compiled! && goto done
 if not [%gccdstatus%]==[] goto printsize
 
 :: call strip (no need if '-s' is passed to g++)
@@ -186,13 +197,13 @@ rem if exist %target% %mgwpath%strip --strip-all %target%
 
 :printsize
 :: target file size
-if not [%v%]==[] for %%I in (%target%) do echo * filesize: %%~zI bytes
+if not [%v%]==[] for %%I in ("%target%") do echo * filesize: %%~zI bytes
 
 :: check if '-nmv'
 if not [%nmv%]==[] goto done
 if not exist %~p0..\bin md %~p0..\bin
-if exist %target% if not [%v%]==[] echo. && echo moving '%target%' to '%~p0..\bin'
-if exist %target%	move %target% %~p0..\bin
+if exist "%target%" if not [%v%]==[] echo. && echo moving '%target%' to '%~p0..\bin'
+if exist "%target%"	move "%target%" %~p0..\bin
 :: --------------------------
 :: done
 :done

@@ -77,7 +77,7 @@ function showerr
   exit
 }
 
-# begin checking parameters
+# ------------------------- begin checking parameters
 if [ "$1" == "" ] || [ "$1" == "-h" ];
 then
   # ------------------------- show help
@@ -156,15 +156,15 @@ else
     fi
         
     # ------------------------- resource file (mingw32-windres)
-    if [ "$resfile" != "" ] && [ "$compiler" == "$mingw" ];
+    if [ "{$resfile}" != "" ] && [ "$compiler" == "$mingw" ];
     then
       echo "preparing resources..."
-      if [ -e "$resfile".o ];
+      if [ -e "{$resfile}".o ];
       then
-        rm -f "$resfile".o
+        rm -f "{$resfile}".o
       fi
-      `$windres -i $resfile -o $resfile.o`
-      if [ -e "$resfile".o ];
+      echo $windres -i "{$resfile}" -o "{$resfile.o}" | sh      
+      if [ -e "{$resfile}".o ];
       then    
         res="$resfile".o
       else
@@ -218,14 +218,14 @@ else
     fi
     
     # ------------------------- command line (compile)
-    _cmdline="$compiler $1 -o $file$fmt_ext -I$vstpath -I$axpath $tgt $res $gccdebug $libdebug $warn $opt $linker $format"
+    _cmdline="$compiler \"${1}\" -o \"${file}\"\"${fmt_ext}\" -I$vstpath -I$axpath $tgt $res $gccdebug $libdebug $warn $opt $linker $format"
     if [ "$v" == "yes" ];
     then
         echo ""
         echo "command line is: $_cmdline"    
         echo ""
     fi
-    `$_cmdline`
+    echo $_cmdline | sh
     
     # ------------------------- check if compiled
     if [ -e "$file$fmt_ext" ];
@@ -233,7 +233,7 @@ else
       # ------------------------- print file size
       if [ "$v" == "yes" ];
       then              
-        size=$(stat -c%s "$file$fmt_ext")
+        size=$(stat -c%s "${file}${fmt_ext}")
         echo ""      
         echo "* filesize: $size bytes"
       fi
@@ -258,7 +258,7 @@ else
         then
           echo "* moving '$file$fmt_ext' to '../bin'"
         fi 
-        `mv $file$fmt_ext ../bin`
+        `mv "${file}${fmt_ext}" ../bin`
       fi
       
       # ------------------------- done
