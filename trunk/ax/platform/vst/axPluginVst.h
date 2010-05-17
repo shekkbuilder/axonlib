@@ -321,8 +321,9 @@ class axPluginVst : public axPluginBase
       {
         if (audioMaster)
         {
-          VstIntPtr res = audioMaster (&aeffect, audioMasterGetSampleRate, 0, 0, 0, 0);
+          VstIntPtr res = audioMaster(&aeffect, audioMasterGetSampleRate, 0, 0, 0, 0);
           if (res>0) mSampleRate = (float)res;
+          //trace(res);
         }
         return mSampleRate;
       }

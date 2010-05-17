@@ -13,16 +13,16 @@
 class axDemo : public axPlugin
 {
   private:
-    axDemo_editor* mEditor;
-    axDemo_graph*  mGraph;
+    axDemo_editor* m_Editor;
+    axDemo_graph*  m_Graph;
     axParameter   *p1,*p2,*p3,*p4,*p5;
   public:
 
     axDemo(axContext* aContext)
     : axPlugin(aContext, pf_HasEditor)
       {
-        mGraph = new axDemo_graph("axDemo graph");
-        mGraph->doCompile();
+        m_Graph = new axDemo_graph("axDemo graph");
+        m_Graph->doCompile();
         describe("axDemo","ccernn","axonlib example",0,AX_MAGIC+0xFFFF);
         setupAudio(2,2,false);
         setupEditor(500,500);
@@ -36,13 +36,10 @@ class axDemo : public axPlugin
         //trace("cpu caps: " << caps);
 
   char buffer[17];
-
   axFtoa(buffer,PI);
   trace("axFtoa(PI) = '" << buffer << "'");
-
   axItoa(buffer,418);
   trace("axItoa(418) = '" << buffer << "'");
-
   if (axBigEndian()) trace("big endian");
   if (axLittleEndian()) trace("little endian");
 
@@ -52,7 +49,7 @@ class axDemo : public axPlugin
 
     virtual ~axDemo()
       {
-        delete mGraph;
+        delete m_Graph;
       }
 
     //---------- plugin ----------
@@ -107,10 +104,15 @@ class axDemo : public axPlugin
 
     //---------- audio ----------
 
-    //virtual bool  doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize)
-    //  {
-    //    return false;
-    //  }
+    virtual bool  doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize)
+      {
+        updateTimeInfo();
+        if (m_Editor)
+        {
+          m_Editor->w_Page_sync->update( getPlayState(), getSamplePos(), getSampleRate(), getBeatPos(), getTempo() );
+        }
+        return false;
+      }
 
     //----------
 
@@ -140,16 +142,16 @@ class axDemo : public axPlugin
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
         trace(":: doOpenEditor");
-        mEditor = new axDemo_editor(this,aContext,mEditorRect,AX_WIN_DEFAULT/*AX_WIN_MSGTHREAD | AX_WIN_MSGDELETE*/ );
-        mEditor->setup(getSystemInfo(),getHostInfo());
-        mEditor->connect(mEditor->w_Page_widgets->w1,p1);
-        mEditor->connect(mEditor->w_Page_widgets->w2,p2);
-        mEditor->connect(mEditor->w_Page_widgets->w3,p3);
-        mEditor->connect(mEditor->w_Page_widgets->w4,p4);
-        mEditor->connect(mEditor->w_Page_widgets->w5,p5);
-        mEditor->show();
+        m_Editor = new axDemo_editor(this,aContext,mEditorRect,AX_WIN_DEFAULT/*AX_WIN_MSGTHREAD | AX_WIN_MSGDELETE*/ );
+        m_Editor->setup(getSystemInfo(),getHostInfo());
+        m_Editor->connect(m_Editor->w_Page_widgets->w1,p1);
+        m_Editor->connect(m_Editor->w_Page_widgets->w2,p2);
+        m_Editor->connect(m_Editor->w_Page_widgets->w3,p3);
+        m_Editor->connect(m_Editor->w_Page_widgets->w4,p4);
+        m_Editor->connect(m_Editor->w_Page_widgets->w5,p5);
+        m_Editor->show();
         //mEditor->startTimer(500);
-        return mEditor;
+        return m_Editor;
       }
 
     //----------
@@ -158,9 +160,9 @@ class axDemo : public axPlugin
       {
         trace(":: doCloseEditor");
         //mEditor->stopTimer();
-        mEditor->hide();
-        delete mEditor;
-        mEditor = NULL;
+        m_Editor->hide();
+        delete m_Editor;
+        m_Editor = NULL;
       }
 
     //----------
@@ -170,7 +172,7 @@ class axDemo : public axPlugin
     virtual void doIdleEditor()
       {
         #ifndef AX_WIDGET_NOUPDATELIST
-        if (mEditor) mEditor->redrawUpdates();
+        if (m_Editor) m_Editor->redrawUpdates();
         #endif
         //trace("doIdleEditor");
       }

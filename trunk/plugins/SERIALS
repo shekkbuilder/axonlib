@@ -15,6 +15,7 @@ ccernn:
   1001      fx_tempodelay
   1002      midi_transpose
   1003      fx_distortion
+  1004      fx_grains
 
 ports:
 

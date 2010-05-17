@@ -480,22 +480,23 @@ __axstdlib_inline int axAtoi (register const char* s)
  * - check for more optimizations?
  *   - ~10 times faster than sprintf().
  *   - ~3 times faster than vstsdk's float2string().
- *   
+ *
  * axFtoa(string, floatnumber, maximumchars, flag)
- * 
+ *
  * flag:
  * 0 - show minus sign only
  * 1 - show minus or plus sign
  * 2 - show minus sign or indent positive values with one space
- *  
+ *
  * 'maximumchars' is the maximum number of characters including the
  * sign and decimal point.
  * allocated memory for 'string' should be >= 'maximumchars'
- * 
+ *
  */
 __axstdlib_inline char* axFtoa (register char* st, register double f,
   register int maxlen = 5, const unsigned int fg = 0) //, const bool e = false)
 {
+  char* ret = st;
   register unsigned int i;
   register int exp = 0;
   register int j = 0;
@@ -548,7 +549,7 @@ __axstdlib_inline char* axFtoa (register char* st, register double f,
     *st++ = 0;
   }
   /*
-  // note: exponent output is disabled. instead it writes the maximum integer.  
+  // note: exponent output is disabled. instead it writes the maximum integer.
   if (exp != 0 && e)
   {
     *st++ = 'e';
@@ -563,7 +564,8 @@ __axstdlib_inline char* axFtoa (register char* st, register double f,
     *st++ = '0' + (exp -= expd10 * 10);
   }
   */
-  return st;
+  //return st;
+  return ret;
 }
 
 /**
