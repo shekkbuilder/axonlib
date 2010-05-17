@@ -27,6 +27,7 @@
 
 //#include "..\plugins\ccernn\midi_transpose.cpp"
 //#include "..\plugins\ccernn\fx_distortion.cpp"
+//#include "..\plugins\ccernn\fx_grains.cpp"
 
 //----- gui -----
 
