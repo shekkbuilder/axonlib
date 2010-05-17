@@ -141,7 +141,7 @@ TODO:  - writing debug logs on windows e.g:
   #ifdef AX_DEBUG_LOG
     fstream axDlog (AX_DEBUG_LOG, ios::out);
     #define axDfstream(x) \
-      axDlog << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << endl;
+      axDlog << x << endl;
   #else
     bool axDlog;
     #define axDfstream(x) (void(0))
@@ -325,6 +325,7 @@ TODO:  - writing debug logs on windows e.g:
 
   // case: linux
   #ifdef linux
+    #define _trace(x) { axDcout_nfl(x); if (axDlog) axDfstream(x); }
     #define trace(x)  { axDcout(x); if (axDlog) axDfstream(x); }
     #define wtrace(x) { axDcout(x); if (axDlog) axDfstream(x); }
     #define msg(x)    { axDprintf(x); if (axDlog) axDfstream(x); }
