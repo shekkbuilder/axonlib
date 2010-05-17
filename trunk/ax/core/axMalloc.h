@@ -62,11 +62,9 @@ STATISTICS:
         axMalloc.h ~= 400 bytes
     ============================================================================
 TODO:
-  - conclude if more speed optimizations are possible
   - fragmentation level tests
   - thread safety tests (disable the mutex and make the winapi calls directly)
-  - check if possible to use implementation with axMutex
-  - linux: research on mmap vs sbrk in regard of speed
+  - check if possible to use implementation with axMutex  
     ============================================================================
 */
 
@@ -82,6 +80,7 @@ TODO:
 #ifdef AX_NO_MALLOC     // no axMalloc - use stdlib.h malloc
   #include "stdlib.h"
   #define axMalloc    malloc
+  #define axCalloc    calloc
   #define axRealloc   realloc
   #define axFree      free
 
@@ -247,6 +246,7 @@ __axmalloc_inline void* axMalloc (register unsigned int size)
   return (void*)rv;
 }
 
+
 /**
  * axCalloc
  */ 
@@ -318,10 +318,11 @@ __axmalloc_inline void* axRealloc (void* _ptr,
 // enable local debug
 // -----------------------------------------------------------------------------
 #if defined (AX_DEBUG) && defined (AX_DEBUG_MEM)
-  #include <iostream>
-
+  #include "core/axDebug.h"
+  #include "core/axUtils.h"
+  
   #ifdef AX_NO_MALLOC
-    #include "malloc.h" // malloc_usable_size() / _msize
+    #include "malloc.h"
   #endif
 
   #ifdef AX_WIN32
@@ -330,29 +331,9 @@ __axmalloc_inline void* axRealloc (void* _ptr,
 
   static unsigned int _axMemTotal = 0;
 
-  // inline _axStrrchr
-  __axmalloc_inline char* _axStrrchr (register const char* s, const int c)
-  {
-    char* p = NULL;
-    while (*s++)
-      if (*s == c)
-        p = (char*) s;
-    return p;
-  }
-
-  // inline _axGetFileName
-  __axmalloc_inline const char* _axGetFileName (const char* path)
-  {
-    const char *slash, *backslash;
-    slash = _axStrrchr(path, '/');
-    backslash = _axStrrchr(path, '\\') + 1;
-    if (slash) return slash + 1;
-      return backslash;
-  }
-
   // malloc debug
   __axmalloc_inline void* axMallocDebug
-  (register unsigned int _size, const char* _file, const unsigned int _line)
+    (register unsigned int _size, const char* _file, const unsigned int _line)
   {
     #ifdef AX_NO_MALLOC
       void* _ptr = malloc(_size);
@@ -361,19 +342,59 @@ __axmalloc_inline void* axRealloc (void* _ptr,
       void* _ptr = axMalloc(_size);
       _axMemTotal += _size;
     #endif
-    std::cout << "[" << _axGetFileName(_file) << "|" << _line << "] " <<
+    
+    // output cout / log
     #ifdef AX_NO_MALLOC
-      "malloc, " <<
+      const char _name[] = "malloc, ";
     #else
-      "axMalloc, " <<
+      const char _name[] = "axMalloc, ";
     #endif
-    (void*)&_ptr << ", " << _size << ", " << _axMemTotal << "\n";
+    
+    _trace
+    (
+      "[" << axGetFileName(_file) << "|" << _line << "] " << _name <<
+      (void*)&_ptr << ", " << _size << ", " << _axMemTotal
+    );
+    
+    return _ptr;
+  }
+  
+  // calloc debug
+  __axmalloc_inline void* axCallocDebug
+    (register const unsigned int _n, register unsigned int _size,
+    const char* _file, const unsigned int _line)
+  {
+    #ifdef AX_NO_MALLOC
+      void* _ptr = calloc(_n, _size);      
+      unsigned int size = malloc_usable_size(_ptr);
+      _axMemTotal += size;
+    #else
+      void* _ptr = axCalloc(_n, _size);
+      unsigned int size = _n*_size;
+      _axMemTotal += size;
+    #endif
+    
+    // output cout / log
+    #ifdef AX_NO_MALLOC
+      const char _name[] = "calloc, ";
+    #else
+      const char _name[] = "axCalloc, ";
+    #endif
+    
+    _trace
+    (
+      "[" << axGetFileName(_file) << "|" << _line << "] " << _name <<
+      (void*)&_ptr << ", " << _n << ", " << _size << ", " << size << ", " <<
+      _axMemTotal
+    );
+    
     return _ptr;
   }
 
   // realloc debug
   __axmalloc_inline void* axReallocDebug
-  (void* _ptr, register const unsigned int _size, const char* _file, const unsigned int _line)
+    (void* _ptr, register const unsigned int _size, const char* _file,
+    const unsigned int _line)
   {
     #ifdef AX_NO_MALLOC
       unsigned int old_size = malloc_usable_size(_ptr);
@@ -387,20 +408,27 @@ __axmalloc_inline void* axRealloc (void* _ptr,
       _axMemTotal -= old_size;
       _axMemTotal += _size;
     #endif
-    std::cout << "[" << _axGetFileName(_file) << "|" << _line << "] " <<
+    
+    // output cout / log
     #ifdef AX_NO_MALLOC
-      "realloc, " <<
+      const char _name[] = "realloc, ";
     #else
-      "axRealloc, " <<
+      const char _name[] = "axRealloc, ";
     #endif
-    (void*)&_ptr << ", " << (void*)&_ptr0 <<
-    ", " << _size << ", " << _axMemTotal << "\n";
+    
+    _trace
+    (
+      "[" << axGetFileName(_file) << "|" << _line << "] " << _name <<
+      (void*)&_ptr << ", " << (void*)&_ptr0 <<
+      ", " << _size << ", " << _axMemTotal
+    );
+   
     return _ptr0;
   }
 
   // free debug
   __axmalloc_inline void axFreeDebug
-  (void* _ptr, const char* _file, const unsigned int _line)
+    (void* _ptr, const char* _file, const unsigned int _line)
   {
     unsigned int _size;
     #ifdef AX_NO_MALLOC
@@ -410,13 +438,20 @@ __axmalloc_inline void* axRealloc (void* _ptr,
       _size = bucket2size[*(unsigned int*)(ptr-4)];
     #endif
     _axMemTotal -= _size;
-    std::cout << "[" << _axGetFileName(_file) << "|" << _line << "] " <<
+    
+    // output cout / log
     #ifdef AX_NO_MALLOC
-      "free, " <<
+      const char _name[] = "free, ";
     #else
-      "axFree, " <<
+      const char _name[] = "axFree, ";
     #endif
-    (void*)&_ptr << ", " << _size << ", " << _axMemTotal << "\n";
+    
+    _trace
+    (
+      "[" << axGetFileName(_file) << "|" << _line << "] " << _name <<
+      (void*)&_ptr << ", " << _size << ", " << _axMemTotal
+    );
+    
     #ifdef AX_NO_MALLOC
       free(_ptr);
     #else
@@ -426,19 +461,22 @@ __axmalloc_inline void* axRealloc (void* _ptr,
 
   // clear previous definitions (if any)
   #ifdef AX_NO_MALLOC
-    #undef axMalloc
+    #undef axMalloc    
+    #undef axCalloc
     #undef axRealloc
     #undef axFree
   #endif
 
   // macro overrides here
   #define axMalloc(s)     axMallocDebug   (s, __FILE__, __LINE__)
-  #define axRealloc(p, s) axReallocDebug  (p, s, __FILE__, __LINE__)
+  #define axCalloc(n, s)  axCallocDebug   (n, s, __FILE__, __LINE__)
+  #define axRealloc(p, s) axReallocDebug  (p, s, __FILE__, __LINE__)  
   #define axFree(p)       axFreeDebug     (p, __FILE__, __LINE__)
 
   // same for the standard methods if 'AX_NO_MALLOC'
   #ifdef AX_NO_MALLOC
     #define malloc(s)       axMallocDebug   (s, __FILE__, __LINE__)
+    #define calloc(n, s)    axCallocDebug   (n, s, __FILE__, __LINE__)
     #define realloc(p, s)   axReallocDebug  (p, s, __FILE__, __LINE__)
     #define free(p)         axFreeDebug     (p, __FILE__, __LINE__)
   #endif

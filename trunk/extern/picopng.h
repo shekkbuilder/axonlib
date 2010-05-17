@@ -1134,12 +1134,16 @@ PNG_info_t *PNG_decode(const uint8_t *in, uint32_t size)
 // override with debug
 #if defined (AX_DEBUG_PNG) && defined (AX_DEBUG)
   #include "core/axUtils.h"
+  #include "core/axDebug.h"
 
   inline PNG_info_t *PNG_decode_DEBUG(const uint8_t *in, uint32_t size,
   const char* _file, const unsigned int _line)
   {
-    cout << "[" << axGetFileName(_file) << "|" << _line <<
-    "] PNG_decode, " <<  (void*)&in << ", " << size << endl;
+    _trace
+    (
+      "[" << axGetFileName(_file) << "|" << _line << "] PNG_decode, " <<
+      (void*)&in << ", " << size
+    );    
     return PNG_decode(in, size);
   }
 
