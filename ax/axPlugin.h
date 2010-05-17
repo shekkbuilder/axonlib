@@ -6,9 +6,8 @@
 
 #include "axConfig.h"
 #include "axDefines.h"
-#include "core/axDebug.h" // < - should be define before Utils because of _WINNT
-#include "axStdlib.h"
 #include "core/axMalloc.h"
+#include "core/axDebug.h"
 #include "core/axUtils.h"
 #include "platform/axContext.h"
 #include "base/axPluginBase.h"
@@ -64,7 +63,7 @@ class axPlugin : public axPluginImpl, public axParameterListener
           #ifdef AX_DEBUG_AUTO_WIN
             axDwinCreate();
           #endif
-        #endif
+        #endif        
         //updateSampleRate();
         //updateTimeInfo();
       }
@@ -84,6 +83,12 @@ class axPlugin : public axPluginImpl, public axParameterListener
             axDstdDestroy();
           #endif
         #endif
+        
+        // close log file stream
+        #if defined AX_DEBUG && defined AX_DEBUG_LOG
+          if (axDlog)
+            axDlog.close();
+        #endif                
       }
 
     //--------------------------------------------------

@@ -43,6 +43,8 @@
   - more performance tests. check if methods in here are redundant in regard
     of speed. (slower than the ones in stdlib). so far all have been
     more efficient.
+  - make the some of the methods variable/parameter naming and general syntax
+    a bit more consistent
   ==============================================================================
 */
 
@@ -408,6 +410,9 @@ __axstdlib_inline char* axStrtok (register char *str, const char *spr)
 __axstdlib_inline char* axItoa (register char* str, int n,
   unsigned int base = 10)
 {
+  // todo: tweak a bit to make it better (faster)..
+  if (!str)
+    return NULL;  
   char tmp[33];
   char* _tmp = tmp;
   register int i;
@@ -430,8 +435,9 @@ __axstdlib_inline char* axItoa (register char* str, int n,
     else
       *_tmp++ = i + 'a' - 10;
   }
-  if (str == 0)
-    str = (char*) axMalloc( (_tmp - tmp) + s + 1 );
+  // --
+  //if (!str)
+  //  str = (char*) axMalloc( (_tmp - tmp) + s + 1 );
   sp = str;
   if (s)
     *sp++ = '-';
@@ -446,6 +452,8 @@ __axstdlib_inline char* axItoa (register char* str, int n,
  */
 __axstdlib_inline int axAtoi (register const char* s)
 {
+  if (!s)
+    return NULL;
   const char digits[] = "0123456789";
   register unsigned val = 0;
   register int neg = 0;
@@ -453,7 +461,7 @@ __axstdlib_inline int axAtoi (register const char* s)
     s++;
   if (*s == '-')
   {
-    neg=1; s++;
+    neg = 1; s++;
   }
   else if (*s == '+')
     s++;
@@ -496,8 +504,9 @@ __axstdlib_inline int axAtoi (register const char* s)
 __axstdlib_inline char* axFtoa (register char* st, register double f,
   register int maxlen = 5, const unsigned int fg = 0) //, const bool e = false)
 {
+  if (!st)
+    return NULL;
   char* ret = st;
-  register unsigned int i;
   register int exp = 0;
   register int j = 0;
   register int z;
@@ -521,7 +530,7 @@ __axstdlib_inline char* axFtoa (register char* st, register double f,
       f *= 0.1f;  exp++;
     }
   }
-  if (exp > maxlen-(j+1))
+  if (exp > maxlen - ( j + 1 ))
   {
     maxlen -= j;
     while (maxlen--)
@@ -539,7 +548,7 @@ __axstdlib_inline char* axFtoa (register char* st, register double f,
     if (j < maxlen-1)
     {
       *st++ = '.';  j++;
-      i = 0;
+      register unsigned int i = 0;
       while (j < maxlen)
       {
         *st++ = '0' + f;

@@ -124,7 +124,28 @@ TODO:  - writing debug logs on windows e.g:
   #include "core/axAssert.h"
   #include "core/axUtils.h"
   #include <iostream>
+  #include <fstream>
   using namespace std;
+
+  // printf / cout / fstream / macros
+  #define axDprintf(x) \
+    printf("[%s|%ui] %s\n", axGetFileName(__FILE__), __LINE__, x)
+  #define axDcout(x) \
+    cout << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << endl; \
+    cout.flush()
+  #define axDcout_nfl(x) \
+    cout << x << endl; \
+    cout.flush()    
+    
+  // log file
+  #ifdef AX_DEBUG_LOG
+    fstream axDlog (AX_DEBUG_LOG, ios::out);
+    #define axDfstream(x) \
+      axDlog << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << endl;
+  #else
+    bool axDlog;
+    #define axDfstream(x) (void(0))
+  #endif
 
   // case: windows
   #ifdef WIN32
@@ -223,7 +244,7 @@ TODO:  - writing debug logs on windows e.g:
     // -------------------
     // window debug macro
     #define wdebug(x) \
-      if (axDtext != NULL) \
+      if (axDtext) \
       { \
         axDoss << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << "\r\n"; \
         wdebug_write(); \
@@ -251,7 +272,7 @@ TODO:  - writing debug logs on windows e.g:
     // create console
     void axDstdCreate(void)
     {
-      if (axHcrt == 0)
+      if (!axHcrt)
       {
         // allocate console
         AllocConsole();
@@ -260,7 +281,7 @@ TODO:  - writing debug logs on windows e.g:
         // get handle for console
         // requires _WIN32_WINNT >= 0x0500 (set before windows.h)
         HWND hCw = GetConsoleWindow();
-        if(hCw != NULL)
+        if(hCw)
 	      {
           // ENABLE_EXTENDED_FLAGS = 0x0080
           // ENABLE_QUICK_EDIT_MODE = 0x0040
@@ -277,7 +298,7 @@ TODO:  - writing debug logs on windows e.g:
           SetWindowPos(hCw, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
           // disable close button
 		      HMENU hMenu = GetSystemMenu(hCw, 0);
-		      if(hMenu != NULL)
+		      if(hMenu)
 		      {
             DeleteMenu(hMenu, SC_CLOSE, MF_BYCOMMAND);
             DrawMenuBar(hCw);
@@ -294,18 +315,19 @@ TODO:  - writing debug logs on windows e.g:
       }
     }
 
-    // --------------
-    #define trace(x) { if (axHcrt != 0) { cout << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << endl; cout.flush(); } }
-    #define msg(x) { if (axHcrt != 0) { printf("[%s|%ui] %s\n", axGetFileName(__FILE__), __LINE__, x); } }
-    #define wtrace(x) { cout << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << endl; cout.flush(); }
-    // ---------
-  #endif
+    // print macros
+    #define _trace(x) { if (axHcrt) axDcout_nfl(x); if (axDlog) axDfstream(x); }
+    #define trace(x)  { if (axHcrt) axDcout(x); if (axDlog) axDfstream(x); }    
+    #define msg(x)    { if (axHcrt) axDprintf(x); if (axDlog) axDfstream(x); }
+    #define wtrace(x) { axDcout(x); if (axDlog) axDfstream(x); }
+
+  #endif // case: windows
 
   // case: linux
   #ifdef linux
-    #define trace(x) { cout << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << endl; cout.flush(); }
-    #define msg(x) { printf("[%s|%ui] %s\n", axGetFileName(__FILE__), __LINE__, x); }
-    #define wtrace(x) { cout << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << endl; cout.flush(); }
+    #define trace(x)  { axDcout(x); if (axDlog) axDfstream(x); }
+    #define wtrace(x) { axDcout(x); if (axDlog) axDfstream(x); }
+    #define msg(x)    { axDprintf(x); if (axDlog) axDfstream(x); }
     #define wdebug(x) ((void)0)
     inline void axDstdCreate(void) {}
     inline void axDstdDestroy(void) {}
@@ -330,7 +352,7 @@ TODO:  - writing debug logs on windows e.g:
 #endif
 
 //----------------------------------------------------------------------
-#endif
+#endif // axDebug_included
 
 /*
   lii:

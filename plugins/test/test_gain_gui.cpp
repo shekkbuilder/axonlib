@@ -1,4 +1,3 @@
-//#define AX_DEBUG_AUTO_STD
 //#define AX_DEBUG_MEMORY
 
 #include "axPlugin.h"
