@@ -133,15 +133,19 @@ TODO:  - writing debug logs on windows e.g:
   #define axDcout(x) \
     cout << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << endl; \
     cout.flush()
-  #define axDcout_nfl(x) \
+  #define _axDcout(x) \
     cout << x << endl; \
-    cout.flush()    
+    cout.flush()
     
   // log file
   #ifdef AX_DEBUG_LOG
     fstream axDlog (AX_DEBUG_LOG, ios::out);
     #define axDfstream(x) \
-      axDlog << x << endl;
+      axDlog << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << endl; \
+      axDlog.flush();
+    #define _axDfstream(x) \
+      axDlog << x << "\n"; \
+      axDlog.flush();
   #else
     bool axDlog;
     #define axDfstream(x) (void(0))
@@ -316,7 +320,7 @@ TODO:  - writing debug logs on windows e.g:
     }
 
     // print macros
-    #define _trace(x) { if (axHcrt) axDcout_nfl(x); if (axDlog) axDfstream(x); }
+    #define _trace(x) { if (axHcrt) _axDcout(x); if (axDlog) _axDfstream(x); }
     #define trace(x)  { if (axHcrt) axDcout(x); if (axDlog) axDfstream(x); }    
     #define msg(x)    { if (axHcrt) axDprintf(x); if (axDlog) axDfstream(x); }
     #define wtrace(x) { axDcout(x); if (axDlog) axDfstream(x); }
@@ -325,7 +329,7 @@ TODO:  - writing debug logs on windows e.g:
 
   // case: linux
   #ifdef linux
-    #define _trace(x) { axDcout_nfl(x); if (axDlog) axDfstream(x); }
+    #define _trace(x) { _axDcout(x); if (axDlog) _axDfstream(x); }
     #define trace(x)  { axDcout(x); if (axDlog) axDfstream(x); }
     #define wtrace(x) { axDcout(x); if (axDlog) axDfstream(x); }
     #define msg(x)    { axDprintf(x); if (axDlog) axDfstream(x); }
@@ -339,6 +343,7 @@ TODO:  - writing debug logs on windows e.g:
 // case: no debug
 #else
   #define NDEBUG
+  #define _trace(x) ((void)0)
   #define trace(x) ((void)0)
   #define msg(x) ((void)0)
   #define assert(x) ((void)0)
