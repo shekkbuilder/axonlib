@@ -34,6 +34,13 @@
 
 typedef unsigned char byte;
 
+#include "core/axMath.h"
+
+// a good test for these approximations ?
+#define sin axSin
+#define cos axCos
+#define tan axTan
+
 //----------------------------------------------------------------------
 
 //    // Draw the frame
