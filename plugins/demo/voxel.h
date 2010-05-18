@@ -185,7 +185,7 @@ class CVoxel
             if (y<0) y=0;
             while (y<a)
             {
-              *b     = (cc>>17);//(blue  * (cc>>16)) >> 8;
+              *b     = (cc>>16);//(blue  * (cc>>16)) >> 8;
               *(b+1) = (cc>>16);//(green * (cc>>16)) >> 8;
               *(b+2) = (cc>>17);//(red   * (cc>>16)) >> 8;
               *(b+3) = 0;//cc>>16;
@@ -224,9 +224,9 @@ class CVoxel
               b = HMap[ (((i+p)&255)<<8) +   j ];
               c = HMap[ (  i        <<8) + ((j+p) & 255) ];
               d = HMap[ (((i+p)&255)<<8) + ((j+p) & 255) ];
-              HMap[ (  i         <<8) + ((j+p2)&255) ] = Clamp(((a+c)    >>1)+(rand()%k-k2));
-              HMap[ (((i+p2)&255)<<8) + ((j+p2)&255) ] = Clamp(((a+b+c+d)>>2)+(rand()%k-k2));
-              HMap[ (((i+p2)&255)<<8) +   j ]          = Clamp(((a+b)    >>1)+(rand()%k-k2));
+              HMap[ (  i         <<8) + ((j+p2)&255) ] = Clamp(((a+c)    >>1)+(axRandInt()%k-k2));
+              HMap[ (((i+p2)&255)<<8) + ((j+p2)&255) ] = Clamp(((a+b+c+d)>>2)+(axRandInt()%k-k2));
+              HMap[ (((i+p2)&255)<<8) +   j ]          = Clamp(((a+b)    >>1)+(axRandInt()%k-k2));
             }
           }
         }

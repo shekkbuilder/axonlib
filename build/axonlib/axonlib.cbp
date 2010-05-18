@@ -257,10 +257,12 @@
 		<Unit filename="../../ax/wdg/wdgSizer.h" />
 		<Unit filename="../../ax/wdg/wdgSlider.h" />
 		<Unit filename="../../ax/wdg/wdgValue.h" />
+		<Unit filename="../plugin.cpp" />
 		<Unit filename="../../doc/AUTHORS" />
 		<Unit filename="../../doc/FEATURES" />
 		<Unit filename="../../doc/TODO" />
-		<Unit filename="../../plugins/demo/axDemo.cpp" />
+		<Unit filename="../../extern/mtrand.h" />
+		<Unit filename="../../extern/picopng.h" />
 		<Unit filename="../../plugins/demo/axDemo_editor.h" />
 		<Unit filename="../../plugins/demo/axDemo_graph.h" />
 		<Unit filename="../../plugins/demo/axDemo_page_audio.h" />

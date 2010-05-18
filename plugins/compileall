@@ -20,7 +20,7 @@ fi
 
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
-for _f in ${1}/*
+for _f in ${1}/*.cpp
 do
   ./compile "$_f" $2 $3 $4 $5 $6 $7 $8 $9 $10
 done

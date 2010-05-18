@@ -21,13 +21,16 @@ class wdgImage : public axWidget//axContainer
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-        int dstx = mRect.x;
-        int dsty = mRect.y;
-        int srcx = 0;
-        int srcy = 0;
-        int srcw = mRect.w;
-        int srch = mRect.h;
-        aCanvas->drawImage(mImage,dstx,dsty, srcx,srcy,srcw,srch);
+        if (mImage)
+        {
+          int dstx = mRect.x;
+          int dsty = mRect.y;
+          int srcx = 0;
+          int srcy = 0;
+          int srcw = mRect.w;
+          int srch = mRect.h;
+          aCanvas->drawImage(mImage,dstx,dsty, srcx,srcy,srcw,srch);
+        }
         axWidget::doPaint(aCanvas,aRect);
       }
 
