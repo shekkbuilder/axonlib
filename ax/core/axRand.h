@@ -48,24 +48,32 @@
 
 #define AXRAND_MAX        2147483647L
 #define INV_AXRAND_MAX    4.656612875245796924105750827168e-10f
+#define AXRAND_MAXLL      9223372036854775806LL
 
 #define _AXRAND_FLOAT     ( ( (float)( ( a * b ) >> 2) ) * 0.00000000093f )
 #define _AXRAND_FLOAT_C   s * ( (float)( ( a * b ) >> 1) ) * INV_AXRAND_MAX
 
 #ifdef __AX64__
   // 64bit untested
+  unsigned int _axrnd;
   #define _AXRAND_ARCH \
     register unsigned long low, high; \
     register unsigned int  a, b; \
-    __asmv ( "rdtsc;" : "=a" (low), "=d" (high) ) \
-    a = (unsigned int)( (low) | ( (unsigned long)(high) << 32 ) )
+    if (!_axrnd) \
+    { \
+      __asm__ ( "rdtsc;" : "=a" (low), "=d" (high) ) \
+      _axrnd = (unsigned int)( (low) | ( (unsigned long)(high) << 32 ) ) \
+    } else if (_axrnd > AXRAND_MAXLL) _axrnd = 0; \
+    a = _axrnd++;
 #endif
 #ifdef __AX32__
+  unsigned long long _axrnd;
   #define _AXRAND_ARCH \
-    register unsigned long long _a; \
     register unsigned long a, b; \
-    __asmv ( "rdtsc;" : "=A" (_a) ); \
-    a = (unsigned long) _a;
+    if (!_axrnd) \
+      __asm__ ( "rdtsc;" : "=A" (_axrnd) ); \
+    else if (_axrnd > AXRAND_MAXLL) _axrnd = 0; \
+    a = (unsigned long) _axrnd++
 #endif
 
 #define _AXRAND \
