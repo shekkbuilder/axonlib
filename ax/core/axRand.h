@@ -24,13 +24,15 @@
 #define axRand_included
 //------------------------------------------------------------------------------
 
-#include "axDefines.h"
-
 #ifdef AX_HOT_INLINE_RAND
   #define __axrand_inline __hotinline
 #else
   #define __axrand_inline inline
 #endif
+
+#ifndef AX_NO_RAND      // if not defined: use axonlib's axRand()
+
+#include "axDefines.h"
 
 /*
   ------------------------------------------------------------------------------
@@ -102,8 +104,8 @@ __axrand_inline unsigned long axRandInt(const unsigned long s)
   ------------------------------------------------------------------------------
 */
 
-#define AXRANDSINF_MAX    AX_FLT_MAX
-#define AXRAND_MAX        2147483647L
+#define AXRANDSINF_MAX    3.40282347e+38F
+#define AXRANDSF_MAX      2147483647L
 
 #define _AXRANDSINF \
   if (x >= AXRANDSINF_MAX ) x = 0.f; \
@@ -158,11 +160,42 @@ class axRandSinf
     { _AXRANDSINF; return y; }
 
     __axrand_inline unsigned long randInt(void)
-    { _AXRANDSINF;  return (unsigned long) AXRAND_MAX * _AXRANDSINF_SHIFT; }
+    { _AXRANDSINF;  return (unsigned long) AXRANDSF_MAX * _AXRANDSINF_SHIFT; }
 
     __axrand_inline unsigned long randInt(const unsigned long _top)
     { _AXRANDSINF; return (unsigned long) ( _top * _AXRANDSINF_SHIFT ); }
 };
 
-//------------------------------------------------------------------------------
-#endif
+#else // AX_NO_RAND
+
+/*
+  ------------------------------------------------------------------------------
+  stdlib based methods rand()
+  ------------------------------------------------------------------------------
+*/
+
+#include "math.h"
+#include "time.h"
+#include "stdarg.h"
+#include "stdlib.h"
+
+__deprecated ___axrand_inline void axRandomize
+  (const int aSeed = (unsigned int)time(0))
+{ srand(aSeed); }
+
+__deprecated __axrand_inline float axRand(const float f = 1)
+{ return (f * (float)rand() / (float)RAND_MAX); }
+
+__deprecated __axrand_inline float axRand(const float aLow, const float aHigh)
+{ return aLow + ( (float)rand() / (float)RAND_MAX ) *(aHigh - aLow); }
+
+__deprecated __axmath_inline int axRandomInt(const int i)
+{ return axMinInt
+    (i, (int)axFloor( (i + 1) * (float)rand() / (float)RAND_MAX ) ); }
+
+__deprecated __axrand_inline float axRandomSigned(void)
+{ return (2 * (float)rand() / (float)RAND_MAX) - 1; }
+
+#endif // AX_NO_RAND
+
+#endif // axRand_included

@@ -125,8 +125,9 @@ class myPlugin : public axPlugin
         /*
           // test
           char* ptr = (char*)axCalloc(11, sizeof(char));
-          trace ( axSqrt(21.f) );
+          trace ( axSqrt(21.f) );          
         */
+        trace ( axLogf(11.f) );
       }
 
     virtual ~myPlugin()
