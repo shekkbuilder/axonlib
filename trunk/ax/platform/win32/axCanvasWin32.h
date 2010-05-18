@@ -378,10 +378,10 @@ class axCanvasWin32 : public axCanvasBase
           float x = aX1 + w*0.5;
           float y = aY1 + h*0.5;
           float size = axMax(w,h);
-          float x1 = x + cos(a1*PI2) * size;
-          float y1 = y + sin(a1*PI2) * size;
-          float x2 = x + cos(a2*PI2) * size;
-          float y2 = y + sin(a2*PI2) * size;
+          float x1 = x + axCosf(a1*PI2) * size;
+          float y1 = y + axSinf(a1*PI2) * size;
+          float x2 = x + axCosf(a2*PI2) * size;
+          float y2 = y + axSinf(a2*PI2) * size;
           Arc(mDC,aX1,aY1,aX2,aY2,(int)x1,(int)y1,(int)x2,(int)y2);
         }
       }
@@ -408,10 +408,10 @@ class axCanvasWin32 : public axCanvasBase
           float x = aX1 + w*0.5;
           float y = aY1 + h*0.5;
           float size = axMax(w,h);
-          float x1 = x + cos(a1*PI2) * size;
-          float y1 = y + sin(a1*PI2) * size;
-          float x2 = x + cos(a2*PI2) * size;
-          float y2 = y + sin(a2*PI2) * size;
+          float x1 = x + axCos(a1*PI2) * size;
+          float y1 = y + axSin(a1*PI2) * size;
+          float x2 = x + axCos(a2*PI2) * size;
+          float y2 = y + axSin(a2*PI2) * size;
           Pie(mDC,aX1,aY1,aX2,aY2,(int)x1,(int)y1,(int)x2,(int)y2);
           resetPen();
         }

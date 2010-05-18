@@ -31,6 +31,7 @@ class parInteger : public axParameter
     int     mMin, mMax, mStep;
     char**  mStrings;
     float   mRange;
+    float   inv_mRange;
     float   mHalfStep;
 
   public:
@@ -48,11 +49,12 @@ class parInteger : public axParameter
 
     void setup(int aVal, int aMin, int aMax, char** aStrings)
       {
-        mMin      = aMin;
-        mMax      = aMax;
-        mRange    = mMax - mMin + 1;      // 4
-        mHalfStep = (1/mRange)*0.5;
-        mStrings  = aStrings;
+        mMin       = aMin;
+        mMax       = aMax;
+        mRange     = mMax - mMin + 1;      // 4
+        inv_mRange = 1/mRange; 
+        mHalfStep  = (inv_mRange)*0.5;
+        mStrings   = aStrings;
         setInt(aVal);
       }
 
@@ -60,7 +62,7 @@ class parInteger : public axParameter
 
     virtual void setInt(int aValue)
       {
-        mValue = (float)(aValue-mMin) / mRange;
+        mValue = (float)(aValue-mMin) * inv_mRange;
         mValue += mHalfStep;
       }
 
@@ -69,7 +71,7 @@ class parInteger : public axParameter
     virtual int getInt(void)
       {
         //return mRange * (float)(mValue + mMin);
-        float n = floor (mValue * mRange );
+        float n = axFloor (mValue * mRange );
         return (mMin + (int)axMin(n,(mRange-1)));
       }
 
@@ -89,7 +91,7 @@ class parInteger : public axParameter
     virtual void  doGetDisplay(char* buf)
       {
         int i = getInt();
-        if( mStrings ) strcpy( buf, mStrings[i] );
+        if( mStrings ) axStrcpy( buf, mStrings[i] );
         //else __builtin_sprintf( buf, "%i", (int)i );
         else axItoa(buf,i);
       }

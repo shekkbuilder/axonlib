@@ -175,8 +175,9 @@ __axutils_inline float axSumDB(unsigned int n, const float* ar)
 }
 
 // ------
-bool __AX_SSE3__, __AX_SSSE3__, __AX_FPU__, __AX_CMOV__,  __AX_SSE__, __AX_SSE2__,
-__AX_SSE4A__, __AX_SSE5__, __AX_MMX__, __AX_MMXEXT__, __AX_3DNOW__, __AX_3DNOWEXT__;
+bool __AX_SSE3__, __AX_SSSE3__, __AX_FPU__, __AX_CMOV__,  __AX_SSE__,
+  __AX_SSE2__, __AX_SSE4A__, __AX_SSE5__, __AX_MMX__, __AX_MMXEXT__,
+  __AX_3DNOW__, __AX_3DNOWEXT__;
 /**
  * calls the CPUID instruction <br>
  * can be used to target specific CPU architectures:
@@ -260,17 +261,15 @@ __axutils_inline void axCPUID(const int fcall=33139, int* eax=0, int* ebx=0,
   // user defined call
   // -----------------
   else
-  {
     __asmv
     (
       "cpuid;"
       : "=a" (*eax), "=b" (*ebx), "=c" (*ecx), "=d" (*edx) : "a" (fcall)
     );
-  }
 }
 
-//-----
-
+// axCpuCaps
+/*
 #define cc_SSE3     0x0001
 #define cc_SSSE3    0x0002
 #define cc_FPU      0x0004
@@ -283,47 +282,33 @@ __axutils_inline void axCPUID(const int fcall=33139, int* eax=0, int* ebx=0,
 #define cc_MMXEXT   0x0200
 #define cc_3DNOW    0x0400
 #define cc_3DNOWEXT 0x0800
+*/
 
-int axCpuCaps(void)
+inline unsigned int axCpuCaps(void)
 {
-  int caps = 0;
+  unsigned int caps = 0;
   axCPUID();
-  if (__AX_SSE3__)      caps |= cc_SSE3;
-  if (__AX_SSSE3__)     caps |= cc_SSSE3;
-  if (__AX_FPU__)       caps |= cc_FPU;
-  if (__AX_CMOV__)      caps |= cc_CMOV;
-  if (__AX_SSE__)       caps |= cc_SSE;
-  if (__AX_SSE4A__)     caps |= cc_SSE4A;
-  if (__AX_SSE5__)      caps |= cc_SSE5;
-  if (__AX_MMX__)       caps |= cc_MMX;
-  if (__AX_MMXEXT__)    caps |= cc_MMXEXT;
-  if (__AX_3DNOW__)     caps |= cc_3DNOW;
-  if (__AX_3DNOWEXT__)  caps |= cc_3DNOWEXT;
+  if (__AX_SSE3__)      caps |= 0x0001;
+  if (__AX_SSSE3__)     caps |= 0x0002;
+  if (__AX_FPU__)       caps |= 0x0004;
+  if (__AX_CMOV__)      caps |= 0x0008;
+  if (__AX_SSE__)       caps |= 0x0010;
+  if (__AX_SSE2__)      caps |= 0x0020;
+  if (__AX_SSE4A__)     caps |= 0x0040;
+  if (__AX_SSE5__)      caps |= 0x0080;
+  if (__AX_MMX__)       caps |= 0x0100;
+  if (__AX_MMXEXT__)    caps |= 0x0200;
+  if (__AX_3DNOW__)     caps |= 0x0400;
+  if (__AX_3DNOWEXT__)  caps |= 0x0800;
   return caps;
 }
 
-static char cpustringbuf[256];
-
+// axCpuCapsString
+char cpustringbuf[256];
 char* axCpuCapsString(void)
 {
-  axCPUID();
-  // ## note: sprintf() is current used as __builtin_spritf()
-  //sprintf(cpustringbuf,"%s%s%s%s%s%s%s%s%s%s%s%s",
-//  __builtin_sprintf(cpustringbuf,"%s%s%s%s%s%s%s%s%s%s%s%s",
-//          __AX_SSE3__     ? "sse3 "     : "" ,
-//          __AX_SSSE3__    ? "ssse3 "    : "" ,
-//          __AX_FPU__      ? "fpu "      : "" ,
-//          __AX_CMOV__     ? "cmov "     : "" ,
-//          __AX_SSE__      ? "sse "      : "" ,
-//          __AX_SSE2__     ? "sse2 "     : "" ,
-//          __AX_SSE4A__    ? "sse4a "    : "" ,
-//          __AX_SSE5__     ? "sse5 "     : "" ,
-//          __AX_MMX__      ? "mmx "      : "" ,
-//          __AX_MMXEXT__   ? "mmxext "   : "" ,
-//          __AX_3DNOW__    ? "3dnow "    : "" ,
-//          __AX_3DNOWEXT__ ? "3dnowext " : "" );
+  axCPUID();  
   cpustringbuf[0] = 0;
-  //axStrcat(cpustringbuf,(char*)"balls ");
   if (__AX_SSE3__)     axStrcat(cpustringbuf,(char*)"sse3 ");
   if (__AX_SSSE3__)    axStrcat(cpustringbuf,(char*)"ssse3 ");
   if (__AX_FPU__)      axStrcat(cpustringbuf,(char*)"fpu ");
@@ -417,7 +402,8 @@ __axutils_inline float axDenorm(register float n)
  * @param[in] N long
  * @param[in] byte int
  */
-__axutils_inline void axRadix(long *source, long *dest, unsigned long N, int byte)
+__axutils_inline void axRadix(long *source, long *dest,
+  unsigned long N, int byte)
 {
   unsigned int i;
   long count[256];
@@ -432,11 +418,13 @@ __axutils_inline void axRadix(long *source, long *dest, unsigned long N, int byt
     dest[ index[ ((source[i])>>(byte*8))&0xff ]++ ] = source[i];
 }
 
-//----------
+// check for little endian
+__axutils_inline bool axLittleEndian (void)
+  { const int i = 1; return  (*(char*)&i); }
 
-const int i = 1;
-#define axBigEndian() ((*(char*)&i)==0)
-#define axLittleEndian() ((*(char*)&i)==1)
+// check for big endian
+__axutils_inline bool axBigEndian (void)
+  { const int i = 1; return !(*(char*)&i); }
 
 //----------------------------------------------------------------------
 #endif

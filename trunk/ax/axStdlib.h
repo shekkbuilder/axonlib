@@ -376,7 +376,7 @@ __axstdlib_inline char* axStrpbrk (register const char* s1,
 /**
  * axStrtok
  */
-__axstdlib_inline char* axStrtok (register char *str, const char *spr)
+__axstdlib_inline char* axStrtok (register char* str, const char* spr)
 {
   register char *s1, *s2;
   // static buffer = kaboom ?
@@ -398,53 +398,99 @@ __axstdlib_inline char* axStrtok (register char *str, const char *spr)
   return s1;
 }
 
+/**
+ * axStrrev
+ */
+__axstdlib_inline char* axStrrev (register char* str)
+{
+  register unsigned int i = 0;
+  register unsigned int j = axStrlen(str)-1;
+  while (i < j)
+  {
+    str[i] ^= str[j];
+    str[j] ^= str[i];
+    str[i] ^= str[j];
+    ++i;
+    --j;
+  }
+  return str;
+}
+
 /*
   ------------------------------------------------------------------------------
   conversations
   ------------------------------------------------------------------------------
 */
 
-/**
- * axItoa
+/*
+ * axItoa(string, intnumber, maximumchars, base, flag)
+ *
+ * base: 16 = hex, 10 = dec, 2 = bin, etc.
+ *  
+ * flag (works only for base = 10):
+ * 0 - show minus sign only
+ * 1 - show minus or plus sign
+ * 2 - show minus sign or indent positive values with one space
+ *
+ * 'maximumchars' is the maximum number of characters including the
+ * sign. maximum is 33, default is 10
+ * for base 2, intnumber=2147483647 requires at string length 33  
+ * for base 10 use 'maximumchars' = N to show N chars max
+ * (e.g. -9999, +9999)
+ * allocated memory for 'string' should be >= 'maximumchars'
+ *  
  */
-__axstdlib_inline char* axItoa (register char* str, int n,
-  unsigned int base = 10)
+__axstdlib_inline char* axItoa (register char* _st, int n,
+  unsigned int maxlen = 10, unsigned int base = 10, unsigned int fg = 0)
 {
-  // todo: tweak a bit to make it better (faster)..
-  if (!str)
-    return NULL;  
-  char tmp[33];
-  char* _tmp = tmp;
-  register int i;
-  register unsigned int v;
-  register char* sp;
-  int s;
-  if (base > 36 || base <= 1)
-    return NULL;
-  s = (base == 10 && n < 0);
-  if (s)
-    v = -n;
-  else
-    v = (unsigned) n;
-  while (v || _tmp == tmp)
+  if (!_st || maxlen > 33)
+    return (char*)"0";
+  register unsigned int v, p = 1;
+  register int i = 0;
+  char* st = _st;
+  char _t[33];
+  register char* t = _t;
+  v = (unsigned int) n;
+  if (base == 10)
   {
-    i = v % base;
-    v = v / base;
-    if (i < 10)
-      *_tmp++ = i + '0';
+    if (n < 0)
+    {
+      v = -n;
+      *st++ = '-';
+      maxlen--;
+    }
     else
-      *_tmp++ = i + 'a' - 10;
+    {
+      if (fg == 1) { *st++ = '+'; maxlen--; }
+      if (fg == 2) { *st++ = ' '; maxlen--; }
+    }
   }
-  // --
-  //if (!str)
-  //  str = (char*) axMalloc( (_tmp - tmp) + s + 1 );
-  sp = str;
-  if (s)
-    *sp++ = '-';
-  while (_tmp > tmp)
-    *sp++ = *--_tmp;
-  *sp = 0;
-  return str;
+  while (i < (int)maxlen)
+  {
+    p *= 10;
+    i++;
+  }
+  if (base == 10 && v >= (p-1))
+  {
+    while (maxlen--)
+      *st++ = '9';
+  }
+  else
+  {
+    while (v || t == _t)
+    {
+      i = v % base;
+      v = v / base;
+      if (i < 10)
+        *t++ = '0' + i;
+      else
+        *t++ = 'a' + i - 10;
+    }
+    while (t > _t)
+      *st++ = *--t;
+  }
+  *st = 0;
+  return _st;
 }
 
 /**
@@ -453,7 +499,7 @@ __axstdlib_inline char* axItoa (register char* str, int n,
 __axstdlib_inline int axAtoi (register const char* s)
 {
   if (!s)
-    return NULL;
+    return 0;
   const char digits[] = "0123456789";
   register unsigned val = 0;
   register int neg = 0;
@@ -482,13 +528,6 @@ __axstdlib_inline int axAtoi (register const char* s)
 }
 
 /*
- * axFtoa
- *
- * TODO:
- * - check for more optimizations?
- *   - ~10 times faster than sprintf().
- *   - ~3 times faster than vstsdk's float2string().
- *
  * axFtoa(string, floatnumber, maximumchars, flag)
  *
  * flag:
@@ -505,11 +544,11 @@ __axstdlib_inline char* axFtoa (register char* st, register double f,
   register int maxlen = 5, const unsigned int fg = 0) //, const bool e = false)
 {
   if (!st)
-    return NULL;
+    return (char*)"0";
   char* ret = st;
-  register int exp = 0;
-  register int j = 0;
+  register int exp = 0;  
   register int z;
+  int j = 0;
   if (f < 0)
   {
    *st++ = '-';   j++;    f = -f;
@@ -554,9 +593,8 @@ __axstdlib_inline char* axFtoa (register char* st, register double f,
         *st++ = '0' + f;
         z = f;   f -= z;    f *= 10.f;    i++;    j++;
       }
-    }
-    *st++ = 0;
-  }
+    }    
+  }  
   /*
   // note: exponent output is disabled. instead it writes the maximum integer.
   if (exp != 0 && e)
@@ -573,7 +611,7 @@ __axstdlib_inline char* axFtoa (register char* st, register double f,
     *st++ = '0' + (exp -= expd10 * 10);
   }
   */
-  //return st;
+  *st++ = 0;
   return ret;
 }
 
@@ -582,6 +620,8 @@ __axstdlib_inline char* axFtoa (register char* st, register double f,
   */
 __axstdlib_inline float axAtof (register char* s)
 {
+  if (!s)
+    return 0.f;
   register float a = 0.f;
   register int e = 0;
   register unsigned int c;
