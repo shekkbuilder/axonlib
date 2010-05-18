@@ -94,7 +94,7 @@
 class axBitmapLoader
 {
   private:
-    PNG_info_t*     mPngInfo;
+    axPngInfo*     mPngInfo;
   public:
     unsigned long   mWidth;
     unsigned long   mHeight;
@@ -133,7 +133,7 @@ class axBitmapLoader
         //int error = decodePNG(image, width, height, buffer, buffersize);
         //int error = (int)PNG_decode(buffer, buffersize);
         if (mPngInfo) axFree(mPngInfo);
-        PNG_info_t* mPngInfo = PNG_decode(buffer, buffersize);
+        PNG_info_t* mPngInfo = axPngDecode(buffer, buffersize);
         mWidth  = mPngInfo->width;
         mHeight = mPngInfo->height;
         mImage  = mPngInfo->image->data;

@@ -42,6 +42,10 @@
 #ifndef _PICOPNG_H
 #define _PICOPNG_H
 
+#define axPngFree     png_alloc_free_all
+#define axPngDecode   PNG_decode
+#define axPngInfo     PNG_info_t
+
 #if defined (AX_DEBUG_PNG) && defined (AX_DEBUG)
   #include "core/axDebug.h"
 #endif

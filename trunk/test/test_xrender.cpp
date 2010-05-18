@@ -2,7 +2,7 @@
 //#define AX_DEBUG_AUTO_STD
 #define AX_DEBUG_MEM
 #define AX_DEBUG_PNG
-#define AX_DEBUG_LOG  "test_gain_gui_skin.log"
+#define AX_DEBUG_LOG  "test_xrender.log"
 
 #include "axPlugin.h"
 #include "axEditor.h"
@@ -21,7 +21,7 @@ class myPlugin : public axPlugin,
                  public axWidgetListener
 {
   private:
-    PNG_info_t* pnginfo;
+    axPngInfo* pnginfo;
     //axEditor*   m_Editor;
     //wdgImage*   w_Image;
     //axSurface*  surface;
@@ -34,12 +34,12 @@ class myPlugin : public axPlugin,
         describe("test_winsize","ccernn","axonlibe example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);
         //setupEditor(256,256);
-        pnginfo = PNG_decode(testpng,testpng_size);
+        pnginfo = axPngDecode(testpng,testpng_size);
       }
 
     virtual ~myPlugin()
       {
-        png_alloc_free_all();
+        axPngFree();
       }
 
     //--------------------------------------------------

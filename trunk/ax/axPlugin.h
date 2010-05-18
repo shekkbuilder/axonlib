@@ -63,7 +63,8 @@ class axPlugin : public axPluginImpl, public axParameterListener
           #ifdef AX_DEBUG_AUTO_WIN
             axDwinCreate();
           #endif
-        #endif        
+        #endif
+        
         //updateSampleRate();
         //updateTimeInfo();
       }
@@ -71,7 +72,7 @@ class axPlugin : public axPluginImpl, public axParameterListener
     virtual ~axPlugin()
       {
         #ifndef AX_NOAUTODELETE
-        deleteParameters();
+          deleteParameters();
         #endif
 
         // auto close debug (win32)
@@ -84,11 +85,6 @@ class axPlugin : public axPluginImpl, public axParameterListener
           #endif
         #endif
         
-        // close log file stream
-        #if defined AX_DEBUG && defined AX_DEBUG_LOG
-          if (axDlog)
-            axDlog.close();
-        #endif                
       }
 
     //--------------------------------------------------

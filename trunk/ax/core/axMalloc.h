@@ -343,7 +343,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
       _axMemTotal += malloc_usable_size(_ptr);
     #else
       void* _ptr = axMalloc(_size);
-      _axMemTotal += _size;
+      _axMemTotal += bucket2size[*(unsigned int*)((char*)_ptr-4)];
     #endif
 
     // output cout / log
@@ -373,7 +373,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
       _axMemTotal += size;
     #else
       void* _ptr = axCalloc(_n, _size);
-      unsigned int size = _n*_size;
+      unsigned int size = bucket2size[*(unsigned int*)((char*)_ptr-4)];
       _axMemTotal += size;
     #endif
 
@@ -399,17 +399,14 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     (void* _ptr, register const unsigned int _size, const char* _file,
     const unsigned int _line)
   {
-    #ifdef AX_NO_MALLOC
-      unsigned int old_size = malloc_usable_size(_ptr);
+    #ifdef AX_NO_MALLOC    
+      _axMemTotal -= malloc_usable_size(_ptr);
       void* _ptr0 = realloc(_ptr, _size);
-      _axMemTotal -= old_size;
       _axMemTotal += malloc_usable_size(_ptr0);
-    #else
-      register char* old_ptr = (char*)_ptr;
-      unsigned int old_size = bucket2size[*(unsigned int*)(old_ptr-4)];
+    #else      
+      _axMemTotal -= bucket2size[*(unsigned int*)((char*)_ptr-4)];
       void* _ptr0 = axRealloc(_ptr, _size);
-      _axMemTotal -= old_size;
-      _axMemTotal += _size;
+      _axMemTotal += bucket2size[*(unsigned int*)((char*)_ptr0-4)];;
     #endif
 
     // output cout / log
@@ -436,9 +433,8 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     unsigned int _size;
     #ifdef AX_NO_MALLOC
       _size = malloc_usable_size(_ptr);
-    #else
-      register unsigned char* ptr = (unsigned char*)_ptr;
-      _size = bucket2size[*(unsigned int*)(ptr-4)];
+    #else      
+      _size = bucket2size[*(unsigned int*)((char*)_ptr-4)];
     #endif
     _axMemTotal -= _size;
 
