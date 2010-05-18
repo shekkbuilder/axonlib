@@ -74,11 +74,11 @@ class axPlugin : public axPluginImpl, public axParameterListener
         deleteParameters();
         #endif
 
-        // auto close debug (win32)        
-        #ifdef AX_WIN32          
+        // auto close debug (win32)
+        #ifdef AX_WIN32
           #ifdef AX_DEBUG_AUTO_WIN
             axDwinDestroy();
-          #endif          
+          #endif
           #ifdef AX_DEBUG_AUTO_STD
             axDstdDestroy();
           #endif

@@ -1,6 +1,6 @@
 //#define AX_NO_MALLOC
 //#define AX_DEBUG_MEM
-#define AX_DEBUG_AUTO_STD
+//#define AX_DEBUG_AUTO_STD
 
 #include "core/axRand.h"
 
@@ -160,9 +160,10 @@ class axDemo : public axPlugin
       {
         trace(":: doCloseEditor");
         //mEditor->stopTimer();
-        m_Editor->hide();
-        delete m_Editor;
+        axEditor* editor = m_Editor;
+        editor->hide();
         m_Editor = NULL;
+        delete editor;
       }
 
     //----------

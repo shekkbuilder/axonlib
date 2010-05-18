@@ -29,8 +29,8 @@
 
 //----------------------------------------------------------------------
 
-//unsigned char demo_skin[] = {};
-//int           demo_skin_size = 0;
+unsigned char demo_skin[]    = { "empty..." };
+int           demo_skin_size = 0;
 
 //----------------------------------------------------------------------
 
@@ -66,7 +66,6 @@ class axDemo_editor : public axEditor
     axDemo_editor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
       {
-
         axCanvas* canvas = getCanvas();
         m_Skin = new axDemo_skin(canvas);
         applySkin(m_Skin);
@@ -130,7 +129,7 @@ class axDemo_editor : public axEditor
     virtual ~axDemo_editor()
       {
         stopTimer();
-        delete m_Symbols;
+        //delete m_Symbols;
         delete m_VoxelBitmap;
         delete m_Skin;
       }
