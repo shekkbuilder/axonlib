@@ -19,7 +19,6 @@ gpp="g++"
 mingw="i586-mingw32msvc-g++"
 
 # windres command
-#mingw="i586-mingw32msvc-windres"
 windres="i586-mingw32msvc-windres"
 
 # set windows PE resource file (leave blank for no resources)
@@ -164,7 +163,7 @@ else
       then
         rm -f "{$resfile}".o
       fi
-      echo $windres -i "{$resfile}" -o "{$resfile.o}" | sh      
+      `$windres -i "{$resfile}" -o "{$resfile.o}"`
       if [ -e "{$resfile}".o ];
       then    
         res="$resfile".o

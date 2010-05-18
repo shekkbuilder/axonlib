@@ -103,7 +103,12 @@ TODO:
 #define AX_LDBL_EPSILON   1.08420217248550443401e-19L
 #define AX_LDBL_DENORM    3.64519953188247460253e-4951L
 
-// custom data types
+/*
+  info on size vs arch:
+  http://www.safercode.com/blog/2009/03/10/portable-code-how-to-check-if-a-machine-is-32-bit-or-64-bit.html
+*/
+// custom data types TODO: either write these correctly or remove
+// i haven't used
 // -----------------------------------------------------------------------------
 #ifdef AX_USE_DATA_TYPES
     #define i8                    char
@@ -192,43 +197,37 @@ so, i tried some #ifdefs...
 is this safe & a good thing to do?
 could there be consequences, or could we risk different definitions of ushort, etc, in different compilers...
 hmmm...
-
-
 */
+
+// lii: well if linux defines ushort, uint, ulong as needed then the fix bellow
+// is cool.
 
 #define cchar       const     char
 #define uchar       unsigned  char
 #define cuchar      const     unsigned  char
+
 #define cshort      const     short
-
-//#undef ushort
-//#define ushort      unsigned  short
 #ifndef AX_LINUX
-  #define ushort      unsigned  short
+  #define ushort    unsigned  short
 #endif
-
 #define cushort     const     unsigned  short
+
 #define cint        const     int
-
-//#undef uint
-//#define uint        unsigned  int
 #ifndef AX_LINUX
-  #define uint        unsigned  int
+  #define uint      unsigned  int
 #endif
-
 #define cuint       const     unsigned  int
+
 #define clong       const     long
-
-//#undef  ulong
-//#define ulong       unsigned  long
 #ifndef AX_LINUX
-  #define ulong       unsigned  long
+  #define ulong     unsigned  long
 #endif
-
 #define culong      const     unsigned  long
+
 #define clonglong   const     long      long
 #define ulonglong   unsigned  long      long
 #define culonglong  const     unsigned  long long
+
 #define cfloat      const     float
 #define cdouble     const     double
 #define ldouble     long      double
@@ -236,10 +235,6 @@ hmmm...
 
 // c defaults
 // -----------------------------------------------------------------------------
-//#ifndef   size_t
-  //#define size_t unsigned
-//#endif
-
 #ifndef   NULL
   #define NULL 0
 #endif
@@ -258,11 +253,6 @@ hmmm...
 #ifndef   false
   #define false 0
 #endif
-
-// ccernn [linux] __shared gives problem with pthreadtypes.h
-// obviously no problem in windows (no pthreads)
-
-// lii: wonder if ___shared (3 ' _ ' lines) will work.
 
 // attributes
 // -----------------------------------------------------------------------------
@@ -309,55 +299,4 @@ hmmm...
 
 #define __asmv                    __asm__ __volatile__
 
-// builtin functions
-// -----------------------------------------------------------------------------
-// ccernn: i get errors when i compile with mingw32 in linux
-// (partially solved it by manually replacing all occurences of printf with __builtin_sprintf)
-//#define sprintf __builtin_sprintf
-
-// ........
-// ........
-
-// ---------------------------------------
-
-// with -pedantic (i think) gcc generates
-// "warning: ISO C++ forbids casting between pointer-to-function and pointer-to-object"
-
-// long, 32/64 bit, same size as void* ???
-// a 'safe' type we can typecast to/from ptr (void*)
-
-//#define AX_PTRCAST long
-
-// isn't long always 32-bit?
-// is sizeof(int) == sizeof(void*) on 32bit and 64bit?
-// what is a safe way to define an integer with the same
-// size as a pointer (32/64 bit)
-
-
-/*
-
-    ^
-
-library code may require some definitions like the one in the data types
-from above:
-
-  #ifdef __AX32__
-  ...
-  #ifdef __AX64__
-  ...
-
-e.g.:
-long will be 64bit on 64bit machines and 32bit on 32bit..
-void* size should be different size as well.
-but char should be always 8 bits.
-etc..
-
-some info:
-http://www.safercode.com/blog/2009/03/10/portable-code-how-to-check-if-a-machine-is-32-bit-or-64-bit.html
-
-*/
-
-
-
-//----------------------------------------------------------------------
-#endif
+#endif // axDefines_included

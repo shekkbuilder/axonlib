@@ -149,6 +149,7 @@ TODO:  - writing debug logs on windows e.g:
   #else
     bool axDlog;
     #define axDfstream(x) (void(0))
+    #define _axDfstream(x) (void(0))
   #endif
 
   // case: windows
@@ -320,19 +321,19 @@ TODO:  - writing debug logs on windows e.g:
     }
 
     // print macros
-    #define _trace(x) { if (axHcrt) _axDcout(x); if (axDlog) _axDfstream(x); }
-    #define trace(x)  { if (axHcrt) axDcout(x); if (axDlog) axDfstream(x); }    
-    #define msg(x)    { if (axHcrt) axDprintf(x); if (axDlog) axDfstream(x); }
-    #define wtrace(x) { axDcout(x); if (axDlog) axDfstream(x); }
+    #define _trace(x) { if (axHcrt) { _axDcout(x); } if (axDlog) { _axDfstream(x); } }
+    #define trace(x)  { if (axHcrt) { axDcout(x); } if (axDlog) { axDfstream(x); } }    
+    #define msg(x)    { if (axHcrt) { axDprintf(x); } if (axDlog) axDfstream(x); } }
+    #define wtrace(x) { axDcout(x); if (axDlog) { axDfstream(x); } }
 
   #endif // case: windows
 
   // case: linux
   #ifdef linux
-    #define _trace(x) { _axDcout(x); if (axDlog) _axDfstream(x); }
-    #define trace(x)  { axDcout(x); if (axDlog) axDfstream(x); }
-    #define wtrace(x) { axDcout(x); if (axDlog) axDfstream(x); }
-    #define msg(x)    { axDprintf(x); if (axDlog) axDfstream(x); }
+    #define _trace(x) { _axDcout(x); if (axDlog) { _axDfstream(x); } }
+    #define trace(x)  { axDcout(x); if (axDlog) { axDfstream(x); } }
+    #define wtrace(x) { axDcout(x); if (axDlog) { axDfstream(x); } }
+    #define msg(x)    { axDprintf(x); if (axDlog) { axDfstream(x); } }
     #define wdebug(x) ((void)0)
     inline void axDstdCreate(void) {}
     inline void axDstdDestroy(void) {}
