@@ -131,27 +131,26 @@ __axrand_inline unsigned long axRandInt(const unsigned long s)
 
 class axRandSinf
 {
-  private:
-    float x, y;
-
   public:
+    float x, y;
+    
     axRandSinf(void)
     {
-      // 64bit untested
       #ifdef __AX64__
+      // 64bit untested
         register unsigned long low, high;
         register unsigned int _x;
         __asmv ( "rdtsc;" : "=a" (low), "=d" (high) );
         _x = (unsigned int) ( (low) | ( (unsigned long)(high) << 32 ) );
       #endif
       #ifdef __AX32__
-        register unsigned long _x;
-        __asmv ( "rdtsc;" : "=a" (_x) );
+        register unsigned long long _x;
+        __asmv ( "rdtsc;" : "=A" (_x) );
       #endif
       x = (float)(_x >> 16);
       y = 1.f;
     }
-
+      
     axRandSinf(const unsigned long _x)  { x = (float)_x; }
     axRandSinf(const float _x)          { x = _x;        }
 
