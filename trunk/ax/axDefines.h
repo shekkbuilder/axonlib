@@ -107,8 +107,7 @@ TODO:
   info on size vs arch:
   http://www.safercode.com/blog/2009/03/10/portable-code-how-to-check-if-a-machine-is-32-bit-or-64-bit.html
 */
-// custom data types TODO: either write these correctly or remove
-// i haven't used
+// custom data types. TODO: either write these correctly or remove
 // -----------------------------------------------------------------------------
 #ifdef AX_USE_DATA_TYPES
     #define i8                    char
@@ -149,58 +148,6 @@ TODO:
 
 // architecture 'safe' aliases
 // -----------------------------------------------------------------------------
-
-/*
-  ccernn:
-  [linux/gcc] the three commented lines below conflicts with sys/types.h
-  :: problems in win7.
-
-  lii:
-  these should work now with #undef before the new #define
-
-ccernn:
-
-compile (in linux) to a linux app generates:
-
-||=== axonlib, linux app - debug ===|
-/usr/include/sys/types.h|151|error: duplicate ‘unsigned’|
-/usr/include/sys/types.h|151|error: declaration does not declare anything|
-/usr/include/sys/types.h|152|error: duplicate ‘unsigned’|
-/usr/include/sys/types.h|152|error: duplicate ‘short’|
-/usr/include/sys/types.h|152|error: declaration does not declare anything|
-/usr/include/sys/types.h|153|error: duplicate ‘unsigned’|
-/usr/include/sys/types.h|153|error: multiple types in one declaration|
-/usr/include/sys/types.h|153|error: declaration does not declare anything|
-||=== Build finished: 8 errors, 0 warnings ===|
-
-the relevant lines (149-154) from types.h:
-
-// #ifdef __USE_MISC
-// // Old compatibility names for C types.
-// typedef unsigned long int ulong;
-// typedef unsigned short int ushort;
-// typedef unsigned int uint;
-// #endif
-
-don't know where __USE_MISC is defined, some system things that shouldn't be messed with, i guessa...
-
-also error if we do something like this:
-#ifndef ushort
-  #define ushort unsigned  short
-#endif
-
-with the commented lines, no errors...
-also, compiling to a win32 app = no errors..
-so it's a _in_ linu8x, _to_ linux thing...
-so, i tried some #ifdefs...
-
-is this safe & a good thing to do?
-could there be consequences, or could we risk different definitions of ushort, etc, in different compilers...
-hmmm...
-*/
-
-// lii: well if linux defines ushort, uint, ulong as needed then the fix bellow
-// is cool.
 
 #define cchar       const     char
 #define uchar       unsigned  char
@@ -274,7 +221,7 @@ hmmm...
 #define __alloc_size1(x)          __attribute__ ((alloc_size(x)))
 #define __alloc_size2(x, y)       __attribute__ ((alloc_size(x, y)))
 #define __alias(name)             __attribute__ ((alias (name)));
-#define ___always_inline    inline __attribute__ ((always_inline))
+#define ___always_inline   inline __attribute__ ((always_inline))
 #define __warning(message)        __attribute__ ((warning(message)))
 #define __error(message)          __attribute__ ((error(message)))
 #define __malloc                  __attribute__ ((malloc))
@@ -288,7 +235,7 @@ hmmm...
 #define __weak                    __attribute__ ((weak)))
 #define __weakref(name)           __attribute__ ((weakref (name)))
 
-#define __hotinline               __always_inline __hot __optimize(3)
+#define __hotinline               ___always_inline __hot __optimize(3)
 
 #ifndef __cdecl
   #define __cdecl                 __attribute__ ((cdecl))

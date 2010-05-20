@@ -39,7 +39,7 @@ class myPlugin : public axPlugin,
 
     virtual ~myPlugin()
       {
-        axPngFree();
+        axPngFreeAll();
       }
 
     //--------------------------------------------------

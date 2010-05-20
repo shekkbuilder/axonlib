@@ -42,40 +42,46 @@
 #ifndef _PICOPNG_H
 #define _PICOPNG_H
 
-#define axPngFree     png_alloc_free_all
-#define axPngDecode   PNG_decode
-#define axPngInfo     PNG_info_t
-
 #if defined (AX_DEBUG_PNG) && defined (AX_DEBUG)
   #include "core/axDebug.h"
 #endif
 
-#include <stdint.h>
+#include "axDefines.h"
 #include "core/axMalloc.h"
 
+//#include <stdint.h> // uint8_t, uint32_t, uint64_t
+
+#define axPngInfo           PNG_info_t
+#define axPngDecode         PNG_decode
+#define axPngConvert        PNG_convert
+#define axPngFree           png_alloc_free
+#define axPngFreeAll        png_alloc_free_all
+#define axPngReadHeader     PNG_readPngHeader
+#define axPngZlibDecompress Zlib_decompress
+
 typedef struct {
-	uint32_t *data;
+	unsigned int *data;
 	size_t size;
 	size_t allocsize;
 } vector32_t;
 
 typedef struct {
-	uint8_t *data;
+	unsigned char *data;
 	size_t size;
 	size_t allocsize;
 } vector8_t;
 
 typedef struct {
-	uint32_t width, height;
-	uint32_t colorType, bitDepth;
-	uint32_t compressionMethod, filterMethod, interlaceMethod;
-	uint32_t key_r, key_g, key_b;
+	unsigned int width, height;
+	unsigned int colorType, bitDepth;
+	unsigned int compressionMethod, filterMethod, interlaceMethod;
+	unsigned int key_r, key_g, key_b;
 	bool key_defined; // is a transparent color key given?
 	vector8_t *palette;
 	vector8_t *image;
 } PNG_info_t;
 
-PNG_info_t *PNG_decode(const uint8_t *in, uint32_t size);
+PNG_info_t *PNG_decode(const unsigned char *in, unsigned int size);
 void png_alloc_free_all();
 
 extern int PNG_error;
@@ -183,14 +189,14 @@ __unused void vector32_cleanup(vector32_t *p)
 	p->data = NULL;
 }
 
-uint32_t vector32_resize(vector32_t *p, size_t size)
+unsigned int vector32_resize(vector32_t *p, size_t size)
 {	// returns 1 if success, 0 if failure ==> nothing done
-	if (size * sizeof (uint32_t) > p->allocsize) {
-		size_t newsize = size * sizeof (uint32_t) * 2;
+	if (size * sizeof (unsigned int) > p->allocsize) {
+		size_t newsize = size * sizeof (unsigned int) * 2;
 		void *data = png_alloc_realloc(p->data, newsize);
 		if (data) {
 			p->allocsize = newsize;
-			p->data = (uint32_t *) data;
+			p->data = (unsigned int *) data;
 			p->size = size;
 		} else
 			return 0;
@@ -199,7 +205,7 @@ uint32_t vector32_resize(vector32_t *p, size_t size)
 	return 1;
 }
 
-uint32_t vector32_resizev(vector32_t *p, size_t size, uint32_t value)
+unsigned int vector32_resizev(vector32_t *p, size_t size, unsigned int value)
 {	// resize and give all new elements the value
 	size_t oldsize = p->size, i;
 	if (!vector32_resize(p, size))
@@ -215,7 +221,7 @@ void vector32_init(vector32_t *p)
 	p->size = p->allocsize = 0;
 }
 
-vector32_t *vector32_new(size_t size, uint32_t value)
+vector32_t *vector32_new(size_t size, unsigned int value)
 {
 	vector32_t *p = (vector32_t*)png_alloc_malloc(sizeof (vector32_t));
 	vector32_init(p);
@@ -234,17 +240,17 @@ __unused void vector8_cleanup(vector8_t *p)
 	p->data = NULL;
 }
 
-uint32_t vector8_resize(vector8_t *p, size_t size)
+unsigned int vector8_resize(vector8_t *p, size_t size)
 {	// returns 1 if success, 0 if failure ==> nothing done
-	// xxx: the use of sizeof uint32_t here seems like a bug (this descends from the lodepng vector
+	// xxx: the use of sizeof unsigned int here seems like a bug (this descends from the lodepng vector
 	// compatibility functions which do the same). without this there is corruption in certain cases,
 	// so this was probably done to cover up allocation bug(s) in the original picopng code!
-	if (size * sizeof (uint32_t) > p->allocsize) {
-		size_t newsize = size * sizeof (uint32_t) * 2;
+	if (size * sizeof (unsigned int) > p->allocsize) {
+		size_t newsize = size * sizeof (unsigned int) * 2;
 		void *data = png_alloc_realloc(p->data, newsize);
 		if (data) {
 			p->allocsize = newsize;
-			p->data = (uint8_t *) data;
+			p->data = (unsigned char *) data;
 			p->size = size;
 		} else
 			return 0; // error: not enough memory
@@ -253,7 +259,7 @@ uint32_t vector8_resize(vector8_t *p, size_t size)
 	return 1;
 }
 
-uint32_t vector8_resizev(vector8_t *p, size_t size, uint8_t value)
+unsigned int vector8_resizev(vector8_t *p, size_t size, unsigned char value)
 {	// resize and give all new elements the value
 	size_t oldsize = p->size, i;
 	if (!vector8_resize(p, size))
@@ -269,7 +275,7 @@ void vector8_init(vector8_t *p)
 	p->size = p->allocsize = 0;
 }
 
-vector8_t *vector8_new(size_t size, uint8_t value)
+vector8_t *vector8_new(size_t size, unsigned char value)
 {
 	vector8_t *p = (vector8_t*) png_alloc_malloc(sizeof (vector8_t));
 	vector8_init(p);
@@ -281,7 +287,7 @@ vector8_t *vector8_new(size_t size, uint8_t value)
 vector8_t *vector8_copy(vector8_t *p)
 {
 	vector8_t *q = vector8_new(p->size, 0);
-	uint32_t n;
+	unsigned int n;
 	for (n = 0; n < q->size; n++)
 		q->data[n] = p->data[n];
 	return q;
@@ -289,16 +295,16 @@ vector8_t *vector8_copy(vector8_t *p)
 
 /******************************************************************************/
 
-const uint32_t LENBASE[29] = { 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51,
+const unsigned int LENBASE[29] = { 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51,
 		59, 67, 83, 99, 115, 131, 163, 195, 227, 258 };
-const uint32_t LENEXTRA[29] = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4,
+const unsigned int LENEXTRA[29] = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4,
 		4, 5, 5, 5, 5, 0 };
-const uint32_t DISTBASE[30] = { 1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385,
+const unsigned int DISTBASE[30] = { 1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385,
 		513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577 };
-const uint32_t DISTEXTRA[30] = { 0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9,
+const unsigned int DISTEXTRA[30] = { 0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9,
 		10, 10, 11, 11, 12, 12, 13, 13 };
 // code length code lengths
-const uint32_t CLCL[19] = { 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
+const unsigned int CLCL[19] = { 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
 
 /******************************************************************************/
 
@@ -315,10 +321,10 @@ HuffmanTree *HuffmanTree_new()
 	return tree;
 }
 
-int HuffmanTree_makeFromLengths(HuffmanTree *tree, const vector32_t *bitlen, uint32_t maxbitlen)
+int HuffmanTree_makeFromLengths(HuffmanTree *tree, const vector32_t *bitlen, unsigned int maxbitlen)
 {	// make tree given the lengths
-	uint32_t bits, n, i;
-	uint32_t numcodes = (uint32_t) bitlen->size, treepos = 0, nodefilled = 0;
+	unsigned int bits, n, i;
+	unsigned int numcodes = (unsigned int) bitlen->size, treepos = 0, nodefilled = 0;
 	vector32_t *tree1d, *blcount, *nextcode;
 	tree1d = vector32_new(numcodes, 0);
 	blcount = vector32_new(maxbitlen + 1, 0);
@@ -335,7 +341,7 @@ int HuffmanTree_makeFromLengths(HuffmanTree *tree, const vector32_t *bitlen, uin
 	tree->tree2d = tree2d;
 	for (n = 0; n < numcodes; n++) // the codes
 		for (i = 0; i < bitlen->data[n]; i++) { // the bits for this code
-			uint32_t bit = (tree1d->data[n] >> (bitlen->data[n] - i - 1)) & 1;
+			unsigned int bit = (tree1d->data[n] >> (bitlen->data[n] - i - 1)) & 1;
 			if (treepos > numcodes - 2)
 				return 55;
 			if (tree2d->data[2 * treepos + bit] == 0x7fff) { // not yet filled in
@@ -352,11 +358,11 @@ int HuffmanTree_makeFromLengths(HuffmanTree *tree, const vector32_t *bitlen, uin
 	return 0;
 }
 
-int HuffmanTree_decode(const HuffmanTree *tree, bool *decoded, uint32_t *result, size_t *treepos,
-		uint32_t bit)
+int HuffmanTree_decode(const HuffmanTree *tree, bool *decoded, unsigned int *result, size_t *treepos,
+		unsigned int bit)
 {	// Decodes a symbol from the tree
 	const vector32_t *tree2d = tree->tree2d;
-	uint32_t numcodes = (uint32_t) tree2d->size / 2;
+	unsigned int numcodes = (unsigned int) tree2d->size / 2;
 	if (*treepos >= numcodes)
 		return 11; // error: you appeared outside the codetree
 	*result = tree2d->data[2 * (*treepos) + bit];
@@ -369,16 +375,16 @@ int HuffmanTree_decode(const HuffmanTree *tree, bool *decoded, uint32_t *result,
 
 int Inflator_error;
 
-uint32_t Zlib_readBitFromStream(size_t *bitp, const uint8_t *bits)
+unsigned int Zlib_readBitFromStream(size_t *bitp, const unsigned char *bits)
 {
-	uint32_t result = (bits[*bitp >> 3] >> (*bitp & 0x7)) & 1;
+	unsigned int result = (bits[*bitp >> 3] >> (*bitp & 0x7)) & 1;
 	(*bitp)++;
 	return result;
 }
 
-uint32_t Zlib_readBitsFromStream(size_t *bitp, const uint8_t *bits, size_t nbits)
+unsigned int Zlib_readBitsFromStream(size_t *bitp, const unsigned char *bits, size_t nbits)
 {
-	uint32_t i, result = 0;
+	unsigned int i, result = 0;
 	for (i = 0; i < nbits; i++)
 		result += (Zlib_readBitFromStream(bitp, bits)) << i;
 	return result;
@@ -398,11 +404,11 @@ void Inflator_generateFixedTrees(HuffmanTree *tree, HuffmanTree *treeD)
 	HuffmanTree_makeFromLengths(treeD, bitlenD, 15);
 }
 
-uint32_t Inflator_huffmanDecodeSymbol(const uint8_t *in, size_t *bp, const HuffmanTree *codetree,
+unsigned int Inflator_huffmanDecodeSymbol(const unsigned char *in, size_t *bp, const HuffmanTree *codetree,
 		size_t inlength)
 {	// decode a single symbol from given list of bits with given code tree. returns the symbol
 	bool decoded = false;
-	uint32_t ct = 0;
+	unsigned int ct = 0;
 	size_t treepos = 0;
 	for (;;) {
 		if ((*bp & 0x07) == 0 && (*bp >> 3) > inlength) {
@@ -418,7 +424,7 @@ uint32_t Inflator_huffmanDecodeSymbol(const uint8_t *in, size_t *bp, const Huffm
 	}
 }
 
-void Inflator_getTreeInflateDynamic(HuffmanTree *tree, HuffmanTree *treeD, const uint8_t *in,
+void Inflator_getTreeInflateDynamic(HuffmanTree *tree, HuffmanTree *treeD, const unsigned char *in,
 		size_t *bp, size_t inlength)
 {	// get the tree of a deflated block with dynamic tree, the tree itself is also Huffman
 	// compressed with a known tree
@@ -443,7 +449,7 @@ void Inflator_getTreeInflateDynamic(HuffmanTree *tree, HuffmanTree *treeD, const
 		return;
 	size_t replength;
 	for (i = 0; i < HLIT + HDIST; ) {
-		uint32_t code = Inflator_huffmanDecodeSymbol(in, bp, codelengthcodetree, inlength);
+		unsigned int code = Inflator_huffmanDecodeSymbol(in, bp, codelengthcodetree, inlength);
 		if (Inflator_error)
 			return;
 		if (code <= 15) { // a length code
@@ -457,7 +463,7 @@ void Inflator_getTreeInflateDynamic(HuffmanTree *tree, HuffmanTree *treeD, const
 				return;
 			}
 			replength = 3 + Zlib_readBitsFromStream(bp, in, 2);
-			uint32_t value; // set value to the previous code
+			unsigned int value; // set value to the previous code
 			if ((i - 1) < HLIT)
 				value = bitlen->data[i - 1];
 			else
@@ -522,8 +528,8 @@ void Inflator_getTreeInflateDynamic(HuffmanTree *tree, HuffmanTree *treeD, const
 		return;
 }
 
-void Inflator_inflateHuffmanBlock(vector8_t *out, const uint8_t *in, size_t *bp, size_t *pos,
-		size_t inlength, uint32_t btype)
+void Inflator_inflateHuffmanBlock(vector8_t *out, const unsigned char *in, size_t *bp, size_t *pos,
+		size_t inlength, unsigned int btype)
 {
 	HuffmanTree *codetree, *codetreeD; // the code tree for Huffman codes, dist codes
 	codetree = HuffmanTree_new();
@@ -536,7 +542,7 @@ void Inflator_inflateHuffmanBlock(vector8_t *out, const uint8_t *in, size_t *bp,
 			return;
 	}
 	for (;;) {
-		uint32_t code = Inflator_huffmanDecodeSymbol(in, bp, codetree, inlength);
+		unsigned int code = Inflator_huffmanDecodeSymbol(in, bp, codetree, inlength);
 		if (Inflator_error)
 			return;
 		if (code == 256) // end code
@@ -544,7 +550,7 @@ void Inflator_inflateHuffmanBlock(vector8_t *out, const uint8_t *in, size_t *bp,
 		else if (code <= 255) { // literal symbol
 			if (*pos >= out->size)
 				vector8_resize(out, (*pos + 1) * 2); // reserve more room
-			out->data[(*pos)++] = (uint8_t) code;
+			out->data[(*pos)++] = (unsigned char) code;
 		} else if (code >= 257 && code <= 285) { // length code
 			size_t length = LENBASE[code - 257], numextrabits = LENEXTRA[code - 257];
 			if ((*bp >> 3) >= inlength) {
@@ -552,14 +558,14 @@ void Inflator_inflateHuffmanBlock(vector8_t *out, const uint8_t *in, size_t *bp,
 				return;
 			}
 			length += Zlib_readBitsFromStream(bp, in, numextrabits);
-			uint32_t codeD = Inflator_huffmanDecodeSymbol(in, bp, codetreeD, inlength);
+			unsigned int codeD = Inflator_huffmanDecodeSymbol(in, bp, codetreeD, inlength);
 			if (Inflator_error)
 				return;
 			if (codeD > 29) {
 				Inflator_error = 18; // error: invalid dist code (30-31 are never used)
 				return;
 			}
-			uint32_t dist = DISTBASE[codeD], numextrabitsD = DISTEXTRA[codeD];
+			unsigned int dist = DISTBASE[codeD], numextrabitsD = DISTEXTRA[codeD];
 			if ((*bp >> 3) >= inlength) {
 				Inflator_error = 51; // error, bit pointer will jump past memory
 				return;
@@ -578,7 +584,7 @@ void Inflator_inflateHuffmanBlock(vector8_t *out, const uint8_t *in, size_t *bp,
 	}
 }
 
-void Inflator_inflateNoCompression(vector8_t *out, const uint8_t *in, size_t *bp, size_t *pos,
+void Inflator_inflateNoCompression(vector8_t *out, const unsigned char *in, size_t *bp, size_t *pos,
 		size_t inlength)
 {
 	while ((*bp & 0x7) != 0)
@@ -588,7 +594,7 @@ void Inflator_inflateNoCompression(vector8_t *out, const uint8_t *in, size_t *bp
 		Inflator_error = 52; // error, bit pointer will jump past memory
 		return;
 	}
-	uint32_t LEN = in[p] + 256 * in[p + 1], NLEN = in[p + 2] + 256 * in[p + 3];
+	unsigned int LEN = in[p] + 256 * in[p + 1], NLEN = in[p + 2] + 256 * in[p + 3];
 	p += 4;
 	if (LEN + NLEN != 65535) {
 		Inflator_error = 21; // error: NLEN is not one's complement of LEN
@@ -600,7 +606,7 @@ void Inflator_inflateNoCompression(vector8_t *out, const uint8_t *in, size_t *bp
 		Inflator_error = 23; // error: reading outside of in buffer
 		return;
 	}
-	uint32_t n;
+	unsigned int n;
 	for (n = 0; n < LEN; n++)
 		out->data[(*pos)++] = in[p++]; // read LEN bytes of literal data
 	*bp = p * 8;
@@ -610,14 +616,14 @@ void Inflator_inflate(vector8_t *out, const vector8_t *in, size_t inpos)
 {
 	size_t bp = 0, pos = 0; // bit pointer and byte pointer
 	Inflator_error = 0;
-	uint32_t BFINAL = 0;
+	unsigned int BFINAL = 0;
 	while (!BFINAL && !Inflator_error) {
 		if (bp >> 3 >= in->size) {
 			Inflator_error = 52; // error, bit pointer will jump past memory
 			return;
 		}
 		BFINAL = Zlib_readBitFromStream(&bp, &in->data[inpos]);
-		uint32_t BTYPE = Zlib_readBitFromStream(&bp, &in->data[inpos]);
+		unsigned int BTYPE = Zlib_readBitFromStream(&bp, &in->data[inpos]);
 		BTYPE += 2 * Zlib_readBitFromStream(&bp, &in->data[inpos]);
 		if (BTYPE == 3) {
 			Inflator_error = 20; // error: invalid BTYPE
@@ -642,7 +648,7 @@ int Zlib_decompress(vector8_t *out, const vector8_t *in) // returns error value
 		// error: 256 * in->data[0] + in->data[1] must be a multiple of 31, the FCHECK value is
 		// supposed to be made that way
 		return 24;
-	uint32_t CM = in->data[0] & 15, CINFO = (in->data[0] >> 4) & 15, FDICT = (in->data[1] >> 5) & 1;
+	unsigned int CM = in->data[0] & 15, CINFO = (in->data[0] >> 4) & 15, FDICT = (in->data[1] >> 5) & 1;
 	if (CM != 8 || CINFO > 7)
 		// error: only compression method 8: inflate with sliding window of 32k is supported by
 		// the PNG spec
@@ -667,33 +673,33 @@ int Zlib_decompress(vector8_t *out, const vector8_t *in) // returns error value
 
 int PNG_error;
 
-uint32_t PNG_readBitFromReversedStream(size_t *bitp, const uint8_t *bits)
+unsigned int PNG_readBitFromReversedStream(size_t *bitp, const unsigned char *bits)
 {
-	uint32_t result = (bits[*bitp >> 3] >> (7 - (*bitp & 0x7))) & 1;
+	unsigned int result = (bits[*bitp >> 3] >> (7 - (*bitp & 0x7))) & 1;
 	(*bitp)++;
 	return result;
 }
 
-uint32_t PNG_readBitsFromReversedStream(size_t *bitp, const uint8_t *bits, uint32_t nbits)
+unsigned int PNG_readBitsFromReversedStream(size_t *bitp, const unsigned char *bits, unsigned int nbits)
 {
-	uint32_t i, result = 0;
+	unsigned int i, result = 0;
 	for (i = nbits - 1; i < nbits; i--)
 		result += ((PNG_readBitFromReversedStream(bitp, bits)) << i);
 	return result;
 }
 
-void PNG_setBitOfReversedStream(size_t *bitp, uint8_t *bits, uint32_t bit)
+void PNG_setBitOfReversedStream(size_t *bitp, unsigned char *bits, unsigned int bit)
 {
 	bits[*bitp >> 3] |= (bit << (7 - (*bitp & 0x7)));
 	(*bitp)++;
 }
 
-uint32_t PNG_read32bitInt(const uint8_t *buffer)
+unsigned int PNG_read32bitInt(const unsigned char *buffer)
 {
 	return (buffer[0] << 24) | (buffer[1] << 16) | (buffer[2] << 8) | buffer[3];
 }
 
-int PNG_checkColorValidity(uint32_t colorType, uint32_t bd) // return type is a LodePNG error code
+int PNG_checkColorValidity(unsigned int colorType, unsigned int bd) // return type is a LodePNG error code
 {
 	if ((colorType == 2 || colorType == 4 || colorType == 6)) {
 		if (!(bd == 8 || bd == 16))
@@ -714,9 +720,9 @@ int PNG_checkColorValidity(uint32_t colorType, uint32_t bd) // return type is a 
 		return 31; // nonexistent color type
 }
 
-uint32_t PNG_getBpp(const PNG_info_t *info)
+unsigned int PNG_getBpp(const PNG_info_t *info)
 {
-	uint32_t bitDepth, colorType;
+	unsigned int bitDepth, colorType;
 	bitDepth = info->bitDepth;
 	colorType = info->colorType;
 	if (colorType == 2)
@@ -727,17 +733,17 @@ uint32_t PNG_getBpp(const PNG_info_t *info)
 		return bitDepth;
 }
 
-void PNG_readPngHeader(PNG_info_t *info, const uint8_t *in, size_t inlength)
+void PNG_readPngHeader(PNG_info_t *info, const unsigned char *in, size_t inlength)
 {	// read the information from the header and store it in the Info
 	if (inlength < 29) {
 		PNG_error = 27; // error: the data length is smaller than the length of the header
 		return;
 	}
-	if (*(uint64_t *) in != PNG_SIGNATURE) {
+	if (*(unsigned long long *) in != PNG_SIGNATURE) {
 		PNG_error = 28; // no PNG signature
 		return;
 	}
-	if (*(uint32_t *) &in[12] != CHUNK_IHDR) {
+	if (*(unsigned int *) &in[12] != CHUNK_IHDR) {
 		PNG_error = 29; // error: it doesn't start with a IHDR chunk!
 		return;
 	}
@@ -773,8 +779,8 @@ int PNG_paethPredictor(int a, int b, int c) // Paeth predicter, used by PNG filt
 	return (pa <= pb && pa <= pc) ? a : (pb <= pc ? b : c);
 }
 
-void PNG_unFilterScanline(uint8_t *recon, const uint8_t *scanline, const uint8_t *precon,
-		size_t bytewidth, uint32_t filterType, size_t length)
+void PNG_unFilterScanline(unsigned char *recon, const unsigned char *scanline, const unsigned char *precon,
+		size_t bytewidth, unsigned int filterType, size_t length)
 {
 	size_t i;
 	switch (filterType) {
@@ -812,15 +818,15 @@ void PNG_unFilterScanline(uint8_t *recon, const uint8_t *scanline, const uint8_t
 	case 4:
 		if (precon) {
 			for (i = 0; i < bytewidth; i++)
-				recon[i] = (uint8_t) (scanline[i] + PNG_paethPredictor(0, precon[i], 0));
+				recon[i] = (unsigned char) (scanline[i] + PNG_paethPredictor(0, precon[i], 0));
 			for (i = bytewidth; i < length; i++)
-				recon[i] = (uint8_t) (scanline[i] + PNG_paethPredictor(recon[i - bytewidth],
+				recon[i] = (unsigned char) (scanline[i] + PNG_paethPredictor(recon[i - bytewidth],
 						precon[i], precon[i - bytewidth]));
 		} else {
 			for (i = 0; i < bytewidth; i++)
 				recon[i] = scanline[i];
 			for (i = bytewidth; i < length; i++)
-				recon[i] = (uint8_t) (scanline[i] + PNG_paethPredictor(recon[i - bytewidth], 0, 0));
+				recon[i] = (unsigned char) (scanline[i] + PNG_paethPredictor(recon[i - bytewidth], 0, 0));
 		}
 		break;
 	default:
@@ -829,19 +835,19 @@ void PNG_unFilterScanline(uint8_t *recon, const uint8_t *scanline, const uint8_t
 	}
 }
 
-void PNG_adam7Pass(uint8_t *out, uint8_t *linen, uint8_t *lineo, const uint8_t *in, uint32_t w,
+void PNG_adam7Pass(unsigned char *out, unsigned char *linen, unsigned char *lineo, const unsigned char *in, unsigned int w,
 		size_t passleft, size_t passtop, size_t spacex, size_t spacey, size_t passw, size_t passh,
-		uint32_t bpp)
+		unsigned int bpp)
 {	// filter and reposition the pixels into the output when the image is Adam7 interlaced. This
 	// function can only do it after the full image is already decoded. The out buffer must have
 	// the correct allocated memory size already.
 	if (passw == 0)
 		return;
 	size_t bytewidth = (bpp + 7) / 8, linelength = 1 + ((bpp * passw + 7) / 8);
-	uint32_t y;
+	unsigned int y;
 	for (y = 0; y < passh; y++) {
 		size_t i, b;
-		uint8_t filterType = in[y * linelength], *prevline = (y == 0) ? 0 : lineo;
+		unsigned char filterType = in[y * linelength], *prevline = (y == 0) ? 0 : lineo;
 		PNG_unFilterScanline(linen, &in[y * linelength + 1], prevline, bytewidth, filterType,
 				(w * bpp + 7) / 8);
 		if (PNG_error)
@@ -859,21 +865,21 @@ void PNG_adam7Pass(uint8_t *out, uint8_t *linen, uint8_t *lineo, const uint8_t *
 				for (b = 0; b < bpp; b++)
 					PNG_setBitOfReversedStream(&obp, out, PNG_readBitFromReversedStream(&bp, linen));
 			}
-		uint8_t *temp = linen;
+		unsigned char *temp = linen;
 		linen = lineo;
 		lineo = temp; // swap the two buffer pointers "line old" and "line new"
 	}
 }
 
-int PNG_convert(const PNG_info_t *info, vector8_t *out, const uint8_t *in)
+int PNG_convert(const PNG_info_t *info, vector8_t *out, const unsigned char *in)
 {	// converts from any color type to 32-bit. return value = LodePNG error code
 	size_t i, c;
-	uint32_t bitDepth, colorType;
+	unsigned int bitDepth, colorType;
 	bitDepth = info->bitDepth;
 	colorType = info->colorType;
 	size_t numpixels = info->width * info->height, bp = 0;
 	vector8_resize(out, numpixels * 4);
-	uint8_t *out_data = out->size ? out->data : 0;
+	unsigned char *out_data = out->size ? out->data : 0;
 	if (bitDepth == 8 && colorType == 0) // greyscale
 		for (i = 0; i < numpixels; i++) {
 			out_data[4 * i + 0] = out_data[4 * i + 1] = out_data[4 * i + 2] = in[i];
@@ -928,15 +934,15 @@ int PNG_convert(const PNG_info_t *info, vector8_t *out, const uint8_t *in)
 				out_data[4 * i + c] = in[8 * i + 2 * c]; // RGB with alpha
 	else if (bitDepth < 8 && colorType == 0) // greyscale
 		for (i = 0; i < numpixels; i++) {
-			uint32_t value = (PNG_readBitsFromReversedStream(&bp, in, bitDepth) * 255) /
+			unsigned int value = (PNG_readBitsFromReversedStream(&bp, in, bitDepth) * 255) /
 					((1 << bitDepth) - 1); // scale value from 0 to 255
-			out_data[4 * i + 0] = out_data[4 * i + 1] = out_data[4 * i + 2] = (uint8_t) value;
+			out_data[4 * i + 0] = out_data[4 * i + 1] = out_data[4 * i + 2] = (unsigned char) value;
 			out_data[4 * i + 3] = (info->key_defined && value &&
 					(((1U << bitDepth) - 1U) == info->key_r) && ((1U << bitDepth) - 1U)) ? 0 : 255;
 		}
 	else if (bitDepth < 8 && colorType == 3) // palette
 		for (i = 0; i < numpixels; i++) {
-			uint32_t value = PNG_readBitsFromReversedStream(&bp, in, bitDepth);
+			unsigned int value = PNG_readBitsFromReversedStream(&bp, in, bitDepth);
 			if (4 * value >= info->palette->size)
 				return 47;
 			for (c = 0; c < 4; c++) // get rgb colors from the palette
@@ -948,15 +954,15 @@ int PNG_convert(const PNG_info_t *info, vector8_t *out, const uint8_t *in)
 PNG_info_t *PNG_info_new()
 {
 	PNG_info_t *info = (PNG_info_t*)png_alloc_malloc(sizeof (PNG_info_t));
-	uint32_t i;
+	unsigned int i;
 	for (i = 0; i < sizeof (PNG_info_t); i++)
-		((uint8_t *) info)[i] = 0;
+		((unsigned char *) info)[i] = 0;
 	info->palette = vector8_new(0, 0);
 	info->image = vector8_new(0, 0);
 	return info;
 }
 
-PNG_info_t *PNG_decode(const uint8_t *in, uint32_t size)
+PNG_info_t *PNG_decode(const unsigned char *in, unsigned int size)
 {
 	PNG_info_t *info;
 	PNG_error = 0;
@@ -990,7 +996,7 @@ PNG_info_t *PNG_decode(const uint8_t *in, uint32_t size)
 			PNG_error = 35; // error: size of the in buffer too small to contain next chunk
 			return NULL;
 		}
-		uint32_t chunkType = *(uint32_t *) &in[pos];
+		unsigned int chunkType = *(unsigned int *) &in[pos];
 		if (chunkType == CHUNK_IDAT) { // IDAT: compressed image data chunk
 			size_t offset = 0;
 			if (idat) {
@@ -1060,7 +1066,7 @@ PNG_info_t *PNG_decode(const uint8_t *in, uint32_t size)
 		}
 		pos += 4; // step over CRC (which is ignored)
 	}
-	uint32_t bpp = PNG_getBpp(info);
+	unsigned int bpp = PNG_getBpp(info);
 	vector8_t *scanlines; // now the out buffer will be filled
 	scanlines = vector8_new(((info->width * (info->height * bpp + 7)) / 8) + info->height, 0);
 	PNG_error = Zlib_decompress(scanlines, idat);
@@ -1068,7 +1074,7 @@ PNG_info_t *PNG_decode(const uint8_t *in, uint32_t size)
 		return NULL; // stop if the zlib decompressor returned an error
 	size_t bytewidth = (bpp + 7) / 8, outlength = (info->height * info->width * bpp + 7) / 8;
 	vector8_resize(info->image, outlength); // time to fill the out buffer
-	uint8_t *out_data = outlength ? info->image->data : 0;
+	unsigned char *out_data = outlength ? info->image->data : 0;
 	if (info->interlaceMethod == 0) { // no interlace, just filter
 		size_t y, obp, bp;
 		size_t linestart, linelength;
@@ -1077,8 +1083,8 @@ PNG_info_t *PNG_decode(const uint8_t *in, uint32_t size)
 		linelength = (info->width * bpp + 7) / 8;
 		if (bpp >= 8) // byte per byte
 			for (y = 0; y < info->height; y++) {
-				uint32_t filterType = scanlines->data[linestart];
-				const uint8_t *prevline;
+				unsigned int filterType = scanlines->data[linestart];
+				const unsigned char *prevline;
 				prevline = (y == 0) ? 0 : &out_data[(y - 1) * info->width * bytewidth];
 				PNG_unFilterScanline(&out_data[linestart - y], &scanlines->data[linestart + 1],
 						prevline, bytewidth, filterType, linelength);
@@ -1089,8 +1095,8 @@ PNG_info_t *PNG_decode(const uint8_t *in, uint32_t size)
 			vector8_t *templine; // only used if bpp < 8
 			templine = vector8_new((info->width * bpp + 7) >> 3, 0);
 			for (y = 0, obp = 0; y < info->height; y++) {
-				uint32_t filterType = scanlines->data[linestart];
-				const uint8_t *prevline;
+				unsigned int filterType = scanlines->data[linestart];
+				const unsigned char *prevline;
 				prevline = (y == 0) ? 0 : &out_data[(y - 1) * info->width * bytewidth];
 				PNG_unFilterScanline(templine->data, &scanlines->data[linestart + 1], prevline,
 						bytewidth, filterType, linelength);
@@ -1140,19 +1146,71 @@ PNG_info_t *PNG_decode(const uint8_t *in, uint32_t size)
   #include "core/axUtils.h"
   #include "core/axDebug.h"
 
-  inline PNG_info_t *PNG_decode_DEBUG(const uint8_t *in, uint32_t size,
+  // decode
+  PNG_info_t *PNG_decode_DEBUG(const unsigned char *in, unsigned int size,
   const char* _file, const unsigned int _line)
   {
     _trace
     (
-      "[" << axGetFileName(_file) << "|" << _line << "] PNG_decode, " <<
+      "[" << axGetFileName(_file) << "|" << _line << "] axPngDecode, " <<
       (void*)&in << ", " << size
     );
     return PNG_decode(in, size);
   }
+  
+  //convert
+  int PNG_convert_DEBUG(const PNG_info_t *info, vector8_t *out,
+    const unsigned char *in, const char* _file, const unsigned int _line)
+  {
+    _trace
+    (
+      "[" << axGetFileName(_file) << "|" << _line << "] axPngConvert, " <<
+      (void*)&in << ", " << (void*)&out
+    );
+    return PNG_convert(info, out, in);
+  }
+  
+  // read header
+  void PNG_readPngHeader_DEBUG(PNG_info_t *info, const unsigned char *in,
+    size_t inlength, const char* _file, const unsigned int _line)
+  {
+    _trace
+    (
+      "[" << axGetFileName(_file) << "|" << _line << "] axPngReadHeader, " <<
+      (void*)&in << ", " << inlength
+    );
+    return PNG_readPngHeader(info, in, inlength);
+  }
+  
+  // zlib decompress
+  int Zlib_decompress_DEBUG(vector8_t *out, const vector8_t *in,
+    const char* _file, const unsigned int _line)
+  {
+    _trace
+    (
+      "[" << axGetFileName(_file) << "|" << _line << "] axPngZlibDecompress, "
+      << (void*)&in << ", " << (void*)&out
+    );
+    return Zlib_decompress(out, in);
+  }
+  
+  // free all
+  void png_alloc_free_all_DEBUG(const char* _file, const unsigned int _line)
+  {
+    _trace
+    (
+      "[" << axGetFileName(_file) << "|" << _line << "] axPngFreeAll"
+    );
+    return png_alloc_free_all();
+  }
+  
+  #define PNG_decode(a, b)      PNG_decode_DEBUG(a, b, __FILE__, __LINE__)
+  #define PNG_convert(a, b, c)  PNG_convert_DEBUG(a, b, c, __FILE__, __LINE__)
+  #define PNG_readPngHeader(a, b, c) \
+    PNG_readPngHeader_DEBUG(a, b, c, __FILE__,  __LINE__)
+  #define Zlib_decompress(a, b) Zlib_decompress_DEBUG(a, b, __FILE__, __LINE__)
+  #define png_alloc_free_all() png_alloc_free_all_DEBUG(__FILE__, __LINE__)
+    
+#endif //AX_DEBUG_PNG
 
-  #define PNG_decode(p, s) PNG_decode_DEBUG(p, s, __FILE__, __LINE__)
-
-#endif
-
-#endif
+#endif // _PICOPNG_H
