@@ -98,7 +98,7 @@ TODO:
   #define _WIN32_WINNT 0x0501
   #include "windows.h"
 
-  static long g_sl;
+  static __thread long g_sl;
 
   /*
   // inline these two
@@ -333,7 +333,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
   #endif
 
   // global data, can be 'dangerous' for multiple instances
-  static unsigned int _axMemTotal = 0;
+  static __thread unsigned int _axMemTotal = 0;
 
   // malloc debug
   __axmalloc_inline void* axMallocDebug

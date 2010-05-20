@@ -217,30 +217,38 @@ TODO:
 #define __deprecated              __attribute__ ((deprecated))
 
 #define __constructor             __attribute__ ((constructor))
-#define __destructor              __attribute__ ((constructor))
+#define __destructor              __attribute__ ((destructor))
 #define __alloc_size1(x)          __attribute__ ((alloc_size(x)))
 #define __alloc_size2(x, y)       __attribute__ ((alloc_size(x, y)))
-#define __alias(name)             __attribute__ ((alias (name)));
+#define __alias(name)             __attribute__ ((alias (name)))
 #define ___always_inline   inline __attribute__ ((always_inline))
-#define __warning(message)        __attribute__ ((warning(message)))
-#define __error(message)          __attribute__ ((error(message)))
 #define __malloc                  __attribute__ ((malloc))
 #define __noinline                __attribute__ ((noinline))
 #define __noreturn                __attribute__ ((noreturn))
-#define __optimize(level)         __attribute__ ((optimize (level)))
 #define __pure                    __attribute__ ((pure))
-#define __cold                    __attribute__ ((cold)))
-#define __target(value)           __attribute__ ((target (value))))
-#define __weak                    __attribute__ ((weak)))
+#define __target(value)           __attribute__ ((target (value)))
+#define __weak                    __attribute__ ((weak))
 #define __weakref(name)           __attribute__ ((weakref (name)))
 
 #define __hotinline               ___always_inline __hot __optimize(3)
 
-// put attributes that require new version of GCC. 4.4.x as base
-#if (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 4) 
-  #define __hot  __attribute__ ((hot))
-#else
+// newer version of GCC required
+#if (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 4)
+  #define __optimize(level)         __attribute__ ((optimize (level)))
+  #define __hot                     __attribute__ ((hot))
+  #define __cold                    __attribute__ ((cold))
+  #define __error(message)          __attribute__ ((error(message)))
+  #define __warning(message)        __attribute__ ((warning(message)))
+#else  
+  #define __optimize(level)
   #define __hot
+  #define __cold
+  #define __error
+  #define __warning
+  // disable TLS & show warning
+  #undef __thread
+  #define __thread  
+  #warning "### Thread-local storage requires GCC 4.4.x"
 #endif
 
 #ifndef __cdecl

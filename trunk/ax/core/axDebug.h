@@ -14,15 +14,6 @@
  * If not, see <http://axonlib.googlecode.com/>.
  */
 
-/*
-TODO:  - writing debug logs on windows e.g:
-         #define AX_LOG_FILE logfile.log
-         this is going to be useful for logging assertion of gui programs
-         and for logging _all_ stdout messages, since allocated consoles
-         ( with AllocConsole() ) are closed prematurely.
-       - investigate alternatives.
-*/
-
 /**
  * @file axDebug.h
  * \brief debugger methods
@@ -146,7 +137,7 @@ TODO:  - writing debug logs on windows e.g:
       axDlog << x << "\n"; \
       axDlog.flush();
   #else
-    bool axDlog;
+    __thread bool axDlog;
     #define axDfstream(x) (void(0))
     #define _axDfstream(x) (void(0))
   #endif
@@ -163,7 +154,7 @@ TODO:  - writing debug logs on windows e.g:
     #include <stdio.h>            // gcc-4.4.1-tdm
     #include <sstream>
 
-    HWND axDtext;                 // edit control handle
+    __thread HWND axDtext;                 // edit control handle
     ostringstream axDoss;         // string stream for window
 
     // ----------------
@@ -260,8 +251,8 @@ TODO:  - writing debug logs on windows e.g:
      * http://support.microsoft.com/kb/105305
      *
      */
-    unsigned int axHcrt = 0;                  // crt handle
-    FILE *axSfile;                            // file stream
+    __thread unsigned int axHcrt = 0;                  // crt handle
+    __thread FILE *axSfile;                            // file stream
 
     // ----------------
     // destroy console
