@@ -274,7 +274,7 @@ hmmm...
 #define __alloc_size1(x)          __attribute__ ((alloc_size(x)))
 #define __alloc_size2(x, y)       __attribute__ ((alloc_size(x, y)))
 #define __alias(name)             __attribute__ ((alias (name)));
-#define __always_inline    inline __attribute__ ((always_inline))
+#define ___always_inline    inline __attribute__ ((always_inline))
 #define __warning(message)        __attribute__ ((warning(message)))
 #define __error(message)          __attribute__ ((error(message)))
 #define __malloc                  __attribute__ ((malloc))

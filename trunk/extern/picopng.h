@@ -1147,7 +1147,7 @@ PNG_info_t *PNG_decode(const uint8_t *in, uint32_t size)
     (
       "[" << axGetFileName(_file) << "|" << _line << "] PNG_decode, " <<
       (void*)&in << ", " << size
-    );    
+    );
     return PNG_decode(in, size);
   }
 

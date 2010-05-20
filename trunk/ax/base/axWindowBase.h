@@ -63,7 +63,7 @@ class axWindowBase : public axWidget//axContainer
     // canvas/surface
 
     virtual axCanvas*   createCanvas(void)  { return NULL; }
-    virtual axSurface*  createSurface(int aWidth, int aHeight) { return NULL; }
+    virtual axSurface*  createSurface(int aWidth, int aHeight, int aDepth) { return NULL; }
     virtual axBitmap*   createBitmap(int aWidth, int aHeight) { return NULL; }
     virtual axCanvas*   getCanvas(void)     { return mCanvas; }
     virtual axSurface*  getSurface(void)    { return mSurface; }

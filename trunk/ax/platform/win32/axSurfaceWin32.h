@@ -17,13 +17,13 @@ class axSurfaceWin32 : public axSurfaceBase
 //    int       mDepth;
 //    axCanvas* mCanvas;
   public:
-    axSurfaceWin32(axContext* aContext, int aWidth, int aHeight)
-    : axSurfaceBase(aWidth,aHeight)
+    axSurfaceWin32(axContext* aContext, int aWidth, int aHeight, int aDepth)
+    : axSurfaceBase(aWidth,aHeight,aDepth)
       {
         mWindow   = aContext->mWindow;
         //mWidth    = aWidth;
         //mHeight   = aHeight;
-        mDepth    = 24;
+        //mDepth    = 24;
         HDC tempdc = GetDC(0);                                    // ...if this value is NULL, GetDC retrieves the device context for the entire screen...
         mBitmap = CreateCompatibleBitmap(tempdc,mWidth,mHeight);  // creates a bitmap compatible with the device associated with the specified device context.
         ReleaseDC(0,tempdc);                                      // releases a device context (DC), freeing it for use by other applications.
@@ -41,11 +41,8 @@ class axSurfaceWin32 : public axSurfaceBase
     //----------
 
     // called by: axCanvasLinux.drawImage
-    virtual int getHandle(void)
-      {
-        return (int)mCanvas->getHandle();//mBitmap;
-      }
-
+    virtual int getHandle(void) { return (int)mCanvas->getHandle(); }
+    virtual int getBitmap(void) { return (int)mBitmap; }
     virtual axCanvas* getCanvas(void) { return mCanvas; }
 
     virtual axCanvas* createCanvas(void)

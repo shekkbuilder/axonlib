@@ -5,7 +5,8 @@
 class axImage
 {
   public:
-    virtual int getHandle(void) { return 0; }
+    virtual int getHandle(void) { return  0; }
+    virtual int getPicture(void) { return 0; }
 };
 
 //----------------------------------------------------------------------

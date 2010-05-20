@@ -11,6 +11,16 @@
 //#include "base/axSurfaceBase.h"
 #include "gui/axBitmap.h"
 
+//#ifndef AlphaBlend
+//WINGDIAPI BOOL WINAPI AlphaBlend(HDC,int,int,int,int,HDC,int,int,int,int,BLENDFUNCTION);
+//#endif
+
+// #if (WINVER >= 0x0410)
+//WINGDIAPI BOOL WINAPI GradientFill(HDC,PTRIVERTEX,ULONG,PVOID,ULONG,ULONG);
+//WINGDIAPI BOOL WINAPI TransparentBlt(HDC,int,int,int,int,HDC,int,int,int,int,UINT);
+//#endif
+
+
 //----------------------------------------------------------------------
 
 #define DEF_PENWIDTH 0
@@ -502,6 +512,38 @@ class axCanvasWin32 : public axCanvasBase
       {
         HDC tempdc = (HDC)aImage->getHandle();
         BitBlt(mDC,aX,aY,aSrcW,aSrcH,tempdc,aSrcX,aSrcY,SRCCOPY);
+      }
+
+    //----------
+
+    virtual void renderBitmap(axBitmap* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+      {
+        drawBitmap(aBitmap,aX,aY,aSrcX,aSrcY,aSrcW,aSrcH);
+      }
+
+//typedef struct _BLENDFUNCTION {
+//  BYTE BlendOp;
+//  BYTE BlendFlags;
+//  BYTE SourceConstantAlpha;
+//  BYTE AlphaFormat;
+//} BLENDFUNCTION, *PBLENDFUNCTION, *LPBLENDFUNCTION;
+
+
+
+
+    virtual void renderImage( axImage*  aImage,  int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+      {
+        drawImage(aImage,aX,aY,aSrcX,aSrcY,aSrcW,aSrcH);
+
+//        HDC tempdc = (HDC)aImage->getHandle();
+//        BLENDFUNCTION bf;
+//        bf.BlendOp = AC_SRC_OVER;
+//        bf.BlendFlags = 0;
+//        bf.SourceConstantAlpha = 0x7f;
+//        bf.AlphaFormat = 0; // ignore source alpha channel
+//        AlphaBlend(mDC,aX,aY,aSrcW,aSrcH,tempdc,aSrcX,aSrcY,aSrcW,aSrcH,bf);
+//        // iink with: libmsimg32
+
       }
 
 };

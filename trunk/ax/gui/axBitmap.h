@@ -13,6 +13,7 @@
 
 #include "axDefines.h"
 #include "core/axMath.h"
+#include "core/axRand.h"
 #include "platform/axContext.h"
 #include "base/axBitmapBase.h"
 
@@ -31,8 +32,8 @@ class axBitmap : public axBitmapImpl
 {
   public:
 
-    axBitmap(axContext* aContext, int aWidth, int aHeight)
-    : axBitmapImpl(aContext,aWidth, aHeight)
+    axBitmap(axContext* aContext, int aWidth, int aHeight, int aDepth)
+    : axBitmapImpl(aContext,aWidth, aHeight, aDepth)
       {
         //wtrace("axBitmap.constructor");
       }
@@ -56,7 +57,7 @@ class axBitmap : public axBitmapImpl
         int size = mWidth*mHeight*4;
         // malloc ?
         mBuffer = new char[size];
-       
+
         if (aData) axMemcpy(mBuffer,(int)aData,size);
         else axMemset(mBuffer,0,size);
         return mBuffer;
@@ -120,7 +121,7 @@ class axBitmap : public axBitmapImpl
               mBuffer[pos+0] = alpha(r,a) + alpha(aR,(255-a));
               mBuffer[pos+1] = alpha(g,a) + alpha(aG,(255-a));
               mBuffer[pos+2] = alpha(b,a) + alpha(aB,(255-a));
-              mBuffer[pos+3] = 0;//a;
+              mBuffer[pos+3] = a;
             } //for x
           } //for y
         } //mBuffer
@@ -160,7 +161,7 @@ class axBitmap : public axBitmapImpl
               mBuffer[pos+0] = alpha(r,a) + alpha(r2,(255-a));
               mBuffer[pos+1] = alpha(g,a) + alpha(g2,(255-a));
               mBuffer[pos+2] = alpha(b,a) + alpha(b2,(255-a));
-              mBuffer[pos+3] = 0;//a;
+              mBuffer[pos+3] = a;
 
               x2++;
               if (x2>=w2) x2 = aRect.x;
@@ -181,6 +182,7 @@ class axBitmap : public axBitmapImpl
       {
         if(mBuffer)
         {
+          trace("swizzle");
           for(int y=0; y<mHeight; y++)
           {
             for(int x=0; x<mWidth; x++)

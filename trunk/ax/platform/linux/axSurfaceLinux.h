@@ -2,6 +2,10 @@
 #define axSurfaceLinux_included
 //----------------------------------------------------------------------
 
+#ifdef AX_XRENDER
+#include <X11/extensions/Xrender.h>
+#endif
+
 #include "platform/axContext.h"
 #include "axDefines.h"
 #include "base/axSurfaceBase.h"
@@ -19,11 +23,14 @@ class axSurfaceLinux : public axSurfaceBase
     Display*  mDisplay;
     Drawable  mDrawable;
     Pixmap    mPixmap;
-  protected:
-    int       mWidth;
-    int       mHeight;
-    int       mDepth;
-    axCanvas* mCanvas;
+
+    int       mPicture;
+
+  //protected:
+  //  int       mWidth;
+  //  int       mHeight;
+  //  int       mDepth;
+  //  axCanvas* mCanvas;
   public:
 
     //Pixmap XCreatePixmap(display, d, width, height, depth)
@@ -32,22 +39,38 @@ class axSurfaceLinux : public axSurfaceBase
     //  unsigned int width, height; // 	Specify the width and height, which define the dimensions of the pixmap.
     //  unsigned int depth; // Specifies the depth of the pixmap.
 
-    axSurfaceLinux(axContext* aContext, int aWidth, int aHeight)
+    axSurfaceLinux(axContext* aContext, int aWidth, int aHeight, int aDepth)
     //: axSurfaceBase(aContext)
     //: axSurfaceBase(/*aContext,*/aWidth,aHeight)
-    : axSurfaceBase(aWidth,aHeight)
+    : axSurfaceBase(aWidth,aHeight,aDepth)
       {
-        //wtrace("axSurfaceLinux.constructor. this=" << this);
         mDisplay  = aContext->mDisplay;
         mDrawable = aContext->mWindow;  // XDefaultRootWindow(mDisplay);
         mWidth    = aWidth;
         mHeight   = aHeight;
-        mDepth    = DefaultDepth(mDisplay,DefaultScreen(mDisplay));
-        mPixmap   = XCreatePixmap(mDisplay,mDrawable,mWidth,mHeight,mDepth);
-        //wtrace(":: mPixmap=" << mPixmap);
+        //mDepth = DefaultDepth(mDisplay,DefaultScreen(mDisplay));
+        mDepth = aDepth;
+        mPixmap  = XCreatePixmap(mDisplay,mDrawable,mWidth,mHeight,mDepth);
+
+        #ifdef AX_XRENDER
+          XRenderPictFormat* fmt;
+          if (mDepth==24)
+            fmt = XRenderFindStandardFormat(mDisplay,PictStandardRGB24);
+          else
+            fmt = XRenderFindStandardFormat(mDisplay,PictStandardARGB32);
+          XRenderPictureAttributes pict_attr;
+          pict_attr.poly_edge = PolyEdgeSmooth;
+          pict_attr.poly_mode = PolyModeImprecise;
+          //pict_attr.component_alpha = true;
+          int pict_bits = /*CPComponentAlpha |*/ CPPolyEdge | CPPolyMode;
+          mPicture = XRenderCreatePicture(mDisplay,/*mDrawable*/mPixmap,fmt,pict_bits,&pict_attr);
+        #endif
+
         //axContext ctx(mDisplay,mPixmap); // display, drawable
         //mCanvas = new axCanvas(&ctx);
         mCanvas = createCanvas();
+        //mCanvas->setPicture(mPicture);
+
       }
 
     //----------
@@ -63,25 +86,23 @@ class axSurfaceLinux : public axSurfaceBase
     //----------
 
     // called from axCanvas.blit
-    virtual int getHandle(void)
-      {
-        return mPixmap;
-      }
+    virtual int getHandle(void)  { return mPixmap; }
+    virtual int getPicture(void) { return mPicture; }
 
     //----------
 
     virtual  int          getWidth(void)  { return 0; }
     virtual  int          getHeight(void) { return 0; }
     virtual  int          getDepth(void)  { return 0; }
-    virtual axCanvas* getCanvas(void) { return mCanvas; }
+    virtual axCanvas*     getCanvas(void) { return mCanvas; }
 
     //----------
 
     virtual axCanvas* createCanvas(void)
       {
-        //wtrace("axSurfaceLinux.createCanvas");
         axContext ctx(mDisplay,mPixmap);
         axCanvas* can = new axCanvas(&ctx);
+        //can->setPicture(mPicture);
         return can;
       }
 

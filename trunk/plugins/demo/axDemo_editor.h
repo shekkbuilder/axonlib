@@ -71,7 +71,7 @@ class axDemo_editor : public axEditor
         applySkin(m_Skin);
         //m_Skin->loadSkinBitmap(this,(unsigned char*)demo_skin,demo_skin_size);
         //m_Symbols = new axSymbols(m_Skin->getSurface());
-        m_VoxelBitmap = createBitmap(320,200);
+        m_VoxelBitmap = createBitmap(320,200,24);
         m_VoxelBitmap->createBuffer();
         m_VoxelBitmap->prepare();
 
