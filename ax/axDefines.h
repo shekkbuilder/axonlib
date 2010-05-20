@@ -229,13 +229,19 @@ TODO:
 #define __noreturn                __attribute__ ((noreturn))
 #define __optimize(level)         __attribute__ ((optimize (level)))
 #define __pure                    __attribute__ ((pure))
-#define __hot                     __attribute__ ((hot))
 #define __cold                    __attribute__ ((cold)))
 #define __target(value)           __attribute__ ((target (value))))
 #define __weak                    __attribute__ ((weak)))
 #define __weakref(name)           __attribute__ ((weakref (name)))
 
 #define __hotinline               ___always_inline __hot __optimize(3)
+
+// put attributes that require new version of GCC. 4.4.x as base
+#if (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 4) 
+  #define __hot  __attribute__ ((hot))
+#else
+  #define __hot
+#endif
 
 #ifndef __cdecl
   #define __cdecl                 __attribute__ ((cdecl))

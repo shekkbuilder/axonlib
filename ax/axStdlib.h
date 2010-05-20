@@ -579,19 +579,19 @@ __axstdlib_inline char* axFtoa (register char* st, register double f,
   {
     while ( (exp > 0) && (exp <= maxlen) && j < maxlen-1 )
     {
-      *st++ = '0' + f;
-      z = f;  f -= z;  f *= 10.f;  exp--;  j++;
+      *st++ = '0' + (char)f;
+      z = (int)f;  f -= z;  f *= 10.f;  exp--;  j++;
     }
-    *st++ = '0' + f;
-    z = f;   f -= z;   f *= 10.f;   j++;
+    *st++ = '0' + (char)f;
+    z = (int)f;   f -= z;   f *= 10.f;   j++;
     if (j < maxlen-1)
     {
       *st++ = '.';  j++;
       register unsigned int i = 0;
       while (j < maxlen)
       {
-        *st++ = '0' + f;
-        z = f;   f -= z;    f *= 10.f;    i++;    j++;
+        *st++ = '0' + (char)f;
+        z = (int)f;   f -= z;    f *= 10.f;    i++;    j++;
       }
     }    
   }  
