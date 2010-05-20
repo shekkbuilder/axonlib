@@ -1,8 +1,13 @@
+
+#include "core/axRand.h"
+
 #include "axPlugin.h"
 #include "par/parInteger.h"
 #include "par/parFloat.h"
-//#include "dsp/dspRC.h"
-#include "core/axRand.h"
+
+#include "axEditor.h"
+#include "wdg/wdgPanel.h"
+
 
 //----------------------------------------------------------------------
 
@@ -59,6 +64,9 @@ class myPlugin : public axPlugin
     float        _GrainSize;
     float        _GrainDur;
   //vst parameters
+  //gui
+    axEditor*   w_Editor;
+    wdgPanel*   w_Panel;
 
   public:
 
@@ -73,6 +81,7 @@ class myPlugin : public axPlugin
         countdown = 0;
         describe("fx_grains","ccernn","axonlib example",0,AX_MAGIC+0x1004);
         setupAudio(2,2,false);
+        setupEditor(640,480);
         appendParameter( new parFloat(  this,"master volume",     "",   1,    0, 2   ) );
         appendParameter( new parInteger(this,"number of grains",  "",   10,   1, 255 ) );
         appendParameter( new parFloat(  this,"buffer size",       "ms", 1000, 1, 5000) );
@@ -97,6 +106,34 @@ class myPlugin : public axPlugin
         delete BUFFER;
       }
 
+    //--------------------------------------------------
+    // editor
+    //--------------------------------------------------
+
+    virtual axWindow* doOpenEditor(axContext* aContext)
+      {
+        axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
+          editor->appendWidget( w_Panel = new wdgPanel(editor,NULL_RECT,wa_Client) );
+
+        editor->doRealign();
+        w_Editor = editor;
+        editor->show();
+        return editor;
+      }
+
+    virtual void doCloseEditor(void)
+      {
+        axEditor* editor = w_Editor;
+        w_Editor = NULL;
+        delete editor;
+      }
+
+    //virtual void doIdleEditor(void)
+    //  {
+    //  }
+
+    //--------------------------------------------------
+    // plugin
     //--------------------------------------------------
 
     virtual void doSetParameter(axParameter* aParameter)

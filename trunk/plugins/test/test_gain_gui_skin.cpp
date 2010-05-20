@@ -13,6 +13,15 @@
 #include "gui/axBitmapLoader.h"
 #include "../img/knob32.h"
 
+
+#define AX_ALPHA
+
+//TODO: deprecate the following two,
+//use AX_ALPHA (in axCanvas/Surface, etc...)
+#define AX_DIBSECTION
+#define AX_XRENDER
+
+
 //----------------------------------------------------------------------
 //
 // skin
@@ -42,21 +51,38 @@ class mySkin : public axSkin//Default
       }
     inline void loadKnobBitmap(axEditor* aEditor, unsigned char* buffer, int size, int w, int h, int n)
       {
+        #ifdef AX_ALPHA
+          #define BPP 32
+        #else
+          #define BPP 24
+        #endif
+        trace("bits per pixel: " << BPP);
         mKnobWidth  = w;//32;
         mKnobHeight = h;//32;
         mKnobCount  = n;//65;
-        mKnobImage = aEditor->createSurface(mKnobWidth,mKnobHeight*mKnobCount,24);
+        mKnobImage = aEditor->createSurface(mKnobWidth,mKnobHeight*mKnobCount,BPP);
         loader.decode(buffer,size);
-        bitmap = aEditor->createBitmap( loader.getWidth(), loader.getHeight(), 24 );
+        bitmap = aEditor->createBitmap( loader.getWidth(), loader.getHeight(), BPP );
         bitmap->createBuffer( (char*)loader.getImage() );                   // create bitmap buffer & copy data
         bitmap->convertRgbaBgra();                                          // -> bgr.a
+
+        // 'funny' swizzling colors & alpha
         bitmap->swizzle(
-          0,0,1,0,
-          0,0,0,0,
-          1,0,0,0,
-          0,0,0,1
+          0.5, 0.0, 0.0, 0.0,   // blue *= 0.5
+          0.0, 1.0, 0.0, 0.0,
+          0.0, 0.0, 1.0, 0.0,
+          0.0, 0.0, 0.0, 0.6    // alpha *= 0.6
         );
-        bitmap->setBackground(128,128,128);                                 // replace alpha (bgr)
+
+        //TODO: the following could be moved to axBitmapLoader
+        #ifdef AX_ALPHA
+          #ifdef AX_WIN32
+            bitmap->premultAlpha();
+          #endif
+        #else
+          bitmap->setBackground(128,128,128);                                 // replace alpha (bgr)
+        #endif
+
         bitmap->prepare();                                                  // prepare bitmap for blitting
         axCanvas* can = mKnobImage->getCanvas();
         can->drawBitmap(bitmap,0,0,0,0,mKnobWidth,mKnobHeight*mKnobCount);  // upload to surface
@@ -64,7 +90,7 @@ class mySkin : public axSkin//Default
       }
     virtual void drawPanel(axCanvas* aCanvas, axRect aRect)
       {
-        aCanvas->setBrushColor(mFillColor);
+        aCanvas->setBrushColor( /*aCanvas->getColor(128,0,0)*/mFillColor );
         aCanvas->fillRect(aRect.x,aRect.y,aRect.x2(),aRect.y2());
       }
     virtual void drawKnob(axCanvas* aCanvas, axRect aRect,  axString aName, axString aDisp, float aValue)
@@ -75,7 +101,23 @@ class mySkin : public axSkin//Default
           int index = (int)axFloor(aValue*mKnobCount);
           index = axMinInt(index,mKnobCount-1);
           int ky = mKnobHeight * index;
-          aCanvas->drawImage(mKnobImage,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);
+
+          // test
+          for (int y=0;y<32;y++)
+          {
+            for (int x=0;x<64;x++)
+            {
+              aCanvas->setPenColor( aCanvas->getColor(x*4,y*8,0) );
+              aCanvas->drawPoint(/*aRect.x+*/x,/*aRect.y+*/y);
+            }
+          }
+          //
+
+          #ifdef AX_ALPHA
+            aCanvas->renderImage(mKnobImage,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);
+          #else
+            aCanvas->drawImage(mKnobImage,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);
+          #endif
           // text (copy/paste from wdgKnob)
           int x  = aRect.x;
           int y  = aRect.y;
