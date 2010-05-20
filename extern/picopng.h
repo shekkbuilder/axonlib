@@ -1147,7 +1147,7 @@ PNG_info_t *PNG_decode(const unsigned char *in, unsigned int size)
   #include "core/axDebug.h"
 
   // decode
-  PNG_info_t *PNG_decode_DEBUG(const unsigned char *in, unsigned int size,
+  PNG_info_t* PNG_decode_DEBUG(const unsigned char *in, unsigned int size,
   const char* _file, const unsigned int _line)
   {
     _trace
@@ -1162,12 +1162,13 @@ PNG_info_t *PNG_decode(const unsigned char *in, unsigned int size)
   int PNG_convert_DEBUG(const PNG_info_t *info, vector8_t *out,
     const unsigned char *in, const char* _file, const unsigned int _line)
   {
+    int ret = PNG_convert(info, out, in);
     _trace
     (
       "[" << axGetFileName(_file) << "|" << _line << "] axPngConvert, " <<
-      (void*)&in << ", " << (void*)&out
+      (void*)&in << ", " << (void*)&out << ", " << ret
     );
-    return PNG_convert(info, out, in);
+    return ret;
   }
   
   // read header
@@ -1186,12 +1187,13 @@ PNG_info_t *PNG_decode(const unsigned char *in, unsigned int size)
   int Zlib_decompress_DEBUG(vector8_t *out, const vector8_t *in,
     const char* _file, const unsigned int _line)
   {
+    int ret = Zlib_decompress(out, in);
     _trace
     (
       "[" << axGetFileName(_file) << "|" << _line << "] axPngZlibDecompress, "
-      << (void*)&in << ", " << (void*)&out
+      << (void*)&in << ", " << (void*)&out << ", " << ret
     );
-    return Zlib_decompress(out, in);
+    return ret;
   }
   
   // free all
