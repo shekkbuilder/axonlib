@@ -138,7 +138,8 @@ class axWindowLinux : public axWindowBase
     bool        mTimerRunning;
     int         mTimerSleep;
 
-    #ifdef AX_XRENDER
+    //#ifdef AX_XRENDER
+    #ifdef AX_ALPHA
     //bool          mXRender;
       Picture       mPicture;
     #endif
@@ -260,7 +261,8 @@ class axWindowLinux : public axWindowBase
           mSurface = createSurface(mRect.w,mRect.h,depth); // see also: resizeBuffer
           //trace(":: win picture " << mSurface->getPicture() );
 
-          #ifdef AX_XRENDER
+          //#ifdef AX_XRENDER
+          #ifdef AX_ALPHA
           //if (mXRender)
           //{
             XRenderPictFormat* fmt = XRenderFindStandardFormat(mDisplay,PictStandardRGB24);
@@ -715,7 +717,8 @@ class axWindowLinux : public axWindowBase
               can->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
               doPaint(can,rc);
 
-              #ifdef AX_XRENDER
+              //#ifdef AX_XRENDER
+              #ifdef AX_ALPHA
               mCanvas->renderImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
               #else
               mCanvas->drawImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);

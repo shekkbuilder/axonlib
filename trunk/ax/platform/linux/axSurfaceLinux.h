@@ -2,7 +2,8 @@
 #define axSurfaceLinux_included
 //----------------------------------------------------------------------
 
-#ifdef AX_XRENDER
+//#ifdef AX_XRENDER
+#ifdef AX_ALPHA
 #include <X11/extensions/Xrender.h>
 #endif
 
@@ -52,7 +53,8 @@ class axSurfaceLinux : public axSurfaceBase
         mDepth = aDepth;
         mPixmap  = XCreatePixmap(mDisplay,mDrawable,mWidth,mHeight,mDepth);
 
-        #ifdef AX_XRENDER
+        //#ifdef AX_XRENDER
+        #ifdef AX_ALPHA
           XRenderPictFormat* fmt;
           if (mDepth==24)
             fmt = XRenderFindStandardFormat(mDisplay,PictStandardRGB24);
