@@ -18,9 +18,12 @@
 //#define AX_USE_DATA_TYPES       // axDefines.h
 //#define AX_WIDGET_NOUPDATELIST  // axEditor.h
 
+//#define AX_ALPHA
+
+// deprecate:
 //#define AX_DIBSECTION
 //#define AX_XRENDER
-//#define AX_ALPHA
+
 
 
 //----------------------------------------------------------------------

@@ -3,6 +3,8 @@
 //#define AX_DEBUG_MEM
 //#define AX_DEBUG_PNG
 
+//#define AX_ALPHA
+
 //----------------------------------------------------------------------
 // test
 //----------------------------------------------------------------------
@@ -16,17 +18,18 @@
 //#include "../test/test_winsize.cpp"
 //#include "../test/test_png.cpp"
 
-//----------
 
-// linux:
-//  #define AX_XRENDER
-//  build options, link with Xrender
-//  -lXrender
-// ----------
-// win32:
+
+//----------
+//linux:
+//#define AX_XRENDER
+//build options, link with Xrender
+//-lXrender
+//----------
+//win32:
 //#define AX_DIBSECTION
-//  build options, link with libmsimg32
-// ----------
+//build options, link with libmsimg32
+//----------
 //#include "../test/test_xrender.cpp"
 
 

@@ -4,7 +4,8 @@
 
 #include <math.h>
 
-#ifdef AX_XRENDER
+//#ifdef AX_XRENDER
+#ifdef AX_ALPHA
 #include <X11/extensions/Xrender.h>
 #endif
 
@@ -498,7 +499,8 @@ class axCanvasLinux : public axCanvasBase
 
     virtual void renderImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
-        #ifdef AX_XRENDER
+        //#ifdef AX_XRENDER
+        #ifdef AX_ALPHA
         trace("renderImage");
         trace("src picture = " << (int)aImage->getPicture());
         trace("dst picture = " << (int)mPicture);

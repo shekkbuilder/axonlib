@@ -25,7 +25,8 @@ class axSurfaceWin32 : public axSurfaceBase
         //mHeight   = aHeight;
         //mDepth    = 24;
         HDC tempdc = GetDC(0);                                    // ...if this value is NULL, GetDC retrieves the device context for the entire screen...
-        #ifdef AX_DIBSECTION
+        //#ifdef AX_DIBSECTION
+        #ifdef AX_ALPHA
           BITMAPINFO bmi;
           memset(&bmi,0,sizeof(BITMAPINFO));
           bmi.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);

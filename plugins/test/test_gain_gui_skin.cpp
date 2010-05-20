@@ -18,8 +18,8 @@
 
 //TODO: deprecate the following two,
 //use AX_ALPHA (in axCanvas/Surface, etc...)
-#define AX_DIBSECTION
-#define AX_XRENDER
+//#define AX_DIBSECTION
+//#define AX_XRENDER
 
 
 //----------------------------------------------------------------------
