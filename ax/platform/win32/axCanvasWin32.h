@@ -40,6 +40,7 @@ class axCanvasWin32 : public axCanvasBase
 		//HPEN    mPen, mOldPen, mOldPen2;
 		//HBRUSH  mBrush, mOldBrush, mOldBrush2;
     HRGN    mClipRegion;
+    BLENDFUNCTION mBlendFunc;
   protected:
 		int     mWinHandle;   // from context
     axColor mPenColor;
@@ -97,6 +98,20 @@ class axCanvasWin32 : public axCanvasBase
         // /*mOldBrush = (HBRUSH)*/SelectObject(mDC, GetStockObject(DC_BRUSH));
         SelectObject(mDC,mPen);
         SelectObject(mDC,mBrush);
+
+        // from wingdi.h:
+        //#define AC_SRC_OVER		          0x00
+        //#define AC_SRC_ALPHA		        0x01
+        //#define AC_SRC_NO_PREMULT_ALPHA	0x01
+        //#define AC_SRC_NO_ALPHA		      0x02
+        //#define AC_DST_NO_PREMULT_ALPHA	0x10
+        //#define AC_DST_NO_ALPHA		      0x20
+
+        mBlendFunc.BlendOp              = AC_SRC_OVER;
+        mBlendFunc.BlendFlags           = 0;
+        mBlendFunc.SourceConstantAlpha  = 255;//128;//0x7f;
+        mBlendFunc.AlphaFormat          = AC_SRC_ALPHA; // 0 =  ignore source alpha channel
+        //mBlendFunc.AlphaFormat          = AC_SRC_NO_PREMULT_ALPHA; // 0 =  ignore source alpha channel
 
       }
 
@@ -516,10 +531,10 @@ class axCanvasWin32 : public axCanvasBase
 
     //----------
 
-    virtual void renderBitmap(axBitmap* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-      {
-        drawBitmap(aBitmap,aX,aY,aSrcX,aSrcY,aSrcW,aSrcH);
-      }
+//    virtual void renderBitmap(axBitmap* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+//      {
+//        drawBitmap(aBitmap,aX,aY,aSrcX,aSrcY,aSrcW,aSrcH);
+//      }
 
 //typedef struct _BLENDFUNCTION {
 //  BYTE BlendOp;
@@ -533,16 +548,12 @@ class axCanvasWin32 : public axCanvasBase
 
     virtual void renderImage( axImage*  aImage,  int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
-        drawImage(aImage,aX,aY,aSrcX,aSrcY,aSrcW,aSrcH);
+        //drawImage(aImage,aX,aY,aSrcX,aSrcY,aSrcW,aSrcH);
 
-//        HDC tempdc = (HDC)aImage->getHandle();
-//        BLENDFUNCTION bf;
-//        bf.BlendOp = AC_SRC_OVER;
-//        bf.BlendFlags = 0;
-//        bf.SourceConstantAlpha = 0x7f;
-//        bf.AlphaFormat = 0; // ignore source alpha channel
-//        AlphaBlend(mDC,aX,aY,aSrcW,aSrcH,tempdc,aSrcX,aSrcY,aSrcW,aSrcH,bf);
-//        // iink with: libmsimg32
+        HDC tempdc = (HDC)aImage->getHandle();
+        AlphaBlend(mDC,aX,aY,aSrcW,aSrcH,tempdc,aSrcX,aSrcY,aSrcW,aSrcH,mBlendFunc);
+
+        // iink with: libmsimg32
 
       }
 

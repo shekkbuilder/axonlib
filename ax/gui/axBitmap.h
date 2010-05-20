@@ -202,6 +202,59 @@ class axBitmap : public axBitmapImpl
         } //mBuffer
       }
 
+    //----------
+
+    void randomAlpha(void)
+      {
+        if(mBuffer)
+        {
+          for(int y=0; y<mHeight; y++)
+          {
+            for(int x=0; x<mWidth; x++)
+            {
+              int pos = (y*mWidth + x) * 4;
+              //unsigned char r = mBuffer[pos+0];
+              //unsigned char g = mBuffer[pos+1];
+              //unsigned char b = mBuffer[pos+2];
+              //unsigned char a = mBuffer[pos+3];
+              unsigned char a = axRandInt(255);
+              //mBuffer[pos+0] = b;
+              //mBuffer[pos+1] = g;
+              //mBuffer[pos+2] = r;
+              mBuffer[pos+3] = a;
+            } //for x
+          } //for y
+        } //mBuffer
+      }
+
+    //----------
+
+    void premultAlpha(void)
+      {
+        if (mBuffer)
+        {
+          for(int y=0; y<mHeight; y++)
+          {
+            for(int x=0; x<mWidth; x++)
+            {
+              int pos = (y*mWidth + x) * 4;
+              unsigned char r = mBuffer[pos+0];
+              unsigned char g = mBuffer[pos+1];
+              unsigned char b = mBuffer[pos+2];
+              unsigned char a = mBuffer[pos+3];
+              mBuffer[pos+0] = alpha(r,a);
+              mBuffer[pos+1] = alpha(g,a);
+              mBuffer[pos+2] = alpha(b,a);
+              mBuffer[pos+3] = a;
+            } //for x
+          } //for y
+        } //mBuffer
+      }
+
+    //----------
+
+
+
 };
 
 //----------------------------------------------------------------------
