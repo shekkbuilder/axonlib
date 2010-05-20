@@ -11,9 +11,17 @@
 //#include "../plugins/test/test_gain_gui.cpp"
 //#include "../plugins/test/test_gain_gui_skin.cpp"
 
+//----------
+
 //#include "../test/test_winsize.cpp"
 //#include "../test/test_png.cpp"
-#include "../test/test_xrender.cpp"
+
+//----------
+
+// build options, link with xrender
+// -lXrender
+//#define AX_XRENDER
+//#include "../test/test_xrender.cpp"
 
 //----------------------------------------------------------------------
 // demo

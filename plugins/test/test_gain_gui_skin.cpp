@@ -45,9 +45,9 @@ class mySkin : public axSkin//Default
         mKnobWidth  = w;//32;
         mKnobHeight = h;//32;
         mKnobCount  = n;//65;
-        mKnobImage = aEditor->createSurface(mKnobWidth,mKnobHeight*mKnobCount);
+        mKnobImage = aEditor->createSurface(mKnobWidth,mKnobHeight*mKnobCount,24);
         loader.decode(buffer,size);
-        bitmap = aEditor->createBitmap( loader.getWidth(), loader.getHeight() );
+        bitmap = aEditor->createBitmap( loader.getWidth(), loader.getHeight(), 24 );
         bitmap->createBuffer( (char*)loader.getImage() );                   // create bitmap buffer & copy data
         bitmap->convertRgbaBgra();                                          // -> bgr.a
         bitmap->setBackground(128,128,128);                                 // replace alpha (bgr)
@@ -121,11 +121,11 @@ class myPlugin : public axPlugin
         setupEditor(128,64);
         appendParameter( p_Gain = new axParameter(this,"gain","") );
         setupParameters();
-        
+
         /*
           // test
           char* ptr = (char*)axCalloc(11, sizeof(char));
-          trace ( axSqrt(21.f) );          
+          trace ( axSqrt(21.f) );
         */
         trace ( axLogf(11.f) );
       }

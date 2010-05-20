@@ -93,6 +93,7 @@ TODO:
   for windows with mutex.
 */
 #ifdef WIN32
+  #define WINVER 0x0501
   #undef _WIN32_WINNT
   #define _WIN32_WINNT 0x0501
   #include "windows.h"

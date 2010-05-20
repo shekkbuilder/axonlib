@@ -93,6 +93,7 @@ class axThread : public axThreadBase
 #ifdef AX_WIN32
 //----------------------------------------------------------------------
 
+#define WINVER 0x0501
 #include <windows.h>
 //#include <unistd.h> // sleep
 

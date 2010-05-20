@@ -21,8 +21,8 @@
 class axSurface : public axSurfaceImpl
 {
   public:
-    axSurface(axContext* aContext, int aWidth, int aHeight)
-    : axSurfaceImpl(aContext,aWidth,aHeight)
+    axSurface(axContext* aContext, int aWidth, int aHeight, int aDepth)
+    : axSurfaceImpl(aContext,aWidth,aHeight,aDepth)
       {
       }
     //virtual ~axSurface() {}

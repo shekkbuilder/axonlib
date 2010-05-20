@@ -45,12 +45,12 @@ class axDemo_skin : public axSkinBasic
         m_Loader.decode(aBuffer,aSize);
         int width = m_Loader.getWidth();
         int height = m_Loader.getHeight();
-        axBitmap* bitmap = aEditor->createBitmap(width,height);
+        axBitmap* bitmap = aEditor->createBitmap(width,height,24);
         bitmap->createBuffer( (char*)m_Loader.getImage() );    // create bitmap buffer & copy data
         bitmap->convertRgbaBgra();                           // -> bgr.a
         bitmap->setBackground(BACKGROUND_COLOR/*128,128,128*/);                  // replace alpha (bgr)
         bitmap->prepare();                                   // prepare bitmap for blitting
-        axSurface* surface = aEditor->createSurface(width,height);
+        axSurface* surface = aEditor->createSurface(width,height,24);
         axCanvas* canvas = surface->getCanvas();
         canvas->drawBitmap(bitmap,0,0,0,0,width,height);     // upload /blit) to surface
         delete bitmap;

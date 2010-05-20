@@ -17,11 +17,11 @@ class axSurfaceBase : public axImage
     int       mDepth;
     axCanvas* mCanvas;
   public:
-    axSurfaceBase(int aWidth, int aHeight)
+    axSurfaceBase(int aWidth, int aHeight, int aDepth/*=24*/)
       {
         mWidth  = aWidth;
         mHeight = aHeight;
-        mDepth  = 24;
+        mDepth  = aDepth;
         mCanvas = NULL;
       }
     virtual ~axSurfaceBase() {}

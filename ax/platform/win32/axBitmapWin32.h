@@ -16,8 +16,8 @@ class axBitmapWin32 : public axBitmapBase
 
   public:
 
-    axBitmapWin32(axContext* aContext, int aWidth, int aHeight)
-    : axBitmapBase(aContext,aWidth,aHeight)
+    axBitmapWin32(axContext* aContext, int aWidth, int aHeight, int aDepth)
+    : axBitmapBase(aContext,aWidth,aHeight,aDepth)
       {
         //mWin = aContext->mWindow;
       }

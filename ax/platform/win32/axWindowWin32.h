@@ -223,7 +223,7 @@ class axWindowWin32 : public axWindowBase
         SetWindowLong(mWindow,GWL_USERDATA,(int)this);
         //DragAcceptFiles(mWindow,true);
         mCanvas = createCanvas();
-        if (aWinFlags & AX_WIN_BUFFERED) mSurface = createSurface(mRect.w,mRect.h);
+        if (aWinFlags & AX_WIN_BUFFERED) mSurface = createSurface(mRect.w,mRect.h,32);
 
       }
 
@@ -260,19 +260,19 @@ class axWindowWin32 : public axWindowBase
 
     //----------
 
-    virtual axSurface* createSurface(int aWidth, int aHeight)
+    virtual axSurface* createSurface(int aWidth, int aHeight, int aDepth)
       {
         //axContext ctx(mParent);
         axContext ctx(mWindow);
-        return new axSurface(&ctx,aWidth,aHeight);
+        return new axSurface(&ctx,aWidth,aHeight, aDepth);
       }
 
     //----------
 
-    virtual axBitmap* createBitmap(int aWidth, int aHeight)
+    virtual axBitmap* createBitmap(int aWidth, int aHeight, int aDepth)
       {
         axContext ctx(mWindow);
-        return new axBitmap(&ctx,aWidth,aHeight);
+        return new axBitmap(&ctx,aWidth,aHeight,aDepth);
       }
 
 
@@ -518,7 +518,7 @@ class axWindowWin32 : public axWindowBase
               delete srf;
             }
             //srf = new axSurface(aWidth,aHeight/*,mWinFlags*/);
-            srf = createSurface(aWidth,aHeight);
+            srf = createSurface(aWidth,aHeight,32);
             mSurface = srf;
             //mSurfaceMutex.unlock();
           }

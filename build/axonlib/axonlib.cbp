@@ -23,6 +23,7 @@
 				<Linker>
 					<Add library="X11" />
 					<Add library="pthread" />
+					<Add library="Xrender" />
 				</Linker>
 			</Target>
 			<Target title="linux app - release">
@@ -96,6 +97,7 @@
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
+					<Add option="-mwindows" />
 					<Add option="-Wno-unused" />
 					<Add option="-Wno-long-long" />
 					<Add option="-DAX_FORMAT_EXE" />
@@ -136,6 +138,8 @@
 					<Add option="-g" />
 					<Add option="-shared" />
 					<Add option="-mwindows" />
+					<Add option="-Wno-unused" />
+					<Add option="-Wno-long-long" />
 					<Add option="-DAX_FORMAT_VST" />
 					<Add option="-DAX_DEBUG" />
 					<Add directory="../../ax" />
@@ -165,6 +169,7 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add option="-shared" />
 					<Add option="-mwindows" />
 				</Linker>
 			</Target>
@@ -240,6 +245,7 @@
 		<Unit filename="../../ax/platform/win32/axWindowWin32.h" />
 		<Unit filename="../../ax/script/axScript.h" />
 		<Unit filename="../../ax/script/axScriptStdlib.h" />
+		<Unit filename="../../ax/skins/axSkinBasic.h" />
 		<Unit filename="../../ax/wdg/wdgBitmap.h" />
 		<Unit filename="../../ax/wdg/wdgButton.h" />
 		<Unit filename="../../ax/wdg/wdgButtons.h" />

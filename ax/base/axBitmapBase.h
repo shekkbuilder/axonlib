@@ -51,12 +51,12 @@ class axBitmapBase
       \param aHeight height of bitmap (in pixels)
     */
 
-    axBitmapBase(axContext* aContext, int aWidth, int aHeight)
+    axBitmapBase(axContext* aContext, int aWidth, int aHeight, int aDepth)
       {
         mPrepared = false;
         mWidth    = aWidth;
         mHeight   = aHeight;
-        mDepth    = 24;         // !!!
+        mDepth    = aDepth;//32;//24;         // !!!
         mBuffer   = NULL;
       }
 

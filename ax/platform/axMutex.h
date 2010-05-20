@@ -37,6 +37,7 @@ class axMutexImpl : public axMutexBase
 #ifdef AX_WIN32
 //----------------------------------------------------------------------
 
+#define WINVER 0x0501
 #include <windows.h>
 
 class axMutexImpl : public axMutexBase

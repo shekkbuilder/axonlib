@@ -14,10 +14,11 @@ class axBitmapLinux : public axBitmapBase
 
   public:
 
-    axBitmapLinux(axContext* aContext, int aWidth, int aHeight)
-    : axBitmapBase(aContext,aWidth,aHeight)
+    axBitmapLinux(axContext* aContext, int aWidth, int aHeight, int aDepth)
+    : axBitmapBase(aContext,aWidth,aHeight,aDepth)
       {
         //wtrace("axBitmap.constructor");
+        //mDepth    = 24; // 32
         mDisplay = aContext->mDisplay;
       }
 
@@ -40,8 +41,8 @@ class axBitmapLinux : public axBitmapBase
         //trace("prepare");
         if (!mPrepared)
         {
-          mDepth  = DefaultDepth(mDisplay,DefaultScreen(mDisplay)); // 32?
-
+          //mDepth  = 32;
+          //mDepth  = DefaultDepth(mDisplay,DefaultScreen(mDisplay)); // 32?
           //mBuffer = new char[mWidth*mHeight*4];
           if (!mBuffer) mBuffer = new char[mWidth*mHeight*4];
 

@@ -11,6 +11,11 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 //#include <X11/cursorfont.h>
+
+//#ifdef AX_XRENDER
+//#include <X11/extensions/Xrender.h>
+//#endif
+
 #include <pthread.h>
 #include <unistd.h>   // sleep
 
@@ -132,6 +137,13 @@ class axWindowLinux : public axWindowBase
     pthread_t   mTimerThread;
     bool        mTimerRunning;
     int         mTimerSleep;
+
+    #ifdef AX_XRENDER
+    //bool          mXRender;
+      Picture       mPicture;
+    #endif
+    //XRenderColor rendercolor;
+
   protected:
     // ptr to external axContext (used when creating surfaces)
     //axContext*  mContext;
@@ -240,22 +252,25 @@ class axWindowLinux : public axWindowBase
           XChangeProperty(mDisplay,mWindow,atom,atom,32,PropModeReplace,(unsigned char*)&data,1);
         }
 
-        // --- canvas ---
-
-        //wtrace("axWindowLinux.constructor - creating mCanvas");
-        //axContext ctx(mDisplay,mWindow);
-        //mCanvas = new axCanvas(&ctx);
         mCanvas = createCanvas();
-        //wtrace(":: mCanvas = " << mCanvas);
 
-        // --- surface ---
-
-        //mSurface = NULL;
         if (mWinFlags&AX_WIN_BUFFERED)
         {
-          mSurface = createSurface(mRect.w,mRect.h);
+          int depth = DefaultDepth(mDisplay,DefaultScreen(mDisplay));
+          mSurface = createSurface(mRect.w,mRect.h,depth); // see also: resizeBuffer
+          //trace(":: win picture " << mSurface->getPicture() );
+
+          #ifdef AX_XRENDER
+          //if (mXRender)
+          //{
+            XRenderPictFormat* fmt = XRenderFindStandardFormat(mDisplay,PictStandardRGB24);
+            XRenderPictureAttributes pict_attr;
+            mPicture/*Picture pic*/ = XRenderCreatePicture(mDisplay,mWindow,fmt,None,&pict_attr);
+            mCanvas->setPicture( mPicture );
+          //}
+        #endif
+
         }
-        // see also: resizeBuffer
 
         // --- (invisible) mouse cursor ---
 
@@ -288,7 +303,7 @@ class axWindowLinux : public axWindowBase
         }
         if (mTimerRunning)
         {
-          wtrace("killing timer");
+          //wtrace("killing timer");
           mTimerRunning = false;
           void* ret;
           pthread_join(mTimerThread,&ret);
@@ -306,25 +321,29 @@ class axWindowLinux : public axWindowBase
     //virtual int getHandle(void) { return (int)mWindow; }
     //Display* getDisplay(void) { return mDisplay; }
 
+    //----------------------------------------
+
     virtual axCanvas* createCanvas(void)
       {
         axContext ctx(mDisplay,mWindow);
-        return new axCanvas(&ctx);
+        axCanvas* canvas = new axCanvas(&ctx);
+        return canvas;
       }
 
-    virtual axSurface* createSurface(int aWidth, int aHeight)
+    virtual axSurface* createSurface(int aWidth, int aHeight, int aDepth)
       {
         //axContext ctx(mDisplay,mParent);
         axContext ctx(mDisplay,mWindow);
-        return new axSurface(&ctx,aWidth,aHeight);
+        axSurface* surface = new axSurface(&ctx,aWidth,aHeight,aDepth);
+        return surface;
       }
 
-    virtual axBitmap* createBitmap(int aWidth, int aHeight)
+    virtual axBitmap* createBitmap(int aWidth, int aHeight, int aDepth)
       {
         //wtrace("axWindowLinux.createBitmap");
         //axContext ctx(mDisplay,mParent);
         axContext ctx(mDisplay,mWindow);
-        return new axBitmap(&ctx,aWidth,aHeight);
+        return new axBitmap(&ctx,aWidth,aHeight,aDepth);
       }
 
     //----------------------------------------
@@ -527,7 +546,11 @@ class axWindowLinux : public axWindowBase
               mSurface = NULL;
               delete srf;
             }
-            srf = createSurface(aWidth,aHeight);
+            int depth = DefaultDepth(mDisplay,DefaultScreen(mDisplay));
+            srf = createSurface(aWidth,aHeight,depth);
+            srf->getCanvas()->setPicture( srf->getPicture() );
+
+            //mCanvas->setPicture( mSurface->getPicture() );
             mSurface = srf;
             //mSurfaceMutex.unlock();
           //} //size
@@ -691,8 +714,15 @@ class axWindowLinux : public axWindowBase
               axCanvas* can = mSurface->getCanvas();
               can->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
               doPaint(can,rc);
-              //mCanvas->drawSurface(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
+
+              #ifdef AX_XRENDER
+              mCanvas->renderImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
+              #else
               mCanvas->drawImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
+              #endif
+
+              //mCanvas->renderPicture(mPicture,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
+
               can->clearClipRect();
             }
             else
