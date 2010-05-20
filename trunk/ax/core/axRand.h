@@ -168,7 +168,7 @@ class axRandSinf
     { _AXRANDSINF; return y; }
 
     __axrand_inline unsigned long randInt(void)
-    { _AXRANDSINF;  return (unsigned long) AXRANDSF_MAX * _AXRANDSINF_SHIFT; }
+    { _AXRANDSINF;  return (unsigned long) (AXRANDSF_MAX * _AXRANDSINF_SHIFT); }
 
     __axrand_inline unsigned long randInt(const unsigned long _top)
     { _AXRANDSINF; return (unsigned long) ( _top * _AXRANDSINF_SHIFT ); }

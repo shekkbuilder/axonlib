@@ -304,7 +304,7 @@ __axmath_inline int axMaxInt(register const int a, register const int b)
 __axmath_inline int axLimitInt(register const int input,
   register const int limit)
 {
-  register float _t = (input > -limit) ? input : -limit;
+  register int _t = (input > -limit) ? input : -limit;
   return (_t > limit) ? _t : limit;
 }
 

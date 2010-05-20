@@ -2,20 +2,6 @@
 #define axPluginBase_included
 //----------------------------------------------------------------------
 
-//this file generates these warnings:
-//
-// ||=== axonlib, win32 app - debug ===|
-// ../../ax/base/axPluginBase.h|140|warning: ‘hot’ attribute directive ignored|
-// ../../ax/base/axPluginBase.h|146|warning: ‘hot’ attribute directive ignored|
-// ../../ax/base/axPluginBase.h|150|warning: ‘hot’ attribute directive ignored|
-// ../../ax/base/axPluginBase.h|154|warning: ‘hot’ attribute directive ignored|
-// ../../ax/base/axPluginBase.h|157|warning: ‘hot’ attribute directive ignored|
-// ||=== Build finished: 0 errors, 8 warnings ===|
-//
-// just warnings, but...
-
-
-
 #include "platform/axContext.h"
 #include "core/axRect.h"
 #include "axParameter.h"

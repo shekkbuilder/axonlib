@@ -46,7 +46,7 @@ bool _axAssert(const int e, const char* file, const unsigned int line,
   return 1;
 }
 #define axAssert(e) _axAssert((e), __FILE__, __LINE__, #e)
-#define assert axAssert
+//#define assert axAssert
 
 // -----------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ bool _axAssert(const int e, const char* file, const unsigned int line,
     __attribute__(( optimize(0) ))
     __attribute__(( noinline ));
   #define axStaticAssert(e) ( (!(e)) ? __axSA(): 1 )
-  #define static_assert axStaticAssert
+  //#define static_assert axStaticAssert
 #else
   #define axStaticAssert(e) (void(0))
   #warning "### axStaticAssert() requires GCC 4.4.x"  
