@@ -25,7 +25,23 @@ class axSurfaceWin32 : public axSurfaceBase
         //mHeight   = aHeight;
         //mDepth    = 24;
         HDC tempdc = GetDC(0);                                    // ...if this value is NULL, GetDC retrieves the device context for the entire screen...
-        mBitmap = CreateCompatibleBitmap(tempdc,mWidth,mHeight);  // creates a bitmap compatible with the device associated with the specified device context.
+        #ifdef AX_DIBSECTION
+          BITMAPINFO bmi;
+          memset(&bmi,0,sizeof(BITMAPINFO));
+          bmi.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);
+          bmi.bmiHeader.biWidth       = mWidth;           // width of the bitmap, in pixels.
+          bmi.bmiHeader.biHeight      = -mHeight;         // height (negative)
+          bmi.bmiHeader.biPlanes      = 1;                // number of planes for target device. must be set to 1.
+          bmi.bmiHeader.biBitCount    = mDepth;//32;               // bits per pixel
+          bmi.bmiHeader.biCompression = BI_RGB;           // uncompressed
+          bmi.bmiHeader.biSizeImage   = 0;//mWidth*mHeight*4; // size, in bytes, of the image. may be set to zero for BI_RGB bitmaps.
+          //HDC tempdc = GetDC(0);
+          //HDC tempdc = GetDC(mWin);
+          void* ptr;
+          mBitmap = CreateDIBSection(tempdc, &bmi, DIB_RGB_COLORS, &ptr, NULL, 0);
+        #else
+          mBitmap = CreateCompatibleBitmap(tempdc,mWidth,mHeight);  // creates a bitmap compatible with the device associated with the specified device context.
+        #endif
         ReleaseDC(0,tempdc);                                      // releases a device context (DC), freeing it for use by other applications.
         mCanvas = createCanvas();
         mOldHandle = (HBITMAP)SelectObject((HDC)mCanvas->getHandle(),mBitmap);

@@ -50,6 +50,12 @@ class mySkin : public axSkin//Default
         bitmap = aEditor->createBitmap( loader.getWidth(), loader.getHeight(), 24 );
         bitmap->createBuffer( (char*)loader.getImage() );                   // create bitmap buffer & copy data
         bitmap->convertRgbaBgra();                                          // -> bgr.a
+        bitmap->swizzle(
+          0,0,1,0,
+          0,0,0,0,
+          1,0,0,0,
+          0,0,0,1
+        );
         bitmap->setBackground(128,128,128);                                 // replace alpha (bgr)
         bitmap->prepare();                                                  // prepare bitmap for blitting
         axCanvas* can = mKnobImage->getCanvas();

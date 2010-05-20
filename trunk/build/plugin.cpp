@@ -18,16 +18,23 @@
 
 //----------
 
-// build options, link with xrender
-// -lXrender
-//#define AX_XRENDER
-//#include "../test/test_xrender.cpp"
+// linux:
+//  #define AX_XRENDER
+//  build options, link with Xrender
+//  -lXrender
+// ----------
+// win32:
+#define AX_DIBSECTION
+//  build options, link with libmsimg32
+// ----------
+#include "../test/test_xrender.cpp"
+
 
 //----------------------------------------------------------------------
 // demo
 //----------------------------------------------------------------------
 
-#include "../plugins/demo/axDemo.cpp"
+//#include "../plugins/demo/axDemo.cpp"
 
 //----------------------------------------------------------------------
 // ccernn
