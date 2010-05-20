@@ -38,9 +38,8 @@
   ------------------------------------------------------------------------------
   axRand()
   - "rdtsc" 64 bit register dependant
-  - constantly seeded from "rdtsc"
+  - seeded from "rdtsc"
   - uniform distribution
-  - non-recursive
   - returns integer or floats in specified ranges
   author: lubomir i. ivanov (lii) for axonlib
   ------------------------------------------------------------------------------
