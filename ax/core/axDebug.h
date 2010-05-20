@@ -121,7 +121,6 @@ TODO:  - writing debug logs on windows e.g:
 
   #define _WIN32_WINNT 0x0501
 
-  #include "core/axAssert.h"
   #include "core/axUtils.h"
   #include <iostream>
   #include <fstream>

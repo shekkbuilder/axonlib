@@ -36,10 +36,11 @@ typedef unsigned char byte;
 
 #include "core/axMath.h"
 
-// a good test for these approximations ?
-#define sin axSin
-#define cos axCos
-#define tan axTan
+// axSin, axCos, axTan run for a while, until their turn the landscape into
+// a plot that summarizes the extra dimesions of "string theory".. 
+#define sin axSinf
+#define cos axCosf
+#define tan axTanf
 
 //----------------------------------------------------------------------
 

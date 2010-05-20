@@ -25,6 +25,10 @@
 #ifndef axAssert_included
 #define axAssert_included
 
+#ifdef AX_DEBUG
+
+#include "core/axDebug.h"
+
 // -----------------------------------------------------------------------------
 // run time assertion
 bool _axAssert()
@@ -35,9 +39,9 @@ bool _axAssert()
 bool _axAssert(const int e, const char* file, const unsigned int line,
   const char* e_str)
 {
-  __asm__ __volatile__("");  
+  __asm__ __volatile__("");
   if (!e)
-  { __builtin_printf("### axAssert: %s, %u, (%s)\n", file, line, e_str);
+  { _trace("### axAssert: " << file << ", " << line << ", (" << e_str << ")");
     __builtin_exit(0); }
   return 1;
 }
@@ -58,5 +62,7 @@ bool _axAssert(const int e, const char* file, const unsigned int line,
   #define axStaticAssert(e) (void(0))
   #warning "### axStaticAssert() requires GCC 4.4.x"  
 #endif
+
+#endif // AX_DEBUG
 
 #endif // axAssert_included

@@ -9,6 +9,7 @@
 #include "core/axMalloc.h"
 #include "core/axDebug.h"
 #include "core/axUtils.h"
+#include "core/axAssert.h"
 #include "platform/axContext.h"
 #include "base/axPluginBase.h"
 
