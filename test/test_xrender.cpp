@@ -1,9 +1,8 @@
 
 //#define AX_NO_MALLOC
-//#define AX_DEBUG_AUTO_STD
-
-//#define AX_DEBUG_MEM
-//#define AX_DEBUG_PNG
+#define AX_DEBUG_AUTO_STD
+#define AX_DEBUG_MEM
+#define AX_DEBUG_PNG
 //#define AX_DEBUG_LOG  "test_gain_gui_skin.log"
 
 #include "axPlugin.h"
@@ -11,6 +10,7 @@
 
 #include "wdg/wdgImage.h"
 #include "../extern/picopng.h"
+//#include "testpng.h"
 #include "testpng.h"
 
 //----------------------------------------------------------------------
@@ -78,6 +78,7 @@ class myPlugin : public axPlugin,
         setupAudio(2,2,false);
         setupEditor(256,256);
         pnginfo = PNG_decode(testpng,testpng_size);
+        //pnginfo = PNG_decode(png2,png2_size);
         trace("pnginfo = " << pnginfo);
         trace("png error: " << PNG_error);
       }
