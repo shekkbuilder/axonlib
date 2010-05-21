@@ -45,6 +45,7 @@ class axSurfaceLinux : public axSurfaceBase
     //: axSurfaceBase(/*aContext,*/aWidth,aHeight)
     : axSurfaceBase(aWidth,aHeight,aDepth)
       {
+        trace("axSurfaceLinux constructor");
         mDisplay  = aContext->mDisplay;
         mDrawable = aContext->mWindow;  // XDefaultRootWindow(mDisplay);
         mWidth    = aWidth;
@@ -52,6 +53,10 @@ class axSurfaceLinux : public axSurfaceBase
         //mDepth = DefaultDepth(mDisplay,DefaultScreen(mDisplay));
         mDepth = aDepth;
         mPixmap  = XCreatePixmap(mDisplay,mDrawable,mWidth,mHeight,mDepth);
+
+        //axContext ctx(mDisplay,mPixmap); // display, drawable
+        //mCanvas = new axCanvas(&ctx);
+        mCanvas = createCanvas();
 
         //#ifdef AX_XRENDER
         #ifdef AX_ALPHA
@@ -66,12 +71,13 @@ class axSurfaceLinux : public axSurfaceBase
           //pict_attr.component_alpha = true;
           int pict_bits = /*CPComponentAlpha |*/ CPPolyEdge | CPPolyMode;
           mPicture = XRenderCreatePicture(mDisplay,/*mDrawable*/mPixmap,fmt,pict_bits,&pict_attr);
+
+          trace("  mPicture: " << mPicture);
+
+          mCanvas->setPicture(mPicture);
+
         #endif
 
-        //axContext ctx(mDisplay,mPixmap); // display, drawable
-        //mCanvas = new axCanvas(&ctx);
-        mCanvas = createCanvas();
-        //mCanvas->setPicture(mPicture);
 
       }
 
@@ -80,6 +86,9 @@ class axSurfaceLinux : public axSurfaceBase
     virtual ~axSurfaceLinux()
       {
         delete mCanvas;
+        #ifdef AX_ALPHA
+        XRenderFreePicture(mDisplay,mPicture);
+        #endif
         // The XFreePixmap() function first deletes the association between the pixmap ID and the pixmap.
         // Then, the X server frees the pixmap storage when there are no references to it.
         XFreePixmap(mDisplay,mPixmap);
