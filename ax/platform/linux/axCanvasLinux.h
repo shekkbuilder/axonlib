@@ -33,7 +33,9 @@ class axCanvasLinux : public axCanvasBase
     GC            mGC;
     XGCValues     gcvalues;
     XFontStruct*  mFont;
-    int           mPicture;
+    #ifdef AX_ALPHA
+    Picture       mPicture;
+    #endif
 
 //    #ifdef AX_XRENDER
 //    bool          mXRender;
@@ -53,7 +55,9 @@ class axCanvasLinux : public axCanvasBase
       {
         mDisplay  = aContext->mDisplay;                         //trace(":: mDisplay = " << mDisplay);
         mDrawable = aContext->mWindow;                          //trace(":: mDrawable = " << mDrawable);
+        #ifdef AX_ALPHA
         mPicture  = -2;
+        #endif
         mGC       = XCreateGC(mDisplay,mDrawable,0,&gcvalues);  //trace(":: mGC = " << mGC);
         mFont     = XQueryFont(mDisplay,XGContextFromGC(mGC));  //trace(":: mFont = " << mFont);
         mXpos     = 0;
@@ -74,7 +78,9 @@ class axCanvasLinux : public axCanvasBase
     //virtual int getHandle(void) { return (int)mDrawable; }
     virtual void setPicture(int pic)
       {
+        #ifdef AX_ALPHA
         mPicture = pic;
+        #endif
       }
 
     //--------------------------------------------------
@@ -501,6 +507,7 @@ class axCanvasLinux : public axCanvasBase
       {
         //#ifdef AX_XRENDER
         #ifdef AX_ALPHA
+          trace("renderImage.. from mPicture: " << aImage->getPicture() << " to mPicture: " << mPicture);
         //trace("renderImage");
         //trace("src picture = " << (int)aImage->getPicture());
         //trace("dst picture = " << (int)mPicture);
