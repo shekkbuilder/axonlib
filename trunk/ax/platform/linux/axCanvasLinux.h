@@ -501,9 +501,9 @@ class axCanvasLinux : public axCanvasBase
       {
         //#ifdef AX_XRENDER
         #ifdef AX_ALPHA
-        trace("renderImage");
-        trace("src picture = " << (int)aImage->getPicture());
-        trace("dst picture = " << (int)mPicture);
+        //trace("renderImage");
+        //trace("src picture = " << (int)aImage->getPicture());
+        //trace("dst picture = " << (int)mPicture);
           int op = PictOpOver;
           XRenderComposite(mDisplay,op,aImage->getPicture(),None,mPicture,aSrcX,aSrcY,0,0,aX,aY,aSrcW,aSrcH);
         #else

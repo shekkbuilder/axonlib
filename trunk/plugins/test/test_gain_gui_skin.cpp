@@ -1,8 +1,10 @@
 //#define AX_NO_MALLOC
 #define AX_DEBUG_AUTO_STD
-#define AX_DEBUG_MEM
-#define AX_DEBUG_PNG
-#define AX_DEBUG_LOG  "test_gain_gui_skin.log"
+//#define AX_DEBUG_MEM
+//#define AX_DEBUG_PNG
+//#define AX_DEBUG_LOG  "test_gain_gui_skin.log"
+
+#define AX_ALPHA
 
 #include "axPlugin.h"
 #include "axEditor.h"
@@ -12,9 +14,6 @@
 #include "gui/axSkin.h"
 #include "gui/axBitmapLoader.h"
 #include "../img/knob32.h"
-
-
-#define AX_ALPHA
 
 //TODO: deprecate the following two,
 //use AX_ALPHA (in axCanvas/Surface, etc...)
@@ -68,17 +67,17 @@ class mySkin : public axSkin//Default
 
         // 'funny' swizzling colors & alpha
         bitmap->swizzle(
-          0.5, 0.0, 0.0, 0.0,   // blue *= 0.5
+          0.0, 0.0, 0.0, 0.0,
           0.0, 1.0, 0.0, 0.0,
-          0.0, 0.0, 1.0, 0.0,
-          0.0, 0.0, 0.0, 0.6    // alpha *= 0.6
+          0.0, 0.0, 2.0, 0.0,
+          0.0, 0.0, 0.0, 0.8    // alpha *= 0.8
         );
 
         //TODO: the following could be moved to axBitmapLoader
         #ifdef AX_ALPHA
-          #ifdef AX_WIN32
+          //#ifdef AX_WIN32
             bitmap->premultAlpha();
-          #endif
+          //#endif
         #else
           bitmap->setBackground(128,128,128);                                 // replace alpha (bgr)
         #endif
@@ -102,16 +101,21 @@ class mySkin : public axSkin//Default
           index = axMinInt(index,mKnobCount-1);
           int ky = mKnobHeight * index;
 
-          // test
+//
+          //axColor col = aCanvas->getColor(0,96,128);
+          //aCanvas->setPenColor(col);
           for (int y=0;y<32;y++)
           {
+            axColor col = aCanvas->getColor(0,y*8,255-y*8);
+            aCanvas->setPenColor(col);
             for (int x=0;x<64;x++)
             {
-              aCanvas->setPenColor( aCanvas->getColor(x*4,y*8,0) );
-              aCanvas->drawPoint(/*aRect.x+*/x,/*aRect.y+*/y);
+              //axColor col = aCanvas->getColor(x*4,y*8,0); // this is _REALLY_ slow in linux..
+              //aCanvas->setPenColor(col);
+              aCanvas->drawPoint(x,y);
             }
           }
-          //
+//
 
           #ifdef AX_ALPHA
             aCanvas->renderImage(mKnobImage,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);

@@ -257,7 +257,32 @@ class axWindowLinux : public axWindowBase
 
         if (mWinFlags&AX_WIN_BUFFERED)
         {
-          int depth = DefaultDepth(mDisplay,DefaultScreen(mDisplay));
+          XWindowAttributes attr;
+          XGetWindowAttributes(mDisplay,mWindow,&attr );
+
+          trace("x,y: " << attr.x << "," << attr.y); // location of window
+          trace("w,h: " << attr.width << "," << attr.height); // width and height of window
+          trace("border width: " << attr.border_width); /* border width of window */
+          trace("depth: " << attr.depth); /* depth of window */
+          trace("visual: " << attr.visual);    /* theassociated visual structure */
+          trace("root: " << attr.root);    /* root of screen containing window */
+          //trace("class: " << attr.class);    /* InputOutput, InputOnly*/
+          trace("bit_gravity: " << attr.bit_gravity);    /* one of the bit gravity values */
+          trace("win_gravity: " << attr.win_gravity);    /* one of the window gravity values */
+          trace("backing_store: " << attr.backing_store);    /* NotUseful, WhenMapped, Always */
+          trace("backing_planes: " << attr.backing_planes);/* planes to be preserved if possible */
+          trace("backing_pixel: " << attr.backing_pixel);/* value to be used when restoring planes */
+          trace("save_under: " << attr.save_under); /* boolean, should bits under be saved? */
+          trace("colormap: " << attr.colormap); /* color map to be associated with window */
+          trace("map_installed: " << attr.map_installed); /* boolean, is color map currently installed*/
+          trace("map_state: " << attr.map_state); /* IsUnmapped, IsUnviewable, IsViewable */
+          trace("all_event_masks: " << attr.all_event_masks); /* set of events all people have interest in*/
+          trace("your_event_mask: " << attr.your_event_mask); /* my event mask */
+          trace("do_not_propagate_mask: " << attr.do_not_propagate_mask);/* set of events that should not propagate */
+          trace("override_redirect: " << attr.override_redirect); /* boolean value for override-redirect */
+          trace("screen: " << attr.screen); /* back pointer to correct screen */
+
+          int depth = attr.depth;//DefaultDepth(mDisplay,DefaultScreen(mDisplay));
           mSurface = createSurface(mRect.w,mRect.h,depth); // see also: resizeBuffer
           //trace(":: win picture " << mSurface->getPicture() );
 
@@ -265,13 +290,17 @@ class axWindowLinux : public axWindowBase
           #ifdef AX_ALPHA
           //if (mXRender)
           //{
-            XRenderPictFormat* fmt = XRenderFindStandardFormat(mDisplay,PictStandardRGB24);
+            XRenderPictFormat *format = XRenderFindVisualFormat(mDisplay,attr.visual);
+            //XRenderPictFormat* format = XRenderFindStandardFormat(mDisplay,PictStandardRGB24);
+            //XRenderPictFormat* format = XRenderFindStandardFormat(mDisplay,PictStandardARGB32);
             XRenderPictureAttributes pict_attr;
-            mPicture/*Picture pic*/ = XRenderCreatePicture(mDisplay,mWindow,fmt,None,&pict_attr);
+            mPicture/*Picture pic*/ = XRenderCreatePicture(mDisplay,mWindow,format,None,&pict_attr);
             mCanvas->setPicture( mPicture );
           //}
-        #endif
 
+            bool hasAlpha  = ( format->type == PictTypeDirect && format->direct.alphaMask );
+            trace("hasAlpha: " << hasAlpha);
+          #endif
         }
 
         // --- (invisible) mouse cursor ---

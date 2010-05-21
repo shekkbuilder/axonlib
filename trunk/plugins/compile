@@ -87,7 +87,7 @@ else
   compiler=$gpp
   format="-DAX_FORMAT_VST"
   fmt_ext=".so"
-  tgt="-lX11 -lpthread -shared"
+  tgt="-lX11 -lXrender -lpthread -shared"
   move="yes"
   libdebug=""
   gccdebug=""
