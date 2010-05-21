@@ -42,6 +42,7 @@
 					<Add option="-s" />
 					<Add library="X11" />
 					<Add library="pthread" />
+					<Add library="Xrender" />
 				</Linker>
 			</Target>
 			<Target title="linux plug - debug">
@@ -65,6 +66,7 @@
 				<Linker>
 					<Add library="X11" />
 					<Add library="pthread" />
+					<Add library="Xrender" />
 				</Linker>
 			</Target>
 			<Target title="linux plug - release">
@@ -87,6 +89,7 @@
 					<Add option="-s" />
 					<Add library="X11" />
 					<Add library="pthread" />
+					<Add library="Xrender" />
 				</Linker>
 			</Target>
 			<Target title="win32 app - debug">
@@ -106,6 +109,7 @@
 				</Compiler>
 				<Linker>
 					<Add option="-mwindows" />
+					<Add library="libmsimg32" />
 				</Linker>
 			</Target>
 			<Target title="win32 app - release">
@@ -124,6 +128,7 @@
 				<Linker>
 					<Add option="-s" />
 					<Add option="-mwindows" />
+					<Add library="libmsimg32" />
 				</Linker>
 			</Target>
 			<Target title="win32 plug - debug">
@@ -148,6 +153,7 @@
 				<Linker>
 					<Add option="-shared" />
 					<Add option="-mwindows" />
+					<Add library="libmsimg32" />
 				</Linker>
 			</Target>
 			<Target title="win32 plug - release">
@@ -171,6 +177,7 @@
 					<Add option="-s" />
 					<Add option="-shared" />
 					<Add option="-mwindows" />
+					<Add library="libmsimg32" />
 				</Linker>
 			</Target>
 		</Build>
