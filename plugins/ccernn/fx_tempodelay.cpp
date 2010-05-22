@@ -17,7 +17,7 @@
 
 //----------------------------------------------------------------------
 
-class myPlugin : public axPlugin
+class myPlugin : public axFormat
 {
   private:
   // process
@@ -46,7 +46,7 @@ class myPlugin : public axPlugin
   public:
 
     myPlugin(axContext* aContext)
-    : axPlugin(aContext, pf_None)
+    : axFormat(aContext, pf_None)
       {
 
         m_Index = 0;

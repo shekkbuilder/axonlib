@@ -120,7 +120,7 @@ class axWindowLinux : public axWindowBase
 {
   friend void* threadProc(void* data);
   friend void* timerProc(void* data);
-  friend class axPluginVst;
+  friend class axFormatVst;
 
   private:
     Display*    mDisplay;

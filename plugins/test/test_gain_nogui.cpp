@@ -6,7 +6,7 @@
 #include "core/axRand.h"
 #include "../extern/mtrand.h"
 
-class myPlugin : public axPlugin
+class myPlugin : public axFormat
 {
   private:
     axParameter*  p_Gain;
@@ -17,14 +17,14 @@ class myPlugin : public axPlugin
   public:
 
     myPlugin(axContext* aContext)
-    : axPlugin(aContext, pf_None)
+    : axFormat(aContext, pf_None)
       {
         m_Gain = 0;
         describe("test_gain_nogui","ccernn","axonlib example",0,AX_MAGIC+0x0000);
         setupAudio(2, 2, false);
         appendParameter( p_Gain = new axParameter(this, "gain", "") );
         setupParameters();
-        
+
         wdebug("hello dbg");
         trace("hello dbg");
       }

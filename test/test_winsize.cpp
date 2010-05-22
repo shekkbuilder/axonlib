@@ -38,7 +38,7 @@ class myWidget : public axWidget
 //
 //----------------------------------------------------------------------
 
-class myPlugin : public axPlugin,
+class myPlugin : public axFormat,
                  public axWidgetListener
 {
   private:
@@ -50,7 +50,7 @@ class myPlugin : public axPlugin,
   public:
 
     myPlugin(axContext* aContext)
-    : axPlugin(aContext, AX_PLUG_DEFAULT)
+    : axFormat(aContext, AX_PLUG_DEFAULT)
       {
         describe("test_winsize","ccernn","axonlibe example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);
@@ -69,7 +69,7 @@ class myPlugin : public axPlugin,
       {
         m_Editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         m_Editor->appendWidget( w_Main = new myWidget(m_Editor,NULL_RECT,wa_Client) );
-          w_Main->appendWidget( w_Sizer = new wdgSizer(m_Editor,axRect(10,10),wa_BottomRight, sd_All) );
+          w_Main->appendWidget( w_Sizer = new wdgSizer(m_Editor,axRect(10,10),wa_BottomRight, sm_Window) );
           w_Sizer->setTarget(m_Editor);
         m_Editor->doRealign();
         m_Editor->show();

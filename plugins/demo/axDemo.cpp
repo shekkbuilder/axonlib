@@ -12,7 +12,7 @@
 
 //#include "audio/axLibaam.h"
 
-class axDemo : public axPlugin
+class axDemo : public axFormat
 {
   private:
     axDemo_editor* m_Editor;
@@ -21,7 +21,7 @@ class axDemo : public axPlugin
   public:
 
     axDemo(axContext* aContext)
-    : axPlugin(aContext, pf_HasEditor)
+    : axFormat(aContext, pf_HasEditor)
       {
         m_Graph = new axDemo_graph("axDemo graph");
         m_Graph->doCompile();

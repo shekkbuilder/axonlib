@@ -43,3 +43,17 @@ class axCanvas : public axCanvasImpl
 
 //----------------------------------------------------------------------
 #endif
+
+/*
+  some notes about bitmaps & blitting:
+
+  win32:
+  http://en.wikipedia.org/wiki/Graphics_Device_Interface
+  "In Windows Vista... GDI is no longer hardware-accelerated by the video card driver."
+  "Windows 7 includes GDI hardware acceleration for blitting operations"
+  "GDI+ will continue to rely on software rendering in Windows 7"
+
+  linux:
+  http://en.wikipedia.org/wiki/Xrender
+  "..designed to target the 3D graphics capabilities of newer video cards."
+*/

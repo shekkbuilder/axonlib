@@ -63,8 +63,8 @@ class axDemo_editor : public axEditor
 
   public:
 
-    axDemo_editor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
-    : axEditor(aPlugin,aContext,aRect,aWinFlags)
+    axDemo_editor(axFormat* aFormat, axContext* aContext, axRect aRect, int aWinFlags)
+    : axEditor(aFormat,aContext,aRect,aWinFlags)
       {
         axCanvas* canvas = getCanvas();
         m_Skin = new axDemo_skin(canvas);

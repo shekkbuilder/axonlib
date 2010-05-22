@@ -119,7 +119,7 @@ class dspOnePole
      * interpolate filter coeff <br>
      * <br>
      * \code
-     * // call this from axPlugin::doProcessBlock(..)
+     * // call this from axFormat::doProcessBlock(..)
      * // or each N samples: myfilter.interpolate(N)
      * \endcode
      * \param sampleFrames long

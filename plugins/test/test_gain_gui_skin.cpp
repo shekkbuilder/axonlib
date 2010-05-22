@@ -150,7 +150,7 @@ class mySkin : public axSkin//Default
 //
 //----------------------------------------------------------------------
 
-class myPlugin : public axPlugin
+class myPlugin : public axFormat
 {
 
     //----------------------------------------
@@ -164,7 +164,7 @@ class myPlugin : public axPlugin
   public:
 
     myPlugin(axContext* aContext)
-    : axPlugin(aContext, pf_HasEditor)
+    : axFormat(aContext, pf_HasEditor)
       {
         trace("myPlugin.constructor()");
         m_Gain = 0;
