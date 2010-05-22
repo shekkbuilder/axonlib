@@ -43,7 +43,12 @@ struct axVstEvents
 class axFormatVst : public axFormatBase
 {
   friend AEffect* main_plugin(audioMasterCallback audioMaster);
-  friend int      main(audioMasterCallback audioMaster);
+  #ifdef linux
+    friend int    main(audioMasterCallback audioMaster);
+  #endif
+  #ifdef WIN32
+    friend int    main(int audioMaster, char** empty);
+  #endif
 
   private:
     axHostInfo    mHostInfo;
@@ -1511,7 +1516,7 @@ typedef axFormatVst axFormatImpl;
       return TRUE;                                                          \
     }                                                                       \
                                                                             \
-    int main(audioMasterCallback audioMaster)                               \
+    int main(int audioMaster, char** empty)                                 \
     {                                                                       \
       AX_CONTEXT_INIT(plugclass)                                            \
       plugclass* plug = new plugclass(&ctx);                                \
