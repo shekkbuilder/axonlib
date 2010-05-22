@@ -1,0 +1,27 @@
+describe()
+unique id: AX_MAGIX + 0x0000
+ccernn/axonlib reserve the 0000 - 7fff range
+0x8000 and upwards is 'free'
+
+----------------------------------------------------------------------
+
+axonlib:
+
+  0000      test_...
+  ffff      axDemo
+
+ccernn:
+
+  1001      fx_tempodelay
+  1002      midi_transpose
+  1003      fx_distortion
+  1004      fx_grains
+
+ports:
+
+  2001      port_...
+
+liteon:
+
+  8000      liteon_..
+  8001      ...
