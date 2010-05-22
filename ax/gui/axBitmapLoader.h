@@ -5,10 +5,8 @@
 
 #include "axBitmap.h"
 #include "axSurface.h"
-
-//#include "../extern/picopng.cpp"
-// lii: try to use picopng.c instead
 #include "../extern/picopng.h"
+#include "stdio.h" // fread()
 
 //----------------------------------------------------------------------
 
@@ -133,14 +131,48 @@ class axBitmapLoader
         //int error = decodePNG(image, width, height, buffer, buffersize);
         //int error = (int)PNG_decode(buffer, buffersize);
         if (mPngInfo) axFree(mPngInfo);
-        PNG_info_t* mPngInfo = axPngDecode(buffer, buffersize);
+        axPngInfo* mPngInfo = axPngDecode(buffer, buffersize);
         mWidth  = mPngInfo->width;
         mHeight = mPngInfo->height;
         mImage  = mPngInfo->image->data;
         //TODO: #ifdef WIN32 && AX_DIBSECTION, pre-multiply w/alpha
         return (int)mPngInfo;
       }
-
+    
+    //----------
+    int decodeLoad(const char* file)
+      {
+        FILE* f = fopen(file, "rb");
+        if (!f)
+        {
+          trace("decodeLoad(), #ERR missing: " << file);  
+          return 0;
+        }
+        fseek(f, 0, SEEK_END);
+        unsigned long size = ftell(f);
+        fseek(f, 0, SEEK_SET);
+        if (!size)
+        {
+          trace("decodeLoad(), #ERR null sized: " << file);
+          return 0;
+        }
+        unsigned char* b = (unsigned char*)axMalloc(size);
+        fread(b, size, 1, f);        
+        if (b[0] != 0x89 || b[1] != 0x50 || b[2] != 0x4E || b[3] != 0x47)
+        {
+          trace("decodeLoad(), #ERR not a png: " << file);
+          return 0;
+        }
+        else
+        {
+          fclose(f);
+          decode(b, size);
+          axFree(b);
+          trace("decodeLoad(), " << file << ", " << size);
+          return 1;
+        } 
+      }
+    
     //----------
 
     //axSurface* upload(void) { return NULL;}
