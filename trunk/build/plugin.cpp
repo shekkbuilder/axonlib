@@ -52,7 +52,7 @@
 //----- gui -----
 
 //#include "../plugins/ccernn/fx_grains.cpp"
-//#include "../plugins/ccernn/fx_tempodelay.cpp"
+#include "../plugins/ccernn/fx_tempodelay.cpp"
 
 
 //----------------------------------------------------------------------
