@@ -121,7 +121,7 @@ __axstdlib_inline unsigned int axMemcmp (register const void* m1,
 /**
  * axMemcpy
  */
-__axstdlib_inline void* axMemcpy (register void* dest, register void* src,
+__axstdlib_inline void* axMemcpy (register void* dest, register const void* src,
   register unsigned int len)
 {
   register char* _d = (char*) dest;
