@@ -60,7 +60,8 @@ class mySkin : public axSkin//Default
         mKnobHeight = h;//32;
         mKnobCount  = n;//65;
         mKnobImage = aEditor->createSurface(mKnobWidth,mKnobHeight*mKnobCount,BPP);
-        loader.decode(buffer,size);
+        int result = loader.decodeLoad("../img/knob1_32x32_65.png");
+        trace("loader.decodeLoad: " << result);
         bitmap = aEditor->createBitmap( loader.getWidth(), loader.getHeight(), BPP );
         bitmap->createBuffer( (char*)loader.getImage() );                   // create bitmap buffer & copy data
         bitmap->convertRgbaBgra();                                          // -> bgr.a

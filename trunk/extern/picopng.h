@@ -34,9 +34,6 @@
 //    - custom debugger
 //    - custom memory allocator
 //
-// TODO:
-// - (done?) fix all warning - typecasting / -Wall
-// - test methods PNG_decode(), etc..
 // /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _PICOPNG_H
@@ -1207,11 +1204,11 @@ PNG_info_t *PNG_decode(const unsigned char *in, unsigned int size)
   }
   
   #define PNG_decode(a, b)      PNG_decode_DEBUG(a, b, __FILE__, __LINE__)
-  #define PNG_convert(a, b, c)  PNG_convert_DEBUG(a, b, c, __FILE__, __LINE__)
+  #define PNG_convert(a, b, c)  PNG_convert_DEBUG(a, b, c, __FILE__, __LINE__)  
+  #define Zlib_decompress(a, b) Zlib_decompress_DEBUG(a, b, __FILE__, __LINE__)
+  #define png_alloc_free_all()  png_alloc_free_all_DEBUG(__FILE__, __LINE__)
   #define PNG_readPngHeader(a, b, c) \
     PNG_readPngHeader_DEBUG(a, b, c, __FILE__,  __LINE__)
-  #define Zlib_decompress(a, b) Zlib_decompress_DEBUG(a, b, __FILE__, __LINE__)
-  #define png_alloc_free_all() png_alloc_free_all_DEBUG(__FILE__, __LINE__)
     
 #endif //AX_DEBUG_PNG
 
