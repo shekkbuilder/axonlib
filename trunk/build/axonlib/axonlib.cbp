@@ -242,6 +242,14 @@
 		<Unit filename="../../ax/platform/axContext.h" />
 		<Unit filename="../../ax/platform/axMutex.h" />
 		<Unit filename="../../ax/platform/axThread.h" />
+		<Unit filename="../../ax/platform/linux/axBitmapLinux.h" />
+		<Unit filename="../../ax/platform/linux/axCanvasLinux.h" />
+		<Unit filename="../../ax/platform/linux/axSurfaceLinux.h" />
+		<Unit filename="../../ax/platform/linux/axWindowLinux.h" />
+		<Unit filename="../../ax/platform/win32/axBitmapWin32.h" />
+		<Unit filename="../../ax/platform/win32/axCanvasWin32.h" />
+		<Unit filename="../../ax/platform/win32/axSurfaceWin32.h" />
+		<Unit filename="../../ax/platform/win32/axWindowWin32.h" />
 		<Unit filename="../../ax/script/axScript.h" />
 		<Unit filename="../../ax/script/axScriptStdlib.h" />
 		<Unit filename="../../ax/skins/axSkinBasic.h" />

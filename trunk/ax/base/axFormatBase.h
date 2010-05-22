@@ -56,7 +56,7 @@ class axFormatBase// : public axParameterListener
 {
   friend class axEditor;
   protected:
-    int           mPlugFlags;
+    int           mFormatFlags;
     axParameters  mParameters;
     bool          mEditorOpen;
     axRect        mEditorRect;
@@ -67,7 +67,7 @@ class axFormatBase// : public axParameterListener
     axFormatBase(axContext* aContext, int aFormatFlags)
       {
         //wtrace("axFormatBase.constructor");
-        mPlugFlags    = aFormatFlags;//0;
+        mFormatFlags    = aFormatFlags;//0;
         mEditorOpen   = false;
         mEditorRect   = axRect(0,0,256,256);
         mEditorWindow = NULL;
@@ -81,7 +81,7 @@ class axFormatBase// : public axParameterListener
 
   public:
 
-    //inline int     getFlags(void)       { return mPlugFlags; }
+    //inline int     getFlags(void)       { return mFormatFlags; }
     inline axRect   getEditorRect(void) { return mEditorRect; }
     inline bool     isEditorOpen(void)  { return mEditorOpen; }
 
