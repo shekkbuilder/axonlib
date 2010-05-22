@@ -59,7 +59,7 @@ class axFormat : public axFormatImpl, public axParameterListener
     : axFormatImpl(aContext,aFormatFlags)
       {
         // auto open debug (win32)
-        #ifdef AX_WIN32
+        #if defined AX_DEBUG && defined AX_WIN32
           #ifdef AX_DEBUG_AUTO_STD
             axDstdCreate();
           #endif
@@ -79,7 +79,7 @@ class axFormat : public axFormatImpl, public axParameterListener
         #endif
 
         // auto close debug (win32)
-        #ifdef AX_WIN32
+        #if defined AX_DEBUG && defined AX_WIN32
           #ifdef AX_DEBUG_AUTO_WIN
             axDwinDestroy();
           #endif

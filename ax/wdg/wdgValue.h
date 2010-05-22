@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "gui/axWidget.h"
-#include "axStdlib.h"
+#include "core/axStdlib.h"
 
 
 class wdgValue : public axWidget

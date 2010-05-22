@@ -1,7 +1,7 @@
 #define AX_DEBUG
 #define AX_DEBUG_AUTO_STD
 
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "axEditor.h"
 
 #include "gui/axSymbols.h"
@@ -133,7 +133,7 @@ class myEditor : public axEditor
 
   public:
 
-    myEditor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
+    myEditor(axFormat* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
       {
         axCanvas*     can;
@@ -351,7 +351,7 @@ applySkin(mDefaultSkin,true);
 //
 //----------------------------------------------------------------------
 
-class myPlugin : public axPlugin
+class myPlugin : public axFormat
 {
   private:
     myEditor* mEditor;
@@ -365,7 +365,7 @@ class myPlugin : public axPlugin
   public:
 
     myPlugin(axContext* aContext)
-    : axPlugin(aContext, AX_PLUG_DEFAULT)
+    : axFormat(aContext, AX_PLUG_DEFAULT)
       {
         mNumIdle = 0;
         mNumBlock = 0;

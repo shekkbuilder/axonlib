@@ -1,7 +1,7 @@
 
 #define AX_DEBUG
 #include "core/axDebug.h"
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "axEditor.h"
 
 //#include "gui/axWidget.h"
@@ -20,7 +20,7 @@ class myEditor : public axEditor
 {
   public:
 
-    myEditor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
+    myEditor(axFormat* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
       {
         wtrace("myEditor.constructor");
@@ -41,7 +41,7 @@ class myEditor : public axEditor
 //
 //----------------------------------------------------------------------
 
-class myPlugin : public axPlugin
+class myPlugin : public axFormat
 {
   private:
     myEditor* mEditor;
@@ -49,8 +49,8 @@ class myPlugin : public axPlugin
   public:
 
     myPlugin(axContext* aContext)
-    : axPlugin(aContext,AX_PLUG_DEFAULT)
-    //: axPlugin(aContext,0/*pf_HasEditor*/)
+    : axFormat(aContext,AX_PLUG_DEFAULT)
+    //: axFormat(aContext,0/*pf_HasEditor*/)
       {
         wtrace("myPlugin.constructor");
         mEditor = NULL;

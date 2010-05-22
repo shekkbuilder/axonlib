@@ -4,7 +4,7 @@
 // char* wrapper
 
 //#include <string.h>
-#include "axStdlib.h"
+#include "core/axStdlib.h"
 
 //----------------------------------------------------------------------
 

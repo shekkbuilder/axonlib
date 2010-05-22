@@ -2,7 +2,7 @@
 #include "core/axDebug.h"
 
 #include "platform/axContext.h"
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "axEditor.h"
 //#include "gui/axBitmap.h"
 
@@ -15,7 +15,7 @@ class myEditor : public axEditor
     axColor mPenColor;
 
   public:
-    myEditor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
+    myEditor(axFormat* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
     {
       axCanvas* can = getCanvas();
@@ -62,7 +62,7 @@ class myEditor : public axEditor
 
 //----------------------------------------------------------------------
 
-class test : public axPlugin
+class test : public axFormat
 {
   private:
     myEditor* mEditor;
@@ -70,7 +70,7 @@ class test : public axPlugin
   public:
 
     test(axContext* aContext)
-    : axPlugin(aContext, AX_PLUG_DEFAULT)
+    : axFormat(aContext, AX_PLUG_DEFAULT)
       {
         describe("test_timer","ccernn","axonlibe example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);
