@@ -6,7 +6,7 @@
 
 #define AX_ALPHA
 
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "axEditor.h"
 #include "wdg/wdgPanel.h"
 #include "wdg/wdgKnob.h"

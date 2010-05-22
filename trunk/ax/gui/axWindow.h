@@ -12,11 +12,13 @@
 //----------
 
 #ifdef AX_LINUX
-  #include "platform/linux/axWindowLinux.h"
+  //#include "platform/linux/axWindowLinux.h"
+  #include "gui/linux/axWindowLinux.h"
 #endif
 
 #ifdef AX_WIN32
-  #include "platform/win32/axWindowWin32.h"
+  //#include "platform/win32/axWindowWin32.h"
+  #include "gui/win32/axWindowWin32.h"
 #endif
 
 //----------------------------------------------------------------------

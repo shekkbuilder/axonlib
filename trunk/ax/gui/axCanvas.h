@@ -19,11 +19,13 @@
 //----------
 
 #ifdef AX_LINUX
-  #include "platform/linux/axCanvasLinux.h"
+  //#include "platform/linux/axCanvasLinux.h"
+  #include "gui/linux/axCanvasLinux.h"
 #endif
 
 #ifdef AX_WIN32
-  #include "platform/win32/axCanvasWin32.h"
+  //#include "platform/win32/axCanvasWin32.h"
+  #include "gui/win32/axCanvasWin32.h"
 #endif
 
 //----------------------------------------------------------------------

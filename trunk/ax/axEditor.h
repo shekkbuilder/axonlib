@@ -6,7 +6,7 @@
 
 //TODO: updateList (dirtyWidgets)
 
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "core/axArray.h"
 #include "gui/axWindow.h"
 #include "skins/axSkinBasic.h"

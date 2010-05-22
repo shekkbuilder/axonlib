@@ -5,7 +5,7 @@
 #define AX_DEBUG_PNG
 //#define AX_DEBUG_LOG  "test_gain_gui_skin.log"
 
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "axEditor.h"
 
 #include "wdg/wdgImage.h"

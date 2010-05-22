@@ -2,7 +2,7 @@
 #define AX_DEBUG_AUTO_STD
 #define AX_DEBUG_AUTO_WIN
 
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "core/axRand.h"
 #include "../extern/mtrand.h"
 

@@ -1,6 +1,6 @@
 //#define AX_DEBUG_MEMORY
 
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "axEditor.h"
 //#include "gui/axSkinDefault.h"
 #include "wdg/wdgPanel.h"

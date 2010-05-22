@@ -6,7 +6,7 @@
 
 #include "core/axRand.h"
 
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "axDemo_editor.h"
 #include "axDemo_graph.h"
 
