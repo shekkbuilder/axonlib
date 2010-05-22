@@ -6,7 +6,7 @@
 #include "platform/axContext.h"
 #include "core/axRect.h"
 #include "gui/axWindow.h"
-#include "base/axPluginBase.h"
+#include "base/axFormatBase.h"
 
 #define AX_WIN_DEFAULT (AX_WIN_BUFFERED|AX_WIN_MSGDELETE)
 
@@ -48,7 +48,7 @@ class axFormatExe : public axFormatBase//,
         //wtrace("axFormatExe.main");
         // can this fail if we create the class as axEditor
         // meaning, can we safely typecase a axEditor* to a axWindow?
-        if (mPlugFlags&pf_HasEditor)
+        if (mFormatFlags&pf_HasEditor)
         {
           axWindow* win = (axWindow*)doOpenEditor(aContext);
           //wtrace("win = " << win);
@@ -92,7 +92,7 @@ class axFormatExe : public axFormatBase//,
     virtual void setupEditor(int aWidth, int aHeight)
       {
         mEditorRect.set(0,0,aWidth,aHeight);
-        mPlugFlags |= pf_HasEditor;
+        mFormatFlags |= pf_HasEditor;
       }
 
 //    virtual void setupParameters(void)
@@ -193,10 +193,10 @@ typedef axFormatExe axFormatImpl;
 int main(void)                              \
 {                                           \
   AX_CONTEXT_INIT(classname)                \
-  axFormatImpl* plug = new classname(&ctx); \
-  int ret = plug->main(&ctx);               \
+  axFormatImpl* app = new classname(&ctx);  \
+  int ret = app->main(&ctx);                \
   AX_CONTEXT_EXIT                           \
-  delete plug;                              \
+  delete app;                               \
   return ret;                               \
 }
 

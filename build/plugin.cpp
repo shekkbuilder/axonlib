@@ -38,7 +38,7 @@
 // demo
 //----------------------------------------------------------------------
 
-//#include "../plugins/demo/axDemo.cpp"
+#include "../plugins/demo/axDemo.cpp"
 
 //----------------------------------------------------------------------
 // ccernn
@@ -52,7 +52,7 @@
 //----- gui -----
 
 //#include "../plugins/ccernn/fx_grains.cpp"
-#include "../plugins/ccernn/fx_tempodelay.cpp"
+//#include "../plugins/ccernn/fx_tempodelay.cpp"
 
 
 //----------------------------------------------------------------------
