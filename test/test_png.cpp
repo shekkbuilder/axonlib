@@ -4,7 +4,7 @@
 #define AX_DEBUG_PNG
 #define AX_DEBUG_LOG  "test_png.log"
 
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "axEditor.h"
 
 #include "wdg/wdgImage.h"

@@ -1,6 +1,6 @@
 
 #include "platform/axContext.h"
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "axEditor.h"
 
 #include "gui/axWidget.h"

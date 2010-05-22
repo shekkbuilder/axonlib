@@ -121,7 +121,8 @@ __axstdlib_inline unsigned int axMemcmp (register const void* m1,
 /**
  * axMemcpy
  */
-__axstdlib_inline void* axMemcpy (register void* dest, register int src,
+//__axstdlib_inline void* axMemcpy (register void* dest, register int src,
+__axstdlib_inline void* axMemcpy (register void* dest, register void* src,
   register unsigned int len)
 {
   register char* _d = (char*) dest;
@@ -426,7 +427,7 @@ __axstdlib_inline char* axStrrev (register char* str)
  * axItoa(string, intnumber, maximumchars, base, flag)
  *
  * base: 16 = hex, 10 = dec, 2 = bin, etc.
- *  
+ *
  * flag (works only for base = 10):
  * 0 - show minus sign only
  * 1 - show minus or plus sign
@@ -434,11 +435,11 @@ __axstdlib_inline char* axStrrev (register char* str)
  *
  * 'maximumchars' is the maximum number of characters including the
  * sign. maximum is 33, default is 10
- * for base 2, intnumber=2147483647 requires at string length 33  
+ * for base 2, intnumber=2147483647 requires at string length 33
  * for base 10 use 'maximumchars' = N to show N chars max
  * (e.g. -9999, +9999)
  * allocated memory for 'string' should be >= 'maximumchars'
- *  
+ *
  */
 __axstdlib_inline char* axItoa (register char* _st, int n,
   unsigned int maxlen = 10, unsigned int base = 10, unsigned int fg = 0)
@@ -546,7 +547,7 @@ __axstdlib_inline char* axFtoa (register char* st, register double f,
   if (!st)
     return (char*)"0";
   char* ret = st;
-  register int exp = 0;  
+  register int exp = 0;
   register int z;
   int j = 0;
   if (f < 0)
@@ -593,8 +594,8 @@ __axstdlib_inline char* axFtoa (register char* st, register double f,
         *st++ = '0' + (char)f;
         z = (int)f;   f -= z;    f *= 10.f;    i++;    j++;
       }
-    }    
-  }  
+    }
+  }
   /*
   // note: exponent output is disabled. instead it writes the maximum integer.
   if (exp != 0 && e)

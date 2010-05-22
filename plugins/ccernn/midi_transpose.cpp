@@ -1,4 +1,4 @@
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "par/parInteger.h"
 
 /*
@@ -46,8 +46,8 @@ class myPlugin : public axFormat
     virtual bool doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize)
       {
         // pass audio through, untouched
-        memcpy(aOutputs[0],aInputs[0],aSize*sizeof(SPL));
-        memcpy(aOutputs[1],aInputs[1],aSize*sizeof(SPL));
+        axMemcpy(aOutputs[0],aInputs[0],aSize*sizeof(SPL));
+        axMemcpy(aOutputs[1],aInputs[1],aSize*sizeof(SPL));
         return true; // we don't want doProcessSample
       }
 

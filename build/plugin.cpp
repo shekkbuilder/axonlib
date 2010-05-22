@@ -30,6 +30,7 @@
 //#define AX_DIBSECTION
 //build options, link with libmsimg32
 //----------
+
 //#include "../test/test_xrender.cpp"
 
 
@@ -37,7 +38,7 @@
 // demo
 //----------------------------------------------------------------------
 
-#include "../plugins/demo/axDemo.cpp"
+//#include "../plugins/demo/axDemo.cpp"
 
 //----------------------------------------------------------------------
 // ccernn

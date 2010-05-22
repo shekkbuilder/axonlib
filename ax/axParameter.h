@@ -25,8 +25,6 @@ class axParameterListener
 
 #define AX_PAR_DEFAULT (pf_Automate)
 
-//NOTE: plugin flags also has pf_ prefix
-
 //----------------------------------------------------------------------
 
 class axParameter// : public axParameterBase
