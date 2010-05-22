@@ -1,7 +1,7 @@
 #define AX_DEBUG
 #define AX_DEBUG_AUTO_STD
 
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "axEditor.h"
 
 #include "gui/axSymbols.h"
@@ -53,7 +53,7 @@ class myEditor : public axEditor
     wdgButtons*   b1;
   public:
 
-    myEditor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
+    myEditor(axFormat* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
       {
         appendWidget( w_MainPanel = new wdgPanel(this,NULL_RECT,wa_Client) );
@@ -102,7 +102,7 @@ class myEditor : public axEditor
 //
 //----------------------------------------------------------------------
 
-class myPlugin : public axPlugin
+class myPlugin : public axFormat
 {
   private:
     myEditor* mEditor;
@@ -110,7 +110,7 @@ class myPlugin : public axPlugin
   public:
 
     myPlugin(axContext* aContext)
-    : axPlugin(aContext, AX_PLUG_DEFAULT)
+    : axFormat(aContext, AX_PLUG_DEFAULT)
       {
         axRandomize(418);
         describe("test_widgets","ccernn","axonlibe example",0,AX_MAGIC+0x0000);

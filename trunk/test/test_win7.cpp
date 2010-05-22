@@ -4,7 +4,7 @@
 #include "core/axDebug.h"
 
 #include "platform/axContext.h"
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "axEditor.h"
 #include "wdg/wdgPanel.h"
 
@@ -21,7 +21,7 @@ class myEditor : public axEditor
 
   public:
 
-    myEditor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
+    myEditor(axFormat* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
     : axEditor(aPlugin,aContext,aRect,aWinFlags)
     {
       //axCanvas* canvas = getCanvas();
@@ -54,7 +54,7 @@ class myEditor : public axEditor
 //
 //----------------------------------------------------------------------
 
-class myPlugin : public axPlugin
+class myPlugin : public axFormat
 {
   private:
     myEditor* mEditor;
@@ -62,7 +62,7 @@ class myPlugin : public axPlugin
   public:
 
     myPlugin(axContext* aContext)
-    : axPlugin(aContext, AX_PLUG_DEFAULT)
+    : axFormat(aContext, AX_PLUG_DEFAULT)
       {
         describe("test_","ccernn","axonlibe example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);

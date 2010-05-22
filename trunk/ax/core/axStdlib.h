@@ -121,7 +121,6 @@ __axstdlib_inline unsigned int axMemcmp (register const void* m1,
 /**
  * axMemcpy
  */
-//__axstdlib_inline void* axMemcpy (register void* dest, register int src,
 __axstdlib_inline void* axMemcpy (register void* dest, register void* src,
   register unsigned int len)
 {
@@ -435,7 +434,7 @@ __axstdlib_inline char* axStrrev (register char* str)
  *
  * 'maximumchars' is the maximum number of characters including the
  * sign. maximum is 33, default is 10
- * for base 2, intnumber=2147483647 requires at string length 33
+ * for base 2, intnumber=2147483647 requires string length=33
  * for base 10 use 'maximumchars' = N to show N chars max
  * (e.g. -9999, +9999)
  * allocated memory for 'string' should be >= 'maximumchars'

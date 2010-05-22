@@ -27,7 +27,7 @@ set resfile="rc_default.rc"
 set opt=-msse -mfpmath=sse,387 -O3 -Os
 
 :: linker options
-set linker=-fstack-check -fdata-sections -ffunction-sections -Wl,-gc-sections -s
+set linker=-mwindows -lmsimg32 -fstack-check -fdata-sections -ffunction-sections -Wl,-gc-sections -s
 
 :: -----------------------------------------------------------------------------
 :: *** end of user settings
@@ -118,7 +118,7 @@ goto getgccdebug
 set gccdbg=-DDEBUG -gstabs
 set gccdstatus=ON
 set resfile=
-set linker=
+set linker=-mwindows -lmsimg32
 set opt=-O3
 goto getformat
 
@@ -181,7 +181,7 @@ if not [%v%]==[] echo * gcc debug is: %gccdstatus%
 
 :compile
 if not [%v%]==[] echo.
-set cmdline=%mgwpath% -I%cmdpath%%axpath% -I%cmdpath%%vstpath% -mwindows %tgtformat% %opt% %warn% %gccdbg% %dbg% %linker% "%infile%" %res% -o "%target%"
+set cmdline=%mgwpath% -I%axpath% -I%vstpath% -mwindows %tgtformat% %opt% %warn% %gccdbg% %dbg% "%infile%" %res% -o "%target%" %linker%
 :: show cmdline
 if not [%v%]==[] echo command line is: %cmdline% && echo.
 :: call g++

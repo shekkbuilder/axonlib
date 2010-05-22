@@ -4,7 +4,7 @@
 // #define _WIN32_WINNT 0x0501
 
 #include "platform/axContext.h"
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "axEditor.h"
 #include "gui/axContainer.h"
 #include "gui/axBitmap.h"
@@ -72,7 +72,7 @@ class myWidget : public /*axContainer*/axWidget
 //
 //----------------------------------------------------------------------
 
-class test1 : public axPlugin
+class test1 : public axFormat
 {
   private:
     axContext   ctx();
@@ -83,7 +83,7 @@ class test1 : public axPlugin
 
   public:
     test1(axContext* aContext)
-    : axPlugin(aContext, AX_PLUG_DEFAULT)
+    : axFormat(aContext, AX_PLUG_DEFAULT)
       {
         describe("test1","ccernn","axonlibe example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);

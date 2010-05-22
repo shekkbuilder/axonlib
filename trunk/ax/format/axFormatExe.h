@@ -2,9 +2,9 @@
 #define axFormatExe_included
 //----------------------------------------------------------------------
 
-#include "axStdlib.h"
-#include "platform/axContext.h"
+#include "core/axStdlib.h"
 #include "core/axRect.h"
+#include "platform/axContext.h"
 #include "gui/axWindow.h"
 #include "base/axFormatBase.h"
 

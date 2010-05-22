@@ -170,7 +170,7 @@ class axDemo : public axFormat
 
     //----------
 
-    //this should be in axEditor? (axPlugin...)
+    //this should be in axEditor? (axFormat...)
 
     virtual void doIdleEditor()
       {

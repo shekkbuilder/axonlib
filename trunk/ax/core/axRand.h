@@ -131,9 +131,10 @@ __axrand_inline unsigned long axRandInt(const unsigned long s)
 
 class axRandSinf
 {
-  public:
+  private:
     float x, y;
-    
+  
+  public:
     axRandSinf(void)
     {
       #ifdef __AX64__

@@ -6,7 +6,7 @@
 #include "core/axDebug.h"
 #include "core/axMath.h"
 #include "gui/axWidget.h"
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "axEditor.h"
 
 //----------------------------------------------------------------------
@@ -95,7 +95,7 @@ class myWidget : public axContainer
 class myEditor : public axEditor
 {
   private:
-    axPlugin*   mPlugin;
+    axFormat*   mPlugin;
 
     myWidget*   mWidget;
     //axDefSkin*  mSkin;
@@ -105,7 +105,7 @@ class myEditor : public axEditor
 
   public:
 
-    myEditor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
+    myEditor(axFormat* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
     : axEditor(aPlugin, aContext,aRect,aWinFlags)
       {
         mPlugin = aPlugin;
@@ -147,7 +147,7 @@ class myEditor : public axEditor
 //
 //----------------------------------------------------------------------
 
-class myPlugin : public axPlugin
+class myPlugin : public axFormat
 {
   private:
     myEditor*     mEditor;
@@ -157,7 +157,7 @@ class myPlugin : public axPlugin
   public:
 
     myPlugin(axContext* aContext)
-    : axPlugin(aContext,AX_PLUG_DEFAULT)
+    : axFormat(aContext,AX_PLUG_DEFAULT)
       {
         mGain = 0.5;
         describe("axonlib2 build test","ccernn","axonlib build.cpp",0,AX_MAGIC+0x0000);
@@ -170,7 +170,7 @@ class myPlugin : public axPlugin
 
     //virtual ~myPlugin()
     //  {
-    //    //parameters are auto-deleted in axPluginBase
+    //    //parameters are auto-deleted in axFormatBase
     //  }
 
     virtual axWindow* doOpenEditor(axContext* aContext)

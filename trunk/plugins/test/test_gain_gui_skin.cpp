@@ -211,8 +211,8 @@ class myPlugin : public axFormat
 
   public:
 
-    // from axPluginVst.dispatcher  -  context: HWND
-    // axPluginExe.main = main  -  context: instance, winname
+    // from axFormatVst.dispatcher  -  context: HWND
+    // axFormatExe.main = main  -  context: instance, winname
 
     virtual axWindow* doOpenEditor(axContext* aContext)
       {

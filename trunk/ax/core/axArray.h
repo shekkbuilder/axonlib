@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include <axDefines.h>
-#include <axStdlib.h>
+#include <core/axStdlib.h>
 #include <core/axMalloc.h>
 
 #define SIZE_INIT 16  ///< initial size of array

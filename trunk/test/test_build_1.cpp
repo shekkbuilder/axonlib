@@ -8,7 +8,7 @@
 #include "axConfig.h"
 #include "core/axMath.h"
 
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "axEditor.h"
 
 #include "gui/axWidget.h"
@@ -25,7 +25,7 @@
 //
 //----------------------------------------------------------------------
 
-class myPlugin : public axPlugin
+class myPlugin : public axFormat
 {
   private:
     //myEditor*     mEditor;
@@ -45,7 +45,7 @@ class myPlugin : public axPlugin
   public:
 
     myPlugin(axContext* aContext)
-    : axPlugin(aContext,AX_PLUG_DEFAULT)
+    : axFormat(aContext,AX_PLUG_DEFAULT)
       {
         wtrace("myPlugin.constructor");
 
@@ -70,7 +70,7 @@ class myPlugin : public axPlugin
 
     virtual ~myPlugin()
       {
-        //parameters are auto-deleted in axPluginBase destructor
+        //parameters are auto-deleted in axFormatBase destructor
         delete mGraph; // modules auto-deleted in destructor
       }
 

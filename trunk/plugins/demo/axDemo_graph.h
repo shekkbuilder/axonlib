@@ -34,7 +34,7 @@ class axDemo_graph : public axGraph
 //#define AX_NUMPARAMS  1
 //#define AX_DEBUG
 //#include "axDebug.h"
-//#include "axPlugin.h"
+//#include "axFormat.h"
 //#include "parFloat.h"
 //#include "axModule.h"
 //

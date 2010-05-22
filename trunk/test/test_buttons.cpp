@@ -1,7 +1,7 @@
 //#define AX_DEBUG
 //#include "core/axDebug.h"
 
-#include "axPlugin.h"
+#include "axFormat.h"
 #include "axEditor.h"
 #include "gui/axSkinDefault.h"
 #include "wdg/wdgPanel.h"
@@ -10,7 +10,7 @@
 
 //----------------------------------------------------------------------
 
-class myPlugin : public axPlugin
+class myPlugin : public axFormat
 {
 
     //----------------------------------------
@@ -24,7 +24,7 @@ class myPlugin : public axPlugin
   public:
 
     myPlugin(axContext* aContext)
-    : axPlugin(aContext, pf_None/*HasEditor*/)
+    : axFormat(aContext, pf_None/*HasEditor*/)
       {
         m_Gain = 0;
         describe("test_buttons","ccernn","axonlib example",0,AX_MAGIC+0x0000);
