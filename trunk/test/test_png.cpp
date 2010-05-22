@@ -17,7 +17,7 @@
 //
 //----------------------------------------------------------------------
 
-class myPlugin : public axPlugin,
+class myPlugin : public axFormat,
                  public axWidgetListener
 {
   private:
@@ -29,7 +29,7 @@ class myPlugin : public axPlugin,
   public:
 
     myPlugin(axContext* aContext)
-    : axPlugin(aContext, pf_None/*AX_PLUG_DEFAULT*/)
+    : axFormat(aContext, pf_None/*AX_PLUG_DEFAULT*/)
       {
         describe("test_winsize","ccernn","axonlibe example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);

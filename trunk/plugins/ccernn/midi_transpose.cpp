@@ -9,7 +9,7 @@
 
 //----------------------------------------------------------------------
 
-class myPlugin : public axPlugin
+class myPlugin : public axFormat
 {
   private:
     int         m_Transpose;
@@ -18,7 +18,7 @@ class myPlugin : public axPlugin
   public:
 
     myPlugin(axContext* aContext)
-    : axPlugin(aContext, pf_None)
+    : axFormat(aContext, pf_None)
       {
         describe("midi_transpose","ccernn","axonlib example",2,AX_MAGIC+0x1002);
         setupAudio(2,2,false);

@@ -1,5 +1,5 @@
-#ifndef axPluginBase_included
-#define axPluginBase_included
+#ifndef axFormatBase_included
+#define axFormatBase_included
 //----------------------------------------------------------------------
 
 #include "platform/axContext.h"
@@ -9,7 +9,7 @@
 
 //----------------------------------------------------------------------
 
-// plugin flags
+// Format flags
 #define pf_None       0
 #define pf_HasEditor  1
 
@@ -17,7 +17,7 @@
 
 //----------
 
-// plugin states (doStateChange)
+// Format states (doStateChange)
 #define ps_Open     1
 #define ps_Close    2
 #define ps_Suspend  3
@@ -52,7 +52,7 @@ struct axHostInfo
 
 //----------------------------------------------------------------------
 
-class axPluginBase// : public axParameterListener
+class axFormatBase// : public axParameterListener
 {
   friend class axEditor;
   protected:
@@ -64,18 +64,18 @@ class axPluginBase// : public axParameterListener
 
   protected:
 
-    axPluginBase(axContext* aContext, int aPluginFlags)
+    axFormatBase(axContext* aContext, int aFormatFlags)
       {
-        //wtrace("axPluginBase.constructor");
-        mPlugFlags    = aPluginFlags;//0;
+        //wtrace("axFormatBase.constructor");
+        mPlugFlags    = aFormatFlags;//0;
         mEditorOpen   = false;
         mEditorRect   = axRect(0,0,256,256);
         mEditorWindow = NULL;
         }
 
-    virtual ~axPluginBase()
+    virtual ~axFormatBase()
       {
-        //wtrace("axPluginBase.destructor");
+        //wtrace("axFormatBase.destructor");
         //deleteParameters();
       }
 

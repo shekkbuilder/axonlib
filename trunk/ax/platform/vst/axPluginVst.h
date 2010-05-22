@@ -1,5 +1,5 @@
-#ifndef axPluginVst_included
-#define axPluginVst_included
+#ifndef axFormatVst_included
+#define axFormatVst_included
 //----------------------------------------------------------------------
 //TODO: remove temporary docs & info from the vst sdk
 
@@ -40,7 +40,7 @@ struct axVstEvents
 
 //----------------------------------------------------------------------
 
-class axPluginVst : public axPluginBase
+class axFormatVst : public axFormatBase
 {
   friend AEffect* main_plugin(audioMasterCallback audioMaster);
   friend int      main(audioMasterCallback audioMaster);
@@ -85,7 +85,7 @@ class axPluginVst : public axPluginBase
 
     static VstIntPtr dispatcher_callback(AEffect* ae, VstInt32 opCode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
       {
-        axPluginVst* plug = (axPluginVst*)(ae->object);
+        axFormatVst* plug = (axFormatVst*)(ae->object);
         if (opCode==effClose)
         {
           plug->dispatcher(opCode,index,value,ptr,opt);
@@ -99,7 +99,7 @@ class axPluginVst : public axPluginBase
 
     static float getParameter_callback(AEffect* ae, VstInt32 index)
       {
-        axPluginVst* plug = (axPluginVst*)(ae->object);
+        axFormatVst* plug = (axFormatVst*)(ae->object);
         return plug->getParameter(index);
       }
 
@@ -107,7 +107,7 @@ class axPluginVst : public axPluginBase
 
     static void setParameter_callback(AEffect* ae, VstInt32 index, float value)
       {
-        axPluginVst* plug = (axPluginVst*)(ae->object);
+        axFormatVst* plug = (axFormatVst*)(ae->object);
         plug->setParameter(index,value);
       }
 
@@ -115,7 +115,7 @@ class axPluginVst : public axPluginBase
 
     static void processReplacing_callback(AEffect* ae, float** inputs, float** outputs, VstInt32 sampleFrames)
       {
-        axPluginVst* plug = (axPluginVst*)(ae->object);
+        axFormatVst* plug = (axFormatVst*)(ae->object);
         plug->processReplacing(inputs,outputs,sampleFrames);
       }
 
@@ -123,7 +123,7 @@ class axPluginVst : public axPluginBase
 
     static void processDoubleReplacing_callback(AEffect* e, double** inputs, double** outputs, VstInt32 sampleFrames)
       {
-        axPluginVst* plug = (axPluginVst*)(e->object);
+        axFormatVst* plug = (axFormatVst*)(e->object);
         plug->processDoubleReplacing(inputs,outputs,sampleFrames);
       }
 
@@ -131,8 +131,8 @@ class axPluginVst : public axPluginBase
 
   //axContext* mContext;
 
-    axPluginVst(axContext* aContext, int aPluginFlags)
-    : axPluginBase(aContext, aPluginFlags)
+    axFormatVst(axContext* aContext, int aFormatFlags)
+    : axFormatBase(aContext, aFormatFlags)
       {
         mContext = *aContext;
         audioMaster = (audioMasterCallback)aContext->mAudio;
@@ -165,7 +165,7 @@ class axPluginVst : public axPluginBase
 
     //----------
 
-    virtual ~axPluginVst()
+    virtual ~axFormatVst()
       {
       }
 
@@ -253,7 +253,7 @@ class axPluginVst : public axPluginBase
 
     void setParameterAutomated(VstInt32 index, float value)
       {
-        //wtrace("  axPluginVst.setParameterAutomated  index: " << index << " value: " << value);
+        //wtrace("  axFormatVst.setParameterAutomated  index: " << index << " value: " << value);
         if (audioMaster) audioMaster(&aeffect,audioMasterAutomate,index,0,0,value);
         //setParameter(index,value);
       }
@@ -583,7 +583,7 @@ class axPluginVst : public axPluginBase
           case effOpen:
 
             // called when plug-in is initialized
-            //trace("axPluginVst.dispatcher :: effOpen");
+            //trace("axFormatVst.dispatcher :: effOpen");
             doStateChange(ps_Open);
             break;
 
@@ -591,7 +591,7 @@ class axPluginVst : public axPluginBase
           case effClose:
 
             // called when plug-in will be released
-            //trace("axPluginVst.dispatcher :: effClose");
+            //trace("axFormatVst.dispatcher :: effClose");
             doStateChange(ps_Close);
             break;
 
@@ -599,7 +599,7 @@ class axPluginVst : public axPluginBase
           case effSetProgram:
 
             // set the current program
-            //trace("axPluginVst.dispatcher :: effSetProgram");
+            //trace("axFormatVst.dispatcher :: effSetProgram");
             //if (value<numPrograms) setProgram((VstInt32)value);
             mCurrentProgram = (VstInt32)value;
             doSetProgram(mCurrentProgram);
@@ -609,7 +609,7 @@ class axPluginVst : public axPluginBase
           case effGetProgram:
 
             // return the index to the current program
-            //trace("axPluginVst.dispatcher :: effGetProgram");
+            //trace("axFormatVst.dispatcher :: effGetProgram");
             //v = getProgram();
             v = mCurrentProgram;
             break;
@@ -619,7 +619,7 @@ class axPluginVst : public axPluginBase
 
             // stuff the name field of the current program with name.
             // Limited to kVstMaxProgNameLen.
-            //trace("axPluginVst.dispatcher :: effSetProgramName");
+            //trace("axFormatVst.dispatcher :: effSetProgramName");
             //setProgramName((char*)ptr);
             strncpy(mProgramName,(char*)ptr,kVstMaxProgNameLen);
             break;
@@ -629,7 +629,7 @@ class axPluginVst : public axPluginBase
 
             // stuff name with the name of the current program.
             // Limited to kVstMaxProgNameLen.
-            //trace("axPluginVst.dispatcher :: effGetProgramName");
+            //trace("axFormatVst.dispatcher :: effGetProgramName");
             //getProgramName((char*)ptr);
             strncpy((char*)ptr,mProgramName,kVstMaxProgNameLen);
             break;
@@ -640,7 +640,7 @@ class axPluginVst : public axPluginBase
             // Stuff label with the units in which parameter index is displayed
             // (i.e. "sec", "dB", "type", etc...).
             // Limited to kVstMaxParamStrLen.
-            //trace("axPluginVst.dispatcher :: effGetParamLabel");
+            //trace("axFormatVst.dispatcher :: effGetParamLabel");
             //getParameterLabel(index,(char*)ptr);
             mParameters[index]->doGetLabel((char*)ptr);
             break;
@@ -651,7 +651,7 @@ class axPluginVst : public axPluginBase
             // stuff text with a string representation of the value of parameter index.
             // ("0.5", "-3", "PLATE", etc...)
             // Limited to kVstMaxParamStrLen.
-            //trace("axPluginVst.dispatcher :: effGetParamDisplay");
+            //trace("axFormatVst.dispatcher :: effGetParamDisplay");
             //getParameterDisplay(index,(char*)ptr);
             mParameters[index]->doGetDisplay((char*)ptr);
             break;
@@ -662,7 +662,7 @@ class axPluginVst : public axPluginBase
             // stuff text with the name of parameter index.
             // ("Time", "Gain", "RoomType", etc...)
             // Limited to kVstMaxParamStrLen.
-            //trace("axPluginVst.dispatcher :: effGetParamName");
+            //trace("axFormatVst.dispatcher :: effGetParamName");
             //getParameterName(index,(char*)ptr);
             mParameters[index]->doGetName((char*)ptr);
             break;
@@ -671,7 +671,7 @@ class axPluginVst : public axPluginBase
           case effSetSampleRate:
 
             // called when the sample rate changes (always in a suspend state)
-            //trace("axPluginVst.dispatcher :: effSetSampleRate");
+            //trace("axFormatVst.dispatcher :: effSetSampleRate");
             //setSampleRate(opt);
             mSampleRate = opt;
             break;
@@ -681,7 +681,7 @@ class axPluginVst : public axPluginBase
 
             // called when the maximun block size changes (always in a suspend state).
             // note that the sampleFrames in process calls could be smaller than this block size, but NOT bigger.
-            //trace("axPluginVst.dispatcher :: effSetBlockSize");
+            //trace("axFormatVst.dispatcher :: effSetBlockSize");
             //setBlockSize((VstInt32)value);
             mBlockSize = (VstInt32)value;
             break;
@@ -691,7 +691,7 @@ class axPluginVst : public axPluginBase
 
             // suspend: called when plug-in is switched to off
             // resume:  called when plug-in is switched to on
-            //trace("axPluginVst.dispatcher :: effMainsChanged");
+            //trace("axFormatVst.dispatcher :: effMainsChanged");
             //if (!value) suspend(); else resume();
             if (!value) doStateChange(ps_Suspend);
             else doStateChange(ps_Resume);
@@ -715,7 +715,7 @@ class axPluginVst : public axPluginBase
           // 14
           case effEditOpen:
 
-            //trace("axPluginVst.dispatcher :: effEditOpen");
+            //trace("axFormatVst.dispatcher :: effEditOpen");
             if ((mPlugFlags&pf_HasEditor) && !mEditorOpen)
             {
               {
@@ -743,7 +743,7 @@ class axPluginVst : public axPluginBase
           // 15
           case effEditClose:
 
-            //trace("axPluginVst.dispatcher :: effEditClose");
+            //trace("axFormatVst.dispatcher :: effEditClose");
             if ((mPlugFlags&pf_HasEditor) && mEditorOpen)
             {
               mEditorOpen = false;
@@ -758,7 +758,7 @@ class axPluginVst : public axPluginBase
           // 19
           case effEditIdle:
 
-            //trace("axPluginVst.dispatcher :: effEditIdle");
+            //trace("axFormatVst.dispatcher :: effEditIdle");
             if ((mPlugFlags&pf_HasEditor) && mEditorOpen)
             {
               doIdleEditor();
@@ -779,7 +779,7 @@ class axPluginVst : public axPluginBase
 
             // host stores plug-in state. Returns the size in bytes of the chunk
             // (plug-in allocates the data array)
-            //trace("axPluginVst.dispatcher :: effGetChunk");
+            //trace("axFormatVst.dispatcher :: effGetChunk");
             //v = getChunk((void**)ptr, index ? true : false);
             break;
 
@@ -793,7 +793,7 @@ class axPluginVst : public axPluginBase
             //isPreset - true when restoring a single program, false for all programs
 
             // host restores plug-in state
-            //trace("axPluginVst.dispatcher :: effSetChunk");
+            //trace("axFormatVst.dispatcher :: effSetChunk");
             //v = setChunk(ptr, (VstInt32)value, index ? true : false);
             break;
 
@@ -830,7 +830,7 @@ class axPluginVst : public axPluginBase
           // 26
           case effCanBeAutomated:
 
-            //trace("axPluginVst.dispatcher :: effCanBeAutomated");
+            //trace("axFormatVst.dispatcher :: effCanBeAutomated");
             //v = canParameterBeAutomated (index) ? 1 : 0;
             if ( mParameters[index]->getFlags() & pf_Automate ) v = 1;
             break;
@@ -838,14 +838,14 @@ class axPluginVst : public axPluginBase
           // 27
           case effString2Parameter:
 
-            //trace("axPluginVst.dispatcher :: effString2Parameter");
+            //trace("axFormatVst.dispatcher :: effString2Parameter");
             //v = string2parameter (index, (char*)ptr) ? 1 : 0;
             break;
 
           // 29
           case effGetProgramNameIndexed:
 
-            //trace("axPluginVst.dispatcher :: effGetProgramNameIndexed");
+            //trace("axFormatVst.dispatcher :: effGetProgramNameIndexed");
             //v = getProgramNameIndexed ((VstInt32)value, index, (char*)ptr) ? 1 : 0;
             break;
 
@@ -879,14 +879,14 @@ class axPluginVst : public axPluginBase
             // 	...
             // };
 
-            //trace("axPluginVst.dispatcher :: effGetInputProperties");
+            //trace("axFormatVst.dispatcher :: effGetInputProperties");
             //v = getInputProperties (index, (VstPinProperties*)ptr) ? 1 : 0;
             break;
 
           // 34
           case effGetOutputProperties:
 
-            //trace("axPluginVst.dispatcher :: effGetOutputProperties");
+            //trace("axFormatVst.dispatcher :: effGetOutputProperties");
             //v = getOutputProperties (index, (VstPinProperties*)ptr) ? 1 : 0;
             break;
 
@@ -906,56 +906,56 @@ class axPluginVst : public axPluginBase
             // kPlugCategShell,			      ///< Plug-in is container of other plug-ins  @see effShellGetNextPlugin
             // kPlugCategGenerator,		    ///< ToneGenerator, ...
 
-            //trace("axPluginVst.dispatcher :: effGetPlugCategory");
+            //trace("axFormatVst.dispatcher :: effGetPlugCategory");
             //v = (VstIntPtr)getPlugCategory ();
             break;
 
           // 38
           case effOfflineNotify:
 
-            //trace("axPluginVst.dispatcher :: effOfflineNotify");
+            //trace("axFormatVst.dispatcher :: effOfflineNotify");
             //v = offlineNotify ((VstAudioFile*)ptr, (VstInt32)value, index != 0);
             break;
 
           // 39
           case effOfflinePrepare:
 
-            //trace("axPluginVst.dispatcher :: effOfflinePrepare");
+            //trace("axFormatVst.dispatcher :: effOfflinePrepare");
             //v = offlinePrepare ((VstOfflineTask*)ptr, (VstInt32)value);
             break;
 
           // 40
           case effOfflineRun:
 
-            //trace("axPluginVst.dispatcher :: effOfflineRun");
+            //trace("axFormatVst.dispatcher :: effOfflineRun");
             //v = offlineRun ((VstOfflineTask*)ptr, (VstInt32)value);
             break;
 
           // 41
           case effProcessVarIo:
 
-            //trace("axPluginVst.dispatcher :: effProcessVarIo");
+            //trace("axFormatVst.dispatcher :: effProcessVarIo");
             //v = processVariableIo ((VstVariableIo*)ptr) ? 1 : 0;
             break;
 
           // 42
           case effSetSpeakerArrangement:
 
-            //trace("axPluginVst.dispatcher :: effSetSpeakerArrangement");
+            //trace("axFormatVst.dispatcher :: effSetSpeakerArrangement");
             //v = setSpeakerArrangement (FromVstPtr<VstSpeakerArrangement> (value), (VstSpeakerArrangement*)ptr) ? 1 : 0;
             break;
 
           // 44
           case effSetBypass:
 
-            //trace("axPluginVst.dispatcher :: effSetBypass");
+            //trace("axFormatVst.dispatcher :: effSetBypass");
             //v = setBypass (value ? true : false) ? 1 : 0;
             break;
 
           // 45
           case effGetEffectName:
 
-            //trace("axPluginVst.dispatcher :: effGetEffectName");
+            //trace("axFormatVst.dispatcher :: effGetEffectName");
             //v = getEffectName ((char*)ptr) ? 1 : 0;
             strcpy((char*)ptr,mEffectName);
             v = 1;
@@ -964,7 +964,7 @@ class axPluginVst : public axPluginBase
           // 47
           case effGetVendorString:
 
-            //trace("axPluginVst.dispatcher :: effGetVendorString");
+            //trace("axFormatVst.dispatcher :: effGetVendorString");
             //v = getVendorString ((char*)ptr) ? 1 : 0;
             strcpy((char*)ptr,mVendorString);
             v = 1;
@@ -973,7 +973,7 @@ class axPluginVst : public axPluginBase
           // 48
           case effGetProductString:
 
-            //trace("axPluginVst.dispatcher :: effGetVendorString");
+            //trace("axFormatVst.dispatcher :: effGetVendorString");
             //v = getProductString ((char*)ptr) ? 1 : 0;
             strcpy((char*)ptr,mProductString);
             v = 1;
@@ -982,7 +982,7 @@ class axPluginVst : public axPluginBase
           // 49
           case effGetVendorVersion:
 
-            //trace("axPluginVst.dispatcher :: effGetVendorVersion");
+            //trace("axFormatVst.dispatcher :: effGetVendorVersion");
             //v = getVendorVersion ();
             v = mVendorVersion;;
             break;
@@ -990,7 +990,7 @@ class axPluginVst : public axPluginBase
           // 50
           case effVendorSpecific:
 
-            //trace("axPluginVst.dispatcher :: effVendorSpecific");
+            //trace("axFormatVst.dispatcher :: effVendorSpecific");
             //v = vendorSpecific (index, value, ptr, opt);
             break;
 
@@ -998,7 +998,7 @@ class axPluginVst : public axPluginBase
           case effCanDo:
 
             {
-            //trace("axPluginVst.dispatcher :: effCanDo");
+            //trace("axFormatVst.dispatcher :: effCanDo");
             //v = canDo ((char*)ptr);
             char* p = (char*)ptr;
             //trace("effCanDo: '" << p << "'");
@@ -1018,14 +1018,14 @@ class axPluginVst : public axPluginBase
           // 52
           case effGetTailSize:
 
-            //trace("axPluginVst.dispatcher :: effGetTailSize");
+            //trace("axFormatVst.dispatcher :: effGetTailSize");
             //v = getGetTailSize ();
             break;
 
           //case 53://effIdle: // deprecated
 
             // called by: energy xt2
-            //  trace("axPluginVst.dispatcher :: effIdle (deprecated)");
+            //  trace("axFormatVst.dispatcher :: effIdle (deprecated)");
             //  //v = getGetTailSize ();
             //  break;
 
@@ -1073,14 +1073,14 @@ class axPluginVst : public axPluginBase
             //	kVstParameterCanRamp				 = 1 << 6	///< set if parameter value can ramp up/down
             //};
 
-            //trace("axPluginVst.dispatcher :: effGetParameterProperties");
+            //trace("axFormatVst.dispatcher :: effGetParameterProperties");
             //v = getParameterProperties (index, (VstParameterProperties*)ptr) ? 1 : 0;
             break;
 
           // 58
           case effGetVstVersion:
 
-            //trace("axPluginVst.dispatcher :: effGetVstVersion");
+            //trace("axFormatVst.dispatcher :: effGetVstVersion");
             //v = getVstVersion ();
             break;
 
@@ -1089,7 +1089,7 @@ class axPluginVst : public axPluginBase
           // 59
           case effEditKeyDown:
 
-            //trace("axPluginVst.dispatcher :: effEditKeyDown");
+            //trace("axFormatVst.dispatcher :: effEditKeyDown");
             //if (editor)
             //{
             //  VstKeyCode keyCode = {index, (unsigned char)value, (unsigned char)opt};
@@ -1100,7 +1100,7 @@ class axPluginVst : public axPluginBase
           // 60
           case effEditKeyUp:
 
-            //trace("axPluginVst.dispatcher :: effEditKeyUp");
+            //trace("axFormatVst.dispatcher :: effEditKeyUp");
             //if (editor)
             //{
             //  VstKeyCode keyCode = {index, (unsigned char)value, (unsigned char)opt};
@@ -1111,7 +1111,7 @@ class axPluginVst : public axPluginBase
           // 61
           case effSetEditKnobMode:
 
-            //trace("axPluginVst.dispatcher :: effSetEditKnobMode");
+            //trace("axFormatVst.dispatcher :: effSetEditKnobMode");
             //if (editor)
             //  v = editor->setKnobMode ((VstInt32)value) ? 1 : 0;
             break;
@@ -1119,49 +1119,49 @@ class axPluginVst : public axPluginBase
           // 62
           case effGetMidiProgramName:
 
-            //trace("axPluginVst.dispatcher :: effGetMidiProgramName");
+            //trace("axFormatVst.dispatcher :: effGetMidiProgramName");
             //v = getMidiProgramName (index, (MidiProgramName*)ptr);
             break;
 
           // 63
           case effGetCurrentMidiProgram:
 
-            //trace("axPluginVst.dispatcher :: effGetCurrentMidiProgram");
+            //trace("axFormatVst.dispatcher :: effGetCurrentMidiProgram");
             //v = getCurrentMidiProgram (index, (MidiProgramName*)ptr);
             break;
 
           // 64
           case effGetMidiProgramCategory:
 
-            //trace("axPluginVst.dispatcher :: effGetMidiProgramCategory");
+            //trace("axFormatVst.dispatcher :: effGetMidiProgramCategory");
             //v = getMidiProgramCategory (index, (MidiProgramCategory*)ptr);
             break;
 
           // 65
           case effHasMidiProgramsChanged:
 
-            //trace("axPluginVst.dispatcher :: effHasMidiProgramsChanged");
+            //trace("axFormatVst.dispatcher :: effHasMidiProgramsChanged");
             //v = hasMidiProgramsChanged (index) ? 1 : 0;
             break;
 
           // 66
           case effGetMidiKeyName:
 
-            //trace("axPluginVst.dispatcher :: effGetMidiKeyName");
+            //trace("axFormatVst.dispatcher :: effGetMidiKeyName");
             //v = getMidiKeyName (index, (MidiKeyName*)ptr) ? 1 : 0;
             break;
 
           // 67
           case effBeginSetProgram:
 
-            //trace("axPluginVst.dispatcher :: effBeginSetProgram");
+            //trace("axFormatVst.dispatcher :: effBeginSetProgram");
             //v = beginSetProgram () ? 1 : 0;
             break;
 
           // 68
           case effEndSetProgram:
 
-            //trace("axPluginVst.dispatcher :: effEndSetProgram");
+            //trace("axFormatVst.dispatcher :: effEndSetProgram");
             //v = endSetProgram () ? 1 : 0;
             break;
 
@@ -1170,56 +1170,56 @@ class axPluginVst : public axPluginBase
           // 69
           case effGetSpeakerArrangement:
 
-            //trace("axPluginVst.dispatcher :: effGetSpeakerArrangement");
+            //trace("axFormatVst.dispatcher :: effGetSpeakerArrangement");
             //v = getSpeakerArrangement (FromVstPtr<VstSpeakerArrangement*> (value), (VstSpeakerArrangement**)ptr) ? 1 : 0;
             break;
 
           // 70
           case effShellGetNextPlugin:
 
-            //trace("axPluginVst.dispatcher :: effShellGetNextPlugin");
+            //trace("axFormatVst.dispatcher :: effShellGetNextPlugin");
             //v = getNextShellPlugin ((char*)ptr);
             break;
 
           // 71
           case effStartProcess:
 
-            //trace("axPluginVst.dispatcher :: effStartProcess");
+            //trace("axFormatVst.dispatcher :: effStartProcess");
             //v = startProcess ();
             break;
 
           // 72
           case effStopProcess:
 
-            //trace("axPluginVst.dispatcher :: effStopProcess");
+            //trace("axFormatVst.dispatcher :: effStopProcess");
             //v = stopProcess ();
             break;
 
           // 73
           case effSetTotalSampleToProcess:
 
-            //trace("axPluginVst.dispatcher :: effSetTotalSampleToProcess");
+            //trace("axFormatVst.dispatcher :: effSetTotalSampleToProcess");
             //v = setTotalSampleToProcess ((VstInt32)value);
             break;
 
           // 74
           case effSetPanLaw:
 
-            //trace("axPluginVst.dispatcher :: effSetPanLaw");
+            //trace("axFormatVst.dispatcher :: effSetPanLaw");
             //v = setPanLaw ((VstInt32)value, opt) ? 1 : 0;
             break;
 
           // 75
           case effBeginLoadBank:
 
-            //trace("axPluginVst.dispatcher :: effBeginLoadBank");
+            //trace("axFormatVst.dispatcher :: effBeginLoadBank");
             //v = beginLoadBank ((VstPatchChunkInfo*)ptr);
             break;
 
           // 76
           case effBeginLoadProgram:
 
-            //trace("axPluginVst.dispatcher :: effBeginLoadProgram");
+            //trace("axFormatVst.dispatcher :: effBeginLoadProgram");
             //v = beginLoadProgram ((VstPatchChunkInfo*)ptr);
             break;
 
@@ -1228,26 +1228,26 @@ class axPluginVst : public axPluginBase
           // 77
           case effSetProcessPrecision:
 
-            //trace("axPluginVst.dispatcher ::effSetProcessPrecision");
+            //trace("axFormatVst.dispatcher ::effSetProcessPrecision");
             //v = setProcessPrecision ((VstInt32)value) ? 1 : 0;
             break;
 
           // 78
           case effGetNumMidiInputChannels:
 
-            //trace("axPluginVst.dispatcher :: effGetNumMidiInputChannels");
+            //trace("axFormatVst.dispatcher :: effGetNumMidiInputChannels");
             //v = getNumMidiInputChannels ();
             break;
 
           // 79
           case effGetNumMidiOutputChannels:
 
-            //trace("axPluginVst.dispatcher :: effGetNumMidiOutputChannels");
+            //trace("axFormatVst.dispatcher :: effGetNumMidiOutputChannels");
             //v = getNumMidiOutputChannels ();
             break;
 
           //default:
-          //  trace("axPluginVst.dispatcher :: unknown dispatch code: " << opcode);
+          //  trace("axFormatVst.dispatcher :: unknown dispatch code: " << opcode);
           //  break;
 
         }
@@ -1258,7 +1258,7 @@ class axPluginVst : public axPluginBase
 
     //--------------------------------------------------
     //
-    // implementation of axPluginBase virtual methods
+    // implementation of axFormatBase virtual methods
     //
     //--------------------------------------------------
 
@@ -1335,7 +1335,7 @@ class axPluginVst : public axPluginBase
 
     virtual void  notifyParamChanged(axParameter* aParameter)
       {
-        //wtrace("axPluginVst.notifyParamChanged");
+        //wtrace("axFormatVst.notifyParamChanged");
         int index = aParameter->getIndex();
         float value = aParameter->getValue();
         //wtrace("  index: " << index << " value: " << value);
@@ -1347,8 +1347,8 @@ class axPluginVst : public axPluginBase
 
     virtual void  notifyResizeEditor(int aWidth, int aHeight)
       {
-        //trace("axPluginVst.notifyResizeEditor: " << aWidth << "," << aHeight);
-        //axPluginBase::notifyResizeEditor(aWidth,aHeight); // editor rect
+        //trace("axFormatVst.notifyResizeEditor: " << aWidth << "," << aHeight);
+        //axFormatBase::notifyResizeEditor(aWidth,aHeight); // editor rect
         mEditorRect.w = aWidth;
         mEditorRect.h = aHeight;
         sizeWindow(aWidth, aHeight); // vst
@@ -1408,7 +1408,7 @@ class axPluginVst : public axPluginBase
       }
 };
 
-typedef axPluginVst axPluginImpl;
+typedef axFormatVst axFormatImpl;
 
 
 

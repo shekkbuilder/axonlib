@@ -1,5 +1,5 @@
-#ifndef axPluginExe_included
-#define axPluginExe_included
+#ifndef axFormatExe_included
+#define axFormatExe_included
 //----------------------------------------------------------------------
 
 #include "axStdlib.h"
@@ -12,7 +12,7 @@
 
 //----------------------------------------------------------------------
 
-class axPluginExe : public axPluginBase//,
+class axFormatExe : public axFormatBase//,
                     //public axWidgetListener
 {
   friend int main(void);
@@ -24,19 +24,19 @@ class axPluginExe : public axPluginBase//,
 
   protected:
 
-    axPluginExe(axContext* aContext, int aPluginFlags)
-    : axPluginBase(aContext, aPluginFlags)
+    axFormatExe(axContext* aContext, int aFormatFlags)
+    : axFormatBase(aContext, aFormatFlags)
       {
-        //wtrace("axPluginExe.constructor");
-        mTitle = "axPluginExe";
+        //wtrace("axFormatExe.constructor");
+        mTitle = "axFormatExe";
         mTitleBuffer[0] = 0;
       }
 
   //public:
 
-    virtual ~axPluginExe()
+    virtual ~axFormatExe()
       {
-        //wtrace("axPluginExe.destructor");
+        //wtrace("axFormatExe.destructor");
       }
 
     //--------------------------------------------------
@@ -45,7 +45,7 @@ class axPluginExe : public axPluginBase//,
 
     virtual int main(axContext* aContext)
       {
-        //wtrace("axPluginExe.main");
+        //wtrace("axFormatExe.main");
         // can this fail if we create the class as axEditor
         // meaning, can we safely typecase a axEditor* to a axWindow?
         if (mPlugFlags&pf_HasEditor)
@@ -123,7 +123,7 @@ class axPluginExe : public axPluginBase//,
 
     virtual void  notifyResizeEditor(int aWidth, int aHeight)
       {
-        //trace("axPluginExe.notifyResizeEditor: " << aWidth << "," << aHeight);
+        //trace("axFormatExe.notifyResizeEditor: " << aWidth << "," << aHeight);
         mEditorRect.w = aWidth;
         mEditorRect.h = aHeight;
         //sizeWindow(aWidth, aHeight); // vst
@@ -132,7 +132,7 @@ class axPluginExe : public axPluginBase//,
 
 };
 
-typedef axPluginExe axPluginImpl;
+typedef axFormatExe axFormatImpl;
 
 //----------------------------------------------------------------------
 //
@@ -193,7 +193,7 @@ typedef axPluginExe axPluginImpl;
 int main(void)                              \
 {                                           \
   AX_CONTEXT_INIT(classname)                \
-  axPluginImpl* plug = new classname(&ctx); \
+  axFormatImpl* plug = new classname(&ctx); \
   int ret = plug->main(&ctx);               \
   AX_CONTEXT_EXIT                           \
   delete plug;                              \

@@ -6,7 +6,7 @@
 #include "wdg/wdgPanel.h"
 #include "wdg/wdgKnob.h"
 
-class myPlugin : public axPlugin//,
+class myPlugin : public axFormat//,
                  //public axWidgetListener
 {
 
@@ -21,7 +21,7 @@ class myPlugin : public axPlugin//,
   public:
 
     myPlugin(axContext* aContext)
-    : axPlugin(aContext, pf_HasEditor)
+    : axFormat(aContext, pf_HasEditor)
       {
         m_Gain = 0;
         describe("test_gain_gui","ccernn","axonlib example",0,AX_MAGIC+0x0000);
@@ -31,7 +31,7 @@ class myPlugin : public axPlugin//,
         setupParameters();
 
         int a=1, b=1;
-        axAssert(a-b);        
+        axAssert(a-b);
         //axStaticAssert(a-b);
       }
 

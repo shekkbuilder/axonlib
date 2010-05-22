@@ -126,7 +126,7 @@ class axDemo_graph : public axGraph
 //
 ////----------------------------------------------------------------------
 //
-//class myPlugin : public axPlugin,
+//class myPlugin : public axFormat,
 //                 public axModuleListener
 //{
 //  public:
@@ -139,7 +139,7 @@ class axDemo_graph : public axGraph
 //  public:
 //
 //    myPlugin(audioMasterCallback audioMaster, int aNumProgs, int aNumParams, int aPlugFlags)
-//    : axPlugin(audioMaster,aNumProgs,aNumParams,aPlugFlags)
+//    : axFormat(audioMaster,aNumProgs,aNumParams,aPlugFlags)
 //      {
 //        describe("module_test","ccernn","product_string",0,0);
 //        gain = new modGain(this,"gain");
@@ -316,7 +316,7 @@ class axDemo_graph : public axGraph
 //    wdgImgKnob2*  wKnob;
 //
 //  public:
-//    myEditor(axString aWinName, axPlugin* aPlugin, int aID, axRect aRect, int aWinFlags, int aParent)
+//    myEditor(axString aWinName, axFormat* aPlugin, int aID, axRect aRect, int aWinFlags, int aParent)
 //    : axEditor(aWinName,aPlugin,aID,aRect,aWinFlags, aParent)
 //      { }
 //

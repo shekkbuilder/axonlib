@@ -32,11 +32,11 @@ class axParameterListener
 class axParameter// : public axParameterBase
 {
   friend class axWindow;
-  friend class axPlugin;
+  friend class axFormat;
 
   private:
     int mConnection;      // which widget (if any) this is connected to
-    int mIndex;           // index into the parameter list (axPluginBase)
+    int mIndex;           // index into the parameter list (axFormatBase)
 
   protected:
     axParameterListener* mListener;

@@ -40,7 +40,7 @@ typedef axArray<wp_connection> wp_connections;
 class axEditor : public axWindow
 {
   protected:
-    axPlugin*       mPlugin;
+    axFormat*       mFormat;
     wp_connections  mConnections;
     //axSkinDefault*  mDefaultSkin;
     axSkinBasic*    mDefaultSkin;
@@ -52,10 +52,10 @@ class axEditor : public axWindow
 
   public:
 
-    axEditor(axPlugin* aPlugin, axContext* aContext, axRect aRect, int aWinFlags)
+    axEditor(axFormat* aFormat, axContext* aContext, axRect aRect, int aWinFlags)
     : axWindow(aContext,aRect,aWinFlags)
       {
-        mPlugin = aPlugin;
+        mFormat = aFormat;
         axCanvas* canvas = getCanvas();
         mDefaultSkin = new axSkinBasic(canvas);
         applySkin(mDefaultSkin);
@@ -133,7 +133,7 @@ class axEditor : public axWindow
         //resizeBuffer(aWidth,aHeight);
         //doSetSize(aWidth,aHeight);
         //#endif
-//        mPlugin->notifyResizeEditor(aWidth,aHeight);
+//        mFormat->notifyResizeEditor(aWidth,aHeight);
       }
 
     //----------------------------------------
@@ -215,7 +215,7 @@ class axEditor : public axWindow
     virtual void doSetSize(int aWidth, int aHeight)
       {
         //trace("axEditor.doSetSize: " << aWidth << "," << aHeight);
-        if (mPlugin) mPlugin->notifyResizeEditor(aWidth,aHeight);
+        if (mFormat) mFormat->notifyResizeEditor(aWidth,aHeight);
         axWindow::doSetSize(aWidth,aHeight);
       }
 
@@ -240,7 +240,7 @@ class axEditor : public axWindow
         {
           axParameter* par = mConnections[conn].mParameter;
           float val = aWidget->getValue();
-          mPlugin->notifyParamChanged(par);
+          mFormat->notifyParamChanged(par);
           par->doSetValue(val);
         }
         internal_redraw(aWidget);
@@ -272,7 +272,7 @@ class axEditor : public axWindow
       {
         if (aMode<0)
         {
-          axRect R = mPlugin->getEditorRect();
+          axRect R = mFormat->getEditorRect();
           int w = R.w + aDeltaX; //mRect.w + aDeltaX;
           int h = R.h + aDeltaY; //mRect.h + aDeltaY;
           //axWidget::doSetSize(w,h);

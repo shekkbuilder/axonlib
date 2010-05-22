@@ -1,5 +1,5 @@
-#ifndef axPlugin_included
-#define axPlugin_included
+#ifndef axFormat_included
+#define axFormat_included
 //----------------------------------------------------------------------
 
 //TODO: updateList (dirtyParameters)
@@ -34,10 +34,10 @@
 /*
 
 this is inherited from Impl, because:
-- axPluginBase defines the interface, the methods that each plugin format implements
-- axPluginVst/Exe, implements these, and are the format spewcific layers
-- axPluginExe/Vst is typedef'd into axPluginImpl
-- axPlugin derives (inherits) from axPluginImpl, and yb that, drgging in the
+- axFormatBase defines the interface, the methods that each plugin format implements
+- axFormatVst/Exe, implements these, and are the format spewcific layers
+- axFormatExe/Vst is typedef'd into axFormatImpl
+- axFormat derives (inherits) from axFormatImpl, and yb that, drgging in the
   platform specific sub-layers...
 
 - to make all this work, we need to do #define AX_FORMAT_EXE or #define AX_FORMAT_VST,
@@ -46,15 +46,15 @@ this is inherited from Impl, because:
 
 */
 
-//class axPlugin : public axPluginBase, public axParameterListener
-class axPlugin : public axPluginImpl, public axParameterListener
+//class axFormat : public axFormatBase, public axParameterListener
+class axFormat : public axFormatImpl, public axParameterListener
 {
   protected:
     axSystemInfo mSystemInfo;
   public:
-    axPlugin(axContext* aContext,int aPluginFlags)
-    //: axPluginBase(aContext,aPluginFlags)
-    : axPluginImpl(aContext,aPluginFlags)
+    axFormat(axContext* aContext,int aFormatFlags)
+    //: axFormatBase(aContext,aFormatFlags)
+    : axFormatImpl(aContext,aFormatFlags)
       {
         // auto open debug (win32)
         #ifdef AX_WIN32
@@ -65,12 +65,12 @@ class axPlugin : public axPluginImpl, public axParameterListener
             axDwinCreate();
           #endif
         #endif
-        
+
         //updateSampleRate();
         //updateTimeInfo();
       }
 
-    virtual ~axPlugin()
+    virtual ~axFormat()
       {
         #ifndef AX_NOAUTODELETE
           deleteParameters();
@@ -85,7 +85,7 @@ class axPlugin : public axPluginImpl, public axParameterListener
             axDstdDestroy();
           #endif
         #endif
-        
+
       }
 
     //--------------------------------------------------
