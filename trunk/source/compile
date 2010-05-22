@@ -1,0 +1,278 @@
+#!/bin/bash
+# ==============================================================================
+# linux - axonlib - compile - bash
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+#                               user settings
+# ------------------------------------------------------------------------------
+# vst path
+vstpath="../../vstsdk24"
+
+# axonlib 'ax' path
+axpath="../ax"
+
+# g++ command
+gpp="g++"
+
+# mingw command
+mingw="i586-mingw32msvc-g++"
+
+# windres command
+windres="i586-mingw32msvc-windres"
+
+# set windows PE resource file (leave blank for no resources)
+# axonlib provides an example 'plugins/rc_default.rc' that adds an icon
+# 'plugins/rc_axlogo.ico' and some text details like author, program name etc.
+resfile="rc_default.rc"
+
+# warning flags
+warn="-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long"
+
+# optimization
+opt="-msse -mfpmath=sse,387 -O3 -Os"
+
+# linker options
+linker="-fstack-check -fdata-sections -ffunction-sections -Wl,-gc-sections -s"
+
+# ------------------------- end of user settings -------------------------------
+
+# ----------------------------------------
+# help screen
+# ----------------------------------------
+function show_help
+{
+  echo ""
+  echo "-------------------------------------------------------------------------------"
+  echo "* axonlib compile script for linux"
+  echo ""
+  echo "usage:"
+  echo "./compile [file.cpp] [-h] [-linux or -win32] [-exe or -lib] [-nmv] [-d] [-v]"
+  echo ""  
+  echo "-linux : target linux (default)"
+  echo "-win32 : target windows using mingw"
+  echo "-exe : create an executable"
+  echo "-lib : create a library file (default)"
+  echo "-nmv : do not move result to ../bin"
+  echo "-d : enable library debug mode"
+  echo "-g : enable gcc debug mode (-gstabs)"
+  echo "-v : verbose"
+  echo "-h : show this help message"  
+  echo "-------------------------------------------------------------------------------"
+  echo ""
+}
+
+# ----------------------------------------
+# show msg / errors
+# ----------------------------------------
+function showerr
+{
+  echo
+  echo $1
+  if [ "$v" == "yes" ];
+  then
+    echo "-------------------------------------------------------------------------------"
+  else
+    echo ""
+  fi
+  exit
+}
+
+# ------------------------- begin checking parameters
+if [ "$1" == "" ] || [ "$1" == "-h" ];
+then
+  # ------------------------- show help
+  show_help
+else
+  # ------------------------- defaults
+  compiler=$gpp
+  format="-DAX_FORMAT_VST"
+  fmt_ext=".so"
+  tgt="-lX11 -lXrender -lpthread -shared"
+  move="yes"
+  libdebug=""
+  gccdebug=""
+  libdebugstatus="OFF"
+  gccdebugstatus="OFF"
+  res="" 
+  v="no"
+  
+  # ------------------------- strip extension
+  file=${1%.*p}
+  
+  # ------------------------- check if extension is .cpp
+  if [ "${1: -4}" != ".cpp" ];
+  then
+    showerr "### ERR: first argument has to be a .cpp file"
+  else
+    # ------------------------- use mingw
+    if [ "$2" == "-v" ] || [ "$3" == "-v" ] || [ "$4" == "-v" ] || [ "$5" == "-v" ] || [ "$6" == "-v" ] || [ "$7" == "-v" ];
+    then
+      v="yes"
+    fi
+    # ------------------------- use mingw
+    if [ "$2" == "-win32" ] || [ "$3" == "-win32" ] || [ "$4" == "-win32" ] || [ "$5" == "-win32" ] || [ "$6" == "-win32" ] || [ "$7" == "-win32" ];
+    then
+      compiler=$mingw
+      fmt_ext=".dll"
+      tgt="-shared -mwindows -lmsimg32"
+    fi
+    # ------------------------- format is executable
+    if [ "$2" == "-exe" ] || [ "$3" == "-exe" ] || [ "$4" == "-exe" ] || [ "$5" == "-exe" ] || [ "$6" == "-exe" ] || [ "$7" == "-exe" ];
+    then
+      format=-DAX_FORMAT_EXE
+      # ------------------------- case mingw
+      if [ "$compiler" == "$mingw" ];
+      then
+        fmt_ext=".exe"
+        tgt="-mwindows -lmsimg32"
+      # ------------------------- case gcc
+      else
+        fmt_ext=""
+        tgt="-lX11 -lpthread"
+      fi
+    fi
+    # ------------------------- don't move to ../bin
+    if [ "$2" == "-nmv" ] || [ "$3" == "-nmv" ] || [ "$4" == "-nmv" ] || [ "$5" == "-nmv" ] || [ "$6" == "-nmv" ] || [ "$7" == "-nmv" ];
+    then
+      move="no"
+    fi
+    # ------------------------- enable lib debug
+    if [ "$2" == "-d" ] || [ "$3" == "-d" ] || [ "$4" == "-d" ] || [ "$5" == "-d" ] || [ "$6" == "-d" ] || [ "$7" == "-d" ];
+    then
+      libdebug="-DAX_DEBUG"
+      libdebugstatus="ON"
+    fi
+    # ------------------------- enable gcc debug
+    if [ "$2" == "-g" ] || [ "$3" == "-g" ] || [ "$4" == "-g" ] || [ "$5" == "-g" ] || [ "$6" == "-g" ] || [ "$7" == "-g" ];
+    then
+      gccdebug="-DDEBUG -gstabs"
+      linker=""
+      gccdebugstatus="ON"
+    fi
+        
+    if [ "$v" == "yes" ];
+    then
+      echo "-------------------------------------------------------------------------------"
+    fi
+        
+    # ------------------------- resource file (mingw32-windres)
+    if [ "{$resfile}" != "" ] && [ "$compiler" == "$mingw" ];
+    then
+      echo "preparing resources..."
+      if [ -e "{$resfile}".o ];
+      then
+        rm -f "{$resfile}".o
+      fi
+      `$windres -i "{$resfile}" -o "{$resfile.o}"`
+      if [ -e "{$resfile}".o ];
+      then    
+        res="$resfile".o
+      else
+        res="error"
+        showerr "### ERR: cannot create resource file '$resfile.o'"
+      fi
+    fi
+    
+    # ------------------------- echo settings
+    echo ""
+    echo "compiling binary for '$1'..."
+    if [ "$v" == "yes" ];
+    then
+      echo ""
+      echo "* compiler is: $compiler"
+      if [ "$fmt_ext" == "" ];
+      then    
+        echo "* target format is: elf (exe)"
+      else
+        echo "* target format is: $fmt_ext"
+      fi
+      echo "* lib debug is: $libdebugstatus"
+      echo "* gcc debug is: $gccdebugstatus"
+    fi
+    # ------------------------- check if axpath available
+    if [ -d "$axpath" ];
+    then
+      if [ "$v" == "yes" ];
+      then
+        echo "* found ax headers in '$axpath'"
+      fi
+    else
+      showerr "### ERR: cannot find axonlib headers in '$axpath'"
+    fi
+    
+    # ------------------------- check if vstpath available
+    if [ -d "$vstpath" ];
+    then
+      if [ "$v" == "yes" ];
+      then
+        echo "* found vst sdk headers in '$vstpath'"
+      fi
+    else
+      showerr "### ERR: cannot find vst sdk in '$vstpath%'"
+    fi
+    
+    # ------------------------- delete old file if available
+    if [ -e "$file$fmt_ext" ];
+    then
+      `rm -f "$file$fmt_ext"`
+    fi
+    
+    # ------------------------- command line (compile)
+    _cmdline="$compiler \"${1}\" -o \"${file}\"\"${fmt_ext}\" -I$vstpath -I$axpath $tgt $res $gccdebug $libdebug $warn $opt $linker $format"
+    if [ "$v" == "yes" ];
+    then
+        echo ""
+        echo "command line is: $_cmdline"    
+        echo ""
+    fi
+    echo $_cmdline | sh
+    
+    # ------------------------- check if compiled
+    if [ -e "$file$fmt_ext" ];
+    then
+      # ------------------------- print file size
+      if [ "$v" == "yes" ];
+      then              
+        size=$(stat -c%s "${file}${fmt_ext}")
+        echo ""      
+        echo "* filesize: $size bytes"
+      fi
+      # ------------------------- check if move
+      if [ "$move" == "yes" ];
+      then
+        # ------------------------- check if '../bin' exists / create it
+        if [ -d "../bin" ];
+        then
+          if [ "$v" == "yes" ];
+          then
+            echo "* folder '../bin' exists"
+          fi
+        else
+          if [ "$v" == "yes" ];
+          then
+            echo "* creating folder '../bin'"
+          fi
+          `mkdir ../bin`
+        fi
+        if [ "$v" == "yes" ];
+        then
+          echo "* moving '$file$fmt_ext' to '../bin'"
+        fi 
+        `mv "${file}${fmt_ext}" ../bin`
+      fi
+      
+      # ------------------------- done
+      if [ "$v" == "yes" ];
+      then
+        echo ""
+        echo "* done"
+        echo "-------------------------------------------------------------------------------"
+      fi      
+    else
+      showerr "# ERR: not compiled!"
+    fi
+  fi
+fi
+
+exit
