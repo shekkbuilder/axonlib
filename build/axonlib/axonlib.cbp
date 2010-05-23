@@ -193,7 +193,6 @@
 		<Unit filename="../../ax/axEditor.h" />
 		<Unit filename="../../ax/axFormat.h" />
 		<Unit filename="../../ax/axParameter.h" />
-		<Unit filename="../../ax/axPlugin.h" />
 		<Unit filename="../../ax/axStdlib.h" />
 		<Unit filename="../../ax/base/axBitmapBase.h" />
 		<Unit filename="../../ax/base/axCanvasBase.h" />

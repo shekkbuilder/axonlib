@@ -59,15 +59,17 @@ class mySkin : public axSkin//Default
         mKnobCount  = n;//65;
         mKnobImage = aEditor->createSurface(mKnobWidth,mKnobHeight*mKnobCount,BPP);
 
+        //int result = loader.decodeLoad("../img/knob1_32x32_65.png");
+        //trace("loader.decodeLoad: " << result);
+
         // it works here (will test it later in linux too...
         // but it didn't work when running from within code:blocks while coding,
+        // (because of some paths, i guess)
         // and might have problems for vst's (and different for linux/win32)
-        // good to have for exe's though!
+        // good to have for exe's! and while developing/testing!
 
-        //int result = loader.decodeLoad("../img/knob1_32x32_65.png");
-        int result = loader.decode((unsigned char*)knob32,knob32_size);
+        int result = loader.decode(buffer,size);
 
-        //trace("loader.decodeLoad: " << result);
         bitmap = aEditor->createBitmap( loader.getWidth(), loader.getHeight(), BPP );
         bitmap->createBuffer( (char*)loader.getImage() );                   // create bitmap buffer & copy data
         bitmap->convertRgbaBgra();                                          // -> bgr.a
@@ -108,7 +110,7 @@ class mySkin : public axSkin//Default
           index = axMinInt(index,mKnobCount-1);
           int ky = mKnobHeight * index;
 
-//
+/*
           //axColor col = aCanvas->getColor(0,96,128);
           //aCanvas->setPenColor(col);
           for (int y=0;y<32;y++)
@@ -122,7 +124,7 @@ class mySkin : public axSkin//Default
               aCanvas->drawPoint(x,y);
             }
           }
-//
+*/
 
           #ifdef AX_ALPHA
             //aCanvas->renderImage(mKnobImage,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);
@@ -230,7 +232,8 @@ class myPlugin : public axFormat
         m_Skin->loadKnobBitmap(editor,(unsigned char*)knob32,knob32_size,32,32,65);
         editor->applySkin(m_Skin);
         editor->appendWidget( w_Panel = new wdgPanel(editor,NULL_RECT,wa_Client) );
-        w_Panel->appendWidget( w_Gain = new wdgKnob( editor,axRect(10,10,100,32),wa_None,"gain",0.75) );
+        //w_Panel->appendWidget( w_Gain = new wdgKnob( editor,axRect(10,10,100,32),wa_None,"gain",0.75) );
+        w_Panel->appendWidget( w_Gain = new wdgKnob( editor,axRect(10,10,100,32),wa_Client,"gain",0.75) );
         editor->connect(w_Gain,p_Gain);
         editor->doRealign();
         editor->show();

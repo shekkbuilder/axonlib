@@ -81,6 +81,7 @@ typedef struct {
 PNG_info_t *PNG_decode(const unsigned char *in, unsigned int size);
 void png_alloc_free_all();
 
+// see line 676: "int PNG_error;"
 extern int PNG_error;
 
 /******************************************************************************/
@@ -1154,7 +1155,7 @@ PNG_info_t *PNG_decode(const unsigned char *in, unsigned int size)
     );
     return PNG_decode(in, size);
   }
-  
+
   //convert
   int PNG_convert_DEBUG(const PNG_info_t *info, vector8_t *out,
     const unsigned char *in, const char* _file, const unsigned int _line)
@@ -1167,7 +1168,7 @@ PNG_info_t *PNG_decode(const unsigned char *in, unsigned int size)
     );
     return ret;
   }
-  
+
   // read header
   void PNG_readPngHeader_DEBUG(PNG_info_t *info, const unsigned char *in,
     size_t inlength, const char* _file, const unsigned int _line)
@@ -1179,7 +1180,7 @@ PNG_info_t *PNG_decode(const unsigned char *in, unsigned int size)
     );
     return PNG_readPngHeader(info, in, inlength);
   }
-  
+
   // zlib decompress
   int Zlib_decompress_DEBUG(vector8_t *out, const vector8_t *in,
     const char* _file, const unsigned int _line)
@@ -1192,7 +1193,7 @@ PNG_info_t *PNG_decode(const unsigned char *in, unsigned int size)
     );
     return ret;
   }
-  
+
   // free all
   void png_alloc_free_all_DEBUG(const char* _file, const unsigned int _line)
   {
@@ -1202,14 +1203,14 @@ PNG_info_t *PNG_decode(const unsigned char *in, unsigned int size)
     );
     return png_alloc_free_all();
   }
-  
+
   #define PNG_decode(a, b)      PNG_decode_DEBUG(a, b, __FILE__, __LINE__)
   #define PNG_convert(a, b, c)  PNG_convert_DEBUG(a, b, c, __FILE__, __LINE__)  
   #define Zlib_decompress(a, b) Zlib_decompress_DEBUG(a, b, __FILE__, __LINE__)
   #define png_alloc_free_all()  png_alloc_free_all_DEBUG(__FILE__, __LINE__)
   #define PNG_readPngHeader(a, b, c) \
     PNG_readPngHeader_DEBUG(a, b, c, __FILE__,  __LINE__)
-    
+
 #endif //AX_DEBUG_PNG
 
 #endif // _PICOPNG_H
