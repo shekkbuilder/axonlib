@@ -1,13 +1,71 @@
 #ifndef axBitmapLoad_included
 #define axBitmapLoad_included
 //----------------------------------------------------------------------
-//TODO: a lot
+/*
+  TODO:
 
+  rework this into a more generic decoder class.
+  and specific decoders being sub-clases of this
+
+*/
 #include "axBitmap.h"
 #include "axSurface.h"
 #include "../extern/picopng.h"
 #include "stdio.h" // fread()
 
+//----------------------------------------------------------------------
+
+/*
+
+// can this be used for samples too? like wav, like an 1d picture
+// width  = length in samples
+// height = 1
+// depth  = (format?)
+// buffer = cast to SPL*
+
+class axDecoderBase
+{
+  protected:
+    int   mWidth;
+    int   mHeight;
+    int   mDepth;
+    char* mBuffer;
+  public:
+    axDecoderBase()
+    {
+      mWidth  = 0;
+      mHeight = 0;
+      mDepth  = 32;
+      mBuffer = NULL;
+    }
+    virtual ~axDecoderBase()
+    {
+      if (mBuffer) delete mBuffer;
+    }
+    inline int   getWidth(void)   { return mWidth; }
+    inline int   getHeight(void)  { return mHeight; }
+    inline int   getDepth(void)   { return mDepth; }
+    inline char* getBuffer(void)  { return mBuffer; }
+    virtual bool canDecode(char* aBuffer, int aSize) { return false; }
+    virtual int  decode(char* aBuffer, int aSize) { return -1; }
+};
+
+//----------
+
+class axDecoderPng : public axDecoderBase
+{
+  public:
+    axDecoderPng() : axDecoderBase() {}
+};
+
+// tga, pcx, bmp, raw
+
+*/
+
+//----------------------------------------------------------------------
+//
+//
+//
 //----------------------------------------------------------------------
 
 //// decode a pre-loaded buffer containing png file

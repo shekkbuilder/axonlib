@@ -96,16 +96,17 @@
 		<Unit filename="..\..\ax\axConfig.h" />
 		<Unit filename="..\..\ax\axDefines.h" />
 		<Unit filename="..\..\ax\axEditor.h" />
+		<Unit filename="..\..\ax\axFormat.h" />
 		<Unit filename="..\..\ax\axParameter.h" />
-		<Unit filename="..\..\ax\axPlugin.h" />
-		<Unit filename="..\..\ax\axStdlib.h" />
 		<Unit filename="..\..\ax\base\axBitmapBase.h" />
 		<Unit filename="..\..\ax\base\axCanvasBase.h" />
+		<Unit filename="..\..\ax\base\axFormatBase.h" />
 		<Unit filename="..\..\ax\base\axImage.h" />
 		<Unit filename="..\..\ax\base\axPluginBase.h" />
 		<Unit filename="..\..\ax\base\axSurfaceBase.h" />
 		<Unit filename="..\..\ax\base\axWindowBase.h" />
 		<Unit filename="..\..\ax\core\axArray.h" />
+		<Unit filename="..\..\ax\core\axAssert.h" />
 		<Unit filename="..\..\ax\core\axBuffer.h" />
 		<Unit filename="..\..\ax\core\axDebug.h" />
 		<Unit filename="..\..\ax\core\axList.h" />
@@ -114,9 +115,9 @@
 		<Unit filename="..\..\ax\core\axPoint.h" />
 		<Unit filename="..\..\ax\core\axRand.h" />
 		<Unit filename="..\..\ax\core\axRect.h" />
+		<Unit filename="..\..\ax\core\axStdlib.h" />
 		<Unit filename="..\..\ax\core\axString.h" />
 		<Unit filename="..\..\ax\core\axUtils.h" />
-		<Unit filename="..\..\ax\deprecated\axApplication.h" />
 		<Unit filename="..\..\ax\dsp\dspDCF.h" />
 		<Unit filename="..\..\ax\dsp\dspInterpolate.h" />
 		<Unit filename="..\..\ax\dsp\dspOnePole.h" />
@@ -127,6 +128,8 @@
 		<Unit filename="..\..\ax\dsp\dspSVF.h" />
 		<Unit filename="..\..\ax\dsp\dsp_Env.h" />
 		<Unit filename="..\..\ax\dsp\dsp_Osc.h" />
+		<Unit filename="..\..\ax\format\axFormatExe.h" />
+		<Unit filename="..\..\ax\format\axFormatVst.h" />
 		<Unit filename="..\..\ax\gui\axBitmap.h" />
 		<Unit filename="..\..\ax\gui\axBitmapLoader.h" />
 		<Unit filename="..\..\ax\gui\axCanvas.h" />
@@ -142,13 +145,10 @@
 		<Unit filename="..\..\ax\platform\axContext.h" />
 		<Unit filename="..\..\ax\platform\axMutex.h" />
 		<Unit filename="..\..\ax\platform\axThread.h" />
-		<Unit filename="..\..\ax\platform\exe\axPluginExe.h" />
 		<Unit filename="..\..\ax\platform\linux\axBitmapLinux.h" />
 		<Unit filename="..\..\ax\platform\linux\axCanvasLinux.h" />
 		<Unit filename="..\..\ax\platform\linux\axSurfaceLinux.h" />
 		<Unit filename="..\..\ax\platform\linux\axWindowLinux.h" />
-		<Unit filename="..\..\ax\platform\vst\axHostVst.h" />
-		<Unit filename="..\..\ax\platform\vst\axPluginVst.h" />
 		<Unit filename="..\..\ax\platform\win32\axBitmapWin32.h" />
 		<Unit filename="..\..\ax\platform\win32\axCanvasWin32.h" />
 		<Unit filename="..\..\ax\platform\win32\axSurfaceWin32.h" />
@@ -173,25 +173,14 @@
 		<Unit filename="..\..\ax\wdg\wdgSizer.h" />
 		<Unit filename="..\..\ax\wdg\wdgSlider.h" />
 		<Unit filename="..\..\ax\wdg\wdgValue.h" />
+		<Unit filename="..\plugin.cpp" />
 		<Unit filename="..\..\doc\AUTHORS" />
 		<Unit filename="..\..\doc\FEATURES" />
+		<Unit filename="..\..\doc\OVERVIEW" />
 		<Unit filename="..\..\doc\TODO" />
 		<Unit filename="..\..\extern\mtrand.h" />
 		<Unit filename="..\..\extern\picopng.h" />
-		<Unit filename="..\..\plugins\SERIALS" />
-		<Unit filename="..\..\plugins\demo\axDemo_editor.h" />
-		<Unit filename="..\..\plugins\demo\axDemo_graph.h" />
-		<Unit filename="..\..\plugins\demo\axDemo_page_audio.h" />
-		<Unit filename="..\..\plugins\demo\axDemo_page_bitmaps.h" />
-		<Unit filename="..\..\plugins\demo\axDemo_page_canvas.h" />
-		<Unit filename="..\..\plugins\demo\axDemo_page_host.h" />
-		<Unit filename="..\..\plugins\demo\axDemo_page_midi.h" />
-		<Unit filename="..\..\plugins\demo\axDemo_page_params.h" />
-		<Unit filename="..\..\plugins\demo\axDemo_page_sync.h" />
-		<Unit filename="..\..\plugins\demo\axDemo_page_system.h" />
-		<Unit filename="..\..\plugins\demo\axDemo_page_widgets.h" />
-		<Unit filename="..\..\plugins\demo\axDemo_skin.h" />
-		<Unit filename="..\..\plugins\test\test_gain_gui_skin.cpp" />
+		<Unit filename="..\..\source\SERIALS" />
 		<Extensions>
 			<code_completion />
 			<debugger />
