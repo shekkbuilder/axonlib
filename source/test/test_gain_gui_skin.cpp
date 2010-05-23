@@ -68,6 +68,19 @@ class mySkin : public axSkin//Default
         // and might have problems for vst's (and different for linux/win32)
         // good to have for exe's! and while developing/testing!
 
+        /*
+          lii:
+          i have added some "path finding" in axBitmapLoader and it now 
+          works for dlls too in win32. not tested on linux but it should work
+          with just relative paths for executables. if not this can be used:
+            ...
+            char buf[256];
+            readlink("/proc/self/exe", buf, sizeof(buf));
+          for ".so", it might not work at all as explained in this thread:
+          http://www.linuxquestions.org/questions/programming-9/retrieving-location-of-shared-object-file-linux-c-559671/
+         
+        */
+        
         int result = loader.decode(buffer,size);
 
         bitmap = aEditor->createBitmap( loader.getWidth(), loader.getHeight(), BPP );

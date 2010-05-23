@@ -270,7 +270,8 @@ __axstdlib_inline int axStrncmp (register const char* s1,
 /**
  * axStrcat
  */
-__axstdlib_inline const char* axStrcat (register char* s1, register char *s2)
+__axstdlib_inline const char* axStrcat (register char* s1,
+  register const char *s2)
 {
   while (*s1)
     s1++;
@@ -281,7 +282,7 @@ __axstdlib_inline const char* axStrcat (register char* s1, register char *s2)
 /**
  * axStrncat
  */
-__axstdlib_inline char* axStrncat (register char* s1, register const char* s2,
+__axstdlib_inline char* axStrncat (register char* s1, register char* s2,
   register unsigned int n)
 {
   register char* s = s1;
