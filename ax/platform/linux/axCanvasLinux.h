@@ -30,7 +30,6 @@ XTransform mat_ident =
 };
 #endif
 
-
 //----------------------------------------------------------------------
 
 class axSurface;
@@ -359,174 +358,149 @@ class axCanvasLinux : public axCanvasBase
 
     virtual void drawImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
-        //#ifdef AX_XRENDER
-        //  //trace("src picture = " << aImage->getPicture());
-        //  //trace("dst picture = " << mPicture);
-        //  int op = PictOpOver;
-        //  XRenderComposite(mDisplay,op,aImage->getPicture(),None,mPicture,aSrcX,aSrcY,0,0,aX,aY,aSrcW,aSrcH);
-        //#else
-          //wtrace("blit");
-          //XCopyArea(mDisplay,aCanvas->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
-          XCopyArea(mDisplay,aImage->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
-          //wtrace("blit ok");
-        //#endif
+        XCopyArea(mDisplay,aImage->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
       }
 
-//void
-//XRenderComposite (Display   *dpy,
-//                  int       op,
-//                  Picture   src,
-//                  Picture   mask,
-//                  Picture   dst,
-//                  int       src_x,
-//                  int       src_y,
-//                  int       mask_x,
-//                  int       mask_y,
-//                  int       dst_x,
-//                  int       dst_y,
-//                  unsigned int  width,
-//                  unsigned int  height);
+    //void
+    //XRenderComposite (Display   *dpy,
+    //                  int       op,
+    //                  Picture   src,
+    //                  Picture   mask,
+    //                  Picture   dst,
+    //                  int       src_x,
+    //                  int       src_y,
+    //                  int       mask_x,
+    //                  int       mask_y,
+    //                  int       dst_x,
+    //                  int       dst_y,
+    //                  unsigned int  width,
+    //                  unsigned int  height);
 
-    //#ifdef AX_XRENDER
-    //virtual void renderPicture(Picture aPicture, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-    //  {
-    //    XRenderComposite(mDisplay,PictOpSrc,aPicture,None,mPicture,aSrcX,aSrcY,0,0,aX,aY,aSrcW,aSrcH);
-    //  }
-    //#endif
+    //----------
 
-  //----------
-
-//	PictOp			Fa			Fb
-//	--------------------------------------------------
-//	Clear			      0			            0
-//	Src			        1			            0
-//	Dst			        0			            1
-//	Over			      1			            1-Aa
-//	OverReverse		  1-Ab			        1
-//	In			        Ab			          0
-//	InReverse		    0			            Aa
-//	Out			        1-Ab			        0
-//	OutReverse		  0			            1-Aa
-//	Atop			      Ab			          1-Aa
-//	AtopReverse		  1-Ab			        Aa
-//	Xor			        1-Ab			        1-Aa
-//	Add			        1			            1
-//	Saturate		    min(1,(1-Ab)/Aa)	1
+    //	PictOp			Fa			Fb
+    //	--------------------------------------------------
+    //	Clear			      0			            0
+    //	Src			        1			            0
+    //	Dst			        0			            1
+    //	Over			      1			            1-Aa
+    //	OverReverse		  1-Ab			        1
+    //	In			        Ab			          0
+    //	InReverse		    0			            Aa
+    //	Out			        1-Ab			        0
+    //	OutReverse		  0			            1-Aa
+    //	Atop			      Ab			          1-Aa
+    //	AtopReverse		  1-Ab			        Aa
+    //	Xor			        1-Ab			        1-Aa
+    //	Add			        1			            1
+    //	Saturate		    min(1,(1-Ab)/Aa)	1
 
 
 
-//	DisjointClear		0			            0
-//	DisjointSrc		  1			0
-//	DisjointDst		  0			1
-//	DisjointOver		1			min(1,(1-Aa)/Ab)
-//	DisjointOverReverse	min(1,(1-Ab)/Aa)	1
-//	DisjointIn		max(1-(1-Ab)/Aa,0)	0
-//	DisjointInReverse	0			max(1-(1-Aa)/Ab,0)
-//	DisjointOut		min(1,(1-Ab)/Aa)	0
-//	DisjointOutReverse	0			min(1,(1-Aa)/Ab)
-//	DisjointAtop		max(1-(1-Ab)/Aa,0)	min(1,(1-Aa)/Ab)
-//	DisjointAtopReverse	min(1,(1-Ab)/Aa)	max(1-(1-Aa)/Ab,0)
-//	DisjointXor		min(1,(1-Ab)/Aa)	min(1,(1-Aa)/Ab)
-//	ConjointClear		0			0
-//	ConjointSrc		1			0
-//	ConjointDst		0			1
-//	ConjointOver		1			max(1-Aa/Ab,0)
-//	ConjointOverReverse	max(1-Ab/Aa,0)		1
-//	ConjointIn		min(1,Ab/Aa)		0
-//	ConjointInReverse	0			min(Aa/Ab,1)
-//	ConjointOut		max(1-Ab/Aa,0)		0
-//	ConjointOutReverse	0			max(1-Aa/Ab,0)
-//	ConjointAtop		min(1,Ab/Aa)		max(1-Aa/Ab,0)
-//	ConjointAtopReverse	max(1-Ab/Aa,0)		min(1,Aa/Ab)
-//	ConjointXor		max(1-Ab/Aa,0)		max(1-Aa/Ab,0)
+    //	DisjointClear		0			            0
+    //	DisjointSrc		  1			0
+    //	DisjointDst		  0			1
+    //	DisjointOver		1			min(1,(1-Aa)/Ab)
+    //	DisjointOverReverse	min(1,(1-Ab)/Aa)	1
+    //	DisjointIn		max(1-(1-Ab)/Aa,0)	0
+    //	DisjointInReverse	0			max(1-(1-Aa)/Ab,0)
+    //	DisjointOut		min(1,(1-Ab)/Aa)	0
+    //	DisjointOutReverse	0			min(1,(1-Aa)/Ab)
+    //	DisjointAtop		max(1-(1-Ab)/Aa,0)	min(1,(1-Aa)/Ab)
+    //	DisjointAtopReverse	min(1,(1-Ab)/Aa)	max(1-(1-Aa)/Ab,0)
+    //	DisjointXor		min(1,(1-Ab)/Aa)	min(1,(1-Aa)/Ab)
+    //	ConjointClear		0			0
+    //	ConjointSrc		1			0
+    //	ConjointDst		0			1
+    //	ConjointOver		1			max(1-Aa/Ab,0)
+    //	ConjointOverReverse	max(1-Ab/Aa,0)		1
+    //	ConjointIn		min(1,Ab/Aa)		0
+    //	ConjointInReverse	0			min(Aa/Ab,1)
+    //	ConjointOut		max(1-Ab/Aa,0)		0
+    //	ConjointOutReverse	0			max(1-Aa/Ab,0)
+    //	ConjointAtop		min(1,Ab/Aa)		max(1-Aa/Ab,0)
+    //	ConjointAtopReverse	max(1-Ab/Aa,0)		min(1,Aa/Ab)
+    //	ConjointXor		max(1-Ab/Aa,0)		max(1-Aa/Ab,0)
 
 
 
-//#define PictOpClear			    0
-//#define PictOpSrc			      1
-//#define PictOpDst			      2
-//#define PictOpOver			    3
-//#define PictOpOverReverse		4
-//#define PictOpIn			      5
-//#define PictOpInReverse			6
-//#define PictOpOut			      7
-//#define PictOpOutReverse		8
-//#define PictOpAtop			    9
-//#define PictOpAtopReverse		10
-//#define PictOpXor			      11
-//#define PictOpAdd			      12
-//#define PictOpSaturate			13
-//#define PictOpMaximum			  13
-//
-///*
-// * Operators only available in version 0.2
-// */
-//#define PictOpDisjointMinimum			  0x10
-//#define PictOpDisjointClear			    0x10
-//#define PictOpDisjointSrc			      0x11
-//#define PictOpDisjointDst			      0x12
-//#define PictOpDisjointOver			    0x13
-//#define PictOpDisjointOverReverse		0x14
-//#define PictOpDisjointIn			      0x15
-//#define PictOpDisjointInReverse			0x16
-//#define PictOpDisjointOut			      0x17
-//#define PictOpDisjointOutReverse		0x18
-//#define PictOpDisjointAtop			    0x19
-//#define PictOpDisjointAtopReverse		0x1a
-//#define PictOpDisjointXor			      0x1b
-//#define PictOpDisjointMaximum			  0x1b
-//
-//#define PictOpConjointMinimum			    0x20
-//#define PictOpConjointClear			    0x20
-//#define PictOpConjointSrc			    0x21
-//#define PictOpConjointDst			    0x22
-//#define PictOpConjointOver			    0x23
-//#define PictOpConjointOverReverse		    0x24
-//#define PictOpConjointIn			    0x25
-//#define PictOpConjointInReverse			    0x26
-//#define PictOpConjointOut			    0x27
-//#define PictOpConjointOutReverse		    0x28
-//#define PictOpConjointAtop			    0x29
-//#define PictOpConjointAtopReverse		    0x2a
-//#define PictOpConjointXor			    0x2b
-//#define PictOpConjointMaximum			    0x2b
-//
-///*
-// * Operators only available in version 0.11
-// */
-//#define PictOpBlendMinimum			    0x30
-//#define PictOpMultiply				    0x30
-//#define PictOpScreen				    0x31
-//#define PictOpOverlay				    0x32
-//#define PictOpDarken				    0x33
-//#define PictOpLighten				    0x34
-//#define PictOpColorDodge			    0x35
-//#define PictOpColorBurn				    0x36
-//#define PictOpHardLight				    0x37
-//#define PictOpSoftLight				    0x38
-//#define PictOpDifference			    0x39
-//#define PictOpExclusion				    0x3a
-//#define PictOpHSLHue				    0x3b
-//#define PictOpHSLSaturation			    0x3c
-//#define PictOpHSLColor				    0x3d
-//#define PictOpHSLLuminosity			    0x3e
-//#define PictOpBlendMaximum			    0x3e
-
-
-
+    //#define PictOpClear			    0
+    //#define PictOpSrc			      1
+    //#define PictOpDst			      2
+    //#define PictOpOver			    3
+    //#define PictOpOverReverse		4
+    //#define PictOpIn			      5
+    //#define PictOpInReverse			6
+    //#define PictOpOut			      7
+    //#define PictOpOutReverse		8
+    //#define PictOpAtop			    9
+    //#define PictOpAtopReverse		10
+    //#define PictOpXor			      11
+    //#define PictOpAdd			      12
+    //#define PictOpSaturate			13
+    //#define PictOpMaximum			  13
+    //
+    ///*
+    // * Operators only available in version 0.2
+    // */
+    //#define PictOpDisjointMinimum			  0x10
+    //#define PictOpDisjointClear			    0x10
+    //#define PictOpDisjointSrc			      0x11
+    //#define PictOpDisjointDst			      0x12
+    //#define PictOpDisjointOver			    0x13
+    //#define PictOpDisjointOverReverse		0x14
+    //#define PictOpDisjointIn			      0x15
+    //#define PictOpDisjointInReverse			0x16
+    //#define PictOpDisjointOut			      0x17
+    //#define PictOpDisjointOutReverse		0x18
+    //#define PictOpDisjointAtop			    0x19
+    //#define PictOpDisjointAtopReverse		0x1a
+    //#define PictOpDisjointXor			      0x1b
+    //#define PictOpDisjointMaximum			  0x1b
+    //
+    //#define PictOpConjointMinimum			    0x20
+    //#define PictOpConjointClear			    0x20
+    //#define PictOpConjointSrc			    0x21
+    //#define PictOpConjointDst			    0x22
+    //#define PictOpConjointOver			    0x23
+    //#define PictOpConjointOverReverse		    0x24
+    //#define PictOpConjointIn			    0x25
+    //#define PictOpConjointInReverse			    0x26
+    //#define PictOpConjointOut			    0x27
+    //#define PictOpConjointOutReverse		    0x28
+    //#define PictOpConjointAtop			    0x29
+    //#define PictOpConjointAtopReverse		    0x2a
+    //#define PictOpConjointXor			    0x2b
+    //#define PictOpConjointMaximum			    0x2b
+    //
+    ///*
+    // * Operators only available in version 0.11
+    // */
+    //#define PictOpBlendMinimum			    0x30
+    //#define PictOpMultiply				    0x30
+    //#define PictOpScreen				    0x31
+    //#define PictOpOverlay				    0x32
+    //#define PictOpDarken				    0x33
+    //#define PictOpLighten				    0x34
+    //#define PictOpColorDodge			    0x35
+    //#define PictOpColorBurn				    0x36
+    //#define PictOpHardLight				    0x37
+    //#define PictOpSoftLight				    0x38
+    //#define PictOpDifference			    0x39
+    //#define PictOpExclusion				    0x3a
+    //#define PictOpHSLHue				    0x3b
+    //#define PictOpHSLSaturation			    0x3c
+    //#define PictOpHSLColor				    0x3d
+    //#define PictOpHSLLuminosity			    0x3e
+    //#define PictOpBlendMaximum			    0x3e
 
     virtual void renderImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
-        //#ifdef AX_XRENDER
         #ifdef AX_ALPHA
-          trace("renderImage.. from mPicture: " << aImage->getPicture() << " to mPicture: " << mPicture);
-        //trace("renderImage");
-        //trace("src picture = " << (int)aImage->getPicture());
-        //trace("dst picture = " << (int)mPicture);
           int op = PictOpOver;
           XRenderComposite(mDisplay,op,aImage->getPicture(),None,mPicture,aSrcX,aSrcY,0,0,aX,aY,aSrcW,aSrcH);
-        #else
-          drawImage(aImage,aX,aY,aSrcX,aSrcY,aSrcW,aSrcH);
+        //#else
+        //  drawImage(aImage,aX,aY,aSrcX,aSrcY,aSrcW,aSrcH);
         #endif
       }
 
@@ -553,36 +527,16 @@ class axCanvasLinux : public axCanvasBase
             Picture pic = aImage->getPicture();
             XRenderSetPictureTransform(mDisplay, pic, &xform );
             int op = PictOpOver;
-
             // hmmm.. is srcx, srcy transformed by the matrix too?
-
-            float x = (float)aSrcX / xs;
-            float y = (float)aSrcY / ys;
-
+            float x = axFloor( (float)aSrcX / xs );
+            float y = axFloor( (float)aSrcY / ys );
             XRenderComposite(mDisplay,op,pic,None,mPicture,(int)x,(int)y,0,0,aX,aY,aW,aH);
-
             XRenderSetPictureTransform(mDisplay, pic, &mat_ident );
           } //h>0
         } //w>0
         //#else
         #endif
       }
-//void
-//XRenderComposite (Display   *dpy,
-//                  int       op,
-//                  Picture   src,
-//                  Picture   mask,
-//                  Picture   dst,
-//                  int       src_x,
-//                  int       src_y,
-//                  int       mask_x,
-//                  int       mask_y,
-//                  int       dst_x,
-//                  int       dst_y,
-//                  unsigned int  width,
-//                  unsigned int  height);
-
-
 
 };
 

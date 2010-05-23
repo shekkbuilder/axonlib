@@ -9,11 +9,12 @@
 
 //#include "../source/test/test_gain_nogui.cpp"
 //#include "../source/test/test_gain_gui.cpp"
-#include "../source/test/test_gain_gui_skin.cpp"
+//#include "../source/test/test_gain_gui_skin.cpp"
 
 //#include "../test/test_winsize.cpp"
 //#include "../test/test_png.cpp"
 //#include "../test/test_xrender.cpp"
+#include "../test/test_blitting.cpp"
 
 //----------------------------------------------------------------------
 // demo
