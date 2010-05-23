@@ -3,42 +3,23 @@
 //#define AX_DEBUG_MEM
 //#define AX_DEBUG_PNG
 
-#define AX_ALPHA
-
 //----------------------------------------------------------------------
 // test
 //----------------------------------------------------------------------
 
-//#include "../plugins/test/test_gain_nogui.cpp"
-//#include "../plugins/test/test_gain_gui.cpp"
-//#include "../plugins/test/test_gain_gui_skin.cpp"
-
-//----------
+//#include "../source/test/test_gain_nogui.cpp"
+//#include "../source/test/test_gain_gui.cpp"
+//#include "../source/test/test_gain_gui_skin.cpp"
 
 //#include "../test/test_winsize.cpp"
 //#include "../test/test_png.cpp"
-
-
-
-//----------
-//linux:
-//#define AX_XRENDER
-//build options, link with Xrender
-//-lXrender
-//----------
-//win32:
-//#define AX_DIBSECTION
-//build options, link with libmsimg32
-//----------
-
 //#include "../test/test_xrender.cpp"
-
 
 //----------------------------------------------------------------------
 // demo
 //----------------------------------------------------------------------
 
-#include "../plugins/demo/axDemo.cpp"
+//#include "../source/demo/axDemo.cpp"
 
 //----------------------------------------------------------------------
 // ccernn
@@ -46,14 +27,13 @@
 
 //----- no gui -----
 
-//#include "../plugins/ccernn/midi_transpose.cpp"
-//#include "../plugins/ccernn/fx_distortion.cpp"
+//#include "../source/ccernn/midi_transpose.cpp"
+//#include "../source/ccernn/fx_distortion.cpp"
 
 //----- gui -----
 
-//#include "../plugins/ccernn/fx_grains.cpp"
-//#include "../plugins/ccernn/fx_tempodelay.cpp"
-
+#include "../source/ccernn/fx_grains.cpp"            // in progress !!
+//#include "../source/ccernn/fx_tempodelay.cpp"
 
 //----------------------------------------------------------------------
 // liteon

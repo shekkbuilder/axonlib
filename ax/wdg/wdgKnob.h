@@ -18,7 +18,7 @@ class wdgKnob : public wdgValue
     float     mSens2;
 
   public:
-    wdgKnob(axWidgetListener* aListener, /*int aId, */axRect aRect, int aAlignment=wa_None,
+    wdgKnob(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None,
             axString aName="", float aValue=0)
     : wdgValue(aListener,/*aId, */aRect,aAlignment,aName,aValue)
       {
@@ -96,7 +96,7 @@ class wdgKnob : public wdgValue
           //sprintf(mDisp,"%.3f",mValue);
           //if (mParameter) __builtin_sprintf(mDisp,"%.2f",mParameter->getValue());
           //else __builtin_sprintf(mDisp,"%.2f",mValue);
-          if (mParameter) axFtoa(mDisp,mParameter->getValue());
+          if (mParameter) mParameter->doGetDisplay(mDisp);//axFtoa(mDisp,mParameter->getValue());
           else axFtoa(mDisp,mValue);
           mSkin->drawKnob(aCanvas,mRect,mName,mDisp,mValue);
         }

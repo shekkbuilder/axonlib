@@ -228,24 +228,9 @@ class axWidget : public axWidgetListener
     //
     //--------------------------------------------------
 
-    virtual axRect getContent(void)
-      {
-        return mContent;
-      }
-
-    //----------
-
-    virtual int getNumWidgets(void)
-      {
-        return mWidgets.size();
-      }
-
-    //----------
-
-    virtual axWidget* getWidget(int aIndex)
-      {
-        return mWidgets[aIndex];
-      }
+    virtual axRect getContent(void)         { return mContent; }
+    virtual int getNumWidgets(void)         { return mWidgets.size(); }
+    virtual axWidget* getWidget(int aIndex) { return mWidgets[aIndex]; }
 
     //--------------------------------------------------
 

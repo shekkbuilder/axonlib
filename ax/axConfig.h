@@ -4,6 +4,9 @@
 
 // here you can define things you seldom, or never change...
 
+//TODO: describe/document these
+
+//#define AX_ALPHA                // axCanvasLinux.h, axSurfaceLinux.h, axWindowLinux.h, axSurfaceWin32.h
 //#define AX_AUTOSYNC             // axFormatVst.h
 //#define AX_DEBUG                // axDebug.h
 //#define AX_DEBUG_AUTO_STD       // axDebug.h
@@ -17,14 +20,6 @@
 //#define AX_NO_MALLOC            // axMalloc.h
 //#define AX_USE_DATA_TYPES       // axDefines.h
 //#define AX_WIDGET_NOUPDATELIST  // axEditor.h
-
-//#define AX_ALPHA
-
-// deprecate:
-//#define AX_DIBSECTION
-//#define AX_XRENDER
-
-
 
 //----------------------------------------------------------------------
 #endif

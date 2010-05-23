@@ -9,7 +9,12 @@
 
 //----------------------------------------------------------------------
 
-// Format flags
+// TODO: the 'p' was there because it was called axPlugin
+//       change to 'f' for format
+//       this can propagate through a few classes,
+//       but if not done, it will be confusing..
+
+// plugin flags
 #define pf_None       0
 #define pf_HasEditor  1
 
@@ -17,7 +22,7 @@
 
 //----------
 
-// Format states (doStateChange)
+// plugin states (doStateChange)
 #define ps_Open     1
 #define ps_Close    2
 #define ps_Suspend  3

@@ -1,13 +1,11 @@
 
-#include "core/axRand.h"
-
 #include "axFormat.h"
+#include "axEditor.h"
+#include "core/axRand.h"
 #include "par/parInteger.h"
 #include "par/parFloat.h"
-
-#include "axEditor.h"
 #include "wdg/wdgPanel.h"
-
+#include "wdg/wdgKnob.h"
 
 //----------------------------------------------------------------------
 
@@ -81,15 +79,15 @@ class myPlugin : public axFormat
         countdown = 0;
         describe("fx_grains","ccernn","axonlib example",0,AX_MAGIC+0x1004);
         setupAudio(2,2,false);
-        setupEditor(640,480);
+        setupEditor(340,325);
         appendParameter( new parFloat(  this,"master volume",     "",   1,    0, 2   ) );
-        appendParameter( new parInteger(this,"number of grains",  "",   10,   1, 255 ) );
+        appendParameter( new parInteger(this,"number of grains",  "",   10,   1, MAX_GRAINS ) );
         appendParameter( new parFloat(  this,"buffer size",       "ms", 1000, 1, 5000) );
         appendParameter( new parInteger(this,"freeze",            "",   0,    0, 1, str_onoff ) );
         appendParameter( new parFloat(  this,"grain distance",    "ms", 20,   1, 100 ) );
         appendParameter( new parFloat(  this,"grain size",        "ms", 30,   1, 100 ) );
         appendParameter( new parFloat(  this,"grain duration",    "ms", 300,  1, 2000) );
-        appendParameter( new parFloat(  this,"grain pitch",       "",   1,    0, 4   ) );
+        appendParameter( new parFloat(  this,"grain pitch",       "",   1,    0, 2   ) );
         appendParameter( new parFloat(  this,"envelope",          "",   1   ) );
         appendParameter( new parFloat(  this,"grain envelope",    "",   1   ) );
         appendParameter( new parFloat(  this,"distance jitter",   "",   0.2 ) );
@@ -115,6 +113,25 @@ class myPlugin : public axFormat
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
           editor->appendWidget( w_Panel = new wdgPanel(editor,NULL_RECT,wa_Client) );
 
+            w_Panel->appendWidget( new wdgKnob(editor,axRect(230,255,100,32),wa_None,"master") );
+            w_Panel->appendWidget( new wdgKnob(editor,axRect( 10,155,100,32),wa_None,"num grains") );
+            w_Panel->appendWidget( new wdgKnob(editor,axRect( 10, 50,100,32),wa_None,"buf size") );
+            w_Panel->appendWidget( new wdgKnob(editor,axRect( 10, 85,100,32),wa_None,"freeze") );
+            w_Panel->appendWidget( new wdgKnob(editor,axRect(120, 50,100,32),wa_None,"grain dist") );
+            w_Panel->appendWidget( new wdgKnob(editor,axRect(120, 85,100,32),wa_None,"grain size") );
+            w_Panel->appendWidget( new wdgKnob(editor,axRect(120,120,100,32),wa_None,"grain dur") );
+            w_Panel->appendWidget( new wdgKnob(editor,axRect(120,155,100,32),wa_None,"grain pitch") );
+            w_Panel->appendWidget( new wdgKnob(editor,axRect( 10,255,100,32),wa_None,"dur env") );
+            w_Panel->appendWidget( new wdgKnob(editor,axRect(120,255,100,32),wa_None,"grain env") );
+            w_Panel->appendWidget( new wdgKnob(editor,axRect(230, 50,100,32),wa_None,"dist jitter") );
+            w_Panel->appendWidget( new wdgKnob(editor,axRect(230,155,100,32),wa_None,"pitch jitter") );
+            w_Panel->appendWidget( new wdgKnob(editor,axRect(230, 85,100,32),wa_None,"size jitter") );
+            w_Panel->appendWidget( new wdgKnob(editor,axRect(230,120,100,32),wa_None,"dur jitter") );
+
+            for (int i=0; i<w_Panel->getNumWidgets(); i++)
+              editor->connect( w_Panel->getWidget(i), mParameters[i] );
+            setupParameters();
+
         editor->doRealign();
         w_Editor = editor;
         editor->show();
@@ -138,23 +155,23 @@ class myPlugin : public axFormat
 
     virtual void doSetParameter(axParameter* aParameter)
       {
-        float val = aParameter->getValue();
+        float v = aParameter->getValue();
         switch ( aParameter->getIndex() )
         {
-          case 0:   m_Master      = val;      break;
-          case 1:   m_NumGrains   = (int)val; break;
-          case 2:    _BufferSize  = val;      break;
-          case 3:   m_Freeze      = val;      break;
-          case 4:    _GrainDist   = val;      break;
-          case 5:    _GrainSize   = val;      break;
-          case 6:    _GrainDur    = val;      break;
-          case 7:   m_GrainPitch  = val;      break;
-          case 8:   m_Env         = val;      break;
-          case 9:   m_GrainEnv    = val;      break;
-          case 10:  m_StartJit    = val;      break;
-          case 11:  m_PitchJit    = val;      break;
-          case 12:  m_SizeJit     = val;      break;
-          case 13:  m_DurJit      = val;      break;
+          case 0:   m_Master      = v*v;    break;
+          case 1:   m_NumGrains   = (int)v; break;
+          case 2:    _BufferSize  = v;      break;
+          case 3:   m_Freeze      = v;      break;
+          case 4:    _GrainDist   = v;      break;
+          case 5:    _GrainSize   = v;      break;
+          case 6:    _GrainDur    = v;      break;
+          case 7:   m_GrainPitch  = v*v;    break;
+          case 8:   m_Env         = v;      break;
+          case 9:   m_GrainEnv    = v;      break;
+          case 10:  m_StartJit    = v*v*v;  break;
+          case 11:  m_PitchJit    = v*v*v;  break;
+          case 12:  m_SizeJit     = v*v*v;  break;
+          case 13:  m_DurJit      = v*v*v;  break;
         }
       }
 

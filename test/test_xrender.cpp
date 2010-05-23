@@ -9,9 +9,15 @@
 #include "axEditor.h"
 
 #include "wdg/wdgImage.h"
+
 #include "../extern/picopng.h"
+//#include "../extern/tga_loader.h"
+
 //#include "testpng.h"
-#include "testpng.h"
+#include "testpng2.h"
+#include "testpng3.h"
+//#include "testtga.h"
+
 
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
@@ -69,6 +75,12 @@ class myPlugin : public axFormat,
     myImage*    w_Image;
     axSurface*  surface;
     axBitmap*   bitmap;
+
+    int   _w;
+    int   _h;
+    char* _buf;
+
+
   public:
 
     myPlugin(axContext* aContext)
@@ -77,15 +89,30 @@ class myPlugin : public axFormat,
         describe("test_winsize","ccernn","axonlibe example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);
         setupEditor(256,256);
-        pnginfo = PNG_decode(testpng,testpng_size);
-        //pnginfo = PNG_decode(png2,png2_size);
+
+        //pnginfo = PNG_decode(testpng,testpng_size);
+        //pnginfo = PNG_decode(testpng2,testpng2_size);
+        pnginfo = PNG_decode(testpng3,testpng3_size);
         trace("pnginfo = " << pnginfo);
         trace("png error: " << PNG_error);
+        _w   = pnginfo->width;
+        _h   = pnginfo->height;
+        _buf = (char*)pnginfo->image->data;
+
+        //TGAImg loader;
+        //loader.decode((unsigned char*)testtga,testtga_size);
+
+        //trace( loader.GetWidth() << "," << loader.GetHeight() << " * " << loader.GetBPP() );
+
+        //_w   = loader.GetWidth();
+        //_h   = loader.GetHeight();
+        //_buf = (char*)loader.GetImg();
+
       }
 
     virtual ~myPlugin()
       {
-        png_alloc_free_all();
+        //png_alloc_free_all();
       }
 
     //--------------------------------------------------
@@ -96,40 +123,41 @@ class myPlugin : public axFormat,
       {
         m_Editor  = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
 
-        int   w   = pnginfo->width;
-        int   h   = pnginfo->height;
-        char* buf = (char*)pnginfo->image->data;
-        bitmap = m_Editor->createBitmap(w,h,32);      // 32
-        bitmap->createBuffer(buf);
+//        _w   = pnginfo->width;
+//        _h   = pnginfo->height;
+//        _buf = (char*)pnginfo->image->data;
+
+        bitmap = m_Editor->createBitmap(_w,_h,32);      // 32
+        bitmap->createBuffer(_buf);
         bitmap->convertRgbaBgra();
-        //bitmap->swizzle(
-        //  1,  0,  0,  0,
-        //  0,  1,  0,  0,
-        //  0,  0,  1,  0,
-        //  0,  0,  0,  1
-        //);
+        bitmap->swizzle(
+          1,  0,  0,  0,    // b
+          0,  1,  0,  0,    // g
+          0,  0,  1,  0,    // r
+          0,  0,  0,  0.5   // a
+        );
         //bitmap->randomAlpha();
 
           int width = bitmap->getWidth();
           int height = bitmap->getHeight();
           char* buffer = bitmap->getBuffer();
 
-          for(int y=0; y<height; y++)
-          {
-            for(int x=0; x<width; x++)
-            {
-              int pos = (y*width + x) * 4;
-              unsigned char a = x;//axRandInt(255);
-              buffer[pos+3] = a;
-            } //for x
-          } //for y
+//          for(int y=0; y<height; y++)
+//          {
+//            for(int x=0; x<width; x++)
+//            {
+//              int pos = (y*width + x) * 4;
+//              unsigned char a = x;//axRandInt(255);
+//              buffer[pos+3] = a;
+//            } //for x
+//          } //for y
 
         bitmap->premultAlpha();
         bitmap->prepare();
 
-        surface = m_Editor->createSurface(w,h,32);    // 32
+        surface = m_Editor->createSurface(_w,_h,32);    // 32
         axCanvas* canvas = surface->getCanvas();
-        canvas->drawBitmap(bitmap,0,0,0,0,w,h);
+        canvas->drawBitmap(bitmap,0,0,0,0,_w,_h);
         delete bitmap;
 
         m_Editor->appendWidget( w_Image = new myImage(m_Editor,axRect(0,0,256,256),wa_None,surface) );
