@@ -129,7 +129,7 @@ else
       # ------------------------- case gcc
       else
         fmt_ext=""
-        tgt="-lX11 -lpthread"
+        tgt="-lX11 -lXrender -lpthread"
       fi
     fi
     # ------------------------- don't move to ../bin
@@ -164,8 +164,10 @@ else
       then
         rm -f "{$resfile}".o
       fi
-      `$windres -i "{$resfile}" -o "{$resfile.o}"`
-      if [ -e "{$resfile}".o ];
+      #`$windres -i "{$resfile}" -o "{$resfile.o}"`
+      #if [ -e "{$resfile}".o ];
+      `$windres -i "$resfile" -o "$resfile.o"`
+      if [ -e "$resfile".o ];
       then    
         res="$resfile".o
       else

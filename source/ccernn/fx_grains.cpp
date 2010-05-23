@@ -153,20 +153,20 @@ class myPlugin : public axFormat
         describe("fx_grains","ccernn","axonlib example",0,AX_MAGIC+0x1004);
         setupAudio(2,2,false);
         setupEditor(340,325);
-        appendParameter( new parFloat(  this,"master volume",     "",   1,    0, 2   ) );
+        appendParameter( new parFloat2( this,"master volume",     "",   1,    0, 2   ) );
         appendParameter( new parInteger(this,"number of grains",  "",   10,   1, MAX_GRAINS ) );
         appendParameter( new parFloat(  this,"buffer size",       "ms", 1000, 1, 5000) );
         appendParameter( new parInteger(this,"freeze",            "",   0,    0, 1, str_onoff ) );
-        appendParameter( new parFloat(  this,"grain distance",    "ms", 20,   1, 100 ) );
-        appendParameter( new parFloat(  this,"grain size",        "ms", 30,   1, 100 ) );
-        appendParameter( new parFloat(  this,"grain duration",    "ms", 300,  1, 2000) );
-        appendParameter( new parFloat(  this,"grain pitch",       "",   1,    0, 2   ) );
+        appendParameter( new parFloat2( this,"grain distance",    "ms", 3,    1, 10 ) );
+        appendParameter( new parFloat2( this,"grain size",        "ms", 5,    1, 10 ) );
+        appendParameter( new parFloat2( this,"grain duration",    "ms", 16,   1, 50 ) );
+        appendParameter( new parFloat2( this,"grain pitch",       "",   1,    0, 2  ) );
         appendParameter( new parFloat(  this,"envelope",          "",   1   ) );
         appendParameter( new parFloat(  this,"grain envelope",    "",   1   ) );
-        appendParameter( new parFloat(  this,"distance jitter",   "",   0.2 ) );
-        appendParameter( new parFloat(  this,"pitch jitter",      "",   0.2 ) );
-        appendParameter( new parFloat(  this,"size jitter",       "",   0.2 ) );
-        appendParameter( new parFloat(  this,"duration jitter",   "",   0.2 ) );
+        appendParameter( new parFloat3( this,"distance jitter",   "",   0.2 ) );
+        appendParameter( new parFloat3( this,"pitch jitter",      "",   0.2 ) );
+        appendParameter( new parFloat3( this,"size jitter",       "",   0.2 ) );
+        appendParameter( new parFloat3( this,"duration jitter",   "",   0.2 ) );
         setupParameters();
 
       }
@@ -245,10 +245,10 @@ class myPlugin : public axFormat
           w_Panel->appendWidget( new wdgKnob(editor,axRect(120,155,100,32),wa_None,"grain pitch") );
           w_Panel->appendWidget( new wdgKnob(editor,axRect( 10,255,100,32),wa_None,"dur env") );
           w_Panel->appendWidget( new wdgKnob(editor,axRect(120,255,100,32),wa_None,"grain env") );
-          w_Panel->appendWidget( new wdgKnob(editor,axRect(230, 50,100,32),wa_None,"dist jitter") );
-          w_Panel->appendWidget( new wdgKnob(editor,axRect(230,155,100,32),wa_None,"pitch jitter") );
-          w_Panel->appendWidget( new wdgKnob(editor,axRect(230, 85,100,32),wa_None,"size jitter") );
-          w_Panel->appendWidget( new wdgKnob(editor,axRect(230,120,100,32),wa_None,"dur jitter") );
+          w_Panel->appendWidget( new wdgKnob(editor,axRect(230, 50,100,32),wa_None,"dist jit") );
+          w_Panel->appendWidget( new wdgKnob(editor,axRect(230,155,100,32),wa_None,"pitch jit") );
+          w_Panel->appendWidget( new wdgKnob(editor,axRect(230, 85,100,32),wa_None,"size jit") );
+          w_Panel->appendWidget( new wdgKnob(editor,axRect(230,120,100,32),wa_None,"dur jit") );
 
           for (int i=0; i<w_Panel->getNumWidgets(); i++)
             editor->connect( w_Panel->getWidget(i), mParameters[i] );
@@ -282,20 +282,20 @@ class myPlugin : public axFormat
         float v = aParameter->getValue();
         switch ( aParameter->getIndex() )
         {
-          case 0:   m_Master      = v*v;    break;
+          case 0:   m_Master      = v;      break;
           case 1:   m_NumGrains   = (int)v; break;
           case 2:    _BufferSize  = v;      break;
           case 3:   m_Freeze      = v;      break;
           case 4:    _GrainDist   = v;      break;
           case 5:    _GrainSize   = v;      break;
           case 6:    _GrainDur    = v;      break;
-          case 7:   m_GrainPitch  = v*v;    break;
+          case 7:   m_GrainPitch  = v;      break;
           case 8:   m_Env         = v;      break;
           case 9:   m_GrainEnv    = v;      break;
-          case 10:  m_StartJit    = v*v*v;  break;
-          case 11:  m_PitchJit    = v*v*v;  break;
-          case 12:  m_SizeJit     = v*v*v;  break;
-          case 13:  m_DurJit      = v*v*v;  break;
+          case 10:  m_StartJit    = v;      break;
+          case 11:  m_PitchJit    = v;      break;
+          case 12:  m_SizeJit     = v;      break;
+          case 13:  m_DurJit      = v;      break;
         }
       }
 

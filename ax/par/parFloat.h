@@ -121,4 +121,39 @@ class parFloat : public axParameter
 };
 
 //----------------------------------------------------------------------
+
+class parFloat2 : public parFloat
+{
+  public:
+    parFloat2(axParameterListener* aListener, axString aName, axString aLabel="",
+              float aValue=0, float aMin=0, float aMax=1, float aStep=0)
+    : parFloat(aListener,aName,aLabel,aValue,aMin,aMax,aStep)
+      {
+      }
+    virtual float getValue(void)
+      {
+        float v = parFloat::getValue();
+        return v*v;
+      }
+};
+
+//----------------------------------------------------------------------
+
+class parFloat3 : public parFloat
+{
+  public:
+    parFloat3(axParameterListener* aListener, axString aName, axString aLabel="",
+              float aValue=0, float aMin=0, float aMax=1, float aStep=0)
+    : parFloat(aListener,aName,aLabel,aValue,aMin,aMax,aStep)
+      {
+      }
+    virtual float getValue(void)
+      {
+        float v = parFloat::getValue();
+        return v*v*v;
+      }
+};
+
+
+//----------------------------------------------------------------------
 #endif
