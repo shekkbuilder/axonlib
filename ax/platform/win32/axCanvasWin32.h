@@ -543,18 +543,32 @@ class axCanvasWin32 : public axCanvasBase
 //  BYTE AlphaFormat;
 //} BLENDFUNCTION, *PBLENDFUNCTION, *LPBLENDFUNCTION;
 
-
-
-
     virtual void renderImage( axImage*  aImage,  int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
-        //drawImage(aImage,aX,aY,aSrcX,aSrcY,aSrcW,aSrcH);
-
         HDC tempdc = (HDC)aImage->getHandle();
         AlphaBlend(mDC,aX,aY,aSrcW,aSrcH,tempdc,aSrcX,aSrcY,aSrcW,aSrcH,mBlendFunc);
+        // link with: libmsimg32
+      }
 
-        // iink with: libmsimg32
+//BOOL StretchBlt(
+//  __in  HDC hdcDest,
+//  __in  int nXOriginDest,
+//  __in  int nYOriginDest,
+//  __in  int nWidthDest,
+//  __in  int nHeightDest,
+//  __in  HDC hdcSrc,
+//  __in  int nXOriginSrc,
+//  __in  int nYOriginSrc,
+//  __in  int nWidthSrc,
+//  __in  int nHeightSrc,
+//  __in  DWORD dwRop
+//);
 
+    virtual void stretchImage( axImage*  aImage,  int aX, int aY, int aW, int aH, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+      {
+        HDC tempdc = (HDC)aImage->getHandle();
+        AlphaBlend(mDC,aX,aY,aW,aH,tempdc,aSrcX,aSrcY,aSrcW,aSrcH,mBlendFunc);
+        // link with: libmsimg32
       }
 
 };

@@ -4,7 +4,11 @@
 //#define AX_DEBUG_PNG
 //#define AX_DEBUG_LOG  "test_gain_gui_skin.log"
 
-#define AX_ALPHA
+//TODO: cleanup this, to be a bare-bones gui w/skin example
+//      (these three simple gain plugins might be usable
+//       as a starting point for your own plugins)
+
+#define AX_ALPHA // testing that it still works without transparency
 
 #include "axFormat.h"
 #include "axEditor.h"
@@ -14,12 +18,6 @@
 #include "gui/axSkin.h"
 #include "gui/axBitmapLoader.h"
 #include "../img/knob32.h"
-
-//TODO: deprecate the following two,
-//use AX_ALPHA (in axCanvas/Surface, etc...)
-//#define AX_DIBSECTION
-//#define AX_XRENDER
-
 
 //----------------------------------------------------------------------
 //
@@ -60,8 +58,16 @@ class mySkin : public axSkin//Default
         mKnobHeight = h;//32;
         mKnobCount  = n;//65;
         mKnobImage = aEditor->createSurface(mKnobWidth,mKnobHeight*mKnobCount,BPP);
-        int result = loader.decodeLoad("../img/knob1_32x32_65.png");
-        trace("loader.decodeLoad: " << result);
+
+        // it works here (will test it later in linux too...
+        // but it didn't work when running from within code:blocks while coding,
+        // and might have problems for vst's (and different for linux/win32)
+        // good to have for exe's though!
+
+        //int result = loader.decodeLoad("../img/knob1_32x32_65.png");
+        int result = loader.decode((unsigned char*)knob32,knob32_size);
+
+        //trace("loader.decodeLoad: " << result);
         bitmap = aEditor->createBitmap( loader.getWidth(), loader.getHeight(), BPP );
         bitmap->createBuffer( (char*)loader.getImage() );                   // create bitmap buffer & copy data
         bitmap->convertRgbaBgra();                                          // -> bgr.a
@@ -71,7 +77,7 @@ class mySkin : public axSkin//Default
           0.0, 0.0, 0.0, 0.0,
           0.0, 1.0, 0.0, 0.0,
           0.0, 0.0, 2.0, 0.0,
-          0.0, 0.0, 0.0, 0.8    // alpha *= 0.8
+          0.0, 0.0, 0.0, 0.6    // alpha *= 0.8
         );
 
         //TODO: the following could be moved to axBitmapLoader
@@ -119,7 +125,8 @@ class mySkin : public axSkin//Default
 //
 
           #ifdef AX_ALPHA
-            aCanvas->renderImage(mKnobImage,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);
+            //aCanvas->renderImage(mKnobImage,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);
+            aCanvas->stretchImage(mKnobImage,aRect.x,aRect.y, aRect.w, aRect.h, 0,ky,mKnobWidth,mKnobHeight);
           #else
             aCanvas->drawImage(mKnobImage,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);
           #endif

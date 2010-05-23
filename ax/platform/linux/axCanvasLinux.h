@@ -19,6 +19,18 @@
 
 #define DEF_PENWIDTH 0
 
+#ifdef AX_ALPHA
+XTransform mat_ident =
+{
+  {
+    { XDoubleToFixed(1), XDoubleToFixed(0), XDoubleToFixed(0) },
+    { XDoubleToFixed(0), XDoubleToFixed(1), XDoubleToFixed(0) },
+    { XDoubleToFixed(0), XDoubleToFixed(0), XDoubleToFixed(1) }
+  }
+};
+#endif
+
+
 //----------------------------------------------------------------------
 
 class axSurface;
@@ -517,6 +529,49 @@ class axCanvasLinux : public axCanvasBase
           drawImage(aImage,aX,aY,aSrcX,aSrcY,aSrcW,aSrcH);
         #endif
       }
+
+    //----------
+
+    //[untested!]
+
+    virtual void stretchImage(axImage* aImage, int aX, int aY, int aW, int aH, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+      {
+
+        //double scale = .5; // We'll scale the window to 50% of its original size
+        //// Scaling matrix
+        //XTransform xform = {{
+        //	{ XDoubleToFixed( 1 ), XDoubleToFixed( 0 ), XDoubleToFixed(     0 ) },
+        //	{ XDoubleToFixed( 0 ), XDoubleToFixed( 1 ), XDoubleToFixed(     0 ) },
+        //	{ XDoubleToFixed( 0 ), XDoubleToFixed( 0 ), XDoubleToFixed( scale ) }
+        //}};
+        //XRenderSetPictureTransform( dpy, picture, &xform );
+
+        #ifdef AX_ALPHA
+        if (srcW > 0)
+        {
+          if (srcH > 0)
+          {
+            float xs = aW / srcW;
+            float ys = aH / srcH;
+            float zs = 1;
+            XTransform xform =
+            {
+              {
+                { XDoubleToFixed(xs), XDoubleToFixed(0 ), XDoubleToFixed(0 ) },
+                { XDoubleToFixed(0 ), XDoubleToFixed(ys), XDoubleToFixed(0 ) },
+                { XDoubleToFixed(0 ), XDoubleToFixed(0 ), XDoubleToFixed(zs) }
+              }
+            };
+            XRenderSetPictureTransform(mDisplay, picture, &xform );
+            int op = PictOpOver;
+            XRenderComposite(mDisplay,op,aImage->getPicture(),None,mPicture,aSrcX,aSrcY,0,0,aX,aY,aSrcW,aSrcH);
+          } //h>0
+        } //w>0
+        //#else
+        #endif
+      }
+
+
 
 };
 
