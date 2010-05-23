@@ -14,7 +14,7 @@
 //#include "../test/test_winsize.cpp"
 //#include "../test/test_png.cpp"
 //#include "../test/test_xrender.cpp"
-#include "../test/test_blitting.cpp"
+//#include "../test/test_blitting.cpp"
 
 //----------------------------------------------------------------------
 // demo
@@ -33,7 +33,7 @@
 
 //----- gui -----
 
-//#include "../source/ccernn/fx_grains.cpp"            // in progress !!
+#include "../source/ccernn/fx_grains.cpp"            // in progress !!
 //#include "../source/ccernn/fx_tempodelay.cpp"
 
 //----------------------------------------------------------------------
