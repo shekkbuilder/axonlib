@@ -1342,7 +1342,7 @@ class axFormatVst : public axFormatBase
       {
         //wtrace("axFormatVst.notifyParamChanged");
         int index = aParameter->getIndex();
-        float value = aParameter->getValue();
+        float value = aParameter->doGetValue();//getValue();
         //wtrace("  index: " << index << " value: " << value);
         //setParameterAutomated(aParameter->getIndex(),aParameter->getValue());
         setParameterAutomated(index,value);
