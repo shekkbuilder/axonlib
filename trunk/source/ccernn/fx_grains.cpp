@@ -1,11 +1,18 @@
+#define AX_ALPHA
 
 #include "axFormat.h"
 #include "axEditor.h"
 #include "core/axRand.h"
 #include "par/parInteger.h"
 #include "par/parFloat.h"
-#include "wdg/wdgPanel.h"
+//#include "wdg/wdgPanel.h"
+#include "wdg/wdgImage.h"
 #include "wdg/wdgKnob.h"
+
+#include "gui/axBitmapLoader.h"
+
+#include "img/fx_grains_back.h"
+#include "img/fx_grains_knob.h"
 
 //----------------------------------------------------------------------
 
@@ -31,6 +38,68 @@ struct GRAIN
   float phase2;
   float phase2_add;
 };
+
+//----------------------------------------------------------------------
+
+class mySkin : public axSkin
+{
+  public:
+    axSurface*  s_Back;
+    axSurface*  s_Knob;
+    int mKnobWidth,mKnobHeight,mKnobCount;
+  public:
+    mySkin(axCanvas* aCanvas)
+    : axSkin(aCanvas)
+      {
+        mKnobWidth  = 32;
+        mKnobHeight = 32;
+        mKnobCount  = 65;
+      }
+    virtual ~mySkin()
+      {
+      }
+    //virtual void drawPanel(axCanvas* aCanvas, axRect aRect)
+    //  {
+    //    aCanvas->setBrushColor( /*aCanvas->getColor(128,0,0)*/mFillColor );
+    //    aCanvas->fillRect(aRect.x,aRect.y,aRect.x2(),aRect.y2());
+    //  }
+    virtual void drawKnob(axCanvas* aCanvas, axRect aRect,  axString aName, axString aDisp, float aValue)
+      {
+        if (s_Knob)
+        {
+          // bitmap
+          int index = (int)axFloor(aValue*mKnobCount);
+          index = axMinInt(index,mKnobCount-1);
+          int ky = mKnobHeight * index;
+
+          //#ifdef AX_ALPHA
+            aCanvas->renderImage(s_Knob,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);
+          //  //aCanvas->stretchImage(mKnobImage,aRect.x,aRect.y, aRect.w, aRect.h, 0,ky,mKnobWidth,mKnobHeight);
+          //#else
+          //  aCanvas->drawImage(mKnobImage,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);
+          //#endif
+          // text (copy/paste from wdgKnob)
+          int x  = aRect.x;
+          int y  = aRect.y;
+          int size = axMinInt(aRect.w,aRect.h);
+          int th = aCanvas->textHeight("Xj");
+          if (aRect.h >= (2*th))
+          {
+            aCanvas->setTextColor(mTextColor);
+            aCanvas->drawText(x+size+8,y,   aRect.x2(),aRect.y2(),aName,ta_Top|ta_Left);
+            aCanvas->drawText(x+size+8,y+th,aRect.x2(),aRect.y2(),aDisp,ta_Top|ta_Left);
+          }
+          else
+          {
+            aCanvas->setTextColor(mTextColor);
+            aCanvas->drawText(x+size+5,y,aRect.x2(),aRect.y2(),aDisp,ta_Left);
+          }
+        } //knobimage
+        //else
+        //  axSkinDefault::drawKnob(aCanvas,aRect,aName,aDisp,aValue);
+      }
+};
+
 
 //----------------------------------------------------------------------
 
@@ -64,7 +133,11 @@ class myPlugin : public axFormat
   //vst parameters
   //gui
     axEditor*   w_Editor;
-    wdgPanel*   w_Panel;
+    //wdgPanel*   w_Panel;
+    wdgImage*   w_Panel;
+    axSurface*  s_Back;
+    axSurface*  s_Knob;
+    mySkin*     m_Skin;
 
   public:
 
@@ -95,6 +168,7 @@ class myPlugin : public axFormat
         appendParameter( new parFloat(  this,"size jitter",       "",   0.2 ) );
         appendParameter( new parFloat(  this,"duration jitter",   "",   0.2 ) );
         setupParameters();
+
       }
 
     //----------
@@ -111,26 +185,74 @@ class myPlugin : public axFormat
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
-          editor->appendWidget( w_Panel = new wdgPanel(editor,NULL_RECT,wa_Client) );
 
-            w_Panel->appendWidget( new wdgKnob(editor,axRect(230,255,100,32),wa_None,"master") );
-            w_Panel->appendWidget( new wdgKnob(editor,axRect( 10,155,100,32),wa_None,"num grains") );
-            w_Panel->appendWidget( new wdgKnob(editor,axRect( 10, 50,100,32),wa_None,"buf size") );
-            w_Panel->appendWidget( new wdgKnob(editor,axRect( 10, 85,100,32),wa_None,"freeze") );
-            w_Panel->appendWidget( new wdgKnob(editor,axRect(120, 50,100,32),wa_None,"grain dist") );
-            w_Panel->appendWidget( new wdgKnob(editor,axRect(120, 85,100,32),wa_None,"grain size") );
-            w_Panel->appendWidget( new wdgKnob(editor,axRect(120,120,100,32),wa_None,"grain dur") );
-            w_Panel->appendWidget( new wdgKnob(editor,axRect(120,155,100,32),wa_None,"grain pitch") );
-            w_Panel->appendWidget( new wdgKnob(editor,axRect( 10,255,100,32),wa_None,"dur env") );
-            w_Panel->appendWidget( new wdgKnob(editor,axRect(120,255,100,32),wa_None,"grain env") );
-            w_Panel->appendWidget( new wdgKnob(editor,axRect(230, 50,100,32),wa_None,"dist jitter") );
-            w_Panel->appendWidget( new wdgKnob(editor,axRect(230,155,100,32),wa_None,"pitch jitter") );
-            w_Panel->appendWidget( new wdgKnob(editor,axRect(230, 85,100,32),wa_None,"size jitter") );
-            w_Panel->appendWidget( new wdgKnob(editor,axRect(230,120,100,32),wa_None,"dur jitter") );
+        axBitmapLoader* loader;
+        axBitmap* bitmap;
 
-            for (int i=0; i<w_Panel->getNumWidgets(); i++)
-              editor->connect( w_Panel->getWidget(i), mParameters[i] );
-            setupParameters();
+        loader = new axBitmapLoader();
+          loader->decode((unsigned char*)fx_grains_back,fx_grains_back_size);
+          bitmap = editor->createBitmap(340,325,24);
+            bitmap->createBuffer((char*)loader->getImage());
+
+            bitmap->convertRgbaBgra();                                          // -> bgr.a
+            bitmap->premultAlpha();
+            bitmap->swizzle(
+              1.1, 0.0, 0.0, 0.0,
+              0.0, 1.1, 0.0, 0.0,
+              0.0, 0.0, 0.8, 0.0,
+              0.0, 0.0, 0.0, 1.0
+            );
+
+            bitmap->prepare();
+            s_Back = editor->createSurface(340,325,24);
+            s_Back->getCanvas()->drawBitmap( bitmap, 0,0, 0,0,340,325 );
+          delete bitmap;
+        delete loader;
+
+        loader = new axBitmapLoader();
+          loader->decode((unsigned char*)fx_grains_knob,fx_grains_knob_size);
+          bitmap = editor->createBitmap(32,32*65,32);
+            bitmap->createBuffer((char*)loader->getImage());
+            bitmap->convertRgbaBgra();                                          // -> bgr.a
+            //bitmap->swizzle(
+            //  1.0, 0.0, 0.0, 0.0,
+            //  0.0, 1.0, 0.0, 0.0,
+            //  0.0, 0.0, 1.0, 0.0,
+            //  0.0, 0.0, 0.0, 1.0
+            //);
+            bitmap->premultAlpha();
+            bitmap->prepare();
+            s_Knob = editor->createSurface(32,32*65,32);
+            s_Knob->getCanvas()->drawBitmap( bitmap, 0,0, 0,0,32,32*65 );
+          delete bitmap;
+        delete loader;
+
+        axCanvas* canvas = editor->getCanvas();
+        m_Skin = new mySkin(canvas);
+        m_Skin->s_Back = s_Back;
+        m_Skin->s_Knob = s_Knob;
+        editor->applySkin(m_Skin);
+
+        editor->appendWidget( w_Panel = new wdgImage(editor,NULL_RECT,wa_Client,s_Back) );
+
+          w_Panel->appendWidget( new wdgKnob(editor,axRect(230,255,100,32),wa_None,"master") );
+          w_Panel->appendWidget( new wdgKnob(editor,axRect( 10,155,100,32),wa_None,"num grains") );
+          w_Panel->appendWidget( new wdgKnob(editor,axRect( 10, 50,100,32),wa_None,"buf size") );
+          w_Panel->appendWidget( new wdgKnob(editor,axRect( 10, 85,100,32),wa_None,"freeze") );
+          w_Panel->appendWidget( new wdgKnob(editor,axRect(120, 50,100,32),wa_None,"grain dist") );
+          w_Panel->appendWidget( new wdgKnob(editor,axRect(120, 85,100,32),wa_None,"grain size") );
+          w_Panel->appendWidget( new wdgKnob(editor,axRect(120,120,100,32),wa_None,"grain dur") );
+          w_Panel->appendWidget( new wdgKnob(editor,axRect(120,155,100,32),wa_None,"grain pitch") );
+          w_Panel->appendWidget( new wdgKnob(editor,axRect( 10,255,100,32),wa_None,"dur env") );
+          w_Panel->appendWidget( new wdgKnob(editor,axRect(120,255,100,32),wa_None,"grain env") );
+          w_Panel->appendWidget( new wdgKnob(editor,axRect(230, 50,100,32),wa_None,"dist jitter") );
+          w_Panel->appendWidget( new wdgKnob(editor,axRect(230,155,100,32),wa_None,"pitch jitter") );
+          w_Panel->appendWidget( new wdgKnob(editor,axRect(230, 85,100,32),wa_None,"size jitter") );
+          w_Panel->appendWidget( new wdgKnob(editor,axRect(230,120,100,32),wa_None,"dur jitter") );
+
+          for (int i=0; i<w_Panel->getNumWidgets(); i++)
+            editor->connect( w_Panel->getWidget(i), mParameters[i] );
+          setupParameters();
 
         editor->doRealign();
         w_Editor = editor;
@@ -143,6 +265,8 @@ class myPlugin : public axFormat
         axEditor* editor = w_Editor;
         w_Editor = NULL;
         delete editor;
+        delete s_Back;
+        delete s_Knob;
       }
 
     //virtual void doIdleEditor(void)

@@ -9,9 +9,11 @@
 #define BPP 32
 // blending only with BPP=32 & AX_ALPHA
 
-
+// frames per second, very, very, non-scientific,
+// times measured by counting seconds from the sound on a wall-clock :-)
 
 //---------- linux/ubuntu, ati mobility radeon
+// - = xserver crash
 
 // 64*64
 //                    24    32
@@ -19,7 +21,7 @@
 // drawImage          3.5   -
 // renderImage        2.5   1
 // stretchImage       1/13  1/13
-
+//
 // 32*32
 //                    24    32
 // drawBitmap         3     -
@@ -27,7 +29,7 @@
 // renderImage        3     2
 // stretchImage       1/11  1/12
 
-//----------  same laptop, wine (win32)
+//----------  wine (win32), same laptop
 
 // 64*64
 //                    24    32
@@ -35,6 +37,25 @@
 // drawImage          3.5   1.5
 // renderImage        *     0.2
 // stretchImage       *     1/19
+//
+// ...
+
+//---------- win7 same laptop
+// * = black screen
+
+// 64*64
+//                    24    32
+// drawBitmap         1     1.5
+// drawImage          3     3
+// renderImage        *     0.4
+// stretchImage       *     1/10
+//
+// 32*32
+//                    24    32
+// drawBitmap
+// drawImage
+// renderImage
+// stretchImage
 
 
 #include "axFormat.h"
@@ -79,6 +100,7 @@ class myEditor : public axEditor
             *ptr++ = (x*y) >> 4;  // a
           }
         }
+        m_Bitmap->premultAlpha();
         m_Surface = createSurface(64,64,BPP);
         m_Surface->getCanvas()->drawBitmap(m_Bitmap, 0,0, 0,0,63,63);
         startTimer(40);   // 25 fps
@@ -100,7 +122,7 @@ class myEditor : public axEditor
       {
         aCanvas->setBrushColor(m_Black);
         aCanvas->fillRect(aRect.x,aRect.y,aRect.x2(),aRect.y2());
-        for (int i=0; i<100000; i++)
+        for (int i=0; i<10000; i++)
           {
             int x = axRandInt(256);
             int y = axRandInt(256);
@@ -153,7 +175,7 @@ class myPlugin : public axFormat
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
         myEditor* editor = new myEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
-        axCanvas* canvas = editor->getCanvas();
+        //axCanvas* canvas = editor->getCanvas();
         editor->show();
         m_Editor = editor;
         return m_Editor;
