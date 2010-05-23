@@ -532,28 +532,16 @@ class axCanvasLinux : public axCanvasBase
 
     //----------
 
-    //[untested!]
-
     virtual void stretchImage(axImage* aImage, int aX, int aY, int aW, int aH, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
-
-        //double scale = .5; // We'll scale the window to 50% of its original size
-        //// Scaling matrix
-        //XTransform xform = {{
-        //	{ XDoubleToFixed( 1 ), XDoubleToFixed( 0 ), XDoubleToFixed(     0 ) },
-        //	{ XDoubleToFixed( 0 ), XDoubleToFixed( 1 ), XDoubleToFixed(     0 ) },
-        //	{ XDoubleToFixed( 0 ), XDoubleToFixed( 0 ), XDoubleToFixed( scale ) }
-        //}};
-        //XRenderSetPictureTransform( dpy, picture, &xform );
-
         #ifdef AX_ALPHA
-        if (srcW > 0)
+        if (aW > 0)
         {
-          if (srcH > 0)
+          if (aH > 0)
           {
-            float xs = aW / srcW;
-            float ys = aH / srcH;
-            float zs = 1;
+            double xs = (float)aSrcW / (float)aW;
+            double ys = (float)aSrcH / (float)aH;
+            double zs = 1;
             XTransform xform =
             {
               {
@@ -562,14 +550,37 @@ class axCanvasLinux : public axCanvasBase
                 { XDoubleToFixed(0 ), XDoubleToFixed(0 ), XDoubleToFixed(zs) }
               }
             };
-            XRenderSetPictureTransform(mDisplay, picture, &xform );
+            Picture pic = aImage->getPicture();
+            XRenderSetPictureTransform(mDisplay, pic, &xform );
             int op = PictOpOver;
-            XRenderComposite(mDisplay,op,aImage->getPicture(),None,mPicture,aSrcX,aSrcY,0,0,aX,aY,aSrcW,aSrcH);
+
+            // hmmm.. is srcx, srcy transformed by the matrix too?
+
+            float x = (float)aSrcX / xs;
+            float y = (float)aSrcY / ys;
+
+            XRenderComposite(mDisplay,op,pic,None,mPicture,(int)x,(int)y,0,0,aX,aY,aW,aH);
+
+            XRenderSetPictureTransform(mDisplay, pic, &mat_ident );
           } //h>0
         } //w>0
         //#else
         #endif
       }
+//void
+//XRenderComposite (Display   *dpy,
+//                  int       op,
+//                  Picture   src,
+//                  Picture   mask,
+//                  Picture   dst,
+//                  int       src_x,
+//                  int       src_y,
+//                  int       mask_x,
+//                  int       mask_y,
+//                  int       dst_x,
+//                  int       dst_y,
+//                  unsigned int  width,
+//                  unsigned int  height);
 
 
 

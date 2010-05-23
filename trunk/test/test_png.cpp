@@ -1,15 +1,18 @@
 //#define AX_NO_MALLOC
 //#define AX_DEBUG_AUTO_STD
-#define AX_DEBUG_MEM
-#define AX_DEBUG_PNG
-#define AX_DEBUG_LOG  "test_png.log"
+//#define AX_DEBUG_MEM
+//#define AX_DEBUG_PNG
+//#define AX_DEBUG_LOG  "test_png.log"
 
 #include "axFormat.h"
 #include "axEditor.h"
 
 #include "wdg/wdgImage.h"
-#include "../extern/picopng.h"
-#include "testpng.h"
+//#include "../extern/picopng.h"
+#include "gui/axBitmapLoader.h"
+
+//#include "testpng.h"
+#include "testpng2.h"
 
 //----------------------------------------------------------------------
 //
@@ -21,7 +24,7 @@ class myPlugin : public axFormat,
                  public axWidgetListener
 {
   private:
-    axPngInfo* pnginfo;
+    //axPngInfo* pnginfo;
     //axEditor*   m_Editor;
     //wdgImage*   w_Image;
     //axSurface*  surface;
@@ -34,7 +37,11 @@ class myPlugin : public axFormat,
         describe("test_winsize","ccernn","axonlibe example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);
         //setupEditor(256,256);
-        pnginfo = axPngDecode(testpng,testpng_size);
+        axBitmapLoader loader;
+        //loader.decode((unsigned char*)testpng,testpng_size);
+        loader.decode((unsigned char*)testpng2,testpng2_size);
+        //pnginfo = axPngDecode(testpng,testpng_size);
+
       }
 
     virtual ~myPlugin()

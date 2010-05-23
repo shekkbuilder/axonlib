@@ -196,14 +196,14 @@ class axBitmapLoader
         //TODO: #ifdef WIN32 && AX_DIBSECTION, pre-multiply w/alpha
         return (int)mPngInfo;
       }
-    
+
     //----------
     int decodeLoad(const char* file)
       {
         FILE* f = fopen(file, "rb");
         if (!f)
         {
-          trace("decodeLoad(), #ERR missing: " << file);  
+          trace("decodeLoad(), #ERR missing: " << file);
           return 0;
         }
         fseek(f, 0, SEEK_END);
@@ -215,7 +215,7 @@ class axBitmapLoader
           return 0;
         }
         unsigned char* b = (unsigned char*)axMalloc(size);
-        fread(b, size, 1, f);        
+        fread(b, size, 1, f); // warning: ignoring return value of ‘size_t fread(void*, size_t, size_t, FILE*)’, declared with attribute warn_unused_result
         if (b[0] != 0x89 || b[1] != 0x50 || b[2] != 0x4E || b[3] != 0x47)
         {
           trace("decodeLoad(), #ERR not a png: " << file);
@@ -228,9 +228,9 @@ class axBitmapLoader
           axFree(b);
           trace("decodeLoad(), " << file << ", " << size);
           return 1;
-        } 
+        }
       }
-    
+
     //----------
 
     //axSurface* upload(void) { return NULL;}
