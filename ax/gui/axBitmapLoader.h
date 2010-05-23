@@ -232,7 +232,12 @@ class axBitmapLoader
           return 0;
         }
         unsigned char* b = (unsigned char*)axMalloc(size);
-        fread(b, size, 1, f);        
+        unsigned int res = fread(b, size, 1, f);
+        if (!res) 
+        {
+          trace("decodeLoad(), #ERR file read: " << file);
+          return 0;
+        }
         if (b[0] != 0x89 || b[1] != 0x50 || b[2] != 0x4E || b[3] != 0x47)
         {
           trace("decodeLoad(), #ERR not a png: " << file);
