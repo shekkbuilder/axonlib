@@ -196,10 +196,27 @@ class axBitmapLoader
         //TODO: #ifdef WIN32 && AX_DIBSECTION, pre-multiply w/alpha
         return (int)mPngInfo;
       }
-
+    
     //----------
-    int decodeLoad(const char* file)
+    int decodeLoad(const char* _file)
       {
+        #ifdef WIN32          
+          // get dll/exe path on windows
+          char path [MAX_PATH] = "";
+          char file [MAX_PATH] = "";
+          #ifdef AX_FORMAT_VST
+            GetModuleFileName(gInstance, path, MAX_PATH);
+          #endif
+          #ifdef AX_FORMAT_EXE
+            GetModuleFileName(NULL, path, MAX_PATH);
+          #endif
+          axStrncpy(file, path, (axStrrchr(path, '\\') + 1) - (char*)path);
+          axStrcat(file, (char*)_file);
+        #endif
+        #ifdef linux
+          // should work ok with relative paths on linux
+          char* file = (char*)_file;
+        #endif        
         FILE* f = fopen(file, "rb");
         if (!f)
         {
@@ -215,7 +232,7 @@ class axBitmapLoader
           return 0;
         }
         unsigned char* b = (unsigned char*)axMalloc(size);
-        fread(b, size, 1, f); // warning: ignoring return value of ‘size_t fread(void*, size_t, size_t, FILE*)’, declared with attribute warn_unused_result
+        fread(b, size, 1, f);        
         if (b[0] != 0x89 || b[1] != 0x50 || b[2] != 0x4E || b[3] != 0x47)
         {
           trace("decodeLoad(), #ERR not a png: " << file);
@@ -228,9 +245,9 @@ class axBitmapLoader
           axFree(b);
           trace("decodeLoad(), " << file << ", " << size);
           return 1;
-        }
+        } 
       }
-
+    
     //----------
 
     //axSurface* upload(void) { return NULL;}

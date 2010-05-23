@@ -1501,6 +1501,7 @@ typedef axFormatVst axFormatImpl;
 
   #define AX_ENTRYPOINT(plugclass)                                          \
                                                                             \
+    extern "C"                                                              \
     BOOL APIENTRY DllMain(HINSTANCE hModule,DWORD reason,LPVOID lpReserved) \
     {                                                                       \
       gInstance = hModule;                                                  \
