@@ -193,7 +193,6 @@
 		<Unit filename="../../ax/axEditor.h" />
 		<Unit filename="../../ax/axFormat.h" />
 		<Unit filename="../../ax/axParameter.h" />
-		<Unit filename="../../ax/axStdlib.h" />
 		<Unit filename="../../ax/base/axBitmapBase.h" />
 		<Unit filename="../../ax/base/axCanvasBase.h" />
 		<Unit filename="../../ax/base/axFormatBase.h" />
@@ -201,18 +200,18 @@
 		<Unit filename="../../ax/base/axSurfaceBase.h" />
 		<Unit filename="../../ax/base/axWindowBase.h" />
 		<Unit filename="../../ax/core/axArray.h" />
+		<Unit filename="../../ax/core/axAssert.h" />
 		<Unit filename="../../ax/core/axBuffer.h" />
 		<Unit filename="../../ax/core/axDebug.h" />
 		<Unit filename="../../ax/core/axList.h" />
 		<Unit filename="../../ax/core/axMalloc.h" />
 		<Unit filename="../../ax/core/axMath.h" />
-		<Unit filename="../../ax/core/axMemory.h" />
 		<Unit filename="../../ax/core/axPoint.h" />
 		<Unit filename="../../ax/core/axRand.h" />
 		<Unit filename="../../ax/core/axRect.h" />
+		<Unit filename="../../ax/core/axStdlib.h" />
 		<Unit filename="../../ax/core/axString.h" />
 		<Unit filename="../../ax/core/axUtils.h" />
-		<Unit filename="../../ax/deprecated/axApplication.h" />
 		<Unit filename="../../ax/dsp/dspDCF.h" />
 		<Unit filename="../../ax/dsp/dspInterpolate.h" />
 		<Unit filename="../../ax/dsp/dspOnePole.h" />
@@ -272,22 +271,10 @@
 		<Unit filename="../plugin.cpp" />
 		<Unit filename="../../doc/AUTHORS" />
 		<Unit filename="../../doc/FEATURES" />
+		<Unit filename="../../doc/OVERVIEW" />
 		<Unit filename="../../doc/TODO" />
 		<Unit filename="../../extern/mtrand.h" />
 		<Unit filename="../../extern/picopng.h" />
-		<Unit filename="../../plugins/demo/axDemo_editor.h" />
-		<Unit filename="../../plugins/demo/axDemo_graph.h" />
-		<Unit filename="../../plugins/demo/axDemo_page_audio.h" />
-		<Unit filename="../../plugins/demo/axDemo_page_bitmaps.h" />
-		<Unit filename="../../plugins/demo/axDemo_page_canvas.h" />
-		<Unit filename="../../plugins/demo/axDemo_page_host.h" />
-		<Unit filename="../../plugins/demo/axDemo_page_midi.h" />
-		<Unit filename="../../plugins/demo/axDemo_page_params.h" />
-		<Unit filename="../../plugins/demo/axDemo_page_sync.h" />
-		<Unit filename="../../plugins/demo/axDemo_page_system.h" />
-		<Unit filename="../../plugins/demo/axDemo_page_widgets.h" />
-		<Unit filename="../../plugins/demo/axDemo_skin.h" />
-		<Unit filename="../../plugins/demo/voxel.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

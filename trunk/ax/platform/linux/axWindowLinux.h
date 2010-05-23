@@ -764,12 +764,15 @@ trace("  win picture " << mSurface->getPicture() );
               can->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
               doPaint(can,rc);
 
-              //#ifdef AX_XRENDER
-              #ifdef AX_ALPHA
-              mCanvas->renderImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
-              #else
+//TODO: investigate this. should the window buffer be blitter w/transparency?
+//      make it similar to how it works in windows...
+
+//              //#ifdef AX_XRENDER
+//              #ifdef AX_ALPHA
+//              mCanvas->renderImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
+//              #else
               mCanvas->drawImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
-              #endif
+//              #endif
 
               //mCanvas->renderPicture(mPicture,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
 
