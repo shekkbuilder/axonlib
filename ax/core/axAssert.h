@@ -14,9 +14,6 @@
  * If not, see <http://axonlib.googlecode.com/>.
  */
 
-// g++ -ansi -pedantic -W -Wall -Wextra -s -O3 test.cpp -o test.exe
-// g++ -E -Wp,-dD,-dM test.cpp
-
 /*
   ISO C/C++ compatible runtime and static assertion for GCC (4.4.x)
   no external dependencies.
@@ -29,38 +26,41 @@
 
 #include "core/axDebug.h"
 
-// -----------------------------------------------------------------------------
-// run time assertion
-bool _axAssert()
-#if (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 4)
-  __attribute__(( optimize(0) ))
-#endif
-  __attribute__(( noinline ));
-bool _axAssert(const int e, const char* file, const unsigned int line,
-  const char* e_str)
+/*
+  axAssert()
+  runtime assertion
+*/
+unsigned int _axAssert () __attribute__ (( noinline ));
+unsigned int _axAssert (const unsigned int e, const char* file,
+  const unsigned int line, const char* e_str)
 {
-  __asm__ __volatile__("");
   if (!e)
   { _trace("### axAssert: " << file << ", " << line << ", (" << e_str << ")");
     __builtin_exit(0); }
   return 1;
 }
 #define axAssert(e) _axAssert((e), __FILE__, __LINE__, #e)
-//#define assert axAssert
 
-// -----------------------------------------------------------------------------
-
-// compile time assertion ( requires GCC 4.4.x )
+/*
+  axStaticAssert()
+  compile time assertion ( requires GCC 4.4.x )
+*/
 #if (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 4)
-  bool __axSA(void)
-    __attribute__(( error("### axStaticAssert") ))
-    __attribute__(( optimize(0) ))
-    __attribute__(( noinline ));
+  unsigned int __axSA (void)
+    __attribute__ (( error("### axStaticAssert") ))
+    __attribute__ (( optimize(0) ));
   #define axStaticAssert(e) ( (!(e)) ? __axSA(): 1 )
-  //#define static_assert axStaticAssert
 #else
-  #define axStaticAssert(e) (void(0))
-  #warning "### axStaticAssert() requires GCC 4.4.x"  
+  // for c89 compat mainly if header is used elsewhere
+  #ifdef __GNUC_STDC_INLINE__
+    #define _AXSA_INLINE inline
+  #else
+    #define _AXSA_INLINE
+  #endif
+  _AXSA_INLINE unsigned int __axSA (void) { return 0; }  
+  // prevent some warnings
+  #define axStaticAssert(e) __axSA()
+  #warning "### axStaticAssert() requires GCC 4.4.x"
 #endif
 
 #endif // AX_DEBUG

@@ -27,7 +27,7 @@ set resfile="rc_default.rc"
 set opt=-msse -mfpmath=sse,387 -O3 -Os
 
 :: target & libraries
-set tgtlib=-mwindows -lmsimg32
+set tgtlib=-mwindows -lmsimg32 -mthreads
 
 :: linker options
 set linker=-fstack-check -fdata-sections -ffunction-sections -Wl,-gc-sections -s
