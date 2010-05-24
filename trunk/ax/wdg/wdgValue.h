@@ -38,7 +38,7 @@ class wdgValue : public axWidget
     //----------
 
     //inline void setName(axString aName) { mName=aName; }
-    inline void setSensitivity(float aSens1, float aSens2) { mSens1=aSens1; mSens2=aSens2; }
+    inline void setSensitivity(float aSens1, float aSens2=0.05) { mSens1=aSens1; mSens2=aSens2; }
 
     //----------
 
