@@ -182,7 +182,7 @@ class axBitmap : public axBitmapImpl
       {
         if(mBuffer)
         {
-          trace("swizzle");
+          //trace("swizzle");
           for(int y=0; y<mHeight; y++)
           {
             for(int x=0; x<mWidth; x++)

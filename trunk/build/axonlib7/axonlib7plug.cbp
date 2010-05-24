@@ -130,6 +130,7 @@
 		<Unit filename="..\..\ax\dsp\dsp_Osc.h" />
 		<Unit filename="..\..\ax\format\axFormatExe.h" />
 		<Unit filename="..\..\ax\format\axFormatVst.h" />
+		<Unit filename="..\..\ax\format\axReaperExt.h" />
 		<Unit filename="..\..\ax\gui\axBitmap.h" />
 		<Unit filename="..\..\ax\gui\axBitmapLoader.h" />
 		<Unit filename="..\..\ax\gui\axCanvas.h" />
