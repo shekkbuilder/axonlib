@@ -230,8 +230,6 @@ TODO:
 #define __weak                    __attribute__ ((weak))
 #define __weakref(name)           __attribute__ ((weakref (name)))
 
-#define __hotinline               ___always_inline __hot __optimize(3)
-
 // newer version of GCC required
 #if (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 4)
   #define __optimize(level)         __attribute__ ((optimize (level)))
@@ -247,17 +245,35 @@ TODO:
   #define __warning
   // disable TLS & show warning
   #undef __thread
-  #define __thread  
+  #define __thread
   #warning "### Thread-local storage requires GCC 4.4.x"
 #endif
 
+// aliasing types
+typedef ldouble   __may_alias ldouble_a;
+typedef double    __may_alias double_a;
+typedef float     __may_alias float_a;
+typedef longlong  __may_alias longlong_a;
+typedef ulonglong __may_alias ulonglong_a;
+typedef long      __may_alias long_a;
+typedef ulong     __may_alias ulong_a;
+typedef int       __may_alias int_a;
+typedef uint      __may_alias uint_a;
+typedef short     __may_alias short_a;
+typedef ushort    __may_alias ushort_a;
+typedef char      __may_alias char_a;
+typedef uchar     __may_alias uchar_a;
+
+// msvc specific
 #ifndef __cdecl
-  #define __cdecl                 __attribute__ ((cdecl))
+  #define __cdecl     __attribute__ ((cdecl))
 #endif
 #ifndef __stdcall
-  #define __stdcall               __attribute__ ((stdcall)))
+  #define __stdcall   __attribute__ ((stdcall)))
 #endif
 
+// other
+#define __hotinline               ___always_inline __hot __optimize(3)
 #define __asmv                    __asm__ __volatile__
 
 #endif // axDefines_included
