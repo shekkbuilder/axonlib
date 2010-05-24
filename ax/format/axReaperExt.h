@@ -37,21 +37,40 @@ class axReaperExt
           // the following generates (in release build...)
           // warning: dereferencing type-punned pointer will break strict-aliasing rules
           // Reaper VST extensions
-          *(long*)&mGetPlayPosition     = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"GetPlayPosition",0.0);
-          *(long*)&mGetPlayPosition2    = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"GetPlayPosition2",0.0);
-          *(long*)&mGetCursorPosition   = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"GetCursorPosition",0.0);
-          *(long*)&mGetPlayState        = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"GetPlayState",0.0);
-          *(long*)&mSetEditCurPos       = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"SetEditCurPos",0.0);
-          *(long*)&mGetSetRepeat        = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"GetSetRepeat",0.0);
-          *(long*)&mGetProjectPath      = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"GetProjectPath",0.0);
-          *(long*)&mOnPlayButton        = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"OnPlayButton",0.0);
-          *(long*)&mOnStopButton        = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"OnStopButton",0.0);
-          *(long*)&mOnPauseButton       = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"OnPauseButton",0.0);
-          *(long*)&mIsInRealTimeAudio   = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"IsInRealTimeAudio",0.0);
-          *(long*)&mAudio_IsRunning     = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"Audio_IsRunning",0.0);
+          /*
+            lii:
+              '__may_alias' could be used on a type
+              (e.g. 'long_a'. see axDefines.h update ) 
+              
+              or something in the lines of:
+              union
+              { 
+                double (*mGetPlayPosition) ();
+                audioMasterCallback audioMaster;
+              } u;
+              u.mGetPlayPosition = mGetPlayPosition; // ?
+              u.audioMaster = audioMaster(_PARAMS, (char*)"string",0.0);
+              
+              //...
+              //untested.
+          */
+               
+          // Reaper VST extensions
+          *(long_a*)&mGetPlayPosition     = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"GetPlayPosition",0.0);
+          *(long_a*)&mGetPlayPosition2    = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"GetPlayPosition2",0.0);
+          *(long_a*)&mGetCursorPosition   = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"GetCursorPosition",0.0);
+          *(long_a*)&mGetPlayState        = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"GetPlayState",0.0);
+          *(long_a*)&mSetEditCurPos       = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"SetEditCurPos",0.0);
+          *(long_a*)&mGetSetRepeat        = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"GetSetRepeat",0.0);
+          *(long_a*)&mGetProjectPath      = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"GetProjectPath",0.0);
+          *(long_a*)&mOnPlayButton        = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"OnPlayButton",0.0);
+          *(long_a*)&mOnStopButton        = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"OnStopButton",0.0);
+          *(long_a*)&mOnPauseButton       = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"OnPauseButton",0.0);
+          *(long_a*)&mIsInRealTimeAudio   = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"IsInRealTimeAudio",0.0);
+          *(long_a*)&mAudio_IsRunning     = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"Audio_IsRunning",0.0);
           // Reaper SDK
-          *(long*)&mAddCustomizableMenu = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"AddCustomizableMenu",0.0);
-          *(long*)&mShowMessageBox      = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"ShowMessageBox",0.0);
+          *(long_a*)&mAddCustomizableMenu = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"AddCustomizableMenu",0.0);
+          *(long_a*)&mShowMessageBox      = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"ShowMessageBox",0.0);
         }
         else
         {

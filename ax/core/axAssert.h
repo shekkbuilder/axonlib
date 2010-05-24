@@ -51,18 +51,18 @@ unsigned int _axAssert (const unsigned int e, const char* file,
     __attribute__ (( optimize(0) ));
   #define axStaticAssert(e) ( (!(e)) ? __axSA(): 1 )
 #else
-  // for c89 compat mainly if header is used elsewhere
+  /* for c89 compat mainly if header is used elsewhere */
   #ifdef __GNUC_STDC_INLINE__
     #define _AXSA_INLINE inline
   #else
     #define _AXSA_INLINE
   #endif
-  _AXSA_INLINE unsigned int __axSA (void) { return 0; }  
-  // prevent some warnings
+  _AXSA_INLINE const unsigned int __axSA (void) { return 0; }  
+  /* prevent some warnings */
   #define axStaticAssert(e) __axSA()
   #warning "### axStaticAssert() requires GCC 4.4.x"
 #endif
 
-#endif // AX_DEBUG
+#endif /* AX_DEBUG */
 
-#endif // axAssert_included
+#endif /* axAssert_included */

@@ -59,28 +59,12 @@ class mySkin : public axSkin//Default
         mKnobCount  = n;//65;
         mKnobImage = aEditor->createSurface(mKnobWidth,mKnobHeight*mKnobCount,BPP);
 
-        //int result = loader.decodeLoad("../img/knob1_32x32_65.png");
-        //trace("loader.decodeLoad: " << result);
-
-        // it works here (will test it later in linux too...
-        // but it didn't work when running from within code:blocks while coding,
-        // (because of some paths, i guess)
-        // and might have problems for vst's (and different for linux/win32)
-        // good to have for exe's! and while developing/testing!
-
-        /*
-          lii:
-          i have added some "path finding" in axBitmapLoader and it now 
-          works for dlls too in win32. not tested on linux but it should work
-          with just relative paths for executables. if not this can be used:
-            ...
-            char buf[256];
-            readlink("/proc/self/exe", buf, sizeof(buf));
-          for ".so", it might not work at all as explained in this thread:
-          http://www.linuxquestions.org/questions/programming-9/retrieving-location-of-shared-object-file-linux-c-559671/
-         
-        */
+        // lii:
+        // img loading works on linux as well, but for .so's the png has to be
+        // located in the folder from where the process (exe) is started.
+        // not other solutions so far
         
+        //int result = loader.decodeLoad("knob1_32x32_65.png");
         int result = loader.decode(buffer,size);
 
         bitmap = aEditor->createBitmap( loader.getWidth(), loader.getHeight(), BPP );
