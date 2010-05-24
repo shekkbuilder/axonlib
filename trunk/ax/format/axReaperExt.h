@@ -2,15 +2,15 @@
 #define axReaperExt_included
 //----------------------------------------------------------------------
 
-//#include "format/axFormatVst.h"
-#include "pluginterfaces/vst2.x/aeffect.h"
-#include "pluginterfaces/vst2.x/aeffectx.h"
+// http://reaper.fm/sdk/plugin/plugin.php
+// http://reaper.fm/sdk/vst/vst_ext.php
+
+//#include "pluginterfaces/vst2.x/aeffect.h"
+//#include "pluginterfaces/vst2.x/aeffectx.h"
 
 class axReaperExt
 {
   private:
-    bool mHasExt;
-  //public:
     // Reaper VST extensions
     double  (*mGetPlayPosition)();
     double  (*mGetPlayPosition2)();
@@ -32,12 +32,10 @@ class axReaperExt
 
     axReaperExt(audioMasterCallback audioMaster)
       {
-        mHasExt = false;
         if (audioMaster)
         {
-          mHasExt = true;
-              // the following generates (in release build...)
-              // warning: dereferencing type-punned pointer will break strict-aliasing rules
+          // the following generates (in release build...)
+          // warning: dereferencing type-punned pointer will break strict-aliasing rules
           // Reaper VST extensions
           *(long*)&mGetPlayPosition     = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"GetPlayPosition",0.0);
           *(long*)&mGetPlayPosition2    = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(char*)"GetPlayPosition2",0.0);
@@ -57,18 +55,18 @@ class axReaperExt
         }
         else
         {
-          // set all to NULL, so we can simplify usage:
+          // set all to NULL, for a bnit more safe usage:
           // if (mFunc) mFunc();
         }
       }
 
-    virtual ~axReaperExt()
-      {
-      }
-
     //----------
 
-    //inline bool hasExt(void) { return mHasExt; }
+    //~axReaperExt()
+    //  {
+    //  }
+
+    //--------------------------------------------------
 
     double  GetPlayPosition(void) { if (mGetPlayPosition) return mGetPlayPosition(); else return 0; }
     double  GetPlayPosition2(void) { if (mGetPlayPosition2) return mGetPlayPosition2(); else return 0; }
@@ -83,28 +81,12 @@ class axReaperExt
     int     IsInRealTimeAudio(void) { if (mIsInRealTimeAudio) return mIsInRealTimeAudio(); else return 0; }
     int     Audio_IsRunning(void) { if (mAudio_IsRunning) return mAudio_IsRunning(); else return 0; }
 
-    //
+    //--------------------------------------------------
 
-    bool    AddCustomizableMenu(const char* menuidstr, const char* menuname, const char* kbdsecname, bool addtomainmenu)
-      { if (mAddCustomizableMenu) return mAddCustomizableMenu(menuidstr,menuname,kbdsecname,addtomainmenu); else return false; }
-
-    //type
-    //  0=OK
-    //  2=OKCANCEL
-    //  2=ABORTRETRYIGNORE
-    //  3=YESNOCANCEL
-    //  4=YESNO
-    //  5=RETRYCANCEL
-    //ret
-    //  1=OK
-    //  2=CANCEL
-    //  3=ABORT
-    //  4=RETRY
-    //  5=IGNORE
-    //  6=YES
-    //  7=NO
-    int     ShowMessageBox(const char* msg, const char* title, int type)
-      { if (mShowMessageBox) return mShowMessageBox(msg,title,type); else return 0; }
+    bool    AddCustomizableMenu(const char* menuidstr, const char* menuname, const char* kbdsecname, bool addtomainmenu) { if (mAddCustomizableMenu) return mAddCustomizableMenu(menuidstr,menuname,kbdsecname,addtomainmenu); else return false; }
+    //type: 0=OK, 2=OKCANCEL(1?), 2=ABORTRETRYIGNORE, 3=YESNOCANCEL, 4=YESNO, 5=RETRYCANCEL
+    //ret: 1=OK, 2=CANCEL, 3=ABORT, 4=RETRY, 5=IGNORE, 6=YES, 7=NO
+    int     ShowMessageBox(const char* msg, const char* title, int type) { if (mShowMessageBox) return mShowMessageBox(msg,title,type); else return 0; }
 
 };
 

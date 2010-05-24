@@ -85,18 +85,19 @@ class axDemo_page_widgets : public wdgPanel
     axDemo_page_widgets(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
     : wdgPanel(aListener,aRect,aAlignment)
       {
+
         axWidget* widget;
         wdgPanel* panel;
         wdgScrollBox* scroll;
 
         modal = NULL;
         setBorders(5,5,2,2);
-
         appendWidget( scroll = new wdgScrollBox(aListener,axRect(0,200),wa_Top) );
           widget = scroll->getContainer();//->setBorders(10,10,5,5);
           //widget->setFlag(wf_Clip);
           scroll->setFlag(wf_Clip);
           widget->setBorders(10,10,5,5);
+
           widget->appendWidget(      new wdgSlider(    aListener,axRect( 16,200), wa_Left,"v.slider", 0.5, true ) );
           widget->appendWidget(      new wdgLabel(     aListener,axRect(128, 20), wa_Top, "label", ta_Left ) );
           widget->appendWidget( bu = new wdgButton(    this,     axRect(128, 20), wa_Top, false, "spring", "spring", ta_Center, bm_Spring ) );
@@ -113,7 +114,6 @@ class axDemo_page_widgets : public wdgPanel
           w_Sizer->setTarget(scroll);
 
         appendWidget( panel = new wdgPanel(aListener,axRect(0,100),wa_Client) );
-
       }
 
     //----------
@@ -128,6 +128,7 @@ class axDemo_page_widgets : public wdgPanel
 
     virtual void onChange(axWidget* aWidget)
       {
+
         mListener->onChange(aWidget);
         if (aWidget==bu)
         {
@@ -155,6 +156,7 @@ class axDemo_page_widgets : public wdgPanel
           trace("sel: " << sel);
           mListener->onModal(false,NULL);
         }
+
       }
 
 };

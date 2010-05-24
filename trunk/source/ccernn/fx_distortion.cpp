@@ -8,7 +8,11 @@
 char* str_type[] =
 {
   (char*)"bypass",
-  (char*)"clip"
+  (char*)"clip",
+  (char*)"fold",
+  (char*)"wrap+",
+  (char*)"wrap",
+  (char*)"wrap-"
 };
 
 //----------------------------------------------------------------------
@@ -40,12 +44,12 @@ class myPlugin : public axFormat
       {
         describe("fx_distortion","ccernn","axonlib example",2,AX_MAGIC+0x1003);
         setupAudio(2,2,false);
-        appendParameter( p_Type = new parInteger(this,"type",      "", 0, 0,1, str_type) );
-        appendParameter( p_Thr  = new parFloat(  this,"threshold", "", 1       ) );
-        appendParameter( p_Pre  = new parFloat(  this,"pre gain",  "", 1, 1,2  ) );
-        appendParameter( p_Post = new parFloat(  this,"post gain", "", 1, 0,2  ) );
-        appendParameter( p_Flt  = new parFloat(  this,"filter",    "", 1, 0,1  ) );
-        appendParameter( p_Vol  = new parFloat(  this,"volume",    "", 1, 0,1  ) );
+        appendParameter( p_Type = new parInteger( this,"type",      "", 0, 0,5, str_type) );
+        appendParameter( p_Thr  = new parFloat3(  this,"threshold", "", 1       ) );
+        appendParameter( p_Pre  = new parFloat3(  this,"pre gain",  "", 1, 1,2  ) );
+        appendParameter( p_Post = new parFloat3(  this,"post gain", "", 1, 0,2  ) );
+        appendParameter( p_Flt  = new parFloat3(  this,"filter",    "", 1, 0,1  ) );
+        appendParameter( p_Vol  = new parFloat3(  this,"volume",    "", 1, 0,1  ) );
         setupParameters();
       }
 
@@ -53,14 +57,18 @@ class myPlugin : public axFormat
 
     virtual void doSetParameter(axParameter* aParameter)
       {
+        float val = aParameter->getValue();
         switch ( aParameter->getIndex() )
         {
-          case 0: m_Type  = (int)aParameter->getValue();  break;
-          case 1: m_Thr   =      aParameter->getValue3(); break;
-          case 2: m_Pre   =      aParameter->getValue3(); break;
-          case 3: m_Post  =      aParameter->getValue3(); break;
-          case 4: m_Flt   =      aParameter->getValue3(); flt0.setWeight(m_Flt); flt1.setWeight(m_Flt); break;
-          case 5: m_Vol   =      aParameter->getValue3(); break;
+          case 0: m_Type = (int)val;  break;
+          case 1: m_Thr  =      val;  break;;
+          case 2: m_Pre  =      val;  break;
+          case 3: m_Post =      val;  break;
+          case 4: m_Flt  =      val;
+                  flt0.setWeight(m_Flt);
+                  flt1.setWeight(m_Flt);
+                                      break;
+          case 5: m_Vol  =      val;  break;
         }
       }
 
@@ -72,11 +80,36 @@ class myPlugin : public axFormat
         float in1 = *aInputs[1];
         float out0 = in0 * m_Pre;
         float out1 = in1 * m_Pre;
+        float over,under;
         switch (m_Type)
         {
           case 1: // clip
             out0 = axMin(axMax(out0,-m_Thr),m_Thr);
             out1 = axMin(axMax(out1,-m_Thr),m_Thr);
+            break;
+          case 2: // fold
+            if( in0> m_Thr ) { over =in0-m_Thr; out0= m_Thr-over;  }  // l+
+            if( in0<-m_Thr ) { under=in0+m_Thr; out0=-m_Thr-under; }  // l+
+            if( in1> m_Thr ) { over =in1-m_Thr; out1= m_Thr-over;  }  // r+
+            if( in1<-m_Thr ) { under=in1+m_Thr; out1=-m_Thr-under; }  // r-
+            break;
+          case 3: // wrap+
+            if( in0> m_Thr ) { over =in0-m_Thr; out0=-m_Thr+over;  }
+            if( in0<-m_Thr ) { under=in0+m_Thr; out0= m_Thr+under; }
+            if( in1> m_Thr ) { over =in1-m_Thr; out1=-m_Thr+over;  }
+            if( in1<-m_Thr ) { under=in1+m_Thr; out1= m_Thr+under; }
+            break;
+          case 4: // wrap (flat)
+            if( in0> m_Thr ) { out0=-m_Thr; }
+            if( in0<-m_Thr ) { out0= m_Thr; }
+            if( in1> m_Thr ) { out1=-m_Thr; }
+            if( in1<-m_Thr ) { out1= m_Thr; }
+            break;
+          case 5: // wrap-
+            if( in0> m_Thr ) { over =in0-m_Thr; out0=-m_Thr-over;  }
+            if( in0<-m_Thr ) { under=in0+m_Thr; out0= m_Thr-under; }
+            if( in1> m_Thr ) { over =in1-m_Thr; out1=-m_Thr-over;  }
+            if( in1<-m_Thr ) { under=in1+m_Thr; out1= m_Thr-under; }
             break;
         }
         flt0.setTarget(out0);

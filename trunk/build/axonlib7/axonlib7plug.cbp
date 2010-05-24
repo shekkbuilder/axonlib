@@ -89,6 +89,7 @@
 		<Linker>
 			<Add option="-mwindows" />
 		</Linker>
+		<Unit filename="..\..\..\..\Desktop\commit.txt" />
 		<Unit filename="..\..\ax\audio\axGraph.h" />
 		<Unit filename="..\..\ax\audio\axLibaam.h" />
 		<Unit filename="..\..\ax\audio\axModule.h" />
