@@ -141,6 +141,37 @@ class axFormatVst : public axFormatBase
       {
         mContext = *aContext;
         audioMaster = (audioMasterCallback)aContext->mAudio;
+
+//        // reaper extensions
+//
+//        double (*GetPlayPosition)() = NULL; // GetPlayPosition() returns the current playback position of the project. This is the time the user is hearing (and the transport shows etc). The value is in seconds.
+//        double (*GetPlayPosition2)() = NULL; // GetPlayPosition() returns the current playback decode position of the project. This is the time of the audio block that is being processed by the host. The value is in seconds. This may be behind where your plug-in is processing, due to anticipative processing and/or PDC.
+//        double (*GetCursorPosition)() = NULL; // GetCursorPosition() returns the current edit cursor position (if any), in seconds.
+//        int    (*GetPlayState)() = NULL; // GetPlayState() returns an integer value representing the project play state. 1=play, 2=paused, 5=recording, 6=record paused.
+//        void   (*SetEditCurPos)(double time, bool moveview, bool seekplay) = NULL; // SetEditCurPos() repositions the edit cursor to "time" (in seconds), optionally moving the view if necessary, and optionally seeking playback (if playing back). This function should ONLY be called from a UI context (i.e. from the editor window, NOT from audio processing etc).
+//        int    (*GetSetRepeat)(int parm) = NULL; // GetSetRepeat() is used to change or query the transport "loop/repeat" state. Pass a parameter of -1 to query the repeat state, 0 to clear, 1 to set, and >1 to toggle. The return value is the new value of the repeat state. ONLY use this function to change the repeat state from the UI thread (however you can query safely at any time).
+//        void   (*GetProjectPath)(char *buf, int bufsz) = NULL; // GetProjectPath() can be used to query the path that media files are stored in for the current project.
+//        void   (*OnPlayButton)() = NULL;
+//        void   (*OnStopButton)() = NULL;
+//        void   (*OnPauseButton)() = NULL; // These functions control the main transport for the host app. Only call these from the UI thread.
+//        int    (*IsInRealTimeAudio)() = NULL; // Returns nonzero if in the main audio thread, or in a thread doing synchronous multiprocessing. In these instances low latency is key. If this is 0, and you are in processReplacing, then you are being called in an anticipative processing thread.
+//        int    (*Audio_IsRunning)() = NULL; // Returns nonzero if the audio device is open and running.
+//
+//        //        void (*someFunction)();
+//        //        *(long *)&someFunction = hostcb(NULL,0xdeadbeef,0xdeadf00d,0,"someFunction",0.0);
+//
+//        *(long *)&GetPlayPosition = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(void*)"GetPlayPosition",0.0);
+//        *(long *)&GetProjectPath  = audioMaster(NULL,0xdeadbeef,0xdeadf00d,0,(void*)"GetProjectPath", 0.0);
+//
+//        double playpos;
+//        if (GetPlayPosition) playpos = GetPlayPosition();
+//        trace("playpos: " << playpos);
+//
+//        char buff[256];
+//        buff[0] = 0;
+//        if (GetProjectPath) GetProjectPath(buff,255);
+//        trace("reaper project path: " << buff);
+
         mCurrentProgram = 0;
         mEditorOpen = false;
         mEditorRect = axRect(0,0,256,256);
@@ -388,6 +419,8 @@ class axFormatVst : public axFormatBase
     //audioMasterVendorSpecific,
     // no definition, vendor specific handling
     // @see AudioEffectX::hostVendorSpecific
+
+
 
     //audioMasterCanDo,
     // [ptr]: "can do" string
@@ -998,6 +1031,17 @@ class axFormatVst : public axFormatBase
             //trace("axFormatVst.dispatcher :: effVendorSpecific");
             //v = vendorSpecific (index, value, ptr, opt);
             break;
+
+// case effVendorSpecific:
+//    if (index == effGetParamDisplay && ptr)
+//    {
+//      if (value>=0 && value<NUM_PARAMS)
+//      {
+//        sprintf(ptr,"%f",opt);
+//        return 0xbeef;
+//      }
+//    }
+
 
           // 51
           case effCanDo:

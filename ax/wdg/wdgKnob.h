@@ -11,7 +11,7 @@ class wdgKnob : public wdgValue
     int   mClickX;
     int   mClickY;
     float mClickVal;
-    char  mDisp[16];
+    char  mDisp[32];    // !!! dangerous hardcoded constant :-)
   protected:
     //axString  mName;
     float     mSens1;
@@ -35,7 +35,7 @@ class wdgKnob : public wdgValue
     //----------
 
     //inline void setName(axString aName) { mName=aName; }
-    inline void setSensitivity(float aSens1, float aSens2) { mSens1=aSens1; mSens2=aSens2; }
+    inline void setSensitivity(float aSens1, float aSens2=0.05) { mSens1=aSens1; mSens2=aSens2; }
 
     //----------
 
@@ -93,11 +93,12 @@ class wdgKnob : public wdgValue
       {
         if (mSkin)
         {
-          //sprintf(mDisp,"%.3f",mValue);
-          //if (mParameter) __builtin_sprintf(mDisp,"%.2f",mParameter->getValue());
-          //else __builtin_sprintf(mDisp,"%.2f",mValue);
-          if (mParameter) mParameter->doGetDisplay(mDisp);//axFtoa(mDisp,mParameter->getValue());
+          if (mParameter) mParameter->doGetDisplay(mDisp);
           else axFtoa(mDisp,mValue);
+          char tempbuf[32];
+          mParameter->doGetLabel(tempbuf);
+          axStrcat(mDisp," ");
+          axStrcat(mDisp,tempbuf);
           mSkin->drawKnob(aCanvas,mRect,mName,mDisp,mValue);
         }
       }

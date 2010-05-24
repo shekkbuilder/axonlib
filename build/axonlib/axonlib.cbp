@@ -184,6 +184,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="../../../../Desktop/commit" />
 		<Unit filename="../../ax/audio/axGraph.h" />
 		<Unit filename="../../ax/audio/axLibaam.h" />
 		<Unit filename="../../ax/audio/axModule.h" />

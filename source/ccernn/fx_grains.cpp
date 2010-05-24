@@ -100,11 +100,66 @@ class mySkin : public axSkin
       }
 };
 
+//----------------------------------------------------------------------
+
+//class myPlugin;
+
+class myVisual : public axWidget
+{
+  public:
+    axColor   aBackColor;
+    axColor   aIndexColor;
+    axColor   aGrainColor;
+    //myPlugin* plug;
+  public:
+    // setup in idle
+    int     buffersize;
+    int     index;
+    int     numgrains;
+    GRAIN*  grains;
+  public:
+    myVisual(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
+    : axWidget(aListener,aRect,aAlignment)
+    {
+      grains = NULL;
+      buffersize = 0;
+      index = 0;
+      numgrains = 0;
+    }
+
+  // this is using quite a bit of cpu
+
+  /*
+  virtual void doPaint(axCanvas* aCanvas, axRect aRect)
+    {
+      aCanvas->setBrushColor(aBackColor);
+      aCanvas->fillRect(mRect.x, mRect.y, mRect.x2(), mRect.y2());
+      if (grains && (buffersize>0))
+      {
+        float inv = 1.0f/(float)buffersize;
+        aCanvas->setPenColor(aGrainColor);
+        for ( int i=0; i<numgrains; i++ )
+        {
+          if( grains[i].active==1 )
+          {
+            float x = mRect.x + ( mRect.w * (grains[i].pos*inv) );
+            aCanvas->drawLine((int)x, mRect.y, (int)x, mRect.y2());
+          }
+        }
+        float x = mRect.x + ( mRect.w * ((float)index*inv) );
+        aCanvas->setPenColor(aIndexColor);
+        aCanvas->drawLine((int)x, mRect.y, (int)x, mRect.y2());
+      }
+    }
+    */
+
+};
 
 //----------------------------------------------------------------------
 
 class myPlugin : public axFormat
 {
+  friend class myVisual;
   private:
   // process
     float*      BUFFER;
@@ -138,6 +193,7 @@ class myPlugin : public axFormat
     axSurface*  s_Back;
     axSurface*  s_Knob;
     mySkin*     m_Skin;
+    myVisual* vis;
 
   public:
 
@@ -155,12 +211,12 @@ class myPlugin : public axFormat
         setupEditor(340,325);
         appendParameter( new parFloat2( this,"master volume",     "",   1,    0, 2   ) );
         appendParameter( new parInteger(this,"number of grains",  "",   10,   1, MAX_GRAINS ) );
-        appendParameter( new parFloat(  this,"buffer size",       "ms", 1000, 1, 5000) );
+        appendParameter( new parFloat2( this,"buffer size",       "ms", 32,   1, 64 ) );
         appendParameter( new parInteger(this,"freeze",            "",   0,    0, 1, str_onoff ) );
-        appendParameter( new parFloat2( this,"grain distance",    "ms", 3,    1, 10 ) );
-        appendParameter( new parFloat2( this,"grain size",        "ms", 5,    1, 10 ) );
-        appendParameter( new parFloat2( this,"grain duration",    "ms", 16,   1, 50 ) );
-        appendParameter( new parFloat2( this,"grain pitch",       "",   1,    0, 2  ) );
+        appendParameter( new parFloat2( this,"grain distance",    "ms", 2,    1, 16  ) );
+        appendParameter( new parFloat2( this,"grain size",        "ms", 4,    1, 8   ) );
+        appendParameter( new parFloat2( this,"grain duration",    "ms", 16,   1, 32  ) );
+        appendParameter( new parFloat2( this,"grain pitch",       "",   1,    0, 2   ) );
         appendParameter( new parFloat(  this,"envelope",          "",   1   ) );
         appendParameter( new parFloat(  this,"grain envelope",    "",   1   ) );
         appendParameter( new parFloat3( this,"distance jitter",   "",   0.2 ) );
@@ -235,24 +291,34 @@ class myPlugin : public axFormat
 
         editor->appendWidget( w_Panel = new wdgImage(editor,NULL_RECT,wa_Client,s_Back) );
 
-          w_Panel->appendWidget( new wdgKnob(editor,axRect(230,255,100,32),wa_None,"master") );
-          w_Panel->appendWidget( new wdgKnob(editor,axRect( 10,155,100,32),wa_None,"num grains") );
-          w_Panel->appendWidget( new wdgKnob(editor,axRect( 10, 50,100,32),wa_None,"buf size") );
-          w_Panel->appendWidget( new wdgKnob(editor,axRect( 10, 85,100,32),wa_None,"freeze") );
-          w_Panel->appendWidget( new wdgKnob(editor,axRect(120, 50,100,32),wa_None,"grain dist") );
-          w_Panel->appendWidget( new wdgKnob(editor,axRect(120, 85,100,32),wa_None,"grain size") );
-          w_Panel->appendWidget( new wdgKnob(editor,axRect(120,120,100,32),wa_None,"grain dur") );
-          w_Panel->appendWidget( new wdgKnob(editor,axRect(120,155,100,32),wa_None,"grain pitch") );
-          w_Panel->appendWidget( new wdgKnob(editor,axRect( 10,255,100,32),wa_None,"dur env") );
-          w_Panel->appendWidget( new wdgKnob(editor,axRect(120,255,100,32),wa_None,"grain env") );
-          w_Panel->appendWidget( new wdgKnob(editor,axRect(230, 50,100,32),wa_None,"dist jit") );
-          w_Panel->appendWidget( new wdgKnob(editor,axRect(230,155,100,32),wa_None,"pitch jit") );
-          w_Panel->appendWidget( new wdgKnob(editor,axRect(230, 85,100,32),wa_None,"size jit") );
-          w_Panel->appendWidget( new wdgKnob(editor,axRect(230,120,100,32),wa_None,"dur jit") );
+          wdgKnob* k1;
+
+          w_Panel->appendWidget(   new wdgKnob(editor,axRect(230,255,100,32),wa_None,"master") );
+          w_Panel->appendWidget(k1=new wdgKnob(editor,axRect( 10,155,100,32),wa_None,"num grains") );
+          w_Panel->appendWidget(   new wdgKnob(editor,axRect( 10, 50,100,32),wa_None,"buf size") );
+          w_Panel->appendWidget(   new wdgKnob(editor,axRect( 10, 85,100,32),wa_None,"freeze") );
+          w_Panel->appendWidget(   new wdgKnob(editor,axRect(120, 50,100,32),wa_None,"grain dist") );
+          w_Panel->appendWidget(   new wdgKnob(editor,axRect(120, 85,100,32),wa_None,"grain size") );
+          w_Panel->appendWidget(   new wdgKnob(editor,axRect(120,120,100,32),wa_None,"grain dur") );
+          w_Panel->appendWidget(   new wdgKnob(editor,axRect(120,155,100,32),wa_None,"grain pitch") );
+          w_Panel->appendWidget(   new wdgKnob(editor,axRect( 10,255,100,32),wa_None,"dur env") );
+          w_Panel->appendWidget(   new wdgKnob(editor,axRect(120,255,100,32),wa_None,"grain env") );
+          w_Panel->appendWidget(   new wdgKnob(editor,axRect(230, 50,100,32),wa_None,"dist jit") );
+          w_Panel->appendWidget(   new wdgKnob(editor,axRect(230,155,100,32),wa_None,"pitch jit") );
+          w_Panel->appendWidget(   new wdgKnob(editor,axRect(230, 85,100,32),wa_None,"size jit") );
+          w_Panel->appendWidget(   new wdgKnob(editor,axRect(230,120,100,32),wa_None,"dur jit") );
+
+          k1->setSensitivity(0.001);
 
           for (int i=0; i<w_Panel->getNumWidgets(); i++)
             editor->connect( w_Panel->getWidget(i), mParameters[i] );
           setupParameters();
+
+          w_Panel->appendWidget( vis = new myVisual(editor,axRect(11,203,319,34),wa_None)  );
+          vis->aBackColor = canvas->getColor(64,64,64);
+          vis->aIndexColor = canvas->getColor(255,0,0);
+          vis->aGrainColor = canvas->getColor(128,128,128);
+          vis->grains = GRAINS;
 
         editor->doRealign();
         w_Editor = editor;
@@ -269,9 +335,13 @@ class myPlugin : public axFormat
         delete s_Knob;
       }
 
-    //virtual void doIdleEditor(void)
-    //  {
-    //  }
+    virtual void doIdleEditor(void)
+      {
+        vis->buffersize = m_BufferSize;
+        vis->index = index;
+        vis->numgrains = m_NumGrains;
+        w_Editor->redrawWidget(vis);
+      }
 
     //--------------------------------------------------
     // plugin
