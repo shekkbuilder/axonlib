@@ -12,7 +12,8 @@
 #include "gui/axBitmapLoader.h"
 #include "img/fx_grains_back.h"
 #include "img/fx_grains_knob.h"
-#include "format/axReaperExt.h"
+
+//#include "format/axReaperExt.h"
 
 //----------------------------------------------------------------------
 
@@ -205,7 +206,7 @@ class myPlugin : public axFormat
     mySkin*     m_Skin;
     myVisual*   vis;
 
-    axReaperExt*  reaper;
+    //axReaperExt*  reaper;
 
   public:
 
@@ -258,6 +259,8 @@ class myPlugin : public axFormat
 
 */
 
+/* commented, so that it won't make any problems for non-reaper hosts
+
 //--- test reaper extensions
 audioMasterCallback audio = (audioMasterCallback)aContext->mAudio;
 reaper = new axReaperExt(audio);
@@ -271,6 +274,8 @@ reaper->ShowMessageBox("testing reaper sdk extensions","axonlib",3);
 
 //---
 
+*/
+
       }
 
     //----------
@@ -278,7 +283,7 @@ reaper->ShowMessageBox("testing reaper sdk extensions","axonlib",3);
     virtual ~myPlugin()
       {
         delete BUFFER;
-        delete reaper;  // !!
+        //delete reaper;  // !!
       }
 
     //--------------------------------------------------

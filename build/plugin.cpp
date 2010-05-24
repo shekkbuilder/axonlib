@@ -1,7 +1,9 @@
 //#define AX_NO_MALLOC
-#define AX_DEBUG_AUTO_STD
+//#define AX_DEBUG_AUTO_STD
 //#define AX_DEBUG_MEM
 //#define AX_DEBUG_PNG
+
+#define AX_ALPHA
 
 //----------------------------------------------------------------------
 // test
@@ -20,7 +22,7 @@
 // demo
 //----------------------------------------------------------------------
 
-//#include "../source/demo/axDemo.cpp"
+#include "../source/demo/axDemo.cpp"
 
 //----------------------------------------------------------------------
 // ccernn
@@ -33,7 +35,7 @@
 
 //----- gui -----
 
-#include "../source/ccernn/fx_grains.cpp"            // in progress !!
+//#include "../source/ccernn/fx_grains.cpp"
 //#include "../source/ccernn/fx_tempodelay.cpp"
 
 //----------------------------------------------------------------------

@@ -8,7 +8,8 @@
 
 class wdgValue : public axWidget
 {
-  private:
+  //private:
+  protected:
     bool  mIsDragging;
     int   mClickX;
     int   mClickY;

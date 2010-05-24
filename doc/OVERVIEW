@@ -1,4 +1,39 @@
+//----------------------------------------------------------------------
+//
+// directories
+//
+//----------------------------------------------------------------------
 
+  ax
+    audio
+    base
+    core
+    [deprecated]
+    dsp
+    format
+    gui
+    par
+    platform
+      linux
+      win32
+    script
+    skins
+    wdg
+  bin
+  build
+  demo
+  doc
+  extern
+  img
+  source
+    ccernn
+    demo
+    liteon ( -> neolit123 ? )
+    ports
+    test
+  templetes
+  test
+  tools
 
 //----------------------------------------------------------------------
 //
@@ -6,17 +41,10 @@
 //
 //----------------------------------------------------------------------
 
+editor
 format
 parameter
 platform
 plugin
 widget
 
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
-
-format abstraction
-platform abstraction
