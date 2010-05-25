@@ -171,6 +171,7 @@ TODO:
 #endif
 #define culong      const     unsigned  long
 
+#define longlong              long      long
 #define clonglong   const     long      long
 #define ulonglong   unsigned  long      long
 #define culonglong  const     unsigned  long long
