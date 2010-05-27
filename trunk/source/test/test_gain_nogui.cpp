@@ -39,8 +39,8 @@ class myPlugin : public axFormat
         SPL spl0 = *aInputs[0];
         SPL spl1 = *aInputs[1];
         //*aOutputs[0] = ( spl0 + axsin.randSigned() ) * m_Gain;
-        *aOutputs[0] = ( spl0 + axRand() ) * m_Gain;
-        *aOutputs[1] = ( spl1 + axRand() ) * m_Gain;
+        *aOutputs[0] = ( spl0 + axRandSigned() ) * m_Gain;
+        *aOutputs[1] = ( spl1 + axRandSigned() ) * m_Gain;
       }
 
 };
