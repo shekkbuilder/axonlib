@@ -338,8 +338,6 @@
   #define trace(x) ((void)0)
   #define msg(x) ((void)0)
   #define assert(x) ((void)0)
-  #define axAssert(x) ((void)0)
-  #define axStaticAssert(x) ((void)0)
   #define wtrace(x) ((void)0)
   #define wdebug(x) ((void)0)
   inline void axDstdCreate(void) {}
@@ -350,87 +348,3 @@
 
 //----------------------------------------------------------------------
 #endif // axDebug_included
-
-/*
-  lii:
-  
-  propsal:
-    
-  axAssert.h now includes two local methods for static and runtime assertion, 
-  based on GCC attributes and __builtin_ functions.
-  
-  i haven't examined closely the method bellow, but i've noticed it did not
-  compile with GCC:  
-  g++ -pedantic -W -Wall -Wextra test.cpp -O3 -s -o test.exe
-  StaticAssert(0, "error test");
-  
-  with 2 commond errors related to "#" (attribute to string) and to the
-  do{} while(0) sequence in macros.  
-  but looks like that even if this method is adapted, one of its major downsides
-  would be that it will bloat the code a lot when used.  
-  
-  on the other hand i wrote axStaticAssert() with assembler in mind and its as
-  lighweight as possible. it does have one issue:  
-    - non portable -> GCC 4.4.x or above (requires the 'exit' function
-      attribute)
-  
-  if version (user's) compiler is less than 4.4.x a warning is returned tha
-  axStaticAssert() is disabled. 
-  
-*/
-
-/*
-
-// from: http://www.skynet.ie/~caolan/Fragments/C++StaticAssert.html
-// google search term: "static assert"
-//
-//C++ Static Assert
-// StaticAssert is like assert for C++, except that the test is done at compile time.
-// Of course this can only be done when the test is possible at compile time.
-//
-// const char *stiName = { "Normal" };
-// StaticAssert((sizeof(stiName) / sizeof(stiName)) == 100, WrongSizeOfArray);
-//
-// Here the array is one element in size, and we have a StaticAssert that will fail
-// if the array is not 100 in size with an error of WrongSizeOfArray.
-//
-// ----------
-//
-// Lifted direct from:
-// Modern C++ Design: Generic Programming and Design Patterns Applied
-// Section 2.1
-// by Andrei Alexandrescu
-
-namespace ww // change this? (ccernn)
-{
-  template<bool> class compile_time_check
-    {
-      public:
-        compile_time_check(...) {}
-    };
-  template<> class compile_time_check<false>
-    {
-    };
-}
-
-// Similiar to assert, StaticAssert is only in operation when NDEBUG is not
-// defined. It will test its first argument at compile time and on failure
-// report the error message of the second argument, which must be a valid c++
-// classname. i.e. no spaces, punctuation or reserved keywords.
-
-#ifndef NDEBUG // todo: if AX_DEBUG? (ccernn)
-#define StaticAssert(test, errormsg) \
-do \
-{ \
-  struct ERROR_##errormsg {}; \
-  typedef ww::compile_time_check< (test)!=0 > tmplimpl; \
-  tmplimpl aTemp = tmplimpl(ERROR_##errormsg()); \
-  sizeof(aTemp); \
-} while (0)
-#else
-#define StaticAssert(test, errormsg) \
-  do {} while (0)
-#endif
-#endif
-
-*/

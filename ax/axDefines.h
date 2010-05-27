@@ -109,6 +109,7 @@ TODO:
 */
 // custom data types. TODO: either write these correctly or remove
 // -----------------------------------------------------------------------------
+
 #ifdef AX_USE_DATA_TYPES
     #define i8                    char
     #define ci8   const           char
@@ -146,7 +147,8 @@ TODO:
   #endif
 #endif
 
-// architecture 'safe' aliases
+// # missleading.. local architecture specific, sized types should be defined
+// for general library use e.g. ax_uint32
 // -----------------------------------------------------------------------------
 
 #define cchar       const     char

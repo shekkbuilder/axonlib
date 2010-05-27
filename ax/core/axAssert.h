@@ -24,44 +24,52 @@
 
 #ifdef AX_DEBUG
 
-#include "core/axDebug.h"
+  #include "core/axDebug.h"
+  
+  /*
+    axAssert()
+    runtime assertion
+  */
+  unsigned int _axAssert () __attribute__ (( noinline ));
+  unsigned int _axAssert (const unsigned int e, const char* file,
+    const unsigned int line, const char* e_str)
+  {
+    if (!e)
+    { _trace("### axAssert: " << file << ", " << line << ", (" << e_str << ")");
+      __builtin_exit(0); }
+    return 1;
+  }
+  #define axAssert(e) _axAssert((e), __FILE__, __LINE__, #e)
+  
+  /*
+    axStaticAssert()
+    compile time assertion ( requires GCC 4.4.x )
+  */
+  #if (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 4)
+    unsigned int __axSA (void)
+      __attribute__ (( error("### axStaticAssert") ))
+      __attribute__ (( optimize(0) ));
+    #define axStaticAssert(e) ( (!(e)) ? __axSA(): 1 )
+  #else
+    /*
+      switch can also be used. it does not generate extra code and is much
+      more portable, but not very useful at the same time.
+    */    
+    #define axStaticAssert(e) switch(0) { case 0: case (e): ; }
+  #endif
 
-/*
-  axAssert()
-  runtime assertion
-*/
-unsigned int _axAssert () __attribute__ (( noinline ));
-unsigned int _axAssert (const unsigned int e, const char* file,
-  const unsigned int line, const char* e_str)
-{
-  if (!e)
-  { _trace("### axAssert: " << file << ", " << line << ", (" << e_str << ")");
-    __builtin_exit(0); }
-  return 1;
-}
-#define axAssert(e) _axAssert((e), __FILE__, __LINE__, #e)
+#else /* AX_DEBUG */
 
-/*
-  axStaticAssert()
-  compile time assertion ( requires GCC 4.4.x )
-*/
-#if (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 4)
-  unsigned int __axSA (void)
-    __attribute__ (( error("### axStaticAssert") ))
-    __attribute__ (( optimize(0) ));
-  #define axStaticAssert(e) ( (!(e)) ? __axSA(): 1 )
-#else
   /* for c89 compat mainly if header is used elsewhere */
   #ifdef __GNUC_STDC_INLINE__
     #define _AXSA_INLINE inline
   #else
     #define _AXSA_INLINE
   #endif
-  _AXSA_INLINE const unsigned int __axSA (void) { return 0; }  
-  /* prevent some warnings */
+  
+  _AXSA_INLINE unsigned int __axSA (void) { return 0; }
+  #define axAssert(e)       __axSA()
   #define axStaticAssert(e) __axSA()
-  #warning "### axStaticAssert() requires GCC 4.4.x"
-#endif
 
 #endif /* AX_DEBUG */
 
