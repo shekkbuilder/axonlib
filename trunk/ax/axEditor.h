@@ -93,9 +93,19 @@ class axEditor : public axWindow
 
     // called from axFormat.onChange(axParameter) if editor is open
 
+    // when the vast host automates a parameter, the parameter's onChange is
+    // called (via axFormatVst.setParameter)..
+    // this func is then called to redraw the widget.
+    //
+    // automation can theoretically come at any time, so we shouldn't just
+    // blindly redraw the widget..
+    // the internal_redraw function either sends an 'invalidate' notification
+    // to the window/editor, or append the widget to an updatelist, and then this
+    // will be redrawn in the next editor idle calls...
+
     virtual void paramChanged(axParameter* aParameter)
       {
-        trace("paramChanged");
+        //trace("paramChanged");
         int conn = aParameter->getConnection();
         if (conn>=0)
         {
@@ -199,7 +209,7 @@ class axEditor : public axWindow
     inline void internal_redraw(axWidget* aWidget)
     //inline void internal_redraw(axWidget* aWidget, bool fromgui/*=false*/)
       {
-        trace("internal_redraw");
+        //trace("internal_redraw");
         #ifdef AX_FORMAT_EXE
           redrawWidget(aWidget);
         #else
@@ -239,11 +249,13 @@ class axEditor : public axWindow
     //TODO: if tweaked from gui, redraw directly
     // else append to updatelist
 
-    // this is called from a widget when its internal state has changeds
+    // this is called from a widget when its internal state has changed.
+    // we notify the parameter, if there's any associated with the widget,
+    // and redraw the widget
 
     virtual void onChange(axWidget* aWidget)
       {
-        trace("onChange wdg");
+        //trace("onChange wdg");
         int conn = aWidget->getConnection();
         if (conn>=0)
         {
@@ -253,7 +265,11 @@ class axEditor : public axWindow
           par->doSetValue(val,false);
         }
         //internal_redraw(aWidget);
-        redrawWidget(aWidget); // redraw directly (don't add to updatelist)
+        // redraw directly (don't add to updatelist)
+        // check possibility, feasability of drawing directly
+        // via the editor's canvas, so we avoid the extra
+        // 'invalidate' roundtrip to the os and back
+        redrawWidget(aWidget);
 
       }
 
@@ -261,7 +277,7 @@ class axEditor : public axWindow
 
     virtual void onRedraw(axWidget* aWidget)
       {
-        trace("onRedraw");
+        //trace("onRedraw");
         internal_redraw(aWidget);
       }
 

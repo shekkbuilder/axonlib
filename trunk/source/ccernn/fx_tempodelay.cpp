@@ -1,5 +1,5 @@
 #define AX_ALPHA
-#define AX_WIDGET_NOUPDATELIST
+//#define AX_WIDGET_NOUPDATELIST
 
 #include "axFormat.h"
 #include "axEditor.h"

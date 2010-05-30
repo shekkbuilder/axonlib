@@ -56,7 +56,7 @@ class axWindow : public axWindowImpl
     //virtual void redrawRect(axRect aRect)               { invalidate( aRect.x, aRect.y, aRect.x2(), aRect.y2() ); }
     virtual void redrawAll(void)                        { invalidate( mRect.x, mRect.y, mRect.w, mRect.h ); }
     virtual void redrawRect(axRect aRect)               { invalidate( aRect.x, aRect.y, aRect.w, aRect.h ); }
-    virtual void redrawWidget(axWidget* aWidget)        { trace("redrawWidget"); redrawRect(aWidget->getRect()); }
+    virtual void redrawWidget(axWidget* aWidget)        { /*trace("redrawWidget");*/ redrawRect(aWidget->getRect()); }
     virtual void paramChanged(axParameter* aParameter)  { /*trace("axWindow.paramChanged");*/ }
 
     //redraw directly, not via invalidate
@@ -153,8 +153,8 @@ class axWindow : public axWindowImpl
     // axWidgetListener
     //----------------------------------------
 
-    //virtual void onChange(axWidget* aWidget)  { /*wtrace("onChange");*/ redrawWidget(aWidget); }
-    virtual void onRedraw(axWidget* aWidget)  { trace("onRedraw"); redrawWidget(aWidget); }
+    //virtual void onChange(axWidget* aWidget)  { /*trace("onChange");*/ redrawWidget(aWidget); }
+    virtual void onRedraw(axWidget* aWidget)  { /*trace("onRedraw");*/ redrawWidget(aWidget); }
     virtual void onCursor(int aCursor)        { setCursor(aCursor); }
     virtual void onHint(axString aHint)       {}
 
@@ -167,7 +167,7 @@ class axWindow : public axWindowImpl
 
     virtual void onModal(bool aModal, axWidget* aWidget)
       {
-        trace("onModal");
+        //trace("onModal");
         if (aModal) goModal(aWidget);
         else unModal();
       }
