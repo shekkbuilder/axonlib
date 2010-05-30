@@ -1,9 +1,15 @@
+#define AX_ALPHA
+
 #include "axFormat.h"
 #include "axEditor.h"
 #include "skins/axSkinBasic.h"
 #include "par/parFloat.h"
 #include "wdg/wdgPanel.h"
 #include "wdg/wdgKnob.h"
+
+#include "wdg/wdgSlider.h"
+#include "skins/axSkinDef.h"
+#include "gui/axBitmapLoader.h"
 
 //----------------------------------------------------------------------
 
@@ -16,6 +22,7 @@
 //#define MAX_DELAY_LENGTH    1536000
 
 //----------------------------------------------------------------------
+
 
 class myPlugin : public axFormat
 {
@@ -34,31 +41,58 @@ class myPlugin : public axFormat
     parFloat*     p_Feedback;
     parFloat*     p_Dry;
     parFloat*     p_Wet;
+
   //editor
+
     axEditor*     m_Editor;
-    axSkinBasic*  m_Skin;
+    axSkinDef*    m_Skin;
+
     wdgPanel*     w_Panel;
     wdgKnob*      w_Delay;
     wdgKnob*      w_Feedback;
     wdgKnob*      w_Dry;
     wdgKnob*      w_Wet;
 
+    bool            gui_initialized;
+    axBitmapLoader* skinloader;   // todo!
+    axBitmapLoader* knobloader;
+
+//    axBitmap*       bitmap;
+//    axSurface*      surface;
+
   public:
 
     myPlugin(axContext* aContext)
     : axFormat(aContext, pf_None)
       {
-
+        if (!gui_initialized)
+        {
+          skinloader = new axBitmapLoader();
+          skinloader->decode((unsigned char*)skin1,skin1_size);
+          knobloader = new axBitmapLoader();
+          knobloader->decode((unsigned char*)knob1,knob1_size);
+          gui_initialized = true;
+        }
         m_Index = 0;
         m_Size  = 0;
         describe("fx_tempodelay","ccernn","axonlib example",2,AX_MAGIC+0x1001);
         setupAudio(2,2,false);
-        setupEditor(148,163);
+        //setupEditor(148,163);
+        setupEditor(320,400);
         appendParameter( p_Delay    = new parFloat(this,"delay",   "",0.75, 0.25, MAX_BEATS, 0.25 ) );
         appendParameter( p_Feedback = new parFloat(this,"feedback","",0.75 ) );
         appendParameter( p_Dry      = new parFloat(this,"dry",     "",0.75 ) );
         appendParameter( p_Wet      = new parFloat(this,"wet",     "",0.4  ) );
         setupParameters();
+      }
+
+    ~myPlugin()
+      {
+        if (gui_initialized)
+        {
+          delete skinloader;
+          delete knobloader;
+        }
       }
 
     //----------
@@ -122,18 +156,44 @@ class myPlugin : public axFormat
 
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
+        //if (!gui_initialized)
+        //{
+        //  loader = new axBitmapLoader();
+        //  loader->decode((unsigned char*)skin1,skin1_size);
+        //}
+
         trace(":: doOpenEditor");
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         axCanvas* canvas = editor->getCanvas();
-        m_Skin = new axSkinBasic(canvas);
+        m_Skin = new axSkinDef(canvas);
+        m_Skin->setup(editor,(char*)skinloader->getImage(),(char*)knobloader->getImage());
         editor->applySkin(m_Skin);
-          //mEditor->setup(getSystemInfo(),getHostInfo());
-          editor->appendWidget(  w_Panel = new wdgPanel(editor,NULL_RECT,wa_Client) );
-          w_Panel->setBorders(10,10,5,5);
-            w_Panel->appendWidget( w_Delay    = new wdgKnob(editor,axRect(128,32),wa_TopLeft,"delay"    ) );
-            w_Panel->appendWidget( w_Feedback = new wdgKnob(editor,axRect(128,32),wa_TopLeft,"feedback" ) );
-            w_Panel->appendWidget( w_Dry      = new wdgKnob(editor,axRect(128,32),wa_TopLeft,"dry"      ) );
-            w_Panel->appendWidget( w_Wet      = new wdgKnob(editor,axRect(128,32),wa_TopLeft,"wet"      ) );
+        //mEditor->setup(getSystemInfo(),getHostInfo());
+        editor->appendWidget(  w_Panel = new wdgPanel(editor,NULL_RECT,wa_Client) );
+        w_Panel->setBorders(10,10,5,5);
+        w_Panel->appendWidget( w_Delay    = new wdgKnob(editor,axRect(128,32),wa_TopLeft,"delay"    ) );
+        w_Panel->appendWidget( w_Feedback = new wdgKnob(editor,axRect(128,32),wa_TopLeft,"feedback" ) );
+        w_Panel->appendWidget( w_Dry      = new wdgKnob(editor,axRect(128,32),wa_TopLeft,"dry"      ) );
+        w_Panel->appendWidget( w_Wet      = new wdgKnob(editor,axRect(128,32),wa_TopLeft,"wet"      ) );
+
+//----------
+
+//        bitmap = editor->createBitmap(256,256,32);
+//        surface = editor->createSurface(256,256,32);
+        //m_Skin->setup(bitmap,surface);
+        //delete bitmap;
+
+        wdgSlider* sli;
+        for (int i=0; i<20; i++)
+        {
+          w_Panel->appendWidget( sli = new wdgSlider(editor,axRect(16,64),wa_StackedHoriz,"slider",0,true) );
+          sli->setSensitivity( 1.0f/(64.0f-11.0f) );
+        }
+
+        //m_Skin->m_Surface = surface;
+
+
+//----------
 
         editor->connect(w_Delay,   p_Delay);
         editor->connect(w_Feedback,p_Feedback);
@@ -157,6 +217,7 @@ class myPlugin : public axFormat
         delete m_Editor;
         m_Editor = NULL;
         delete m_Skin;
+        //delete surface;
       }
 
     //----------

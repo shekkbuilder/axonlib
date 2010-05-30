@@ -1,7 +1,7 @@
 //#define AX_NO_MALLOC
 //#define AX_DEBUG_MEM
 //#define AX_DEBUG_PNG
-//#define AX_DEBUG_AUTO_STD
+#define AX_DEBUG_AUTO_STD
 //#define AX_DEBUG_LOG        "axDemo.cpp.log"
 
 #include "core/axRand.h"

@@ -98,7 +98,7 @@ class wdgButton : public axWidget
 
     virtual void doMouseUp(int aXpos, int aYpos, int aButton)
       {
-        if (aButton==bu_Left)
+        if (aButton==bu_Left && mButtonDown)
         {
           switch (mMode)
           {

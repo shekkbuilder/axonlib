@@ -103,7 +103,6 @@
 		<Unit filename="..\..\ax\base\axCanvasBase.h" />
 		<Unit filename="..\..\ax\base\axFormatBase.h" />
 		<Unit filename="..\..\ax\base\axImage.h" />
-		<Unit filename="..\..\ax\base\axPluginBase.h" />
 		<Unit filename="..\..\ax\base\axSurfaceBase.h" />
 		<Unit filename="..\..\ax\base\axWindowBase.h" />
 		<Unit filename="..\..\ax\core\axArray.h" />
@@ -158,6 +157,7 @@
 		<Unit filename="..\..\ax\script\axScript.h" />
 		<Unit filename="..\..\ax\script\axScriptStdlib.h" />
 		<Unit filename="..\..\ax\skins\axSkinBasic.h" />
+		<Unit filename="..\..\ax\skins\axSkinDef.h" />
 		<Unit filename="..\..\ax\wdg\wdgBitmap.h" />
 		<Unit filename="..\..\ax\wdg\wdgButton.h" />
 		<Unit filename="..\..\ax\wdg\wdgButtons.h" />
@@ -166,6 +166,7 @@
 		<Unit filename="..\..\ax\wdg\wdgImage.h" />
 		<Unit filename="..\..\ax\wdg\wdgKnob.h" />
 		<Unit filename="..\..\ax\wdg\wdgLabel.h" />
+		<Unit filename="..\..\ax\wdg\wdgMenuItem.h" />
 		<Unit filename="..\..\ax\wdg\wdgOctave.h" />
 		<Unit filename="..\..\ax\wdg\wdgPages.h" />
 		<Unit filename="..\..\ax\wdg\wdgPanel.h" />
