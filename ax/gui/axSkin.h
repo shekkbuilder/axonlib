@@ -17,6 +17,7 @@
 class axSkin
 {
   protected:
+    int     mVariation;
     axColor mFillColor;
     axColor mLightColor;
     axColor mDarkColor;
@@ -24,12 +25,15 @@ class axSkin
   public:
     axSkin(axCanvas* aCanvas)
       {
+        mVariation  = 0;
         mFillColor  = aCanvas->getColor(AX_GREY);
         mLightColor = aCanvas->getColor(AX_GREY_LIGHT);
         mDarkColor  = aCanvas->getColor(AX_GREY_DARK);
         mTextColor  = aCanvas->getColor(AX_WHITE);
       }
     virtual ~axSkin() {}
+
+    virtual void setVariation(int aVar) { mVariation=aVar; }
 
     virtual axColor getFillColor(void)  { return mFillColor; }
     virtual axColor getDarkColor(void)  { return mDarkColor; }

@@ -181,8 +181,11 @@
 		<Unit filename="..\..\doc\FEATURES" />
 		<Unit filename="..\..\doc\OVERVIEW" />
 		<Unit filename="..\..\doc\TODO" />
+		<Unit filename="..\..\extern\Daubechies.h" />
+		<Unit filename="..\..\extern\mayer_fft.h" />
 		<Unit filename="..\..\extern\mtrand.h" />
 		<Unit filename="..\..\extern\picopng.h" />
+		<Unit filename="..\..\extern\stb_truetype.h" />
 		<Unit filename="..\..\source\SERIALS" />
 		<Extensions>
 			<code_completion />
