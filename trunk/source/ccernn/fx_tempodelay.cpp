@@ -6,10 +6,14 @@
 #include "par/parFloat.h"
 #include "wdg/wdgPanel.h"
 #include "wdg/wdgKnob.h"
+#include "wdg/wdgButton.h"
 
 #include "wdg/wdgSlider.h"
 #include "skins/axSkinDef.h"
 #include "gui/axBitmapLoader.h"
+#include "../../ax/skins/img/skin1.h"
+#include "../../ax/skins/img/knob1.h"
+#include "../../ax/skins/img/knob32.h"
 
 //----------------------------------------------------------------------
 
@@ -46,6 +50,7 @@ class myPlugin : public axFormat
 
     axEditor*     m_Editor;
     axSkinDef*    m_Skin;
+    axSkinDef*    m_Skin2;
 
     wdgPanel*     w_Panel;
     wdgKnob*      w_Delay;
@@ -56,6 +61,7 @@ class myPlugin : public axFormat
     bool            gui_initialized;
     axBitmapLoader* skinloader;   // todo!
     axBitmapLoader* knobloader;
+    axBitmapLoader* knob2loader;
 
 //    axBitmap*       bitmap;
 //    axSurface*      surface;
@@ -71,6 +77,8 @@ class myPlugin : public axFormat
           skinloader->decode((unsigned char*)skin1,skin1_size);
           knobloader = new axBitmapLoader();
           knobloader->decode((unsigned char*)knob1,knob1_size);
+          knob2loader = new axBitmapLoader();
+          knob2loader->decode((unsigned char*)knob32,knob32_size);
           gui_initialized = true;
         }
         m_Index = 0;
@@ -92,6 +100,7 @@ class myPlugin : public axFormat
         {
           delete skinloader;
           delete knobloader;
+          delete knob2loader;
         }
       }
 
@@ -102,7 +111,7 @@ class myPlugin : public axFormat
         int index = aParameter->getIndex();
         float val = aParameter->getValue();
         axString name = aParameter->getName();
-        trace("doSetParameter(" << index << ") = " << val << "  [" <<  name.ptr() << "]" );
+        //trace("doSetParameter(" << index << ") = " << val << "  [" <<  name.ptr() << "]" );
         switch(index)
         {
           // be careful with that index, eugene!
@@ -156,17 +165,12 @@ class myPlugin : public axFormat
 
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
-        //if (!gui_initialized)
-        //{
-        //  loader = new axBitmapLoader();
-        //  loader->decode((unsigned char*)skin1,skin1_size);
-        //}
-
-        trace(":: doOpenEditor");
+        //trace(":: doOpenEditor");
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         axCanvas* canvas = editor->getCanvas();
         m_Skin = new axSkinDef(canvas);
-        m_Skin->setup(editor,(char*)skinloader->getImage(),(char*)knobloader->getImage());
+        m_Skin->loadSkinBitmap(editor,(char*)skinloader->getImage());
+        m_Skin->loadKnobBitmap(editor,(char*)knobloader->getImage());
         editor->applySkin(m_Skin);
         //mEditor->setup(getSystemInfo(),getHostInfo());
         editor->appendWidget(  w_Panel = new wdgPanel(editor,NULL_RECT,wa_Client) );
@@ -178,20 +182,24 @@ class myPlugin : public axFormat
 
 //----------
 
-//        bitmap = editor->createBitmap(256,256,32);
-//        surface = editor->createSurface(256,256,32);
-        //m_Skin->setup(bitmap,surface);
-        //delete bitmap;
+        m_Skin2 = new axSkinDef(canvas);
+        m_Skin2->copyFrom(m_Skin);
+        m_Skin2->loadKnobBitmap(editor,(char*)knob2loader->getImage());
+        m_Skin2->setVariation(1);
+
+        w_Delay->applySkin(m_Skin2);
+
+        wdgButton* but;
+        w_Panel->appendWidget( but = new wdgButton(editor,axRect(8,8),wa_StackedHoriz/*,true, "off","on",ta_Center,bm_Switch*/) );
+        w_Panel->appendWidget( but = new wdgButton(editor,axRect(8,8),wa_StackedHoriz,true/*, "off","on",ta_Center,bm_Switch*/) );
+        but->applySkin(m_Skin2);
 
         wdgSlider* sli;
-        for (int i=0; i<20; i++)
-        {
-          w_Panel->appendWidget( sli = new wdgSlider(editor,axRect(16,64),wa_StackedHoriz,"slider",0,true) );
-          sli->setSensitivity( 1.0f/(64.0f-11.0f) );
-        }
-
-        //m_Skin->m_Surface = surface;
-
+        w_Panel->appendWidget( sli = new wdgSlider(editor,axRect(16,64),wa_StackedHoriz,"slider",0,true) );
+        sli->setSensitivity( 1.0f/(64.0f-11.0f) );
+        w_Panel->appendWidget( sli = new wdgSlider(editor,axRect(16,64),wa_StackedHoriz,"slider",0,true) );
+        sli->setSensitivity( 1.0f/(64.0f-11.0f) );
+        sli->applySkin(m_Skin2);
 
 //----------
 
@@ -211,13 +219,13 @@ class myPlugin : public axFormat
 
     virtual void doCloseEditor(void)
       {
-        trace(":: doCloseEditor");
+        //trace(":: doCloseEditor");
         //mEditor->stopTimer();
         m_Editor->hide();
         delete m_Editor;
         m_Editor = NULL;
         delete m_Skin;
-        //delete surface;
+        delete m_Skin2;
       }
 
     //----------

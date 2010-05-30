@@ -14,14 +14,16 @@
   //#include <X11/cursorfont.h>
   //#include <pthread.h>
 
-
   struct axContext
   {
     Display*    mDisplay;
     Window      mWindow;//mParent;
     AX_PTRCAST  mAudio;
 
-    axContext() {}
+    axContext()
+      {
+      }
+
     axContext(Display* aDisplay, Window aWindow, AX_PTRCAST aAudio=0)
       {
         mDisplay = aDisplay;
@@ -39,6 +41,7 @@
   #define WINVER 0x0501 // AlphaBlend
   #define _WIN32_WINNT 0x0501
   #include <windows.h>
+
   struct axContext
   {
     HINSTANCE   mInstance;
@@ -46,7 +49,10 @@
     char*       mWinClassName;
     AX_PTRCAST  mAudio;
 
-    axContext() {}
+    axContext()
+      {
+      }
+
     axContext(HINSTANCE aInstance, char* aName, AX_PTRCAST aAudio=0)
       {
         mInstance     = aInstance;
@@ -54,6 +60,7 @@
         mWinClassName = aName;
         mAudio        = aAudio;
       }
+
     axContext(HWND aWindow)
       {
         mInstance     = 0;
@@ -61,7 +68,7 @@
         mWinClassName = 0;
         mAudio        = 0;
         }
-    //axContext(HWND win) { mInstance=0; mWindow=win; mWinClassName=0; mAudio=0; }
+
   };
 
 #endif

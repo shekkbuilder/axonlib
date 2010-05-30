@@ -2,9 +2,7 @@
 #define axEditor_included
 //----------------------------------------------------------------------
 
-#define AX_WIDGET_NOUPDATELIST
-
-//TODO: updateList (dirtyWidgets)
+//#define AX_WIDGET_NOUPDATELIST
 
 #include "axFormat.h"
 #include "core/axArray.h"
@@ -179,6 +177,7 @@ class axEditor : public axWindow
       {
         //mutex_dirty.lock();
         int num = mUpdateList.size();
+        trace("redrawUpdates: " << num);
         for( int i=0; i<num; i++ )
         {
           axWidget* wdg = mUpdateList[i];
