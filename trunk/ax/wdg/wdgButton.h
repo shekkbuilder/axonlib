@@ -105,11 +105,14 @@ class wdgButton : public axWidget
             case bm_Switch:
               break;
             case bm_Spring:
-              mButtonDown = false;
-              mState = false;
-              //mValue = 0;
-              if (mRect.contains(aXpos,aYpos)) mListener->onChange(this);
-              else mListener->onRedraw(this);
+              if (mButtonDown)
+              {
+                mButtonDown = false;
+                mState = false;
+                //mValue = 0;
+                if (mRect.contains(aXpos,aYpos)) mListener->onChange(this);
+                else mListener->onRedraw(this);
+              }
               break;
           } //switch
         } //bu_Left
@@ -152,7 +155,8 @@ class wdgButton : public axWidget
 
     virtual void doEnter(axWidget* aCapture)
       {
-        mListener->onCursor(cu_Hand);
+        //mListener->onCursor(cu_Hand);
+        mListener->onCursor(cu_Finger);
         if (mMode==bm_Switch) mListener->onHint("wdgButton [switch]");
         if (mMode==bm_Spring) mListener->onHint("wdgButton [spring]");
       }

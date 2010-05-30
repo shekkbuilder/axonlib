@@ -1,4 +1,5 @@
 #define AX_ALPHA
+#define AX_WIDGET_NOUPDATELIST
 
 #include "axFormat.h"
 #include "axEditor.h"
@@ -190,8 +191,8 @@ class myPlugin : public axFormat
         w_Delay->applySkin(m_Skin2);
 
         wdgButton* but;
-        w_Panel->appendWidget( but = new wdgButton(editor,axRect(8,8),wa_StackedHoriz/*,true, "off","on",ta_Center,bm_Switch*/) );
-        w_Panel->appendWidget( but = new wdgButton(editor,axRect(8,8),wa_StackedHoriz,true/*, "off","on",ta_Center,bm_Switch*/) );
+        w_Panel->appendWidget( but = new wdgButton(editor,axRect(16,16),wa_StackedHoriz/*,true, "off","on",ta_Center,bm_Switch*/) );
+        w_Panel->appendWidget( but = new wdgButton(editor,axRect(16,16),wa_StackedHoriz,true/*, "off","on",ta_Center,bm_Switch*/) );
         but->applySkin(m_Skin2);
 
         wdgSlider* sli;

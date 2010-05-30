@@ -91,16 +91,18 @@ class axEditor : public axWindow
     //virtual void redrawRect(axRect aRect)               { invalidate( aRect.x, aRect.y, aRect.x2(), aRect.y2() ); }
     //virtual void redrawWidget(axWidget* aWidget)        { redrawRect(aWidget->getRect()); }
 
-    // called from axEditor.onChange(axParameter) if editor is open
+    // called from axFormat.onChange(axParameter) if editor is open
+
     virtual void paramChanged(axParameter* aParameter)
       {
+        trace("paramChanged");
         int conn = aParameter->getConnection();
         if (conn>=0)
         {
           axWidget* wdg = mConnections[conn].mWidget;
           float val = aParameter->doGetValue();
           wdg->setValue(val);
-          redrawWidget(wdg);
+          internal_redraw(wdg); //redrawWidget(wdg);
         }
       }
 
@@ -177,7 +179,7 @@ class axEditor : public axWindow
       {
         //mutex_dirty.lock();
         int num = mUpdateList.size();
-        trace("redrawUpdates: " << num);
+        //trace("redrawUpdates: " << num);
         for( int i=0; i<num; i++ )
         {
           axWidget* wdg = mUpdateList[i];
@@ -195,7 +197,9 @@ class axEditor : public axWindow
 
     //[internal]
     inline void internal_redraw(axWidget* aWidget)
+    //inline void internal_redraw(axWidget* aWidget, bool fromgui/*=false*/)
       {
+        trace("internal_redraw");
         #ifdef AX_FORMAT_EXE
           redrawWidget(aWidget);
         #else
@@ -232,38 +236,34 @@ class axEditor : public axWindow
     // on
     //--------------------------------------------------
 
+    //TODO: if tweaked from gui, redraw directly
+    // else append to updatelist
+
+    // this is called from a widget when its internal state has changeds
+
     virtual void onChange(axWidget* aWidget)
       {
+        trace("onChange wdg");
         int conn = aWidget->getConnection();
         if (conn>=0)
         {
           axParameter* par = mConnections[conn].mParameter;
           float val = aWidget->getValue();
           mFormat->notifyParamChanged(par);
-          par->doSetValue(val);
+          par->doSetValue(val,false);
         }
-        internal_redraw(aWidget);
+        //internal_redraw(aWidget);
+        redrawWidget(aWidget); // redraw directly (don't add to updatelist)
+
       }
 
     //----------
 
     virtual void onRedraw(axWidget* aWidget)
       {
+        trace("onRedraw");
         internal_redraw(aWidget);
       }
-
-    //----------
-
-    //virtual void onCursor(int aCursor)
-    //  {
-    //    setCursor(aCursor);
-    //  }
-
-    //----------
-
-    //virtual void onHint(axString aHint)
-    //  {
-    //  }
 
     //----------
 

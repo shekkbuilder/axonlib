@@ -45,7 +45,7 @@ class axSurfaceLinux : public axSurfaceBase
     //: axSurfaceBase(/*aContext,*/aWidth,aHeight)
     : axSurfaceBase(aWidth,aHeight,aDepth)
       {
-        trace("axSurfaceLinux constructor");
+        //trace("axSurfaceLinux constructor");
         mDisplay  = aContext->mDisplay;
         mDrawable = aContext->mWindow;  // XDefaultRootWindow(mDisplay);
         mWidth    = aWidth;
@@ -71,9 +71,7 @@ class axSurfaceLinux : public axSurfaceBase
           //pict_attr.component_alpha = true;
           int pict_bits = /*CPComponentAlpha |*/ CPPolyEdge | CPPolyMode;
           mPicture = XRenderCreatePicture(mDisplay,/*mDrawable*/mPixmap,fmt,pict_bits,&pict_attr);
-
-          trace("  mPicture: " << mPicture);
-
+          //trace("  mPicture: " << mPicture);
           mCanvas->setPicture(mPicture);
 
         #endif

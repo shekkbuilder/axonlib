@@ -253,8 +253,7 @@ class axWindowLinux : public axWindowBase
           XChangeProperty(mDisplay,mWindow,atom,atom,32,PropModeReplace,(unsigned char*)&data,1);
         }
 
-
-trace("creating window canvas");
+//trace("creating window canvas");
 
         mCanvas = createCanvas(); // window canvas
 
@@ -289,7 +288,7 @@ trace("creating window canvas");
           int depth = attr.depth;//DefaultDepth(mDisplay,DefaultScreen(mDisplay));
           mSurface = createSurface(mRect.w,mRect.h,depth); // see also: resizeBuffer
 
-trace("  win picture " << mSurface->getPicture() );
+//trace("  win picture " << mSurface->getPicture() );
 
           //#ifdef AX_XRENDER
           #ifdef AX_ALPHA
@@ -302,15 +301,14 @@ trace("  win picture " << mSurface->getPicture() );
             mPicture = XRenderCreatePicture(mDisplay,mWindow,format,None,&pict_attr);
             //mPicture = XRenderCreatePicture(mDisplay,mParent,format,None,&pict_attr);
 
-trace("  setPicture");
+//trace("  setPicture");
 mCanvas->setPicture( mPicture );
-trace("  win picture " << mSurface->getPicture() );
+//trace("  win picture " << mSurface->getPicture() );
 
           //}
             bool hasAlpha  = ( format->type == PictTypeDirect && format->direct.alphaMask );
-            trace("hasAlpha: " << hasAlpha);
-
-            trace("main window mPicture: " << mPicture);
+//trace("hasAlpha: " << hasAlpha);
+//trace("main window mPicture: " << mPicture);
 
           #endif
         }
@@ -555,7 +553,6 @@ trace("  win picture " << mSurface->getPicture() );
       {
         XUngrabPointer(mDisplay, CurrentTime);
       }
-
 
     //----------------------------------------
     // medium level

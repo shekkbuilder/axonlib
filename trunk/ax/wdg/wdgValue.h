@@ -76,6 +76,7 @@ class wdgValue : public axWidget
       {
         if (mIsDragging)
         {
+          trace(":::::::::: doMouseMove");
           //int dx = aXpos - mClickX;
           int dy = aYpos - mClickY;
           float v;
@@ -88,6 +89,7 @@ class wdgValue : public axWidget
           mValue = axMin(1,mValue);
           mValue = axMax(0,mValue);
           mListener->onChange(this);
+          //mListener->onRedraw(this);
         }
       }
 
