@@ -59,6 +59,9 @@ class axWindow : public axWindowImpl
     virtual void redrawWidget(axWidget* aWidget)        { redrawRect(aWidget->getRect()); }
     virtual void paramChanged(axParameter* aParameter)  { /*wtrace("axWindow.paramChanged");*/ }
 
+    //redraw directly, not via invalidate
+    //virtual void redrawWidget(axWidget* aWidget)
+
     //----------------------------------------
 
     virtual void goModal(axWidget* aWidget)

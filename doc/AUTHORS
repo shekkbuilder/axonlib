@@ -18,6 +18,17 @@ Jorgen Aase
 
 Makoto Matsumoto, Takuji Nishimura, Richard J. Wagner et al
   marsenne twister: initial work and implementations
+  
+Ron Mayer
+  mayer_fft (from autotalent)
+  (see mayer_fft.c for further info)
+  - note: check license
+  
+Sean Barrett
+  stb_truetype
+
+Ian Kaplan
+  daubechies wavelet transform
 
 DJ Delorie, Joerg Walter, Doug Lea et al
   basis for the custom fast memmory allocator "assembly" in axMalloc.h

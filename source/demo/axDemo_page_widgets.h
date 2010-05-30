@@ -11,55 +11,58 @@
 #include "wdg/wdgKnob.h"
 #include "wdg/wdgOctave.h"
 #include "wdg/wdgGrid.h"
+#include "wdg/wdgMenuItem.h"
 
 //----------------------------------------------------------------------
 
-class popupButton : public wdgButton
-{
-  private:
-    bool isHovering;
-    //int  mx,my;
-  public:
-    popupButton(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None, axString aText="text", int aTextAlign=ta_Center)
-    : wdgButton(aListener,aRect,aAlignment,false,aText,aText,aTextAlign,bm_Spring)
-      {
-        isHovering = false;
-      }
-    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
-      {
-        axColor light = aCanvas->getColor(192,192,192);
-        axColor dark  = aCanvas->getColor(64,64,64);
-        axColor grey  = aCanvas->getColor(128,128,128);
-        if (isHovering)
-        {
-          aCanvas->setBrushColor(dark);
-          aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
-          aCanvas->setTextColor(light);
-          aCanvas->drawText(mRect.x,mRect.y,mRect.x2(),mRect.y2(),mOnText,mTextAlign);
-        }
-        else
-        {
-          //aCanvas->setBrushColor(grey);
-          //aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
-          aCanvas->setTextColor(dark);
-          aCanvas->drawText(mRect.x,mRect.y,mRect.x2(),mRect.y2(),mOnText,mTextAlign);
-        }
-      }
-    virtual void doEnter(axWidget* aCapture)
-      {
-        wdgButton::doEnter(aCapture);
-        isHovering = true;
-        mListener->onRedraw(this);
-        //mListener->onCursor(cu_Hand);
-      }
-    virtual void doLeave(axWidget* aCapture)
-      {
-        //mListener->onCursor(DEF_CURSOR);
-        wdgButton::doLeave(aCapture);
-        isHovering = false;
-        mListener->onRedraw(this);
-      }
-};
+////class popupButton : public wdgButton
+//class wdgMenuItem : public wdgButton
+//{
+//  private:
+//    bool isHovering;
+//    //int  mx,my;
+//  public:
+//    //popupButton(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None, axString aText="text", int aTextAlign=ta_Center)
+//    wdgMenuItem(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None, axString aText="text", int aTextAlign=ta_Center)
+//    : wdgButton(aListener,aRect,aAlignment,false,aText,aText,aTextAlign,bm_Spring)
+//      {
+//        isHovering = false;
+//      }
+//    virtual void doPaint(axCanvas* aCanvas, axRect aRect)
+//      {
+//        axColor light = aCanvas->getColor(192,192,192);
+//        axColor dark  = aCanvas->getColor(64,64,64);
+//        axColor grey  = aCanvas->getColor(128,128,128);
+//        if (isHovering)
+//        {
+//          aCanvas->setBrushColor(dark);
+//          aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
+//          aCanvas->setTextColor(light);
+//          aCanvas->drawText(mRect.x,mRect.y,mRect.x2(),mRect.y2(),mOnText,mTextAlign);
+//        }
+//        else
+//        {
+//          //aCanvas->setBrushColor(grey);
+//          //aCanvas->fillRect(mRect.x,mRect.y,mRect.x2(),mRect.y2());
+//          aCanvas->setTextColor(dark);
+//          aCanvas->drawText(mRect.x,mRect.y,mRect.x2(),mRect.y2(),mOnText,mTextAlign);
+//        }
+//      }
+//    virtual void doEnter(axWidget* aCapture)
+//      {
+//        wdgButton::doEnter(aCapture);
+//        isHovering = true;
+//        mListener->onRedraw(this);
+//        //mListener->onCursor(cu_Hand);
+//      }
+//    virtual void doLeave(axWidget* aCapture)
+//      {
+//        //mListener->onCursor(DEF_CURSOR);
+//        wdgButton::doLeave(aCapture);
+//        isHovering = false;
+//        mListener->onRedraw(this);
+//      }
+//};
 
 //----------------------------------------------------------------------
 
@@ -78,7 +81,7 @@ class axDemo_page_widgets : public wdgPanel
     wdgButton*    bu;
     int           mx,my;
     axWidget*     modal;
-    popupButton   *mb1,*mb2,*mb3,*mb4,*mb5;
+    wdgMenuItem   *mi1,*mi2,*mi3,*mi4,*mi5;
 
   public:
 
@@ -128,7 +131,6 @@ class axDemo_page_widgets : public wdgPanel
 
     virtual void onChange(axWidget* aWidget)
       {
-
         mListener->onChange(aWidget);
         if (aWidget==bu)
         {
@@ -136,23 +138,23 @@ class axDemo_page_widgets : public wdgPanel
           int y = bu->getRect().y + 5;//20;
           modal = new wdgPanel(this,axRect(x,y,80,5*16+10),wa_None);
           modal->setBorders(5,5,0,0);
-          modal->appendWidget( mb1 = new popupButton(this,axRect(0,16),wa_Top) );
-          modal->appendWidget( mb2 = new popupButton(this,axRect(0,16),wa_Top) );
-          modal->appendWidget( mb3 = new popupButton(this,axRect(0,16),wa_Top) );
-          modal->appendWidget( mb4 = new popupButton(this,axRect(0,16),wa_Top) );
-          modal->appendWidget( mb5 = new popupButton(this,axRect(0,16),wa_Top) );
+          modal->appendWidget( mi1 = new wdgMenuItem(this,axRect(0,16),wa_Top,"item 1",ta_Left) );
+          modal->appendWidget( mi2 = new wdgMenuItem(this,axRect(0,16),wa_Top,"item 2",ta_Left) );
+          modal->appendWidget( mi3 = new wdgMenuItem(this,axRect(0,16),wa_Top,"item 3",ta_Right) );
+          modal->appendWidget( mi4 = new wdgMenuItem(this,axRect(0,16),wa_Top,"item 4",ta_Right) );
+          modal->appendWidget( mi5 = new wdgMenuItem(this,axRect(0,16),wa_Top,"item 5",ta_Center) );
           modal->doRealign();
           mListener->onCursor(DEF_CURSOR); // ?
           mListener->onModal(true,modal);
         }
-        if (aWidget==mb1 || aWidget==mb2 || aWidget==mb3 || aWidget==mb4 || aWidget==mb5)
+        if (aWidget==mi1 || aWidget==mi2 || aWidget==mi3 || aWidget==mi4 || aWidget==mi5)
         {
           int sel = 0;
-               if (aWidget==mb1) sel=1;
-          else if (aWidget==mb2) sel=2;
-          else if (aWidget==mb3) sel=3;
-          else if (aWidget==mb4) sel=4;
-          else if (aWidget==mb5) sel=5;
+               if (aWidget==mi1) sel=1;
+          else if (aWidget==mi2) sel=2;
+          else if (aWidget==mi3) sel=3;
+          else if (aWidget==mi4) sel=4;
+          else if (aWidget==mi5) sel=5;
           trace("sel: " << sel);
           mListener->onModal(false,NULL);
         }
