@@ -98,10 +98,11 @@ class axParameter// : public axParameterBase
 
     //----------
 
-    virtual void doSetValue(float aValue)
+    virtual void doSetValue(float aValue, bool aNotify/*=true*/)
       {
+        trace("doSetValue (aNotify=" << (aNotify?"true":"false") << ")" );
         mValue = aValue;
-        if (mListener) mListener->onChange(this);
+        if (aNotify) if (mListener) mListener->onChange(this);
       }
 
     //----------

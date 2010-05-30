@@ -6,88 +6,13 @@
 
 class wdgKnob : public wdgValue
 {
-  //private:
-  //  char labelbuf[32];
-
-  //  bool  mIsDragging;
-  //  int   mClickX;
-  //  int   mClickY;
-  //  float mClickVal;
-  //  char  mDisp[32];    // !!! dangerous hardcoded constant :-)
-  //protected:
-  //  //axString  mName;
-  //  float     mSens1;
-  //  float     mSens2;
 
   public:
     wdgKnob(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None,
             axString aName="", float aValue=0)
     : wdgValue(aListener,/*aId, */aRect,aAlignment,aName,aValue)
       {
-//        mName = aName;
-//        mValue = aValue;
-//        mIsDragging = false;
-//        mSens1 = 0.005;
-//        //if (hasFlag(wf_Vertical)) { if (aRect.w>0) mSens1 = 1.0f/(float)aRect.h; }
-//        //else                      { if (aRect.w>0) mSens1 = 1.0f/(float)aRect.w; }
-//        mSens2 = 0.05;
-//        //if (aRect.h<aRect.w) setFlag(wf_Vertical);
       }
-
-    //----------
-
-    //inline void setName(axString aName) { mName=aName; }
-//    inline void setSensitivity(float aSens1, float aSens2=0.05) { mSens1=aSens1; mSens2=aSens2; }
-
-    //----------
-
-    //virtual void doSetSize(int aWidth, int aHeight)
-    //  {
-    //    if (hasFlag(wf_Vertical)) { if (aHeight>0) mSens1 = 1.0f/(float)aHeight; }
-    //    else                      { if (aWidth >0) mSens1 = 1.0f/(float)aWidth; }
-    //    axWidget::doSetSize(aWidth,aHeight);
-    //  }
-
-    //----------
-
-//    virtual void doMouseDown(int aXpos, int aYpos, int aButton)
-//      {
-//        if (aButton==bu_Left)
-//        {
-//          mIsDragging = true;
-//          mClickX = aXpos;
-//          mClickY = aYpos;
-//          mClickVal = mValue;
-//        }
-//      }
-
-    //----------
-
-//    virtual void doMouseUp(int aXpos, int aYpos, int aButton)
-//      {
-//        if (aButton==bu_Left) mIsDragging = false;
-//      }
-
-    //----------
-
-//    virtual void doMouseMove(int aXpos, int aYpos, int aButton)
-//      {
-//        if (mIsDragging)
-//        {
-//          //int dx = aXpos - mClickX;
-//          int dy = aYpos - mClickY;
-//          float v;
-//          /*if (hasFlag(wf_Vertical))*/ v = -dy;
-//          //else v = dx;
-//          float s = mSens1;
-//          if (aButton&bu_Ctrl) s*=mSens2;
-//          v *= s;
-//          mValue = mClickVal + v;
-//          mValue = axMin(1,mValue);
-//          mValue = axMax(0,mValue);
-//          mListener->onChange(this);
-//        }
-//      }
 
     //----------
 

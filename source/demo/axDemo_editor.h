@@ -83,7 +83,7 @@ class axDemo_editor : public axEditor
 
         //----- left [page Buttons] -----
 
-        appendWidget( w_LeftPanel = new wdgPanel(this,axRect(0,0,100,0),wa_Left) );
+        appendWidget( w_LeftPanel = new wdgPanel(this,axRect(0,0,200,0),wa_Left) );
           w_LeftPanel->appendWidget( w_Scroll = new wdgScrollBox(this,NULL_RECT,wa_Client) );
             w_Scroll->appendWidget( w_Select = new wdgButtons(this,axRect(0,180+26),wa_Top) );
               w_Select->getContainer()->setBorders(5,5,2,2);

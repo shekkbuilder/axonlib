@@ -24,7 +24,8 @@ LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 #define cu_Wait            ((int)IDC_WAIT)
 #define cu_ArrowWait       ((int)IDC_APPSTARTING)
 #define cu_Hand            ((int)IDC_HAND)
-#define cu_Finger          cu_Arrow
+//#define cu_Finger          cu_Arrow
+#define cu_Finger          ((int)IDC_HAND)
 #define cu_Cross           ((int)IDC_CROSS)
 #define cu_Pencil          cu_Arrow
 #define cu_Plus            cu_Arrow

@@ -240,7 +240,7 @@ TODO:
   #define __cold                    __attribute__ ((cold))
   #define __error(message)          __attribute__ ((error(message)))
   #define __warning(message)        __attribute__ ((warning(message)))
-#else  
+#else
   #define __optimize(level)
   #define __hot
   #define __cold
@@ -259,11 +259,11 @@ typedef float     __may_alias float_a;
 typedef longlong  __may_alias longlong_a;
 typedef ulonglong __may_alias ulonglong_a;
 typedef long      __may_alias long_a;
-typedef ulong     __may_alias ulong_a;
+//typedef ulong     __may_alias ulong_a; // when compiled from linux: error: expected initializer before ‘ulong_a’
 typedef int       __may_alias int_a;
-typedef uint      __may_alias uint_a;
+//typedef uint      __may_alias uint_a; // when compiled from linux: error: expected initializer before ‘ulong_a’
 typedef short     __may_alias short_a;
-typedef ushort    __may_alias ushort_a;
+//typedef ushort    __may_alias ushort_a; // when compiled from linux: error: expected initializer before ‘ulong_a’
 typedef char      __may_alias char_a;
 typedef uchar     __may_alias uchar_a;
 

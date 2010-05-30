@@ -252,6 +252,7 @@
 		<Unit filename="../../ax/script/axScript.h" />
 		<Unit filename="../../ax/script/axScriptStdlib.h" />
 		<Unit filename="../../ax/skins/axSkinBasic.h" />
+		<Unit filename="../../ax/skins/axSkinDef.h" />
 		<Unit filename="../../ax/wdg/wdgBitmap.h" />
 		<Unit filename="../../ax/wdg/wdgButton.h" />
 		<Unit filename="../../ax/wdg/wdgButtons.h" />

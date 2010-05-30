@@ -129,8 +129,11 @@ class axFormat : public axFormatImpl, public axParameterListener
 
     //--------------------------------------------------
 
+    // from plugin
+
     virtual void onChange(axParameter* aParameter)
       {
+        trace("onChange");
         doSetParameter(aParameter);
         if (mEditorOpen && mEditorWindow) mEditorWindow->paramChanged(aParameter);
       }

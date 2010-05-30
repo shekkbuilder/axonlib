@@ -39,10 +39,10 @@ class axSkinDef : public axSkin
         m_KnobSrfLoaded     = false;
         m_SkinSrf           = NULL;
         m_PanelBackCol      = aCanvas->getColor(0x5c,0x64,0x6a);
-        m_ButtonOffRect     = axRect(16, 0,8,8);
-        m_ButtonOnRect      = axRect(16,16,8,8);
-        m_Button2OffRect    = axRect(32, 0,8,8);
-        m_Button2OnRect     = axRect(32,16,8,8);
+        m_ButtonOffRect     = axRect(16, 0,16,16);
+        m_ButtonOnRect      = axRect(16,16,16,16);
+        m_Button2OffRect    = axRect(32, 0,16,16);
+        m_Button2OnRect     = axRect(32,16,16,16);
         m_KnobSrf           = NULL;
         m_KnobWidth         = 32;
         m_KnobHeight        = 32;
@@ -168,18 +168,22 @@ class axSkinDef : public axSkin
 
     virtual void drawSlider(axCanvas* aCanvas, axRect aRect, float aValue, axString aText1, axString aText2, bool aVertical)
       {
+        float h;
+        int y;
         //trace("drawSlider");
         if (aVertical)
         {
-          float h = (float)(aRect.h - m_SliderThumbRect.h);
-          int y   = aRect.y + (int)(h*(1-aValue));
           switch (mVariation)
           {
             case 0:
+              h = (float)(aRect.h - m_SliderThumbRect.h);
+              y   = aRect.y + (int)(h*(1-aValue));
               aCanvas->renderImage(m_SkinSrf, aRect.x, aRect.y, m_SliderBackRect.x, m_SliderBackRect.y, m_SliderBackRect.w, m_SliderBackRect.h );
               aCanvas->renderImage(m_SkinSrf, aRect.x, y,       m_SliderThumbRect.x,m_SliderThumbRect.y,m_SliderThumbRect.w,m_SliderThumbRect.h);
               break;
             case 1:
+              h = (float)(aRect.h - m_Slider2ThumbRect.h);
+              y   = aRect.y + (int)(h*(1-aValue));
               aCanvas->renderImage(m_SkinSrf, aRect.x, aRect.y, m_Slider2BackRect.x, m_Slider2BackRect.y, m_Slider2BackRect.w, m_Slider2BackRect.h );
               aCanvas->renderImage(m_SkinSrf, aRect.x, y,       m_Slider2ThumbRect.x,m_Slider2ThumbRect.y,m_Slider2ThumbRect.w,m_Slider2ThumbRect.h);
               break;
