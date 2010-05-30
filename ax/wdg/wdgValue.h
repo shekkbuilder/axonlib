@@ -76,7 +76,7 @@ class wdgValue : public axWidget
       {
         if (mIsDragging)
         {
-          trace(":::::::::: doMouseMove");
+          //trace(":::::::::: doMouseMove");
           //int dx = aXpos - mClickX;
           int dy = aYpos - mClickY;
           float v;

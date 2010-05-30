@@ -282,7 +282,7 @@ class axWidget : public axWidgetListener
 
     virtual void applySkin(axSkin* aSkin, bool aSub=false, bool aOnlyIfNull=false)
       {
-        //wtrace("axWidget.setSkin");
+        //trace("axWidget.setSkin");
         if (aOnlyIfNull) { if (!mSkin) mSkin=aSkin; }
         else mSkin = aSkin;
         if (aSub) { for (int i=0; i<mWidgets.size(); i++) mWidgets[i]->applySkin(aSkin,aSub,aOnlyIfNull); }
