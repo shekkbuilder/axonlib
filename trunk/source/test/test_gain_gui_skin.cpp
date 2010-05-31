@@ -4,157 +4,18 @@
 //#define AX_DEBUG_PNG
 //#define AX_DEBUG_LOG  "test_gain_gui_skin.log"
 
-//TODO: cleanup this, to be a bare-bones gui w/skin example
-//      (these three simple gain plugins might be usable
-//       as a starting point for your own plugins)
-
-#define AX_ALPHA // testing that it still works without transparency
+#define AX_ALPHA
 
 #include "axFormat.h"
 #include "axEditor.h"
 #include "wdg/wdgPanel.h"
 #include "wdg/wdgKnob.h"
 
-#include "gui/axSkin.h"
+#include "skins/axSkinDef.h"
 #include "gui/axBitmapLoader.h"
-#include "../img/knob32.h"
+#include "../../ax/skins/img/skin1.h"
+#include "../../ax/skins/img/knob1.h"
 
-//----------------------------------------------------------------------
-//
-// skin
-//
-//----------------------------------------------------------------------
-
-class mySkin : public axSkin//Default
-{
-  private:
-    axBitmapLoader  loader;
-    axBitmap*       bitmap;
-  public:
-    axSurface*  mKnobImage;
-    int         mKnobCount, mKnobWidth, mKnobHeight;
-  public:
-    mySkin(axCanvas* aCanvas)
-    : axSkin/*Default*/(aCanvas)
-      {
-        mKnobImage  = NULL;
-        mKnobCount  = 0;
-        mKnobWidth  = 0;
-        mKnobHeight = 0;
-      }
-    virtual ~mySkin()
-      {
-        if (mKnobImage) delete mKnobImage;
-      }
-    inline void loadKnobBitmap(axEditor* aEditor, unsigned char* buffer, int size, int w, int h, int n)
-      {
-        #ifdef AX_ALPHA
-          #define BPP 32
-        #else
-          #define BPP 24
-        #endif
-        trace("bits per pixel: " << BPP);
-        mKnobWidth  = w;//32;
-        mKnobHeight = h;//32;
-        mKnobCount  = n;//65;
-        mKnobImage = aEditor->createSurface(mKnobWidth,mKnobHeight*mKnobCount,BPP);
-
-        // lii:
-        // img loading works on linux as well, but for .so's the png has to be
-        // located in the folder from where the process (exe) is started.
-        // not other solutions so far
-        
-        //int result = loader.decodeLoad("knob1_32x32_65.png");
-        int result = loader.decode(buffer,size);
-
-        bitmap = aEditor->createBitmap( loader.getWidth(), loader.getHeight(), BPP );
-        bitmap->createBuffer( (char*)loader.getImage() );                   // create bitmap buffer & copy data
-        bitmap->convertRgbaBgra();                                          // -> bgr.a
-
-        // 'funny' swizzling colors & alpha
-        bitmap->swizzle(
-          0.0, 0.0, 0.0, 0.0,
-          0.0, 1.0, 0.0, 0.0,
-          0.0, 0.0, 2.0, 0.0,
-          0.0, 0.0, 0.0, 0.6    // alpha *= 0.8
-        );
-
-        //TODO: the following could be moved to axBitmapLoader
-        #ifdef AX_ALPHA
-          //#ifdef AX_WIN32
-            bitmap->premultAlpha();
-          //#endif
-        #else
-          bitmap->setBackground(128,128,128);                                 // replace alpha (bgr)
-        #endif
-
-        bitmap->prepare();                                                  // prepare bitmap for blitting
-        axCanvas* can = mKnobImage->getCanvas();
-        can->drawBitmap(bitmap,0,0,0,0,mKnobWidth,mKnobHeight*mKnobCount);  // upload to surface
-        delete bitmap;
-      }
-    virtual void drawPanel(axCanvas* aCanvas, axRect aRect)
-      {
-        aCanvas->setBrushColor( /*aCanvas->getColor(128,0,0)*/mFillColor );
-        aCanvas->fillRect(aRect.x,aRect.y,aRect.x2(),aRect.y2());
-      }
-    virtual void drawKnob(axCanvas* aCanvas, axRect aRect,  axString aName, axString aDisp, float aValue)
-      {
-        if (mKnobImage)
-        {
-          // bitmap
-          int index = (int)axFloor(aValue*mKnobCount);
-          index = axMinInt(index,mKnobCount-1);
-          int ky = mKnobHeight * index;
-
-/*
-          //axColor col = aCanvas->getColor(0,96,128);
-          //aCanvas->setPenColor(col);
-          for (int y=0;y<32;y++)
-          {
-            axColor col = aCanvas->getColor(0,y*8,255-y*8);
-            aCanvas->setPenColor(col);
-            for (int x=0;x<64;x++)
-            {
-              //axColor col = aCanvas->getColor(x*4,y*8,0); // this is _REALLY_ slow in linux..
-              //aCanvas->setPenColor(col);
-              aCanvas->drawPoint(x,y);
-            }
-          }
-*/
-
-          #ifdef AX_ALPHA
-            //aCanvas->renderImage(mKnobImage,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);
-            aCanvas->stretchImage(mKnobImage,aRect.x,aRect.y, aRect.w, aRect.h, 0,ky,mKnobWidth,mKnobHeight);
-          #else
-            aCanvas->drawImage(mKnobImage,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);
-          #endif
-          // text (copy/paste from wdgKnob)
-          int x  = aRect.x;
-          int y  = aRect.y;
-          int size = axMinInt(aRect.w,aRect.h);
-          int th = aCanvas->textHeight("Xj");
-          if (aRect.h >= (2*th))
-          {
-            aCanvas->setTextColor(mTextColor);
-            aCanvas->drawText(x+size+8,y,   aRect.x2(),aRect.y2(),aName,ta_Top|ta_Left);
-            aCanvas->drawText(x+size+8,y+th,aRect.x2(),aRect.y2(),aDisp,ta_Top|ta_Left);
-          }
-          else
-          {
-            aCanvas->setTextColor(mTextColor);
-            aCanvas->drawText(x+size+5,y,aRect.x2(),aRect.y2(),aDisp,ta_Left);
-          }
-        } //knobimage
-        //else
-        //  axSkinDefault::drawKnob(aCanvas,aRect,aName,aDisp,aValue);
-      }
-};
-
-//----------------------------------------------------------------------
-//
-// plugin
-//
 //----------------------------------------------------------------------
 
 class myPlugin : public axFormat
@@ -173,30 +34,34 @@ class myPlugin : public axFormat
     myPlugin(axContext* aContext)
     : axFormat(aContext, pf_HasEditor)
       {
-        trace("myPlugin.constructor()");
+        gui_initialized = false;
         m_Gain = 0;
         describe("test_gain_gui_skin","ccernn","axonlib example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);
         setupEditor(128,64);
         appendParameter( p_Gain = new axParameter(this,"gain","") );
         setupParameters();
-
         /*
           // test
           char* ptr = (char*)axCalloc(11, sizeof(char));
           trace ( axSqrt(21.f) );
         */
-        trace ( axLogf(11.f) );
+        //trace(axLogf(11.f));
       }
 
     virtual ~myPlugin()
       {
+        if (gui_initialized)
+        {
+          delete skinloader;
+          delete knobloader;
+        }
         axDstdDestroy();
         //axDwinDestroy();
       }
 
     virtual void  doSetParameter(axParameter* aParameter)
-      {
+      { // or aParameter->getIndex()==0
         if (aParameter==p_Gain) m_Gain = aParameter->getValue();
       }
 
@@ -211,26 +76,34 @@ class myPlugin : public axFormat
     //----------------------------------------
 
   private:
+    bool            gui_initialized;
+    axBitmapLoader* skinloader;
+    axBitmapLoader* knobloader;
     axEditor*       m_Editor;
-    mySkin*         m_Skin;
+    axSkinDef*      m_Skin;
     wdgPanel*       w_Panel;
     wdgKnob*        w_Gain;
 
   public:
 
-    // from axFormatVst.dispatcher  -  context: HWND
-    // axFormatExe.main = main  -  context: instance, winname
-
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
+        if (!gui_initialized)
+        {
+          skinloader = new axBitmapLoader();
+          skinloader->decode((unsigned char*)skin1,skin1_size);
+          knobloader = new axBitmapLoader();
+          knobloader->decode((unsigned char*)knob1,knob1_size);
+          gui_initialized = true;
+        }
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         axCanvas* canvas = editor->getCanvas();
-        m_Skin = new mySkin(canvas);
-        m_Skin->loadKnobBitmap(editor,(unsigned char*)knob32,knob32_size,32,32,65);
+        m_Skin = new axSkinDef(canvas);
+        m_Skin->loadSkinBitmap(editor,(char*)skinloader->getImage());
+        m_Skin->loadKnobBitmap(editor,(char*)knobloader->getImage());
         editor->applySkin(m_Skin);
         editor->appendWidget( w_Panel = new wdgPanel(editor,NULL_RECT,wa_Client) );
-        //w_Panel->appendWidget( w_Gain = new wdgKnob( editor,axRect(10,10,100,32),wa_None,"gain",0.75) );
-        w_Panel->appendWidget( w_Gain = new wdgKnob( editor,axRect(10,10,100,32),wa_Client,"gain",0.75) );
+        w_Panel->appendWidget( w_Gain = new wdgKnob( editor,axRect(10,10,100,32),wa_None,"gain",0.75) );
         editor->connect(w_Gain,p_Gain);
         editor->doRealign();
         editor->show();
@@ -256,8 +129,6 @@ class myPlugin : public axFormat
       }
 
     //----------
-
-    //virtual void doIdleEditor() {}
 
 };
 
