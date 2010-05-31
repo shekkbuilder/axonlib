@@ -261,6 +261,7 @@
 		<Unit filename="../../ax/wdg/wdgImage.h" />
 		<Unit filename="../../ax/wdg/wdgKnob.h" />
 		<Unit filename="../../ax/wdg/wdgLabel.h" />
+		<Unit filename="../../ax/wdg/wdgMenuItem.h" />
 		<Unit filename="../../ax/wdg/wdgOctave.h" />
 		<Unit filename="../../ax/wdg/wdgPages.h" />
 		<Unit filename="../../ax/wdg/wdgPanel.h" />
@@ -275,8 +276,12 @@
 		<Unit filename="../../doc/FEATURES" />
 		<Unit filename="../../doc/OVERVIEW" />
 		<Unit filename="../../doc/TODO" />
+		<Unit filename="../../extern/Daubechies.h" />
+		<Unit filename="../../extern/mayer_fft.h" />
 		<Unit filename="../../extern/mtrand.h" />
 		<Unit filename="../../extern/picopng.h" />
+		<Unit filename="../../extern/stb_truetype.h" />
+		<Unit filename="../../source/SERIALS" />
 		<Extensions>
 			<code_completion />
 			<envvars />
