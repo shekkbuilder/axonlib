@@ -22,7 +22,14 @@
 #ifndef axAssert_included
 #define axAssert_included
 
-#ifdef AX_DEBUG
+/* for c89 compat mainly if the header is used elsewhere */
+#ifdef __GNUC_STDC_INLINE__
+  #define _AXSA_INLINE inline
+#else
+  #define _AXSA_INLINE
+#endif
+
+#ifdef AX_DEBUG /* AX_DEBUG */
 
   #include "core/axDebug.h"
   
@@ -46,27 +53,21 @@
     compile time assertion ( requires GCC 4.4.x )
   */
   #if (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 4)
-    unsigned int __axSA (void)
+    _AXSA_INLINE unsigned int __axSA_true (void) { return 1; }
+    unsigned int __axSA (void)    
       __attribute__ (( error("### axStaticAssert") ))
       __attribute__ (( optimize(0) ));
-    #define axStaticAssert(e) ( (!(e)) ? __axSA(): 1 )
+    #define axStaticAssert(e) ( (!(e)) ? __axSA(): __axSA_true() )
   #else
     /*
       switch can also be used. it does not generate extra code and is much
       more portable, but not very useful at the same time.
-    */    
+    */
     #define axStaticAssert(e) switch(0) { case 0: case (e): ; }
   #endif
 
 #else /* AX_DEBUG */
 
-  /* for c89 compat mainly if header is used elsewhere */
-  #ifdef __GNUC_STDC_INLINE__
-    #define _AXSA_INLINE inline
-  #else
-    #define _AXSA_INLINE
-  #endif
-  
   _AXSA_INLINE unsigned int __axSA (void) { return 0; }
   #define axAssert(e)       __axSA()
   #define axStaticAssert(e) __axSA()

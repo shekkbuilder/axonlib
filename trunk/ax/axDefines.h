@@ -13,7 +13,7 @@ TODO:
   #define __AX32__
 #endif
 
-#if defined (__x86_64) || (__LP64__)  || defined (_WIN64)
+#if defined (__x86_64) || (__LP64__)
   #define __AX64__
 #endif
 
@@ -103,85 +103,55 @@ TODO:
 #define AX_LDBL_EPSILON   1.08420217248550443401e-19L
 #define AX_LDBL_DENORM    3.64519953188247460253e-4951L
 
-/*
-  info on size vs arch:
-  http://www.safercode.com/blog/2009/03/10/portable-code-how-to-check-if-a-machine-is-32-bit-or-64-bit.html
-*/
-// custom data types. TODO: either write these correctly or remove
-// -----------------------------------------------------------------------------
+// fixed size types
+#define ax_int8         char
+#define ax_uint8        unsigned char
+#define ax_int16        short
+#define ax_uint16       unsigned short
 
-#ifdef AX_USE_DATA_TYPES
-    #define i8                    char
-    #define ci8   const           char
-    #define u8          unsigned  char
-    #define cu8   const unsigned  char
-    #define i16                   short
-    #define ci16  const           short
-    #define u16         unsigned  short
-    #define cu16  const unsigned  short
+// architecture dependant
+#ifdef __AX32__
+  #define ax_int32  typedef long
+  #define ax_uint32 unsigned long
+  #define ax_int64  long long
+  #define ax_uint64 unsigned long long
+#endif
+#ifdef __AX64__
+  #define ax_int32  int
+  #define ax_uint32 unsigned int
+  #define ax_int64  long;
+  #define ax_uint64 unsigned long
+#endif
 
-    #define f32                   float
-    #define cf32  const           float
-    #define f64                   double
-    #define cf64  const           double
-    #define lf64                  long double
-    #define clf64 const           long double
-
-  #ifdef (__AX32__)
-    #define i32                   int
-    #define ci32  const           int
-    #define u32         unsigned  int
-    #define cu32  const unsigned  int
-    #define lg                    long
-    #define clg   const           long
-    #define ulg         unsigned  long
-    #define culg  const unsigned  long
-    #define i64                   long long
-    #define ci64  const           long long
-    #define u64         unsigned  long long
-    #define cu64  const unsigned  long long
+#ifdef AX_USE_SHORT_DATA_TYPES
+  // shorter names
+  #define cchar       const     char
+  #define uchar       unsigned  char
+  #define cuchar      const     unsigned  char
+  #define cshort      const     short
+  #ifndef AX_LINUX
+    #define ushort    unsigned  short
   #endif
-
-  #ifdef (__AX64__)
-    //---
+  #define cushort     const     unsigned  short  
+  #define cint        const     int
+  #ifndef AX_LINUX
+    #define uint      unsigned  int
   #endif
-#endif
-
-// # missleading.. local architecture specific, sized types should be defined
-// for general library use e.g. ax_uint32
-// -----------------------------------------------------------------------------
-
-#define cchar       const     char
-#define uchar       unsigned  char
-#define cuchar      const     unsigned  char
-
-#define cshort      const     short
-#ifndef AX_LINUX
-  #define ushort    unsigned  short
-#endif
-#define cushort     const     unsigned  short
-
-#define cint        const     int
-#ifndef AX_LINUX
-  #define uint      unsigned  int
-#endif
-#define cuint       const     unsigned  int
-
-#define clong       const     long
-#ifndef AX_LINUX
-  #define ulong     unsigned  long
-#endif
-#define culong      const     unsigned  long
-
-#define longlong              long      long
-#define clonglong   const     long      long
-#define ulonglong   unsigned  long      long
-#define culonglong  const     unsigned  long long
-
-#define cfloat      const     float
-#define cdouble     const     double
-#define ldouble     long      double
-#define cldouble    const     long      double
+  #define cuint       const     unsigned  int  
+  #define clong       const     long
+  #ifndef AX_LINUX
+    #define ulong     unsigned  long
+  #endif
+  #define culong      const     unsigned  long  
+  #define longlong              long      long
+  #define clonglong   const     long      long
+  #define ulonglong   unsigned  long      long
+  #define culonglong  const     unsigned  long long
+  #define cfloat      const     float
+  #define cdouble     const     double
+  #define ldouble     long      double
+  #define cldouble    const     long      double
+#endif // AX_USE_DATA_TYPES
 
 // c defaults
 // -----------------------------------------------------------------------------
@@ -252,20 +222,24 @@ TODO:
   #warning "### Thread-local storage requires GCC 4.4.x"
 #endif
 
+// aligned types
+typedef double      __aligned(8) double_8;
+typedef long long   __aligned(8) longlong_8;
+
 // aliasing types
-typedef ldouble   __may_alias ldouble_a;
-typedef double    __may_alias double_a;
-typedef float     __may_alias float_a;
-typedef longlong  __may_alias longlong_a;
-typedef ulonglong __may_alias ulonglong_a;
-typedef long      __may_alias long_a;
-//typedef ulong     __may_alias ulong_a; // when compiled from linux: error: expected initializer before ‘ulong_a’
-typedef int       __may_alias int_a;
-//typedef uint      __may_alias uint_a; // when compiled from linux: error: expected initializer before ‘ulong_a’
-typedef short     __may_alias short_a;
-//typedef ushort    __may_alias ushort_a; // when compiled from linux: error: expected initializer before ‘ulong_a’
-typedef char      __may_alias char_a;
-typedef uchar     __may_alias uchar_a;
+typedef long double           __may_alias ldouble_a;
+typedef double                __may_alias double_a;
+typedef float                 __may_alias float_a;
+typedef long long             __may_alias longlong_a;
+typedef unsigned long long    __may_alias ulonglong_a;
+typedef long                  __may_alias long_a;
+typedef unsigned long         __may_alias ulong_a;
+typedef int                   __may_alias int_a;
+typedef unsigned int          __may_alias uint_a;
+typedef short                 __may_alias short_a;
+typedef unsigned short        __may_alias ushort_a;
+typedef char                  __may_alias char_a;
+typedef unsigned char         __may_alias uchar_a;
 
 // msvc specific
 #ifndef __cdecl
@@ -280,3 +254,4 @@ typedef uchar     __may_alias uchar_a;
 #define __asmv                    __asm__ __volatile__
 
 #endif // axDefines_included
+
