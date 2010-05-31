@@ -191,8 +191,10 @@ class axWindowWin32 : public axWindowBase
         {
           AdjustWindowRectEx(&rc,WS_OVERLAPPEDWINDOW,FALSE,WS_EX_OVERLAPPEDWINDOW);
           //trace("adjusted rc (windowed): " << rc.left << "," << rc.top << " : " << rc.right << "," << rc.bottom);
-          culong wPosX = ((GetSystemMetrics(SM_CXSCREEN)-mRect.w)>>1) + rc.left;
-          culong wPosY = ((GetSystemMetrics(SM_CYSCREEN)-mRect.h)>>1) + rc.top;
+          const unsigned int wPosX =
+            ((GetSystemMetrics(SM_CXSCREEN)-mRect.w)>>1) + rc.left;
+          const unsigned int wPosY =
+            ((GetSystemMetrics(SM_CYSCREEN)-mRect.h)>>1) + rc.top;
           mWindow = CreateWindowEx(
             WS_EX_OVERLAPPEDWINDOW,   // dwExStyle
             classname,                // lpClassName
@@ -200,8 +202,8 @@ class axWindowWin32 : public axWindowBase
             WS_OVERLAPPEDWINDOW,      // dwStyle
             wPosX,                    // center x
             wPosY,                    // center y
-            rc.right-rc.left+1,         //wWidth,
-            rc.bottom-rc.top+1,         //wHeight,
+            rc.right-rc.left+1,       // wWidth,
+            rc.bottom-rc.top+1,       // wHeight,
             0,                        // hWndParent
             0,                        // hMenu
             mInstance,                // hInstance

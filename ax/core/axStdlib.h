@@ -245,7 +245,7 @@ __axstdlib_inline int axStrcmp (register const char* s1,
 {
   while (*s1 != '\0' && *s1 == *s2)
   { s1++; s2++; }
-  return (*(unsigned char *) s1) - (*(unsigned char *) s2);
+  return (*(unsigned char *) s1) - (*(unsigned char*) s2);
 }
 
 /**
@@ -271,7 +271,7 @@ __axstdlib_inline int axStrncmp (register const char* s1,
  * axStrcat
  */
 __axstdlib_inline const char* axStrcat (register char* s1,
-  register const char *s2)
+  register const char* s2)
 {
   while (*s1)
     s1++;

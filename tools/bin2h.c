@@ -10,7 +10,7 @@ int main (int argc, char **argv)
 
 	if (argc!=4)
 	{
-		fprintf(stderr,"usage: bin2h input.png output.h name[]\n");
+		fprintf(stderr,"usage: bin2h inputfile output.h name[]\n");
 		return 1;
 	}
 	if (!(in=fopen(argv[1],"rb")))

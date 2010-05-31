@@ -35,9 +35,6 @@
 
 // -------------------------------------------
 #define axStrExpand(x) #x
-/**
- * convert macro value to string: ( "value" )
- */
 #define axStr(x) axStrExpand(x)
 
 /**

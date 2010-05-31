@@ -18,7 +18,7 @@
 //#define AX_MULTICHANNEL         // axFormatVst.h
 //#define AX_NOAUTODELETE         // axGraph.h, axModule.h, axVoices.h, axFormat.h, axWidget.h
 //#define AX_NO_MALLOC            // axMalloc.h
-//#define AX_USE_DATA_TYPES       // axDefines.h
+//#define AX_USE_SHORT_DATA_TYPES // axDefines.h
 //#define AX_WIDGET_NOUPDATELIST  // axEditor.h
 
 //----------------------------------------------------------------------
