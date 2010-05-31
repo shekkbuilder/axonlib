@@ -129,6 +129,13 @@ class axFormat : public axFormatImpl, public axParameterListener
 
     //--------------------------------------------------
 
+    virtual void doIdleEditor()
+      {
+        #ifndef AX_WIDGET_NOUPDATELIST
+        if (mEditorWindow) mEditorWindow->redrawUpdates();
+        #endif
+      }
+
     // from plugin
 
     virtual void onChange(axParameter* aParameter)
