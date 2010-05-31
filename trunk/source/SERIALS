@@ -16,6 +16,9 @@ ccernn:
   1002      midi_transpose
   1003      fx_distortion
   1004      fx_grains
+  1005      fx_wgtavg
+  1006      fx_svf
+  1007      syn_poly
 
 ports:
 
@@ -23,5 +26,7 @@ ports:
 
 liteon:
 
-  8000      liteon_..
-  8001      ...
+  7000      liteon_..
+  7001      ...
+
+

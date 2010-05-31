@@ -2,15 +2,15 @@
  * This file is part of Axonlib.
  *
  * Axonlib is free software: you can redistribute it and/or modify
- * it under the terms of the Axonlib License, either version 1.0 
+ * it under the terms of the Axonlib License, either version 1.0
  * of the License, or (at your option) any later version.
  *
  * Axonlib is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE_AX for more details.
- *  
- * You should have received a copy of the Axonlib License 
+ *
+ * You should have received a copy of the Axonlib License
  * If not, see <http://axonlib.googlecode.com/>.
  */
 
@@ -68,11 +68,11 @@ class dspOsc0
       {
         case osc_Const: out = 1; break;
         case osc_Input: out = in; break;
-        case osc_Noise: out = axRandomSigned(); break;
+        case osc_Noise: out = axRandSigned(); break;
         case osc_Ramp:  out = (mPhase*2)-1; break;
         case osc_Saw:   out = 1-(mPhase*2); break;
         case osc_Squ:   if (mPhase<0.5) out=1; else out=-1; break;
-        case osc_Sin:   out = sin(mPhase*PI2); break;
+        case osc_Sin:   out = axSin(mPhase*PI2); break;
       }
       mPhase += mFreq * iRate;
       if (mPhase>=1) mPhase-=1;
@@ -92,11 +92,11 @@ class dspOsc0
       {
         case osc_Const: out = 1; break;
         case osc_Input: out = in; break;
-        case osc_Noise: out = axRandomSigned(); break;
+        case osc_Noise: out = axRandSigned(); break;
         case osc_Ramp:  out = (p2*2)-1; break;
         case osc_Saw:   out = 1-(p2*2); break;
         case osc_Squ:   if (p2<0.5) out=1; else out=-1; break;
-        case osc_Sin:   out = sin(p2*PI2); break;
+        case osc_Sin:   out = axSin(p2*PI2); break;
       }
       mPhase += mFreq * iRate;
       if (mPhase>=1) mPhase-=1;
