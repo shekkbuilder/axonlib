@@ -40,13 +40,7 @@ class axEditor : public axWindow
   protected:
     axFormat*       mFormat;
     wp_connections  mConnections;
-    //axSkinDefault*  mDefaultSkin;
     axSkinBasic*    mDefaultSkin;
-    #ifndef AX_WIDGET_NOUPDATELIST
-    axWidgets       mUpdateList;
-    #endif
-    //axWidget*       mModalWidget;
-    //int             mModalIndex;
 
   public:
 
@@ -57,10 +51,10 @@ class axEditor : public axWindow
         axCanvas* canvas = getCanvas();
         mDefaultSkin = new axSkinBasic(canvas);
         applySkin(mDefaultSkin);
-        //mModalWidget = NULL;
-        //mModalIndex  = -1;
 
       }
+
+    //----------
 
     virtual ~axEditor()
       {
@@ -76,23 +70,41 @@ class axEditor : public axWindow
         aWidget->setParameter(aParameter);
         aParameter->setConnection(conn);
         aWidget->setValue( aParameter->doGetValue() );
-        mConnections.append( wp_connection(aWidget,aParameter) );
+        mConnections.append( wp_connection(aWidget,aParameter) );   // ??? delete?
       }
 
     //void deleteConnections(void)
     //  {
     //  }
 
-    //----------
+    //--------------------------------------------------
 
-    // only used internally (window/editor?)
+    //[internal]
+    inline void internal_redraw(axWidget* aWidget)
+    //inline void internal_redraw(axWidget* aWidget, bool fromgui/*=false*/)
+      {
+        //trace("internal_redraw");
+        #ifdef AX_FORMAT_EXE
+          redrawWidget(aWidget);
+        #else
+          #ifndef AX_WIDGET_NOUPDATELIST
+            appendUpdate(aWidget);
+          #else
+            redrawWidget(aWidget);
+          #endif
+        #endif
+      }
+
+    //----------
 
     //virtual void redrawAll(void)                        { invalidate( mRect.x, mRect.y, mRect.x2(), mRect.y2() ); }
     //virtual void redrawRect(axRect aRect)               { invalidate( aRect.x, aRect.y, aRect.x2(), aRect.y2() ); }
     //virtual void redrawWidget(axWidget* aWidget)        { redrawRect(aWidget->getRect()); }
 
-    // called from axFormat.onChange(axParameter) if editor is open
+    //----------
 
+    // called from axFormat.onChange(axParameter) if editor is open
+    //
     // when the vast host automates a parameter, the parameter's onChange is
     // called (via axFormatVst.setParameter)..
     // this func is then called to redraw the widget.
@@ -116,7 +128,7 @@ class axEditor : public axWindow
         }
       }
 
-    //----------------------------------------
+    //----------
 
       // this one needs more work. specific hosts might need specific actions...
       // - axWindow.setSize()
@@ -146,83 +158,8 @@ class axEditor : public axWindow
 //        mFormat->notifyResizeEditor(aWidth,aHeight);
       }
 
-    //----------------------------------------
-
-    /*
-      axArray.append looks like can be dangerous,
-      because it increases the size before the item itself is added to the array..
-      if a thread is reading the array size just after it has been increased,
-      but before the item has been properly set up and written to the array buffer,
-      things could go wrong...
-    */
-
-    #ifndef AX_WIDGET_NOUPDATELIST
-
-    void clearUpdates(void)
-      {
-        //mutex_dirty.lock();
-        mUpdateList.clear(false);
-        //mutex_dirty.unlock();
-      }
-
-    //----------
-
-    void appendUpdate(axWidget* aWidget)
-      {
-        for( int i=0; i<mUpdateList.size(); i++ ) if( mUpdateList[i]==aWidget ) return;
-        //mutex_dirty.lock();
-        mUpdateList.append(aWidget);
-        //mutex_dirty.unlock();
-      }
-
-    //----------
-
-    // if we're inside this redrawDirty (because of idleEditor),
-    // we can't append new widgets to it!!
-    // dangerous if we don't manage the redrawDirty ourselves...
-    // we might need a redrawLock here
-    // or we need to be very certain about which thread is adding
-    // widgets to the array, and which is reading from the list...
-    // appendUpdate vs redrawUpdates
-
-    void redrawUpdates(void)
-      {
-        //mutex_dirty.lock();
-        int num = mUpdateList.size();
-        //trace("redrawUpdates: " << num);
-        for( int i=0; i<num; i++ )
-        {
-          axWidget* wdg = mUpdateList[i];
-          redrawWidget(wdg);
-        }
-        clearUpdates();
-        //mutex_dirty.unlock();
-        //flush();
-
-      }
-
-    #endif // AX_WIDGET_NOUPDATELIST
-
-    //----------------------------------------
-
-    //[internal]
-    inline void internal_redraw(axWidget* aWidget)
-    //inline void internal_redraw(axWidget* aWidget, bool fromgui/*=false*/)
-      {
-        //trace("internal_redraw");
-        #ifdef AX_FORMAT_EXE
-          redrawWidget(aWidget);
-        #else
-          #ifndef AX_WIDGET_NOUPDATELIST
-            appendUpdate(aWidget);
-          #else
-            redrawWidget(aWidget);
-          #endif
-        #endif
-      }
-
     //--------------------------------------------------
-    // do
+    // do..
     //--------------------------------------------------
 
     virtual void doSetSize(int aWidth, int aHeight)
@@ -232,18 +169,8 @@ class axEditor : public axWindow
         axWindow::doSetSize(aWidth,aHeight);
       }
 
-    //----------
-
-//    virtual void doIdleEditor()
-//      {
-//        #ifndef AX_WIDGET_NOUPDATELIST
-//        if (mEditor) mEditor->redrawUpdates();
-//        #endif
-//        //trace("doIdleEditor");
-//      }
-
     //--------------------------------------------------
-    // on
+    // on..
     //--------------------------------------------------
 
     //TODO: if tweaked from gui, redraw directly

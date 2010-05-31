@@ -25,42 +25,33 @@ class axWindow : public axWindowImpl
 
 {
   protected:
-  //  axSkinDefault*  mDefaultSkin;
-    axWidget*         mModalWidget;
-    int               mModalIndex;
+    axWidget* mModalWidget;
+    int       mModalIndex;
+    #ifndef AX_WIDGET_NOUPDATELIST
+    axWidgets       mUpdateList;
+    #endif
 
   public:
 
     axWindow(axContext* aContext, axRect aRect, int aWinFlags)
     : axWindowImpl(aContext,aRect,aWinFlags)
       {
-        //trace("- axWindow.constructor");
-        //axCanvas* can = getCanvas();
-        //mDefaultSkin = new axSkinDefault(can);
-        //setSkin(mDefaultSkin/*,true*/); // no sub-widgets yet?
-        //trace("- axWindow.constructor OK");
         mModalWidget = NULL;
         mModalIndex  = -1;
       }
 
     virtual ~axWindow()
       {
-        //delete mDefaultSkin;
       }
 
     //----------------------------------------
     //
     //----------------------------------------
 
-    //virtual void redrawAll(void)                        { invalidate( mRect.x, mRect.y, mRect.x2(), mRect.y2() ); }
-    //virtual void redrawRect(axRect aRect)               { invalidate( aRect.x, aRect.y, aRect.x2(), aRect.y2() ); }
     virtual void redrawAll(void)                        { invalidate( mRect.x, mRect.y, mRect.w, mRect.h ); }
     virtual void redrawRect(axRect aRect)               { invalidate( aRect.x, aRect.y, aRect.w, aRect.h ); }
-    virtual void redrawWidget(axWidget* aWidget)        { /*trace("redrawWidget");*/ redrawRect(aWidget->getRect()); }
-    virtual void paramChanged(axParameter* aParameter)  { /*trace("axWindow.paramChanged");*/ }
-
-    //redraw directly, not via invalidate
-    //virtual void redrawWidget(axWidget* aWidget)
+    virtual void redrawWidget(axWidget* aWidget)        { redrawRect(aWidget->getRect()); }
+    virtual void paramChanged(axParameter* aParameter)  { }
 
     //----------------------------------------
 
@@ -81,36 +72,79 @@ class axWindow : public axWindowImpl
         redrawAll();
       }
 
-
-    //----------------------------------------
-    //
     //----------------------------------------
 
-    //virtual void doSetPos(int aXpos, int aYpos)
-    //  {
-    //  }
+    /*
+      axArray.append looks like can be dangerous,
+      because it increases the size before the item itself is added to the array..
+      if a thread is reading the array size just after it has been increased,
+      but before the item has been properly set up and written to the array buffer,
+      things could go wrong...
+    */
+
+    #ifndef AX_WIDGET_NOUPDATELIST
+
+    void clearUpdates(void)
+      {
+        //mutex_dirty.lock();
+        mUpdateList.clear(false);
+        //mutex_dirty.unlock();
+      }
+
+    //----------
+
+    void appendUpdate(axWidget* aWidget)
+      {
+        for( int i=0; i<mUpdateList.size(); i++ ) if( mUpdateList[i]==aWidget ) return;
+        //mutex_dirty.lock();
+        mUpdateList.append(aWidget);
+        //mutex_dirty.unlock();
+      }
+
+    //----------
+
+    // if we're inside this redrawDirty (because of idleEditor),
+    // we can't append new widgets to it!!
+    // dangerous if we don't manage the redrawDirty ourselves...
+    // we might need a redrawLock here
+    // or we need to be very certain about which thread is adding
+    // widgets to the array, and which is reading from the list...
+    // appendUpdate vs redrawUpdates
+
+    void redrawUpdates(void)
+      {
+        //mutex_dirty.lock();
+        int num = mUpdateList.size();
+        //trace("redrawUpdates: " << num);
+        for( int i=0; i<num; i++ )
+        {
+          axWidget* wdg = mUpdateList[i];
+          redrawWidget(wdg);
+        }
+        clearUpdates();
+        //mutex_dirty.unlock();
+        //flush();
+
+      }
+
+    #endif // AX_WIDGET_NOUPDATELIST
+
+    //----------------------------------------
+    // do..
+    //----------------------------------------
+
+    //virtual void doSetPos(int aXpos, int aYpos) {}
 
     virtual void doSetSize(int aWidth, int aHeight)
       {
-        //trace("axWindow.doSetSize: " << aWidth << "," << aHeight);
-        //mRect.w = aWidth;
-        //mRect.h = aHeight;
         mRect.setSize(aWidth,aHeight);
         if (mFlags&wf_Align) doRealign();
       }
 
-    //virtual void doMove(int aDeltaX, int aDeltaY)
-    //  {
-    //  }
-    //virtual void doResize(int aDeltaX, int aDeltaY)
-    //  {
-    //  }
-    //virtual void doRealign(void)
-    //  {
-    //  }
-    //virtual void doPaint(axCanvas* aCanvas, axRect aRect)
-    //  {
-    //  }
+    //virtual void doMove(int aDeltaX, int aDeltaY) {}
+    //virtual void doResize(int aDeltaX, int aDeltaY) {}
+    //virtual void doRealign(void) {}
+    //virtual void doPaint(axCanvas* aCanvas, axRect aRect) {}
 
     virtual void doMouseDown(int aXpos, int aYpos, int aButton)
       {
@@ -142,21 +176,31 @@ class axWindow : public axWindowImpl
         else axWidget::doKeyUp(aKeyCode,aState);
       }
 
-    //virtual void doEnter(axWidget* aCapture)
-    //  {
-    //  }
-    //virtual void doLeave(axWidget* aCapture)
-    //  {
-    //  }
+    //virtual void doEnter(axWidget* aCapture) {}
+    //virtual void doLeave(axWidget* aCapture) {}
 
     //----------------------------------------
-    // axWidgetListener
+    // on..
     //----------------------------------------
 
-    //virtual void onChange(axWidget* aWidget)  { /*trace("onChange");*/ redrawWidget(aWidget); }
-    virtual void onRedraw(axWidget* aWidget)  { /*trace("onRedraw");*/ redrawWidget(aWidget); }
-    virtual void onCursor(int aCursor)        { setCursor(aCursor); }
-    virtual void onHint(axString aHint)       {}
+    //virtual void onChange(axWidget* aWidget)
+    //  {
+    //    redrawWidget(aWidget);
+    //  }
+
+    virtual void onRedraw(axWidget* aWidget)
+      {
+        redrawWidget(aWidget);
+      }
+
+    virtual void onCursor(int aCursor)
+      {
+        setCursor(aCursor);
+      }
+
+    virtual void onHint(axString aHint)
+      {
+      }
 
     virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY, int aMode)
       {
@@ -167,11 +211,9 @@ class axWindow : public axWindowImpl
 
     virtual void onModal(bool aModal, axWidget* aWidget)
       {
-        //trace("onModal");
         if (aModal) goModal(aWidget);
         else unModal();
       }
-
 
 };
 

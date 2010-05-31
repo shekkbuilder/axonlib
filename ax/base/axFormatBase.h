@@ -71,7 +71,6 @@ class axFormatBase// : public axParameterListener
 
     axFormatBase(axContext* aContext, int aFormatFlags)
       {
-        //wtrace("axFormatBase.constructor");
         mFormatFlags    = aFormatFlags;//0;
         mEditorOpen   = false;
         mEditorRect   = axRect(0,0,256,256);
@@ -80,13 +79,10 @@ class axFormatBase// : public axParameterListener
 
     virtual ~axFormatBase()
       {
-        //wtrace("axFormatBase.destructor");
-        //deleteParameters();
       }
 
   public:
 
-    //inline int     getFlags(void)       { return mFormatFlags; }
     inline axRect   getEditorRect(void) { return mEditorRect; }
     inline bool     isEditorOpen(void)  { return mEditorOpen; }
 
@@ -98,6 +94,8 @@ class axFormatBase// : public axParameterListener
 
     virtual axSystemInfo* getSystemInfo(void) { return NULL; }
     virtual axHostInfo*   getHostInfo(void)   { return NULL; }
+
+    //--------------------------------------------------
 
     // call this to descript your plugin.
     // most of these are directly related to similar vst features
@@ -134,6 +132,10 @@ class axFormatBase// : public axParameterListener
     virtual void sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3) {}
 
   protected:
+
+    //--------------------------------------------------
+    // do..
+    //--------------------------------------------------
 
     // this will be called when the plugins is suspend/resume, and open/close
     virtual void doStateChange(int aState) {}
