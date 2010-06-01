@@ -1,4 +1,9 @@
-//#define AX_DEBUG_MEMORY
+#define AX_DEBUG_AUTO_STD
+#define AX_DEBUG_MEM
+#define AX_DEBUG_PNG
+#define AX_DEBUG_NEW
+#define AX_DEBUG_LOG  "test_gain_gui_skin.log"
+
 #include "axFormat.h"
 #include "axEditor.h"
 //#include "gui/axSkinDefault.h"
