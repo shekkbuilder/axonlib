@@ -36,11 +36,7 @@
 #endif
 //----------------------------------------------------------------------
 #ifdef AX_WIN32
-
-  //#undef _WIN32_WINNT
-  #define WINVER 0x0501 // AlphaBlend
-  #define _WIN32_WINNT 0x0501
-  #include <windows.h>
+  #include "windows.h"
 
   struct axContext
   {
