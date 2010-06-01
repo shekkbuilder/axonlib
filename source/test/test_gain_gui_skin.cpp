@@ -42,7 +42,7 @@ class myPlugin : public axFormat
         setupEditor(128,64);
         appendParameter( p_Gain = new axParameter(this,"gain","") );
         setupParameters();
-                
+
         // test op delete[]
         int* j = new int[21];
         delete[] j;

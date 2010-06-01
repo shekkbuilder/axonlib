@@ -132,6 +132,7 @@ class axFormat : public axFormatImpl, public axParameterListener
     virtual void doIdleEditor()
       {
         #ifndef AX_WIDGET_NOUPDATELIST
+        //trace("axFormat.doIdleEditor");
         if (mEditorWindow) mEditorWindow->redrawUpdates();
         #endif
       }

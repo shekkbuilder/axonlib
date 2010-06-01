@@ -9,6 +9,8 @@
 //#include "wdg/wdgPanel.h"
 #include "wdg/wdgImage.h"
 #include "wdg/wdgKnob.h"
+
+#include "skins/axSkinDef.h"
 #include "gui/axBitmapLoader.h"
 #include "img/fx_grains_back.h"
 #include "img/fx_grains_knob.h"
@@ -42,71 +44,6 @@ struct GRAIN
 
 //----------------------------------------------------------------------
 //
-// skin
-//
-//----------------------------------------------------------------------
-
-class mySkin : public axSkin
-{
-  public:
-    axSurface*  s_Back;
-    axSurface*  s_Knob;
-    int mKnobWidth,mKnobHeight,mKnobCount;
-  public:
-    mySkin(axCanvas* aCanvas)
-    : axSkin(aCanvas)
-      {
-        mKnobWidth  = 32;
-        mKnobHeight = 32;
-        mKnobCount  = 65;
-      }
-    virtual ~mySkin()
-      {
-      }
-    //virtual void drawPanel(axCanvas* aCanvas, axRect aRect)
-    //  {
-    //    aCanvas->setBrushColor( /*aCanvas->getColor(128,0,0)*/mFillColor );
-    //    aCanvas->fillRect(aRect.x,aRect.y,aRect.x2(),aRect.y2());
-    //  }
-    virtual void drawKnob(axCanvas* aCanvas, axRect aRect,  axString aName, axString aDisp, float aValue)
-      {
-        if (s_Knob)
-        {
-          // bitmap
-          int index = (int)axFloor(aValue*mKnobCount);
-          index = axMinInt(index,mKnobCount-1);
-          int ky = mKnobHeight * index;
-
-          //#ifdef AX_ALPHA
-            aCanvas->renderImage(s_Knob,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);
-          //  //aCanvas->stretchImage(mKnobImage,aRect.x,aRect.y, aRect.w, aRect.h, 0,ky,mKnobWidth,mKnobHeight);
-          //#else
-          //  aCanvas->drawImage(mKnobImage,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);
-          //#endif
-          // text (copy/paste from wdgKnob)
-          int x  = aRect.x;
-          int y  = aRect.y;
-          int size = axMinInt(aRect.w,aRect.h);
-          int th = aCanvas->textHeight("Xj");
-          if (aRect.h >= (2*th))
-          {
-            aCanvas->setTextColor(mTextColor);
-            aCanvas->drawText(x+size+8,y,   aRect.x2(),aRect.y2(),aName,ta_Top|ta_Left);
-            aCanvas->drawText(x+size+8,y+th,aRect.x2(),aRect.y2(),aDisp,ta_Top|ta_Left);
-          }
-          else
-          {
-            aCanvas->setTextColor(mTextColor);
-            aCanvas->drawText(x+size+5,y,aRect.x2(),aRect.y2(),aDisp,ta_Left);
-          }
-        } //knobimage
-        //else
-        //  axSkinDefault::drawKnob(aCanvas,aRect,aName,aDisp,aValue);
-      }
-};
-
-//----------------------------------------------------------------------
-//
 // widget
 //
 //----------------------------------------------------------------------
@@ -134,9 +71,9 @@ class myVisual : public axWidget
       numgrains = 0;
     }
 
-  // this is using quite a bit of cpu
-
 //  /*
+
+  // this is using quite a bit of cpu
   virtual void doPaint(axCanvas* aCanvas, axRect aRect)
     {
       aCanvas->setBrushColor(aBackColor);
@@ -158,6 +95,7 @@ class myVisual : public axWidget
         aCanvas->drawLine((int)x, mRect.y, (int)x, mRect.y2());
       }
     }
+
 //    */
 
 };
@@ -196,16 +134,15 @@ class myPlugin : public axFormat
     float        _GrainDist;
     float        _GrainSize;
     float        _GrainDur;
-  //vst parameters
   //gui
-    axEditor*   w_Editor;
-    //wdgPanel*   w_Panel;
-    wdgImage*   w_Panel;
-    axSurface*  s_Back;
-    axSurface*  s_Knob;
-    mySkin*     m_Skin;
-    myVisual*   vis;
-
+    axEditor*       w_Editor;
+    //wdgPanel*     w_Panel;
+    wdgImage*       w_Panel;
+    myVisual*       vis;
+    bool            gui_initialized;
+    axSkinDef*      m_Skin;
+    axBitmapLoader* backloader;
+    axBitmapLoader* knobloader;
     //axReaperExt*  reaper;
 
   public:
@@ -272,8 +209,6 @@ reaper->ShowMessageBox("testing reaper sdk extensions","axonlib",3);
 
 // the 'axonlib' menu will remain after deletiong the plugin!
 
-//---
-
 */
 
       }
@@ -283,6 +218,12 @@ reaper->ShowMessageBox("testing reaper sdk extensions","axonlib",3);
     virtual ~myPlugin()
       {
         delete BUFFER;
+        if (gui_initialized)
+        {
+          delete backloader;
+          delete knobloader;
+        }
+
         //delete reaper;  // !!
       }
 
@@ -292,79 +233,47 @@ reaper->ShowMessageBox("testing reaper sdk extensions","axonlib",3);
 
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
+        if (!gui_initialized)
+        {
+          backloader = new axBitmapLoader();
+          backloader->decode((unsigned char*)fx_grains_back,fx_grains_back_size);
+          knobloader = new axBitmapLoader();
+          knobloader->decode((unsigned char*)fx_grains_knob,fx_grains_knob_size);
+          gui_initialized = true;
+        }
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
-        axBitmapLoader* loader;
-        axBitmap* bitmap;
-        // png (background)
-        loader = new axBitmapLoader();
-          loader->decode((unsigned char*)fx_grains_back,fx_grains_back_size);
-          bitmap = editor->createBitmap(340,325,24);
-            bitmap->createBuffer((char*)loader->getImage());
-            bitmap->convertRgbaBgra();
-            bitmap->premultAlpha();
-            bitmap->swizzle(
-              1.1, 0.0, 0.0, 0.0,
-              0.0, 1.1, 0.0, 0.0,
-              0.0, 0.0, 0.8, 0.0,
-              0.0, 0.0, 0.0, 1.0
-            );
-            bitmap->prepare();
-            s_Back = editor->createSurface(340,325,24);
-            s_Back->getCanvas()->drawBitmap( bitmap, 0,0, 0,0,340,325 );
-          delete bitmap;
-        delete loader;
-
-        // png (knob)
-        loader = new axBitmapLoader();
-          loader->decode((unsigned char*)fx_grains_knob,fx_grains_knob_size);
-          bitmap = editor->createBitmap(32,32*65,32);
-            bitmap->createBuffer((char*)loader->getImage());
-            bitmap->convertRgbaBgra();
-            //bitmap->swizzle(
-            //  1.0, 0.0, 0.0, 0.0,
-            //  0.0, 1.0, 0.0, 0.0,
-            //  0.0, 0.0, 1.0, 0.0,
-            //  0.0, 0.0, 0.0, 1.0
-            //);
-            bitmap->premultAlpha();
-            bitmap->prepare();
-            s_Knob = editor->createSurface(32,32*65,32);
-            s_Knob->getCanvas()->drawBitmap( bitmap, 0,0, 0,0,32,32*65 );
-          delete bitmap;
-        delete loader;
-        // skin
         axCanvas* canvas = editor->getCanvas();
-        m_Skin = new mySkin(canvas);
-        m_Skin->s_Back = s_Back;
-        m_Skin->s_Knob = s_Knob;
+        m_Skin = new axSkinDef(canvas);
+        m_Skin->loadKnobBitmap(editor,(char*)knobloader->getImage());
         editor->applySkin(m_Skin);
         // widgets
-        editor->appendWidget( w_Panel = new wdgImage(editor,NULL_RECT,wa_Client,s_Back) );
-          wdgKnob* k1;
-          w_Panel->appendWidget(   new wdgKnob(editor,axRect(230,255,100,32),wa_None,"master") );
-          w_Panel->appendWidget(k1=new wdgKnob(editor,axRect( 10,155,100,32),wa_None,"num grains") );
-          w_Panel->appendWidget(   new wdgKnob(editor,axRect( 10, 50,100,32),wa_None,"buf size") );
-          w_Panel->appendWidget(   new wdgKnob(editor,axRect( 10, 85,100,32),wa_None,"freeze") );
-          w_Panel->appendWidget(   new wdgKnob(editor,axRect(120, 50,100,32),wa_None,"grain dist") );
-          w_Panel->appendWidget(   new wdgKnob(editor,axRect(120, 85,100,32),wa_None,"grain size") );
-          w_Panel->appendWidget(   new wdgKnob(editor,axRect(120,120,100,32),wa_None,"grain dur") );
-          w_Panel->appendWidget(   new wdgKnob(editor,axRect(120,155,100,32),wa_None,"grain pitch") );
-          w_Panel->appendWidget(   new wdgKnob(editor,axRect( 10,255,100,32),wa_None,"dur env") );
-          w_Panel->appendWidget(   new wdgKnob(editor,axRect(120,255,100,32),wa_None,"grain env") );
-          w_Panel->appendWidget(   new wdgKnob(editor,axRect(230, 50,100,32),wa_None,"dist jit") );
-          w_Panel->appendWidget(   new wdgKnob(editor,axRect(230,155,100,32),wa_None,"pitch jit") );
-          w_Panel->appendWidget(   new wdgKnob(editor,axRect(230, 85,100,32),wa_None,"size jit") );
-          w_Panel->appendWidget(   new wdgKnob(editor,axRect(230,120,100,32),wa_None,"dur jit") );
-          k1->setSensitivity(0.001);
-          for (int i=0; i<w_Panel->getNumWidgets(); i++)
-            editor->connect( w_Panel->getWidget(i), mParameters[i] );
-          setupParameters();
-          // 'grain painter'
-          w_Panel->appendWidget( vis = new myVisual(editor,axRect(11,203,319,34),wa_None)  );
-          vis->aBackColor = canvas->getColor(64,64,64);
-          vis->aIndexColor = canvas->getColor(255,0,0);
-          vis->aGrainColor = canvas->getColor(128,128,128);
-          vis->grains = GRAINS;
+        editor->appendWidget( w_Panel = new wdgImage(editor,NULL_RECT,wa_Client) );
+        w_Panel->loadBitmap(editor,(char*)backloader->getImage(),340,325);
+        wdgKnob* k1;
+        w_Panel->appendWidget(   new wdgKnob(editor,axRect(230,255,100,32),wa_None,"master") );
+        w_Panel->appendWidget(k1=new wdgKnob(editor,axRect( 10,155,100,32),wa_None,"num grains") );
+        w_Panel->appendWidget(   new wdgKnob(editor,axRect( 10, 50,100,32),wa_None,"buf size") );
+        w_Panel->appendWidget(   new wdgKnob(editor,axRect( 10, 85,100,32),wa_None,"freeze") );
+        w_Panel->appendWidget(   new wdgKnob(editor,axRect(120, 50,100,32),wa_None,"grain dist") );
+        w_Panel->appendWidget(   new wdgKnob(editor,axRect(120, 85,100,32),wa_None,"grain size") );
+        w_Panel->appendWidget(   new wdgKnob(editor,axRect(120,120,100,32),wa_None,"grain dur") );
+        w_Panel->appendWidget(   new wdgKnob(editor,axRect(120,155,100,32),wa_None,"grain pitch") );
+        w_Panel->appendWidget(   new wdgKnob(editor,axRect( 10,255,100,32),wa_None,"dur env") );
+        w_Panel->appendWidget(   new wdgKnob(editor,axRect(120,255,100,32),wa_None,"grain env") );
+        w_Panel->appendWidget(   new wdgKnob(editor,axRect(230, 50,100,32),wa_None,"dist jit") );
+        w_Panel->appendWidget(   new wdgKnob(editor,axRect(230,155,100,32),wa_None,"pitch jit") );
+        w_Panel->appendWidget(   new wdgKnob(editor,axRect(230, 85,100,32),wa_None,"size jit") );
+        w_Panel->appendWidget(   new wdgKnob(editor,axRect(230,120,100,32),wa_None,"dur jit") );
+        k1->setSensitivity(0.001);
+        for (int i=0; i<w_Panel->getNumWidgets(); i++)
+          editor->connect( w_Panel->getWidget(i), mParameters[i] );
+        setupParameters();
+        // 'grain painter'
+        w_Panel->appendWidget( vis = new myVisual(editor,axRect(11,203,319,34),wa_None)  );
+        vis->aBackColor = canvas->getColor(64,64,64);
+        vis->aIndexColor = canvas->getColor(255,0,0);
+        vis->aGrainColor = canvas->getColor(128,128,128);
+        vis->grains = GRAINS;
         editor->doRealign();
         w_Editor = editor;
         editor->show();
@@ -376,16 +285,17 @@ reaper->ShowMessageBox("testing reaper sdk extensions","axonlib",3);
         axEditor* editor = w_Editor;
         w_Editor = NULL;
         delete editor;
-        delete s_Back;
-        delete s_Knob;
+        delete m_Skin;
       }
 
     virtual void doIdleEditor(void)
       {
+        trace("fx_grains.doIdleEditor");
         vis->buffersize = m_BufferSize;
         vis->index = index;
         vis->numgrains = m_NumGrains;
         w_Editor->redrawWidget(vis);
+        axFormat::doIdleEditor();
       }
 
     //--------------------------------------------------
