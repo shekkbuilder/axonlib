@@ -137,7 +137,7 @@
       axDlog << x << "\n"; \
       axDlog.flush();
   #else
-    __thread bool axDlog;
+    static __thread bool axDlog;
     #define axDfstream(x) (void(0))
     #define _axDfstream(x) (void(0))
   #endif
@@ -154,8 +154,8 @@
     #include <stdio.h>            // gcc-4.4.1-tdm
     #include <sstream>
 
-    __thread HWND axDtext;                 // edit control handle
-    ostringstream axDoss;         // string stream for window
+    static __thread HWND axDtext;        // edit control handle
+    ostringstream axDoss;                // string stream for window
 
     // ----------------
     // destroy window
@@ -209,7 +209,7 @@
 
     // -------------------
     // window debug write
-    inline void wdebug_write(void)
+    __deprecated inline void wdebug_write(void)
     {
         // cast stream to string
         const string s2 = axDoss.str();
@@ -251,8 +251,8 @@
      * http://support.microsoft.com/kb/105305
      *
      */
-    __thread unsigned int axHcrt = 0;                  // crt handle
-    __thread FILE *axSfile;                            // file stream
+    static __thread unsigned int axHcrt = 0;          // crt handle
+    static __thread FILE *axSfile;                    // file stream
 
     // ----------------
     // destroy console

@@ -333,7 +333,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
   #endif
 
   // global data, can be 'dangerous' for multiple instances
-  static __thread unsigned int _axMemTotal = 0;
+  static __thread int _axMemTotal = 0;
 
   // malloc debug
   __axmalloc_inline void* axMallocDebug
@@ -342,24 +342,18 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     #ifdef AX_NO_MALLOC
       void* _ptr = malloc(_size);
       _axMemTotal += malloc_usable_size(_ptr);
+      const char _name[] = "malloc, ";
     #else
       void* _ptr = axMalloc(_size);
       _axMemTotal += bucket2size[*(unsigned int*)((char*)_ptr-4)];
-    #endif
-
-    // output cout / log
-    #ifdef AX_NO_MALLOC
-      const char _name[] = "malloc, ";
-    #else
       const char _name[] = "axMalloc, ";
     #endif
-
+    // output cout / log
     _trace
     (
       "[" << axGetFileName(_file) << "|" << _line << "] " << _name <<
       (void*)&_ptr << ", " << _size << ", " << _axMemTotal
     );
-
     return _ptr;
   }
 
@@ -372,26 +366,20 @@ __axmalloc_inline void* axRealloc (void* _ptr,
       void* _ptr = calloc(_n, _size);
       unsigned int size = malloc_usable_size(_ptr);
       _axMemTotal += size;
+      const char _name[] = "calloc, ";
     #else
       void* _ptr = axCalloc(_n, _size);
       unsigned int size = bucket2size[*(unsigned int*)((char*)_ptr-4)];
       _axMemTotal += size;
-    #endif
-
-    // output cout / log
-    #ifdef AX_NO_MALLOC
-      const char _name[] = "calloc, ";
-    #else
       const char _name[] = "axCalloc, ";
     #endif
-
+    // output cout / log
     _trace
     (
       "[" << axGetFileName(_file) << "|" << _line << "] " << _name <<
       (void*)&_ptr << ", " << _n << ", " << _size << ", " << size << ", " <<
       _axMemTotal
     );
-
     return _ptr;
   }
 
@@ -400,25 +388,24 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     (void* _ptr, register const unsigned int _size, const char* _file,
     const unsigned int _line)
   {
-    #ifdef AX_NO_MALLOC    
-      if (_axMemTotal)
-        _axMemTotal -= malloc_usable_size(_ptr);
+    #ifdef AX_NO_MALLOC
+      int nsize = malloc_usable_size(_ptr);
+      if (_axMemTotal - nsize >= 0)
+        _axMemTotal -= nsize;
+      else
+        _axMemTotal = 0;
       void* _ptr0 = realloc(_ptr, _size);
       _axMemTotal += malloc_usable_size(_ptr0);
-    #else
-      if (_axMemTotal)
-        _axMemTotal -= bucket2size[*(unsigned int*)((char*)_ptr-4)];
-      void* _ptr0 = axRealloc(_ptr, _size);
-      _axMemTotal += bucket2size[*(unsigned int*)((char*)_ptr0-4)];;
-    #endif
-
-    // output cout / log
-    #ifdef AX_NO_MALLOC
       const char _name[] = "realloc, ";
     #else
+      int nsize = bucket2size[*(unsigned int*)((char*)_ptr-4)];
+      if (_axMemTotal - nsize >= 0)
+        _axMemTotal -= nsize;
+      void* _ptr0 = axRealloc(_ptr, _size);
+      _axMemTotal += bucket2size[*(unsigned int*)((char*)_ptr0-4)];;
       const char _name[] = "axRealloc, ";
     #endif
-
+    // output cout / log
     _trace
     (
       "[" << axGetFileName(_file) << "|" << _line << "] " << _name <<
@@ -433,22 +420,18 @@ __axmalloc_inline void* axRealloc (void* _ptr,
   __axmalloc_inline void axFreeDebug
     (void* _ptr, const char* _file, const unsigned int _line)
   {
-    unsigned int _size;
     #ifdef AX_NO_MALLOC
-      _size = malloc_usable_size(_ptr);
-    #else      
-      _size = bucket2size[*(unsigned int*)((char*)_ptr-4)];
-    #endif
-    if (_axMemTotal)
-      _axMemTotal -= _size;
-
-    // output cout / log
-    #ifdef AX_NO_MALLOC
+      int _size = malloc_usable_size(_ptr);
       const char _name[] = "free, ";
-    #else
+    #else      
+      int _size = bucket2size[*(unsigned int*)((char*)_ptr-4)];
       const char _name[] = "axFree, ";
     #endif
-
+    if (_axMemTotal - _size >= 0)
+      _axMemTotal -= _size;
+    else 
+      _axMemTotal = 0;
+    // output cout / log
     _trace
     (
       "[" << axGetFileName(_file) << "|" << _line << "] " << _name <<
@@ -456,10 +439,10 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     );
 
     #ifdef AX_NO_MALLOC
-      free(_ptr);
+      free(_ptr);      
     #else
-      axFree(_ptr);
-    #endif
+      axFree(_ptr);     
+    #endif    
   }
 
   // clear previous definitions (if any)
@@ -484,55 +467,46 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     #define free(p)         axFreeDebug     (p, __FILE__, __LINE__)
   #endif
   
-  // define some helpers for the delete operator
-  __thread char* ax_del_file;
-  __thread unsigned int ax_del_line;
-  unsigned int axDebugSetDelete(const char* file, unsigned int line)
-  {
-    ax_del_file = (char*)file;
-    ax_del_line = line;
-    return 1;
-  }
-  
-  // overload operators new, delete with debug
-  void* operator new (const unsigned int size, const char* file,
-    const unsigned int line) throw (std::bad_alloc);
-  void* operator new[] (const unsigned int size, const char* file,
-    const unsigned int line) throw (std::bad_alloc);
-  void  operator delete (void* ptr) throw();
-  void  operator delete[] (void* ptr) throw();
+  #ifdef AX_DEBUG_NEW
+    // define some helpers for the delete operator
+    static __thread char* ax_del_file;
+    static __thread unsigned int ax_del_line;
+    unsigned int axDebugSetDelete(const char* file, unsigned int line)
+    {
+      ax_del_file = (char*)file;
+      ax_del_line = line;
+      return 1;
+    }
+   
+    // overload operators new, delete with debug    
+    __axmalloc_inline void* operator new (const unsigned int size,
+      const char* file, unsigned int line) throw (std::bad_alloc)
+    {
+      return axMallocDebug(size, file, line);
+    }
+    __axmalloc_inline void* operator new[] (const unsigned int size,
+      const char* file, unsigned int line) throw (std::bad_alloc)
+    {
+      return axMallocDebug(size, file, line);
+    }
+    __axmalloc_inline void operator delete (void* ptr) throw()
+    {
+      return axFreeDebug(ptr, ax_del_file, ax_del_line);
+    }
+    __axmalloc_inline void operator delete[] (void* ptr) throw()
+    {
+     return axFreeDebug(ptr, ax_del_file, ax_del_line);
+    }
     
-  __axmalloc_inline void* operator new (const unsigned int size,
-    const char* file, unsigned int line) throw (std::bad_alloc)
-  {
-    return axMallocDebug(size, file, line);
-  }
-  __axmalloc_inline void* operator new[] (const unsigned int size,
-    const char* file, unsigned int line) throw (std::bad_alloc)
-  {
-    return axMallocDebug(size, file, line);
-  }
-  __axmalloc_inline void operator delete (void* ptr) throw()
-  {
-    return axFreeDebug(ptr, ax_del_file, ax_del_line);
-  }
-  __axmalloc_inline void operator delete[] (void* ptr) throw()
-  {
-   return axFreeDebug(ptr, ax_del_file, ax_del_line);
-  }
-  
-  #define new new(__FILE__, __LINE__)  
-  #define delete if(axDebugSetDelete(__FILE__, __LINE__)) delete
+    #define new new(__FILE__, __LINE__)    
+    #define delete if(axDebugSetDelete(__FILE__, __LINE__)) delete
+      
+  #endif // AX_DEBUG_NEW
 
 #else // AX_DEBUG && AX_DEBUG_MEM
   // overload operators new, delete without debug
   #include <new>
-  
-  void* operator new      (unsigned int size) throw (std::bad_alloc);
-  void* operator new[]    (unsigned int size) throw (std::bad_alloc);
-  void  operator delete   (void* ptr) throw();
-  void  operator delete[] (void* ptr) throw();
-  
+
   __axmalloc_inline void* operator new (unsigned int size)
     throw (std::bad_alloc)
   {
