@@ -275,12 +275,15 @@ __axmalloc_inline void* axCalloc (register const unsigned int n,
  */
 __axmalloc_inline void axFree (void* _ptr)
 {
-  if (_ptr != NULL)
+  if (_ptr)
   {
     register unsigned char* ptr = (unsigned char*)_ptr;
     unsigned int b = *(unsigned int*)(ptr-4);
-    *(unsigned char**)ptr = buckets[b];
-    buckets[b] = ptr;
+    if (buckets[b])
+    {
+      *(unsigned char**)ptr = buckets[b];      
+      buckets[b] = ptr;
+    }
   }
 }
 
@@ -316,7 +319,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
   return _ptr;
 }
 
-#endif // ax_no_malloc
+#endif // !AX_NO_MALLOC
 
 // -----------------------------------------------------------------------------
 // enable local debug
@@ -481,7 +484,74 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     #define realloc(p, s)   axReallocDebug  (p, s, __FILE__, __LINE__)
     #define free(p)         axFreeDebug     (p, __FILE__, __LINE__)
   #endif
+  
+  // define some helpers for the delete operator
+  __thread char* ax_del_file;
+  __thread unsigned int ax_del_line;
+  unsigned int axDebugSetDelete(const char* file, unsigned int line)
+  {
+    ax_del_file = (char*)file;
+    ax_del_line = line;
+    return 1;
+  }
+  
+  // overload operators new, delete with debug
+  void* operator new (const unsigned int size, const char* file,
+    const unsigned int line) throw (std::bad_alloc);
+  void* operator new[] (const unsigned int size, const char* file,
+    const unsigned int line) throw (std::bad_alloc);
+  void  operator delete (void* ptr) throw();
+  void  operator delete[] (void* ptr) throw();
+    
+  __axmalloc_inline void* operator new (const unsigned int size,
+    const char* file, unsigned int line) throw (std::bad_alloc)
+  {
+    return axMallocDebug(size, file, line);
+  }
+  __axmalloc_inline void* operator new[] (const unsigned int size,
+    const char* file, unsigned int line) throw (std::bad_alloc)
+  {
+    return axMallocDebug(size, file, line);
+  }
+  __axmalloc_inline void operator delete (void* ptr) throw()
+  {
+    return axFreeDebug(ptr, ax_del_file, ax_del_line);
+  }
+  __axmalloc_inline void operator delete[] (void* ptr) throw()
+  {
+   return axFreeDebug(ptr, ax_del_file, ax_del_line);
+  }
+  
+  #define new new(__FILE__, __LINE__)  
+  #define delete if(axDebugSetDelete(__FILE__, __LINE__)) delete
 
-#endif // ax_debug && ax_debug_mem
+#else // AX_DEBUG && AX_DEBUG_MEM
+  // overload operators new, delete without debug
+  #include <new>
+  
+  void* operator new      (unsigned int size) throw (std::bad_alloc);
+  void* operator new[]    (unsigned int size) throw (std::bad_alloc);
+  void  operator delete   (void* ptr) throw();
+  void  operator delete[] (void* ptr) throw();
+  
+  __axmalloc_inline void* operator new (unsigned int size)
+    throw (std::bad_alloc)
+  {
+    return axMalloc(size);
+  }
+  __axmalloc_inline void* operator new[] (unsigned int size)
+    throw (std::bad_alloc)
+  {
+    return axMalloc(size);
+  }
+  __axmalloc_inline void operator delete (void* ptr) throw()
+  {
+    return axFree(ptr);
+  }
+  __axmalloc_inline void operator delete[] (void* ptr) throw()
+  {
+    return axFree(ptr);
+  }
+#endif // AX_DEBUG && AX_DEBUG_MEM
 
 #endif // axMalloc_included

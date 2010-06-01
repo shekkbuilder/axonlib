@@ -1,8 +1,8 @@
 //#define AX_NO_MALLOC
 #define AX_DEBUG_AUTO_STD
-//#define AX_DEBUG_MEM
-//#define AX_DEBUG_PNG
-//#define AX_DEBUG_LOG  "test_gain_gui_skin.log"
+#define AX_DEBUG_MEM
+#define AX_DEBUG_PNG
+#define AX_DEBUG_LOG  "test_gain_gui_skin.log"
 
 #define AX_ALPHA
 
@@ -41,12 +41,10 @@ class myPlugin : public axFormat
         setupEditor(128,64);
         appendParameter( p_Gain = new axParameter(this,"gain","") );
         setupParameters();
-        /*
-          // test
-          char* ptr = (char*)axCalloc(11, sizeof(char));
-          trace ( axSqrt(21.f) );
-        */
-        //trace(axLogf(11.f));
+                
+        // test op delete[]
+        int* j = new int[21];
+        delete[] j;
       }
 
     virtual ~myPlugin()
