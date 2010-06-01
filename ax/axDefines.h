@@ -25,6 +25,11 @@ TODO:
 
 #ifdef WIN32
   #define AX_WIN32
+  
+  #undef WINVER
+  #define WINVER 0x0501
+  #undef _WIN32_WINNT
+  #define _WIN32_WINNT 0x0501
 #endif
 
 // ax magic

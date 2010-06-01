@@ -115,7 +115,7 @@ else
     then
       compiler=$mingw
       fmt_ext=".dll"
-      tgt="-shared -mwindows -mthreads -lmsimg32"
+      tgt="-shared -mwindows -lmsimg32"
     fi
     # ------------------------- format is executable
     if [ "$2" == "-exe" ] || [ "$3" == "-exe" ] || [ "$4" == "-exe" ] || [ "$5" == "-exe" ] || [ "$6" == "-exe" ] || [ "$7" == "-exe" ];
@@ -125,7 +125,7 @@ else
       if [ "$compiler" == "$mingw" ];
       then
         fmt_ext=".exe"
-        tgt="-mwindows -mthreads -lmsimg32"
+        tgt="-mwindows -lmsimg32"
       # ------------------------- case gcc
       else
         fmt_ext=""
