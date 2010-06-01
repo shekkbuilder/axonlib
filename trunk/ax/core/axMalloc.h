@@ -85,6 +85,12 @@ TODO:
   #define axCalloc    calloc
   #define axRealloc   realloc
   #define axFree      free
+  
+  // no debug for these
+  #define _axMalloc   malloc
+  #define _axCalloc   calloc
+  #define _axRealloc  realloc
+  #define _axFree     free
 
 #else // use axMalloc
 
@@ -315,6 +321,11 @@ __axmalloc_inline void* axRealloc (void* _ptr,
   return _ptr;
 }
 
+#define _axMalloc  axMalloc
+#define _axCalloc  axCalloc
+#define _axFree    axFree
+#define _axRealloc axRealloc
+
 #endif // !AX_NO_MALLOC
 
 // -----------------------------------------------------------------------------
@@ -474,8 +485,22 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     #undef axCalloc
     #undef axRealloc
     #undef axFree
-  #endif
-
+  #endif  
+  
+  // no debug for these: _ax*
+  #undef _axMalloc
+  #undef _axCalloc
+  #undef _axRealloc
+  #undef _axFree
+  __axmalloc_inline void* _axMalloc (register const unsigned int size)
+    { return axMalloc(size); }
+  __axmalloc_inline void* _axCalloc (register const unsigned int n,
+    register unsigned int size)  { return axCalloc(n, size); }  
+  __axmalloc_inline void* _axRealloc (register void* _ptr,
+    register const unsigned int size) { return axRealloc(_ptr, size); }
+  __axmalloc_inline void  _axFree (register void* _ptr)
+    { axFree(_ptr); }
+  
   // macro overrides here
   #define axMalloc(s)     axMallocDebug   (s, __FILE__, __LINE__)
   #define axCalloc(n, s)  axCallocDebug   (n, s, __FILE__, __LINE__)
@@ -488,7 +513,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     #define calloc(n, s)    axCallocDebug   (n, s, __FILE__, __LINE__)
     #define realloc(p, s)   axReallocDebug  (p, s, __FILE__, __LINE__)
     #define free(p)         axFreeDebug     (p, __FILE__, __LINE__)
-  #endif
+  #endif  
   
   #ifdef AX_DEBUG_NEW
     // define some helpers for the delete operator
