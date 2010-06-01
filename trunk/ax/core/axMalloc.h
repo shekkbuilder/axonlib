@@ -65,6 +65,7 @@ TODO:
   - fragmentation level tests
   - thread safety tests (disable the mutex and make the winapi calls directly)
   - check if possible to use implementation with axMutex
+  - better error handling ?
     ============================================================================
 */
 
@@ -200,7 +201,7 @@ static __axmalloc_inline unsigned int size2bucket(unsigned size)
   if (size < 4) size = 4;
   size = (size + 3) & ~3;
   unsigned int i = 0;
-  while (i<5)
+  while (i < 5)
   {
     if (bucket2size[rv & bit] >= size)
       rv &= bit;
@@ -281,7 +282,7 @@ __axmalloc_inline void axFree (void* _ptr)
   {
     register unsigned char* ptr = (unsigned char*)_ptr;
     register unsigned int b = *(unsigned int*)(ptr-4);
-    if (b > 0 && b < 32)
+    if (b < 32)
     {
       *(unsigned char**)ptr = buckets[b];      
       buckets[b] = ptr;
@@ -454,7 +455,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
           axStrcpy(_name, "free, ");
       #else
         unsigned int b = *(unsigned int*)((char*)_ptr-4);
-        if (b > 0 && b < 32)
+        if (b < 32)
           _size = bucket2size[b];
         if (flag)
           axStrcpy(_name, "axFree(delete), ");
