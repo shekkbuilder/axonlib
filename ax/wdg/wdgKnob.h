@@ -29,7 +29,7 @@ class wdgKnob : public wdgValue
             axStrcat(mDisp,labelbuf);
           }
           else axFtoa(mDisp,mValue);
-          mSkin->drawKnob(aCanvas,mRect,mName,mDisp,mValue);
+          mSkin->drawKnob(aCanvas,mRect,mName,mDisp,mValue/*,mSkinMode*/);
         }
       }
 

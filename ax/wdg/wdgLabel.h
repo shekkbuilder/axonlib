@@ -27,7 +27,7 @@ class wdgLabel : public axWidget
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
-        if (mSkin) mSkin->drawLabel(aCanvas,mRect,mText,mTextAlign);
+        if (mSkin) mSkin->drawLabel(aCanvas,mRect,mText,mTextAlign/*,mSkinMode*/);
         //axWidget::doPaint(aCanvas,aRect);
       }
 

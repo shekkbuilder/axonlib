@@ -59,7 +59,7 @@ class wdgButton : public axWidget
             state = mState;
             break;
         }
-        if (mSkin) mSkin->drawButton(aCanvas,mRect,mState?mOnText:mOffText,mTextAlign,state);
+        if (mSkin) mSkin->drawButton(aCanvas,mRect,mState?mOnText:mOffText,mTextAlign,state/*,mSkinMode*/);
       }
 
     //----------

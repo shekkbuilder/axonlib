@@ -112,7 +112,7 @@ class wdgSlider : public axWidget
           //sprintf(mDisp,"%.3f",mValue);
           //__builtin_sprintf(mDisp,"%.3f",mValue);
           axFtoa(mDisp,mValue);
-          mSkin->drawSlider(aCanvas,mRect,mValue,mName,mDisp,hasFlag(wf_Vertical));
+          mSkin->drawSlider(aCanvas,mRect,mValue,mName,mDisp,hasFlag(wf_Vertical)/*,mSkinMode*/);
         }
       }
 

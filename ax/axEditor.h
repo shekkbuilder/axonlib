@@ -61,7 +61,11 @@ class axEditor : public axWindow
         delete mDefaultSkin;
       }
 
-    //----------
+    //--------------------------------------------------
+
+    inline axSkin* defaultSkin(void) { return mDefaultSkin; }
+
+    //--------------------------------------------------
 
     void connect(axWidget* aWidget, axParameter* aParameter)
       {

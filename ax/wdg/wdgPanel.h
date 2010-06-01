@@ -17,7 +17,7 @@ class wdgPanel : public axWidget//axContainer
       {
         if (isVisible() && mSkin)
         {
-          mSkin->drawPanel(aCanvas,mRect);
+          mSkin->drawPanel(aCanvas,mRect/*,mSkinMode*/);
           axWidget::doPaint(aCanvas,aRect);
         }
       }
