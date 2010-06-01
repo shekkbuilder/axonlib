@@ -28,7 +28,7 @@ class axWindow : public axWindowImpl
     axWidget* mModalWidget;
     int       mModalIndex;
     #ifndef AX_WIDGET_NOUPDATELIST
-    axWidgets       mUpdateList;
+    axWidgets mUpdateList;
     #endif
 
   public:

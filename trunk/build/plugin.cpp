@@ -1,5 +1,5 @@
 //#define AX_NO_MALLOC
-#define AX_DEBUG_AUTO_STD
+//#define AX_DEBUG_AUTO_STD
 //#define AX_DEBUG_MEM
 //#define AX_DEBUG_PNG
 //#define AX_ALPHA
@@ -11,6 +11,8 @@
 //#include "../source/test/test_gain_nogui.cpp"
 //#include "../source/test/test_gain_gui.cpp"
 //#include "../source/test/test_gain_gui_skin.cpp"
+
+#include "../test/test_skin.cpp"
 
 //----------------------------------------------------------------------
 // demo
@@ -28,7 +30,7 @@
 //#include "../source/ccernn/fx_svf.cpp"
 //#include "../source/ccernn/fx_wgtavg.cpp"
 //#include "../source/ccernn/midi_transpose.cpp"
-#include "../source/ccernn/syn_poly.cpp"
+//#include "../source/ccernn/syn_poly.cpp"
 
 // gui
 

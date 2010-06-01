@@ -276,6 +276,10 @@ class axCanvasLinux : public axCanvasBase
     // text
     //--------------------------------------------------
 
+    virtual void setTextSize(int aSize)
+      {
+      }
+
     virtual int textWidth(axString aText)
       {
         return XTextWidth(mFont, aText.ptr(), aText.length());

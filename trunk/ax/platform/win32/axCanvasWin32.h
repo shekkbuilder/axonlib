@@ -37,8 +37,6 @@ class axCanvasWin32 : public axCanvasBase
 		HBRUSH  mBrush, mOldBrush;
     HBRUSH  mNullBrush;
     RECT    R;            // temp
-		//HPEN    mPen, mOldPen, mOldPen2;
-		//HBRUSH  mBrush, mOldBrush, mOldBrush2;
     HRGN    mClipRegion;
     BLENDFUNCTION mBlendFunc;
   protected:
@@ -65,7 +63,8 @@ class axCanvasWin32 : public axCanvasBase
         mHasClipRect = false;
         HDC tempdc = GetDC(0);
         if (aContext->mWindow)
-        { // window
+        {
+          // window
           mWinHandle = (int)aContext->mWindow;
           mDC = GetDC(aContext->mWindow);
         }
@@ -75,30 +74,26 @@ class axCanvasWin32 : public axCanvasBase
           mWinHandle = 0;
           mDC = CreateCompatibleDC(tempdc);
         }
+// font
         LOGFONT LFont;
         memset(&LFont,0,sizeof(LFont));
         strcpy(LFont.lfFaceName,"Arial");
         LFont.lfHeight = -MulDiv(8,GetDeviceCaps(tempdc,LOGPIXELSY),72);
         mFont = CreateFontIndirect(&LFont);
         SelectObject(mDC,mFont);
+//
         ReleaseDC(0,tempdc);
-
         mNullPen = CreatePen(PS_NULL,0,0);
         //http://msdn.microsoft.com/en-us/library/dd145035%28v=VS.85%29.aspx
         LOGBRUSH logbrush;
-          logbrush.lbStyle = BS_NULL; // BS_HATCHED, BS_HOLLOW, BS_NULL, BS_SOLID, ++
-          logbrush.lbColor = 0;       // ignored if null
-          logbrush.lbHatch = 0;       // if BS_HATCHED: HS_BDIAGONAL, HS_CROSS, HS_DIAGCROSS, HS_FDIAGONAL, HS_HORIZONTAL, HS_VERTICAL
+        logbrush.lbStyle = BS_NULL; // BS_HATCHED, BS_HOLLOW, BS_NULL, BS_SOLID, ++
+        logbrush.lbColor = 0;       // ignored if null
+        logbrush.lbHatch = 0;       // if BS_HATCHED: HS_BDIAGONAL, HS_CROSS, HS_DIAGCROSS, HS_FDIAGONAL, HS_HORIZONTAL, HS_VERTICAL
         mNullBrush = CreateBrushIndirect(&logbrush);
-
         mPen   = (HPEN)GetStockObject(DC_PEN);
         mBrush = (HBRUSH)GetStockObject(DC_BRUSH);
-
-        // /*mOldPen = (HPEN)*/    SelectObject(mDC, GetStockObject(DC_PEN));
-        // /*mOldBrush = (HBRUSH)*/SelectObject(mDC, GetStockObject(DC_BRUSH));
         SelectObject(mDC,mPen);
         SelectObject(mDC,mBrush);
-
         // from wingdi.h:
         //#define AC_SRC_OVER		          0x00
         //#define AC_SRC_ALPHA		        0x01
@@ -106,13 +101,10 @@ class axCanvasWin32 : public axCanvasBase
         //#define AC_SRC_NO_ALPHA		      0x02
         //#define AC_DST_NO_PREMULT_ALPHA	0x10
         //#define AC_DST_NO_ALPHA		      0x20
-
         mBlendFunc.BlendOp              = AC_SRC_OVER;
         mBlendFunc.BlendFlags           = 0;
         mBlendFunc.SourceConstantAlpha  = 255;//128;//0x7f;
         mBlendFunc.AlphaFormat          = AC_SRC_ALPHA; // 0 =  ignore source alpha channel
-        //mBlendFunc.AlphaFormat          = AC_SRC_NO_PREMULT_ALPHA; // 0 =  ignore source alpha channel
-
       }
 
     //----------
@@ -121,23 +113,14 @@ class axCanvasWin32 : public axCanvasBase
       {
         DeleteObject(mNullPen);
         DeleteObject(mNullBrush);
-
-        //DeleteObject(mOldPen);
-        //DeleteObject(mOldBrush);
-
-        //if (mPen)   DeleteObject(mPen);
-        //if (mBrush) DeleteObject(mBrush);
-        if (mFont)  DeleteObject(mFont);
-
+        if (mFont) DeleteObject(mFont);
         if (mWinHandle) ReleaseDC((HWND)mWinHandle,mDC);
         else DeleteDC(mDC);
-
       }
 
     //----------
 
     virtual int getHandle(void) { return (int)mDC; }
-    //virtual HDC getDC(void) { return mDC; }
 
     //--------------------------------------------------
     //
@@ -151,12 +134,6 @@ class axCanvasWin32 : public axCanvasBase
       }
 
     //--------------------
-
-    //virtual axColor getColor(int aRed, int aGreen, int aBlue)
-    //  {
-    //    axColor color = RGB(aRed,aGreen,aBlue);
-    //    return color;
-    //  }
 
     virtual axColor getColor(int aRed, int aGreen, int aBlue)
       {
@@ -208,11 +185,6 @@ class axCanvasWin32 : public axCanvasBase
 
     void setPen(int aColor, int aWidth=DEF_PENWIDTH)
       {
-        //if (mPen)
-        //{
-        //  SelectObject(mDC,mOldPen);
-        //  DeleteObject(mPen);
-        //}
         HPEN pen = CreatePen(PS_SOLID,aWidth,aColor);
         mOldPen = (HPEN)SelectObject((HDC)mDC, pen);
       };
@@ -228,7 +200,6 @@ class axCanvasWin32 : public axCanvasBase
         mOldBrush = (HBRUSH)SelectObject((HDC)mDC, mBrush);
       };
 
-
     // internal
 
     virtual void setPenWidth(int aWidth)
@@ -236,12 +207,6 @@ class axCanvasWin32 : public axCanvasBase
         //mPenWidth = aWidth;
         setPen(mPenColor.mColor,aWidth);
       };
-
-    //virtual void resetPenWidth(void)
-    //  {
-    //    mPenWidth = DEF_PENWIDTH;
-    //    setpen(mPenColor.mColor,mPenWidth);
-    //  };
 
     virtual void setPenStyle(int aStyle)
       {
@@ -331,11 +296,6 @@ class axCanvasWin32 : public axCanvasBase
 
     virtual void drawRect(int aX1, int aY1, int aX2, int aY2)
       {
-        // todo setpos + 4 lineto
-        //drawLine(aX1, aY1, aX2, aY1);
-        //drawLine(aX1, aY1, aX1, aY2);
-        //drawLine(aX1, aY2, aX2, aY2);
-        //drawLine(aX2, aY1, aX2, aY2);
         setPos(aX1,aY1);
         LineTo(mDC,aX2,aY1);
         LineTo(mDC,aX2,aY2);
@@ -446,6 +406,23 @@ class axCanvasWin32 : public axCanvasBase
     // text
     //--------------------------------------------------
 
+    virtual void setTextSize(int aSize)
+      {
+
+        //mFont = CreateFontIndirect(&LFont);
+        //SelectObject(mDC,mFont);
+
+
+        LOGFONT lfont;
+        HFONT font = (HFONT)GetCurrentObject(mDC,OBJ_FONT);
+        GetObject(font,sizeof(LOGFONT),&lfont);
+        lfont.lfHeight = -MulDiv(aSize,GetDeviceCaps(mDC,LOGPIXELSY),72);
+
+        if (mFont) DeleteObject(mFont);
+        mFont = CreateFontIndirect(&lfont);
+        SelectObject(mDC,mFont);
+      }
+
     virtual int textWidth(axString aText)
       {
         SIZE S;
@@ -531,17 +508,17 @@ class axCanvasWin32 : public axCanvasBase
 
     //----------
 
-//    virtual void renderBitmap(axBitmap* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-//      {
-//        drawBitmap(aBitmap,aX,aY,aSrcX,aSrcY,aSrcW,aSrcH);
-//      }
+    //virtual void renderBitmap(axBitmap* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    //  {
+    //    drawBitmap(aBitmap,aX,aY,aSrcX,aSrcY,aSrcW,aSrcH);
+    //  }
 
-//typedef struct _BLENDFUNCTION {
-//  BYTE BlendOp;
-//  BYTE BlendFlags;
-//  BYTE SourceConstantAlpha;
-//  BYTE AlphaFormat;
-//} BLENDFUNCTION, *PBLENDFUNCTION, *LPBLENDFUNCTION;
+    //typedef struct _BLENDFUNCTION {
+    //  BYTE BlendOp;
+    //  BYTE BlendFlags;
+    //  BYTE SourceConstantAlpha;
+    //  BYTE AlphaFormat;
+    //} BLENDFUNCTION, *PBLENDFUNCTION, *LPBLENDFUNCTION;
 
     virtual void renderImage( axImage*  aImage,  int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
@@ -550,19 +527,19 @@ class axCanvasWin32 : public axCanvasBase
         // link with: libmsimg32
       }
 
-//BOOL StretchBlt(
-//  __in  HDC hdcDest,
-//  __in  int nXOriginDest,
-//  __in  int nYOriginDest,
-//  __in  int nWidthDest,
-//  __in  int nHeightDest,
-//  __in  HDC hdcSrc,
-//  __in  int nXOriginSrc,
-//  __in  int nYOriginSrc,
-//  __in  int nWidthSrc,
-//  __in  int nHeightSrc,
-//  __in  DWORD dwRop
-//);
+    //BOOL StretchBlt(
+    //  __in  HDC hdcDest,
+    //  __in  int nXOriginDest,
+    //  __in  int nYOriginDest,
+    //  __in  int nWidthDest,
+    //  __in  int nHeightDest,
+    //  __in  HDC hdcSrc,
+    //  __in  int nXOriginSrc,
+    //  __in  int nYOriginSrc,
+    //  __in  int nWidthSrc,
+    //  __in  int nHeightSrc,
+    //  __in  DWORD dwRop
+    //);
 
     virtual void stretchImage( axImage*  aImage,  int aX, int aY, int aW, int aH, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {

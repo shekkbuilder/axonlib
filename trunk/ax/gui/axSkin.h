@@ -2,7 +2,7 @@
 #define axSkin_included
 //----------------------------------------------------------------------
 
-#include "gui/axCanvas.h"
+//#include "gui/axCanvas.h"
 
 //----------------------------------------------------------------------
 
@@ -14,42 +14,21 @@
 
 //----------------------------------------------------------------------
 
+//class axSkinBase
 class axSkin
 {
-  protected:
-    int     mVariation;
-    axColor mFillColor;
-    axColor mLightColor;
-    axColor mDarkColor;
-    axColor mTextColor;
   public:
-    axSkin(axCanvas* aCanvas)
-      {
-        mVariation  = 0;
-        mFillColor  = aCanvas->getColor(AX_GREY);
-        mLightColor = aCanvas->getColor(AX_GREY_LIGHT);
-        mDarkColor  = aCanvas->getColor(AX_GREY_DARK);
-        mTextColor  = aCanvas->getColor(AX_WHITE);
-      }
-    virtual ~axSkin() {}
 
-    virtual void setVariation(int aVar) { mVariation=aVar; }
-
-    virtual axColor getFillColor(void)  { return mFillColor; }
-    virtual axColor getDarkColor(void)  { return mDarkColor; }
-    virtual axColor getLightColor(void) { return mLightColor; }
-    virtual axColor getTextColor(void)  { return mTextColor; }
-
-    //TODO: mode
-
-    virtual void drawPanel(     axCanvas* aCanvas, axRect aRect)  {}
-    virtual void drawSizer(     axCanvas* aCanvas, axRect aRect)  {}
-    virtual void drawLabel(     axCanvas* aCanvas, axRect aRect,  axString aText, int aTextAlign) {}
-    virtual void drawValue(     axCanvas* aCanvas, axRect aRect,  axString aName, axString aDisp, float aValue) {}
-    virtual void drawButton(    axCanvas* aCanvas, axRect aRect,  axString aText, int aTextAlign, bool aState) {}
-    virtual void drawSlider(    axCanvas* aCanvas, axRect aRect,  float aValue, axString aText1, axString aText2, bool aVertical) {}
-    virtual void drawKnob(      axCanvas* aCanvas, axRect aRect,  axString aName, axString aDisp, float aValue) {}
-    virtual void drawScrollBar( axCanvas* aCanvas, axRect aRect,  float aValue, bool aVertical, float aThumbSize) {}
+    //axSkin(axCanvas* aCanvas) {}
+    //virtual ~axSkin() {}
+    virtual void drawPanel(     axCanvas* aCanvas, axRect aRect, int aMode=0)  {}
+    virtual void drawSizer(     axCanvas* aCanvas, axRect aRect, int aMode=0)  {}
+    virtual void drawLabel(     axCanvas* aCanvas, axRect aRect,  axString aText, int aTextAlign, int aMode=0) {}
+    virtual void drawValue(     axCanvas* aCanvas, axRect aRect,  axString aName, axString aDisp, float aValue, int aMode=0) {}
+    virtual void drawButton(    axCanvas* aCanvas, axRect aRect,  axString aText, int aTextAlign, bool aState, int aMode=0) {}
+    virtual void drawSlider(    axCanvas* aCanvas, axRect aRect,  float aValue, axString aText1, axString aText2, bool aVertical, int aMode=0) {}
+    virtual void drawKnob(      axCanvas* aCanvas, axRect aRect,  axString aName, axString aDisp, float aValue, int aMode=0) {}
+    virtual void drawScrollBar( axCanvas* aCanvas, axRect aRect,  float aValue, bool aVertical, float aThumbSize, int aMode=0) {}
 };
 
 //----------------------------------------------------------------------

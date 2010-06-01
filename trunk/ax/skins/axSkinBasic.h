@@ -7,20 +7,20 @@
 class axSkinBasic : public axSkin
 {
   protected:
-    //axColor mFillColor;
-    //axColor mLightColor;
-    //axColor mDarkColor;
-    //axColor mTextColor;
+    axColor mFillColor;
+    axColor mLightColor;
+    axColor mDarkColor;
+    axColor mTextColor;
 
   public:
 
     axSkinBasic(axCanvas* aCanvas)
-    : axSkin(aCanvas)
+    //: axSkin(aCanvas)
       {
-        //mFillColor    = aCanvas->getColor(AX_GREY);
-        //mLightColor   = aCanvas->getColor(AX_GREY_LIGHT);
-        //mDarkColor    = aCanvas->getColor(AX_GREY_DARK);
-        //mTextColor    = aCanvas->getColor(AX_WHITE);
+        mFillColor  = aCanvas->getColor(AX_GREY);
+        mLightColor = aCanvas->getColor(AX_GREY_LIGHT);
+        mDarkColor  = aCanvas->getColor(AX_GREY_DARK);
+        mTextColor  = aCanvas->getColor(AX_WHITE);
       }
 
     virtual ~axSkinBasic()
@@ -82,7 +82,7 @@ class axSkinBasic : public axSkin
     //
     //--------------------------------------------------
 
-    virtual void drawPanel(axCanvas* aCanvas, axRect aRect)
+    virtual void drawPanel(axCanvas* aCanvas, axRect aRect, int aMode=0)
       {
         fill_back(aCanvas,aRect);
         draw_frame(aCanvas,aRect);
@@ -90,21 +90,21 @@ class axSkinBasic : public axSkin
 
     //----------
 
-    virtual void drawSizer(axCanvas* aCanvas, axRect aRect)
+    virtual void drawSizer(axCanvas* aCanvas, axRect aRect, int aMode=0)
       {
         fill_dark(aCanvas,aRect);
       }
 
     //----------
 
-    virtual void drawLabel(axCanvas* aCanvas, axRect aRect, axString aText, int aTextAlign)
+    virtual void drawLabel(axCanvas* aCanvas, axRect aRect, axString aText, int aTextAlign, int aMode=0)
       {
         draw_text(aCanvas,aRect,aText,aTextAlign);
       }
 
     //----------
 
-    virtual void drawValue(axCanvas* aCanvas, axRect aRect, axString aName, axString aDisp, float aValue)
+    virtual void drawValue(axCanvas* aCanvas, axRect aRect, axString aName, axString aDisp, float aValue, int aMode=0)
       {
         fill_dark( aCanvas,aRect);
         axRect r = aRect;
@@ -115,7 +115,7 @@ class axSkinBasic : public axSkin
 
     //----------
 
-    virtual void drawButton(axCanvas* aCanvas, axRect aRect, axString aText, int aTextAlign, bool aState)
+    virtual void drawButton(axCanvas* aCanvas, axRect aRect, axString aText, int aTextAlign, bool aState, int aMode=0)
       {
         fill_back( aCanvas,aRect);
         draw_frame(aCanvas,aRect,aState);
@@ -124,7 +124,7 @@ class axSkinBasic : public axSkin
 
     //----------
 
-    virtual void drawSlider(axCanvas* aCanvas, axRect aRect, float aValue, axString aText1, axString aText2, bool aVertical)
+    virtual void drawSlider(axCanvas* aCanvas, axRect aRect, float aValue, axString aText1, axString aText2, bool aVertical, int aMode=0)
       {
         if (aVertical)
         {
@@ -152,7 +152,7 @@ class axSkinBasic : public axSkin
 
     //----------
 
-    virtual void drawKnob(axCanvas* aCanvas, axRect aRect, axString aName, axString aDisp, float aValue)
+    virtual void drawKnob(axCanvas* aCanvas, axRect aRect, axString aName, axString aDisp, float aValue, int aMode=0)
       {
         int x  = aRect.x;
         int y  = aRect.y;
@@ -182,7 +182,7 @@ class axSkinBasic : public axSkin
 
     //----------
 
-    virtual void drawScrollBar(axCanvas* aCanvas, axRect aRect, float aValue, bool aVertical, float aThumbSize)
+    virtual void drawScrollBar(axCanvas* aCanvas, axRect aRect, float aValue, bool aVertical, float aThumbSize, int aMode=0)
       {
         fill_dark(aCanvas,aRect);
         if (aVertical)

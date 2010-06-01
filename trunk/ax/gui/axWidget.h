@@ -94,6 +94,7 @@ class axWidget : public axWidgetListener
     int               mMarginX,  mMarginY;    // container inner space (between outer border & widgets)
     int               mPaddingX, mPaddingY;   // space between wal_Stacked widgets
     axSkin*           mSkin;
+    //int               mSkinMode;
   protected:
     axWidgetListener* mListener;
     axWidgets         mWidgets;
@@ -128,6 +129,7 @@ class axWidget : public axWidgetListener
         mPaddingX       = 0;
         mPaddingY       = 0;
         mSkin           = NULL;
+        //mSkinMode       = 0;
 
         mListener       = aListener;
         mCapturedWidget = NULL;
@@ -161,8 +163,10 @@ class axWidget : public axWidgetListener
     inline void setName(axString aName) { mName=aName; }
     inline void setListener(axWidgetListener* aListener) { mListener=aListener; }
 
-    inline int  getIndex(void)                      { return mIndex; }
-    inline void setIndex(int aNum)                  { mIndex = aNum; }
+    inline int  getIndex(void) { return mIndex; }
+    inline void setIndex(int aNum) { mIndex = aNum; }
+
+    //inline void setSkinMode(int aMode) { mSkinMode = aMode; }
 
     // flags
 

@@ -102,7 +102,7 @@ class wdgValue : public axWidget
           //sprintf(mDisp,"%.3f",mValue);
           //__builtin_sprintf(mDisp,"%.3f",mValue);
           axFtoa(mDisp,mValue);
-          mSkin->drawValue(aCanvas,mRect,mName,mDisp,mValue);
+          mSkin->drawValue(aCanvas,mRect,mName,mDisp,mValue/*,mSkinMode*/);
         }
       }
 

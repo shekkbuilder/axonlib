@@ -99,6 +99,7 @@ class axCanvasBase
 
     // text
 
+    virtual void    setTextSize(int aSize) {}
     virtual int     textWidth(axString aText) {return 0;}
     virtual int     textHeight(axString aText) {return 0;}
     virtual void    drawText(int aX, int aY, axString aText) {}
