@@ -401,11 +401,13 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     const unsigned int _line)
   {
     #ifdef AX_NO_MALLOC    
-      _axMemTotal -= malloc_usable_size(_ptr);
+      if (_axMemTotal)
+        _axMemTotal -= malloc_usable_size(_ptr);
       void* _ptr0 = realloc(_ptr, _size);
       _axMemTotal += malloc_usable_size(_ptr0);
-    #else      
-      _axMemTotal -= bucket2size[*(unsigned int*)((char*)_ptr-4)];
+    #else
+      if (_axMemTotal)
+        _axMemTotal -= bucket2size[*(unsigned int*)((char*)_ptr-4)];
       void* _ptr0 = axRealloc(_ptr, _size);
       _axMemTotal += bucket2size[*(unsigned int*)((char*)_ptr0-4)];;
     #endif
@@ -437,7 +439,8 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     #else      
       _size = bucket2size[*(unsigned int*)((char*)_ptr-4)];
     #endif
-    _axMemTotal -= _size;
+    if (_axMemTotal)
+      _axMemTotal -= _size;
 
     // output cout / log
     #ifdef AX_NO_MALLOC
