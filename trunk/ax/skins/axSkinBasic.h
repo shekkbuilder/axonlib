@@ -6,11 +6,6 @@
 
 class axSkinBasic : public axSkin
 {
-  protected:
-    axColor mFillColor;
-    axColor mLightColor;
-    axColor mDarkColor;
-    axColor mTextColor;
 
   public:
 

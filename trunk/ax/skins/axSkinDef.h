@@ -162,6 +162,9 @@ class axSkinDef : public axSkin
 
     //--------------------------------------------------
 
+  //private:
+
+    //[internal]
     axBitmap* loadBitmap(axEditor* aEditor, char* aBuffer, int aWidth, int aHeight)
     {
       axBitmap* bitmap = aEditor->createBitmap(aWidth,aHeight,32);
@@ -172,9 +175,11 @@ class axSkinDef : public axSkin
       return bitmap;
     }
 
-    //----------
+  //public:
 
-    void loadSkinBitmap(axEditor* aEditor, char* aBuffer)
+    //--------------------------------------------------
+
+    virtual void loadSkinBitmap(axEditor* aEditor, char* aBuffer)
       {
         axBitmap* bitmap = loadBitmap(aEditor,aBuffer,256,256);
         mSkinSrf = aEditor->createSurface(256,256,32);
@@ -185,7 +190,7 @@ class axSkinDef : public axSkin
 
     //----------
 
-    void loadKnobBitmap(axEditor* aEditor, char* aBuffer)
+    virtual void loadKnobBitmap(axEditor* aEditor, char* aBuffer)
       {
         axBitmap* bitmap = loadBitmap(aEditor,aBuffer,32,(32*65));
         mKnobSrf = aEditor->createSurface(32,(32*65),32);

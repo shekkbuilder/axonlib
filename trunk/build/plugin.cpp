@@ -2,7 +2,7 @@
 //#define AX_DEBUG_AUTO_STD
 //#define AX_DEBUG_MEM
 //#define AX_DEBUG_PNG
-//#define AX_ALPHA
+//#define AX_DEBUG_LOG "plugin.log"
 
 //----------------------------------------------------------------------
 // test
@@ -10,9 +10,9 @@
 
 //#include "../source/test/test_gain_nogui.cpp"
 //#include "../source/test/test_gain_gui.cpp"
-//#include "../source/test/test_gain_gui_skin.cpp"
+#include "../source/test/test_gain_gui_skin.cpp"
 
-#include "../test/test_skin.cpp"
+//#include "../test/test_skin.cpp"
 
 //----------------------------------------------------------------------
 // demo

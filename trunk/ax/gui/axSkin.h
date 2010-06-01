@@ -17,10 +17,22 @@
 //class axSkinBase
 class axSkin
 {
+  protected:
+    axColor mFillColor;
+    axColor mLightColor;
+    axColor mDarkColor;
+    axColor mTextColor;
+
   public:
 
     //axSkin(axCanvas* aCanvas) {}
     //virtual ~axSkin() {}
+
+    inline axColor getFillColor(void)   { return mFillColor; }
+    inline axColor getLightColor(void)  { return mLightColor; }
+    inline axColor getDarkColor(void)   { return mDarkColor; }
+    inline axColor getTextColor(void)   { return mTextColor; }
+
     virtual void drawPanel(     axCanvas* aCanvas, axRect aRect, int aMode=0)  {}
     virtual void drawSizer(     axCanvas* aCanvas, axRect aRect, int aMode=0)  {}
     virtual void drawLabel(     axCanvas* aCanvas, axRect aRect,  axString aText, int aTextAlign, int aMode=0) {}
