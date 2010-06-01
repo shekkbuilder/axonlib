@@ -229,7 +229,7 @@ __axmalloc_inline void* axMalloc (register unsigned int size)
     return NULL;
   register unsigned char* rv;
   register unsigned int b;
-  if (bucket2size[0] == 0)
+  if (!bucket2size[0])
     init_buckets();
   b = size2bucket(size);
   if (buckets[b])
@@ -280,8 +280,8 @@ __axmalloc_inline void axFree (void* _ptr)
   if (_ptr)
   {
     register unsigned char* ptr = (unsigned char*)_ptr;
-    unsigned int b = *(unsigned int*)(ptr-4);
-    if (buckets[b])
+    register unsigned int b = *(unsigned int*)(ptr-4);
+    if (b > 0 && b < 32)
     {
       *(unsigned char**)ptr = buckets[b];      
       buckets[b] = ptr;
@@ -442,8 +442,9 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     (void* _ptr, const char* _file, const unsigned int _line,
     const unsigned int flag = 0)
   {
-    if (_axMemTotal)
+    if (_axMemTotal && _ptr)
     {
+      int _size = 0;
       char _name[20];
       #ifdef AX_NO_MALLOC
         int _size = malloc_usable_size(_ptr);
@@ -451,8 +452,10 @@ __axmalloc_inline void* axRealloc (void* _ptr,
           axStrcpy(_name, "free(delete), ");        
         else
           axStrcpy(_name, "free, ");
-      #else      
-        int _size = bucket2size[*(unsigned int*)((char*)_ptr-4)];
+      #else
+        unsigned int b = *(unsigned int*)((char*)_ptr-4);
+        if (b > 0 && b < 32)
+          _size = bucket2size[b];
         if (flag)
           axStrcpy(_name, "axFree(delete), ");
         else
