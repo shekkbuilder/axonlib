@@ -107,7 +107,11 @@ void png_alloc_add_node(void *addr, size_t size)
 	png_alloc_node_t *node;
 	if (png_alloc_find_node(addr))
 		return;
-	node = (png_alloc_node_t*)axMalloc(sizeof (png_alloc_node_t));
+  #ifdef AX_DEBUG_PNG
+    node = (png_alloc_node_t*)axMalloc(sizeof (png_alloc_node_t));
+  #else
+    node = (png_alloc_node_t*)_axMalloc(sizeof (png_alloc_node_t));
+  #endif
 	node->addr = addr;
 	node->size = size;
 	node->prev = png_alloc_tail;
@@ -132,12 +136,20 @@ void png_alloc_remove_node(png_alloc_node_t *node)
 	node->prev = NULL;
   node->next = NULL;
   node->addr = NULL;
-	axFree(node);
+  #ifdef AX_DEBUG_PNG
+    axFree(node);
+  #else
+    _axFree(node);
+  #endif
 }
 
 void *png_alloc_malloc(size_t size)
 {
-	void *addr = axMalloc(size);
+  #ifdef AX_DEBUG_PNG
+    void *addr = axMalloc(size);
+  #else
+    void *addr = _axMalloc(size);
+  #endif	
 	png_alloc_add_node(addr, size);
 	return addr;
 }
@@ -147,7 +159,11 @@ void *png_alloc_realloc(void *addr, size_t size)
 	void *new_addr;
 	if (!addr)
 		return png_alloc_malloc(size);
-	new_addr = axRealloc((char*)addr, size);
+  #ifdef AX_DEBUG_PNG
+    new_addr = axRealloc((char*)addr, size);
+  #else
+    new_addr = _axRealloc((char*)addr, size);
+  #endif	
 	if (new_addr != addr) {
 		png_alloc_node_t *old_node;
 		old_node = png_alloc_find_node(addr);
@@ -162,8 +178,12 @@ void png_alloc_free(void *addr)
 	png_alloc_node_t *node = png_alloc_find_node(addr);
 	if (!node)
 		return;
-	png_alloc_remove_node(node);
-	axFree(addr);
+	png_alloc_remove_node(node);	
+  #ifdef AX_DEBUG_PNG
+    axFree(addr);
+  #else
+    _axFree(addr);
+  #endif
 }
 
 void png_alloc_free_all()
@@ -171,7 +191,11 @@ void png_alloc_free_all()
 	while (png_alloc_tail) {
 		void *addr = png_alloc_tail->addr;
 		png_alloc_remove_node(png_alloc_tail);
-		axFree(addr);
+		#ifdef AX_DEBUG_PNG
+      axFree(addr);
+    #else
+      _axFree(addr);
+    #endif
 	}
 }
 
