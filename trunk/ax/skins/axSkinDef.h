@@ -166,9 +166,9 @@ class axSkinDef : public axSkin
   //private:
 
     //[internal]
-    axBitmap* loadBitmap(axEditor* aEditor, char* aBuffer, int aWidth, int aHeight)
+    axBitmap* loadBitmap(axEditor* aEditor, char* aBuffer, int aWidth, int aHeight, int aDepth)
     {
-      axBitmap* bitmap = aEditor->createBitmap(aWidth,aHeight,32);
+      axBitmap* bitmap = aEditor->createBitmap(aWidth,aHeight,aDepth);
       bitmap->createBuffer(aBuffer);
       bitmap->convertRgbaBgra();
       bitmap->premultAlpha();
@@ -180,22 +180,22 @@ class axSkinDef : public axSkin
 
     //--------------------------------------------------
 
-    virtual void loadSkinBitmap(axEditor* aEditor, char* aBuffer)
+    virtual void loadSkinBitmap(axEditor* aEditor, char* aBuffer, int aWidth, int aHeight, int aDepth)
       {
-        axBitmap* bitmap = loadBitmap(aEditor,aBuffer,256,256);
-        mSkinSrf = aEditor->createSurface(256,256,32);
-        mSkinSrf->getCanvas()->drawBitmap( bitmap, 0,0, 0,0,256,256 );
+        axBitmap* bitmap = loadBitmap(aEditor,aBuffer,aWidth,aHeight,aDepth);//256,256);
+        mSkinSrf = aEditor->createSurface(aWidth,aHeight,aDepth);//256,256,32);
+        mSkinSrf->getCanvas()->drawBitmap( bitmap, 0,0, 0,0,aWidth,aHeight);//256,256 );
         mSkinSrfLoaded = true;
         delete bitmap;
       }
 
     //----------
 
-    virtual void loadKnobBitmap(axEditor* aEditor, char* aBuffer)
+    virtual void loadKnobBitmap(axEditor* aEditor, char* aBuffer, int aWidth, int aHeight, int aDepth)
       {
-        axBitmap* bitmap = loadBitmap(aEditor,aBuffer,32,(32*65));
-        mKnobSrf = aEditor->createSurface(32,(32*65),32);
-        mKnobSrf->getCanvas()->drawBitmap( bitmap, 0,0, 0,0,32,(32*65) );
+        axBitmap* bitmap = loadBitmap(aEditor,aBuffer,aWidth,aHeight,aDepth);//32,(32*65));
+        mKnobSrf = aEditor->createSurface(aWidth,aHeight,aDepth);//32,(32*65),32);
+        mKnobSrf->getCanvas()->drawBitmap( bitmap, 0,0, 0,0,aWidth,aHeight);//32,(32*65) );
         mKnobSrfLoaded = true;
         delete bitmap;
       }

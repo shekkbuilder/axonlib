@@ -35,15 +35,15 @@ class wdgImage : public axWidget//axContainer
 
     //----------
 
-    virtual void loadBitmap(axEditor* aEditor, char* aBuffer, int aWidth, int aHeight)
+    virtual void loadBitmap(axEditor* aEditor, char* aBuffer, int aWidth, int aHeight, int aDepth)
     {
-      axBitmap* bitmap = aEditor->createBitmap(aWidth,aHeight,32);
+      axBitmap* bitmap = aEditor->createBitmap(aWidth,aHeight,aDepth);
       bitmap->createBuffer(aBuffer);
       bitmap->convertRgbaBgra();
       bitmap->premultAlpha();
       bitmap->prepare();
       //return bitmap;
-      /*axSurface**/ mSurface = aEditor->createSurface(aWidth,aHeight,32);
+      /*axSurface**/ mSurface = aEditor->createSurface(aWidth,aHeight,aDepth);
       mSurface->getCanvas()->drawBitmap( bitmap, 0,0, 0,0,aWidth,aHeight );
       mImage = mSurface;
       mSurfaceLoaded = true;
