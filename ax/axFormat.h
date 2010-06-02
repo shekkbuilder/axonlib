@@ -54,7 +54,7 @@ class axFormat : public axFormatImpl, public axParameterListener
   protected:
     axSystemInfo mSystemInfo;
   public:
-    axFormat(axContext* aContext,int aFormatFlags)
+    axFormat(axContext* aContext,int aFormatFlags=pf_None)
     //: axFormatBase(aContext,aFormatFlags)
     : axFormatImpl(aContext,aFormatFlags)
       {
