@@ -21,7 +21,7 @@
 // demo
 //----------------------------------------------------------------------
 
-#include "../source/demo/axDemo.cpp"
+//#include "../source/demo/axDemo.cpp"
 
 //----------------------------------------------------------------------
 // ccernn
@@ -29,7 +29,9 @@
 
 // no gui
 
+//#include "../source/ccernn/fx_blur.cpp"
 //#include "../source/ccernn/fx_distortion.cpp"
+#include "../source/ccernn/fx_freeze.cpp"
 //#include "../source/ccernn/fx_svf.cpp"
 //#include "../source/ccernn/fx_wgtavg.cpp"
 //#include "../source/ccernn/midi_transpose.cpp"
