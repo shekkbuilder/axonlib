@@ -7,7 +7,8 @@
 class wdgImage : public axWidget//axContainer
 {
   protected:
-    bool        mImageLoaded;
+    bool        mSurfaceLoaded;
+    axSurface*  mSurface;
     axImage*    mImage;
 
   public:
@@ -17,7 +18,7 @@ class wdgImage : public axWidget//axContainer
     : axWidget(aListener,aRect,aAlignment)
       {
         //clearFlag(wf_Active);
-        mImageLoaded = false;
+        mSurfaceLoaded = false;
         mImage = aImage;
       }
 
@@ -25,7 +26,7 @@ class wdgImage : public axWidget//axContainer
 
     virtual ~wdgImage()
       {
-        if (mImageLoaded) delete mImage;
+        if (mSurfaceLoaded) delete mSurface;
       }
 
     //----------
@@ -42,10 +43,10 @@ class wdgImage : public axWidget//axContainer
       bitmap->premultAlpha();
       bitmap->prepare();
       //return bitmap;
-      axSurface* surface = aEditor->createSurface(aWidth,aHeight,32);
-      surface->getCanvas()->drawBitmap( bitmap, 0,0, 0,0,aWidth,aHeight );
-      mImage = surface;
-      mImageLoaded = true;
+      /*axSurface**/ mSurface = aEditor->createSurface(aWidth,aHeight,32);
+      mSurface->getCanvas()->drawBitmap( bitmap, 0,0, 0,0,aWidth,aHeight );
+      mImage = mSurface;
+      mSurfaceLoaded = true;
       delete bitmap;
     }
 
