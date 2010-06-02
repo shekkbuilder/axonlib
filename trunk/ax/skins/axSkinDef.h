@@ -100,26 +100,27 @@ class axSkinDef : public axSkin
     axSkinDef(axCanvas* aCanvas)
     //: axSkin(aCanvas)
       {
-        mSkinSrfLoaded     = false;
-        mKnobSrfLoaded     = false;
-        mSkinSrf           = NULL;
-        mKnobSrf           = NULL;
-        mPanelBackCol      = aCanvas->getColor(0x5c,0x64,0x6a);
-        mTextColor = aCanvas->getColor(AX_WHITE);
-        mButtonOffRect     = axRect(16, 0,16,16);
-        mButtonOnRect      = axRect(16,16,16,16);
-        mKnobWidth         = 32;
-        mKnobHeight        = 32;
-        mKnobCount         = 65;
-        mKnobTextCol       = aCanvas->getColor(0,0,0);
-        mKnobValCol        = aCanvas->getColor(255,255,255);
-        mSliderBackRect    = axRect( 0,  0,16,64);
-        mSliderThumbRect   = axRect( 0, 64,16,11);
+        mSkinSrfLoaded    = false;
+        mKnobSrfLoaded    = false;
+        mSkinSrf          = NULL;
+        mKnobSrf          = NULL;
+        mPanelBackCol     = aCanvas->getColor(0x5c,0x64,0x6a);
+        mTextColor        = aCanvas->getColor(AX_WHITE);
+        mButtonOffRect    = axRect(16, 0,16,16);
+        mButtonOnRect     = axRect(16,16,16,16);
+        mKnobWidth        = 32;
+        mKnobHeight       = 32;
+        mKnobCount        = 65;
+        mKnobTextCol      = aCanvas->getColor(0,0,0);
+        mKnobValCol       = aCanvas->getColor(255,255,255);
+        mSliderBackRect   = axRect( 0,  0,16,64);
+        mSliderThumbRect  = axRect( 0, 64,16,11);
       }
 
     //----------
 
     axSkinDef(axSkinDef* aSkin)
+    //: axSkin(aCanvas)
       {
         copyFrom(aSkin);
       }

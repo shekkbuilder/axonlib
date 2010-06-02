@@ -13,12 +13,32 @@
 #include "core/axAssert.h"
 #include "core/axRand.h"
 
+#include "gui/axBitmapLoader.h"
+#include "../ax/skins/img/skin1.h"
+#include "../ax/skins/img/knob1.h"
+
 //----------------------------------------------------------------------
 
 int main(void)
 {
-  axRand(666);
+  axBitmapLoader* loader1;
+  axBitmapLoader* loader2;
   int i;
+
+  axRand(666);
+
+  //----------
+
+  //trace("before loading png 1:");
+  //trace("png_alloc_head: " << png_alloc_head);
+  //trace("png_alloc_tail: " << png_alloc_tail);
+
+  loader1 = new axBitmapLoader();
+  loader1->decode((unsigned char*)skin1,skin1_size);
+
+  //trace("after loading png 1:");
+  //trace("png_alloc_head: " << png_alloc_head);
+  //trace("png_alloc_tail: " << png_alloc_tail);
 
   //----------
 
@@ -31,8 +51,20 @@ int main(void)
     bufm[i] = axMalloc(n);
     num_malloc += n;
   }
+  trace("num_malloc: " << num_malloc);
 
-  for (i=0; i<100; i++) axFree( bufm[i] );
+  //----------
+
+  //trace("before loading png 2:");
+  //trace("png_alloc_head: " << png_alloc_head);
+  //trace("png_alloc_tail: " << png_alloc_tail);
+
+  loader2 = new axBitmapLoader();
+  loader2->decode((unsigned char*)knob1,knob1_size);
+
+  //trace("after loading png 2:");
+  //trace("png_alloc_head: " << png_alloc_head);
+  //trace("png_alloc_tail: " << png_alloc_tail);
 
   //----------
 
@@ -45,7 +77,13 @@ int main(void)
     bufn[i] = new char[n];
     num_new += n;
   }
+  trace("num_new: " << num_new);
 
+  //----------
+
+  for (i=0; i<100; i++) axFree( bufm[i] );
   for (i=0; i<100; i++) delete bufn[i];
+  delete loader1;
+  delete loader2;
 
 }

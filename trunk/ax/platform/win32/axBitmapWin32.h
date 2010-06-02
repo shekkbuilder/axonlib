@@ -28,7 +28,7 @@ class axBitmapWin32 : public axBitmapBase
         {
           DeleteObject(mBitmap); // deletes allocated buffer
         }
-        if (!mPrepared && mBuffer) delete[] mBuffer;
+        if ((!mPrepared) && mBuffer) delete[] mBuffer;
         //mBuffer = NULL;
       }
 
@@ -94,7 +94,7 @@ class axBitmapWin32 : public axBitmapBase
             memcpy(ptr,mBuffer,mWidth*mHeight*4);
             //memset(ptr,255,mWidth*mHeight*4);
 
-            //delete[] mBuffer; //caller's responsibility?
+            delete[] mBuffer; //caller's responsibility?
             //mBuffer = (char*)ptr;
           }
 

@@ -19,7 +19,7 @@
 
 class axBitmapLoader
 {
-  public:
+  private:
     unsigned long   mWidth;
     unsigned long   mHeight;
     unsigned char*  mImage;
@@ -58,13 +58,13 @@ class axBitmapLoader
         mHeight = png->height;
         //mImage  = mPngInfo->image->data;
         // allocate our own chunk of data, and free all temporary png decoder things
-        //trace("image size:  " << png->image->size ); // 256k
-        //trace("image alloc: " << png->image->allocsize );  // 2mb
+        trace("image size:  " << png->image->size ); // 256k
+        trace("image alloc: " << png->image->allocsize );  // 2mb
         mImage = (unsigned char*)axMalloc(png->image->size);
         axMemcpy(mImage,png->image->data,png->image->size);
         axPngFreeAll();                                                 // CHECK THIS !!!
-        //axFree(png);
-        //png->image->data[0] = 0;
+        //axFree(png); // crash (already free?)
+        //png->image->data[0] = 0;  // try to access image data
         return res;//(int)mPngInfo;
       }
 

@@ -79,7 +79,7 @@ typedef struct {
 PNG_info_t *PNG_decode(const ax_uint8 *in, ax_uint32 size);
 void png_alloc_free_all();
 
-// see line 676: "int PNG_error;"
+// see line 694: "int PNG_error;"
 extern int PNG_error;
 
 /******************************************************************************/
@@ -149,7 +149,7 @@ void *png_alloc_malloc(size_t size)
     void *addr = axMalloc(size);
   #else
     void *addr = _axMalloc(size);
-  #endif	
+  #endif
 	png_alloc_add_node(addr, size);
 	return addr;
 }
@@ -163,7 +163,7 @@ void *png_alloc_realloc(void *addr, size_t size)
     new_addr = axRealloc((char*)addr, size);
   #else
     new_addr = _axRealloc((char*)addr, size);
-  #endif	
+  #endif
 	if (new_addr != addr) {
 		png_alloc_node_t *old_node;
 		old_node = png_alloc_find_node(addr);
@@ -178,7 +178,7 @@ void png_alloc_free(void *addr)
 	png_alloc_node_t *node = png_alloc_find_node(addr);
 	if (!node)
 		return;
-	png_alloc_remove_node(node);	
+	png_alloc_remove_node(node);
   #ifdef AX_DEBUG_PNG
     axFree(addr);
   #else
@@ -1227,7 +1227,7 @@ PNG_info_t *PNG_decode(const ax_uint8 *in, ax_uint32 size)
   }
 
   #define PNG_decode(a, b)      PNG_decode_DEBUG(a, b, __FILE__, __LINE__)
-  #define PNG_convert(a, b, c)  PNG_convert_DEBUG(a, b, c, __FILE__, __LINE__)  
+  #define PNG_convert(a, b, c)  PNG_convert_DEBUG(a, b, c, __FILE__, __LINE__)
   #define Zlib_decompress(a, b) Zlib_decompress_DEBUG(a, b, __FILE__, __LINE__)
   #define png_alloc_free_all()  png_alloc_free_all_DEBUG(__FILE__, __LINE__)
   #define PNG_readPngHeader(a, b, c) \

@@ -1,29 +1,10 @@
 //#define AX_NO_MALLOC
 #define AX_DEBUG_AUTO_STD
 #define AX_DEBUG_MEM
-#define AX_DEBUG_PNG
+//#define AX_DEBUG_PNG
+#define AX_DEBUG_NEW
 #define AX_DEBUG_LOG "test_skin.log"
 
-//----------------------------------------------------------------------
-/*
-
-win7:
-----------
-
-with this:
-  #define AX_DEBUG_MEM
-it looks like it crashes at exit (seg fault?)
-
-with this:
-  #define AX_NO_MALLOC
-  #define AX_DEBUG_MEM
-it doesn't..
-
-linux:
-----------
-todo
-
-*/
 //----------------------------------------------------------------------
 
 #include "axFormat.h"
@@ -92,6 +73,7 @@ class myPlugin : public axFormat
           knobloader2 = new axBitmapLoader();
           knobloader2->decode((unsigned char*)knob32,knob32_size);
           skin_initialized = true;
+
         }
 
         //---
