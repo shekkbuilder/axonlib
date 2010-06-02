@@ -1,0 +1,123 @@
+
+#include "axFormat.h"
+#include "par/parFloat.h"
+#include "par/parInteger.h"
+
+//----------
+
+#define MAX_SRATE   192000
+#define MAX_SECONDS 1
+#define MAX_BUFSIZE (MAX_SECONDS*MAX_SRATE*2)
+
+char* str_freeze[] = { (char*)"off", (char*)"on" };
+char* str_loopmode[] = { (char*)"wrap", (char*)"bidi" };
+
+//----------
+
+class myPlugin : public axFormat
+{
+  private:
+
+  public:
+    float*  BUFFER;
+    int     index;
+    float   pos;
+
+    int     bufsize;
+    float   size;
+    float   speed;
+    float   start;
+    int     freeze;
+    int     mode;
+
+  public:
+
+    myPlugin(axContext* aContext)
+    : axFormat(aContext, pf_None)
+      {
+        BUFFER = new float[MAX_BUFSIZE];
+        index  = 0;
+        pos    = 0;
+        describe("fx_freeze","ccernn","axonlib example",0,AX_MAGIC+0x1009);
+        setupAudio(2,2);
+        //appendParameter( new axParameter(this,"gain","",0) );
+        appendParameter( new parFloat(  this,"buffersize","ms", 1000, 1, 1000 ));
+        appendParameter( new parFloat(  this,"size",      "",   1,    0, 1 ));
+        appendParameter( new parFloat(  this,"speed",     "",   1,    0, 2 ));
+        appendParameter( new parFloat(  this,"start",     "",   0,    0, 1 ));
+        appendParameter( new parInteger(this,"freeze",    "",   0,    0, 1, str_freeze ));
+        appendParameter( new parInteger(this,"loop mode", "",   1,    0, 1, str_loopmode ));
+        setupParameters();
+      }
+
+    virtual ~myPlugin()
+      {
+        delete[] BUFFER;
+      }
+
+    virtual void  doSetParameter(axParameter* aParameter)
+      {
+        //if (aParameter->getIndex()==0) m_Gain = aParameter->getValue();
+        float srate = getSampleRate();
+        int  id = aParameter->getIndex();
+        float f = aParameter->getValue();
+        switch(id)
+        {
+          case 0: bufsize = (f*0.001)*srate;      break;
+          case 1: size    = axMax(1,(f*bufsize)); break;
+          case 2: speed   = f;                    break;
+          case 3: start   = f*bufsize;            break;
+          case 4: freeze  = f;                    break;
+          case 5: mode    = f;                    break;
+        }
+      }
+
+    virtual void  doProcessSample(SPL** aInputs, SPL** aOutputs)
+      {
+        float spl0 = *aInputs[0];
+        float spl1 = *aInputs[1];
+        int p2;
+
+        if (freeze==0)
+        {
+          p2 = index*2;
+          BUFFER[p2  ] = spl0;
+          BUFFER[p2+1] = spl1;
+        }
+        index += 1;
+        if (index>=bufsize) index = 0;
+        //out = BUFFER[pos];
+        pos += speed;
+        if( mode==0) // wraparound
+        {
+          if (pos>=size) pos -= size;
+          if (pos<0) pos += size;
+        }
+        else if (mode==1) // bidi looping
+        {
+          if (pos>=size)
+          {
+            pos = size - (pos-size);
+            speed = -speed;
+          }
+          else if (pos<0)
+          {
+            pos = -pos;
+            speed = -speed;
+          }
+        }
+        p2 = start + pos;
+        /*if (p>=bufsize)*/ while (p2>=bufsize) p2-=bufsize;
+        /*if (p<0)*/ while (p2<0) p2+=bufsize;
+        p2 *= 2;
+        spl0 = BUFFER[p2];
+        spl1 = BUFFER[p2+1];
+
+
+        *aOutputs[0] = spl0;
+        *aOutputs[1] = spl1;
+      }
+
+};
+
+AX_ENTRYPOINT(myPlugin)

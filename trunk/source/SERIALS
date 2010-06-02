@@ -19,6 +19,8 @@ ccernn:
   1005      fx_wgtavg
   1006      fx_svf
   1007      syn_poly
+  1008      fx_blur
+  1009      fx_freeze
 
 ports:
 
