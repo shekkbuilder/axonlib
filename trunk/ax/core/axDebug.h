@@ -107,12 +107,36 @@
 #define axDebug_included
 //----------------------------------------------------------------------
 
+// get file name from a path string
+#include "axStdlib.h"
+inline const char* axGetFileName(const char* path)
+{
+  const char *slash, *backslash;
+  slash = axStrrchr(path, '/');
+  backslash = axStrrchr(path, '\\') + 1;
+  if (slash) return slash + 1;
+    return backslash;
+}
+
+#ifdef AX_DEBUG_FULL
+  #undef AX_DEBUG
+  #define AX_DEBUG
+  #undef AX_DEBUG_PNG
+  #define AX_DEBUG_PNG
+  #undef AX_DEBUG_MEM
+  #define AX_DEBUG_MEM
+  #undef AX_DEBUG_NEW
+  #define AX_DEBUG_NEW
+  #ifndef AX_DEBUG_LOG
+    #define AX_DEBUG_LOG "axdebug.log"
+  #endif
+#endif
+
 // case: debug enabled
 #ifdef AX_DEBUG
 
   #define _WIN32_WINNT 0x0501
 
-  #include "core/axUtils.h"
   #include <iostream>
   #include <fstream>
   using namespace std;
@@ -311,10 +335,14 @@
     }
 
     // print macros
-    #define _trace(x) { if (axHcrt) { _axDcout(x); } if (axDlog) { _axDfstream(x); } }
-    #define trace(x)  { if (axHcrt) { axDcout(x); } if (axDlog) { axDfstream(x); } }    
-    #define msg(x)    { if (axHcrt) { axDprintf(x); } if (axDlog) axDfstream(x); } }
-    #define wtrace(x) { axDcout(x); if (axDlog) { axDfstream(x); } }
+    #define _trace(x) \
+      { if (axHcrt) { _axDcout(x); } if (axDlog) { _axDfstream(x); } }
+    #define trace(x)  \
+      { if (axHcrt) { axDcout(x); } if (axDlog) { axDfstream(x); } }    
+    #define msg(x)    \
+      { if (axHcrt) { axDprintf(x); } if (axDlog) axDfstream(x); } }
+    #define wtrace(x) \
+      { axDcout(x); if (axDlog) { axDfstream(x); } }
 
   #endif // case: windows
 
