@@ -92,6 +92,7 @@ class myPlugin : public axFormat
           m_SkinLoader->decode((unsigned char*)skin1,skin1_size);
           m_KnobLoader = new axBitmapLoader();
           m_KnobLoader->decode((unsigned char*)knob1,knob1_size);
+          //m_KnobLoader->decodeLoad("fx_grains_knob.png");
           m_GuiInitialized = true;
         }
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);

@@ -254,6 +254,9 @@ typedef unsigned char         __may_alias uchar_a;
   #define __stdcall   __attribute__ ((stdcall)))
 #endif
 
+// path
+#define AX_MAX_PATH 512
+
 // other
 #define __hotinline               ___always_inline __hot __optimize(3)
 #define __asmv                    __asm__ __volatile__

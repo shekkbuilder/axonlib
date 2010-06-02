@@ -26,6 +26,18 @@
 #include "core/axStdlib.h"
 #include "core/axMalloc.h"
 #include "core/axMath.h"
+#include "core/axDebug.h"
+#include "stdio.h" // fread, fseek, fopen
+#ifdef AX_WIN32
+  #include <windows.h>
+  #ifdef AX_FORMAT_VST
+    #include "format/axFormatVst.h" // gInstance for axGetBasePath() 
+  #endif
+#endif
+#ifdef AX_LINUX
+  #include <dlfcn.h>
+  #include <unistd.h>
+#endif
 
 #ifdef AX_HOT_INLINE_UTILS
   #define __axutils_inline __hotinline
@@ -36,24 +48,6 @@
 // -------------------------------------------
 #define axStrExpand(x) #x
 #define axStr(x) axStrExpand(x)
-
-/**
- return the filename from the __FILE__ flag: <br>
- (can be used for any path as well)
- \code
-  printf("%s\n", axGetFileName(__FILE__));
- \endcode
- @param[in] path const char*
- @return const char*
- */
-__axutils_inline const char* axGetFileName(const char* path)
-{
-  const char *slash, *backslash;
-  slash = axStrrchr(path, '/');
-  backslash = axStrrchr(path, '\\') + 1;
-  if (slash) return slash + 1;
-    return backslash;
-}
 
 /**
  * swap the values of two variables <br>
@@ -416,12 +410,95 @@ __axutils_inline void axRadix(long *source, long *dest,
 }
 
 // check for little endian
-__axutils_inline bool axLittleEndian (void)
+__axutils_inline unsigned int axLittleEndian (void)
   { const int i = 1; return  (*(char*)&i); }
 
 // check for big endian
-__axutils_inline bool axBigEndian (void)
+__axutils_inline unsigned int axBigEndian (void)
   { const int i = 1; return !(*(char*)&i); }
 
+// retrieve the path from where the binary (pe / elf) is loaded
+__axstdlib_inline const char* axGetBasePath (char* path)
+{
+  char* path_init = path;
+  // windows
+  #ifdef WIN32
+    char filepath[AX_MAX_PATH] = "";
+    #ifdef AX_FORMAT_VST
+      GetModuleFileName(gInstance, filepath, MAX_PATH);   // windows.h
+      const char* slash = axStrrchr(filepath, '\\') + 1;
+      if (slash)
+        axStrncpy(path, filepath, (axStrrchr(filepath, '\\') + 1) -
+          (char*)filepath);
+      else
+        axStrcpy(path, (char*)".\\");
+    #endif
+    #ifdef AX_FORMAT_EXE
+      axStrcpy(path, (char*)".\\");
+    #endif
+  #endif
+  // linux
+  #ifdef linux
+    #ifdef AX_FORMAT_VST
+      Dl_info dli;
+      dladdr(__func__, &dli);   // dlfcn.h
+      const char* slash = axStrrchr(dli.dli_fname, '/');
+      if (slash)
+		    axStrncpy(path, dli.dli_fname, (axStrrchr(dli.dli_fname, '/') + 1) -
+          (char*)dli.dli_fname);
+      else
+        axStrcpy(path, (char*)"./");
+    #endif
+    #ifdef AX_FORMAT_EXE
+      char filepath[AX_MAX_PATH] = "";
+      unsigned int rl = readlink("/proc/self/exe", filepath, sizeof(filepath));
+      if (rl)      
+      {
+        const char* slash = axStrrchr(filepath, '/');
+        if (slash)
+  		    axStrncpy(path, filepath, (axStrrchr(filepath, '/') + 1) -
+            (char*)filepath);
+        else
+          axStrcpy(path, (char*)"./");
+      }
+    #endif
+  #endif
+  return path_init;
+}
+
+// read file from base path
+__axstdlib_inline unsigned char* axReadFile (const char* _file,
+  unsigned int* _size)
+{
+  char filepath[AX_MAX_PATH] = "";
+  char _path[AX_MAX_PATH] = "";
+  const char* path = axGetBasePath(_path);
+  axStrcat(filepath, (char*)path);
+  axStrcat(filepath, (char*)_file);
+  FILE* f = fopen(filepath, "rb");
+  trace("axReadFile(): " << filepath);
+  if (!f)
+  {
+    trace("axReadFile(), #ERR missing: " << filepath);
+    return 0;
+  }
+  fseek(f, 0, SEEK_END);
+  *_size = ftell(f);
+  fseek(f, 0, SEEK_SET);
+  if (!*_size)
+  {
+    trace("axReadFile(), #ERR null sized: " << filepath);
+    return 0;
+  }
+  unsigned char* b = (unsigned char*)axMalloc(*_size);
+  unsigned int res = fread(b, *_size, 1, f);
+  fclose(f);
+  if (!res)
+  {
+    trace("axReadFile(), #ERR file read: " << filepath);
+    return 0;
+  }
+  return b;
+}
 //----------------------------------------------------------------------
 #endif

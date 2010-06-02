@@ -13,7 +13,6 @@
 //#include "axSurface.h"
 
 #include "../extern/picopng.h"
-#include "stdio.h" // fread()
 
 //----------------------------------------------------------------------
 
@@ -50,6 +49,7 @@ class axBitmapLoader
 
     int decode(unsigned char* buffer, unsigned int buffersize)
       {
+        trace("decode(), " << (void*)&buffer << ", " << buffersize);
         int res = 0;
         //if (mPngInfo) axFree(mPngInfo);
         axPngInfo* png = axPngDecode(buffer, buffersize);
@@ -65,51 +65,17 @@ class axBitmapLoader
         axPngFreeAll();                                                 // CHECK THIS !!!
         //axFree(png); // crash (already free?)
         //png->image->data[0] = 0;  // try to access image data
-        return res;//(int)mPngInfo;
+        return res; //(int)mPngInfo;
       }
 
     //--------------------------------------------------
 
-    int decodeLoad(const char* _file)
+   int decodeLoad(const char* file)
       {
-        #ifdef WIN32
-          // get dll/exe path on windows
-          char path [MAX_PATH] = "";
-          char file [MAX_PATH] = "";
-          #ifdef AX_FORMAT_VST
-            GetModuleFileName(gInstance, path, MAX_PATH);
-          #endif
-          #ifdef AX_FORMAT_EXE
-            GetModuleFileName(NULL, path, MAX_PATH);
-          #endif
-          axStrncpy(file, path, (axStrrchr(path, '\\') + 1) - (char*)path);
-          axStrcat(file, (char*)_file);
-        #endif
-        #ifdef linux
-          // should work ok with relative paths on linux
-          char* file = (char*)_file;
-        #endif
-        FILE* f = fopen(file, "rb");
-        if (!f)
-        {
-          trace("decodeLoad(), #ERR missing: " << file);
-          return 0;
-        }
-        fseek(f, 0, SEEK_END);
-        unsigned long size = ftell(f);
-        fseek(f, 0, SEEK_SET);
-        if (!size)
-        {
-          trace("decodeLoad(), #ERR null sized: " << file);
-          return 0;
-        }
-        unsigned char* b = (unsigned char*)axMalloc(size);
-        unsigned int res = fread(b, size, 1, f);
-        if (!res)
-        {
-          trace("decodeLoad(), #ERR file read: " << file);
-          return 0;
-        }
+        unsigned int size;
+        unsigned char* b = axReadFile(file, &size);
+
+        // check if the buffer contains a png (or a least partially)
         if (b[0] != 0x89 || b[1] != 0x50 || b[2] != 0x4E || b[3] != 0x47)
         {
           trace("decodeLoad(), #ERR not a png: " << file);
@@ -117,10 +83,9 @@ class axBitmapLoader
         }
         else
         {
-          fclose(f);
-          decode(b, size);
-          axFree(b);
           trace("decodeLoad(), " << file << ", " << size);
+          // leave pico to clear the file buffer 
+          decode(b, size);
           return 1;
         }
       }
