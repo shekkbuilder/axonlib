@@ -10,9 +10,10 @@
 
 //#include "../source/test/test_gain_nogui.cpp"
 //#include "../source/test/test_gain_gui.cpp"
-#include "../source/test/test_gain_gui_skin.cpp"
+//#include "../source/test/test_gain_gui_skin.cpp"
 
 //#include "../test/test_skin.cpp"
+#include "../test/test_memory.cpp"
 
 //----------------------------------------------------------------------
 // demo
