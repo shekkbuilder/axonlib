@@ -1,8 +1,8 @@
 //#define AX_NO_MALLOC
 #define AX_DEBUG_AUTO_STD
-#define AX_DEBUG_MEM
-#define AX_DEBUG_PNG
-#define AX_DEBUG_NEW
+//#define AX_DEBUG_MEM
+//#define AX_DEBUG_PNG
+//#define AX_DEBUG_NEW
 #define AX_DEBUG_LOG  "test_gain_gui_skin.log"
 
 #define AX_ALPHA
@@ -91,15 +91,15 @@ class myPlugin : public axFormat
           m_SkinLoader = new axBitmapLoader();
           m_SkinLoader->decode((unsigned char*)skin1,skin1_size);
           m_KnobLoader = new axBitmapLoader();
-          m_KnobLoader->decode((unsigned char*)knob1,knob1_size);
-          //m_KnobLoader->decodeLoad("fx_grains_knob.png");
+          //m_KnobLoader->decode((unsigned char*)knob1,knob1_size);
+          m_KnobLoader->decodeLoad("fx_grains_knob.png");
           m_GuiInitialized = true;
         }
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         axCanvas* canvas = editor->getCanvas();
         m_Skin = new axSkinDef(canvas);
-        m_Skin->loadSkinBitmap(editor,(char*)m_SkinLoader->getImage());
-        m_Skin->loadKnobBitmap(editor,(char*)m_KnobLoader->getImage());
+        m_Skin->loadSkinBitmap(editor,(char*)m_SkinLoader->getImage(),256,256,32);
+        m_Skin->loadKnobBitmap(editor,(char*)m_KnobLoader->getImage(),32,(32*65),32);
         editor->applySkin(m_Skin);
         editor->appendWidget( w_Panel = new wdgPanel(editor,NULL_RECT,wa_Client) );
         w_Panel->appendWidget(w_Gain  = new wdgKnob( editor,axRect(10,10,100,32),wa_None,"gain",0.75) );

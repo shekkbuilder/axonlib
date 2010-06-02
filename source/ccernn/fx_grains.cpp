@@ -244,11 +244,11 @@ reaper->ShowMessageBox("testing reaper sdk extensions","axonlib",3);
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         axCanvas* canvas = editor->getCanvas();
         m_Skin = new axSkinDef(canvas);
-        m_Skin->loadKnobBitmap(editor,(char*)knobloader->getImage());
+        m_Skin->loadKnobBitmap(editor,(char*)knobloader->getImage(),32,(32*65),32);
         editor->applySkin(m_Skin);
         // widgets
         editor->appendWidget( w_Panel = new wdgImage(editor,NULL_RECT,wa_Client) );
-        w_Panel->loadBitmap(editor,(char*)backloader->getImage(),340,325);
+        w_Panel->loadBitmap(editor,(char*)backloader->getImage(),340,325, 24);
         wdgKnob* k1;
         w_Panel->appendWidget(   new wdgKnob(editor,axRect(230,255,100,32),wa_None,"master") );
         w_Panel->appendWidget(k1=new wdgKnob(editor,axRect( 10,155,100,32),wa_None,"num grains") );

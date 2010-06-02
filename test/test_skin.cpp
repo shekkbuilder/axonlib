@@ -1,11 +1,13 @@
 //#define AX_NO_MALLOC
-#define AX_DEBUG_AUTO_STD
-#define AX_DEBUG_MEM
-#define AX_DEBUG_PNG
-#define AX_DEBUG_NEW
-#define AX_DEBUG_LOG "test_skin.log"
+//#define AX_DEBUG_AUTO_STD
+//#define AX_DEBUG_MEM
+//#define AX_DEBUG_PNG
+//#define AX_DEBUG_NEW
+//#define AX_DEBUG_LOG "test_skin.log"
 
 //----------------------------------------------------------------------
+
+#define AX_ALPHA
 
 #include "axFormat.h"
 #include "axEditor.h"
@@ -87,14 +89,14 @@ class myPlugin : public axFormat
 
         // skin 1
         m_Skin1 = new axSkinDef(canvas);
-        m_Skin1->loadSkinBitmap(editor,(char*)skinloader1->getImage());
-        m_Skin1->loadKnobBitmap(editor,(char*)knobloader1->getImage());
+        m_Skin1->loadSkinBitmap(editor,(char*)skinloader1->getImage(),256,256,32);
+        m_Skin1->loadKnobBitmap(editor,(char*)knobloader1->getImage(),32,(32*65),32);
         //editor->applySkin(m_Skin1);
         // skin 2
         //m_Skin2 = new axSkinDef(canvas);
         //m_Skin2->copyFrom(m_Skin1);
         m_Skin2 = new axSkinDef(m_Skin1);
-        m_Skin2->loadKnobBitmap(editor,(char*)knobloader2->getImage());
+        m_Skin2->loadKnobBitmap(editor,(char*)knobloader2->getImage(),32,(32*65),32);
 
         axWidget* wdg;
 

@@ -5,7 +5,7 @@
   if something can't be used in closed-source,
   because of gpl or something, warn the lib-users
   that they should not use these.
-  
+
 - copy/paste: license headers back into top of files
 
 - copy/paste: docygen comments from rev.151

@@ -103,6 +103,11 @@ class axFormat : public axFormatImpl, public axParameterListener
         mSystemInfo.cpuid    = axCpuCaps();
         mSystemInfo.cpuidstr = axCpuCapsString();
         mSystemInfo.bigend   = axBigEndian();
+
+        //TODO: screen width/height/depth
+        //      especially needed on linux, since blitting (copyarea) crashes
+        //      with differing bit-depths (sometimes)
+
         return &mSystemInfo;
       }
 
