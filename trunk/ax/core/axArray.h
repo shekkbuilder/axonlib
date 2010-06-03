@@ -1,3 +1,19 @@
+/*
+ * This file is part of Axonlib.
+ *
+ * Axonlib is free software: you can redistribute it and/or modify
+ * it under the terms of the Axonlib License, either version 1.0
+ * of the License, or (at your option) any later version.
+ *
+ * Axonlib is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE_AX for more details.
+ *
+ * You should have received a copy of the Axonlib License
+ * If not, see <http://axonlib.googlecode.com/>.
+ */
+
 #ifndef axArray_included
 #define axArray_included
 //----------------------------------------------------------------------
@@ -17,7 +33,7 @@ class axArray
     _T* mArray;                // the memory
     unsigned int mTsize;       // size of type
     unsigned int mSize;        // array size
-    unsigned int mRealSize;    // real (allocated) size of array     
+    unsigned int mRealSize;    // real (allocated) size of array
 
   public:
 
@@ -31,7 +47,7 @@ class axArray
 		  	mTsize = sizeof(_T);
         mRealSize = SIZE_INIT;
 			  mSize = 0;
-			  mArray = (_T*)axMalloc(mRealSize*mTsize);        
+			  mArray = (_T*)axMalloc(mRealSize*mTsize);
 			}
 
     // copy constructor.
@@ -42,8 +58,8 @@ class axArray
     axArray(const axArray& aArray)
       {
         mTsize = sizeof(_T);
-        mArray = (_T*)axMalloc(mTsize*aArray.mRealSize);        
-        axMemcpy(mArray, aArray.mArray, mTsize*aArray.mRealSize);        
+        mArray = (_T*)axMalloc(mTsize*aArray.mRealSize);
+        axMemcpy(mArray, aArray.mArray, mTsize*aArray.mRealSize);
         mRealSize = aArray.mRealSize;
         mSize = aArray.mSize;
       }
@@ -111,7 +127,7 @@ class axArray
           return *this;
         if (aArray.mSize==0)
           clear();
-        setSize(aArray.mSize);        
+        setSize(aArray.mSize);
         axMemcpy(mArray, aArray.mArray, mTsize*aArray.mSize);
         return *this;
       }
@@ -134,7 +150,7 @@ class axArray
         mSize = 0;
         if (aErase)
         {
-          mArray = (_T*)axRealloc((char*)mArray, mTsize*SIZE_INIT);          
+          mArray = (_T*)axRealloc((char*)mArray, mTsize*SIZE_INIT);
           mRealSize = SIZE_INIT;
         }
       }
@@ -149,7 +165,7 @@ class axArray
         mSize++;
         if (mSize > mRealSize)
         {
-          mArray = (_T*)axRealloc(mArray, mTsize*mRealSize);                    
+          mArray = (_T*)axRealloc(mArray, mTsize*mRealSize);
         }
         mArray[mSize-1] = aItem;
       }
@@ -162,10 +178,10 @@ class axArray
       {
         if (aSize != 0)
         {
-          if ( (aSize>mRealSize) || (aSize<mRealSize/2) )          
+          if ( (aSize>mRealSize) || (aSize<mRealSize/2) )
           {
             mRealSize = aSize;
-            mArray = (_T*)axRealloc(mArray, mTsize*mSize);            
+            mArray = (_T*)axRealloc(mArray, mTsize*mSize);
             mSize = aSize;
           }
         }

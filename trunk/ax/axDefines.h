@@ -1,3 +1,19 @@
+/*
+ * This file is part of Axonlib.
+ *
+ * Axonlib is free software: you can redistribute it and/or modify
+ * it under the terms of the Axonlib License, either version 1.0
+ * of the License, or (at your option) any later version.
+ *
+ * Axonlib is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE_AX for more details.
+ *
+ * You should have received a copy of the Axonlib License
+ * If not, see <http://axonlib.googlecode.com/>.
+ */
+
 #ifndef axDefines_included
 #define axDefines_included
 
@@ -25,7 +41,7 @@ TODO:
 
 #ifdef WIN32
   #define AX_WIN32
-  
+
   #undef WINVER
   #define WINVER 0x0501
   #undef _WIN32_WINNT
@@ -137,17 +153,17 @@ TODO:
   #ifndef AX_LINUX
     #define ushort    unsigned  short
   #endif
-  #define cushort     const     unsigned  short  
+  #define cushort     const     unsigned  short
   #define cint        const     int
   #ifndef AX_LINUX
     #define uint      unsigned  int
   #endif
-  #define cuint       const     unsigned  int  
+  #define cuint       const     unsigned  int
   #define clong       const     long
   #ifndef AX_LINUX
     #define ulong     unsigned  long
   #endif
-  #define culong      const     unsigned  long  
+  #define culong      const     unsigned  long
   #define longlong              long      long
   #define clonglong   const     long      long
   #define ulonglong   unsigned  long      long
