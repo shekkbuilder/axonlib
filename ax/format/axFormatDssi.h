@@ -14,8 +14,8 @@
  * If not, see <http://axonlib.googlecode.com/>.
  */
 
-#ifndef axScript_included
-#define axScript_included
+#ifndef axFormatDssi_included
+#define axFormatDssi_included
 //----------------------------------------------------------------------
 
 // TODO

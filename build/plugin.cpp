@@ -16,6 +16,7 @@
 
 //#include "../test/test_skin.cpp"
 //#include "../test/test_memory.cpp"
+#include "../test/test_render.cpp"
 
 //----------------------------------------------------------------------
 // demo
@@ -29,7 +30,7 @@
 
 // no gui
 
-#include "../source/ccernn/fx_blur.cpp"
+//#include "../source/ccernn/fx_blur.cpp"
 //#include "../source/ccernn/fx_distortion.cpp"
 //#include "../source/ccernn/fx_freeze.cpp"
 //#include "../source/ccernn/fx_svf.cpp"
