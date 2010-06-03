@@ -31,7 +31,7 @@
 #ifdef AX_WIN32
   #include <windows.h>
   #ifdef AX_FORMAT_VST
-    #include "format/axFormatVst.h" // gInstance for axGetBasePath() 
+    #include "format/axFormatVst.h" // gInstance for axGetBasePath()
   #endif
 #endif
 #ifdef AX_LINUX
@@ -298,7 +298,7 @@ inline unsigned int axCpuCaps(void)
 char cpustringbuf[256];
 char* axCpuCapsString(void)
 {
-  axCPUID();  
+  axCPUID();
   cpustringbuf[0] = 0;
   if (__AX_SSE3__)     axStrcat(cpustringbuf,(char*)"sse3 ");
   if (__AX_SSSE3__)    axStrcat(cpustringbuf,(char*)"ssse3 ");
@@ -423,7 +423,7 @@ __axstdlib_inline const char* axGetBasePath (char* path)
   char* path_init = path;
   // windows
   #ifdef WIN32
-    char filepath[AX_MAX_PATH] = "";
+    char filepath[AX_MAX_PATH] = ""; // warning: unused variable 'filepath'|
     #ifdef AX_FORMAT_VST
       GetModuleFileName(gInstance, filepath, MAX_PATH);   // windows.h
       const char* slash = axStrrchr(filepath, '\\') + 1;
@@ -452,7 +452,7 @@ __axstdlib_inline const char* axGetBasePath (char* path)
     #ifdef AX_FORMAT_EXE
       char filepath[AX_MAX_PATH] = "";
       unsigned int rl = readlink("/proc/self/exe", filepath, sizeof(filepath));
-      if (rl)      
+      if (rl)
       {
         const char* slash = axStrrchr(filepath, '/');
         if (slash)

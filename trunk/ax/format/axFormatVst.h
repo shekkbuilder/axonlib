@@ -483,7 +483,7 @@ class axFormatVst : public axFormatBase
     // called when a parameter changed
     virtual void setParameter(VstInt32 aIndex, float aValue)
       {
-        trace(":::::::::: setParameter");
+        //trace(":::::::::: setParameter");
         axParameter* par = mParameters[aIndex];
         par->doSetValue(aValue,true);
       }

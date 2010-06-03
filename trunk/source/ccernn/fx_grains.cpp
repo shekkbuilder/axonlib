@@ -148,7 +148,7 @@ class myPlugin : public axFormat
   public:
 
     myPlugin(axContext* aContext)
-    : axFormat(aContext, pf_None)
+    : axFormat(aContext/*, pf_None*/)
       {
         axRand(418);
         BUFFER = new float[BUFFER_SIZE];
@@ -157,7 +157,7 @@ class myPlugin : public axFormat
         index     = 0;
         countdown = 0;
         describe("fx_grains","ccernn","axonlib example",0,AX_MAGIC+0x1004);
-        setupAudio(2,2,false);
+        setupAudio(2,2/*,false*/);
         setupEditor(340,325);
         appendParameter( new parFloat2( this,"master volume",     "",   1,    0, 2   ) );
         appendParameter( new parInteger(this,"number of grains",  "",   10,   1, MAX_GRAINS ) );
@@ -248,7 +248,6 @@ reaper->ShowMessageBox("testing reaper sdk extensions","axonlib",3);
         editor->applySkin(m_Skin);
         // widgets
         editor->appendWidget( w_Panel = new wdgImage(editor,NULL_RECT,wa_Client) );
-        w_Panel->loadBitmap(editor,(char*)backloader->getImage(),340,325, 24);
         wdgKnob* k1;
         w_Panel->appendWidget(   new wdgKnob(editor,axRect(230,255,100,32),wa_None,"master") );
         w_Panel->appendWidget(k1=new wdgKnob(editor,axRect( 10,155,100,32),wa_None,"num grains") );
@@ -267,7 +266,8 @@ reaper->ShowMessageBox("testing reaper sdk extensions","axonlib",3);
         k1->setSensitivity(0.001);
         for (int i=0; i<w_Panel->getNumWidgets(); i++)
           editor->connect( w_Panel->getWidget(i), mParameters[i] );
-        setupParameters();
+        w_Panel->loadBitmap(editor,(char*)backloader->getImage(),340,325, 24);
+        //setupParameters();
         // 'grain painter'
         w_Panel->appendWidget( vis = new myVisual(editor,axRect(11,203,319,34),wa_None)  );
         vis->aBackColor = canvas->getColor(64,64,64);
@@ -290,7 +290,7 @@ reaper->ShowMessageBox("testing reaper sdk extensions","axonlib",3);
 
     virtual void doIdleEditor(void)
       {
-        trace("fx_grains.doIdleEditor");
+        //trace("fx_grains.doIdleEditor");
         vis->buffersize = m_BufferSize;
         vis->index = index;
         vis->numgrains = m_NumGrains;
@@ -306,6 +306,7 @@ reaper->ShowMessageBox("testing reaper sdk extensions","axonlib",3);
       {
         int idx = aParameter->getIndex();
         float v = aParameter->getValue();
+        //trace("idx: " << idx << "v: " << v);
         //todo: do this:
         //mPlugin->setPar(idx,val);
         //instead of this:
@@ -333,7 +334,7 @@ reaper->ShowMessageBox("testing reaper sdk extensions","axonlib",3);
     virtual bool doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize)
       {
         float ms  = getSampleRate() * 0.001;
-        m_BufferSize = _BufferSize * ms;
+        m_BufferSize = axMax(1,(_BufferSize*ms));;
         m_GrainDist  = _GrainDist  * ms;
         m_GrainSize  = _GrainSize  * ms;
         m_GrainDur   = _GrainDur   * ms;

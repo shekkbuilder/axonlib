@@ -193,7 +193,8 @@ class axEditor : public axWindow
           axParameter* par = mConnections[conn].mParameter;
           float val = aWidget->getValue();
           mFormat->notifyParamChanged(par);
-          par->doSetValue(val,false);
+          //par->doSetValue(val,false);
+          par->doSetValue(val,true);
         }
         //internal_redraw(aWidget);
         // redraw directly (don't add to updatelist)

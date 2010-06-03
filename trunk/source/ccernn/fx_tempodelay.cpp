@@ -119,7 +119,7 @@ class myPlugin : public axFormat
         int index = aParameter->getIndex();
         float val = aParameter->getValue();
         axString name = aParameter->getName();
-        //trace("doSetParameter(" << index << ") = " << val << "  [" <<  name.ptr() << "]" );
+        trace("doSetParameter(" << index << ") = " << val << "  [" <<  name.ptr() << "]" );
         switch(index)
         {
           // be careful with that index, eugene!
@@ -166,8 +166,8 @@ class myPlugin : public axFormat
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
         axCanvas* canvas = editor->getCanvas();
         m_Skin = new axSkinDef(canvas);
-        m_Skin->loadSkinBitmap(editor,(char*)skinloader->getImage());
-        m_Skin->loadKnobBitmap(editor,(char*)knobloader->getImage());
+        m_Skin->loadSkinBitmap(editor,(char*)skinloader->getImage(),256,256,32);
+        m_Skin->loadKnobBitmap(editor,(char*)knobloader->getImage(),32,(32*65),32);
         editor->applySkin(m_Skin);
         editor->appendWidget(  w_Panel = new wdgPanel(editor,NULL_RECT,wa_Client) );
         w_Panel->setBorders(10,10,5,5);
