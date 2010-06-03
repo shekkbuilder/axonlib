@@ -425,17 +425,17 @@ __axstdlib_inline const char* axGetBasePath (char* path)
   #ifdef WIN32
     char filepath[AX_MAX_PATH] = ""; // warning: unused variable 'filepath'|
     #ifdef AX_FORMAT_VST
-      GetModuleFileName(gInstance, filepath, MAX_PATH);   // windows.h
-      const char* slash = axStrrchr(filepath, '\\') + 1;
-      if (slash)
-        axStrncpy(path, filepath, (axStrrchr(filepath, '\\') + 1) -
-          (char*)filepath);
-      else
-        axStrcpy(path, (char*)".\\");
+      GetModuleFileName(gInstance, filepath, MAX_PATH);      
     #endif
     #ifdef AX_FORMAT_EXE
-      axStrcpy(path, (char*)".\\");
+      GetModuleFileName(NULL, filepath, MAX_PATH);      
     #endif
+    const char* slash = axStrrchr(filepath, '\\') + 1;
+    if (slash)
+      axStrncpy(path, filepath, (axStrrchr(filepath, '\\') + 1) -
+        (char*)filepath);
+    else
+      axStrcpy(path, (char*)".\\");
   #endif
   // linux
   #ifdef linux
