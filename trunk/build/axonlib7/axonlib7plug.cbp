@@ -127,11 +127,15 @@
 		<Unit filename="..\..\ax\dsp\dspSVF.h" />
 		<Unit filename="..\..\ax\dsp\dsp_Env.h" />
 		<Unit filename="..\..\ax\dsp\dsp_Osc.h" />
+		<Unit filename="..\..\ax\format\axFormatDssi.h" />
 		<Unit filename="..\..\ax\format\axFormatExe.h" />
+		<Unit filename="..\..\ax\format\axFormatLadspa.h" />
+		<Unit filename="..\..\ax\format\axFormatLv2.h" />
 		<Unit filename="..\..\ax\format\axFormatVst.h" />
 		<Unit filename="..\..\ax\format\axReaperExt.h" />
 		<Unit filename="..\..\ax\gui\axBitmap.h" />
 		<Unit filename="..\..\ax\gui\axBitmapLoader.h" />
+		<Unit filename="..\..\ax\gui\axBitmapRender.h" />
 		<Unit filename="..\..\ax\gui\axCanvas.h" />
 		<Unit filename="..\..\ax\gui\axColor.h" />
 		<Unit filename="..\..\ax\gui\axFont.h" />
