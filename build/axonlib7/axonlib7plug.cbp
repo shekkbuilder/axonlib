@@ -121,7 +121,6 @@
 		<Unit filename="..\..\ax\dsp\dspDCF.h" />
 		<Unit filename="..\..\ax\dsp\dspInterpolate.h" />
 		<Unit filename="..\..\ax\dsp\dspOnePole.h" />
-		<Unit filename="..\..\ax\dsp\dspPRNG.h" />
 		<Unit filename="..\..\ax\dsp\dspRBJ.h" />
 		<Unit filename="..\..\ax\dsp\dspRC.h" />
 		<Unit filename="..\..\ax\dsp\dspRMS.h" />
