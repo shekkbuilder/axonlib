@@ -1,6 +1,6 @@
 ////#define AX_NO_MALLOC
 
-//#define AX_DEBUG_AUTO_STD
+#define AX_DEBUG_AUTO_STD
 //#define AX_DEBUG_MEM
 //#define AX_DEBUG_NEW
 //#define AX_DEBUG_PNG
@@ -29,9 +29,9 @@
 
 // no gui
 
-//#include "../source/ccernn/fx_blur.cpp"
+#include "../source/ccernn/fx_blur.cpp"
 //#include "../source/ccernn/fx_distortion.cpp"
-#include "../source/ccernn/fx_freeze.cpp"
+//#include "../source/ccernn/fx_freeze.cpp"
 //#include "../source/ccernn/fx_svf.cpp"
 //#include "../source/ccernn/fx_wgtavg.cpp"
 //#include "../source/ccernn/midi_transpose.cpp"

@@ -1,3 +1,9 @@
+#define AX_DEBUG_AUTO_STD
+//#define AX_DEBUG_MEM
+//#define AX_DEBUG_NEW
+//#define AX_DEBUG_PNG
+//#define AX_DEBUG_LOG "plugin.log"
+
 
 #include "axFormat.h"
 #include "par/parFloat.h"
@@ -5,9 +11,9 @@
 
 //----------
 
-#define MAX_SRATE   192000
-#define MAX_SECONDS 1
-#define MAX_BUFSIZE (MAX_SECONDS*MAX_SRATE*2)
+#define MAX_SRATE     192000
+#define MAX_SECONDS   1
+#define MAX_BUFSIZE   (MAX_SECONDS*MAX_SRATE*2)
 
 char* str_freeze[] = { (char*)"off", (char*)"on" };
 char* str_loopmode[] = { (char*)"wrap", (char*)"bidi" };
@@ -18,7 +24,6 @@ class myPlugin : public axFormat
 {
   private:
 
-  public:
     float*  BUFFER;
     int     index;
     float   pos;
@@ -30,10 +35,16 @@ class myPlugin : public axFormat
     int     freeze;
     int     mode;
 
+    float   srate;
+    float   _bufsize;
+    float   _size;
+    float   _start;
+
+
   public:
 
     myPlugin(axContext* aContext)
-    : axFormat(aContext, pf_None)
+    : axFormat(aContext/*, pf_None*/)
       {
         BUFFER = new float[MAX_BUFSIZE];
         index  = 0;
@@ -58,26 +69,39 @@ class myPlugin : public axFormat
     virtual void  doSetParameter(axParameter* aParameter)
       {
         //if (aParameter->getIndex()==0) m_Gain = aParameter->getValue();
-        float srate = getSampleRate();
         int  id = aParameter->getIndex();
         float f = aParameter->getValue();
         switch(id)
         {
-          case 0: bufsize = (f*0.001)*srate;      break;
-          case 1: size    = axMax(1,(f*bufsize)); break;
-          case 2: speed   = f;                    break;
-          case 3: start   = f*bufsize;            break;
-          case 4: freeze  = f;                    break;
-          case 5: mode    = f;                    break;
+          case 0: _bufsize = f*0.001; break;
+          case 1: _size    = f;       break;
+          case 2:  speed   = f;       break;
+          case 3: _start   = f;       break;
+          case 4:  freeze  = f;       break;
+          case 5:  mode    = f;       break;
         }
+      }
+
+    // bah! TOTO
+
+    virtual bool doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize)
+      {
+        float srate = getSampleRate();
+        //trace("srate " << srate);
+        bufsize = axMax(1,(_bufsize*srate));
+        size    = axMax(1,(_size*bufsize));
+        start   = _start * bufsize;
+        while (index>=bufsize) index -= bufsize;
+        //while (index<0) index += bufsize;
+        return false;
       }
 
     virtual void  doProcessSample(SPL** aInputs, SPL** aOutputs)
       {
         float spl0 = *aInputs[0];
         float spl1 = *aInputs[1];
-        int p2;
 
+        int p2;
         if (freeze==0)
         {
           p2 = index*2;
@@ -112,7 +136,6 @@ class myPlugin : public axFormat
         p2 *= 2;
         spl0 = BUFFER[p2];
         spl1 = BUFFER[p2+1];
-
 
         *aOutputs[0] = spl0;
         *aOutputs[1] = spl1;

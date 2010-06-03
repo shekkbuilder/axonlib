@@ -146,7 +146,7 @@ class axFormat : public axFormatImpl, public axParameterListener
 
     virtual void onChange(axParameter* aParameter)
       {
-        trace("onChange");
+        //trace("onChange");
         doSetParameter(aParameter);
         if (mEditorOpen && mEditorWindow) mEditorWindow->paramChanged(aParameter);
       }
