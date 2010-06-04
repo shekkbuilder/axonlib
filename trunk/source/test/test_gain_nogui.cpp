@@ -8,7 +8,7 @@ class myPlugin : public axFormat
   public:
 
     myPlugin(axContext* aContext)
-    : axFormat(aContext, pf_None)
+    : axFormat(aContext)
       {
         describe("test_gain_nogui","ccernn","axonlib example",0,AX_MAGIC+0x0000);
         setupAudio(2,2);
