@@ -27,7 +27,7 @@
 //   buffer[2] = r
 //   buffer[3] = a
 
-#include "axDefines.h"
+#include "core/axDefines.h"
 #include "core/axMath.h"
 #include "core/axRand.h"
 #include "platform/axContext.h"

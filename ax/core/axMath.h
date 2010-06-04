@@ -64,7 +64,7 @@
 #ifndef axMath_included
 #define axMath_included
 
-#include "axDefines.h"
+#include "core/axDefines.h"
 
 #ifdef AX_HOT_INLINE_MATH
   #define __axmath_inline __hotinline

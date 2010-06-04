@@ -27,7 +27,7 @@
 
 //----------------------------------------------------------------------
 
-#include "axDefines.h"
+#include "core/axDefines.h"
 #include "core/axPoint.h"
 #include "core/axRect.h"
 #include "base/axCanvasBase.h"

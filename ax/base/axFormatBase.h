@@ -20,7 +20,7 @@
 
 #include "platform/axContext.h"
 #include "core/axRect.h"
-#include "axParameter.h"
+#include "par/axParameter.h"
 #include "gui/axWindow.h"
 
 //----------------------------------------------------------------------

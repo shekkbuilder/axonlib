@@ -7,7 +7,7 @@
   etc.
 */
 
-#include "axEditor.h"
+#include "gui/axEditor.h"
 #include "gui/axSymbols.h"
 
 #include "wdg/wdgPanel.h"

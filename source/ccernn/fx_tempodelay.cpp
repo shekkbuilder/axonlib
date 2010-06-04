@@ -1,8 +1,8 @@
 #define AX_ALPHA
 //#define AX_WIDGET_NOUPDATELIST
 
-#include "axFormat.h"
-#include "axEditor.h"
+#include "format/axFormat.h"
+#include "gui/axEditor.h"
 #include "skins/axSkinBasic.h"
 #include "par/parFloat.h"
 #include "wdg/wdgPanel.h"

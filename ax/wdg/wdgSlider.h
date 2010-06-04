@@ -19,7 +19,7 @@
 //----------------------------------------------------------------------
 
 #include "gui/axWidget.h"
-#include "axDefines.h"
+#include "core/axDefines.h"
 
 class wdgSlider : public axWidget
 {

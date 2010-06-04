@@ -36,7 +36,7 @@
 #include <unistd.h>   // sleep
 
 #include "platform/axContext.h"
-#include "axDefines.h"
+#include "core/axDefines.h"
 #include "core/axRect.h"
 #include "core/axString.h"
 //#include "base/axWindowBase.h"

@@ -18,12 +18,12 @@
 #define axWindow_included
 //----------------------------------------------------------------------
 
-#include "axDefines.h"
+#include "core/axDefines.h"
 #include "base/axWindowBase.h"
 //#include "gui/axSkin.h"
 //#include "gui/axSkinDefault.h"
 #include "platform/axContext.h"
-#include "axParameter.h"
+#include "par/axParameter.h"
 
 //----------
 

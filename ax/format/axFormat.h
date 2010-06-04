@@ -44,7 +44,7 @@ NOTES:
 #endif
 
 #include "axConfig.h"
-#include "axDefines.h"
+#include "core/axDefines.h"
 #include "core/axMalloc.h"
 #include "core/axDebug.h"
 #include "core/axUtils.h"
@@ -52,9 +52,9 @@ NOTES:
 #include "platform/axContext.h"
 #include "base/axFormatBase.h"
 
-#include "axParameter.h"
-//#include "gui/axWidget.h"
+#include "par/axParameter.h"
 #include "gui/axWindow.h"
+//#include "gui/axWidget.h"
 
 //----------
 

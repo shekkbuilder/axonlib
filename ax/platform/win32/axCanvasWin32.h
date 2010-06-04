@@ -22,7 +22,7 @@
 #include "core/axMath.h" // axMax
 
 #include "platform/axContext.h"
-#include "axDefines.h"
+#include "core/axDefines.h"
 #include "base/axCanvasBase.h"
 //#include "base/axSurfaceBase.h"
 #include "gui/axBitmap.h"

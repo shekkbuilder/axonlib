@@ -7,8 +7,8 @@
 
 #define AX_ALPHA
 
-#include "axFormat.h"
-#include "axEditor.h"
+#include "format/axFormat.h"
+#include "gui/axEditor.h"
 #include "wdg/wdgPanel.h"
 #include "wdg/wdgKnob.h"
 

@@ -18,7 +18,7 @@
 #define axBitmapLinux_included
 //----------------------------------------------------------------------
 
-#include "axDefines.h"
+#include "core/axDefines.h"
 #include "platform/axContext.h"
 #include "base/axBitmapBase.h"
 

@@ -18,7 +18,7 @@
 #define axFont_included
 //----------------------------------------------------------------------
 
-#include "axDefines.h"
+#include "core/axDefines.h"
 #include "core/axString.h"
 
 //----------------------------------------------------------------------

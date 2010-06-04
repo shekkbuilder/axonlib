@@ -6,7 +6,7 @@
 #define AX_DEBUG_LOG "test_memory.log"
 
 #include "axConfig.h"
-#include "axDefines.h"
+#include "core/axDefines.h"
 #include "core/axMalloc.h"
 #include "core/axDebug.h"
 #include "core/axUtils.h"

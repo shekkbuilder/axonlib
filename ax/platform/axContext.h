@@ -18,7 +18,7 @@
 #define axContext_included
 //----------------------------------------------------------------------
 
-#include "axDefines.h"
+#include "core/axDefines.h"
 //#include "extern/vstsdk24/aeffect.h"
 //#include "extern/vstsdk24/aeffectx.h"
 

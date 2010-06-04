@@ -23,7 +23,7 @@
 #define parFloat_included
 //----------------------------------------------------------------------
 
-#include "axParameter.h"
+#include "par/axParameter.h"
 #include "core/axMath.h"
 
 class parFloat : public axParameter

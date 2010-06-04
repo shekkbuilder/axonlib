@@ -22,7 +22,7 @@
 #ifndef axUtils_included
 #define axUtils_included
 
-#include "axDefines.h"
+#include "core/axDefines.h"
 #include "core/axStdlib.h"
 #include "core/axMalloc.h"
 #include "core/axMath.h"
