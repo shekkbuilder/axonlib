@@ -138,10 +138,7 @@ class dspEnvExpADSR : public dspEnvelope
         float target = mStages[mStage].target;
         float rate   = mStages[mStage].rate;
         mValue += (target-mValue) * rate;
-        //TODO: test with axAbs again...
-        // when compiling with -O2, and axAbs doesn't seem to work properly
-        //if (axAbs(target-mValue)<=env_Threshold) { mStage++; }
-        if (fabs(target-mValue)<=env_Threshold) { mStage++; }
+        if (axAbs(target-mValue)<=env_Threshold) { mStage++; }
         return mValue;
       }
 

@@ -95,11 +95,7 @@ TODO:
 #define REC         axRect
 #define STR         axString
 #define COL         axColor
-#define AX_PTRCAST  long
-
-// TODO: replace the long in ax_ptrcast to something that is the same size
-//       as a ptr on all platforms and 32/64-bit
-//       int?
+#define AX_PTRCAST  int // same size on 32/64
 
 // limits
 // -----------------------------------------------------------------------------
@@ -107,13 +103,10 @@ TODO:
 #define AX_CHAR_MAX       127
 #define AX_SHRT_MAX       32767
 #define AX_WCHAR_MAX      65535U
-
-#ifdef __AX32__
-  #define AX_INT_MAX        2147483647
-  #define AX_LONG_MAX       2147483647L
-  #define AX_LONG_LONG_MAX  9223372036854775807LL
-  #define AX_INTMAX_MAX     9223372036854775807LL
-#endif
+#define AX_INT_MAX        2147483647
+#define AX_UINT_MAX       8589934591U
+#define AX_LONG_LONG_MAX  9223372036854775807LL
+#define AX_ULONG_LONG_MAX 18446744073709551615ULL
 
 #define AX_FLT_MAX        3.40282347e+38F
 #define AX_FLT_MIN        1.17549435e-38F
@@ -136,16 +129,26 @@ TODO:
 
 // architecture dependant
 #ifdef __AX32__
-  #define ax_int32  typedef long
+
+  #define ax_int32  long
   #define ax_uint32 unsigned long
   #define ax_int64  long long
   #define ax_uint64 unsigned long long
+
+  #define AX_LONG_MAX       2147483647L
+  #define AX_ULONG_MAX      8589934591UL
+  
 #endif
 #ifdef __AX64__
+
   #define ax_int32  int
   #define ax_uint32 unsigned int
   #define ax_int64  long
   #define ax_uint64 unsigned long
+  
+  #define AX_LONG_MAX       9223372036854775807L
+  #define AX_ULONG_MAX      18446744073709551615UL
+  
 #endif
 
 #ifdef AX_USE_SHORT_DATA_TYPES
