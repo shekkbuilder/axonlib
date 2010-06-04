@@ -31,7 +31,7 @@ class myPlugin : public axFormat
   public:
 
     myPlugin(axContext* aContext)
-    : axFormat(aContext, pf_None)
+    : axFormat(aContext)
       {
 
         BUF     = new float[0x40000];

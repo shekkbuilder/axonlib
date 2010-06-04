@@ -46,7 +46,10 @@
 
 class axBitmap : public axBitmapImpl
 {
-  public:
+  friend class axWindowWin32;
+  friend class axWindowLinux;
+  //public:
+  protected:
 
     axBitmap(axContext* aContext, int aWidth, int aHeight, int aDepth)
     : axBitmapImpl(aContext,aWidth, aHeight, aDepth)
@@ -59,6 +62,8 @@ class axBitmap : public axBitmapImpl
     // the mBuffer is handled a bit differently for win32/linux,
     // depending on if we prepare() the bitmap.
     // so we delete it in axBitmaplinux/Win32 destructors..
+
+  public:
 
     virtual ~axBitmap()
       {

@@ -17,8 +17,23 @@
 #ifndef axEditor_included
 #define axEditor_included
 //----------------------------------------------------------------------
+/*
+  takes care of two things:
+  - widget/parameter connections
+      not all parameters are connected to a widget (gui-less pluginas)
+      not all widgets are connected to parameters (combo-boxes, menus, resizer,. )
+      so this is where we connect everything.
+  - window resizing
+      embedded windowd have no window borders or titlebar,
+      so we 'cheat' by resizing the window-widget ourselves,
+      forcing a reAlign-ment
+      and eventually notify the vst-host and os about the change
+      note that nort all hosts support resizing of the editor,
+      and other hosts might require you to close and reopen the
+      editor for the new size to take effect
+  - and contains a mDefaultSkin
 
-//#define AX_WIDGET_NOUPDATELIST
+*/
 
 #include "axFormat.h"
 #include "core/axArray.h"
@@ -59,6 +74,12 @@ class axEditor : public axWindow
     axSkinBasic*    mDefaultSkin;
 
   public:
+
+  // aFormat   = 'owner' (plugin or exe)
+  // aContext  = the aContext you receive in doOpenEditor
+  // aRect     = pos & size of window
+  // aWinFlags = flags to pass on to (os-specific) window
+  //             defines double-buffering, message--threading, window-parenting
 
     axEditor(axFormat* aFormat, axContext* aContext, axRect aRect, int aWinFlags)
     : axWindow(aContext,aRect,aWinFlags)

@@ -30,27 +30,27 @@
 //       this can propagate through a few classes,
 //       but if not done, it will be confusing..
 
-// plugin flags
-#define pf_None       0
-#define pf_HasEditor  1
+// format flags
+#define ff_None       0
+#define ff_HasEditor  1
 
-#define AX_PLUG_DEFAULT ( pf_HasEditor )
+//#define AX_PLUG_DEFAULT ( pf_HasEditor )
 
 //----------
 
-// plugin states (doStateChange)
-#define ps_Open     1
-#define ps_Close    2
-#define ps_Suspend  3
-#define ps_Resume   4
+// format states (doStateChange)
+#define fs_Open     1
+#define fs_Close    2
+#define fs_Suspend  3
+#define fs_Resume   4
 
-// plugin transport (doTransportChange)
-#define pt_Changed      1   // indicates that play, cycle or record state has changed
-#define pt_Playing      2   // set if Host sequencer is currently playing
-#define pt_CycleActive  4   // set if Host sequencer is in cycle mode
-#define pt_Recording    8   // set if Host sequencer is in record mode
-#define pt_AutoWriting  64  // set if automation write mode active (record parameter changes)
-#define pt_AutoReading  128 // set if automation read mode active (play parameter changes)
+// format transport (doTransportChange)
+#define ft_Changed      1   // indicates that play, cycle or record state has changed
+#define ft_Playing      2   // set if Host sequencer is currently playing
+#define ft_CycleActive  4   // set if Host sequencer is in cycle mode
+#define ft_Recording    8   // set if Host sequencer is in record mode
+#define ft_AutoWriting  64  // set if automation write mode active (record parameter changes)
+#define ft_AutoReading  128 // set if automation read mode active (play parameter changes)
 
 //----------------------------------------------------------------------
 

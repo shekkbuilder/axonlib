@@ -7,7 +7,7 @@
 //#define AX_DEBUG_LOG "plugin.log"
 
 //----------------------------------------------------------------------
-// test
+// test / demo
 //----------------------------------------------------------------------
 
 //#include "../source/test/test_gain_nogui.cpp"
@@ -16,13 +16,9 @@
 
 //#include "../test/test_skin.cpp"
 //#include "../test/test_memory.cpp"
-#include "../test/test_render.cpp"
+//#include "../test/test_render.cpp"
 
-//----------------------------------------------------------------------
-// demo
-//----------------------------------------------------------------------
-
-//#include "../source/demo/axDemo.cpp"
+#include "../source/demo/axDemo.cpp"
 
 //----------------------------------------------------------------------
 // ccernn

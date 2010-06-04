@@ -609,7 +609,7 @@ class axFormatVst : public axFormatBase
 
             // called when plug-in is initialized
             //trace("axFormatVst.dispatcher :: effOpen");
-            doStateChange(ps_Open);
+            doStateChange(fs_Open);
             break;
 
           // 01
@@ -617,7 +617,7 @@ class axFormatVst : public axFormatBase
 
             // called when plug-in will be released
             //trace("axFormatVst.dispatcher :: effClose");
-            doStateChange(ps_Close);
+            doStateChange(fs_Close);
             break;
 
           // 02
@@ -718,14 +718,14 @@ class axFormatVst : public axFormatBase
             // resume:  called when plug-in is switched to on
             //trace("axFormatVst.dispatcher :: effMainsChanged");
             //if (!value) suspend(); else resume();
-            if (!value) doStateChange(ps_Suspend);
-            else doStateChange(ps_Resume);
+            if (!value) doStateChange(fs_Suspend);
+            else doStateChange(fs_Resume);
             break;
 
           // 13
           case effEditGetRect:
 
-            if (mFormatFlags&pf_HasEditor)
+            if (mFormatFlags&ff_HasEditor)
             {
               rect.left     = mEditorRect.x;
               rect.top      = mEditorRect.y;
@@ -741,7 +741,7 @@ class axFormatVst : public axFormatBase
           case effEditOpen:
 
             //trace("axFormatVst.dispatcher :: effEditOpen");
-            if ((mFormatFlags&pf_HasEditor) && !mEditorOpen)
+            if ((mFormatFlags&ff_HasEditor) && !mEditorOpen)
             {
               {
               #ifdef AX_LINUX
@@ -769,7 +769,7 @@ class axFormatVst : public axFormatBase
           case effEditClose:
 
             //trace("axFormatVst.dispatcher :: effEditClose");
-            if ((mFormatFlags&pf_HasEditor) && mEditorOpen)
+            if ((mFormatFlags&ff_HasEditor) && mEditorOpen)
             {
               mEditorOpen = false;
               doCloseEditor();
@@ -784,7 +784,7 @@ class axFormatVst : public axFormatBase
           case effEditIdle:
 
             //trace("axFormatVst.dispatcher :: effEditIdle");
-            if ((mFormatFlags&pf_HasEditor) && mEditorOpen)
+            if ((mFormatFlags&ff_HasEditor) && mEditorOpen)
             {
               doIdleEditor();
             }
@@ -1350,7 +1350,7 @@ class axFormatVst : public axFormatBase
         //hasEditor(aWidth,aHeight);
         hasEditor(true);
         mEditorRect.set(0,0,aWidth,aHeight);
-        mFormatFlags |= pf_HasEditor;
+        mFormatFlags |= ff_HasEditor;
       }
 
     //----------
