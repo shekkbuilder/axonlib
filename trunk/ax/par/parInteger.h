@@ -23,7 +23,7 @@
 #define parInteger_included
 //----------------------------------------------------------------------
 
-#include "axParameter.h"
+#include "par/axParameter.h"
 
 class parInteger : public axParameter
 {

@@ -18,9 +18,9 @@
 #define axArray_included
 //----------------------------------------------------------------------
 
-#include <axDefines.h>
-#include <core/axStdlib.h>
-#include <core/axMalloc.h>
+#include "core/axDefines.h"
+#include "core/axStdlib.h"
+#include "core/axMalloc.h"
 
 #define SIZE_INIT 16  ///< initial size of array
 #define SIZE_MULT 2   ///< amount to increase/decrease the array size when needed (multiplier)

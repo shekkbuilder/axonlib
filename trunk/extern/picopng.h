@@ -43,7 +43,7 @@
   #include "core/axDebug.h"
 #endif
 
-#include "axDefines.h"      // ax_uint8, ax_uint32, ax_uint64
+#include "core/axDefines.h"      // ax_uint8, ax_uint32, ax_uint64
 #include "core/axMalloc.h"
 
 #define axPngInfo           PNG_info_t

@@ -18,7 +18,7 @@
 #define axColor_included
 //----------------------------------------------------------------------
 
-#include "axDefines.h"
+#include "core/axDefines.h"
 #include "core/axArray.h"
 
 //----------------------------------------------------------------------

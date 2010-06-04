@@ -25,7 +25,7 @@
 */
 //----------------------------------------------------------------------
 
-#include "axDefines.h"
+#include "core/axDefines.h"
 #include "audio/axModule.h"
 
 class axGraph : public axModule,

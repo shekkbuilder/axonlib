@@ -32,7 +32,7 @@
 
 #ifndef AX_NO_RAND      // if not defined: use axonlib's axRand()
 
-#include "axDefines.h"
+#include "core/axDefines.h"
 
 /*
   ------------------------------------------------------------------------------

@@ -1,8 +1,8 @@
 // we need alpha-blending of bitmaps/surfaces
 #define AX_ALPHA
 
-#include "axFormat.h"
-#include "axEditor.h"
+#include "format/axFormat.h"
+#include "gui/axEditor.h"
 #include "core/axRand.h"
 #include "par/parInteger.h"
 #include "par/parFloat.h"

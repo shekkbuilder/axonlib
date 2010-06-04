@@ -4,8 +4,8 @@
 #define AX_DEBUG_NEW
 #define AX_DEBUG_LOG  "test_gain_gui_skin.log"
 
-#include "axFormat.h"
-#include "axEditor.h"
+#include "format/axFormat.h"
+#include "gui/axEditor.h"
 //#include "gui/axSkinDefault.h"
 #include "wdg/wdgPanel.h"
 #include "wdg/wdgKnob.h"

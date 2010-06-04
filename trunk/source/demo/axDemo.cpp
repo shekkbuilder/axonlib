@@ -5,7 +5,7 @@
 //#define AX_DEBUG_LOG        "axDemo.cpp.log"
 
 
-#include "axFormat.h"
+#include "format/axFormat.h"
 #include "core/axRand.h"
 #include "gui/axBitmapLoader.h"
 #include "axDemo_editor.h"

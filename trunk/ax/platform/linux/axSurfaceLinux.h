@@ -24,7 +24,7 @@
 #endif
 
 #include "platform/axContext.h"
-#include "axDefines.h"
+#include "core/axDefines.h"
 #include "base/axSurfaceBase.h"
 #include "gui/axCanvas.h"
 //#include "axonlib.h"

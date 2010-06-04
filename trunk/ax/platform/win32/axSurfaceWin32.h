@@ -19,7 +19,7 @@
 //----------------------------------------------------------------------
 
 #include "platform/axContext.h"
-#include "axDefines.h"
+#include "core/axDefines.h"
 #include "base/axSurfaceBase.h"
 
 class axSurfaceWin32 : public axSurfaceBase

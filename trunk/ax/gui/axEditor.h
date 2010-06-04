@@ -35,7 +35,7 @@
 
 */
 
-#include "axFormat.h"
+#include "format/axFormat.h"
 #include "core/axArray.h"
 #include "gui/axWindow.h"
 #include "skins/axSkinBasic.h"
