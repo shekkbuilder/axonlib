@@ -127,6 +127,7 @@
 		<Unit filename="..\..\ax\dsp\dspSVF.h" />
 		<Unit filename="..\..\ax\dsp\dsp_Env.h" />
 		<Unit filename="..\..\ax\dsp\dsp_Osc.h" />
+		<Unit filename="..\..\ax\format\axFormatAu.h" />
 		<Unit filename="..\..\ax\format\axFormatDssi.h" />
 		<Unit filename="..\..\ax\format\axFormatExe.h" />
 		<Unit filename="..\..\ax\format\axFormatLadspa.h" />

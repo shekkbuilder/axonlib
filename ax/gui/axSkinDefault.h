@@ -1,8 +1,12 @@
+#error deprecated!
+//TODO: delete
+
+#if 0
+
 #ifndef axSkinDefault_included
 #define axSkinDefault_included
 //----------------------------------------------------------------------
 
-#error deprecated!
 
 #include "gui/axSkin.h"
 
@@ -219,3 +223,5 @@ class axSkinDefault : public axSkin
 
 //----------------------------------------------------------------------
 #endif
+
+#endif // 0
