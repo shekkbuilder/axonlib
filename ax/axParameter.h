@@ -37,8 +37,7 @@ class axParameterListener
 //----------------------------------------------------------------------
 
 // parameter flags
-#define pf_Automate 1
-
+#define pf_Automate 1 // used in axFormatVst, effCanBeAutomated
 #define AX_PAR_DEFAULT (pf_Automate)
 
 //----------------------------------------------------------------------
@@ -64,6 +63,13 @@ class axParameter// : public axParameterBase
     void*     mPtr;
 
   public:
+
+    // aListener: parent/owner, usually your plugin, can be editor, etc..
+    // aName:     name, displayed in vst-host parameter lists, automation, etc
+    //            and on widgets
+    // aLabel:    extra string, like "db", "%", etc, to append after the
+    //            normal display string (for vst hosts)
+    // aValue:    internal value (0..1)
 
     axParameter(axParameterListener* aListener, axString aName, axString aLabel="", float aValue=0)
       {

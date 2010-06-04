@@ -18,6 +18,16 @@
 #define axFormat_included
 //----------------------------------------------------------------------
 
+/*
+NOTES:
+- if you override doIdleEditor(), you have to call axFormat::doIdleEditor
+  to have the widgets repainted (unless you have AX_WIDGET_NOUPDATELIST defined),
+  or do something like this yoursef in your idle function:
+    if (mEditorWindow) mEditorWindow->redrawUpdates();
+
+
+*/
+
 //TODO: updateList (dirtyParameters)
 
 #include "axConfig.h"
@@ -35,6 +45,12 @@
 
 //----------
 
+// #define AX_FORMAT_EXE or #define AX_FORMAT_VST, etc..
+//  either on the compiler command line (or compiler scripts),
+// or in your ide's build target setup
+
+//----------
+
 #ifdef AX_FORMAT_VST
   //#include "platform/vst/axPluginVst.h"
   #include "format/axFormatVst.h"
@@ -49,28 +65,13 @@
 
 //----------------------------------------------------------------------
 
-/*
-
-this is inherited from Impl, because:
-- axFormatBase defines the interface, the methods that each plugin format implements
-- axFormatVst/Exe, implements these, and are the format spewcific layers
-- axFormatExe/Vst is typedef'd into axFormatImpl
-- axFormat derives (inherits) from axFormatImpl, and yb that, drgging in the
-  platform specific sub-layers...
-
-- to make all this work, we need to do #define AX_FORMAT_EXE or #define AX_FORMAT_VST,
-  either on the compiler command line (compiler scripts), or in an ide's
-  build target setup
-
-*/
-
 //class axFormat : public axFormatBase, public axParameterListener
 class axFormat : public axFormatImpl, public axParameterListener
 {
   protected:
     axSystemInfo mSystemInfo;
   public:
-    axFormat(axContext* aContext,int aFormatFlags=pf_None)
+    axFormat(axContext* aContext,int aFormatFlags=ff_None)
     //: axFormatBase(aContext,aFormatFlags)
     : axFormatImpl(aContext,aFormatFlags)
       {
@@ -150,7 +151,7 @@ class axFormat : public axFormatImpl, public axParameterListener
 
     //--------------------------------------------------
 
-    virtual void doIdleEditor()
+    virtual void doIdleEditor(void)
       {
         #ifndef AX_WIDGET_NOUPDATELIST
         //trace("axFormat.doIdleEditor");

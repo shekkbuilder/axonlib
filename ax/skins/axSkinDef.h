@@ -18,26 +18,6 @@
 #define axSkinDef_included
 //----------------------------------------------------------------------
 
-/*
-
-todo:
-
-  png_skin = new axPngLoader(skin1,skin1_size);
-  png_knob = new axPngLoader(knob1,knob1_size);
-
-  mySkin = new axSkinDef(editor,png_skin,png_knob);
-
-  widget->applySkin(mySkin);
-
-  axPngLoader:
-    char* buffer;
-    int   bufsize;
-    bool  is_decoded;
-
-
-
-*/
-
 #include "gui/axSkin.h"
 //#include "gui/axBitmapLoader.h"
 //#include "img/skin1.h"
@@ -45,64 +25,20 @@ todo:
 
 //----------
 
-//#include "../extern/stb_truetype.h"
-//
-//#if 0
-//
-//char            ttf_buffer[1<<20];
-//stbtt_fontinfo  ttf_font;
-//unsigned char   ttf_screen[20][79];
-//
-////int i,j, pos=0;
-////unsigned char *bitmap;
-//
-//memset(ttf_screen,0,sizeof(ttf_screen));
-//
-////fread(ttf_buffer,1,1000000,fopen("c:/windows/fonts/arialbd.ttf","rb"));
-//stbtt_InitFont(&ttf_font,ttf_buffer,0);
-//float scale = stbtt_ScaleForPixelHeight(&ttf_font,16);
-//
-//int baseline = 13;
-//char* text = "Heljo World!";
-//int   pos = 0;
-//while (*text)
-//{
-//  int advance, lsb;
-//  int x0,y0,x1,y1;
-//
-//  stbtt_GetCodepointHMetrics(&ttf_font,*text,&advance,&lsb);
-//  stbtt_GetCodepointBitmapBox(&ttf_font,*text,scale,scale,&x0,&y0,&x1,&y1);
-//
-//  int newpos = pos + (int)(lsb*scale) + x0;
-//  stbtt_MakeCodepointBitmap(&ttf_font, &ttf_screen[baseline+y0][newpos],x1-x0,y1-y0,79,scale,scale,*text);
-//  // note that this stomps the old data, so where character boxes overlap (e.g. 'lj') it's wrong
-//  // because this API is really for baking character bitmaps into textures
-//  pos += (int)(advance*scale);
-//  ++text;
-//}
-//
-////for (j=0; j < 20; ++j)
-////{
-////  for (i=0; i < 79; ++i)
-////    putchar(" .:ioVM@"[screen[j][i]>>5]);
-////  putchar('\n');
-////}
-//
-//#endif
 
 //----------
 
 class axSkinDef : public axSkin
 {
-  private:
+  protected:
     bool        mSkinSrfLoaded;
-    bool        mKnobSrfLoaded;
     axSurface*  mSkinSrf;
-    axSurface*  mKnobSrf;
     axColor     mPanelBackCol;
     axColor     mTextColor;
     axRect      mButtonOffRect;
     axRect      mButtonOnRect;
+    bool        mKnobSrfLoaded;
+    axSurface*  mKnobSrf;
     int         mKnobWidth;
     int         mKnobHeight;
     int         mKnobCount;
@@ -178,11 +114,10 @@ class axSkinDef : public axSkin
       }
 
     //--------------------------------------------------
+    //
+    //--------------------------------------------------
 
-  //private:
-
-    //[internal]
-    axBitmap* loadBitmap(axEditor* aEditor, char* aBuffer, int aWidth, int aHeight, int aDepth)
+    virtual axBitmap* loadBitmap(axEditor* aEditor, char* aBuffer, int aWidth, int aHeight, int aDepth)
     {
       axBitmap* bitmap = aEditor->createBitmap(aWidth,aHeight,aDepth);
       bitmap->createBuffer(aBuffer);
@@ -191,8 +126,6 @@ class axSkinDef : public axSkin
       bitmap->prepare();
       return bitmap;
     }
-
-  //public:
 
     //--------------------------------------------------
 
@@ -299,11 +232,10 @@ class axSkinDef : public axSkin
           int y  = aRect.y;
           int size = axMinInt(aRect.w,aRect.h);
           int th = aCanvas->textHeight("Xj");
-          aCanvas->setTextColor(mTextColor);
-          //aCanvas->setTextColor(mDarkColor);
+          aCanvas->setTextColor(mKnobTextCol);
           //aCanvas->setTextSize(14);
           aCanvas->drawText(x+size+8,y,   aRect.x2(),aRect.y2(),aName,ta_Top|ta_Left);
-          //aCanvas->setTextColor(mLightColor);
+          aCanvas->setTextColor(mKnobValCol);
           //aCanvas->setTextSize(8);
           aCanvas->drawText(x+size+8,y+th,aRect.x2(),aRect.y2(),aDisp,ta_Top|ta_Left);
         }
@@ -312,3 +244,48 @@ class axSkinDef : public axSkin
 
 //----------------------------------------------------------------------
 #endif
+
+//#include "../extern/stb_truetype.h"
+//
+//#if 0
+//
+//char            ttf_buffer[1<<20];
+//stbtt_fontinfo  ttf_font;
+//unsigned char   ttf_screen[20][79];
+//
+////int i,j, pos=0;
+////unsigned char *bitmap;
+//
+//memset(ttf_screen,0,sizeof(ttf_screen));
+//
+////fread(ttf_buffer,1,1000000,fopen("c:/windows/fonts/arialbd.ttf","rb"));
+//stbtt_InitFont(&ttf_font,ttf_buffer,0);
+//float scale = stbtt_ScaleForPixelHeight(&ttf_font,16);
+//
+//int baseline = 13;
+//char* text = "Heljo World!";
+//int   pos = 0;
+//while (*text)
+//{
+//  int advance, lsb;
+//  int x0,y0,x1,y1;
+//
+//  stbtt_GetCodepointHMetrics(&ttf_font,*text,&advance,&lsb);
+//  stbtt_GetCodepointBitmapBox(&ttf_font,*text,scale,scale,&x0,&y0,&x1,&y1);
+//
+//  int newpos = pos + (int)(lsb*scale) + x0;
+//  stbtt_MakeCodepointBitmap(&ttf_font, &ttf_screen[baseline+y0][newpos],x1-x0,y1-y0,79,scale,scale,*text);
+//  // note that this stomps the old data, so where character boxes overlap (e.g. 'lj') it's wrong
+//  // because this API is really for baking character bitmaps into textures
+//  pos += (int)(advance*scale);
+//  ++text;
+//}
+//
+////for (j=0; j < 20; ++j)
+////{
+////  for (i=0; i < 79; ++i)
+////    putchar(" .:ioVM@"[screen[j][i]>>5]);
+////  putchar('\n');
+////}
+//
+//#endif

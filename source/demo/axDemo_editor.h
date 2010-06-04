@@ -27,6 +27,8 @@
 #include "axDemo_page_midi.h"
 #include "axDemo_page_bitmaps.h"
 
+#include "../ccernn/img/fx_grains_knob.h"
+
 //----------------------------------------------------------------------
 
 //unsigned char demo_skin[]    = { "empty..." };
@@ -68,6 +70,8 @@ class axDemo_editor : public axEditor
       {
         axCanvas* canvas = getCanvas();
         m_Skin = new axDemo_skin(canvas);
+//        m_Skin->loadKnobBitmap(this,buffer,width,height,depth);
+//        m_Skin->loadSkinBitmap(this,buffer,width,height,depth);
         applySkin(m_Skin);
         //m_Skin->loadSkinBitmap(this,(unsigned char*)demo_skin,demo_skin_size);
         //m_Symbols = new axSymbols(m_Skin->getSurface());
@@ -135,6 +139,12 @@ class axDemo_editor : public axEditor
       }
 
     //--------------------------------------------------
+
+    void setupSkin(axBitmapLoader* aSkin, axBitmapLoader* aKnob)
+      {
+        m_Skin->loadSkinBitmap(this,(char*)aSkin->getImage(),aSkin->getWidth(),aSkin->getHeight(),32);
+        m_Skin->loadKnobBitmap(this,(char*)aKnob->getImage(),aKnob->getWidth(),aKnob->getHeight(),32);
+      }
 
     void setup(axSystemInfo* aSystemInfo, axHostInfo* aHostInfo)
       {

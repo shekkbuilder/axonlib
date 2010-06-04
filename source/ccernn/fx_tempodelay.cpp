@@ -61,7 +61,7 @@ class myPlugin : public axFormat
   public:
 
     myPlugin(axContext* aContext)
-    : axFormat(aContext, pf_None)
+    : axFormat(aContext)
       {
         if (!gui_initialized)
         {

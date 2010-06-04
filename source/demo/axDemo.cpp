@@ -4,11 +4,15 @@
 //#define AX_DEBUG_AUTO_STD
 //#define AX_DEBUG_LOG        "axDemo.cpp.log"
 
-#include "core/axRand.h"
 
 #include "axFormat.h"
+#include "core/axRand.h"
+#include "gui/axBitmapLoader.h"
 #include "axDemo_editor.h"
 #include "axDemo_graph.h"
+
+#include "demoskin.h"
+#include "demoknob.h"
 
 //#include "audio/axLibaam.h"
 
@@ -18,11 +22,15 @@ class axDemo : public axFormat
     axDemo_editor* m_Editor;
     axDemo_graph*  m_Graph;
     axParameter   *p1,*p2,*p3,*p4,*p5;
+    bool m_GuiInitialized;
+    axBitmapLoader* skinloader;
+    axBitmapLoader* knobloader;
   public:
 
     axDemo(axContext* aContext)
-    : axFormat(aContext, pf_HasEditor)
+    : axFormat(aContext)
       {
+        m_GuiInitialized = false;
         m_Graph = new axDemo_graph("axDemo graph");
         m_Graph->doCompile();
         describe("axDemo","ccernn","axonlib example",0,AX_MAGIC+0xFFFF);
@@ -37,13 +45,13 @@ class axDemo : public axFormat
         //char* caps = axCpuCapsString();
         //trace("cpu caps: " << caps);
 
-  char buffer[17];
-  axFtoa(buffer,PI);
-  trace("axFtoa(PI) = '" << buffer << "'");
-  axItoa(buffer,418);
-  trace("axItoa(418) = '" << buffer << "'");
-  if (axBigEndian()) trace("big endian");
-  if (axLittleEndian()) trace("little endian");
+//  char buffer[17];
+//  axFtoa(buffer,PI);
+//  trace("axFtoa(PI) = '" << buffer << "'");
+//  axItoa(buffer,418);
+//  trace("axItoa(418) = '" << buffer << "'");
+//  if (axBigEndian()) trace("big endian");
+//  if (axLittleEndian()) trace("little endian");
 
       }
 
@@ -52,6 +60,11 @@ class axDemo : public axFormat
     virtual ~axDemo()
       {
         delete m_Graph;
+        if (m_GuiInitialized)
+        {
+          delete skinloader;
+          delete knobloader;
+        }
       }
 
     //---------- plugin ----------
@@ -144,7 +157,16 @@ class axDemo : public axFormat
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
         trace(":: doOpenEditor");
+        if (!m_GuiInitialized)
+        {
+          skinloader = new axBitmapLoader();
+          skinloader->decode((unsigned char*)demoskin,demoskin_size);
+          knobloader = new axBitmapLoader();
+          knobloader->decode((unsigned char*)demoknob,demoknob_size);
+          m_GuiInitialized = true;
+        }
         m_Editor = new axDemo_editor(this,aContext,mEditorRect,AX_WIN_DEFAULT/*AX_WIN_MSGTHREAD | AX_WIN_MSGDELETE*/ );
+        m_Editor->setupSkin(skinloader,knobloader);
         m_Editor->setup(getSystemInfo(),getHostInfo());
         m_Editor->connect(m_Editor->w_Page_widgets->w1,p1);
         m_Editor->connect(m_Editor->w_Page_widgets->w2,p2);

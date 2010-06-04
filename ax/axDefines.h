@@ -97,6 +97,10 @@ TODO:
 #define COL         axColor
 #define AX_PTRCAST  long
 
+// TODO: replace the long in ax_ptrcast to something that is the same size
+//       as a ptr on all platforms and 32/64-bit
+//       int?
+
 // limits
 // -----------------------------------------------------------------------------
 #define AX_CHAR_BIT       8

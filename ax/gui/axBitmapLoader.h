@@ -28,6 +28,7 @@
 //#include "axBitmap.h"
 //#include "axSurface.h"
 
+#include "core/axStdlib.h"
 #include "../extern/picopng.h"
 
 //----------------------------------------------------------------------

@@ -44,7 +44,7 @@ class myPlugin : public axFormat
   public:
 
     myPlugin(axContext* aContext)
-    : axFormat(aContext/*, pf_None*/)
+    : axFormat(aContext)
       {
         BUFFER = new float[MAX_BUFSIZE];
         index  = 0;

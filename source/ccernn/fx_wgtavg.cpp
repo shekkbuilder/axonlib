@@ -19,7 +19,7 @@ class myPlugin : public axFormat
   public:
 
     myPlugin(axContext* aContext)
-    : axFormat(aContext, pf_None)
+    : axFormat(aContext)
       {
         describe("fx_wgtavg","ccernn","axonlib example",0,AX_MAGIC+0x1005);
         setupAudio(2,2);

@@ -162,6 +162,9 @@ class axWindow : public axWindowImpl
     //virtual void doRealign(void) {}
     //virtual void doPaint(axCanvas* aCanvas, axRect aRect) {}
 
+    // if we're in a modal state, send these events only to
+    // the modal widget (popup, etc)
+
     virtual void doMouseDown(int aXpos, int aYpos, int aButton)
       {
         if (mModalWidget) mModalWidget->doMouseDown(aXpos,aYpos,aButton);

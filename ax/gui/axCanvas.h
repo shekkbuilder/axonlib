@@ -46,11 +46,17 @@
 
 class axCanvas : public axCanvasImpl
 {
-  public:
+  friend class axSurfaceWin32;
+  friend class axSurfaceLinux;
+  friend class axWindowWin32;
+  friend class axWindowLinux;
+  //public:
+  protected:
     axCanvas(axContext* aContext)
     : axCanvasImpl(aContext)
       {
       }
+  public:
     virtual ~axCanvas()
       {
       }

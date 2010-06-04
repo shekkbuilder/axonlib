@@ -19,9 +19,22 @@
 //----------------------------------------------------------------------
 /*
 
+notes:
+- a widget knows about a listener, but not a parent.
+  the listener has a set of methods (see the axWidgetListener methods)
+  that can be called, and depending on widget-type, this results in some response,
+  or it can be further passed on to that widget's listener,
+- a widget has a list of sub-widgets, but theses widgets doesn't necessarily know
+  about the parent/owner, only a listener. often this refers back to the same parent,
+  and thus have some of the same effect (but not all, only the listener-methods)
+- the rect is relative to its parent. depending on widget alignment, it might get
+  moved and resized, and only some of the fields in the rect struct might have any effect
+  (see examples, and doRealign()
+
 TODO:
 - realign, take spacing & borders into account
 - clipping, --"--
+- clip-stack
 
 */
 //----------------------------------------------------------------------

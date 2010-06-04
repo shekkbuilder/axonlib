@@ -36,7 +36,10 @@
 
 class axSurface : public axSurfaceImpl
 {
-  public:
+  friend class axWindowWin32;
+  friend class axWindowLinux;
+  //public:
+  protected:
     axSurface(axContext* aContext, int aWidth, int aHeight, int aDepth)
     : axSurfaceImpl(aContext,aWidth,aHeight,aDepth)
       {

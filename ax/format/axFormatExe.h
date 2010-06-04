@@ -64,7 +64,7 @@ class axFormatExe : public axFormatBase//,
         //wtrace("axFormatExe.main");
         // can this fail if we create the class as axEditor
         // meaning, can we safely typecase a axEditor* to a axWindow?
-        if (mFormatFlags&pf_HasEditor)
+        if (mFormatFlags&ff_HasEditor)
         {
           axWindow* win = (axWindow*)doOpenEditor(aContext);
           //wtrace("win = " << win);
@@ -108,7 +108,7 @@ class axFormatExe : public axFormatBase//,
     virtual void setupEditor(int aWidth, int aHeight)
       {
         mEditorRect.set(0,0,aWidth,aHeight);
-        mFormatFlags |= pf_HasEditor;
+        mFormatFlags |= ff_HasEditor;
       }
 
 //    virtual void setupParameters(void)

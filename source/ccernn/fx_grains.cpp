@@ -148,7 +148,7 @@ class myPlugin : public axFormat
   public:
 
     myPlugin(axContext* aContext)
-    : axFormat(aContext/*, pf_None*/)
+    : axFormat(aContext)
       {
         axRand(418);
         BUFFER = new float[BUFFER_SIZE];
@@ -157,7 +157,7 @@ class myPlugin : public axFormat
         index     = 0;
         countdown = 0;
         describe("fx_grains","ccernn","axonlib example",0,AX_MAGIC+0x1004);
-        setupAudio(2,2/*,false*/);
+        setupAudio(2,2);
         setupEditor(340,325);
         appendParameter( new parFloat2( this,"master volume",     "",   1,    0, 2   ) );
         appendParameter( new parInteger(this,"number of grains",  "",   10,   1, MAX_GRAINS ) );
@@ -267,7 +267,6 @@ reaper->ShowMessageBox("testing reaper sdk extensions","axonlib",3);
         for (int i=0; i<w_Panel->getNumWidgets(); i++)
           editor->connect( w_Panel->getWidget(i), mParameters[i] );
         w_Panel->loadBitmap(editor,(char*)backloader->getImage(),340,325, 24);
-        //setupParameters();
         // 'grain painter'
         w_Panel->appendWidget( vis = new myVisual(editor,axRect(11,203,319,34),wa_None)  );
         vis->aBackColor = canvas->getColor(64,64,64);
