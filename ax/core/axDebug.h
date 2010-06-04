@@ -153,7 +153,7 @@ inline const char* axGetFileName(const char* path)
     
   // log file
   #ifdef AX_DEBUG_LOG
-    fstream axDlog (AX_DEBUG_LOG, ios::out);
+    fstream axDlog;
     #define axDfstream(x) \
       axDlog << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << endl; \
       axDlog.flush();

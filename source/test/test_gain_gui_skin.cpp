@@ -47,13 +47,23 @@ class myPlugin : public axFormat
         m_GuiInitialized = false;
         m_Gain = 0;
         describe("test_gain_gui_skin","ccernn","axonlib example",0,AX_MAGIC+0x0000);
-        setupAudio(2,2/*,false*/);
+        setupAudio(2, 2/*,false*/);
         setupEditor(128,64);
-        appendParameter( p_Gain = new axParameter(this,"gain","") );
+        appendParameter( p_Gain = new axParameter(this, "gain", "") );
         setupParameters();
-        // test op delete[]
-        //int* j = new int[21];
-        //delete[] j;
+        
+        // -- test axFileWrite
+        char b[] = "abcdef\n";
+        unsigned int len = axGetArrSize(b)-1;
+        // wb = 0 (default)
+        axFileWrite("testfile.bin", b, len, 0);
+        // w  = 1
+        axFileWrite("testfile.txt", b, len, 1);
+        // ab = 2        
+        axFileWrite("testfile.bin", b, len, 2);
+        // a = 3
+        axFileWrite("testfile.txt", b, len, 3);
+        // --  
       }
 
     virtual ~myPlugin()

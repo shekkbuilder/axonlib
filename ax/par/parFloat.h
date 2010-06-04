@@ -24,21 +24,24 @@
 //----------------------------------------------------------------------
 
 #include "axParameter.h"
+#include "core/axMath.h"
 
 class parFloat : public axParameter
 {
   protected:
     float mRange;
+    float mInvRange;
     float mNumSteps;
     float mStepSize;
     float mHalfStep;
   public:
-    float   mMin, mMax, mStep;
+    float mMin, mMax, mStep;
 
   public:
 
-    parFloat( axParameterListener* aListener, axString aName, axString aLabel="",
-              float aValue=0, float aMin=0, float aMax=1, float aStep=0)
+    parFloat( axParameterListener* aListener, const axString aName,
+              const axString aLabel="", const float aValue=0,
+              const float aMin=0.f, const float aMax=1.f, const float aStep=0.f)
     : axParameter(aListener,aName,aLabel)
       {
         setup(aValue,aMin,aMax,aStep);
@@ -48,12 +51,14 @@ class parFloat : public axParameter
 
     //--------------------------------------------------
 
-    void setup(float aVal, float aMin, float aMax, float aStep)
+    void setup(const float aVal, const float aMin, const float aMax,
+               const float aStep)
       {
         mMin      = aMin;                 // 2
         mMax      = aMax;                 // 4
         mStep     = aStep;                // 0.5
         mRange    = mMax-mMin;            // 4-2 = 2
+        mInvRange = 1/mRange;
         if( mStep > 0 )
         {
           mNumSteps = 1 + (mRange/mStep); // 1+(2/0.5)  = 1+4   = 5
@@ -65,7 +70,7 @@ class parFloat : public axParameter
           mNumSteps = 1;
           mStepSize = 1;
           mHalfStep = 0;
-        }
+        }        
         setValue(aVal);
       }
 
@@ -79,9 +84,9 @@ class parFloat : public axParameter
 
     //--------------------------------------------------
 
-    virtual void  setValue(float aValue)
+    virtual void  setValue(const float aValue)
       {
-        mValue = ( (aValue-mMin) / mRange);
+        mValue = ( (aValue-mMin) * mInvRange);
         //mValue += mHalfStep;
       }
 
@@ -89,10 +94,10 @@ class parFloat : public axParameter
 
     virtual float getValue(void)
       {
-        if( mStep>0 )
+        if( mStep > 0 )
         {
-          float n = mValue * mNumSteps;
-          int st = (int)axMin(n,(mNumSteps-1));
+          const float n = mValue * mNumSteps;
+          const int st = axMinInt(n, (mNumSteps - 1));
           return mMin + (st*mStep);
         }
         else
@@ -119,6 +124,28 @@ class parFloat : public axParameter
     //--------------------------------------------------
 
 };
+
+class parFloatPow : public parFloat
+{
+  public:
+    parFloatPow(axParameterListener* aListener, const axString aName,
+              const axString aLabel="", const float aValue=0,
+              const float aMin=0, const float aMax=1, const float aStep=0,
+              const float aPower=1.f)
+    : parFloat(aListener,aName,aLabel,aValue,aMin,aMax,aStep)
+      {
+      }
+    virtual float getValue(void)
+      {
+        const float v = parFloat::getValue();
+        if (aPower != 1.f)
+          return axPowf(v, aPower);
+        else
+          return v;
+      }
+};
+
+/*
 
 //----------------------------------------------------------------------
 
@@ -153,6 +180,7 @@ class parFloat3 : public parFloat
         return v*v*v;
       }
 };
+*/
 
 
 //----------------------------------------------------------------------

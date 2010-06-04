@@ -428,9 +428,9 @@ __axstdlib_inline const char* axGetBasePath (char* path)
   char* path_init = path;
   // windows
   #ifdef WIN32
-    char filepath[AX_MAX_PATH] = ""; // warning: unused variable 'filepath'|
+    char filepath[AX_MAX_PATH] = "";
     #ifdef AX_FORMAT_LIB
-      GetModuleFileName(gInstance, filepath, MAX_PATH);      
+      GetModuleFileName(gInstance, filepath, MAX_PATH);
     #endif
     #ifdef AX_FORMAT_EXE
       GetModuleFileName(NULL, filepath, MAX_PATH);      
@@ -471,20 +471,26 @@ __axstdlib_inline const char* axGetBasePath (char* path)
   return path_init;
 }
 
-// read file from base path
-__axstdlib_inline unsigned char* axReadFile (const char* _file,
-  unsigned int* _size)
+// read binary file from base path (bin)
+__axstdlib_inline unsigned char* axFileRead (const char* _file,
+  unsigned int* _size, const unsigned int mode = 0)
 {
   char filepath[AX_MAX_PATH] = "";
   char _path[AX_MAX_PATH] = "";
   const char* path = axGetBasePath(_path);
   axStrcat(filepath, (char*)path);
   axStrcat(filepath, (char*)_file);
-  FILE* f = fopen(filepath, "rb");
-  trace("axReadFile(): " << filepath);
+  
+  trace("axFileRead(): " << filepath);
+  FILE* f = NULL;
+  switch (mode)
+  {
+    case 0: f = fopen(filepath, "rb"); break;
+    case 1: f = fopen(filepath, "r");  break;
+  }  
   if (!f)
   {
-    trace("axReadFile(), #ERR missing: " << filepath);
+    trace("axFileRead(), #ERR open(" << mode << "): " << filepath);
     return 0;
   }
   fseek(f, 0, SEEK_END);
@@ -492,18 +498,53 @@ __axstdlib_inline unsigned char* axReadFile (const char* _file,
   fseek(f, 0, SEEK_SET);
   if (!*_size)
   {
-    trace("axReadFile(), #ERR null sized: " << filepath);
+    trace("axFileRead(), #ERR null sized: " << filepath);
     return 0;
   }
   unsigned char* b = (unsigned char*)axMalloc(*_size);
   unsigned int res = fread(b, *_size, 1, f);
+  fclose(f);  
+  if (!res)
+  {
+    trace("axFileRead(), #ERR read: " << filepath);
+    return 0;
+  }  
+  return b;
+}
+
+// write binary file to base path
+__axstdlib_inline unsigned int axFileWrite (const char* _file,
+  const char* b, const unsigned int len, const unsigned int mode = 0 )
+{
+  char filepath[AX_MAX_PATH] = "";
+  char _path[AX_MAX_PATH] = "";
+  const char* path = axGetBasePath(_path);
+  axStrcat(filepath, (char*)path);
+  axStrcat(filepath, (char*)_file);
+  
+  trace("axFileWrite(): " << filepath);
+  FILE* f = NULL;
+  switch (mode)
+  {
+    case 0: f = fopen(filepath, "wb"); break;
+    case 1: f = fopen(filepath, "w");  break;
+    case 2: f = fopen(filepath, "ab"); break;
+    case 3: f = fopen(filepath, "a");  break;
+  }
+  if (!f)
+  {
+    trace("axFileWrite(), #ERR open(" << mode << "): " << filepath);
+    return 0;
+  }
+  unsigned int res = fwrite(b, sizeof(b[0]), len, f);
   fclose(f);
   if (!res)
   {
-    trace("axReadFile(), #ERR file read: " << filepath);
+    trace("axFileWrite(), #ERR write: " << filepath);
     return 0;
-  }
-  return b;
+  }  
+  return 1;
 }
+
 //----------------------------------------------------------------------
 #endif

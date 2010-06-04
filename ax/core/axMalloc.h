@@ -72,8 +72,6 @@ TODO:
 #ifndef axMalloc_included
 #define axMalloc_included
 
-//#include "core/axDebug.h"
-
 #ifdef AX_HOT_INLINE_MALLOC
   #define __axmalloc_inline __hotinline
 #else
@@ -158,6 +156,7 @@ TODO:
 
   /*
   // ### MUNMAP emulation is currently disabled
+  
   __axmalloc_inline long axMunmap (void *ptr,
     __attribute__((unused)) long size)
   {
@@ -182,8 +181,7 @@ TODO:
 #endif
 
 #ifdef linux
-  // may be needed for sbrk()
-  #include "unistd.h"
+  #include "unistd.h" // sbrk()
 #endif
 
 /**
@@ -252,7 +250,6 @@ __axmalloc_inline void* axMalloc (register unsigned int size)
   rv += 4;
   return (void*)rv;
 }
-
 
 /**
  * axCalloc
@@ -462,7 +459,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
         else
           axStrcpy(_name, "axFree, ");
       #endif
-      
+      // output cout / log
       if (_axMemTotal - _size >= 0)
       {
         _axMemTotal -= _size;
@@ -471,11 +468,11 @@ __axmalloc_inline void* axRealloc (void* _ptr,
           "[" << axGetFileName(_file) << "|" << _line << "] " << _name <<
           (void*)&_ptr << ", " << _size << ", " << _axMemTotal
         );
-           
+
         #ifdef AX_NO_MALLOC
-          free(_ptr);      
+          free(_ptr);
         #else
-          axFree(_ptr);     
+          axFree(_ptr);
         #endif      
       }
       else 
@@ -556,6 +553,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
   #endif // AX_DEBUG_NEW
 
 #else // AX_DEBUG && AX_DEBUG_MEM
+
   // overload operators new, delete without debug
   #include <new>
 
@@ -577,6 +575,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
   {
     return axFree(ptr);
   }
+
 #endif // AX_DEBUG && AX_DEBUG_MEM
 
 #endif // axMalloc_included
