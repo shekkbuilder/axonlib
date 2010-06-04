@@ -70,7 +70,7 @@ class parFloat : public axParameter
           mNumSteps = 1;
           mStepSize = 1;
           mHalfStep = 0;
-        }        
+        }
         setValue(aVal);
       }
 
@@ -127,6 +127,8 @@ class parFloat : public axParameter
 
 class parFloatPow : public parFloat
 {
+  private:
+    float mPower;
   public:
     parFloatPow(axParameterListener* aListener, const axString aName,
               const axString aLabel="", const float aValue=0,
@@ -134,12 +136,13 @@ class parFloatPow : public parFloat
               const float aPower=1.f)
     : parFloat(aListener,aName,aLabel,aValue,aMin,aMax,aStep)
       {
+        mPower = aPower;
       }
     virtual float getValue(void)
       {
         const float v = parFloat::getValue();
-        if (aPower != 1.f)
-          return axPowf(v, aPower);
+        if (mPower != 1.f)
+          return axPowf(v, mPower);
         else
           return v;
       }
