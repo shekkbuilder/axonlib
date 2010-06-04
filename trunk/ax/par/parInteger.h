@@ -31,29 +31,30 @@ class parInteger : public axParameter
     int     mMin, mMax, mStep;
     char**  mStrings;
     float   mRange;
-    float   inv_mRange;
+    float   mInvRange;
     float   mHalfStep;
 
   public:
 
-    parInteger( axParameterListener* aListener, axString aName, axString aLabel="",
-                int aValue=0, int aMin=0, int aMax=100, char** aStrings=NULL)
+    parInteger( axParameterListener* aListener, const axString aName,
+                const axString aLabel="", const int aValue=0,
+                const int aMin=0, const int aMax=100, char** aStrings=NULL)
     : axParameter(aListener,aName,aLabel)
       {
-        setup(aValue,aMin,aMax,aStrings);
+        setup(aValue, aMin, aMax, aStrings);
       }
 
     //virtual ~parFloat() {}
 
     //--------------------------------------------------
 
-    void setup(int aVal, int aMin, int aMax, char** aStrings)
+    void setup(const int aVal, const int aMin, const int aMax, char** aStrings)
       {
         mMin       = aMin;
         mMax       = aMax;
         mRange     = mMax - mMin + 1;      // 4
-        inv_mRange = 1/mRange; 
-        mHalfStep  = (inv_mRange)*0.5;
+        mInvRange  = 1/mRange; 
+        mHalfStep  = (mInvRange)*0.5;
         mStrings   = aStrings;
         setInt(aVal);
       }
@@ -62,7 +63,7 @@ class parInteger : public axParameter
 
     virtual void setInt(int aValue)
       {
-        mValue = (float)(aValue-mMin) * inv_mRange;
+        mValue = (float)(aValue-mMin) * mInvRange;
         mValue += mHalfStep;
       }
 
@@ -71,14 +72,14 @@ class parInteger : public axParameter
     virtual int getInt(void)
       {
         //return mRange * (float)(mValue + mMin);
-        float n = axFloor (mValue * mRange );
-        return (mMin + (int)axMin(n,(mRange-1)));
+        const float n = axFloor (mValue * mRange );
+        return (mMin + axMinInt(n, (mRange-1)));
       }
 
     //--------------------------------------------------
 
-    virtual void  setValue(float aValue)  { setInt((int)aValue); }
-    virtual float getValue(void)          { return (float)getInt(); }
+    virtual void  setValue(const float aValue)  { setInt ((int)aValue); }
+    virtual float getValue(void)                { return (float)getInt(); }
 
     //--------------------------------------------------
 
@@ -90,7 +91,7 @@ class parInteger : public axParameter
 
     virtual void  doGetDisplay(char* buf)
       {
-        int i = getInt();
+        const int i = getInt();
         if( mStrings ) axStrcpy( buf, mStrings[i] );
         //else __builtin_sprintf( buf, "%i", (int)i );
         else axItoa(buf,i);
