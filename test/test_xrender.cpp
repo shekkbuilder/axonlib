@@ -92,7 +92,7 @@ class myPlugin : public axFormat,
 
         //pnginfo = PNG_decode(testpng,testpng_size);
         //pnginfo = PNG_decode(testpng2,testpng2_size);
-        pnginfo = PNG_decode(testpng3,testpng3_size);
+        pnginfo = decodePng(testpng3,testpng3_size);
         trace("pnginfo = " << pnginfo);
         trace("png error: " << PNG_error);
         _w   = pnginfo->width;

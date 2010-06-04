@@ -38,8 +38,8 @@ class myPlugin : public axFormat,
         setupAudio(2,2,false);
         //setupEditor(256,256);
         axBitmapLoader loader;
-        //loader.decode((unsigned char*)testpng,testpng_size);
-        loader.decode((unsigned char*)testpng2,testpng2_size);
+        //loader.decodePng((unsigned char*)testpng,testpng_size);
+        loader.decodePng((unsigned char*)testpng2,testpng2_size);
         //pnginfo = axPngDecode(testpng,testpng_size);
 
       }
