@@ -1,27 +1,53 @@
-[in progress, sketch]
+list of feature for axonlib v.0.1.0
 
-* compile to windows or linux, plugin or standalone executable, with no sourcecode changes
-• common look, feel, functionality among platforms
-• simple to get started, few external dependencies
-• no bloat, tiny and compact binaries, no big external libraries needed
-• cpu efficient, code prepared for (hopefully) compiler analysis and optimization
-• plugin format abstraction (currently vst plugin and standalone exe)
-• simplified handling of parameters, tempo, audio, midi, editor, ...
-• lots of included example plugins
-• flexible, hierarchial gui, skinnable, auto-layout, sizeable, moveable, ...
-• mouse cursor shapes, hovering hints, mouse capture, modal widgets
-• includes a basic, but flexible set of widgets/containers
-• simple to make custom widgets
-• resizeable plugin window/editor (in selected hosts)
-• low level gfx (gdi/xlib) canvas, surface, bitmap, ...
-• png-decoding from memory with (include png directly in exe/plugin)
-• scripts, stack-based, 4th inspired, rudimentary compilation (bytecode)
-• modular audio graph, with connectable dsp modules
-• polyphonic voice manager, event scheduler
-• heavily optimized math functions and approximations..
-• mersenne twister implementation, customized for small binary size impact
-• builtin, fast memory allocator routines
-• builtin routines for string and memory manipulation
-• debugging functionality & helpers
-• everything (almost) is optional (no bloat...)
-• [plus a lot of forgotten things, and all the small details...]
+OVERVIEW:
+* binary format abstraction for vst plugins and excutables on linux and windows
+* common look, feel, functionality among platforms
+* few external dependencies
+* compile scripts with simplified command lines for the gnu gcc compiler 
+* tiny and compact binaries with no big, external libraries needed
+* cpu efficient, code prepared for compiler analysis and optimization
+* options to disable code or functionality that is not needed
+
+CORE:
+* builtin fast memory allocator routines
+* builtin routines for low-level string and memory manipulation
+* heavily optimized mathematical functions and approximations
+* intuitive debugging functionality & helpers
+* static and runtime assertion
+
+GUI:
+* hierarchial gui which: flexible, skinnable, with auto-layout,
+  sizeable, moveable etc
+* includes a basic, but flexible set of widgets/containers
+* simple creation of custom widgets
+* low level gfx (gdi/xlib) canvas, surface, bitmap etc
+* support decoding 32bit pngs from memory or from an external file
+* mouse cursor shapes, hovering hints, mouse capture, modal widgets
+* resizeable window/editor (in plugin hosts as well)
+
+DSP:
+* polyphonic voice manager and event scheduler
+* modular audio graph with connectable dsp modules
+* rbj filter bank
+* basic oversampling container
+* chamberlin state variable filter
+* rms approximation
+* envelope follower
+* basic waveform generators
+
+PLUGINS:
+* lots of included example vsts plugins
+* simplified creation and use of parameters
+* easy host tempo handling for audio and midi
+* can load external files directly from plugin
+  folder on both linux and windows
+
+OTHER:
+* basic read/write access for external files
+* utility methods for bit manipulation and conversations
+* scripts, stack-based, 4th inspired, rudimentary compilation (bytecode)
+* builtin, random number generators 
+* mersenne twister implementation, customized for small binary size impact  
+* fft implementation
+* more...
