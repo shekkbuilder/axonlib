@@ -159,20 +159,20 @@ class myPlugin : public axFormat
         describe("fx_grains","ccernn","axonlib example",0,AX_MAGIC+0x1004);
         setupAudio(2,2);
         setupEditor(340,325);
-        appendParameter( new parFloat2( this,"master volume",     "",   1,    0, 2   ) );
-        appendParameter( new parInteger(this,"number of grains",  "",   10,   1, MAX_GRAINS ) );
-        appendParameter( new parFloat2( this,"buffer size",       "ms", 32,   1, 64 ) );
-        appendParameter( new parInteger(this,"freeze",            "",   0,    0, 1, str_onoff ) );
-        appendParameter( new parFloat2( this,"grain distance",    "ms", 2,    1, 16  ) );
-        appendParameter( new parFloat2( this,"grain size",        "ms", 4,    1, 8   ) );
-        appendParameter( new parFloat2( this,"grain duration",    "ms", 16,   1, 32  ) );
-        appendParameter( new parFloat2( this,"grain pitch",       "",   1,    0, 2   ) );
-        appendParameter( new parFloat(  this,"envelope",          "",   1   ) );
-        appendParameter( new parFloat(  this,"grain envelope",    "",   1   ) );
-        appendParameter( new parFloat3( this,"distance jitter",   "",   0.2 ) );
-        appendParameter( new parFloat3( this,"pitch jitter",      "",   0.2 ) );
-        appendParameter( new parFloat3( this,"size jitter",       "",   0.2 ) );
-        appendParameter( new parFloat3( this,"duration jitter",   "",   0.2 ) );
+        appendParameter( new parFloatPow( this,"master volume",     "",   1,    0, 2,0,  2   ) );
+        appendParameter( new parInteger(  this,"number of grains",  "",   10,   1, MAX_GRAINS ) );
+        appendParameter( new parFloatPow( this,"buffer size",       "ms", 32,   1,64,0, 2 ) );
+        appendParameter( new parInteger(  this,"freeze",            "",   0,    0, 1, str_onoff ) );
+        appendParameter( new parFloatPow( this,"grain distance",    "ms", 2,    1,16,0, 2  ) );
+        appendParameter( new parFloatPow( this,"grain size",        "ms", 4,    1, 8,0, 2   ) );
+        appendParameter( new parFloatPow( this,"grain duration",    "ms", 16,   1,32,0, 2  ) );
+        appendParameter( new parFloatPow( this,"grain pitch",       "",   1,    0, 2,0, 2   ) );
+        appendParameter( new parFloat(    this,"envelope",          "",   1   ) );
+        appendParameter( new parFloat(    this,"grain envelope",    "",   1   ) );
+        appendParameter( new parFloatPow( this,"distance jitter",   "",   0.2,  0, 1,0, 3 ) );
+        appendParameter( new parFloatPow( this,"pitch jitter",      "",   0.2,  0, 1,0, 3 ) );
+        appendParameter( new parFloatPow( this,"size jitter",       "",   0.2,  0, 1,0, 3 ) );
+        appendParameter( new parFloatPow( this,"duration jitter",   "",   0.2,  0, 1,0, 3 ) );
         setupParameters();
 
 /*

@@ -14,19 +14,11 @@
  * If not, see <http://axonlib.googlecode.com/>.
  */
 
-#ifndef axImage_included
-#define axImage_included
+#ifndef axFormatAu_included
+#define axFormatAu_included
 //----------------------------------------------------------------------
 
-//TODO: rename to axDrawable
-
-class axImage
-{
-  public:
-    virtual int getHandle(void) { return  0; }
-    virtual int getPicture(void) { return 0; }
-};
+// TODO
 
 //----------------------------------------------------------------------
 #endif
-
