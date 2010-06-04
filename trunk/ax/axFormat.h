@@ -52,15 +52,25 @@ NOTES:
 //----------
 
 #ifdef AX_FORMAT_VST
-  //#include "platform/vst/axPluginVst.h"
   #include "format/axFormatVst.h"
   //#define AX_WIN_DEFAULT AX_WIN_PLUGDEFAULT
 #endif
 
 #ifdef AX_FORMAT_EXE
-  //#include "platform/exe/axPluginExe.h"
   #include "format/axFormatExe.h"
   //#define AX_WIN_DEFAULT AX_WIN_APPDEFAULT
+#endif
+
+/*
+ lii:
+ AX_FORMAT_LIB is the general flag for dll binaries.
+ if a format supports both executable and dll format then we could
+ sub-type it on user level e.g. AX_FORMAT_NAME_EXE, AX_FORMAT_NAME_LIB
+ (and add a check for its _LIB flag below) 
+*/
+#if defined AX_FORMAT_VST  || defined AX_FORMAT_LADSPA || \
+    defined AX_FORMAT_DSSI || defined AX_FORMAT_LV2
+  #define AX_FORMAT_LIB
 #endif
 
 //----------------------------------------------------------------------

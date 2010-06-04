@@ -30,7 +30,12 @@
 #include "stdio.h" // fread, fseek, fopen
 #ifdef AX_WIN32
   #include <windows.h>
-  #ifdef AX_FORMAT_VST
+  #ifdef AX_FORMAT_LIB
+    /*
+      lii:
+      if other dll formats are added for windows a commont entry point    
+      could be moved in new header to get gInstance from there 
+    */
     #include "format/axFormatVst.h" // gInstance for axGetBasePath()
   #endif
 #endif
@@ -424,7 +429,7 @@ __axstdlib_inline const char* axGetBasePath (char* path)
   // windows
   #ifdef WIN32
     char filepath[AX_MAX_PATH] = ""; // warning: unused variable 'filepath'|
-    #ifdef AX_FORMAT_VST
+    #ifdef AX_FORMAT_LIB
       GetModuleFileName(gInstance, filepath, MAX_PATH);      
     #endif
     #ifdef AX_FORMAT_EXE
@@ -439,7 +444,7 @@ __axstdlib_inline const char* axGetBasePath (char* path)
   #endif
   // linux
   #ifdef linux
-    #ifdef AX_FORMAT_VST
+    #ifdef AX_FORMAT_LIB
       Dl_info dli;
       dladdr(__func__, &dli);   // dlfcn.h
       const char* slash = axStrrchr(dli.dli_fname, '/');
