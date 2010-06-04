@@ -20,7 +20,7 @@ class myPlugin : public axFormat
   public:
 
     myPlugin(axContext* aContext)
-    : axFormat(aContext, pf_HasEditor)
+    : axFormat(aContext)
       {
         m_Gain = 0;
         describe("test_gain_gui","ccernn","axonlib example",0,AX_MAGIC+0x0000);

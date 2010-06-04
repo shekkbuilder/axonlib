@@ -42,7 +42,7 @@ class myPlugin : public axFormat
   public:
 
     myPlugin(axContext* aContext)
-    : axFormat(aContext/*, pf_HasEditor*/)
+    : axFormat(aContext)
       {
         m_GuiInitialized = false;
         m_Gain = 0;
