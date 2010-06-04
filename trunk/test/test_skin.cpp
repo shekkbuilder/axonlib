@@ -69,11 +69,11 @@ class myPlugin : public axFormat
           // png's every time you open the editor
           //
           skinloader1 = new axBitmapLoader();
-          skinloader1->decode((unsigned char*)skin1,skin1_size);
+          skinloader1->decodePng((unsigned char*)skin1,skin1_size);
           knobloader1 = new axBitmapLoader();
-          knobloader1->decode((unsigned char*)knob1,knob1_size);
+          knobloader1->decodePng((unsigned char*)knob1,knob1_size);
           knobloader2 = new axBitmapLoader();
-          knobloader2->decode((unsigned char*)knob32,knob32_size);
+          knobloader2->decodePng((unsigned char*)knob32,knob32_size);
           skin_initialized = true;
 
         }

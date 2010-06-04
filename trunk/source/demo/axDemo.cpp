@@ -160,9 +160,9 @@ class axDemo : public axFormat
         if (!m_GuiInitialized)
         {
           skinloader = new axBitmapLoader();
-          skinloader->decode((unsigned char*)demoskin,demoskin_size);
+          skinloader->decodePng((unsigned char*)demoskin,demoskin_size);
           knobloader = new axBitmapLoader();
-          knobloader->decode((unsigned char*)demoknob,demoknob_size);
+          knobloader->decodePng((unsigned char*)demoknob,demoknob_size);
           m_GuiInitialized = true;
         }
         m_Editor = new axDemo_editor(this,aContext,mEditorRect,AX_WIN_DEFAULT/*AX_WIN_MSGTHREAD | AX_WIN_MSGDELETE*/ );

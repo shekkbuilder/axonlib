@@ -34,7 +34,7 @@ int main(void)
   //trace("png_alloc_tail: " << png_alloc_tail);
 
   loader1 = new axBitmapLoader();
-  loader1->decode((unsigned char*)skin1,skin1_size);
+  loader1->decodePng((unsigned char*)skin1,skin1_size);
 
   //trace("after loading png 1:");
   //trace("png_alloc_head: " << png_alloc_head);

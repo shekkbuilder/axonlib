@@ -236,9 +236,9 @@ reaper->ShowMessageBox("testing reaper sdk extensions","axonlib",3);
         if (!gui_initialized)
         {
           backloader = new axBitmapLoader();
-          backloader->decode((unsigned char*)fx_grains_back,fx_grains_back_size);
+          backloader->decodePng((unsigned char*)fx_grains_back,fx_grains_back_size);
           knobloader = new axBitmapLoader();
-          knobloader->decode((unsigned char*)fx_grains_knob,fx_grains_knob_size);
+          knobloader->decodePng((unsigned char*)fx_grains_knob,fx_grains_knob_size);
           gui_initialized = true;
         }
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);

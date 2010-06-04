@@ -66,11 +66,11 @@ class myPlugin : public axFormat
         if (!gui_initialized)
         {
           skinloader = new axBitmapLoader();
-          skinloader->decode((unsigned char*)skin1,skin1_size);
+          skinloader->decodePng((unsigned char*)skin1,skin1_size);
           knobloader = new axBitmapLoader();
-          knobloader->decode((unsigned char*)knob1,knob1_size);
+          knobloader->decodePng((unsigned char*)knob1,knob1_size);
           //knob2loader = new axBitmapLoader();
-          //knob2loader->decode((unsigned char*)knob32,knob32_size);
+          //knob2loader->decodePng((unsigned char*)knob32,knob32_size);
           gui_initialized = true;
         }
         m_Index = 0;

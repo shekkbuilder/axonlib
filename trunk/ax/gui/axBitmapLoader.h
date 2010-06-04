@@ -64,9 +64,9 @@ class axBitmapLoader
 
     //--------------------------------------------------
 
-    int decode(unsigned char* buffer, unsigned int buffersize)
+    int decodePng(unsigned char* buffer, unsigned int buffersize)
       {
-        trace("decode(), " << (void*)&buffer << ", " << buffersize);
+        trace("decodePng(), " << (void*)&buffer << ", " << buffersize);
         int res = 0;
         //if (mPngInfo) axFree(mPngInfo);
         axPngInfo* png = axPngDecode(buffer, buffersize);
@@ -87,7 +87,7 @@ class axBitmapLoader
 
     //--------------------------------------------------
 
-   int decodeLoad(const char* file)
+   int decodeLoadPng(const char* file)
       {
         unsigned int size;
         unsigned char* b = axReadFile(file, &size);
@@ -95,12 +95,12 @@ class axBitmapLoader
         // check if the buffer contains a png (or a least partially)
         if (b[0] != 0x89 || b[1] != 0x50 || b[2] != 0x4E || b[3] != 0x47)
         {
-          trace("decodeLoad(), #ERR not a png: " << file);
+          trace("decodeLoadPng(), #ERR not a png: " << file);
           return 0;
         }
         else
         {
-          trace("decodeLoad(), " << file << ", " << size);
+          trace("decodeLoadPng(), " << file << ", " << size);
           // leave pico to clear the file buffer
           decode(b, size);
           return 1;

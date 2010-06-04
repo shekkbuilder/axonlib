@@ -79,7 +79,7 @@ class axDemo_skin : public axSkinDef
 
 //    axSurface* loadBitmap(axEditor* aEditor, unsigned char* aBuffer, int aSize)
 //      {
-//        m_Loader.decode(aBuffer,aSize);
+//        m_Loader.decodePng(aBuffer,aSize);
 //        int width = m_Loader.getWidth();
 //        int height = m_Loader.getHeight();
 //        axBitmap* bitmap = aEditor->createBitmap(width,height,24);
