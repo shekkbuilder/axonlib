@@ -37,14 +37,7 @@
 
   ==============================================================================
   TODO:
-  - add more eccentric str* methods if needed
-  - deprecate the use of most (all) stdlib / string.h / memory.h methods across
-    axonlib
-  - more performance tests. check if methods in here are redundant in regard
-    of speed. (slower than the ones in stdlib). so far all have been
-    more efficient.
-  - make the some of the methods variable/parameter naming and general syntax
-    a bit more consistent
+    ...
   ==============================================================================
 */
 
@@ -517,7 +510,7 @@ __axstdlib_inline int axAtoi (register const char* s)
     const char *w;
     unsigned digit;
     w = axStrchr(digits, *s);
-    if (w == NULL)
+    if (!w)
       break;
     digit = (w - digits);
     val = val*10 + digit;

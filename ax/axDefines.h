@@ -92,8 +92,8 @@ TODO:
 #define CSPL        const float
 #define PTR         char*
 #define CPTR        const char*
-#define STR         axString
 #define REC         axRect
+#define STR         axString
 #define COL         axColor
 #define AX_PTRCAST  long
 
@@ -144,7 +144,7 @@ TODO:
 #ifdef __AX64__
   #define ax_int32  int
   #define ax_uint32 unsigned int
-  #define ax_int64  long;
+  #define ax_int64  long
   #define ax_uint64 unsigned long
 #endif
 

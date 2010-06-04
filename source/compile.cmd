@@ -98,17 +98,17 @@ if [%6]==[-g] goto setgccdebug
 
 :: get the tgt format
 :getformat
-if [%2]==[-dll] goto dlltarget
-if [%3]==[-dll] goto dlltarget
-if [%4]==[-dll] goto dlltarget
-if [%5]==[-dll] goto dlltarget
-if [%6]==[-dll] goto dlltarget
+if [%2]==[-vst] goto vsttarget
+if [%3]==[-vst] goto vsttarget
+if [%4]==[-vst] goto vsttarget
+if [%5]==[-vst] goto vsttarget
+if [%6]==[-vst] goto vsttarget
 if [%2]==[-exe] goto exetarget
 if [%3]==[-exe] goto exetarget
 if [%4]==[-exe] goto exetarget
 if [%5]==[-exe] goto exetarget
 if [%6]==[-exe] goto exetarget
-goto :dlltarget
+goto :vsttarget
 
 :: set lib debug
 :setlibdebug
@@ -125,8 +125,8 @@ set linker=
 set opt=-O3
 goto getformat
 
-:: format is dll
-:dlltarget
+:: format is vst
+:vsttarget
 if not [%v%]==[] echo ---------------------------------------------------------------------------
 set ext=.dll
 set tgtformat=-DAX_FORMAT_VST -shared
@@ -152,9 +152,9 @@ echo.
 echo ---------------------------------------------------------------------------
 echo * axonlib compile script for windows
 echo.
-echo usage: compile.cmd [file.cpp] [-h] [-exe or -dll] [-nmv] [-d] [-g]
+echo usage: compile.cmd [file.cpp] [format] [-nmv] [-d] [-g] [-h]
 echo  -exe : create an executable
-echo  -dll : create a dll (default)
+echo  -vst : create a vst dll (default)
 echo  -nmv : do not move result to ..\bin
 echo  -d : enable library debug mode
 echo  -g : enable gcc debug mode (-gstabs)

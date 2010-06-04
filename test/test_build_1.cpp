@@ -1,7 +1,3 @@
-// in project/build options, cor compiler command line, like -DAX_FORMAT_VST)
-//#define AX_FORMAT_EXE
-//#define AX_FORMAT_VST
-
 #define AX_DEBUG
 #include "core/axDebug.h"
 
