@@ -17,12 +17,6 @@
 #ifndef axDefines_included
 #define axDefines_included
 
-/*
-TODO:
-  - write correct types and limits for __AX64__
-  - clean attributes and definitions that give problems
-*/
-
 // architechture
 // -----------------------------------------------------------------------------
 #if defined  (__i386__) || defined (_X86_) || defined (__X86__)
@@ -54,7 +48,7 @@ TODO:
  if a format supports both executable and dll format then we could
  sub-type it on user level e.g. AX_FORMAT_NAME_EXE, AX_FORMAT_NAME_LIB
  (and add a check for its _LIB flag below)
- should be before including other headers: axUtils 
+ should be before including other headers: axUtils
 */
 #if defined AX_FORMAT_VST  || defined AX_FORMAT_LADSPA || \
     defined AX_FORMAT_DSSI || defined AX_FORMAT_LV2

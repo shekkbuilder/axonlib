@@ -62,6 +62,9 @@ core:
   as valgrind (linux), dr. memory (win32), objdump, ndisasm and addr2line
   (binutils).
 
+- find a way to properly add debug symbols in linux builds
+  (for use with addr2line)
+
 ----------------------------------------------------------------------
 plugin:
 ----------------------------------------------------------------------
