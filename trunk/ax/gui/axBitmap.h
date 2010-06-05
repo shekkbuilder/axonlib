@@ -74,19 +74,15 @@ class axBitmap : public axBitmapImpl
 
     //----------------------------------------
 
-    void clearBuffer(unsigned char aValue=0)
+    inline unsigned int makeColor(unsigned char r,unsigned char g,unsigned char b,unsigned char a)
       {
-        int size = mWidth*mHeight*4;
-        axMemset(mBuffer,aValue,size);
+        return  ((unsigned int)a<<24)
+               +((unsigned int)r<<16)
+               +((unsigned int)g<<8)
+               + b;
       }
 
-    void fillBuffer(unsigned int aValue)
-      {
-        int size = mWidth*mHeight;
-        //axMemset(mBuffer,aValue,size);
-        unsigned int* ptr = (unsigned int*)mBuffer;
-        for (int i=0; i<size; i++) *ptr++ = aValue;
-      }
+    //----------------------------------------
 
     char* createBuffer(char* aData=NULL)
       {
@@ -97,6 +93,31 @@ class axBitmap : public axBitmapImpl
         if (aData) axMemcpy(mBuffer,/*(int)*/aData,size);
         else axMemset(mBuffer,0,size);
         return mBuffer;
+      }
+
+    void clearBuffer(unsigned char aValue=0)
+      {
+        int size = mWidth*mHeight*4;
+        axMemset(mBuffer,aValue,size);
+      }
+
+    void fillBuffer(unsigned int aValue)
+      {
+        int size = mWidth*mHeight;
+        unsigned int* ptr = (unsigned int*)mBuffer;
+        for (int i=0; i<size; i++) *ptr++ = aValue;
+      }
+
+    unsigned int getPixel(int x, int y)
+      {
+        unsigned int* ptr = (unsigned int*)mBuffer;
+        return ptr[y*mWidth+x];
+      }
+
+    void setPixel(int x, int y, unsigned int col)
+      {
+        unsigned int* ptr = (unsigned int*)mBuffer;
+        ptr[y*mWidth+x] = col;
       }
 
     //----------------------------------------

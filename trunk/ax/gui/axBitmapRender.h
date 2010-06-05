@@ -79,7 +79,15 @@ class axBitmapRender
 
     //--------------------------------------------------
 
-    inline unsigned char alphablend(int c, int a)
+    //void clear(void) { axMemset(mBuffer,0,mWidth*mHeight*4); }
+    //unsigned int getPixel(int x, int y) { return mBuffer[y*mWidth+x]; }
+    //void setPixel(int x, int y, unsigned int col) { mBuffer[y*mWidth+x] = col; }
+
+
+    //----------
+
+    // fixed point (.8) multiplication
+    inline unsigned char mul_fp8(int c, int a)
       {
         int ret = (c*a) >> 8;
         return ret & 0xff;
@@ -87,32 +95,26 @@ class axBitmapRender
 
     //----------
 
-    void clear(void) { axMemset(mBuffer,0,mWidth*mHeight*4); }
-    unsigned int getPixel(int x, int y) { return mBuffer[y*mWidth+x]; }
-    void setPixel(int x, int y, unsigned int col) { mBuffer[y*mWidth+x] = col; }
-
-    //----------
-
     void blendPixel(unsigned int* ptr, unsigned int color, unsigned char alpha)
       {
         // split color into separate r,g,b,a
-        unsigned int  b1 = (color&0x000000ff);
-        unsigned int  g1 = (color&0x0000ff00) >> 8;
-        unsigned int  r1 = (color&0x00ff0000) >> 16;
-        unsigned int  a1 = (color&0xff000000) >> 24;
+        unsigned int b1 = (color&0x000000ff);
+        unsigned int g1 = (color&0x0000ff00) >> 8;
+        unsigned int r1 = (color&0x00ff0000) >> 16;
+        unsigned int a1 = (color&0xff000000) >> 24;
         // pre mix-in with master-alpha
-        //alpha = alphablend(alpha,a1);
-        alpha = alphablend(a1,alpha);
+        alpha = mul_fp8(alpha,a1);
+        //alpha = mul_fp8(alpha,a1);
         // read pixel from buffer
-        unsigned int  c  = *ptr;//getPixel(x,y);
+        unsigned int c  = *ptr;//getPixel(x,y);
         // extract r,g,b
-        unsigned int  b2 = (c&0x0000ff);
-        unsigned int  g2 = (c&0x00ff00) >> 8;
-        unsigned int  r2 = (c&0xff0000) >> 16;
+        unsigned int b2 = (c&0x0000ff);
+        unsigned int g2 = (c&0x00ff00) >> 8;
+        unsigned int r2 = (c&0xff0000) >> 16;
         // alpha-blend the two colors
-        unsigned char b  = alphablend(b1,alpha) + alphablend(b2,255-alpha);
-        unsigned char g  = alphablend(g1,alpha) + alphablend(g2,255-alpha);
-        unsigned char r  = alphablend(r1,alpha) + alphablend(r2,255-alpha);
+        unsigned char b  = mul_fp8(b1,alpha) + mul_fp8(b2,255-alpha);
+        unsigned char g  = mul_fp8(g1,alpha) + mul_fp8(g2,255-alpha);
+        unsigned char r  = mul_fp8(r1,alpha) + mul_fp8(r2,255-alpha);
         // and write it to buffer
         //setPixel(x,y,(r<<16)+(g<<8)+b);
         *ptr = (r<<16)+(g<<8)+b;
@@ -121,26 +123,6 @@ class axBitmapRender
 
     void blendPixel(int x, int y, unsigned int color, unsigned char alpha)
       {
-//        // split color into separate r,g,b,a
-//        unsigned int  b1 = (color&0x000000ff);
-//        unsigned int  g1 = (color&0x0000ff00) >> 8;
-//        unsigned int  r1 = (color&0x00ff0000) >> 16;
-//        unsigned int  a1 = (color&0xff000000) >> 24;
-//        // pre mix-in with master-alpha
-//        alpha = alphablend(alpha,a1);
-//        // read pixel from buffer
-//        unsigned int  c  = getPixel(x,y);
-//        // extract r,g,b
-//        unsigned int  b2 = (c&0x0000ff);
-//        unsigned int  g2 = (c&0x00ff00) >> 8;
-//        unsigned int  r2 = (c&0xff0000) >> 16;
-//        // alpha-blend the two colors
-//        unsigned char b  = alphablend(b1,alpha) + alphablend(b2,255-alpha);
-//        unsigned char g  = alphablend(g1,alpha) + alphablend(g2,255-alpha);
-//        unsigned char r  = alphablend(r1,alpha) + alphablend(r2,255-alpha);
-//        // and write it to buffer
-//        setPixel(x,y,(r<<16)+(g<<8)+b);
-
         unsigned int* ptr = &mBuffer[y*mWidth+x];
         blendPixel(ptr,color,alpha);
       }
@@ -151,10 +133,7 @@ class axBitmapRender
 
     // http://www.users.on.net/~swcheetah/sam/Prog.html
 
-    //float _frac(float x) { return x - (int)x; }
-    //float _invfrac(float x) { return 1 - _frac(x); }
-
-    #define _frac(x) (x-(int)x)
+    #define _frac(x)    (x-(int)x)
     #define _invfrac(x) (1-_frac(x))
 
     //----------
@@ -190,7 +169,8 @@ class axBitmapRender
           ix2  = (int)(xend);                         // calc screen coordinates
           iy2  = (int)(yend);
           // main loop
-          for (x=ix1+1; x<=ix2-1; x++)
+          //for (x=ix1+1; x<=ix2-1; x++)
+          for (x=ix1+1; x<ix2; x++)
           {
             brightness1 = _invfrac(yf);                // calc pixel brightnesses
             brightness2 =    _frac(yf);
@@ -224,7 +204,8 @@ class axBitmapRender
           ix2 = (int)(xend);                   //calc screen coordinates
           iy2 = (int)(yend);
           //MAIN LOOP
-          for(y=iy1+1;y<=iy2-1;y++)
+          //for(y=iy1+1;y<=iy2-1;y++)
+          for(y=iy1+1;y<iy2;y++)
           {
             brightness1 = _invfrac(xf);    //calc pixel brightnesses
             brightness2 =    _frac(xf);
@@ -266,10 +247,17 @@ class axBitmapRender
 
     //----------
 
-    void drawAffineTexturedPolygon(axPolyVertex *verts, axBitmap* aTexture)
+    //#define p_Wireframe     1
+    //#define p_Color         2
+    //#define p_Gouraud       3
+    //#define p_TexAffine     4
+    //#define p_TexPersp      5
+    //#define p_TexFullPersp  6
+
+    void drawPolyTex(axPolyVertex *verts, axBitmap* aTexture, bool aAlpha)
       {
         int RES_X = mWidth;
-        int RES_Y = mHeight;
+        //int RES_Y = mHeight;
         int TEX_X = aTexture->getWidth();
         int TEX_Y = aTexture->getHeight();
         unsigned int* buffer = mBuffer;
@@ -289,7 +277,6 @@ class axBitmapRender
         }
         rTop = lTop;
         // Top scanline of the polygon in the frame buffer
-        //char	*fb = &backBuffer[lTop->iy * RES_X];
         unsigned int* fb = &buffer[lTop->iy * RES_X];
         // Left & Right edges (primed with 0 to force edge calcs first-time through)
         axPolyEdge	le, re;
@@ -340,18 +327,31 @@ class axBitmapRender
             // Fill the entire span
             //char	*span = fb + start;
             unsigned int* span = fb + start;
-            for (; start < end; start++)
+            if (aAlpha)
             {
-              //*(span++) += texture[((iv>>10)&0xffffffC0) + (iu>>16)];
-              //*(span++)  = texture[((iv>>10)&0xffffffC0) + (iu>>16)];
-              int _u = (iu>>16) % TEX_X;
-              int _v = (iv>>16) % TEX_Y;
-              unsigned int pixel = texture[_u + _v*TEX_X];
-              //*(span++) = pixel;
-              blendPixel(span,pixel,255);
-              span++;
-              iu += idu;
-              iv += idv;
+              for (; start < end; start++)
+              {
+                int _u = (iu>>16) % TEX_X;
+                int _v = (iv>>16) % TEX_Y;
+                unsigned int pixel = texture[_u + _v*TEX_X];
+                blendPixel(span++,pixel,255);
+                iu += idu;
+                iv += idv;
+              }
+            }
+            else
+            {
+              for (; start < end; start++)
+              {
+                //*(span++) += texture[((iv>>10)&0xffffffC0) + (iu>>16)];       // add (blend)
+                //*(span++)  = texture[((iv>>10)&0xffffffC0) + (iu>>16)];       // set (overwrite)
+                int _u = (iu>>16) % TEX_X;
+                int _v = (iv>>16) % TEX_Y;
+                unsigned int pixel = texture[_u + _v*TEX_X];
+                *(span++) = pixel;
+                iu += idu;
+                iv += idv;
+              }
             }
             // Step
             le.u += le.du;
@@ -360,12 +360,10 @@ class axBitmapRender
             re.u += re.du;
             re.v += re.dv;
             re.x += re.dx;
-            fb += RES_X;
+            fb   += RES_X;
           }
         }
       }
-
-
 
 };
 
