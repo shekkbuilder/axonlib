@@ -18,7 +18,7 @@
 //#include "../test/test_memory.cpp"
 //#include "../test/test_render.cpp"
 
-//#include "../source/demo/axDemo.cpp"
+#include "../source/demo/axDemo.cpp"
 
 //----------------------------------------------------------------------
 // ccernn
@@ -36,7 +36,7 @@
 
 // gui
 
-#include "../source/ccernn/fx_grains.cpp"
+//#include "../source/ccernn/fx_grains.cpp"
 //#include "../source/ccernn/fx_tempodelay.cpp"
 
 //----------------------------------------------------------------------
