@@ -16,7 +16,7 @@
 #include "wdg/wdgButtons.h"
 #include "wdg/wdgScrollBox.h"
 
-#include "axDemo_skin.h"
+//#include "axDemo_skin.h"
 #include "axDemo_page_canvas.h"
 #include "axDemo_page_widgets.h"
 #include "axDemo_page_system.h"
@@ -27,7 +27,7 @@
 #include "axDemo_page_midi.h"
 #include "axDemo_page_bitmaps.h"
 
-#include "../ccernn/img/fx_grains_knob.h"
+//#include "../ccernn/img/fx_grains_knob.h"
 
 //----------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ class axDemo_editor : public axEditor
 {
   friend class axDemo;
   private:
-    axDemo_skin*          m_Skin;
+    //axDemo_skin*          m_Skin;
     axBitmap*             m_VoxelBitmap;
     axSymbols*            m_Symbols;
 
@@ -68,11 +68,9 @@ class axDemo_editor : public axEditor
     axDemo_editor(axFormat* aFormat, axContext* aContext, axRect aRect, int aWinFlags)
     : axEditor(aFormat,aContext,aRect,aWinFlags)
       {
-        axCanvas* canvas = getCanvas();
-        m_Skin = new axDemo_skin(canvas);
-//        m_Skin->loadKnobBitmap(this,buffer,width,height,depth);
-//        m_Skin->loadSkinBitmap(this,buffer,width,height,depth);
-        applySkin(m_Skin);
+        //axCanvas* canvas = getCanvas();
+        //m_Skin = new axDemo_skin(canvas);
+        //applySkin(m_Skin);
         //m_Skin->loadSkinBitmap(this,(unsigned char*)demo_skin,demo_skin_size);
         //m_Symbols = new axSymbols(m_Skin->getSurface());
         m_VoxelBitmap = createBitmap(320,200,24);
@@ -135,15 +133,15 @@ class axDemo_editor : public axEditor
         stopTimer();
         //delete m_Symbols;
         delete m_VoxelBitmap;
-        delete m_Skin;
+        //delete m_Skin;
       }
 
     //--------------------------------------------------
 
     void setupSkin(axBitmapLoader* aSkin, axBitmapLoader* aKnob)
       {
-        m_Skin->loadSkinBitmap(this,(char*)aSkin->getImage(),aSkin->getWidth(),aSkin->getHeight(),32);
-        m_Skin->loadKnobBitmap(this,(char*)aKnob->getImage(),aKnob->getWidth(),aKnob->getHeight(),32);
+        //m_Skin->loadSkinBitmap(this,(char*)aSkin->getImage(),aSkin->getWidth(),aSkin->getHeight(),32);
+        //m_Skin->loadKnobBitmap(this,(char*)aKnob->getImage(),aKnob->getWidth(),aKnob->getHeight(),32);
       }
 
     void setup(axSystemInfo* aSystemInfo, axHostInfo* aHostInfo)

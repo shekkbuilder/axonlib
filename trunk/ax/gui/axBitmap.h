@@ -30,6 +30,7 @@
 #include "core/axDefines.h"
 #include "core/axMath.h"
 #include "core/axRand.h"
+#include "core/axRect.h"
 #include "platform/axContext.h"
 #include "base/axBitmapBase.h"
 
@@ -72,6 +73,20 @@ class axBitmap : public axBitmapImpl
       }
 
     //----------------------------------------
+
+    void clearBuffer(unsigned char aValue=0)
+      {
+        int size = mWidth*mHeight*4;
+        axMemset(mBuffer,aValue,size);
+      }
+
+    void fillBuffer(unsigned int aValue)
+      {
+        int size = mWidth*mHeight;
+        //axMemset(mBuffer,aValue,size);
+        unsigned int* ptr = (unsigned int*)mBuffer;
+        for (int i=0; i<size; i++) *ptr++ = aValue;
+      }
 
     char* createBuffer(char* aData=NULL)
       {

@@ -10,9 +10,8 @@
 #include "gui/axBitmapLoader.h"
 #include "axDemo_editor.h"
 #include "axDemo_graph.h"
-
-#include "demoskin.h"
-#include "demoknob.h"
+//#include "demoskin.h"
+//#include "demoknob.h"
 
 //#include "audio/axLibaam.h"
 
@@ -157,16 +156,16 @@ class axDemo : public axFormat
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
         trace(":: doOpenEditor");
-        if (!m_GuiInitialized)
-        {
-          skinloader = new axBitmapLoader();
-          skinloader->decodePng((unsigned char*)demoskin,demoskin_size);
-          knobloader = new axBitmapLoader();
-          knobloader->decodePng((unsigned char*)demoknob,demoknob_size);
-          m_GuiInitialized = true;
-        }
+        //if (!m_GuiInitialized)
+        //{
+        //  skinloader = new axBitmapLoader();
+        //  skinloader->decodePng((unsigned char*)demoskin,demoskin_size);
+        //  knobloader = new axBitmapLoader();
+        //  knobloader->decodePng((unsigned char*)demoknob,demoknob_size);
+        //  m_GuiInitialized = true;
+        //}
         m_Editor = new axDemo_editor(this,aContext,mEditorRect,AX_WIN_DEFAULT/*AX_WIN_MSGTHREAD | AX_WIN_MSGDELETE*/ );
-        m_Editor->setupSkin(skinloader,knobloader);
+        //m_Editor->setupSkin(skinloader,knobloader);
         m_Editor->setup(getSystemInfo(),getHostInfo());
         m_Editor->connect(m_Editor->w_Page_widgets->w1,p1);
         m_Editor->connect(m_Editor->w_Page_widgets->w2,p2);

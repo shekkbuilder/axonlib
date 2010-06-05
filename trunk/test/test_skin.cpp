@@ -9,8 +9,8 @@
 
 #define AX_ALPHA
 
-#include "axFormat.h"
-#include "axEditor.h"
+#include "format/axFormat.h"
+#include "gui/axEditor.h"
 #include "wdg/wdgPanel.h"
 #include "wdg/wdgKnob.h"
 
@@ -37,7 +37,7 @@ class myPlugin : public axFormat
   public:
 
     myPlugin(axContext* aContext)
-    : axFormat(aContext, pf_HasEditor)
+    : axFormat(aContext)
       {
         describe("test_skin","ccernn","axonlib example",0,AX_MAGIC+0x0000);
         setupAudio(2,2,false);
