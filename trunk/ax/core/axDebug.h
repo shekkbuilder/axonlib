@@ -111,11 +111,17 @@
 #include "axStdlib.h"
 inline const char* axGetFileName(const char* path)
 {
-  const char *slash, *backslash;
-  slash = axStrrchr(path, '/');
-  backslash = axStrrchr(path, '\\') + 1;
-  if (slash) return slash + 1;
-    return backslash;
+  if (path)
+  {
+    const char *slash, *backslash;
+    slash = axStrrchr(path, '/');
+    backslash = axStrrchr(path, '\\') + 1;
+    if (slash)
+      return slash + 1;
+    else if (backslash)
+      return backslash;
+  }  
+  return "NULL";
 }
 
 // case: debug enabled

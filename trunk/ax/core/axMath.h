@@ -675,7 +675,7 @@ __axmath_inline float axSinf(register float value)
  */
 __axmath_inline float axSin(register float x)
 {
-  x = x * (1.2732395447f - 0.4052847345f * axAbs(x));
+  x *= (1.2732395447f - 0.4052847345f * axAbs(x));
   return 0.225f * (x * axAbs(x) - x) + x;
 }
 
