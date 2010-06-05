@@ -481,7 +481,7 @@ __axstdlib_inline unsigned char* axFileRead (const char* _file,
   axStrcat(filepath, (char*)path);
   axStrcat(filepath, (char*)_file);
   
-  trace("axFileRead(): " << filepath);
+  trace("axFileRead(" << mode << "): " << filepath);
   FILE* f = NULL;
   switch (mode)
   {
@@ -490,7 +490,7 @@ __axstdlib_inline unsigned char* axFileRead (const char* _file,
   }  
   if (!f)
   {
-    trace("axFileRead(), #ERR open(" << mode << "): " << filepath);
+    trace("axFileRead, #ERR open(" << mode << "): " << filepath);
     return 0;
   }
   fseek(f, 0, SEEK_END);
@@ -498,7 +498,7 @@ __axstdlib_inline unsigned char* axFileRead (const char* _file,
   fseek(f, 0, SEEK_SET);
   if (!*_size)
   {
-    trace("axFileRead(), #ERR null sized: " << filepath);
+    trace("axFileRead, #ERR null sized: " << filepath);
     return 0;
   }
   unsigned char* b = (unsigned char*)axMalloc(*_size);
@@ -506,7 +506,7 @@ __axstdlib_inline unsigned char* axFileRead (const char* _file,
   fclose(f);  
   if (!res)
   {
-    trace("axFileRead(), #ERR read: " << filepath);
+    trace("axFileRead, #ERR read: " << filepath);
     return 0;
   }  
   return b;
@@ -522,7 +522,7 @@ __axstdlib_inline unsigned int axFileWrite (const char* _file,
   axStrcat(filepath, (char*)path);
   axStrcat(filepath, (char*)_file);
   
-  trace("axFileWrite(): " << filepath);
+  trace("axFileWrite(" << mode << "): " << filepath);
   FILE* f = NULL;
   switch (mode)
   {
@@ -530,17 +530,17 @@ __axstdlib_inline unsigned int axFileWrite (const char* _file,
     case 1: f = fopen(filepath, "w");  break;
     case 2: f = fopen(filepath, "ab"); break;
     case 3: f = fopen(filepath, "a");  break;
-  }
+  }  
   if (!f)
   {
-    trace("axFileWrite(), #ERR open(" << mode << "): " << filepath);
+    trace("axFileWrite, #ERR open(" << mode << "): " << filepath);
     return 0;
   }
   unsigned int res = fwrite(b, sizeof(b[0]), len, f);
   fclose(f);
   if (!res)
   {
-    trace("axFileWrite(), #ERR write: " << filepath);
+    trace("axFileWrite, #ERR write: " << filepath);
     return 0;
   }  
   return 1;

@@ -118,20 +118,6 @@ inline const char* axGetFileName(const char* path)
     return backslash;
 }
 
-#ifdef AX_DEBUG_FULL
-  #undef AX_DEBUG
-  #define AX_DEBUG
-  #undef AX_DEBUG_PNG
-  #define AX_DEBUG_PNG
-  #undef AX_DEBUG_MEM
-  #define AX_DEBUG_MEM
-  #undef AX_DEBUG_NEW
-  #define AX_DEBUG_NEW
-  #ifndef AX_DEBUG_LOG
-    #define AX_DEBUG_LOG "axdebug.log"
-  #endif
-#endif
-
 // case: debug enabled
 #ifdef AX_DEBUG
 

@@ -24,8 +24,6 @@ NOTES:
   to have the widgets repainted (unless you have AX_WIDGET_NOUPDATELIST defined),
   or do something like this yoursef in your idle function:
     if (mEditorWindow) mEditorWindow->redrawUpdates();
-
-
 */
 
 //TODO: updateList (dirtyParameters)
@@ -43,12 +41,29 @@ NOTES:
   #define AX_FORMAT_LIB
 #endif
 
+/* enable 'full' debug mode */ 
+#ifdef AX_DEBUG_FULL
+  #undef  AX_DEBUG
+  #define AX_DEBUG
+  #undef  AX_DEBUG_AUTO_STD
+  #define AX_DEBUG_AUTO_STD
+  #undef  AX_DEBUG_MEM
+  #define AX_DEBUG_MEM
+  #undef  AX_DEBUG_NEW
+  #define AX_DEBUG_NEW
+  #undef  AX_DEBUG_PNG
+  #define AX_DEBUG_PNG
+  #ifndef AX_DEBUG_LOG
+    #define AX_DEBUG_LOG "axdebug.log"
+  #endif
+#endif
+
 #include "axConfig.h"
 #include "core/axDefines.h"
 #include "core/axMalloc.h"
 #include "core/axDebug.h"
-#include "core/axUtils.h"
 #include "core/axAssert.h"
+#include "core/axUtils.h"
 #include "platform/axContext.h"
 #include "base/axFormatBase.h"
 
