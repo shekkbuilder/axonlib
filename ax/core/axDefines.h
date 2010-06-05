@@ -48,6 +48,36 @@ TODO:
   #define _WIN32_WINNT 0x0501
 #endif
 
+/*
+ lii:
+ AX_FORMAT_LIB is the general flag for dll binaries.
+ if a format supports both executable and dll format then we could
+ sub-type it on user level e.g. AX_FORMAT_NAME_EXE, AX_FORMAT_NAME_LIB
+ (and add a check for its _LIB flag below)
+ should be before including other headers: axUtils 
+*/
+#if defined AX_FORMAT_VST  || defined AX_FORMAT_LADSPA || \
+    defined AX_FORMAT_DSSI || defined AX_FORMAT_LV2
+  #define AX_FORMAT_LIB
+#endif
+
+/* enable 'full' debug mode */ 
+#if defined AX_DEBUG_FULL && defined AX_DEBUG
+  #undef  AX_DEBUG
+  #define AX_DEBUG
+  #undef  AX_DEBUG_AUTO_STD
+  #define AX_DEBUG_AUTO_STD
+  #undef  AX_DEBUG_MEM
+  #define AX_DEBUG_MEM
+  #undef  AX_DEBUG_NEW
+  #define AX_DEBUG_NEW
+  #undef  AX_DEBUG_PNG
+  #define AX_DEBUG_PNG
+  #ifndef AX_DEBUG_LOG
+    #define AX_DEBUG_LOG "axdebug.log"
+  #endif
+#endif
+
 // ax magic
 // -----------------------------------------------------------------------------
 // ascii 'AX', 0x4158

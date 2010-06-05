@@ -471,7 +471,7 @@ __axstdlib_inline const char* axGetBasePath (char* path)
   return path_init;
 }
 
-// read binary file from base path (bin)
+// read file from base path
 __axstdlib_inline unsigned char* axFileRead (const char* _file,
   unsigned int* _size, const unsigned int mode = 0)
 {
@@ -512,7 +512,7 @@ __axstdlib_inline unsigned char* axFileRead (const char* _file,
   return b;
 }
 
-// write binary file to base path
+// write file to base path
 __axstdlib_inline unsigned int axFileWrite (const char* _file,
   const char* b, const unsigned int len, const unsigned int mode = 0 )
 {

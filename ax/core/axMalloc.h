@@ -520,14 +520,14 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     // define some helpers for the delete operator
     static __thread char* ax_del_file;
     static __thread unsigned int ax_del_line;
-    unsigned int axDebugSetDelete(const char* file, unsigned int line)
+    unsigned int axDebugSetDelete(const char* file, const unsigned int line)
     {
       ax_del_file = (char*)file;
       ax_del_line = line;
       return 1;
     }
    
-    // overload operators new, delete with debug    
+    // overload operators new & delete with debug    
     __axmalloc_inline void* operator new (const unsigned int size,
       const char* file, unsigned int line) throw (std::bad_alloc)
     {
@@ -554,7 +554,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
 
 #else // AX_DEBUG && AX_DEBUG_MEM
 
-  // overload operators new, delete without debug
+  // overload operators new & delete without debug
   #include <new>
 
   __axmalloc_inline void* operator new (unsigned int size)
