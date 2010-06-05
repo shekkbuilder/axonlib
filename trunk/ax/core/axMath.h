@@ -14,6 +14,11 @@
  * If not, see <http://axonlib.googlecode.com/>.
  */
 
+/*
+  NOTE:
+    some of the methods are not be compatible with big endian systems or x64
+*/ 
+
 /**
  * \file axMath.h
  * \brief math approximations and routines
@@ -269,7 +274,7 @@ __axmath_inline float axMax(register const float a, register const float b)
 __axmath_inline float axLimit(register const float input,
   register const float limit)
 {
-  register float _t = (input > -limit) ? input : -limit;
+  register const float _t = (input > -limit) ? input : -limit;
   return (_t > limit) ? _t : limit;
 }
 
@@ -304,7 +309,7 @@ __axmath_inline int axMaxInt(register const int a, register const int b)
 __axmath_inline int axLimitInt(register const int input,
   register const int limit)
 {
-  register int _t = (input > -limit) ? input : -limit;
+  register const int _t = (input > -limit) ? input : -limit;
   return (_t > limit) ? _t : limit;
 }
 
