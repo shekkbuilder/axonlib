@@ -4,6 +4,7 @@
 //#define AX_DEBUG_AUTO_STD
 //#define AX_DEBUG_LOG        "axDemo.cpp.log"
 
+#define AX_ALPHA
 
 #include "format/axFormat.h"
 #include "core/axRand.h"
