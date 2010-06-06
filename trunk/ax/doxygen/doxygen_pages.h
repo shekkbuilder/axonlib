@@ -32,38 +32,16 @@
   <h2>introduction:</h2>
   <b>axonlib</b> is a standalone, multiplatform (win32/linux) library for
   vst plugins and applications, which focuses on the ease of
-  use, while rataining 'low-level' control. it is released under the gnu lgpl
-  license.
+  use, while rataining 'low-level' control. it is released under the axonlib
+  license (AXL) which is based on the GNU LGPL.  
   <br>
   
-  ### NOTE: these docs including the sub-pages are outdated 
+  <h2>
+  ### NOTE: the examples and methods here are outdated,
+  but should be renewed soon.
+  </h2>
   
-  project home: <br>
-  http://axonlib.googlecode.com
-  
-  <h2>feature highlights:</h2>
-  - gui widgets <br>
-  - loading of external png images <br>
-  - resizeable windows <br>
-  - optimized math methods <br>
-  - dsp classes <br>
-  - lots of example plugins <br>
-  
-  <h2>developers:</h2>
-  - ccernn - cern.th.skei at gmail <br>
-  - liteon - neolit123 at gmail <br> 
-  
-  <h2>uses third party code by:</h2>
-  - lode vandevenne (lodepng/picopng)<br>
-  - jorgen aase (some multiplatform code)<br>
-  - miller s. puckette. (mayer_fft)
-  - gregoire pau (dwt97)
-  - tom baran (autotalent)
-  - others
-  
-  which is released under the conditions declared by these authors.
-  
-  <h2>pages:</h2>
+  <h2>CONTENTS:</h2>
   - \subpage installation
   - \subpage examples
   - \subpage compile
@@ -332,6 +310,7 @@
 /**
  \page screenshots screenshots
  
+ <!-- 
  <center>
  <b>some of the included fx:</b>
  <br><br>
@@ -365,6 +344,9 @@
  <br>
  
  </center>
+ 
+ -->
+ 
  */
  
 //----------------------------------------------------------------------
@@ -386,7 +368,7 @@ I. COPYRIGHT NOTICE
     Project: Axonlib
     Website: http://axonlib.googlecode.com/
                             
-    Copyright (c) 2010 Tor-Helge Skei, Lubomir I. Ivanov et all
+    Copyright (c) 2010 Tor-Helge Skei, Lubomir I. Ivanov et al
 
     -----------------------------------------------------------------------
 
@@ -488,9 +470,9 @@ A: - For commercial binaries you cannot include any source code from the
      the Axonlib License, the GPL or the LGPL (Please read 6. and 7. of the
      Exception notice).
 
-   - If your are releasing the source code modifications under the Axonlib
+   - If you are releasing the source code modifications under the Axonlib
      License the files LICENSE_AX, LICENSE_AXDOCS and PREAMBLE should
-     be also present.
+     also be present.
 
    - You must notify of the use of the Library for all projects. See III.4.
      for details.
@@ -520,7 +502,7 @@ A: Yes, you can, but you have to:
      are part of your library.
 
 Q: Is AXL code compatible with MIT code for example?
-A: Yes, as an extension of the LGPL, AXL is compatible with most known
+A: Yes. As an extension of the LGPL, AXL is compatible with most known
    licenses. Please read more info on LGPL compatibility with other licenses.
 
 Q: Where can I ask more questions?
@@ -547,7 +529,7 @@ V. IN CODE COPYRIGHT NOTICE
 
     You should have received a copy of the Axonlib License
     If not, see <http://axonlib.googlecode.com/>.
-
+    
 ================================================================================
 \endcode
 
