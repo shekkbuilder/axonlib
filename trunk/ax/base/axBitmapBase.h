@@ -21,7 +21,7 @@
 /*
 
   user-mem (local) bitmap. let yu access the pixels/ints directly,
-  and draw to a canvas with drawImage()
+  and draw to a canvas with drawBitmap()
 
   note that the rgb format is a bit shaky, more work should be done here
 
@@ -38,14 +38,7 @@
 */
 
 #include "platform/axContext.h"
-#include "base/axImage.h"
-
-//class axBitmapBase : public axImage
-//{
-//  public:
-//    axBitmapBase(axContext* aContext) {}
-//    virtual ~axBitmapBase() {}
-//};
+//#include "base/axImage.h"
 
 class axBitmapBase
 {

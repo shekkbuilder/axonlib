@@ -376,9 +376,11 @@ class axCanvasLinux : public axCanvasBase
     //width,height 	Specify the width and height, which are the dimensions of both the source and destination rectangles.
     //dest_x,dest_y Specify the x and y coordinates, which are relative to the origin of the destination rectangle and specify its upper-left corner
 
-    virtual void drawImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    //virtual void drawImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    virtual void drawImage(axSurfaceBase* aSurface, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
-        XCopyArea(mDisplay,aImage->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
+        //XCopyArea(mDisplay,aImage->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
+        XCopyArea(mDisplay,aSurface->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
       }
 
     //void
@@ -514,11 +516,13 @@ class axCanvasLinux : public axCanvasBase
     //#define PictOpHSLLuminosity			    0x3e
     //#define PictOpBlendMaximum			    0x3e
 
-    virtual void renderImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    //virtual void renderImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    virtual void renderSurface(axSurfaceBase* aSurface, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
         #ifdef AX_ALPHA
           int op = PictOpOver;
-          XRenderComposite(mDisplay,op,aImage->getPicture(),None,mPicture,aSrcX,aSrcY,0,0,aX,aY,aSrcW,aSrcH);
+          //XRenderComposite(mDisplay,op,aImage->getPicture(),None,mPicture,aSrcX,aSrcY,0,0,aX,aY,aSrcW,aSrcH);
+          XRenderComposite(mDisplay,op,aSurface->getPicture(),None,mPicture,aSrcX,aSrcY,0,0,aX,aY,aSrcW,aSrcH);
         //#else
         //  drawImage(aImage,aX,aY,aSrcX,aSrcY,aSrcW,aSrcH);
         #endif
@@ -526,7 +530,8 @@ class axCanvasLinux : public axCanvasBase
 
     //----------
 
-    virtual void stretchImage(axImage* aImage, int aX, int aY, int aW, int aH, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    //virtual void stretchImage(axImage* aImage, int aX, int aY, int aW, int aH, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    virtual void stretchSurface(axSurfaceBase* aSurface, int aX, int aY, int aW, int aH, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
         #ifdef AX_ALPHA
         if (aW > 0)
@@ -544,7 +549,8 @@ class axCanvasLinux : public axCanvasBase
                 { XDoubleToFixed(0 ), XDoubleToFixed(0 ), XDoubleToFixed(zs) }
               }
             };
-            Picture pic = aImage->getPicture();
+            //Picture pic = aImage->getPicture();
+            Picture pic = aSurface->getPicture();
             XRenderSetPictureTransform(mDisplay, pic, &xform );
             int op = PictOpOver;
             // hmmm.. is srcx, srcy transformed by the matrix too?

@@ -238,7 +238,9 @@ class axEditor : public axWindow
         // check possibility, feasability of drawing directly
         // via the editor's canvas, so we avoid the extra
         // 'invalidate' roundtrip to the os and back
+        #ifdef AX_FORMAT_LIB
         else
+        #endif
           redrawWidget(aWidget);
 
       }

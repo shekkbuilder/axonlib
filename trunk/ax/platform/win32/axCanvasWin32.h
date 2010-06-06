@@ -516,9 +516,11 @@ class axCanvasWin32 : public axCanvasBase
     // image
     //--------------------------------------------------
 
-    virtual void drawImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    //virtual void drawImage(axImage* aImage, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    virtual void drawSurface(axSurfaceBase* aSurface, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
-        HDC tempdc = (HDC)aImage->getHandle();
+        //HDC tempdc = (HDC)aImage->getHandle();
+        HDC tempdc = (HDC)aSurface->getHandle();
         BitBlt(mDC,aX,aY,aSrcW,aSrcH,tempdc,aSrcX,aSrcY,SRCCOPY);
       }
 
@@ -536,9 +538,11 @@ class axCanvasWin32 : public axCanvasBase
     //  BYTE AlphaFormat;
     //} BLENDFUNCTION, *PBLENDFUNCTION, *LPBLENDFUNCTION;
 
-    virtual void renderImage( axImage*  aImage,  int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    //virtual void renderImage( axImage*  aImage,  int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    virtual void renderSurface( axSurfaceBase* aSurface,  int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
-        HDC tempdc = (HDC)aImage->getHandle();
+        //HDC tempdc = (HDC)aImage->getHandle();
+        HDC tempdc = (HDC)aSurface->getHandle();
         AlphaBlend(mDC,aX,aY,aSrcW,aSrcH,tempdc,aSrcX,aSrcY,aSrcW,aSrcH,mBlendFunc);
         // link with: libmsimg32
       }
@@ -557,9 +561,11 @@ class axCanvasWin32 : public axCanvasBase
     //  __in  DWORD dwRop
     //);
 
-    virtual void stretchImage( axImage*  aImage,  int aX, int aY, int aW, int aH, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    //virtual void stretchImage( axImage*  aImage,  int aX, int aY, int aW, int aH, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    virtual void stretchSurface( axSurfaceBase* aSurface, int aX, int aY, int aW, int aH, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
-        HDC tempdc = (HDC)aImage->getHandle();
+        //HDC tempdc = (HDC)aImage->getHandle();
+        HDC tempdc = (HDC)aSurface->getHandle();
         AlphaBlend(mDC,aX,aY,aW,aH,tempdc,aSrcX,aSrcY,aSrcW,aSrcH,mBlendFunc);
         // link with: libmsimg32
       }

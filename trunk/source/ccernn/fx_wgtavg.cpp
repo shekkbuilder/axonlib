@@ -1,5 +1,5 @@
 
-#include "axFormat.h"
+#include "format/axFormat.h"
 #include "par/parFloat.h"
 #include "par/parInteger.h"
 
@@ -23,8 +23,8 @@ class myPlugin : public axFormat
       {
         describe("fx_wgtavg","ccernn","axonlib example",0,AX_MAGIC+0x1005);
         setupAudio(2,2);
-        appendParameter( new parInteger(this,"mode",  "", 0, 0,1, str_mode) );
-        appendParameter( new parFloat3( this,"weight","", 0.5) );
+        appendParameter( new parInteger(this,"mode",  "", 0,   0,1, str_mode) );
+        appendParameter( new parFloatPow( this,"weight","", 0.5, 0,1,0, 3) );
         setupParameters();
         z0=z1=0;
       }
