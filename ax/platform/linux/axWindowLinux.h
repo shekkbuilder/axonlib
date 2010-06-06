@@ -785,7 +785,8 @@ mCanvas->setPicture( mPicture );
 //              #ifdef AX_ALPHA
 //              mCanvas->renderImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
 //              #else
-              mCanvas->drawImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
+              //mCanvas->drawImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
+              mCanvas->drawSurface(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
 //              #endif
 
               //mCanvas->renderPicture(mPicture,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
