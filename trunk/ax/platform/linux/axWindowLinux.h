@@ -40,6 +40,7 @@
 #include "core/axRect.h"
 #include "core/axString.h"
 //#include "base/axWindowBase.h"
+#include "gui/axWindowBase.h"
 #include "gui/axWidget.h"
 #include "gui/axCanvas.h"
 #include "gui/axSurface.h"

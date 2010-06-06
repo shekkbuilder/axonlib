@@ -35,7 +35,8 @@ NOTES:
 #include "core/axAssert.h"
 #include "core/axUtils.h"
 #include "platform/axContext.h"
-#include "base/axFormatBase.h"
+//#include "base/axFormatBase.h"
+#include "format/axFormatBase.h"
 
 #include "par/axParameter.h"
 #include "gui/axWindow.h"
@@ -80,17 +81,17 @@ class axFormat : public axFormatImpl, public axParameterListener
             axDwinCreate();
           #endif
         #endif
-        
+
         // open fstream (debug)
-        #if defined AX_DEBUG_LOG && defined AX_DEBUG           
+        #if defined AX_DEBUG_LOG && defined AX_DEBUG
           char filepath[AX_MAX_PATH] = "";
-          axGetBasePath(filepath);          
+          axGetBasePath(filepath);
           axStrcat(filepath, AX_DEBUG_LOG);
           trace("axDlog, logfile: " << filepath);
           axDlog.open(filepath, ios::out);
           axAssert(axDlog.is_open());
         #endif
-        
+
         //updateSampleRate();
         //updateTimeInfo();
       }

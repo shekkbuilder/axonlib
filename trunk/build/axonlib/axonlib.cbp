@@ -193,7 +193,6 @@
 		<Unit filename="../../ax/base/axBitmapBase.h" />
 		<Unit filename="../../ax/base/axCanvasBase.h" />
 		<Unit filename="../../ax/base/axFormatBase.h" />
-		<Unit filename="../../ax/base/axImage.h" />
 		<Unit filename="../../ax/base/axSurfaceBase.h" />
 		<Unit filename="../../ax/base/axWindowBase.h" />
 		<Unit filename="../../ax/core/axArray.h" />

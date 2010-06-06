@@ -26,7 +26,8 @@
 
 #include "platform/axContext.h"
 #include "core/axRect.h"
-#include "base/axFormatBase.h"
+//#include "base/axFormatBase.h"
+#include "format/axFormatBase.h"
 //#include "gui/axWindow.h"
 
 //----------------------------------------------------------------------
