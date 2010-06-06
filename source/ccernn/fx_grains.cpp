@@ -154,6 +154,7 @@ class myPlugin : public axFormat
         BUFFER = new float[BUFFER_SIZE];
         axMemset(BUFFER,0,BUFFER_SIZE*sizeof(float));
         axMemset(GRAINS,0,MAX_GRAINS*sizeof(GRAIN));
+        gui_initialized = false;
         index     = 0;
         countdown = 0;
         describe("fx_grains","ccernn","axonlib example",0,AX_MAGIC+0x1004);

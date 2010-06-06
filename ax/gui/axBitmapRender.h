@@ -146,7 +146,7 @@ class axBitmapRender
         // width and height of the line
         xd = (x2-x1);
         yd = (y2-y1);
-        if (abs(xd)>abs(yd))
+        if (axAbs(xd)>axAbs(yd))
         {
           // horizontal-ish lines
           if(x1>x2)

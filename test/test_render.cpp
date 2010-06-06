@@ -5,7 +5,7 @@
 //#define AX_DEBUG_NEW
 //#define AX_DEBUG_LOG  "test_render.log"
 
-//#define AX_ALPHA
+#define AX_ALPHA
 
 #include "format/axFormat.h"
 #include "gui/axEditor.h"
@@ -33,7 +33,8 @@ class myEditor : public axEditor
     : axEditor(aFormat,aContext,aRect,aWinFlags)
       {
         axRand(418);
-        m_Bitmap = createBitmap(256,256,32);
+        //m_Bitmap = createBitmap(256,256,32);
+        m_Bitmap = createBitmap(256,256,24);
         m_Bitmap->createBuffer();
         m_Bitmap->prepare();
         m_Render = new axBitmapRender();

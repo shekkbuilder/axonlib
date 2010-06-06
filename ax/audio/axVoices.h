@@ -143,12 +143,12 @@ class axVoiceManager
 
     axVoiceManager()
       {
-        memset(mNoteMap,0,sizeof(mNoteMap));
+        axMemset(mNoteMap,0,sizeof(mNoteMap));
         mOffset = 0;
         mCurrEvent = 0;
         mNextEvent = 999999;
         mNumEvents = 0;
-        memset(mEvents,0,sizeof(mEvents));
+        axMemset(mEvents,0,sizeof(mEvents));
         mNumPlaying = 0;
       }
 
