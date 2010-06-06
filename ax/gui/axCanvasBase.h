@@ -23,7 +23,8 @@
 #include "gui/axBitmap.h"
 
 //#include "base/axImage.h"
-#include "base/axSurfaceBase.h"
+//#include "base/axSurfaceBase.h"
+#include "gui/axSurfaceBase.h"
 
 //----------------------------------------------------------------------
 

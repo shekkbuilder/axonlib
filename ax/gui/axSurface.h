@@ -20,7 +20,8 @@
 
 #include "core/axDefines.h"
 #include "platform/axContext.h"
-#include "base/axSurfaceBase.h"
+//#include "base/axSurfaceBase.h"
+#include "gui/axSurfaceBase.h"
 
 //----------------------------------------------------------------------
 

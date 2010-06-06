@@ -32,7 +32,8 @@
 #include "core/axRand.h"
 #include "core/axRect.h"
 #include "platform/axContext.h"
-#include "base/axBitmapBase.h"
+//#include "base/axBitmapBase.h"
+#include "gui/axBitmapBase.h"
 
 //----------
 

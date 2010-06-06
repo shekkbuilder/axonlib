@@ -22,7 +22,8 @@
 #include "core/axRect.h"
 #include "platform/axContext.h"
 #include "gui/axWindow.h"
-#include "base/axFormatBase.h"
+//#include "base/axFormatBase.h"
+#include "format/axFormatBase.h"
 
 #define AX_WIN_DEFAULT (AX_WIN_BUFFERED|AX_WIN_MSGDELETE)
 

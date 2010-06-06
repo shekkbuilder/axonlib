@@ -30,7 +30,8 @@
 #include "core/axDefines.h"
 #include "core/axPoint.h"
 #include "core/axRect.h"
-#include "base/axCanvasBase.h"
+//#include "base/axCanvasBase.h"
+#include "gui/axCanvasBase.h"
 
 //----------
 

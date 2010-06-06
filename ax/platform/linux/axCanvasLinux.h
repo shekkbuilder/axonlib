@@ -27,7 +27,8 @@
 
 #include "platform/axContext.h"
 #include "core/axDefines.h"
-#include "base/axCanvasBase.h"
+//#include "base/axCanvasBase.h"
+#include "gui/axCanvasBase.h"
 //#include "gui/axSurface.h"
 #include "gui/axBitmap.h"
 
