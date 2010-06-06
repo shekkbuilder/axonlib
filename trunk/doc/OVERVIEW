@@ -1,50 +1,34 @@
-//----------------------------------------------------------------------
-//
-// directories
-//
-//----------------------------------------------------------------------
 
-  ax
-    audio
-    base
-    core
-    [deprecated]
-    dsp
-    format
-    gui
-    par
-    platform
-      linux
-      win32
-    script
-    skins
-    wdg
-  bin
-  build
-  demo
-  doc
-  extern
-  img
-  source
-    ccernn
-    demo
-    liteon ( -> neolit123 ? )
-    ports
-    test
-  templetes
-  test
-  tools
+main classes you should know for plugin-making:
 
-//----------------------------------------------------------------------
-//
-// terminology
-//
-//----------------------------------------------------------------------
+plugin:
+- axFormat
+- axParameter
+editor:
+- axEditor
+- axWidget
 
-editor
-format
-parameter
-platform
-plugin
-widget
+----------------------------------------------------------------------
+
+
+
+OS           --(doMouseDown)--> WIDGET (*)
+
+                                 |
+                                 | (listener.onChange)
+                                 v
+
+redraw  <--(internal_redraw)--? EDITOR             <---------
+                                                             |
+                     wdg/par-    ?                           |
+                     connection  | (doSetValue)              |
+                                 v                           |
+                                                             |
+VST-HOST      --(doSetValue)--> PARAMETER (*)                |
+                                                             |
+                                 |                           |
+                                 | (listener.onChange)       |
+                                 v                           |
+                                                             |
+myPlugin   <--doSetParameter)-- PLUGIN ?--(paramChanged)-----
 
