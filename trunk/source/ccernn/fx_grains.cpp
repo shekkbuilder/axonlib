@@ -267,7 +267,9 @@ reaper->ShowMessageBox("testing reaper sdk extensions","axonlib",3);
         k1->setSensitivity(0.001);
         for (int i=0; i<w_Panel->getNumWidgets(); i++)
           editor->connect( w_Panel->getWidget(i), mParameters[i] );
-        w_Panel->loadBitmap(editor,(char*)backloader->getImage(),340,325, 24);
+
+        w_Panel->loadBitmap(editor,(char*)backloader->getImage(),340,325, 24); // 32?
+
         // 'grain painter'
         w_Panel->appendWidget( vis = new myVisual(editor,axRect(11,203,319,34),wa_None)  );
         vis->aBackColor = canvas->getColor(64,64,64);

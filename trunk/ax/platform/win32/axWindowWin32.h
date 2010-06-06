@@ -20,6 +20,8 @@
 
 #include <windows.h>
 
+// where's the #includes? :-)
+
 //----------------------------------------------------------------------
 
 LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
