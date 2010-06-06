@@ -1,4 +1,4 @@
-#include "axFormat.h"
+#include "format/axFormat.h"
 #include "par/parInteger.h"
 #include "par/parFloat.h"
 #include "dsp/dspRC.h"
@@ -45,11 +45,11 @@ class myPlugin : public axFormat
         describe("fx_distortion","ccernn","axonlib example",2,AX_MAGIC+0x1003);
         setupAudio(2,2,false);
         appendParameter( p_Type = new parInteger( this,"type",      "", 0, 0,5, str_type) );
-        appendParameter( p_Thr  = new parFloat3(  this,"threshold", "", 1       ) );
-        appendParameter( p_Pre  = new parFloat3(  this,"pre gain",  "", 1, 1,2  ) );
-        appendParameter( p_Post = new parFloat3(  this,"post gain", "", 1, 0,2  ) );
-        appendParameter( p_Flt  = new parFloat3(  this,"filter",    "", 1, 0,1  ) );
-        appendParameter( p_Vol  = new parFloat3(  this,"volume",    "", 1, 0,1  ) );
+        appendParameter( p_Thr  = new parFloatPow(  this,"threshold", "", 1, 0,1,0, 3 ) );
+        appendParameter( p_Pre  = new parFloatPow(  this,"pre gain",  "", 1, 1,2,0, 3 ) );
+        appendParameter( p_Post = new parFloatPow(  this,"post gain", "", 1, 0,2,0, 3 ) );
+        appendParameter( p_Flt  = new parFloatPow(  this,"filter",    "", 1, 0,1,0, 3 ) );
+        appendParameter( p_Vol  = new parFloatPow(  this,"volume",    "", 1, 0,1,0, 3 ) );
         setupParameters();
       }
 

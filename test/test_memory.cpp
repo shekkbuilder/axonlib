@@ -60,7 +60,7 @@ int main(void)
   //trace("png_alloc_tail: " << png_alloc_tail);
 
   loader2 = new axBitmapLoader();
-  loader2->decode((unsigned char*)knob1,knob1_size);
+  loader2->decodePng((unsigned char*)knob1,knob1_size);
 
   //trace("after loading png 2:");
   //trace("png_alloc_head: " << png_alloc_head);

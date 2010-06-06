@@ -16,9 +16,9 @@
 
 //#include "../test/test_skin.cpp"
 //#include "../test/test_memory.cpp"
-//#include "../test/test_render.cpp"
+#include "../test/test_render.cpp"
 
-#include "../source/demo/axDemo.cpp"
+//#include "../source/demo/axDemo.cpp"
 
 //----------------------------------------------------------------------
 // ccernn

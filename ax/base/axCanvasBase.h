@@ -19,12 +19,11 @@
 //----------------------------------------------------------------------
 
 #include "gui/axColor.h"
-//#include "gui/axPen.h"
-//#include "gui/axBrush.h"
 #include "gui/axFont.h"
-
 #include "gui/axBitmap.h"
-#include "base/axImage.h"
+
+//#include "base/axImage.h"
+#include "base/axSurfaceBase.h"
 
 //----------------------------------------------------------------------
 
@@ -47,19 +46,10 @@
 
 class axCanvasBase
 {
-  protected:
-    //axPens    mPens;
-    //axBrushes mBrushes;
-    //axFonts   mFonts;
-
   public:
 
     virtual ~axCanvasBase()
       {
-        //int i;
-        //for (i=0; i<mPens.size(); i++)    deletePen(i);
-        //for (i=0; i<mBrushes.size(); i++) deleteBrush(i);
-        //for (i=0; i<mFonts.size(); i++)   deleteFont(i);;
       }
 
     virtual int getHandle(void) { return 0; }
@@ -83,17 +73,6 @@ class axCanvasBase
     virtual void setPenWidth(int aWidth) {}
     virtual void setPenStyle(int aStyle) {}
     virtual void setBrushStyle(int aStyle) {}
-
-
-//    virtual int     createPen(int r, int g, int b, int size=DEF_PENWIDTH) { return 0; }
-//    virtual int     createBrush(int r, int g, int b, int style=DEF_BRUSHSTYLE) { return 0; }
-//    virtual int     createFont(axString name, int r, int g, int b, int size=-1, int style=0) { return 0; }
-//    virtual void    deletePen(int aPen) {}
-//    virtual void    deleteBrush(int aBrush) {}
-//    virtual void    deleteFont(int aFont) {}
-//    virtual void    selectPen(int aPen) {}
-//    virtual void    selectBrush(int aBrush) {}
-//    virtual void    selectFont(int aFont) {}
 
     // clip rect
 
@@ -124,10 +103,15 @@ class axCanvasBase
     // bitmap
 
     virtual void drawBitmap(axBitmap* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
-    virtual void drawImage( axImage*  aImage,  int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {} // aka surface
-    //virtual void renderBitmap(axBitmap* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
-    virtual void renderImage( axImage*  aImage,  int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {} // aka surface
-    virtual void stretchImage( axImage*  aImage,  int aX, int aY, int aW, int aH, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
+
+//    virtual void drawImage( axImage*  aImage,  int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {} // aka surface
+//    //virtual void renderBitmap(axBitmap* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
+//    virtual void renderImage( axImage*  aImage,  int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {} // aka surface
+//    virtual void stretchImage( axImage*  aImage,  int aX, int aY, int aW, int aH, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
+
+    virtual void drawSurface(   axSurfaceBase* aSurface, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {} // aka surface
+    virtual void renderSurface( axSurfaceBase* aSurface, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {} // aka surface
+    virtual void stretchSurface(axSurfaceBase* aSurface, int aX, int aY, int aW, int aH, int aSrcX, int aSrcY, int aSrcW, int aSrcH) {}
 
     //----------
 

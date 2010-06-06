@@ -176,8 +176,10 @@ class axSkinDef : public axSkin
         //switch (aMode)
         //{
         //  case 0:
-            if (aState) aCanvas->renderImage(mSkinSrf, aRect.x,aRect.y, mButtonOnRect.x, mButtonOnRect.y, mButtonOnRect.w, mButtonOnRect.h );
-                   else aCanvas->renderImage(mSkinSrf, aRect.x,aRect.y, mButtonOffRect.x,mButtonOffRect.y,mButtonOffRect.w,mButtonOffRect.h);
+//            if (aState) aCanvas->renderImage(mSkinSrf, aRect.x,aRect.y, mButtonOnRect.x, mButtonOnRect.y, mButtonOnRect.w, mButtonOnRect.h );
+//                   else aCanvas->renderImage(mSkinSrf, aRect.x,aRect.y, mButtonOffRect.x,mButtonOffRect.y,mButtonOffRect.w,mButtonOffRect.h);
+            if (aState) aCanvas->renderSurface(mSkinSrf, aRect.x,aRect.y, mButtonOnRect.x, mButtonOnRect.y, mButtonOnRect.w, mButtonOnRect.h );
+                   else aCanvas->renderSurface(mSkinSrf, aRect.x,aRect.y, mButtonOffRect.x,mButtonOffRect.y,mButtonOffRect.w,mButtonOffRect.h);
         //    break;
         //  case 1:
         //    if (aState) aCanvas->renderImage(m_SkinSrf, aRect.x,aRect.y, m_Button2OnRect.x, m_Button2OnRect.y, m_Button2OnRect.w, m_Button2OnRect.h );
@@ -201,8 +203,10 @@ class axSkinDef : public axSkin
           //  case 0:
               h = (float)(aRect.h - mSliderThumbRect.h);
               y   = aRect.y + (int)(h*(1-aValue));
-              aCanvas->renderImage(mSkinSrf, aRect.x, aRect.y, mSliderBackRect.x, mSliderBackRect.y, mSliderBackRect.w, mSliderBackRect.h );
-              aCanvas->renderImage(mSkinSrf, aRect.x, y,       mSliderThumbRect.x,mSliderThumbRect.y,mSliderThumbRect.w,mSliderThumbRect.h);
+//              aCanvas->renderImage(mSkinSrf, aRect.x, aRect.y, mSliderBackRect.x, mSliderBackRect.y, mSliderBackRect.w, mSliderBackRect.h );
+//              aCanvas->renderImage(mSkinSrf, aRect.x, y,       mSliderThumbRect.x,mSliderThumbRect.y,mSliderThumbRect.w,mSliderThumbRect.h);
+              aCanvas->renderSurface(mSkinSrf, aRect.x, aRect.y, mSliderBackRect.x, mSliderBackRect.y, mSliderBackRect.w, mSliderBackRect.h );
+              aCanvas->renderSurface(mSkinSrf, aRect.x, y,       mSliderThumbRect.x,mSliderThumbRect.y,mSliderThumbRect.w,mSliderThumbRect.h);
           //    break;
           //  case 1:
           //    h = (float)(aRect.h - m_Slider2ThumbRect.h);
@@ -227,7 +231,8 @@ class axSkinDef : public axSkin
           int index = (int)axFloor(aValue*mKnobCount);
           index = axMinInt(index,mKnobCount-1);
           int ky = mKnobHeight * index;
-          aCanvas->renderImage(mKnobSrf,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);
+          //aCanvas->renderImage(mKnobSrf,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);
+          aCanvas->renderSurface(mKnobSrf,aRect.x,aRect.y, 0,ky,mKnobWidth,mKnobHeight);
           int x  = aRect.x;
           int y  = aRect.y;
           int size = axMinInt(aRect.w,aRect.h);

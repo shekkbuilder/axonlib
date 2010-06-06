@@ -19,13 +19,12 @@
 //----------------------------------------------------------------------
 
 #include "platform/axContext.h"
-#include "base/axImage.h"
-//#include "base/axCanvasBase.h"
 #include "gui/axCanvas.h"
+//#include "base/axImage.h"
 
 class axCanvas;
 
-class axSurfaceBase : public axImage
+class axSurfaceBase// : public axImage
 {
   protected:
     int       mWidth;
@@ -46,6 +45,11 @@ class axSurfaceBase : public axImage
     inline int        getHeight(void) { return mHeight; }
     inline int        getDepth(void) { return mDepth; }
     virtual axCanvas* getCanvas(void) { return NULL; }
+
+    // was axImage.h
+    virtual int getHandle(void)   { return  0; }
+    virtual int getPicture(void)  { return 0; }
+
 
 };
 

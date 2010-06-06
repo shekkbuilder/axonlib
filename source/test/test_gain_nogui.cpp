@@ -1,4 +1,4 @@
-#include "axFormat.h"
+#include "format/axFormat.h"
 class myPlugin : public axFormat
 {
   private:

@@ -1,5 +1,5 @@
 
-#include "axFormat.h"
+#include "format/axFormat.h"
 #include "par/parFloat.h"
 #include "par/parInteger.h"
 #include "dsp/dspSVF.h"
@@ -26,8 +26,8 @@ class myPlugin : public axFormat
         describe("fx_svf","ccernn","axonlib example",0,AX_MAGIC+0x1006);
         setupAudio(2,2);
         appendParameter( new parInteger(this,"mode", "", 0, 0,4, str_filter ) );
-        appendParameter( new parFloat2( this,"freq", "", 1 ) );
-        appendParameter( new parFloat2( this,"bw",   "", 1 ) );
+        appendParameter( new parFloatPow( this,"freq", "", 1, 0,1,0, 2 ) );
+        appendParameter( new parFloatPow( this,"bw",   "", 1, 0,1,0, 2 ) );
         setupParameters();
         svf1.setup(0,1,1);
         svf2.setup(0,1,1);

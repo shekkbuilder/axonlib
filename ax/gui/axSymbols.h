@@ -96,7 +96,8 @@ class axSymbols
         int sy = mItems[aIndex].mRect.y;
         int sw = mItems[aIndex].mRect.w;
         int sh = mItems[aIndex].mRect.h;
-        aCanvas->drawImage(mSurface, x, y, sx,sy,sw,sh );
+        //aCanvas->drawImage(mSurface, x, y, sx,sy,sw,sh );
+        aCanvas->drawSurface(mSurface, x, y, sx,sy,sw,sh );
       }
 };
 

@@ -23,14 +23,16 @@
 class wdgImage : public axWidget//axContainer
 {
   protected:
-    bool        mSurfaceLoaded;
-    axSurface*  mSurface;
-    axImage*    mImage;
+    bool            mSurfaceLoaded;
+    axSurface*      mSurface;
+    //axImage*        mImage;
+    axSurfaceBase*  mImage;
 
   public:
 
     wdgImage(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None,
-             axImage* aImage=NULL)
+             //axImage* aImage=NULL)
+             axSurfaceBase* aImage=NULL)
     : axWidget(aListener,aRect,aAlignment)
       {
         //clearFlag(wf_Active);
@@ -47,7 +49,8 @@ class wdgImage : public axWidget//axContainer
 
     //----------
 
-    inline void setImage(axImage* aImage) { mImage = aImage; }
+    //inline void setImage(axImage* aImage) { mImage = aImage; }
+    inline void setImage(axSurfaceBase* aImage) { mImage = aImage; }
 
     //----------
 
@@ -80,7 +83,8 @@ class wdgImage : public axWidget//axContainer
           int srcy = 0;
           int srcw = mRect.w;
           int srch = mRect.h;
-          aCanvas->drawImage(mImage,dstx,dsty, srcx,srcy,srcw,srch);
+          //aCanvas->drawImage(mImage,dstx,dsty, srcx,srcy,srcw,srch);
+          aCanvas->drawSurface(mImage,dstx,dsty, srcx,srcy,srcw,srch);
         }
         axWidget::doPaint(aCanvas,aRect);
       }

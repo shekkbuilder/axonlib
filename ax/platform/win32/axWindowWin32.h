@@ -679,8 +679,8 @@ class axWindowWin32 : public axWindowBase
               axCanvas* can = mSurface->getCanvas();
               can->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
               doPaint(can,rc);
-              //mCanvas->blit( can, rc.x,rc.y, rc.x,rc.y,rc.w,rc.h );
-              mCanvas->drawImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
+              //mCanvas->drawImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
+              mCanvas->drawSurface(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
               can->clearClipRect();
               //mSurfaceMutex.unlock();
             }

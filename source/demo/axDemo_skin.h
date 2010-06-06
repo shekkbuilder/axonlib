@@ -115,16 +115,20 @@ class axDemo_skin : public axSkinDef
                           aRect.y    + mPanelTopRect.h,
                           aRect.x2() - mPanelRightRect.w,
                           aRect.y2() - mPanelBottomRect.h );
-        aCanvas->renderImage( mSkinSrf,
+        //aCanvas->renderImage( mSkinSrf,
+        aCanvas->renderSurface( mSkinSrf,
                               aRect.x,aRect.y,
                               mPanelTopLeftRect.x,mPanelTopLeftRect.y,mPanelTopLeftRect.w,mPanelTopLeftRect.h);
-        aCanvas->renderImage( mSkinSrf,
+        //aCanvas->renderImage( mSkinSrf,
+        aCanvas->renderSurface( mSkinSrf,
                               aRect.x2()-mPanelTopRightRect.w ,aRect.y,
                               mPanelTopRightRect.x,mPanelTopRightRect.y,mPanelTopRightRect.w,mPanelTopRightRect.h);
-        aCanvas->renderImage( mSkinSrf,
+        //aCanvas->renderImage( mSkinSrf,
+        aCanvas->renderSurface( mSkinSrf,
                               aRect.x, aRect.y2()-mPanelTopRightRect.h,
                               mPanelBottomLeftRect.x,mPanelBottomLeftRect.y,mPanelBottomLeftRect.w,mPanelBottomLeftRect.h);
-        aCanvas->renderImage( mSkinSrf,
+        //aCanvas->renderImage( mSkinSrf,
+        aCanvas->renderSurface( mSkinSrf,
                               aRect.x2()-mPanelBottomRightRect.w ,aRect.y2()-mPanelBottomRightRect.h,
                               mPanelBottomRightRect.x,mPanelBottomRightRect.y,mPanelBottomRightRect.w,mPanelBottomRightRect.h);
 
@@ -133,10 +137,12 @@ class axDemo_skin : public axSkinDef
         int wleft = aRect.w - mPanelTopLeftRect.w - mPanelTopRightRect.w;
         while (wleft>=w)
         {
-          aCanvas->renderImage( mSkinSrf,
+          //aCanvas->renderImage( mSkinSrf,
+          aCanvas->renderSurface( mSkinSrf,
                                 x, aRect.y,
                                 mPanelTopRect.x,mPanelTopRect.y,w,mPanelLeftRect.h );
-          aCanvas->renderImage( mSkinSrf,
+          //aCanvas->renderImage( mSkinSrf,
+          aCanvas->renderSurface( mSkinSrf,
                                 x, aRect.y2()-mPanelBottomRect.h,
                                 mPanelBottomRect.x,mPanelBottomRect.y,w,mPanelBottomRect.w );
           x += w;
@@ -144,10 +150,12 @@ class axDemo_skin : public axSkinDef
         }
         if (wleft>0)
         {
-          aCanvas->renderImage( mSkinSrf,
+          //aCanvas->renderImage( mSkinSrf,
+          aCanvas->renderSurface( mSkinSrf,
                                 x, aRect.y,
                                 mPanelTopRect.x,mPanelTopRect.y,wleft,mPanelLeftRect.h );
-          aCanvas->renderImage( mSkinSrf,
+          //aCanvas->renderImage( mSkinSrf,
+          aCanvas->renderSurface( mSkinSrf,
                                 x, aRect.y2()-mPanelBottomRect.h,
                                 mPanelBottomRect.x,mPanelBottomRect.y,wleft,mPanelBottomRect.w );
         }
@@ -157,10 +165,12 @@ class axDemo_skin : public axSkinDef
         int hleft = aRect.h - mPanelTopLeftRect.h - mPanelBottomLeftRect.h;
         while (hleft>=h)
         {
-          aCanvas->renderImage( mSkinSrf,
+          //aCanvas->renderImage( mSkinSrf,
+          aCanvas->renderSurface( mSkinSrf,
                                 aRect.x, y,
                                 mPanelLeftRect.x,mPanelLeftRect.y,mPanelLeftRect.w, h );
-          aCanvas->renderImage( mSkinSrf,
+          //aCanvas->renderImage( mSkinSrf,
+          aCanvas->renderSurface( mSkinSrf,
                                 aRect.x2()-mPanelRightRect.w, y,
                                 mPanelRightRect.x,mPanelRightRect.y,mPanelRightRect.w, h );
           y += h;
@@ -168,10 +178,12 @@ class axDemo_skin : public axSkinDef
         }
         if (hleft>0)
         {
-          aCanvas->renderImage( mSkinSrf,
+          //aCanvas->renderImage( mSkinSrf,
+          aCanvas->renderSurface( mSkinSrf,
                                 aRect.x, y,
                                 mPanelLeftRect.x,mPanelLeftRect.y,mPanelLeftRect.w,hleft);
-          aCanvas->renderImage( mSkinSrf,
+          //aCanvas->renderImage( mSkinSrf,
+          aCanvas->renderSurface( mSkinSrf,
                                 aRect.x2()-mPanelRightRect.w, y,
                                 mPanelRightRect.x,mPanelRightRect.y,mPanelRightRect.w, hleft );
         }
