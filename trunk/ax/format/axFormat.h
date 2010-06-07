@@ -62,7 +62,6 @@ NOTES:
 
 //----------------------------------------------------------------------
 
-//class axFormat : public axFormatBase, public axParameterListener
 class axFormat : public axFormatImpl, public axParameterListener
 {
   protected:
@@ -92,8 +91,6 @@ class axFormat : public axFormatImpl, public axParameterListener
           axAssert(axDlog.is_open());
         #endif
 
-        //updateSampleRate();
-        //updateTimeInfo();
       }
 
     virtual ~axFormat()

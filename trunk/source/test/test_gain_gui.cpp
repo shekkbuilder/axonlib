@@ -5,8 +5,8 @@
 #define AX_DEBUG_LOG  "test_gain_gui_skin.log"
 
 #include "format/axFormat.h"
+
 #include "gui/axEditor.h"
-//#include "gui/axSkinDefault.h"
 #include "wdg/wdgPanel.h"
 #include "wdg/wdgKnob.h"
 
@@ -28,9 +28,6 @@ class myPlugin : public axFormat
         setupEditor(200,200);
         appendParameter( p_Gain = new axParameter(this,"gain","") );
         setupParameters();
-        //int a=1, b=1;
-        //axAssert(a-b);
-        //axStaticAssert(a-b);
       }
 
     virtual void  doSetParameter(axParameter* aParameter)
