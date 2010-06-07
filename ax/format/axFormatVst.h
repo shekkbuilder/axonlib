@@ -95,7 +95,7 @@ class axFormatVst : public axFormatBase
 
     virtual int    getPlayState(void)  { return mPlayState; }
     virtual double getSamplePos(void)  { return mSamplePos; }
-    //virtual double getSampleRate(void) { return mSampleRate; }
+    virtual double getSampleRate(void) { if (mSampleRate==0) updateSampleRate(); return mSampleRate; }
     virtual double getBeatPos(void)    { return mBeatPos; }
     virtual double getTempo(void)      { return mTempo; }
 
@@ -104,6 +104,8 @@ class axFormatVst : public axFormatBase
     //----------------------------------------
     // callbacks (host->plugin)
     //----------------------------------------
+
+    // called from vst-host via pointers we set in AEffect
 
     static VstIntPtr dispatcher_callback(AEffect* ae, VstInt32 opCode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
       {
@@ -151,15 +153,26 @@ class axFormatVst : public axFormatBase
 
   protected:
 
-  //axContext* mContext;
+    //----------------------------------------
+    // constructor
+    //----------------------------------------
+
+    // this is protected, to avoid users creating an axFormatVst themselves
+    // rather they should use axFormat, which selects the correct
+    // version depending on binary format and os/platform
 
     axFormatVst(axContext* aContext, int aFormatFlags)
     : axFormatBase(aContext, aFormatFlags)
       {
         mContext = *aContext;
         audioMaster = (audioMasterCallback)aContext->mAudio;
-
         mCurrentProgram = 0;
+        mPlayState = 0;
+        mSamplePos = 0;
+        mSampleRate = 0;
+        mBeatPos = 0;
+        mTempo = 0;
+        mBlockSize = 0;
         mEditorOpen = false;
         mEditorRect = axRect(0,0,256,256);
         mMidiEventList.numEvents = 0;
@@ -208,15 +221,16 @@ class axFormatVst : public axFormatBase
     inline void clear_aeFlags(void)                 { aeffect.flags = 0; }
     inline void clear_aeFlag(int aFlag)             { aeffect.flags &= ~aFlag; }
     inline void set_aeFlag(int aFlag)               { aeffect.flags |= aFlag; }
+    inline bool get_aeFlag(int aFlag)               { return (aeffect.flags|aFlag); }
     inline void set_aeFlag(int aFlag, bool aState)  { if (aState) set_aeFlag(aFlag); else clear_aeFlag(aFlag); }
 
     //----------
 
     void canProcessReplacing(bool aState=true)  { set_aeFlag(effFlagsCanReplacing,aState); }        // tells that processReplacing() could be used. Mandatory in VST 2.4!
     void canDoubleReplacing(bool aState=true)   { set_aeFlag(effFlagsCanDoubleReplacing,aState); }  // tells that processDoubleReplacing() is implemented.
-    void programsAreChunks(bool aState=true)    { set_aeFlag(effFlagsProgramChunks,aState); }              // program data is handled in formatless chunks (using getChunk-setChunks)
-    void isSynth(bool aState=true)              { set_aeFlag(effFlagsIsSynth,aState); }
-    void hasEditor(bool aState=true)            { set_aeFlag(effFlagsHasEditor,aState); }
+    void programsAreChunks(bool aState=false)   { set_aeFlag(effFlagsProgramChunks,aState); }              // program data is handled in formatless chunks (using getChunk-setChunks)
+    void isSynth(bool aState=false)             { set_aeFlag(effFlagsIsSynth,aState); }
+    void hasEditor(bool aState=false)           { set_aeFlag(effFlagsHasEditor,aState); }
     void noSoundInStop(bool aState=true)        { set_aeFlag(effFlagsNoSoundInStop,aState); }
 
     //----------------------------------------
@@ -294,6 +308,8 @@ class axFormatVst : public axFormatBase
         if (audioMaster) audioMaster(&aeffect,audioMasterIdle,0,0,0,0);
       }
 
+    //----------
+
     // audioMasterGetTime,
     // [value]: request mask
     // [return value]: #VstTimeInfo* or null if not supported
@@ -309,6 +325,8 @@ class axFormatVst : public axFormatBase
         return 0;
       }
 
+    //----------
+
     //audioMasterProcessEvents,
     // [ptr]: pointer to #VstEvents  @see VstEvents @see AudioEffectX::sendVstEventsToHost
     // Can be called inside processReplacing.
@@ -321,9 +339,25 @@ class axFormatVst : public axFormatBase
         return false;
       }
 
+    //----------
+
     //audioMasterIOChanged,
     // [return value]: 1 if supported
     // @see AudioEffectX::ioChanged
+    //
+    // The Host could call a suspend() (if the plug-in was enabled (in resume() state)) and then ask for
+	  // getSpeakerArrangement() and/or check the \e numInputs and \e numOutputs and \e initialDelay and then call a
+	  // resume().
+	  // return true on success
+	  // see also: setSpeakerArrangement(), getSpeakerArrangement()
+
+    bool ioChanged(void)
+      {
+        if (audioMaster) return (audioMaster(&aeffect,audioMasterIOChanged,0,0,0,0) != 0);
+        return false;
+      }
+
+    //----------
 
     //audioMasterSizeWindow,
     // [index]: new width
@@ -336,11 +370,14 @@ class axFormatVst : public axFormatBase
         return false;
       }
 
+    //----------
+
     //audioMasterGetSampleRate,
     // [return value]: current sample rate
     // @see AudioEffectX::updateSampleRate
 
-    virtual double getSampleRate(void)
+    //virtual double getSampleRate(void)
+    virtual void updateSampleRate(void)
       {
         if (audioMaster)
         {
@@ -348,8 +385,10 @@ class axFormatVst : public axFormatBase
           if (res>0) mSampleRate = (float)res;
           //trace(res);
         }
-        return mSampleRate;
+        //return mSampleRate;
       }
+
+    //----------
 
     //audioMasterGetBlockSize,
     // [return value]: current block size
@@ -407,7 +446,7 @@ class axFormatVst : public axFormatBase
     // no definition, vendor specific handling
     // @see AudioEffectX::hostVendorSpecific
 
-
+    //
 
     //audioMasterCanDo,
     // [ptr]: "can do" string
@@ -424,13 +463,39 @@ class axFormatVst : public axFormatBase
     //audioMasterUpdateDisplay,
     // no arguments
 
+    //----------
+
     //audioMasterBeginEdit,
     // [index]: parameter index
     // @see AudioEffectX::beginEdit
+    //
+    // tells the Host that if it needs to, it has to record automation data for this control.
+    // param index Index of the parameter
+    // Returns true on success
+
+    bool beginEdit(VstInt32 index)
+      {
+        if (audioMaster) return (audioMaster(&aeffect,audioMasterBeginEdit,index,0,0,0)) ? true : false;
+        return 0;
+      }
+
+    //----------
 
     //audioMasterEndEdit,
     // [index]: parameter index
     // @see AudioEffectX::endEdit
+    //
+    // notifies the Host that this control is no longer moved by the mouse.
+    // param index Index of the parameter
+    // Returns \e true on success
+
+    bool endEdit(VstInt32 index)
+    {
+      if (audioMaster) return (audioMaster(&aeffect,audioMasterEndEdit,index,0,0,0)) ? true : false;
+      return 0;
+    }
+
+    //----------
 
     //audioMasterOpenFileSelector,
     // [ptr]: VstFileSelect*
@@ -697,9 +762,10 @@ class axFormatVst : public axFormatBase
           case effSetSampleRate:
 
             // called when the sample rate changes (always in a suspend state)
-            //trace("axFormatVst.dispatcher :: effSetSampleRate");
+            //trace("axFormatVst.dispatcher :: effSetSampleRate" << opt);
             //setSampleRate(opt);
             mSampleRate = opt;
+            doStateChange(fs_Rate);
             break;
 
           // 11
@@ -710,6 +776,7 @@ class axFormatVst : public axFormatBase
             //trace("axFormatVst.dispatcher :: effSetBlockSize");
             //setBlockSize((VstInt32)value);
             mBlockSize = (VstInt32)value;
+            doStateChange(fs_Block);
             break;
 
           // 12
@@ -907,6 +974,18 @@ class axFormatVst : public axFormatBase
 
             //trace("axFormatVst.dispatcher :: effGetInputProperties");
             //v = getInputProperties (index, (VstPinProperties*)ptr) ? 1 : 0;
+            {
+            VstPinProperties* pin = (VstPinProperties*)ptr;
+            char name[16];
+            char num[16];
+            name[0] = 0;
+            axStrcpy(name,"input ");
+            axStrcat(name, axItoa(num,index,3) );
+            axStrcpy(pin->label,name);
+            pin->flags = 1; // active
+            if ((index&1)==0) pin->flags |= 2; // first of stereo pair
+            v = 1;
+            }
             break;
 
           // 34
@@ -914,6 +993,18 @@ class axFormatVst : public axFormatBase
 
             //trace("axFormatVst.dispatcher :: effGetOutputProperties");
             //v = getOutputProperties (index, (VstPinProperties*)ptr) ? 1 : 0;
+            {
+            VstPinProperties* pin = (VstPinProperties*)ptr;
+            char name[16];
+            char num[16];
+            name[0] = 0;
+            axStrcpy(name,"output ");
+            axStrcat(name, axItoa(num,index,3) );
+            axStrcpy(pin->label,name);
+            pin->flags = 1; // active
+            if ((index&1)==0) pin->flags |= 2; // first of stereo pair
+            v = 1;
+            }
             break;
 
           // 35
@@ -934,6 +1025,13 @@ class axFormatVst : public axFormatBase
 
             //trace("axFormatVst.dispatcher :: effGetPlugCategory");
             //v = (VstIntPtr)getPlugCategory ();
+
+            // is the flags set yet?
+            // (or do we read them correctly?)
+
+//            if (get_aeFlag(effFlagsIsSynth)) v = kPlugCategSynth;
+//            else v = kPlugCategEffect;
+
             break;
 
           // 38
@@ -976,6 +1074,7 @@ class axFormatVst : public axFormatBase
 
             //trace("axFormatVst.dispatcher :: effSetBypass");
             //v = setBypass (value ? true : false) ? 1 : 0;
+            //doStateChange(fs_Bypass);
             break;
 
           // 45
@@ -1035,20 +1134,20 @@ class axFormatVst : public axFormatBase
           case effCanDo:
 
             {
-            //trace("axFormatVst.dispatcher :: effCanDo");
-            //v = canDo ((char*)ptr);
-            char* p = (char*)ptr;
-            //trace("effCanDo: '" << p << "'");
-            if (!strcmp(p,"sendVstEvents"))        v=1; // plug-in will send Vst events to Host
-            if (!strcmp(p,"sendVstMidiEvent"))     v=1; // plug-in will send MIDI events to Host
-            if (!strcmp(p,"receiveVstEvents"))     v=1; // plug-in can receive MIDI events from Host
-            if (!strcmp(p,"receiveVstMidiEvent"))  v=1; // plug-in can receive MIDI events from Host
-            if (!strcmp(p,"receiveVstTimeInfo"))   v=1; // plug-in can receive Time info from Host
-            //if (strcmp(ptr,"offline"))              return 0; // plug-in supports offline functions (#offlineNotify, #offlinePrepare, #offlineRun)
-            //if (strcmp(ptr,"midiProgramNames"))     return 0; // plug-in supports function #getMidiProgramName ()
-            //if (strcmp(ptr,"bypass"))               return 0; // plug-in supports function #setBypass ()
-            if (!strcmp(p,"hasCockosExtensions"))  v=0xbeef0000;
-            trace("effCanDo: '" << p << "' (return: " << hex << v << dec << ")");
+              //trace("axFormatVst.dispatcher :: effCanDo");
+              //v = canDo ((char*)ptr);
+              char* p = (char*)ptr;
+              //trace("effCanDo: '" << p << "'");
+              if (!strcmp(p,"sendVstEvents"))        v=1; // plug-in will send Vst events to Host
+              if (!strcmp(p,"sendVstMidiEvent"))     v=1; // plug-in will send MIDI events to Host
+              if (!strcmp(p,"receiveVstEvents"))     v=1; // plug-in can receive MIDI events from Host
+              if (!strcmp(p,"receiveVstMidiEvent"))  v=1; // plug-in can receive MIDI events from Host
+              if (!strcmp(p,"receiveVstTimeInfo"))   v=1; // plug-in can receive Time info from Host
+              //if (strcmp(ptr,"offline"))              return 0; // plug-in supports offline functions (#offlineNotify, #offlinePrepare, #offlineRun)
+              //if (strcmp(ptr,"midiProgramNames"))     return 0; // plug-in supports function #getMidiProgramName ()
+              //if (strcmp(ptr,"bypass"))               return 0; // plug-in supports function #setBypass ()
+              if (!strcmp(p,"hasCockosExtensions"))  v=0xbeef0000;
+              trace("effCanDo: '" << p << "' (return: " << hex << v << dec << ")");
             }
             break;
 
@@ -1304,6 +1403,8 @@ class axFormatVst : public axFormatBase
     //    return NULL;
     //  }
 
+    //----------
+
     virtual axHostInfo* getHostInfo(void)
       {
         mHostInfo.name    = "unknown";
@@ -1311,6 +1412,8 @@ class axFormatVst : public axFormatBase
         mHostInfo.format  = "vst";
         return &mHostInfo;
       }
+
+    //----------
 
     virtual void describe(axString aName, axString aVendor, axString aProduct, int aVersion, unsigned int aID)
       {

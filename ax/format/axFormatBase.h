@@ -43,6 +43,8 @@
 #define fs_Close    2
 #define fs_Suspend  3
 #define fs_Resume   4
+#define fs_Rate     5
+#define fs_Block    6
 
 // format transport (doTransportChange)
 #define ft_Changed      1   // indicates that play, cycle or record state has changed
@@ -87,7 +89,7 @@ class axFormatBase// : public axParameterListener
 
     axFormatBase(axContext* aContext, int aFormatFlags)
       {
-        mFormatFlags    = aFormatFlags;//0;
+        mFormatFlags  = aFormatFlags;//0;
         mEditorOpen   = false;
         mEditorRect   = axRect(0,0,256,256);
         mEditorWindow = NULL;
@@ -143,6 +145,8 @@ class axFormatBase// : public axParameterListener
     // call this to get updated info about project tempo,
     // current time (in beats), samplerate, etc...
     virtual void  updateTimeInfo(void) {}
+
+    virtual void  updateSampleRate(void) {}
 
     //
     virtual void sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3) {}
