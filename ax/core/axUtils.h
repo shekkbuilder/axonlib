@@ -33,8 +33,8 @@
   #ifdef AX_FORMAT_LIB
     /*
       lii:
-      if other dll formats are added for windows a commont entry point    
-      could be moved in new header to get gInstance from there 
+      if other dll formats are added for windows, a commont entry point    
+      could be moved in a new header to get gInstance from there 
     */
     #include "format/axFormatVst.h" // gInstance for axGetBasePath()
   #endif
@@ -171,6 +171,8 @@ __axutils_inline float axSumDB(unsigned int n, const float* ar)
 }
 
 // ------
+// todo: a bit more thread safety
+
 bool __AX_SSE3__, __AX_SSSE3__, __AX_FPU__, __AX_CMOV__,  __AX_SSE__,
   __AX_SSE2__, __AX_SSE4A__, __AX_SSE5__, __AX_MMX__, __AX_MMXEXT__,
   __AX_3DNOW__, __AX_3DNOWEXT__;
