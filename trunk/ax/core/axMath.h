@@ -16,7 +16,7 @@
 
 /*
   NOTE:
-    some of the methods are not be compatible with big endian systems or x64
+    some of the methods are not compatible with big endian systems or x64.
 */ 
 
 /**

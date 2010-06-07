@@ -41,26 +41,6 @@
 // =============================================================================
 
 /*
-STATISTICS:
-    ============================================================================
-    speed comparison with stdlib malloc:
-      cpu:
-        amd athlon 1800+
-      compiler (mingw-gcc-tdm-4.4.1):
-         -O3 -s -msse -mfpmath=sse,387
-      code:
-        char* ptr = malloc(2000000); free(ptr);
-      n of iterations:
-        100000
-
-      stdlib malloc:
-        724 ms
-      axonlib malloc:
-        2 ms !!!
-    ----------------------------------------------------------
-      binary size overhead:
-        axMalloc.h ~= 400 bytes
-    ============================================================================
 TODO:
   - fragmentation level tests
   - thread safety tests (disable the mutex and make the winapi calls directly)
@@ -447,7 +427,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
       #ifdef AX_NO_MALLOC
         int _size = malloc_usable_size(_ptr);
         if (flag)
-          axStrcpy(_name, "free(delete), ");        
+          axStrcpy(_name, "free(delete), ");
         else
           axStrcpy(_name, "free, ");
       #else
@@ -473,7 +453,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
           free(_ptr);
         #else
           axFree(_ptr);
-        #endif      
+        #endif
       }
       else 
         _axMemTotal = 0;
@@ -486,7 +466,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     #undef axCalloc
     #undef axRealloc
     #undef axFree
-  #endif  
+  #endif
   
   // no debug for these: _ax*
   #undef _axMalloc
