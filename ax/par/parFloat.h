@@ -141,12 +141,22 @@ class parFloatPow : public parFloat
     virtual float getValue(void)
       {
         const float v = parFloat::getValue();
+
+  // TODO: check?
+  if (v>0)
+  {
         if (mPower != 1.f)
           return axPowf(v, mPower);
         else
           return v;
+
+  } else return 0;
+
       }
 };
+
+//----------------------------------------------------------------------
+#endif
 
 /*
 
@@ -186,5 +196,3 @@ class parFloat3 : public parFloat
 */
 
 
-//----------------------------------------------------------------------
-#endif

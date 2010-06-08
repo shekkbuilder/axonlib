@@ -73,6 +73,8 @@ class myEditor : public axEditor
           unsigned int col = m_Texture->makeColor(axRandInt(255),axRandInt(255),axRandInt(255),axRandInt(255));
           m_Render->drawLineAA(axRandInt(w),axRandInt(h),axRandInt(w),axRandInt(h),col);
         }
+
+        //unsigned long long startValue = axRdtsc();
         for (i=0; i<NUM_POLYS; i++)
         {
           VTX[0].x=axRandInt(w); VTX[0].y=axRandInt(h);
@@ -81,6 +83,12 @@ class myEditor : public axEditor
           m_Render->drawPolyTex(VTX,m_Texture,true);
         }
         aCanvas->drawBitmap(m_Bitmap,0,0, 0,0,256,256);
+        //unsigned long long endValue = axRdtsc();
+        //unsigned long long diff = endValue - startValue;
+        //char temp[32];
+        //axItoa(temp,diff,8);
+        //aCanvas->setTextColor( aCanvas->getColor(255,255,255));
+        //aCanvas->drawText(10,10,temp);
       }
 };
 
