@@ -144,6 +144,7 @@
 		<Unit filename="..\..\ax\gui\axWindow.h" />
 		<Unit filename="..\..\ax\gui\axWindowBase.h" />
 		<Unit filename="..\..\ax\par\axParameter.h" />
+		<Unit filename="..\..\ax\par\parDb.h" />
 		<Unit filename="..\..\ax\par\parFloat.h" />
 		<Unit filename="..\..\ax\par\parInteger.h" />
 		<Unit filename="..\..\ax\platform\axContext.h" />

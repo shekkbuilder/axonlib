@@ -391,8 +391,9 @@ reaper->ShowMessageBox("testing reaper sdk extensions","axonlib",3);
             float startrnd = 1 + (m_StartJit * axRandSigned() ); // 0..2
             float pitchrnd = 1 + (m_PitchJit * axRandSigned() );
             float sizernd  = 1 + (m_SizeJit  * axRandSigned() );
-            float durrnd   = 1 + (m_DurJit   * axRandSigned() );
+            float durrnd   = /*1 +*/ (m_DurJit   * axRandSigned() );
             float siz = sizernd * m_GrainSize;
+            siz = axMax(1,siz);
             //float st = index + startrnd*m_BufferSize;
             float st = index + startrnd * m_GrainDur;//m_BufferSize;
             if (st>=m_BufferSize) st -= m_BufferSize;
@@ -400,7 +401,8 @@ reaper->ShowMessageBox("testing reaper sdk extensions","axonlib",3);
             float en = st + siz;
             if (en >= m_BufferSize ) en = m_BufferSize; // clamp
             if (en<0) en = 0;
-            float du = durrnd * m_GrainDur;
+            float du = m_GrainDur + durrnd * m_GrainDur;
+            du = axMax(1,du);
             newgrain->active      = 1;
             newgrain->pos         = st;
             newgrain->start       = st;
