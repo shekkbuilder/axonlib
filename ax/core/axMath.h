@@ -179,12 +179,30 @@ __axmath_inline float axNeg(register float value)
 }
 
 /**
- * returns the sign (-1, 1 or 0) of a floating point number
+ * returns the sign (-1 or 1) of a floating point number
  * @param[in] value float
  * @return value float
 */
 __axmath_inline float axSign(register const float v)
 {
+  register union
+  {
+    signed int i;
+    float f;
+  } u;
+  u.f = v;
+  return (1 | (u.i >> 31));
+}
+
+/**
+ * returns the sign (-1, 1 or 0) of a floating point number
+ * @param[in] value float
+ * @return value float
+*/
+__axmath_inline float axSignZero(register const float v)
+{
+  if (v == 0.f)
+    return 0.f;
   register union
   {
     signed int i;
