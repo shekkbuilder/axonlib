@@ -30,7 +30,7 @@ resfile="rc_default.rc"
 warn="-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long"
 
 # optimization
-opt="-msse -mfpmath=sse,387 -O3 -Os"
+opt="-mfpmath=387 -O3 -Os"
 
 # linker options
 linker="-fstack-check -fdata-sections -ffunction-sections -Wl,-gc-sections -s"

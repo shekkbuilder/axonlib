@@ -24,7 +24,7 @@ set warn=-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long
 set resfile="rc_default.rc"
 
 :: set optimization flags
-set opt=-msse -mfpmath=sse,387 -O3 -Os
+set opt=-mfpmath=387 -O3 -Os
 
 :: target & libraries
 set tgtlib=-mwindows -lmsimg32
