@@ -155,7 +155,7 @@ __axmath_inline float axFmod(register const float x, register const float y)
 __axmath_inline float axAbs(register const float value)
 {
   // alt: fpu fabs is slower
-  union
+  register union
   {
     int i;
     float j;
@@ -172,13 +172,10 @@ __axmath_inline float axAbs(register const float value)
 */
 __axmath_inline float axNeg(register float value)
 {
-  if (value != 0.f)
-  {
-    __asm__ ( "xorl $0x80000000, %0;"    : "=r" (value)    : "0" (value) );
-    return value;
-  }
-  else
+  if (value == 0.f)
     return 0.f;
+  __asm__ ( "xorl $0x80000000, %0;"    : "=r" (value)    : "0" (value) );
+  return value;  
 }
 
 /**
@@ -186,15 +183,15 @@ __axmath_inline float axNeg(register float value)
  * @param[in] value float
  * @return value float
 */
-__axmath_inline float axSign(register const float value)
+__axmath_inline float axSign(register const float v)
 {
-  if (value != 0.f)
+  register union
   {
-    register int p = (int)value;
-    return (1 | (p >> 31));
-  }
-  else
-    return 0.f;
+    signed int i;
+    float f;
+  } u;
+  u.f = v;
+  return (1 | (u.i >> 31));
 }
 
 /**
@@ -292,7 +289,7 @@ __axmath_inline float axLog2(register const float val)
 {
   if (val > 0.f)
   {
-    union
+    register union
     {
       int i;
       float j;
@@ -450,7 +447,7 @@ __axmath_inline float axExpf(register const float x)
  */
 __axmath_inline float axExp(register const float exponent)
 {
-  union
+  register union
   {
     double d;
     struct
@@ -564,7 +561,7 @@ __axmath_inline float axSqrtf(register float value)
 __axmath_inline float axSqrt(register const float x)
 {
   register const float halfx = x*0.5;
-  union
+  register union
   {
     int i;
     float j;
@@ -598,7 +595,7 @@ __axmath_inline float axInvSqrtf(register float value)
 __axmath_inline float axInvSqrt(register const float x)
 {
   register const float halfx = 0.5f*x;
-  union
+  register union
   {
     float j;
     int i;
