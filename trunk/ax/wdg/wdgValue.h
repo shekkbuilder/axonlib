@@ -93,11 +93,15 @@ class wdgValue : public axWidget
         if (mIsDragging)
         {
           //trace(":::::::::: doMouseMove");
-          //int dx = aXpos - mClickX;
+          int dx = aXpos - mClickX;
           int dy = aYpos - mClickY;
           float v;
-          /*if (hasFlag(wf_Vertical))*/ v = -dy;
-          //else v = dx;
+
+//          /*if (hasFlag(wf_Vertical))*/ v = -dy;
+//          //else v = dx;
+          if (hasFlag(wf_Vertical)) v = -dy;
+          else v = dx;
+
           float s = mSens1;
           if (aButton&bu_Ctrl) s*=mSens2;
           v *= s;

@@ -26,7 +26,7 @@ class wdgKnob : public wdgValue
   public:
     wdgKnob(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None,
             axString aName="", float aValue=0)
-    : wdgValue(aListener,/*aId, */aRect,aAlignment,aName,aValue)
+    : wdgValue(aListener,aRect,aAlignment,aName,aValue)
       {
       }
 

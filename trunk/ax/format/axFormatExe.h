@@ -133,6 +133,29 @@ class axFormatExe : public axFormatBase//,
         }
       }
 
+    virtual void prepareParameters(void)
+      {
+        int num = mParameters.size();
+        //setNumParams(num); // vst
+        for (int i=0; i<num; i++)
+        {
+          axParameter* par = mParameters[i];
+          par->setIndex(i);
+          //doSetParameter(par);
+        }
+      }
+
+    virtual void transferParameters(void)
+      {
+        int num = mParameters.size();
+        //setNumParams(num); // vst
+        for (int i=0; i<num; i++)
+        {
+          axParameter* par = mParameters[i];
+          //par->setIndex(i);
+          doSetParameter(par);
+        }
+      }
 
     //virtual void  notifyParamChanged(axParameter* aParameter)
     //  {

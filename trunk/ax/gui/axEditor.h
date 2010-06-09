@@ -231,18 +231,15 @@ class axEditor : public axWindow
           float val = aWidget->getValue();
           mFormat->notifyParamChanged(par);
           //par->doSetValue(val,false);
-          par->doSetValue(val,true);
+          par->doSetValue(val,true); // true = notify listener
         }
-        //internal_redraw(aWidget);
-        // redraw directly (don't add to updatelist)
-        // check possibility, feasability of drawing directly
-        // via the editor's canvas, so we avoid the extra
-        // 'invalidate' roundtrip to the os and back
+        // since exe's don't have parameters, there won't be
+        // any incoming onChange as the result of the above
+        // doSetValue, so we redraw directly here...
         #ifdef AX_FORMAT_LIB
         else
         #endif
           redrawWidget(aWidget);
-
       }
 
     //----------

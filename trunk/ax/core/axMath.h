@@ -17,7 +17,7 @@
 /*
   NOTE:
     some of the methods are not compatible with big endian systems or x64.
-*/ 
+*/
 // -----------------------------------------------------------------------------
 
 #ifndef axMath_included
@@ -178,7 +178,7 @@ __axmath_inline float axNeg(register float value)
     return value;
   }
   else
-    return 0.f;  
+    return 0.f;
 }
 
 /**

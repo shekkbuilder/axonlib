@@ -133,6 +133,10 @@ class axFormatBase// : public axParameterListener
     // (doSetParameter will be called for each parameter)
     virtual void  setupParameters(void) {}
 
+    // the above function, split in two
+    virtual void  prepareParameters(void) {}
+    virtual void  transferParameters(void) {}
+
     // when tweaking a widget, we need to tell the host that the value has changed,
     // so that it can automate it, or redraw something...
     virtual void  notifyParamChanged(axParameter* aParameter) {}
