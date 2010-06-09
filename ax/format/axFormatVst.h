@@ -173,6 +173,10 @@ class axFormatVst : public axFormatBase
         mBeatPos = 0;
         mTempo = 0;
         mBlockSize = 0;
+        axStrncpy(mEffectName,"effect name",kVstMaxEffectNameLen);
+        axStrncpy(mVendorString,"vendor string",kVstMaxVendorStrLen);
+        axStrncpy(mProductString,"product string",kVstMaxProductStrLen);
+        mVendorVersion = 666;
         mEditorOpen = false;
         mEditorRect = axRect(0,0,256,256);
         mMidiEventList.numEvents = 0;
@@ -1467,6 +1471,30 @@ class axFormatVst : public axFormatBase
         {
           axParameter* par = mParameters[i];
           par->setIndex(i);
+          doSetParameter(par);
+        }
+      }
+
+    virtual void prepareParameters(void)
+      {
+        int num = mParameters.size();
+        setNumParams(num); // vst
+        for (int i=0; i<num; i++)
+        {
+          axParameter* par = mParameters[i];
+          par->setIndex(i);
+          //doSetParameter(par);
+        }
+      }
+
+    virtual void transferParameters(void)
+      {
+        int num = mParameters.size();
+        //setNumParams(num); // vst
+        for (int i=0; i<num; i++)
+        {
+          axParameter* par = mParameters[i];
+          //par->setIndex(i);
           doSetParameter(par);
         }
       }
