@@ -16,7 +16,7 @@
 
 /**
  * \file doxygen_pages.h
- * \brief --- should hide this file from list 
+ * \brief --- should hide this file from list
  */
 
 //----------------------------------------------------------------------
@@ -35,11 +35,6 @@
   use, while rataining 'low-level' control. it is released under the axonlib
   license (AXL) which is based on the GNU LGPL.  
   <br>
-  
-  <h2>
-  ### NOTE: the examples and methods here are outdated,
-  but should be renewed soon.
-  </h2>
   
   <h2>CONTENTS:</h2>
   - \subpage installation
@@ -82,8 +77,6 @@
 
   <b>compiler requirements: </b>  
   
-  <hr>
-  
   <b>- linux:</b> <br>
   mingw32 - to cross-compile for win32 <br>
   g++ - to compile c++ code for linux <br>
@@ -96,8 +89,7 @@
   sudo apt-get install xorg-dev
   \endcode
   
-  <hr>
-  
+ 
   <b>- win32:</b> <br>
   get mingw32 (the one included with dev-c++ will suffice) <br>
   set path to '[mingw32dir]/bin/g++.exe' <br>
@@ -105,17 +97,9 @@
   dev-c++ - http://www.bloodshed.net/devcpp.html <br>
   mingw - http://www.mingw.org/ <br>
   
-  <hr>
-  
-  <b>- cygwin:</b> <br> 
-  -- to compile with cygwin for windows:: <br>
-  download & install the standard mingw32, g++ packages <br>
-
-  -- to compile with cygwin for linux:: <br>
-  see bottom of 'axonlib/plugins/compile-cygwin' for instructions <br>
-  
-  you can get cygwin from: <br>
-  http://www.cygwin.com/ <br>
+  if you want a newer version of gcc for windows try the gcc-tdm build
+  try: <br>
+  http://tdm-gcc.tdragon.net/download  
   
   <br>
   
@@ -130,17 +114,43 @@
 /**
   \page examples examples
 
-  the absolutely simplest plugin you can make:
-
+  the absolutely simplest plugin you can make (nogui):
   \code
-  // todo: new examples
-  \endcode
+  #include "format/axFormat.h"
+  
+  class myPlugin : public axFormat
+  {
+  private:  
+    float m_Gain;
+  
+  public:  
+    myPlugin(axContext* aContext)
+    : axFormat(aContext)
+      {
+        describe("test_gain_nogui","ccernn","axonlib example",0,AX_MAGIC+0x0000);
+        setupAudio(2,2);
+        appendParameter( new axParameter(this,"gain","",0) );
+        setupParameters();
+      }
+  
+    virtual void  doSetParameter(axParameter* aParameter)
+      {
+        if (aParameter->getIndex()==0) m_Gain = aParameter->getValue();
+      }
+  
+    virtual void  doProcessSample(SPL** aInputs, SPL** aOutputs)
+      {
+        *aOutputs[0] = *aInputs[0] * m_Gain;
+        *aOutputs[1] = *aInputs[1] * m_Gain;
+      }
+  
+  };  
+  AX_ENTRYPOINT(myPlugin)
 
-  template for gui plugin:
-
-  \code
-  // todo: new examples
   \endcode
+  
+  <br>
+  for more examples take a look at the /source folder.
   
 */
 
@@ -153,63 +163,21 @@
 /**
   \page compile compilation
 
-  there are ready to use compile scripts in the 'axonlib/plugins' folder.
-  the compile scripts will move the resulted binaries to '../bin'.
-  edit them to suit your needs.
-
-  \note under win32 if you have a source file in a subfolder relative to 'compile.cmd'
-  you should call the compile script like:
-  \code
-  cd mysubfolder
-  ../compile.cmd myfx.cpp
-  \endcode
-
-  default compiler lines: <br>
-  \code
-  //win32::
-  g++.exe -I../ax -I../../vstsdk24 -shared -mwindows -lpthread [inputfile.cpp] -s -o [outputfile.cpp] -Wl,-gc-sections
-  //linux for linux::
-  g++ -I../ax -I../../vstsdk24 -lX11 -lpthread -shared [inputfile.cpp] -s -o [outputfile.cpp] -Wl,-gc-sections
-  //linux for win32::
-  i586-mingw32msvc-g++ -I../ax -I../../vstsdk24 -mwindows -shared [inputfile.cpp] -s -o [outputfile.cpp] -Wl,-gc-sections
-  //cygwin for win32::
-  g++ -I../ax -I../../vstsdk24 -shared -mwindows -mno-cygwin -lpthread [inputfile.cpp] -s -o [outputfile.cpp] -Wl,-gc-sections
-  //cygwin for linux::
-  (see bottom of 'axonlib/plugins/compile-cygwin')
-  \endcode
-
-  (see 'man gcc' for more info) <br>
-  
-  suggested optimization flags:
-  \code
-  -O3 -Os -fdata-sections -ffunction-sections -funroll-loops
-  \endcode
-
-  for monitoring warnings use (note that the vst sdk 2.4 may pop a warning or two):
-  \code
-  -pedantic -fpermissive -W -Wall
-  \endcode
-
-  enabling sse optimized math. this will enable gas to optimize the generated asm code with sse and fpu instructions.
-  \code
-  -msse -mfpmath=sse,387
-  \endcode
-  <br>
-  see this page for more information: <br>
-  http://gcc.gnu.org/onlinedocs/gcc-4.0.0/gcc/i386-and-x86_002d64-Options.html
+  there are ready to use compile scripts in the "/source" folder.
+  the compile scripts by default will move the resulted binaries to "/bin".
+  check the command line parameters and edit the scripts to suit your needs
+  (e.g. setting paths, gcc flags etc..).
   <br><br>
-  enabling 'fast-math' will allow the compiler to cut some corner when the default c math functions are used (sinf, tanf etc).
-  this will make such as fast as the included methods in axMath.h but with reduced accuracy.
+  example:
   \code
-   -ffast-math
-  \endcode
-
-  stripping the generated binary: <br>
-  (see 'man strip' for more info)
-  \code
-  strip --strip-all [binaryfile]
-  //or (i586-mingw32msvc-strip)
-  \endcode
+  cd source  
+  // for help  
+  ./compile -h
+  // to enable debug
+  ./compile ./myplug.cpp -d 
+  // verbose output
+  ./compile ./myplug.cpp -v
+  \endcode 
 
 */
 
@@ -223,36 +191,7 @@
  \page debug debug
  
  <b>debug info for axonlib compiled binaries </b>
- 
- list of debugging commands with a short description:
  <br>
- \code
- assert() - same as C assert. will break if assert(false) [win32 & linux]
- trace() - output any type of variable and strings similar to std::cout [win32 & linux] 
- msg() - output a message/warning [win32 & linux]
- wdebug() - write output in text window (gui) [win32]
- wtrace() - trace for wine 
- \endcode
- 
- <br> <hr> <br>
- 
- <b>linux: </b> <br>
- to debug a shared library on linux simply start the program that loads the 
- library from a terminal. this will allow stdout to be routed to the terminal
- output. same for an executable.
- 
- <br> <hr> <br>
- 
- <b>windows: </b> <br> 
- debugging a dll on windows is a bit more complicated. the way to do it is 
- to create a console programmatically, route stdout to it and disable any
- buffering so that the output is shown immediately. alternatively the windows
- gui api can be used so that a text window is created and text is shown there.
-  
- axonlib provides some methods for the above. 
- 
- <br> <hr> <br>
- 
  see axDebug.h for more info on syntax and examples. 
 
  */
@@ -268,8 +207,8 @@
  
   axonlib includes a simple applications called bin2h (tools/bin2h).
   this application will take any binary file and convert it into a byte
-  array. it can be used to create a header file for any image that you
-  wish to include in your binary.<br>
+  array. it can be used for example to create a header file for any image
+  that you wish to include in your binary.<br>
   
   usage:
   \code  
@@ -288,14 +227,11 @@
   
   
   you can now include this header file in your source code and use it with the
-  image loading procedure:
+  image loading procedures:
   \code  
   #include "axBitmapLoader.h"   
   #include "myimage.h" 
   ...
-  axSurface* mysurface;
-  ...
-  mysurface = loadPng(myimage, myimage_size);
   
   \endcode
   
@@ -309,6 +245,8 @@
 
 /**
  \page screenshots screenshots
+ 
+ todo: some new screenshots
  
  <!-- 
  <center>

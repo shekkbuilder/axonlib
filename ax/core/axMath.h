@@ -18,52 +18,6 @@
   NOTE:
     some of the methods are not compatible with big endian systems or x64.
 */ 
-
-/**
- * \file axMath.h
- * \brief math approximations and routines
- *
- * axonlib's math header with a collection of optimized functions for trigonometry,
- * algebra and analysis. <br>
- * some of the methods have a 'f' suffix version (e.g.: axTanf).
- * such versions use FPU instructions for the calculation (FPU x87 required).
- * the versions without 'f' suffix are most likely less cpu heavy approximations,
- * but with reduced accuracy and acceptable input range (e.g. axCos). <br>
- * <br>
- * <b>notes:</b> <br> <br>
- * gcc 4.x outperforms 3.x many times with -O2, -O3 <br>
- * you can get gcc 4.x for windows at http://www.tdragon.net/recentgcc/
-  <br>
-  <br>
-  <b>short performance table for axMath.h</b>: <br>
-  <br>
-  cpu: amd athlon 1800+ <br>
-  parameters: -O3 -msse -mfpmath=sse,387 <br>
-  input values: pi, -pi, 1, -1, other <br>
-  iterations: 10e+5 or more <br>
-  <br>
-  *some comparisons may use a weighting function to reduce the number
-  of iterations <br>
-  <br>
-  <table>  <tr>  <td>
-  axFloor: 5ms <br>  floorf: 25ms <br>
-  axRound: 6ms <br>  roundf: 42ms <br>
-  axAbs: 36ms <br>  fabs: 63ms <br>
-  axLog2: 7ms <br>  axLog2f: 69ms <br>  log2f: 75ms <br>
-  axLogf: 20ms <br>  logf: 80ms <br>
-  axLog10: 30ms <br>  axLog10f: 69ms <br>  log10f: 75ms <br>
-  </td>
-  <td>
-  axPowf: 96ms <br>  powf: 161ms <br>
-  axExp: 3ms <br>  axExpf: 34ms <br>  expf: 137ms <br>
-  axSqrt: <1ms <br>  axSqrtf: <1ms <br>  sqrtf: 27ms <br>
-  axSin: 56ms <br>  axSinf: 98ms <br>  sinf: 114ms <br>
-  axAcosf: <1ms <br>  acosf: 75ms <br>
-  axTanhf: 70ms <br>  tanf: 194ms <br>
-  </td>  </tr>  </table>
-  <br>
-  */
-
 // -----------------------------------------------------------------------------
 
 #ifndef axMath_included
@@ -1128,3 +1082,48 @@ __axmath_inline int axRMSInt(register const unsigned int n,
 }
 
 #endif // axMath_included
+
+/**
+ * \file axMath.h
+ * \brief math approximations and routines
+ *
+ * axonlib's math header with a collection of optimized functions for trigonometry,
+ * algebra and analysis. <br>
+ * some of the methods have a 'f' suffix version (e.g.: axTanf).
+ * such versions use FPU instructions for the calculation (FPU x87 required).
+ * the versions without 'f' suffix are most likely less cpu heavy approximations,
+ * but with reduced accuracy and acceptable input range (e.g. axCos). <br>
+ * <br>
+ * <b>notes:</b> <br> <br>
+ * gcc 4.x outperforms 3.x many times with -O2, -O3 <br>
+ * you can get gcc 4.x for windows at http://www.tdragon.net/recentgcc/
+  <br>
+  <br>
+  <b>short performance table for axMath.h</b>: <br>
+  <br>
+  cpu: amd athlon 1800+ <br>
+  parameters: -O3 -msse -mfpmath=sse,387 <br>
+  input values: pi, -pi, 1, -1, other <br>
+  iterations: 10e+5 or more <br>
+  <br>
+  *some comparisons may use a weighting function to reduce the number
+  of iterations <br>
+  <br>
+  <table>  <tr>  <td>
+  axFloor: 5ms <br>  floorf: 25ms <br>
+  axRound: 6ms <br>  roundf: 42ms <br>
+  axAbs: 36ms <br>  fabs: 63ms <br>
+  axLog2: 7ms <br>  axLog2f: 69ms <br>  log2f: 75ms <br>
+  axLogf: 20ms <br>  logf: 80ms <br>
+  axLog10: 30ms <br>  axLog10f: 69ms <br>  log10f: 75ms <br>
+  </td>
+  <td>
+  axPowf: 96ms <br>  powf: 161ms <br>
+  axExp: 3ms <br>  axExpf: 34ms <br>  expf: 137ms <br>
+  axSqrt: <1ms <br>  axSqrtf: <1ms <br>  sqrtf: 27ms <br>
+  axSin: 56ms <br>  axSinf: 98ms <br>  sinf: 114ms <br>
+  axAcosf: <1ms <br>  acosf: 75ms <br>
+  axTanhf: 70ms <br>  tanf: 194ms <br>
+  </td>  </tr>  </table>
+  <br>
+  */
