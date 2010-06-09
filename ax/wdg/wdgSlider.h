@@ -18,36 +18,18 @@
 #define wdgSlider_included
 //----------------------------------------------------------------------
 
-//#include "gui/axWidget.h"
-#include "wdg/wdgValue.h"
 #include "core/axDefines.h"
+#include "wdg/wdgValue.h"
 
 //class wdgSlider : public axWidget
 class wdgSlider : public wdgValue
 {
-  //private:
-  //  bool  mIsDragging;
-  //  int   mClickX;
-  //  int   mClickY;
-  //  float mClickVal;
-  //  char  mDisp[16];
-  //protected:
-  //  //axString  mName;
-  //  float     mSens1;
-  //  float     mSens2;
-
   public:
     wdgSlider(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None,
               axString aName="", float aValue=0, bool aVertical=false)
-    //: axWidget(aListener,aRect,aAlignment)
     : wdgValue(aListener,aRect,aAlignment,aName,aValue)
       {
-        //mName = aName;
-        //mValue = aValue;
         mIsDragging = false;
-        //mSens1 = 0.005;
-        //if (hasFlag(wf_Vertical)) { if (aRect.h>0) mSens1 = 1.0f/(float)aRect.h; }
-        //else                      { if (aRect.w>0) mSens1 = 1.0f/(float)aRect.w; }
         if (aVertical)
         {
           setFlag(wf_Vertical);
@@ -58,17 +40,7 @@ class wdgSlider : public wdgValue
           clearFlag(wf_Vertical);
           if (aRect.w>0) mSens1 = 1.0f/(float)aRect.w;
         }
-        //mSens2 = 0.05;
-        //if (aRect.h<aRect.w) setFlag(wf_Vertical);
       }
-
-    //----------
-
-    //inline void setSensitivity(float aSens1, float aSens2=0.05)
-    //  {
-    //    mSens1=aSens1;
-    //    mSens2=aSens2;
-    //  }
 
     //----------
 
@@ -81,57 +53,10 @@ class wdgSlider : public wdgValue
 
     //----------
 
-//    virtual void doMouseDown(int aXpos, int aYpos, int aButton)
-//      {
-//        if (aButton==bu_Left)
-//        {
-//          mIsDragging = true;
-//          mClickX = aXpos;
-//          mClickY = aYpos;
-//          mClickVal = mValue;
-//        }
-//      }
-//
-//    //----------
-//
-//    virtual void doMouseUp(int aXpos, int aYpos, int aButton)
-//      {
-//        if (aButton==bu_Left) mIsDragging = false;
-//      }
-//
-//    //----------
-//
-//    virtual void doMouseMove(int aXpos, int aYpos, int aButton)
-//      {
-//        if (mIsDragging)
-//        {
-//          int dx = aXpos - mClickX;
-//          int dy = aYpos - mClickY;
-//          float v;
-//          //if (hasFlag(wf_Vertical)) v = dy;
-//          if (hasFlag(wf_Vertical)) v = -dy;
-//          else v = dx;
-//          float s = mSens1;
-//          if (aButton&bu_Ctrl) s*=mSens2;
-//          v *= s;
-//          mValue = mClickVal + v;
-//          mValue = axMin(1,mValue);
-//          mValue = axMax(0,mValue);
-//          mListener->onChange(this);
-//        }
-//      }
-
-    //----------
-
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)
       {
         if (mSkin)
         {
-          //sprintf(mDisp,"%.3f",mValue);
-          //__builtin_sprintf(mDisp,"%.3f",mValue);
-
-          //axFtoa(mDisp,mValue);
-
           if (mParameter)
           {
             char labelbuf[32];
@@ -141,25 +66,24 @@ class wdgSlider : public wdgValue
             axStrcat(mDisp,labelbuf);
           }
           else axFtoa(mDisp,mValue);
-
           mSkin->drawSlider(aCanvas,mRect,mValue,mName,mDisp,hasFlag(wf_Vertical)/*,mSkinMode*/);
         }
       }
 
     //----------
 
-    virtual void doEnter(axWidget* aCapture)
-      {
-        if (hasFlag(wf_Vertical)) mListener->onCursor(cu_ArrowUpDown);
-        else mListener->onCursor(cu_ArrowLeftRight);
-      }
+    //virtual void doEnter(axWidget* aCapture)
+    //  {
+    //    if (hasFlag(wf_Vertical)) mListener->onCursor(cu_ArrowUpDown);
+    //    else mListener->onCursor(cu_ArrowLeftRight);
+    //  }
 
     //----------
 
-    virtual void doLeave(axWidget* aCapture)
-      {
-        mListener->onCursor(DEF_CURSOR);
-      }
+    //virtual void doLeave(axWidget* aCapture)
+    //  {
+    //    mListener->onCursor(DEF_CURSOR);
+    //  }
 
 };
 

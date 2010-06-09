@@ -28,6 +28,7 @@ class wdgKnob : public wdgValue
             axString aName="", float aValue=0)
     : wdgValue(aListener,aRect,aAlignment,aName,aValue)
       {
+        setFlag(wf_Vertical);
       }
 
     //----------
@@ -51,19 +52,18 @@ class wdgKnob : public wdgValue
 
     //----------
 
-    virtual void doEnter(axWidget* aCapture)
-      {
-        //if (hasFlag(wf_Vertical)) mListener->onCursor(cu_ArrowUpDown);
-        //else mListener->onCursor(cu_ArrowLeftRight);
-        mListener->onCursor(cu_ArrowUpDown);
-      }
+    //virtual void doEnter(axWidget* aCapture)
+    //  {
+    //    if (hasFlag(wf_Vertical)) mListener->onCursor(cu_ArrowUpDown);
+    //    else mListener->onCursor(cu_ArrowLeftRight);
+    //  }
 
     //----------
 
-    virtual void doLeave(axWidget* aCapture)
-      {
-        mListener->onCursor(DEF_CURSOR);
-      }
+    //virtual void doLeave(axWidget* aCapture)
+    //  {
+    //    mListener->onCursor(DEF_CURSOR);
+    //  }
 
 };
 

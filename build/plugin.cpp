@@ -14,14 +14,14 @@
 //#include "../source/test/test_gain_gui.cpp"
 //#include "../source/test/test_gain_gui_skin.cpp"
 
-#include "../test/test_math.cpp"
+//#include "../test/test_math.cpp"
 
 //#include "../test/test_skin.cpp"
 //#include "../test/test_memory.cpp"
 //#include "../test/test_render.cpp"
 //#include "../test/test_scrollview.cpp"
 
-//#include "../source/demo/axDemo.cpp"
+#include "../source/demo/axDemo.cpp"
 
 //----------------------------------------------------------------------
 // ccernn
@@ -47,9 +47,10 @@
 //----------------------------------------------------------------------
 
 //#include "../source/liteon/liteon_biquad.cpp"
+//#include "../source/liteon/liteon_tilteq.cpp"
 
 //----------------------------------------------------------------------
 // ports
 //----------------------------------------------------------------------
 
-//#include "../source/ports/sstillwell_eventhorizon.cpp"  // error
+//#include "../source/ports/sstillwell_eventhorizon.cpp"
