@@ -14,95 +14,6 @@
  * If not, see <http://axonlib.googlecode.com/>.
  */
 
-/**
- * @file axDebug.h
- * \brief debugger methods
- *
- * if AX_DEBUG is defined, 'assert.h' and 'iostream' are included for
- * debugging purposes. <br><br>
- * assert() examples:
- * \code
- * assert(var);             // if 'var' is false the compiler will throw an error and abort
- * assert(num>5);           // same as above but if 'num' is not greater than 5
- * \endcode
- * msg() examples:
- * \code
- * msg("message");         // show a message/warning
- * \endcode
- * trace() examples:
- * \code
- * trace(var);              // trace a variable
- * trace("message");        // trace a message
- * trace(var << "message"); // combined
- * \endcode
- * wtrace() (linux/wine) example:
- * \code
- * wtrace(var);              // trace a variable
- * wtrace("message");        // trace a message
- * wtrace(var << "message"); // combined
- * \endcode
- * wdebug() (win32) examples:
- * wdebug(var);              // trace a variable
- * wdebug("message");        // trace a message
- * wdebug(var << "message"); // combined
- * \endcode
- * <br>
- * linux specific methods: <br>
- * -------------------------------- <br>
- * wtrace() - trace for wine <br>
- *
- * win32 specific methods: <br>
- * -------------------------------- <br>
- * on windows you can manually create a debug window (console or gui) and
- * destroy it when the dll/exe is beeing closed or you can use
- * the flags AX_DEBUG_AUTO_STD (auto create/destroy debug console)
- * or AX_DEBUG_AUTO_WIN (auto create/destroy debug gui window).
- * <br>
- * <br>
- * <b>winapi window (inefficient):</b> <br>
- * axDwinCreate() - create a winapi debug window <br>
- * axDwinDestroy() - destroy the winapi debug window  <br>
- * wdebug() is a method which is used to append text into the gui debug
- * window. <br>
- * not recommended to be called per sample or block on older machines
- * (possible freeze). <br>
- * <br>
- * <b>console window (efficient):</b> <br>
- * uses the standard trace(), msg() macros. <br>
- * axDstdCreate() - create a debug console and route stdout to it <br>
- * axDstdDestroy() - destroy the debug console <br>
- * <br>
- * example in a vst plugin: <br>
- * \code
- * // automatic
- * #define AX_DEBUG           // or call from command line: g++ ... -DAX_DEBUG
- * #define AX_DEBUG_AUTO_WIN
- * #define AX_DEBUG_AUTO_STD
- *
- * // manual
- * virtual void doProcessState(int aState) // overwride default method
-    {
-      #if defined(AX_DEBUG) && defined(WIN32) // check for win32 and ax_debug
-        switch(aState)
-        {
-          case pst_Open:                                // - on plugin open
-            axDstdCreate();                             // create console
-            axDwinCreate();                             // create debug gui
-            trace("axLogf(2.24)=" << axLogf(2.24));     // test trace()
-            wdebug("axLogf(2.24)=" << axLogf(2.24));    // test wdebug()
-          break;
-          case pst_Close:                               // - on plugin close
-            axDstdDestroy();                            // destroy console
-            axDwinDestroy();                            // destroy debug gui
-          break;
-        }
-      #endif
-    }
- * \endcode
- * <i>notes: debug windows are shared between plugin instances and
- * only one console can be allocated per process.<i><br><br>
-*/
-
 #ifndef axDebug_included
 #define axDebug_included
 //----------------------------------------------------------------------
@@ -162,7 +73,6 @@ inline const char* axGetFileName(const char* path)
   #ifdef WIN32
     /*
      * creates a winapi debugger window (slow)
-     *
     */
     #include <windows.h>
     #include <windowsx.h>         // macros
@@ -368,3 +278,49 @@ inline const char* axGetFileName(const char* path)
 
 //----------------------------------------------------------------------
 #endif // axDebug_included
+
+/**
+ * @file axDebug.h
+ * \brief debugger methods
+ *
+ * if AX_DEBUG is defined, library debug mode will be enabled. usually using the 
+ * compile flag -DAX_DEBUG <br><br> 
+ *
+ * while you can observe program output in linux by running a program directly
+ * from a terminal, on win32 you have to create a attach a console/or a text
+ * window to the
+ * process.
+ * 
+ * axonlib will do that for you if you define AX_DEBUG_AUTO_STD or
+ * AX_DEBUG_AUTO_WIN (deprecated). the same definitions do not weight on linux.
+ * 
+ * debug methods:
+ * \code
+ * msg("text");                \\ write text to stdout  
+ * trace(variable << "text");  \\ write to stdout. simillar to cout
+ * wtrace(variable << "text"); \\ same as trace() but for wine
+ * axAssert(expression);       \\ runtime assertion
+ * axStaticAssert(expression); \\ statatic assertion 
+ * wdebug(variable << "text"); \\ (deprecated, win32 only) write to a text 
+ *                             \\ window
+ * \endcode
+ *  
+ * <br>
+ *   
+ * file logging: <br>
+ * you can log all output that is passed to stdout into a text file located in
+ * a relative path to the path of the binary by using:
+ * \code  
+ * #define AX_DEBUG_LOG "./logs/filename.log"
+ * \endcode
+ * <br> 
+ * on win32, due to fact that a console window is closed with a program,
+ * the only way to see the complete debug output is to log it using
+ * this method.
+ *  
+ * <br><br>
+ *      
+ * <i>other notes: <br> - on win32, text windows are shared between plugin   
+ * instances and only one console can be allocated per process.<i><br>
+ * 
+*/
