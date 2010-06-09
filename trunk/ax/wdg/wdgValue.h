@@ -46,25 +46,12 @@ class wdgValue : public axWidget
         mValue = aValue;
         mIsDragging = false;
         mSens1 = 0.005;
-        //if (hasFlag(wf_Vertical)) { if (aRect.w>0) mSens1 = 1.0f/(float)aRect.h; }
-        //else                      { if (aRect.w>0) mSens1 = 1.0f/(float)aRect.w; }
         mSens2 = 0.05;
-        //if (aRect.h<aRect.w) setFlag(wf_Vertical);
       }
 
     //----------
 
-    //inline void setName(axString aName) { mName=aName; }
     inline void setSensitivity(float aSens1, float aSens2=0.05) { mSens1=aSens1; mSens2=aSens2; }
-
-    //----------
-
-    //virtual void doSetSize(int aWidth, int aHeight)
-    //  {
-    //    if (hasFlag(wf_Vertical)) { if (aHeight>0) mSens1 = 1.0f/(float)aHeight; }
-    //    else                      { if (aWidth >0) mSens1 = 1.0f/(float)aWidth; }
-    //    axWidget::doSetSize(aWidth,aHeight);
-    //  }
 
     //----------
 
@@ -92,13 +79,9 @@ class wdgValue : public axWidget
       {
         if (mIsDragging)
         {
-          //trace(":::::::::: doMouseMove");
           int dx = aXpos - mClickX;
           int dy = aYpos - mClickY;
           float v;
-
-//          /*if (hasFlag(wf_Vertical))*/ v = -dy;
-//          //else v = dx;
           if (hasFlag(wf_Vertical)) v = -dy;
           else v = dx;
 
@@ -109,7 +92,6 @@ class wdgValue : public axWidget
           mValue = axMin(1,mValue);
           mValue = axMax(0,mValue);
           mListener->onChange(this);
-          //mListener->onRedraw(this);
         }
       }
 
@@ -119,8 +101,6 @@ class wdgValue : public axWidget
       {
         if (mSkin)
         {
-          //sprintf(mDisp,"%.3f",mValue);
-          //__builtin_sprintf(mDisp,"%.3f",mValue);
           axFtoa(mDisp,mValue);
           mSkin->drawValue(aCanvas,mRect,mName,mDisp,mValue/*,mSkinMode*/);
         }
@@ -130,9 +110,8 @@ class wdgValue : public axWidget
 
     virtual void doEnter(axWidget* aCapture)
       {
-        //if (hasFlag(wf_Vertical)) mListener->onCursor(cu_ArrowUpDown);
-        //else mListener->onCursor(cu_ArrowLeftRight);
-        mListener->onCursor(cu_ArrowUpDown);
+        if (hasFlag(wf_Vertical)) mListener->onCursor(cu_ArrowUpDown);
+        else mListener->onCursor(cu_ArrowLeftRight);
       }
 
     //----------

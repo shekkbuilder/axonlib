@@ -7,13 +7,10 @@
 #include "par/parFloat.h"
 #include "wdg/wdgPanel.h"
 #include "wdg/wdgKnob.h"
-//#include "wdg/wdgButton.h"
-//#include "wdg/wdgSlider.h"
 #include "skins/axSkinDef.h"
 #include "gui/axBitmapLoader.h"
 #include "../../ax/skins/img/skin1.h"
 #include "../../ax/skins/img/knob1.h"
-//#include "../../ax/skins/img/knob32.h"
 
 //----------------------------------------------------------------------
 
@@ -47,7 +44,6 @@ class myPlugin : public axFormat
   //editor
     axEditor*       m_Editor;
     axSkinDef*      m_Skin;
-    //axSkinDef*    m_Skin2;
     wdgPanel*       w_Panel;
     wdgKnob*        w_Delay;
     wdgKnob*        w_Feedback;
@@ -56,7 +52,6 @@ class myPlugin : public axFormat
     bool            gui_initialized;
     axBitmapLoader* skinloader;
     axBitmapLoader* knobloader;
-    //axBitmapLoader* knob2loader;
 
   public:
 
@@ -69,8 +64,6 @@ class myPlugin : public axFormat
           skinloader->decodePng((unsigned char*)skin1,skin1_size);
           knobloader = new axBitmapLoader();
           knobloader->decodePng((unsigned char*)knob1,knob1_size);
-          //knob2loader = new axBitmapLoader();
-          //knob2loader->decodePng((unsigned char*)knob32,knob32_size);
           gui_initialized = true;
         }
         m_Index = 0;
@@ -78,7 +71,6 @@ class myPlugin : public axFormat
         describe("fx_tempodelay","ccernn","axonlib example",2,AX_MAGIC+0x1001);
         setupAudio(2,2,false);
         setupEditor(100+20,(32*4)+15+20);
-        //setupEditor(320,400);
         appendParameter( p_Delay    = new parFloat(this,"delay",   "",0.75, 0.25, MAX_BEATS, 0.25 ) );
         appendParameter( p_Feedback = new parFloat(this,"feedback","",0.75 ) );
         appendParameter( p_Dry      = new parFloat(this,"dry",     "",0.75 ) );
@@ -94,7 +86,6 @@ class myPlugin : public axFormat
         {
           delete skinloader;
           delete knobloader;
-          //delete knob2loader;
         }
       }
 
@@ -175,30 +166,13 @@ class myPlugin : public axFormat
         w_Panel->appendWidget( w_Feedback = new wdgKnob(editor,axRect(100,32),wa_TopLeft,"feedback" ) );
         w_Panel->appendWidget( w_Dry      = new wdgKnob(editor,axRect(100,32),wa_TopLeft,"dry"      ) );
         w_Panel->appendWidget( w_Wet      = new wdgKnob(editor,axRect(100,32),wa_TopLeft,"wet"      ) );
-        //----------
-        //m_Skin2 = new axSkinDef(canvas);
-        //m_Skin2->copyFrom(m_Skin);
-        //m_Skin2->loadKnobBitmap(editor,(char*)knob2loader->getImage());
-        //m_Skin2->setVariation(1);
-        //w_Delay->applySkin(m_Skin2);
-        //wdgButton* but;
-        //w_Panel->appendWidget( but = new wdgButton(editor,axRect(16,16),wa_StackedHoriz/*,true, "off","on",ta_Center,bm_Switch*/) );
-        //w_Panel->appendWidget( but = new wdgButton(editor,axRect(16,16),wa_StackedHoriz,true/*, "off","on",ta_Center,bm_Switch*/) );
-        //but->applySkin(m_Skin2);
-        //wdgSlider* sli;
-        //w_Panel->appendWidget( sli = new wdgSlider(editor,axRect(16,64),wa_StackedHoriz,"slider",0,true) );
-        //sli->setSensitivity( 1.0f/(64.0f-11.0f) );
-        //w_Panel->appendWidget( sli = new wdgSlider(editor,axRect(16,64),wa_StackedHoriz,"slider",0,true) );
-        //sli->setSensitivity( 1.0f/(64.0f-11.0f) );
-        //sli->applySkin(m_Skin2);
-        //----------
         editor->connect(w_Delay,   p_Delay);
         editor->connect(w_Feedback,p_Feedback);
         editor->connect(w_Dry,     p_Dry);
         editor->connect(w_Wet,     p_Wet);
         editor->doRealign();
+        //w_Delay->clearFlag(wf_Vertical);
         editor->show();
-        //editor->startTimer(500);
         m_Editor = editor;
         return m_Editor;
       }
@@ -207,35 +181,13 @@ class myPlugin : public axFormat
 
     virtual void doCloseEditor(void)
       {
-        //mEditor->stopTimer();
         m_Editor->hide();
         delete m_Editor;
         m_Editor = NULL;
         delete m_Skin;
-        //delete m_Skin2;
       }
 
-    //----------
-
-    // call axWindow::doIdleEditor() to redraw update list
-    //
-    //virtual void doIdleEditor()
-    //  {
-    //    #ifndef AX_WIDGET_NOUPDATELIST
-    //    if (m_Editor) m_Editor->redrawUpdates();
-    //    #endif
-    //  }
-
 };
-
-//----------------------------------------------------------------------
-
-//#undef MAX_BEATS
-//#undef MIN_BPM
-//#undef MAX_SRATE
-//#undef MAX_SECONDS_PER_BEAT
-//#undef MAX_SAMPLES_PER_BEAT
-//#undef MAX_DELAY_LENGTH
 
 //----------------------------------------------------------------------
 AX_ENTRYPOINT(myPlugin)
