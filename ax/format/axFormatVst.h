@@ -383,6 +383,7 @@ class axFormatVst : public axFormatBase
     //virtual double getSampleRate(void)
     virtual void updateSampleRate(void)
       {
+        //mSampleRate = 0;
         if (audioMaster)
         {
           VstIntPtr res = audioMaster(&aeffect, audioMasterGetSampleRate, 0, 0, 0, 0);
@@ -1463,6 +1464,8 @@ class axFormatVst : public axFormatBase
 
     //----------
 
+    // prepareParameters + transferParameters
+
     virtual void setupParameters(void)
       {
         int num = mParameters.size();
@@ -1475,6 +1478,11 @@ class axFormatVst : public axFormatBase
         }
       }
 
+    // tells the vst host how many parameters we have
+    // needs to be done in the constructor!
+    // and initializes parameter-index
+    // needed for parameter -> widget mapping if we have an editor
+
     virtual void prepareParameters(void)
       {
         int num = mParameters.size();
@@ -1486,6 +1494,10 @@ class axFormatVst : public axFormatBase
           //doSetParameter(par);
         }
       }
+
+    // calls doSetParameter for all parameters
+    // so that you can fetch them, and setup initial values
+    // for your plugin
 
     virtual void transferParameters(void)
       {

@@ -15,23 +15,27 @@
 
 //---------------------------------------------------------------------
 
-#define NUMTYPES 7
+#define NUMTYPES 9
 
 char* str_type1[] =
 {
   (char*)"sinf",
   (char*)"cosf",
+  (char*)"expf",
+  (char*)"logf",
   (char*)"floorf",
   (char*)"ceilf",
   (char*)"roundf",
   (char*)"abs",
-  (char*)"sign"
+  (char*)"signbit"
 };
 
 char* str_type2[] =
 {
   (char*)"axSinf",
   (char*)"axCosf",
+  (char*)"axExpf",
+  (char*)"axLog",
   (char*)"axFloor",
   (char*)"axCeil",
   (char*)"axRound",
@@ -45,11 +49,13 @@ float calc1(int type, float n)
     {
       case 0: return sinf(n);
       case 1: return cosf(n);
-      case 2: return floorf(n);
-      case 3: return ceilf(n);
-      case 4: return roundf(n);
-      case 5: return abs(n);
-      case 6: return 0;//sign(n);
+      case 2: return expf(n);
+      case 3: return logf(n);
+      case 4: return floorf(n);
+      case 5: return ceilf(n);
+      case 6: return roundf(n);
+      case 7: return fabs(n);
+      case 8: return signbit(n);//sign(n);
     }
     return 0;
   }
@@ -60,11 +66,13 @@ float calc2(int type, float n)
     {
       case 0: return axSinf(n);
       case 1: return axCosf(n);
-      case 2: return axFloor(n);
-      case 3: return axCeil(n);
-      case 4: return axRound(n);
-      case 5: return axAbs(n);
-      case 6: return axSign(n);
+      case 2: return axExpf(n);
+      case 3: return axLog(n);
+      case 4: return axFloor(n);
+      case 5: return axCeil(n);
+      case 6: return axRound(n);
+      case 7: return axAbs(n);
+      case 8: return axSign(n);
     }
     return 0;
   }
@@ -202,10 +210,10 @@ class myPlugin : public axFormat
         setupEditor(640,480);
         appendParameter( new parInteger(this,"type1","", 0,   0, NUMTYPES-1, str_type1 ) );
         appendParameter( new parInteger(this,"type2","", 1,   0, NUMTYPES-1, str_type2 ) );
-        appendParameter( new parFloat(  this,"min x","",-1,  -10,10 ) );
-        appendParameter( new parFloat(  this,"max x","", 1,  -10,10 ) );
-        appendParameter( new parFloat(  this,"min y","",-1,  -10,10 ) );
-        appendParameter( new parFloat(  this,"max y","", 1,  -10,10 ) );
+        appendParameter( new parFloat(  this,"min x","",-10, -10,10 ) );
+        appendParameter( new parFloat(  this,"max x","", 10, -10,10 ) );
+        appendParameter( new parFloat(  this,"min y","",-10, -10,10 ) );
+        appendParameter( new parFloat(  this,"max y","", 10, -10,10 ) );
         appendParameter( new parFloat(  this,"n",    "", 1,  -1, 1  ) );
         //setupParameters();
         prepareParameters();
