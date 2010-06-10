@@ -15,67 +15,38 @@
 
 //---------------------------------------------------------------------
 
-#define NUMTYPES 9
+#define NUMTYPES 26
 
-char* str_type1[] =
+char* str_type[] =
 {
+  (char*)"n",
   (char*)"sinf",
-  (char*)"cosf",
-  (char*)"expf",
-  (char*)"logf",
-  (char*)"floorf",
-  (char*)"ceilf",
-  (char*)"roundf",
-  (char*)"abs",
-  (char*)"signbit"
-};
-
-char* str_type2[] =
-{
+  (char*)"axSin",
   (char*)"axSinf",
+  (char*)"cosf",
+  (char*)"axCos",
   (char*)"axCosf",
+  (char*)"tanf",
+  (char*)"axTan",
+  (char*)"axTanf",
+  (char*)"expf",
+  (char*)"axExp",
   (char*)"axExpf",
+  (char*)"logf",
   (char*)"axLog",
+  (char*)"axLogf",
+  (char*)"floorf",
   (char*)"axFloor",
+  (char*)"ceilf",
   (char*)"axCeil",
+  (char*)"roundf",
   (char*)"axRound",
+  (char*)"abs",
   (char*)"axAbs",
+  (char*)"signbit",
   (char*)"axSign"
 };
 
-float calc1(int type, float n)
-  {
-    switch (type)
-    {
-      case 0: return sinf(n);
-      case 1: return cosf(n);
-      case 2: return expf(n);
-      case 3: return logf(n);
-      case 4: return floorf(n);
-      case 5: return ceilf(n);
-      case 6: return roundf(n);
-      case 7: return fabs(n);
-      case 8: return signbit(n);//sign(n);
-    }
-    return 0;
-  }
-
-float calc2(int type, float n)
-  {
-    switch (type)
-    {
-      case 0: return axSinf(n);
-      case 1: return axCosf(n);
-      case 2: return axExpf(n);
-      case 3: return axLog(n);
-      case 4: return axFloor(n);
-      case 5: return axCeil(n);
-      case 6: return axRound(n);
-      case 7: return axAbs(n);
-      case 8: return axSign(n);
-    }
-    return 0;
-  }
 
 //----------------------------------------------------------------------
 //
@@ -99,6 +70,39 @@ class myPainter : public axWidget
 
     //----------
 
+float calc(int type, float n)
+  {
+    switch (type)
+    {
+      case 0:   return nval;
+      case 1:   return sinf(n);
+      case 2:   return axSin(n);
+      case 3:   return axSinf(n);
+      case 4:   return cosf(n);
+      case 5:   return axCos(n);
+      case 6:   return axCosf(n);
+      case 7:   return tanf(n);
+      case 8:   return axTan(n);
+      case 9:   return axTanf(n);
+      case 10:  return expf(n);
+      case 11:  return axExp(n);
+      case 12:  return axExpf(n);
+      case 13:  return logf(n);
+      case 14:  return axLog(n);
+      case 15:  return axLogf(n);
+      case 16:  return floorf(n);
+      case 17:  return axFloor(n);
+      case 18:  return ceilf(n);
+      case 19:  return axCeil(n);
+      case 20:  return roundf(n);
+      case 21:  return axRound(n);
+      case 22:  return fabs(n);
+      case 23:  return axAbs(n);
+      case 24:  return signbit(n); //sign(n);
+      case 25:  return axSign(n);
+    }
+    return 0;
+  }
 
     //----------
 
@@ -139,47 +143,38 @@ class myPainter : public axWidget
 
         // math func
         int   i;
-        float n;
+        float x,n1,n2;
+        float px,cx;
+        float py1,py2;
+        float cy1,cy2;
         float stepx = rangex / mRect.w;
-        float cx;
-        float cy;
-        float x,px,py;
-
-        //---
 
         x = minx;
         px = x;
-        py = y0;
-        aCanvas->setPenColor( aCanvas->getColor(AX_GREEN) );
+        py1 = y0;
+        py2 = y0;
+        axColor red = aCanvas->getColor(AX_RED);
+        axColor green = aCanvas->getColor(AX_GREEN);
+        axColor yellow = aCanvas->getColor(AX_YELLOW);
         for (i=0; i<mRect.w; i++)
         {
-          n = calc2(type2,x);//axSinf(x);
-          cx = mRect.x+i;
-          cy = y0-(n*scaley);
+          n1 = calc(type1,x);//axSinf(x);
+          n2 = calc(type2,x);//axSinf(x);
+          cx = mRect.x + i;
+          cy1 = (int)(y0 - (n1*scaley));
+          cy2 = (int)(y0 - (n2*scaley));
           //aCanvas->drawPoint( mRect.x+i, y0-(n*scaley) );
-          aCanvas->drawLine( px,py,cx,cy );
+          aCanvas->setPenColor(red);
+          aCanvas->drawLine( px,py1,cx,cy1 );
+          //aCanvas->drawLine( px,y0,cx,cy1 );
+          aCanvas->setPenColor(green);
+          aCanvas->drawLine( px,py2,cx,cy2 );
+          //aCanvas->drawLine( px,y0,cx,cy2 );
           px = cx;
-          py = cy;
+          py1 = cy1;
+          py2 = cy2;
           x += stepx;
         }
-
-        //---
-
-        x = minx;
-        px = x;
-        py = y0;
-        aCanvas->setPenColor( aCanvas->getColor(AX_RED) );
-        for (i=0; i<mRect.w; i++)
-        {
-          n = calc1(type1,x);//axSinf(x);
-          cx = mRect.x+i;
-          cy = y0-(n*scaley);
-          aCanvas->drawLine( px,py,cx,cy );
-          px = cx;
-          py = cy;
-          x += stepx;
-        }
-
         aCanvas->clearClipRect();
 
       }
@@ -208,13 +203,13 @@ class myPlugin : public axFormat
         describe("test_gain_gui","ccernn","axonlib example",0,AX_MAGIC+0x0000);
         setupAudio(2,2);
         setupEditor(640,480);
-        appendParameter( new parInteger(this,"type1","", 0,   0, NUMTYPES-1, str_type1 ) );
-        appendParameter( new parInteger(this,"type2","", 1,   0, NUMTYPES-1, str_type2 ) );
+        appendParameter( new parInteger(this,"type1","", 0,   0, NUMTYPES-1, str_type ) );
+        appendParameter( new parInteger(this,"type2","", 0,   0, NUMTYPES-1, str_type ) );
         appendParameter( new parFloat(  this,"min x","",-10, -10,10 ) );
         appendParameter( new parFloat(  this,"max x","", 10, -10,10 ) );
         appendParameter( new parFloat(  this,"min y","",-10, -10,10 ) );
         appendParameter( new parFloat(  this,"max y","", 10, -10,10 ) );
-        appendParameter( new parFloat(  this,"n",    "", 1,  -1, 1  ) );
+        appendParameter( new parFloat(  this,"n",    "", 0,  -10,10  ) );
         //setupParameters();
         prepareParameters();
       }

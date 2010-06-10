@@ -1,0 +1,14 @@
+#!/bin/bash
+
+./compileall ccernn -win32
+./compileall demo -win32
+./compileall liteon -win32
+./compileall ports -win32
+./compileall test -win32
+
+./compile demo/axDemo.cpp -win32 -exe
+./compile ccernn/fx_grains.cpp -win32 -exe
+./compile ccernn/fx_tempodelay.cpp -win32 -exe
+./compile test/test_gain_gui.cpp -win32 -exe
+./compile test/test_gain_gui_skin.cpp -win32 -exe
+

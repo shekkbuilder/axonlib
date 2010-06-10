@@ -42,6 +42,7 @@ class axDemo_editor : public axEditor
   private:
     //axDemo_skin*          m_Skin;
     axBitmap*             m_VoxelBitmap;
+    axSurface*            m_VoxelSurface;
     axSymbols*            m_Symbols;
 
     wdgPanel*             w_LeftPanel;
@@ -73,7 +74,8 @@ class axDemo_editor : public axEditor
         //applySkin(m_Skin);
         //m_Skin->loadSkinBitmap(this,(unsigned char*)demo_skin,demo_skin_size);
         //m_Symbols = new axSymbols(m_Skin->getSurface());
-        m_VoxelBitmap = createBitmap(320,200,24);
+        m_VoxelBitmap  = createBitmap(320,200,24);
+        m_VoxelSurface = createSurface(320,200,24);
         m_VoxelBitmap->createBuffer();
         m_VoxelBitmap->prepare();
 
@@ -117,7 +119,7 @@ class axDemo_editor : public axEditor
           w_RightPanel->appendPage( w_Page_params  = new axDemo_page_params( this,NULL_RECT,wa_Client) );
           w_RightPanel->appendPage( w_Page_audio   = new axDemo_page_audio(  this,NULL_RECT,wa_Client) );
           w_RightPanel->appendPage( w_Page_midi    = new axDemo_page_midi(   this,NULL_RECT,wa_Client) );
-          w_RightPanel->appendPage( w_Page_bitmaps = new axDemo_page_bitmaps(this,NULL_RECT,wa_Client,m_VoxelBitmap) );
+          w_RightPanel->appendPage( w_Page_bitmaps = new axDemo_page_bitmaps(this,NULL_RECT,wa_Client,m_VoxelBitmap,m_VoxelSurface) );
           w_RightPanel->setPage(0,false);
 
         //----- and then put everything in place -----
@@ -133,6 +135,7 @@ class axDemo_editor : public axEditor
         stopTimer();
         //delete m_Symbols;
         delete m_VoxelBitmap;
+        delete m_VoxelSurface;
         //delete m_Skin;
       }
 
