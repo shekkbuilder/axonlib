@@ -1,12 +1,6 @@
-- check the licenses for /extern things,
-  are they 100% compatible with the axl license?
-  (gpl vs closed-source)
-
-  if something can't be used in closed-source,
-  because of gpl or something, warn the lib-users
-  that they should not use these.
-
-- copy/paste: license headers back into top of files
+- point out that some of the 'extern' files might use other licenses than
+  the axonlib itself, and that projects using them must obey these
+  licenses (gpl, ..)
 
 - copy/paste: docygen comments from rev.151
   (but some needs to be redone because of changes)
@@ -24,15 +18,8 @@
   only tests used wihle developing there.
   none of them is guaranteed to function as the library evolves
 
-- compileall script that compiles all .cpp files found in a specified
-  directory
-
 - examine possibilities for upx (or something else) compression of
   linux shared libraries (.so)
-
-- point out that some of the 'extern' files might use other licenses than
-  the axonlib itself, and that projects using them must obey these
-  licenses (gpl, ..)
 
 - makefiles?
   would it really help anything, since it's mainly .h files?
@@ -45,17 +32,6 @@ core:
 
 - axAtomic
   thread-safe atomic instructions for light-weight mutex alternative.
-
-- deprecate all methods and types from the standard library and other headers:
-  "math.h", "string.h", "memory.h", "malloc.h", that are used locally.
-
-- investigate the possibility of system calls localization:
-  os dependent exit(), abort(), assert(), time()...etc
-
-- (on a later stage) investigate more into the possibility of excluding the
-  standard libraries when linking is possible. may require a lot of work for the
-  os dependent code and to make it all portable. how would that work for users?
-  ...etc
 
 - solidifying and documenting possible methods for debugging memory problems
   and bugs using operator / function overriding and external tools such
