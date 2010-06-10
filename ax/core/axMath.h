@@ -23,7 +23,7 @@
 #ifndef axMath_included
 #define axMath_included
 
-#include "core/axDefines.h"
+#include "axDefines.h"
 
 #ifdef AX_HOT_INLINE_MATH
   #define __axmath_inline __hotinline
@@ -65,18 +65,15 @@
 
 /**
  * returns the floor of a floating point number
- * \code
- * // -1.6 -> -1
- * // -1.1 -> -1
- * // 1.6 -> 1
- * // 1.1 -> 1
- * \endcode
  * @param[in] value float
  * @return result float
  */
-__axmath_inline float axFloor(register const float value)
+__axmath_inline float axFloor(register const float v)
 {
-  return (float)(int)(value);
+  if (v < 0.f)
+    return (float)(int)(v - 1.f);
+  else
+    return (float)(int)(v);
 }
 
 /**
@@ -84,9 +81,12 @@ __axmath_inline float axFloor(register const float value)
  * @param[in] value float
  * @return result float
  */
-__axmath_inline float axCeil(register const float value)
+__axmath_inline float axCeil(register const float v)
 {
-  return (float)(int)(value + 1.f);
+  if (v < 0.f)
+    return (float)(int)(v);
+  else
+    return (float)(int)(v + 1.f);
 }
 
 /**
@@ -94,9 +94,12 @@ __axmath_inline float axCeil(register const float value)
  * @param[in] value float
  * @return result float
 */
-__axmath_inline float axRound(register const float value)
+__axmath_inline float axRound(register const float v)
 {
-  return (float)(int)(value + 0.5f);
+   if (v < 0.f)
+    return (float)(int)(v - 0.5f);
+  else
+    return (float)(int)(v + 0.5f); 
 }
 
 /**
@@ -195,21 +198,19 @@ __axmath_inline float axSign(register const float v)
 }
 
 /**
- * returns the sign (-1, 1 or 0) of a floating point number
+ * returns the sign bit (1 or 0) of a floating point number
  * @param[in] value float
  * @return value float
 */
-__axmath_inline float axSignZero(register const float v)
+__axmath_inline unsigned int axSignBit(register const float v)
 {
-  if (v == 0.f)
-    return 0.f;
   register union
   {
     signed int i;
     float f;
   } u;
   u.f = v;
-  return (1 | (u.i >> 31));
+  return (unsigned int)(-(u.i >> 31));
 }
 
 /**

@@ -44,7 +44,7 @@ char* str_type[] =
   (char*)"abs",
   (char*)"axAbs",
   (char*)"signbit",
-  (char*)"axSign"
+  (char*)"axSignBit"
 };
 
 
@@ -98,8 +98,8 @@ float calc(int type, float n)
       case 21:  return axRound(n);
       case 22:  return fabs(n);
       case 23:  return axAbs(n);
-      case 24:  return signbit(n); //sign(n);
-      case 25:  return axSign(n);
+      case 24:  return signbit(n);
+      case 25:  return axSignBit(n);      
     }
     return 0;
   }
