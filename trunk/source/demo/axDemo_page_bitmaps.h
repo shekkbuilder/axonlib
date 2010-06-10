@@ -15,18 +15,20 @@ class axDemo_page_bitmaps : public wdgPanel
   friend class axDemo;
 
   private:
-    CVoxel*   mVoxel;
-    axBitmap* mBitmap;
+    CVoxel*    mVoxel;
+    axBitmap*  mBitmap;
+    axSurface* mSurface;
     //int x0,y0;
     float x,y;
     float a;
 
   public:
 
-    axDemo_page_bitmaps(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None, axBitmap* aBitmap=NULL)
+    axDemo_page_bitmaps(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None, axBitmap* aBitmap=NULL, axSurface* aSurface=NULL)
     : wdgPanel(aListener,aRect,aAlignment)
       {
-        mBitmap = aBitmap;
+        mBitmap  = aBitmap;
+        mSurface = aSurface;
         mVoxel = new CVoxel();
         //mVoxel->makeColors();
         x = 0.5;
@@ -60,7 +62,12 @@ class axDemo_page_bitmaps : public wdgPanel
         wdgPanel::doPaint(aCanvas,aRect);
         mVoxel->View(x,y,a);
         axMemcpy(mBitmap->getBuffer(),/*(int)*/mVoxel->getBuffer(),320*200*4);
-        aCanvas->drawBitmap(mBitmap,mRect.x,mRect.y2()-200,0,0,320,200);
+        #ifdef AX_ALPHA
+          mSurface->getCanvas()->drawBitmap(mBitmap,0,0,0,0,320,200);
+          aCanvas->stretchSurface(mSurface,mRect.x,mRect.y,mRect.w,mRect.h,0,0,320,200);
+        #else
+          aCanvas->drawBitmap(mBitmap,mRect.x,mRect.y2()-200,0,0,320,200);
+        #endif
       }
 
 };
