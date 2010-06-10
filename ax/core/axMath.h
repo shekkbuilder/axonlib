@@ -32,10 +32,9 @@
 #endif
 
 /**
- * invert of x: (x^2)
+ * invert of x: (1/x)
  */
 #define axInv(x) (1/(x))
-
 
 /**
  * square of x: (x^2)
@@ -464,7 +463,7 @@ __axmath_inline float axExpf(register const float x)
  * @param[in] exponent float
  * @return result float
  */
-__axmath_inline float axExp(register const float exponent)
+__axmath_inline float axExp(register const float v)
 {
   register union
   {
@@ -478,7 +477,7 @@ __axmath_inline float axExp(register const float exponent)
       #endif
     } s;
   } u;
-  u.s.i = (int)(1512775*(double)exponent) + 1072632447;
+  u.s.i = (int)(1512775*(double)v) + 1072632447;
   u.s.j = 0;
   return (float)u.d;
 }
@@ -1018,7 +1017,7 @@ __axmath_inline float axAvrg(register const unsigned int n,
   register const float* ar)
 {
   register float total = 0;
-  unsigned int i=0;
+  register unsigned int i=0;
   while (i<n)
   {
     total += ar[i];   i++;
@@ -1041,7 +1040,7 @@ __axmath_inline int axAvrgInt(register const unsigned int n,
   register const int* ar)
 {
   register int total = 0;
-  unsigned int i=0;
+  register unsigned int i=0;
   while (i<n)
   {
     total += ar[i];   i++;
@@ -1065,7 +1064,7 @@ __axmath_inline float axRMS(register const unsigned int n,
   register const float* ar)
 {
   register float numr = 0;
-  unsigned int i=0;
+  register unsigned int i=0;
   while (i<n)
   {
     numr += ar[i]*ar[i];  i++;
@@ -1089,7 +1088,7 @@ __axmath_inline int axRMSInt(register const unsigned int n,
   register const int* ar)
 {
   register int numr = 0;
-  unsigned int i=0;
+  register unsigned int i=0;
   while (i<n)
   {
     numr += ar[i]*ar[i];  i++;
