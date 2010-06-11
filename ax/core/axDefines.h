@@ -300,6 +300,12 @@ typedef unsigned char         __may_alias uchar_a;
 #ifndef __stdcall
   #define __stdcall   __attribute__ ((stdcall)))
 #endif
+#ifndef __dllexport
+  #define __dllexport __attribute__((dllexport))
+#endif
+#ifndef __dllimport
+  #define __dllimport __attribute__((dllimport))
+#endif
 
 // path
 #define AX_MAX_PATH 512
