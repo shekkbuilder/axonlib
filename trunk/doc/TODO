@@ -67,7 +67,8 @@ plugin:
 
 - event manager (ala voice manager but for all kinds of events)
 
-- find default/specific directory (for data files, etc)
+- [done?]
+  find default/specific directory (for data files, etc)
   relative to host or plugin? doesn't really matter,
   as long as it's predictable and 'stable' in all hosts (and standalone)
 
@@ -89,17 +90,6 @@ gui:
   sans,serif,mono,big,...
   [there's an interesting ttf parser and renderer here: http://nothings.org/]
 
-- alpha support
-  i think it is already there on windows.. but in the interest of total
-  platform independence, it's not activated or ready..
-  glx (opengl) for linux? axWindowGL? (+canvas,syrface,..)
-  look into xrender and/or composite stuff on linux.
-
-- stretchable bitmaps
-  same as alpha support, it's there in bitblt or stretchblt in windows,
-  but with xlib there's only basic copying of pixel-rectangles. have to
-  look into extensions and stuff... or the glx (opengl) idea..
-
 - axCanvas[Win32/Linux]
   clipping rectangles not working properly (most problematic on win32).
   i think it is happening because when we're returning from a
@@ -112,9 +102,6 @@ gui:
 - more cursor shape constants. missiong a few on windows
   (window resizing, finger vs hand, ...)
   even better: user-defined cursor shapes
-
-- some issues with window resizing. resizing via window borders and
-  via wdgSizer. some rect/variables not in sync?
 
 - don't propagate change if widget/parameter value not changed
   (no repeatedly sending 0's, etc..)

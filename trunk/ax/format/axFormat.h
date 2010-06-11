@@ -55,6 +55,11 @@ NOTES:
   //#define AX_WIN_DEFAULT AX_WIN_PLUGDEFAULT
 #endif
 
+#ifdef AX_FORMAT_LADSPA
+  #include "format/axFormatLadspa.h"
+  //#define AX_WIN_DEFAULT AX_WIN_PLUGDEFAULT
+#endif
+
 #ifdef AX_FORMAT_EXE
   #include "format/axFormatExe.h"
   //#define AX_WIN_DEFAULT AX_WIN_APPDEFAULT

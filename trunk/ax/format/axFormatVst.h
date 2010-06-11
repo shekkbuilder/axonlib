@@ -1590,17 +1590,11 @@ class axFormatVst : public axFormatBase
 
 typedef axFormatVst axFormatImpl;
 
-
-
-
-
 //----------------------------------------------------------------------
 //
 // main
 //
 //----------------------------------------------------------------------
-
-// testing VSTPluginMain
 
 #ifdef AX_LINUX
 
@@ -1701,6 +1695,8 @@ typedef axFormatVst axFormatImpl;
     }
 
 #endif
+
+// who deletes the plugin?
 
 //----------------------------------------------------------------------
 #endif
