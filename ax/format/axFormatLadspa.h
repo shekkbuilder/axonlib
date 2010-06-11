@@ -19,22 +19,23 @@
 //----------------------------------------------------------------------
 /*
 
+- we could redo this a little.. let the static methods really be static,
+  global functions, and create the plugin in instantiate()
+
+- audio i/o is done through ports (ptr to buffer). for stereo pløugins,
+  the four first (or last) could be aurtomatically set up for audio
+  ins & outs.
+- it seems like ladspa is writing parameters ('control ports') directly
+  to their memory set up with connect_port.
+  we could call doSetParameter for all parameters, at the beginning of
+  run*.
+
+
 */
 //----------------------------------------------------------------------
 
 #include "format/axFormatBase.h"
 #include "../extern/ladspa.h"
-
-#ifndef NULL
-  #define NULL 0
-#endif
-
-//struct LADSPA_PortRangeHint
-//{
-//  LADSPA_PortRangeHintDescriptor HintDescriptor;
-//  LADSPA_Data LowerBound;
-//  LADSPA_Data UpperBound;
-//};
 
 #define MAX_LADSPA_PORTS 256
 
@@ -42,10 +43,19 @@ class axFormatLadspa : public axFormatBase
 {
   private:
     LADSPA_Descriptor     mDescriptor;
-    int                   mNumPorts;
     char*                 mPortNames[MAX_LADSPA_PORTS];
     LADSPA_PortDescriptor mPortDescr[MAX_LADSPA_PORTS];
     LADSPA_PortRangeHint  mPortRange[MAX_LADSPA_PORTS];
+    int                   mNumInputs;
+    int                   mNumOutputs;
+    int                   mNumPorts;
+  private:
+    unsigned long mSampleRate;
+    char          mLabel[64];
+    char          mName[64];
+    char          mMaker[64];
+    char          mCopyright[64];
+
 
   //--------------------------------------------------
   private:
@@ -100,6 +110,7 @@ class axFormatLadspa : public axFormatBase
       {
         axFormatLadspa* ladspa = (axFormatLadspa*)Instance;
         ladspa->cleanup();
+        //delete ladspa; //!
       }
 
   //--------------------------------------------------
@@ -110,22 +121,22 @@ class axFormatLadspa : public axFormatBase
     : axFormatBase(aContext,aFormatFlags)
       {
         mDescriptor.UniqueID            = 0;
-        mDescriptor.Label               = "label";
+        mDescriptor.Label               = mLabel;//"label";
         mDescriptor.Properties          = LADSPA_PROPERTY_REALTIME | LADSPA_PROPERTY_HARD_RT_CAPABLE;
-        mDescriptor.Name                = "name";
-        mDescriptor.Maker               = "maker";
-        mDescriptor.Copyright           = "copyright";
-        mDescriptor.PortCount           = mNumPorts;
-        mDescriptor.PortDescriptors     = mPortDescr;
-        mDescriptor.PortNames           = mPortNames;
-        mDescriptor.PortRangeHints      = mPortRange;
+        mDescriptor.Name                = mName;//"name";
+        mDescriptor.Maker               = mMaker;//"maker";
+        mDescriptor.Copyright           = mCopyright;//"copyright";
+        mDescriptor.PortCount           = 0;//mNumPorts;
+        mDescriptor.PortDescriptors     = NULL;//mPortDescr;
+        mDescriptor.PortNames           = NULL;//mPortNames;
+        mDescriptor.PortRangeHints      = NULL;//mPortRange;
         mDescriptor.ImplementationData  = this;
         mDescriptor.instantiate         = lad_instantiate;
         mDescriptor.connect_port        = lad_connect_port;
         mDescriptor.activate            = lad_activate;
-        mDescriptor.run                 = lad_run;
-        mDescriptor.run_adding          = lad_run_adding;
-        mDescriptor.set_run_adding_gain = lad_set_run_adding_gain;
+        mDescriptor.run                 = lad_run;                  // ala processReplacing
+        mDescriptor.run_adding          = NULL;//lad_run_adding;           // ala process, optional
+        mDescriptor.set_run_adding_gain = NULL;//lad_set_run_adding_gain;  // if above
         mDescriptor.deactivate          = lad_deactivate;
         mDescriptor.cleanup             = lad_cleanup;
       }
@@ -155,7 +166,8 @@ class axFormatLadspa : public axFormatBase
 
     virtual LADSPA_Handle instantiate(unsigned long SampleRate)
       {
-        trace("instantiate");
+        //trace("instantiate");
+        mSampleRate = SampleRate;
         return this;
       }
 
@@ -187,7 +199,7 @@ class axFormatLadspa : public axFormatBase
 
     virtual void connect_port(unsigned long Port, LADSPA_Data * DataLocation)
       {
-        trace("connect_port");
+        //trace("connect_port");
       }
 
     // initialises a plugin instance and activates it for use.
@@ -212,7 +224,7 @@ class axFormatLadspa : public axFormatBase
 
     virtual void activate(void)
       {
-        trace("activate");
+        //trace("activate");
       }
 
   /* This method is a function pointer that runs an instance of a
@@ -233,6 +245,8 @@ class axFormatLadspa : public axFormatBase
     virtual void run(unsigned long SampleCount)
       {
         //trace("run");
+        // transferParameters();
+        // exec
       }
 
   /* This method is a function pointer that runs an instance of a
@@ -252,6 +266,7 @@ class axFormatLadspa : public axFormatBase
     virtual void run_adding(unsigned long SampleCount)
       {
         //trace("run_adding");
+        //transferParameters();
       }
 
   /* This method is a function pointer that sets the output gain for
@@ -285,7 +300,7 @@ class axFormatLadspa : public axFormatBase
 
     virtual void deactivate(void)
       {
-        trace("deactivate");
+        //trace("deactivate");
       }
 
   /* Once an instance of a plugin has been finished with it can be
@@ -298,22 +313,69 @@ class axFormatLadspa : public axFormatBase
 
     virtual void cleanup(void)
       {
-        trace("cleanup");
+        //trace("cleanup");
       }
+
+    //--------------------------------------------------
+    // axFormatBase
+    //--------------------------------------------------
+
+    virtual void describe(axString aName, axString aVendor, axString aProduct, int aVersion, unsigned int aID)
+      {
+        axStrncpy(mName,aProduct.ptr(),64);
+        axStrncpy(mLabel,aName.ptr(),64);
+        axStrncpy(mMaker,aVendor.ptr(),64);
+        axStrcpy(mCopyright,(char*)"None");
+      }
+
+    virtual void setupAudio(int aInputs=2, int aOutputs=2, bool aIsSynth=false)
+      {
+        mNumInputs = aInputs;
+        mNumOutputs = aOutputs;
+      }
+
+    //virtual void setupEditor(int aWidth, int aHeight) {}
+
+    //virtual void setupParameters(void) {}
+
+    virtual void prepareParameters(void)
+      {
+        int num = mParameters.size();
+        for (int i=0; i<num; i++)
+        {
+          axStrcpy( mPortNames[i], mParameters[i]->getName().ptr() );
+          mPortDescr[i] = LADSPA_PORT_CONTROL;
+          mPortRange[i].HintDescriptor = LADSPA_HINT_DEFAULT_NONE;
+          mPortRange[i].LowerBound = 0;
+          mPortRange[i].UpperBound = 0;
+        }
+        mDescriptor.PortCount = num + mNumInputs + mNumOutputs;
+      }
+
+    //virtual void transferParameters(void) {}
+    //virtual void notifyParamChanged(axParameter* aParameter) {}
+    //virtual void notifyResizeEditor(int aWidth, int aHeight) {}
+    //virtual void updateTimeInfo(void) {}
+    //virtual void updateSampleRate(void) {}
+    //virtual void sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3) {}
 
 };
 
 //----------------------------------------------------------------------
 
 // host calls this to get a LADSPA_Descriptor for our plugin...
+// TODO: the context stuff like vst/exe
 
 const LADSPA_Descriptor* ladspa_descriptor(unsigned long Index)
 {
-  trace("ladspa_descriptor");
-  axFormatLadspa* plugin = new axFormatLadspa(/*axContext* aContext*/);
+  //trace("ladspa_descriptor");
+  axContext* context = NULL;
+  axFormatLadspa* plugin = new axFormatLadspa(context);
   LADSPA_Descriptor* descriptor = plugin->getDescriptor();
   return descriptor;
 }
+
+// who deletes 'plugin' ?
 
 //----------------------------------------------------------------------
 #endif
