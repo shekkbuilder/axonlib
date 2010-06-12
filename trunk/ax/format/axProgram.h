@@ -25,7 +25,7 @@ class axProgram
     //axString  mName;
     char      mName[33];
     float*    mValues;
-    bool      mDidAlloc;
+    //bool      mDidAlloc;
 
   public:
 
@@ -34,8 +34,10 @@ class axProgram
         //mName   = aName;//"default";
         axStrncpy(mName,aName.ptr(),32);
         mNumVal = aNumVal;//0;
-        mValues = aValues;//NULL;
-        mDidAlloc = false;
+        //mValues = aValues;//NULL;
+        mValues = (float*)axMalloc( sizeof(aNumVal*sizeof(float*)) );
+        axMemcpy(mValues,aValues,aNumVal*sizeof(float));
+        //mDidAlloc = true;
       }
 
     axProgram(axString aName, int aNumVal)
@@ -44,12 +46,12 @@ class axProgram
         axStrncpy(mName,aName.ptr(),32);
         mNumVal = aNumVal;//0;
         mValues = (float*)axMalloc( sizeof(aNumVal*sizeof(float*)) );//NULL;
-        mDidAlloc = true;
+        //mDidAlloc = true;
       }
 
     ~axProgram()
       {
-        if (mDidAlloc && mValues) axFree(mValues);
+        if (/*mDidAlloc &&*/ mValues) axFree(mValues);
       }
 
     void      setName(axString aName)             { axStrncpy(mName,aName.ptr(),32);/*mName=aName;*/ }
