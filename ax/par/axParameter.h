@@ -41,6 +41,10 @@ class axParameterListener
 #define AX_PAR_DEFAULT (pf_Automate)
 
 //----------------------------------------------------------------------
+//
+// parameter
+//
+//----------------------------------------------------------------------
 
 class axParameter// : public axParameterBase
 {
@@ -106,9 +110,9 @@ class axParameter// : public axParameterBase
     virtual void  setValue(float aValue) { mValue=aValue; }
     virtual float getValue(void)         { return mValue; }
 
-    /*virtual*/inline float getValue2(void)  { float n=getValue(); return n*n; }
-    /*virtual*/inline float getValue3(void)  { float n=getValue(); return n*n*n; }
-    /*virtual*/inline float getValue3i(void) { float n=getValue(); return (n>0) ? 1.0f/(n*n*n) : 0; }
+//    /*virtual*/inline float getValue2(void)  { float n=getValue(); return n*n; }
+//    /*virtual*/inline float getValue3(void)  { float n=getValue(); return n*n*n; }
+//    /*virtual*/inline float getValue3i(void) { float n=getValue(); return (n>0) ? 1.0f/(n*n*n) : 0; }
 
     //----------
 

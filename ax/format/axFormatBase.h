@@ -22,6 +22,7 @@
 #include "core/axRect.h"
 #include "par/axParameter.h"
 #include "gui/axWindow.h"
+#include "format/axProgram.h"
 
 //----------------------------------------------------------------------
 
@@ -84,6 +85,7 @@ class axFormatBase// : public axParameterListener
     bool          mEditorOpen;
     axRect        mEditorRect;
     axWindow*     mEditorWindow;
+    axPrograms    mPrograms;
 
   protected:
 
@@ -93,7 +95,7 @@ class axFormatBase// : public axParameterListener
         mEditorOpen   = false;
         mEditorRect   = axRect(0,0,256,256);
         mEditorWindow = NULL;
-        }
+      }
 
     virtual ~axFormatBase()
       {
@@ -137,6 +139,9 @@ class axFormatBase// : public axParameterListener
     virtual void  prepareParameters(void) {}
     virtual void  transferParameters(void) {}
 
+    virtual void  saveProgram(int aIndex) {}
+    virtual void  setupPrograms(void) {}
+
     // when tweaking a widget, we need to tell the host that the value has changed,
     // so that it can automate it, or redraw something...
     virtual void  notifyParamChanged(axParameter* aParameter) {}
@@ -167,6 +172,7 @@ class axFormatBase// : public axParameterListener
     // transport state has changed
     virtual void doTransportChange(int aState) {}
 
+    virtual void doPreProgram(int aProgram) {}
     // set new program
     virtual void doSetProgram(int aProgram) {}
 

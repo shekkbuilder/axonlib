@@ -102,6 +102,7 @@ class axFormat : public axFormatImpl, public axParameterListener
       {
         #ifndef AX_NOAUTODELETE
           deleteParameters();
+          deletePrograms();
         #endif
 
         // auto close debug (win32)
@@ -153,10 +154,66 @@ class axFormat : public axFormatImpl, public axParameterListener
         for (int i=0; i<mParameters.size(); i++) delete mParameters[i];
       }
 
-    //inline axParameter* param(int aIndex)
-    //  {
-    //    return mParameters[aIndex];
-    //  }
+    //--------------------------------------------------
+
+    inline void appendProgram(axProgram* aProgram)
+      {
+        //int index = mPrograms.size();
+        //aProgram->setIndex(index);
+        mPrograms.append(aProgram);
+      }
+
+    //----------
+
+    inline void deletePrograms(void)
+      {
+        for (int i=0; i<mPrograms.size(); i++) delete mPrograms[i];
+      }
+
+    //--------------------------------------------------
+
+    virtual axProgram* createDefaultProgram(void)
+      {
+        int num = mParameters.size();
+        axProgram* prog = new axProgram("default",num);
+        for (int i=0; i<num; i++)
+        {
+          float val = mParameters[i]->doGetValue();
+          prog->setValue(i,val);
+        }
+        return prog;
+      }
+
+    //----------
+
+    virtual void saveProgram(int aIndex)
+      {
+
+        int num = mParameters.size();
+        axProgram* prog = mPrograms[aIndex];
+        for (int i=0; i<num; i++)
+        {
+          float val = mParameters[i]->doGetValue();
+          prog->setValue(i,val);
+        }
+      }
+
+    //----------
+
+    virtual void setupPrograms()
+      {
+        int num = mPrograms.size();
+        if (num>0)
+        {
+          setNumPrograms(num); // vst
+        }
+        else
+        {
+          axProgram* prog = createDefaultProgram();
+          appendProgram(prog);
+          setNumPrograms(1);
+        }
+      }
 
     //--------------------------------------------------
 

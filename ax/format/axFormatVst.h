@@ -99,6 +99,8 @@ class axFormatVst : public axFormatBase
     virtual double getBeatPos(void)    { return mBeatPos; }
     virtual double getTempo(void)      { return mTempo; }
 
+    virtual int getCurrentProgram(void){ return mCurrentProgram; }
+
   private:
 
     //----------------------------------------
@@ -697,8 +699,24 @@ class axFormatVst : public axFormatBase
             // set the current program
             //trace("axFormatVst.dispatcher :: effSetProgram");
             //if (value<numPrograms) setProgram((VstInt32)value);
+
+            doPreProgram(mCurrentProgram);
+            //#ifndef AX_NOAUTOSAVE_PROGRAMS
+            //saveProgram( getCurrentProgram() );
+            //#endif
+
             mCurrentProgram = (VstInt32)value;
-            doSetProgram(mCurrentProgram);
+            {
+              axProgram* prog = mPrograms[mCurrentProgram];
+              int num = mParameters.size();
+              for (int i=0; i<num; i++)
+              {
+                float val = prog->getValue(i);
+                mParameters[i]->doSetValue(val,true);
+              }
+              // let plugin know the program have changed
+              doSetProgram(mCurrentProgram);
+            }
             break;
 
           // 03
@@ -717,7 +735,8 @@ class axFormatVst : public axFormatBase
             // Limited to kVstMaxProgNameLen.
             //trace("axFormatVst.dispatcher :: effSetProgramName");
             //setProgramName((char*)ptr);
-            strncpy(mProgramName,(char*)ptr,kVstMaxProgNameLen);
+            //strncpy(mProgramName,(char*)ptr,kVstMaxProgNameLen);
+            mPrograms[mCurrentProgram]->setName( (char*)ptr );
             break;
 
           // 05
@@ -727,7 +746,8 @@ class axFormatVst : public axFormatBase
             // Limited to kVstMaxProgNameLen.
             //trace("axFormatVst.dispatcher :: effGetProgramName");
             //getProgramName((char*)ptr);
-            strncpy((char*)ptr,mProgramName,kVstMaxProgNameLen);
+//            strncpy((char*)ptr,mProgramName,kVstMaxProgNameLen);
+            strncpy( (char*)ptr, mPrograms[mCurrentProgram]->getName().ptr(), kVstMaxProgNameLen );
             break;
 
           // 06
@@ -1468,14 +1488,16 @@ class axFormatVst : public axFormatBase
 
     virtual void setupParameters(void)
       {
-        int num = mParameters.size();
-        setNumParams(num); // vst
-        for (int i=0; i<num; i++)
-        {
-          axParameter* par = mParameters[i];
-          par->setIndex(i);
-          doSetParameter(par);
-        }
+//        int num = mParameters.size();
+//        setNumParams(num); // vst
+//        for (int i=0; i<num; i++)
+//        {
+//          axParameter* par = mParameters[i];
+//          par->setIndex(i);
+//          doSetParameter(par);
+//        }
+        prepareParameters();
+        transferParameters();
       }
 
     // tells the vst host how many parameters we have
@@ -1510,6 +1532,10 @@ class axFormatVst : public axFormatBase
           doSetParameter(par);
         }
       }
+
+    //virtual void setupPrograms(void)
+    //  {
+    //  }
 
     //----------
 
