@@ -17,22 +17,6 @@
 #ifndef axFormatLadspa_included
 #define axFormatLadspa_included
 //----------------------------------------------------------------------
-/*
-
-- we could redo this a little.. let the static methods really be static,
-  global functions, and create the plugin in instantiate()
-
-- audio i/o is done through ports (ptr to buffer). for stereo pløugins,
-  the four first (or last) could be aurtomatically set up for audio
-  ins & outs.
-- it seems like ladspa is writing parameters ('control ports') directly
-  to their memory set up with connect_port.
-  we could call doSetParameter for all parameters, at the beginning of
-  run*.
-
-
-*/
-//----------------------------------------------------------------------
 
 #include "platform/axContext.h"
 #include "format/axFormatBase.h"
@@ -40,6 +24,8 @@
 
 //----------------------------------------------------------------------
 
+// this might be overkill?
+// inputs + outputs + parameters
 #define MAX_LADSPA_PORTS 256
 
 //----------------------------------------------------------------------
@@ -66,6 +52,7 @@ class axFormatLadspa : public axFormatBase
     int                   mNumInputs;
     int                   mNumOutputs;
     unsigned long         mSampleRate;
+    unsigned long         mBlockSize;
 
   private:
 
@@ -254,7 +241,7 @@ class axFormatLadspa : public axFormatBase
     axFormatLadspa(axContext* aContext, int aFormatFlags=ff_None)
     : axFormatBase(aContext,aFormatFlags)
       {
-        trace("axFormatLadspa::constructor");
+        //trace("axFormatLadspa::constructor");
         mDescriptor.UniqueID            = 0;//mUniqueId;
         mDescriptor.Label               = mLabel;//"label";
         mDescriptor.Properties          = LADSPA_PROPERTY_REALTIME | LADSPA_PROPERTY_HARD_RT_CAPABLE;
@@ -274,6 +261,9 @@ class axFormatLadspa : public axFormatBase
         mDescriptor.set_run_adding_gain = NULL;//lad_set_run_adding_gain;  // if above
         mDescriptor.deactivate          = lad_deactivate;
         mDescriptor.cleanup             = lad_cleanup;
+
+        axMemset( mParamPrev, 0, sizeof(mParamPrev));
+
       }
 
     //----------
@@ -305,12 +295,16 @@ class axFormatLadspa : public axFormatBase
 
     //----------
 
+    // this is being called every block (i think) by jost!
+    // probably to allow modular/dynamic connections
+
     virtual void connect_port(unsigned long Port, LADSPA_Data* DataLocation)
       {
-        trace("connect_port");
+        //trace("connect_port");
         unsigned int io = mNumInputs + mNumOutputs;
         if (Port<io) // audio in/out
         {
+          //TODO: don't hardcode ports!!!
           switch (Port)
           {
             case 0: mInputs[0]  = DataLocation; break;
@@ -324,7 +318,7 @@ class axFormatLadspa : public axFormatBase
           int po = Port - io;
           mParamPtr[po] = DataLocation;
         }
-        trace("connect_port finished");
+        //trace("connect_port finished");
       }
 
     //----------
@@ -338,27 +332,45 @@ class axFormatLadspa : public axFormatBase
     //----------
 
     //TODO: copy from axFormatVst
+    //TODO: don't hardcode num in/out (see vst/multi)
 
     virtual void run(unsigned long SampleCount)
       {
         //trace("run");
-//        //chack parameters for changes
-//        int io  = mNumInputs + mNumOutputs;
-//        int par = mParameters.size();
-//        for (int i=0; i<par; i++)
-//        {
-//          float val = *mParamPtr[i];
-//          if (val!=mParamPrev[i])
-//          {
-//            mParameters[i]->doSetValue(val,false);
-//            mParamPrev[i] = val;
-//          }
-//        }
-//        if (!doProcessBlock(mInputs,mOutputs,SampleCount))
-//        {
-//          //doProcessSample
-//        }
-//        doPostProcess(mInputs,mOutputs,SampleCount);
+        //chack parameters for changes
+        int io  = mNumInputs + mNumOutputs;
+        int par = mParameters.size();
+        for (int i=0; i<par; i++)
+        {
+          float val = *mParamPtr[i];
+          if (val!=mParamPrev[i])
+          {
+            mParameters[i]->doSetValue(val,true);
+            mParamPrev[i] = val;
+          }
+        }
+
+        mBlockSize = SampleCount;
+
+        if ( !doProcessBlock(mInputs,mOutputs,mBlockSize) )
+        {
+          float* ins[2];
+          float* outs[2];
+          ins[0]  = mInputs[0];
+          ins[1]  = mInputs[1];
+          outs[0] = mOutputs[0];
+          outs[1] = mOutputs[1];
+          trace(SampleCount);
+          int num = SampleCount;
+          while (--num >= 0)
+          {
+            doProcessSample(ins,outs);
+            ins[0]++;   ins[1]++;
+            outs[0]++;  outs[1]++;
+          } //SampleCount
+        } //process_block
+        doPostProcess(mInputs,mOutputs,mBlockSize);
+
       }
 
     //----------
@@ -446,10 +458,11 @@ class axFormatLadspa : public axFormatBase
           mPortNames[po] = (char*)axMalloc(16);
           axStrcpy( mPortNames[po],"input ");
           axStrcat( mPortNames[po], axItoa(temp,i) );
-          mPortDesc[po]                 = LADSPA_PORT_AUDIO | LADSPA_PORT_INPUT;    //trace(mPortDesc[po]);
-          mPortHint[po].HintDescriptor  = LADSPA_HINT_DEFAULT_NONE;                 //trace(mPortHint[po].HintDescriptor );
-          mPortHint[po].LowerBound      = 0;                                        //trace(mPortHint[po].LowerBound );
-          mPortHint[po].UpperBound      = 1;                                        //trace(mPortHint[po].UpperBound );
+          mPortDesc[po]                 = LADSPA_PORT_AUDIO
+                                        | LADSPA_PORT_INPUT;
+          mPortHint[po].HintDescriptor  = LADSPA_HINT_DEFAULT_NONE;
+          mPortHint[po].LowerBound      = 0;
+          mPortHint[po].UpperBound      = 1;
           po++;
         }
         for (int i=0; i<mNumOutputs; i++)
@@ -457,7 +470,8 @@ class axFormatLadspa : public axFormatBase
           mPortNames[po] = (char*)axMalloc(16);
           axStrcpy( mPortNames[po],"output ");
           axStrcat(mPortNames[po], axItoa(temp,i) );
-          mPortDesc[po]                 = LADSPA_PORT_AUDIO | LADSPA_PORT_OUTPUT;
+          mPortDesc[po]                 = LADSPA_PORT_AUDIO
+                                        | LADSPA_PORT_OUTPUT;
           mPortHint[po].HintDescriptor  = LADSPA_HINT_DEFAULT_NONE;
           mPortHint[po].LowerBound      = 0;
           mPortHint[po].UpperBound      = 1;
@@ -467,8 +481,11 @@ class axFormatLadspa : public axFormatBase
         {
           mPortNames[po] = (char*)axMalloc(16);
           axStrcpy( mPortNames[po], mParameters[i]->getName().ptr() );
-          mPortDesc[po]                 = LADSPA_PORT_CONTROL;
-          mPortHint[po].HintDescriptor  = LADSPA_HINT_DEFAULT_NONE;
+          mPortDesc[po]                 = LADSPA_PORT_CONTROL
+                                        | LADSPA_PORT_INPUT;
+          mPortHint[po].HintDescriptor  = LADSPA_HINT_BOUNDED_BELOW
+                                        | LADSPA_HINT_BOUNDED_ABOVE
+                                        | LADSPA_HINT_DEFAULT_MINIMUM;
           mPortHint[po].LowerBound      = 0;
           mPortHint[po].UpperBound      = 1;
           po++;
