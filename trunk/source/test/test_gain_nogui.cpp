@@ -1,6 +1,10 @@
 
 #include "format/axFormat.h"
 
+float prog0 = { 0.0 };
+float prog1 = { 0.5 };
+float prog2 = { 1.0 };
+
 class myPlugin : public axFormat
 {
   private:
@@ -16,6 +20,21 @@ class myPlugin : public axFormat
         setupAudio(2,2);
         appendParameter( new axParameter(this,"gain","",0) );
         setupParameters();
+        appendProgram( new axProgram("first", 1,&prog0) );
+        appendProgram( new axProgram("second",1,&prog1) );
+        appendProgram( new axProgram("third", 1,&prog2) );
+        setupPrograms();
+      }
+
+    virtual void doPreProgram(int aProgram)
+      {
+        trace("doPreProgram "<<aProgram);
+        saveProgram( getCurrentProgram() );
+      }
+
+    virtual void doSetProgram(int aProgram)
+      {
+        trace("doSetProgram "<<aProgram);
       }
 
     virtual void  doSetParameter(axParameter* aParameter)

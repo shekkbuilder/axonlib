@@ -126,6 +126,7 @@
 		<Unit filename="..\..\ax\format\axFormatLadspa.h" />
 		<Unit filename="..\..\ax\format\axFormatLv2.h" />
 		<Unit filename="..\..\ax\format\axFormatVst.h" />
+		<Unit filename="..\..\ax\format\axProgram.h" />
 		<Unit filename="..\..\ax\format\axReaperExt.h" />
 		<Unit filename="..\..\ax\gui\axBitmap.h" />
 		<Unit filename="..\..\ax\gui\axBitmapBase.h" />

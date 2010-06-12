@@ -10,15 +10,14 @@
 // test / demo
 //----------------------------------------------------------------------
 
-//#include "../source/test/test_gain_nogui.cpp"
+#include "../source/test/test_gain_nogui.cpp"
 //#include "../source/test/test_gain_gui.cpp"
 //#include "../source/test/test_gain_gui_skin.cpp"
 
-#include "../test/test_math.cpp"
-
-//#include "../test/test_skin.cpp"
+//#include "../test/test_math.cpp"
 //#include "../test/test_memory.cpp"
 //#include "../test/test_render.cpp"
+//#include "../test/test_skin.cpp"
 //#include "../test/test_scrollview.cpp"
 
 //#include "../source/demo/axDemo.cpp"
