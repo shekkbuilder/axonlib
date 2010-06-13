@@ -175,6 +175,7 @@ class myPlugin : public axFormat
         appendParameter( new parFloatPow( this,"size jitter",       "",   0.2,  0, 1,0, 3 ) );
         appendParameter( new parFloatPow( this,"duration jitter",   "",   0.2,  0, 1,0, 3 ) );
         setupParameters();
+        setupPrograms();
 
 /*
 

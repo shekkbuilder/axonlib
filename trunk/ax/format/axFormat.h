@@ -140,7 +140,7 @@ class axFormat : public axFormatImpl, public axParameterListener
 
     //--------------------------------------------------
 
-    inline void appendParameter(axParameter* aParameter)
+    virtual void appendParameter(axParameter* aParameter)
       {
         int index = mParameters.size();
         aParameter->setIndex(index);
@@ -149,14 +149,14 @@ class axFormat : public axFormatImpl, public axParameterListener
 
     //----------
 
-    inline void deleteParameters(void)
+    virtual void deleteParameters(void)
       {
         for (int i=0; i<mParameters.size(); i++) delete mParameters[i];
       }
 
     //--------------------------------------------------
 
-    inline void appendProgram(axProgram* aProgram)
+    virtual void appendProgram(axProgram* aProgram)
       {
         //int index = mPrograms.size();
         //aProgram->setIndex(index);
@@ -165,7 +165,7 @@ class axFormat : public axFormatImpl, public axParameterListener
 
     //----------
 
-    inline void deletePrograms(void)
+    virtual void deletePrograms(void)
       {
         for (int i=0; i<mPrograms.size(); i++) delete mPrograms[i];
       }
@@ -188,30 +188,33 @@ class axFormat : public axFormatImpl, public axParameterListener
 
     virtual void saveProgram(int aIndex)
       {
-
-        int num = mParameters.size();
-        axProgram* prog = mPrograms[aIndex];
-        for (int i=0; i<num; i++)
+        trace("saveProgram");
+        if (mPrograms.size() > 0)
         {
-          float val = mParameters[i]->doGetValue();
-          prog->setValue(i,val);
+          int num = mParameters.size();
+          axProgram* prog = mPrograms[aIndex];
+          for (int i=0; i<num; i++)
+          {
+            float val = mParameters[i]->doGetValue();
+            prog->setValue(i,val);
+          }
         }
       }
 
-    //----------
-
-    virtual void setupPrograms()
+    virtual void loadProgram(int aIndex)
       {
-        int num = mPrograms.size();
-        if (num>0)
+        trace("loadProgram");
+        if (mPrograms.size() > 0)
         {
-          setNumPrograms(num); // vst
+          int num = mParameters.size();
+          axProgram* prog = mPrograms[aIndex];
+          for (int i=0; i<num; i++)
+          {
+            //float val = mParameters[i]->doGetValue();
+            //prog->setValue(i,val);
+            float val = prog->getValue(i);
+            mParameters[i]->doSetValue(val,true);
         }
-        else
-        {
-          axProgram* prog = createDefaultProgram();
-          appendProgram(prog);
-          setNumPrograms(1);
         }
       }
 
