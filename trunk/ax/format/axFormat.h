@@ -161,6 +161,18 @@ class axFormat : public axFormatImpl, public axParameterListener
         //int index = mPrograms.size();
         //aProgram->setIndex(index);
         mPrograms.append(aProgram);
+
+//          trace("appendProgram: " <<
+//            aProgram->getValue(0) << "," <<
+//            aProgram->getValue(1) << "," <<
+//            aProgram->getValue(2) << "," <<
+//            aProgram->getValue(3) << "," <<
+//            aProgram->getValue(4) << "," <<
+//            aProgram->getValue(5) << "," <<
+//            aProgram->getValue(6) << "," <<
+//            aProgram->getValue(7) << "," <<
+//            aProgram->getValue(8) );
+
       }
 
     //----------
@@ -188,7 +200,7 @@ class axFormat : public axFormatImpl, public axParameterListener
 
     virtual void saveProgram(int aIndex)
       {
-        trace("saveProgram");
+        //trace("saveProgram");
         if (mPrograms.size() > 0)
         {
           int num = mParameters.size();
@@ -203,7 +215,7 @@ class axFormat : public axFormatImpl, public axParameterListener
 
     virtual void loadProgram(int aIndex)
       {
-        trace("loadProgram");
+        //trace("loadProgram");
         if (mPrograms.size() > 0)
         {
           int num = mParameters.size();
@@ -213,8 +225,9 @@ class axFormat : public axFormatImpl, public axParameterListener
             //float val = mParameters[i]->doGetValue();
             //prog->setValue(i,val);
             float val = prog->getValue(i);
+            //trace("i: "<<i<<" val: "<<val);
             mParameters[i]->doSetValue(val,true);
-        }
+          }
         }
       }
 

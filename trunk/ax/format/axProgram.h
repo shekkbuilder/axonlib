@@ -35,9 +35,21 @@ class axProgram
         axStrncpy(mName,aName.ptr(),32);
         mNumVal = aNumVal;//0;
         //mValues = aValues;//NULL;
-        mValues = (float*)axMalloc( sizeof(aNumVal*sizeof(float*)) );
+        mValues = (float*)axMalloc( aNumVal*sizeof(float) );
         axMemcpy(mValues,aValues,aNumVal*sizeof(float));
+        //trace("malloc: " << sizeof(aNumVal*sizeof(float)) );
         //mDidAlloc = true;
+
+//          trace(mValues[0] << "," <<
+//                mValues[1] << "," <<
+//                mValues[2] << "," <<
+//                mValues[3] << "," <<
+//                mValues[4] << "," <<
+//                mValues[5] << "," <<
+//                mValues[6] << "," <<
+//                mValues[7] << "," <<
+//                mValues[8] );
+
       }
 
     axProgram(axString aName, int aNumVal)
@@ -45,7 +57,8 @@ class axProgram
         //mName   = aName;//"default";
         axStrncpy(mName,aName.ptr(),32);
         mNumVal = aNumVal;//0;
-        mValues = (float*)axMalloc( sizeof(aNumVal*sizeof(float*)) );//NULL;
+        mValues = (float*)axMalloc( aNumVal*sizeof(float) );//NULL;
+        //trace("malloc: " << sizeof(aNumVal*sizeof(float)) );
         //mDidAlloc = true;
       }
 

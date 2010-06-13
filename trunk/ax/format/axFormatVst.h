@@ -1546,10 +1546,7 @@ class axFormatVst : public axFormatBase
     virtual void setupPrograms()
       {
         int num = mPrograms.size();
-        if (num>0)
-        {
-          setNumPrograms(num); // vst
-        }
+        if (num>0) { setNumPrograms(num); } // vst
         else
         {
           axProgram* prog = createDefaultProgram();
