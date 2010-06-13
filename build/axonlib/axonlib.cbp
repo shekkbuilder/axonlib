@@ -180,6 +180,30 @@
 					<Add library="libmsimg32" />
 				</Linker>
 			</Target>
+			<Target title="linux ladspa - debug">
+				<Option output="../../bin/axonlib_debug_ladspa" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/debug/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-shared" />
+					<Add option="-Wno-unused" />
+					<Add option="-Wno-long-long" />
+					<Add option="-DAX_FORMAT_LADSPA" />
+					<Add option="-DAX_DEBUG" />
+					<Add directory="../../ax" />
+					<Add directory="../../../vstsdk24" />
+				</Compiler>
+				<Linker>
+					<Add library="X11" />
+					<Add library="pthread" />
+					<Add library="Xrender" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />

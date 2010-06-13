@@ -83,6 +83,7 @@ class axFormatVst : public axFormatBase
     int           mVendorVersion;
   //protected:
     char          mProgramName[kVstMaxProgNameLen];
+    //int           mNumPrograms;
     VstInt32      mCurrentProgram;
     int           mPlayState;
     double        mSamplePos;
@@ -168,13 +169,17 @@ class axFormatVst : public axFormatBase
       {
         mContext = *aContext;
         audioMaster = (audioMasterCallback)aContext->mAudio;
-        mCurrentProgram = 0;
         mPlayState = 0;
         mSamplePos = 0;
         mSampleRate = 0;
         mBeatPos = 0;
         mTempo = 0;
         mBlockSize = 0;
+
+        mCurrentProgram = 0;
+        //appendProgram( createDefaultProgram() );
+        //setNumPrograms(1);
+
         axStrncpy(mEffectName,"effect name",kVstMaxEffectNameLen);
         axStrncpy(mVendorString,"vendor string",kVstMaxVendorStrLen);
         axStrncpy(mProductString,"product string",kVstMaxProductStrLen);
@@ -704,19 +709,20 @@ class axFormatVst : public axFormatBase
             //#ifndef AX_NOAUTOSAVE_PROGRAMS
             //saveProgram( getCurrentProgram() );
             //#endif
-
             mCurrentProgram = (VstInt32)value;
-            {
-              axProgram* prog = mPrograms[mCurrentProgram];
-              int num = mParameters.size();
-              for (int i=0; i<num; i++)
-              {
-                float val = prog->getValue(i);
-                mParameters[i]->doSetValue(val,true);
-              }
+            loadProgram(mCurrentProgram);
+//            if (mPrograms.size()>0)
+//            {
+//              axProgram* prog = mPrograms[mCurrentProgram];
+//              int num = mParameters.size();
+//              for (int i=0; i<num; i++)
+//              {
+//                float val = prog->getValue(i);
+//                mParameters[i]->doSetValue(val,true);
+//              }
               // let plugin know the program have changed
               doSetProgram(mCurrentProgram);
-            }
+//            }
             break;
 
           // 03
@@ -736,7 +742,10 @@ class axFormatVst : public axFormatBase
             //trace("axFormatVst.dispatcher :: effSetProgramName");
             //setProgramName((char*)ptr);
             //strncpy(mProgramName,(char*)ptr,kVstMaxProgNameLen);
-            mPrograms[mCurrentProgram]->setName( (char*)ptr );
+            if (mPrograms.size() > 0)
+            {
+              mPrograms[mCurrentProgram]->setName( (char*)ptr );
+            } else *(char*)ptr = '\0';
             break;
 
           // 05
@@ -747,7 +756,10 @@ class axFormatVst : public axFormatBase
             //trace("axFormatVst.dispatcher :: effGetProgramName");
             //getProgramName((char*)ptr);
 //            strncpy((char*)ptr,mProgramName,kVstMaxProgNameLen);
-            strncpy( (char*)ptr, mPrograms[mCurrentProgram]->getName().ptr(), kVstMaxProgNameLen );
+            if (mPrograms.size() > 0)
+            {
+              strncpy( (char*)ptr, mPrograms[mCurrentProgram]->getName().ptr(), kVstMaxProgNameLen );
+            } else *(char*)ptr = '\0';
             break;
 
           // 06
@@ -1488,17 +1500,11 @@ class axFormatVst : public axFormatBase
 
     virtual void setupParameters(void)
       {
-//        int num = mParameters.size();
-//        setNumParams(num); // vst
-//        for (int i=0; i<num; i++)
-//        {
-//          axParameter* par = mParameters[i];
-//          par->setIndex(i);
-//          doSetParameter(par);
-//        }
         prepareParameters();
         transferParameters();
       }
+
+    //----------
 
     // tells the vst host how many parameters we have
     // needs to be done in the constructor!
@@ -1517,6 +1523,8 @@ class axFormatVst : public axFormatBase
         }
       }
 
+    //----------
+
     // calls doSetParameter for all parameters
     // so that you can fetch them, and setup initial values
     // for your plugin
@@ -1533,9 +1541,22 @@ class axFormatVst : public axFormatBase
         }
       }
 
-    //virtual void setupPrograms(void)
-    //  {
-    //  }
+    //----------
+
+    virtual void setupPrograms()
+      {
+        int num = mPrograms.size();
+        if (num>0)
+        {
+          setNumPrograms(num); // vst
+        }
+        else
+        {
+          axProgram* prog = createDefaultProgram();
+          appendProgram(prog);
+          setNumPrograms(1);
+        }
+      }
 
     //----------
 

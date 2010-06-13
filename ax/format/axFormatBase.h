@@ -81,10 +81,10 @@ class axFormatBase// : public axParameterListener
   friend class axEditor;
   protected:
     int           mFormatFlags;
-    axParameters  mParameters;
     bool          mEditorOpen;
     axRect        mEditorRect;
     axWindow*     mEditorWindow;
+    axParameters  mParameters;
     axPrograms    mPrograms;
 
   protected:
@@ -112,6 +112,12 @@ class axFormatBase// : public axParameterListener
     virtual double  getBeatPos(void)    { return 0; }
     virtual double  getTempo(void)      { return 0; }
 
+    virtual void    appendParameter(axParameter* aParameter) {}
+    virtual void    deleteParameters(void) {}
+    virtual void    appendProgram(axProgram* aProgram) {}
+    virtual void    deletePrograms(void) {}
+    virtual int     getCurrentProgram(void){ return 0; }
+
     virtual axSystemInfo* getSystemInfo(void) { return NULL; }
     virtual axHostInfo*   getHostInfo(void)   { return NULL; }
 
@@ -133,14 +139,16 @@ class axFormatBase// : public axParameterListener
     // this, to tell the framework how many parameters you have,
     // and to distribute the parameter values.
     // (doSetParameter will be called for each parameter)
-    virtual void  setupParameters(void) {}
-
     // the above function, split in two
+
+    virtual void  setupParameters(void) {}
     virtual void  prepareParameters(void) {}
     virtual void  transferParameters(void) {}
 
-    virtual void  saveProgram(int aIndex) {}
     virtual void  setupPrograms(void) {}
+    virtual void  saveProgram(int aIndex) {}
+    virtual void  loadProgram(int aIndex) {}
+    virtual axProgram* createDefaultProgram(void) { return NULL; }
 
     // when tweaking a widget, we need to tell the host that the value has changed,
     // so that it can automate it, or redraw something...
