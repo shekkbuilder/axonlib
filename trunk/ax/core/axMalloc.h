@@ -52,6 +52,8 @@ TODO:
 #ifndef axMalloc_included
 #define axMalloc_included
 
+#include "stdio.h"
+
 #ifdef AX_HOT_INLINE_MALLOC
   #define __axmalloc_inline __hotinline
 #else
@@ -72,6 +74,8 @@ TODO:
   #define _axFree     free
 
 #else // use axMalloc
+
+#define AX_M_MAX_BUCKETS 256
 
 /*
   from here bellow adapted version of Joerg Walter's MMAP emulation
@@ -169,8 +173,8 @@ TODO:
   routines (malloc1.c)
 */
 
-unsigned char* buckets[32] = {0};
-unsigned int bucket2size[32] = {0};
+unsigned char* buckets[AX_M_MAX_BUCKETS] = {0};
+unsigned int bucket2size[AX_M_MAX_BUCKETS] = {0};
 
 static __axmalloc_inline unsigned int size2bucket(unsigned size)
 {
@@ -192,7 +196,7 @@ static __axmalloc_inline unsigned int size2bucket(unsigned size)
 static __axmalloc_inline void init_buckets()
 {
   register unsigned int b = 0;
-  while (b < 32)
+  while (b < AX_M_MAX_BUCKETS)
   {
     bucket2size[b] = (1 << b);
     b++;
@@ -259,7 +263,7 @@ __axmalloc_inline void axFree (void* _ptr)
   {
     register unsigned char* ptr = (unsigned char*)_ptr;
     register unsigned int b = *(unsigned int*)(ptr-4);
-    if (b < 32)
+    if (b < AX_M_MAX_BUCKETS)
     {
       *(unsigned char**)ptr = buckets[b];      
       buckets[b] = ptr;
@@ -425,14 +429,14 @@ __axmalloc_inline void* axRealloc (void* _ptr,
       int _size = 0;
       char _name[20];
       #ifdef AX_NO_MALLOC
-        int _size = malloc_usable_size(_ptr);
+        _size = malloc_usable_size(_ptr);
         if (flag)
           axStrcpy(_name, "free(delete), ");
         else
           axStrcpy(_name, "free, ");
       #else
         unsigned int b = *(unsigned int*)((char*)_ptr-4);
-        if (b < 32)
+        if (b < AX_M_MAX_BUCKETS)
           _size = bucket2size[b];
         if (flag)
           axStrcpy(_name, "axFree(delete), ");
@@ -460,14 +464,6 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     }
   }
 
-  // clear previous definitions (if any)
-  #ifdef AX_NO_MALLOC
-    #undef axMalloc
-    #undef axCalloc
-    #undef axRealloc
-    #undef axFree
-  #endif
-  
   // no debug for these: _ax*
   #undef _axMalloc
   #undef _axCalloc
@@ -481,6 +477,14 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     register const unsigned int size) { return axRealloc(_ptr, size); }
   __axmalloc_inline void  _axFree (register void* _ptr)
     { axFree(_ptr); }
+    
+  // clear previous definitions (if any)
+  #ifdef AX_NO_MALLOC
+    #undef axMalloc
+    #undef axCalloc
+    #undef axRealloc
+    #undef axFree
+  #endif
   
   // macro overrides here
   #define axMalloc(s)     axMallocDebug   (s, __FILE__, __LINE__)
