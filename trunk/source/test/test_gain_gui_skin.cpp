@@ -1,9 +1,7 @@
-//#define AX_NO_MALLOC
+#define AX_NO_MALLOC
 #define AX_DEBUG_AUTO_STD
-//#define AX_DEBUG_MEM
-//#define AX_DEBUG_PNG
-//#define AX_DEBUG_NEW
 #define AX_DEBUG_LOG  "test_gain_gui_skin.log"
+#define AX_DEBUG_FULL
 
 #define AX_ALPHA
 
@@ -48,22 +46,10 @@ class myPlugin : public axFormat
         m_Gain = 0;
         describe("test_gain_gui_skin","ccernn","axonlib example",0,AX_MAGIC+0x0000);
         setupAudio(2, 2/*,false*/);
-        setupEditor(128,64);
+        setupEditor(400,300);
         appendParameter( p_Gain = new axParameter(this, "gain", "") );
         setupParameters();
-        
-        // -- test axFileWrite
-        char b[] = "abcdef\n";
-        unsigned int len = axGetArrSize(b)-1;
-        // wb = 0 (default)
-        axFileWrite("testfile.bin", b, len, 0);
-        // w  = 1
-        axFileWrite("testfile.txt", b, len, 1);
-        // ab = 2        
-        axFileWrite("testfile.bin", b, len, 2);
-        // a = 3
-        axFileWrite("testfile.txt", b, len, 3);
-        // --  
+
       }
 
     virtual ~myPlugin()
@@ -101,8 +87,8 @@ class myPlugin : public axFormat
           m_SkinLoader = new axBitmapLoader();
           m_SkinLoader->decodePng((unsigned char*)skin1,skin1_size);
           m_KnobLoader = new axBitmapLoader();
-          //m_KnobLoader->decode((unsigned char*)knob1,knob1_size);
-          m_KnobLoader->decodeLoadPng("fx_grains_knob.png");
+          //m_KnobLoader->decodePng((unsigned char*)knob1,knob1_size);
+          m_KnobLoader->decodeLoadPng("background.png");
           m_GuiInitialized = true;
         }
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
@@ -117,12 +103,6 @@ class myPlugin : public axFormat
         editor->doRealign();
         editor->show();
         m_Editor = editor;
-        //int* test_axrlc = NULL;
-        //int c = 64; // warning: unused variable
-        //test_axrlc = (int*)axRealloc (test_axrlc, 64 * sizeof(int));
-        //if (test_axrlc)
-        //  trace("test: *** realloc_ok");
-        //axFree(test_axrlc);
         return m_Editor;
       }
 

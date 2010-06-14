@@ -104,14 +104,14 @@ png_alloc_node_t *png_alloc_find_node(void *addr)
 
 void png_alloc_add_node(void *addr, size_t size)
 {
-	png_alloc_node_t *node;
+  png_alloc_node_t *node;
 	if (png_alloc_find_node(addr))
 		return;
   #ifdef AX_DEBUG_PNG
     node = (png_alloc_node_t*)axMalloc(sizeof (png_alloc_node_t));
   #else
     node = (png_alloc_node_t*)_axMalloc(sizeof (png_alloc_node_t));
-  #endif
+  #endif    
 	node->addr = addr;
 	node->size = size;
 	node->prev = png_alloc_tail;
@@ -174,7 +174,7 @@ void *png_alloc_realloc(void *addr, size_t size)
 }
 
 void png_alloc_free(void *addr)
-{
+{ 
 	png_alloc_node_t *node = png_alloc_find_node(addr);
 	if (!node)
 		return;
@@ -261,7 +261,8 @@ __unused void vector8_cleanup(vector8_t *p)
 }
 
 ax_uint32 vector8_resize(vector8_t *p, size_t size)
-{	// returns 1 if success, 0 if failure ==> nothing done
+{
+  // returns 1 if success, 0 if failure ==> nothing done
 	// xxx: the use of sizeof ax_uint32 here seems like a bug (this descends from the lodepng vector
 	// compatibility functions which do the same). without this there is corruption in certain cases,
 	// so this was probably done to cover up allocation bug(s) in the original picopng code!
