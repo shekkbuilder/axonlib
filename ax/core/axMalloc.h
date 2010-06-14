@@ -58,6 +58,10 @@ TODO:
   #define __axmalloc_inline inline
 #endif
 
+#ifndef AX_USE_MALLOC
+  #define AX_NO_MALLOC  // disable the local malloc by default
+#endif
+
 #ifdef AX_NO_MALLOC     // no axMalloc - use stdlib.h malloc
   #include "stdlib.h"
   #define axMalloc    malloc
@@ -169,7 +173,7 @@ TODO:
   routines (malloc1.c)
 */
 
-#define AX_M_MAX_BUCKETS 32
+#define AX_M_MAX_BUCKETS = 128;
 
 unsigned char* buckets[AX_M_MAX_BUCKETS] = {0};
 unsigned int bucket2size[AX_M_MAX_BUCKETS] = {0};
@@ -202,9 +206,7 @@ static __axmalloc_inline void init_buckets()
   }
 }
 
-/**
- * axMalloc
- */
+// axMalloc
 static __axmalloc_inline void* axMalloc (register unsigned int size)
 {
   if (size <= 0)
@@ -223,7 +225,7 @@ static __axmalloc_inline void* axMalloc (register unsigned int size)
   size = bucket2size[b]+4;
   // os specific calls
   #ifdef linux
-    //rv = (char*)mmap(rv, size, ...);       // #include "sys/mman.h"
+    //rv = (char*)mmap(rv, size, ...);  // #include "sys/mman.h"
     rv = (unsigned char*)sbrk(size);    // sbrk = legacy
   #endif
   #ifdef WIN32
@@ -235,9 +237,7 @@ static __axmalloc_inline void* axMalloc (register unsigned int size)
   return malloc(size);
 }
 
-/**
- * axCalloc
- */
+// axCalloc
 static __axmalloc_inline void* axCalloc (register const unsigned int n,
   register unsigned int size)
 {
@@ -254,9 +254,8 @@ static __axmalloc_inline void* axCalloc (register const unsigned int n,
   }
 }
 
-/**
- * axFree
- */
+
+// axFree
 static __axmalloc_inline void axFree (void* _ptr)
 {
   if (_ptr)
@@ -271,9 +270,7 @@ static __axmalloc_inline void axFree (void* _ptr)
   }
 }
 
-/**
- * axRealloc
- */
+// axRealloc
 static __axmalloc_inline void* axRealloc (void* _ptr,
   register const unsigned int size)
 {
