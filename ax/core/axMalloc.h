@@ -52,8 +52,6 @@ TODO:
 #ifndef axMalloc_included
 #define axMalloc_included
 
-#include "stdio.h"
-
 #ifdef AX_HOT_INLINE_MALLOC
   #define __axmalloc_inline __hotinline
 #else
@@ -74,8 +72,6 @@ TODO:
   #define _axFree     free
 
 #else // use axMalloc
-
-#define AX_M_MAX_BUCKETS 256
 
 /*
   from here bellow adapted version of Joerg Walter's MMAP emulation
@@ -173,6 +169,8 @@ TODO:
   routines (malloc1.c)
 */
 
+#define AX_M_MAX_BUCKETS 32
+
 unsigned char* buckets[AX_M_MAX_BUCKETS] = {0};
 unsigned int bucket2size[AX_M_MAX_BUCKETS] = {0};
 
@@ -182,11 +180,12 @@ static __axmalloc_inline unsigned int size2bucket(unsigned size)
   int bit = ~0x10;
   if (size < 4) size = 4;
   size = (size + 3) & ~3;
-  unsigned int i = 0;
+  unsigned int i = 0;   
   while (i < 5)
   {
-    if (bucket2size[rv & bit] >= size)
-      rv &= bit;
+    if ((rv & bit) < AX_M_MAX_BUCKETS)
+      if (bucket2size[rv & bit] >= size)
+        rv &= bit;
     bit >>= 1;
     i++;
   }
@@ -206,7 +205,7 @@ static __axmalloc_inline void init_buckets()
 /**
  * axMalloc
  */
-__axmalloc_inline void* axMalloc (register unsigned int size)
+static __axmalloc_inline void* axMalloc (register unsigned int size)
 {
   if (size <= 0)
     return NULL;
@@ -214,17 +213,17 @@ __axmalloc_inline void* axMalloc (register unsigned int size)
   register unsigned int b;
   if (!bucket2size[0])
     init_buckets();
-  b = size2bucket(size);
+  b = size2bucket(size);    
   if (buckets[b])
   {
     rv = buckets[b];
-    buckets[b] = *(unsigned char**)rv;
+    buckets[b] = *(unsigned char**)rv;    
     return rv;
-  }
+  }  
   size = bucket2size[b]+4;
   // os specific calls
   #ifdef linux
-    //rv = (char*)mmap(rv, size);       // #include "sys/mman.h"
+    //rv = (char*)mmap(rv, size, ...);       // #include "sys/mman.h"
     rv = (unsigned char*)sbrk(size);    // sbrk = legacy
   #endif
   #ifdef WIN32
@@ -232,13 +231,14 @@ __axmalloc_inline void* axMalloc (register unsigned int size)
   #endif
   *(unsigned int*)rv = b;
   rv += 4;
-  return (void*)rv;
+  //return (void*)rv;
+  return malloc(size);
 }
 
 /**
  * axCalloc
  */
-__axmalloc_inline void* axCalloc (register const unsigned int n,
+static __axmalloc_inline void* axCalloc (register const unsigned int n,
   register unsigned int size)
 {
   size *= n;
@@ -257,7 +257,7 @@ __axmalloc_inline void* axCalloc (register const unsigned int n,
 /**
  * axFree
  */
-__axmalloc_inline void axFree (void* _ptr)
+static __axmalloc_inline void axFree (void* _ptr)
 {
   if (_ptr)
   {
@@ -265,7 +265,7 @@ __axmalloc_inline void axFree (void* _ptr)
     register unsigned int b = *(unsigned int*)(ptr-4);
     if (b < AX_M_MAX_BUCKETS)
     {
-      *(unsigned char**)ptr = buckets[b];      
+      *(unsigned char**)ptr = buckets[b];
       buckets[b] = ptr;
     }
   }
@@ -274,7 +274,7 @@ __axmalloc_inline void axFree (void* _ptr)
 /**
  * axRealloc
  */
-__axmalloc_inline void* axRealloc (void* _ptr,
+static __axmalloc_inline void* axRealloc (void* _ptr,
   register const unsigned int size)
 {
   // case null pointer
@@ -299,7 +299,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
       axFree(ptr);
       return (void*)newptr;
     }
-  }
+  }  
   return _ptr;
 }
 
@@ -333,7 +333,7 @@ __axmalloc_inline void* axRealloc (void* _ptr,
     (register unsigned int _size, const char* _file, const unsigned int _line,
     const unsigned int flag = 0)
   {
-     char _name[20];
+    char _name[20];
     #ifdef AX_NO_MALLOC
       void* _ptr = malloc(_size);
       _axMemTotal += malloc_usable_size(_ptr);

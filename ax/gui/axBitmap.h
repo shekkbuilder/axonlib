@@ -91,8 +91,19 @@ class axBitmap : public axBitmapImpl
         // malloc ?
         mBuffer = new char[size];
 
-        if (aData) axMemcpy(mBuffer,/*(int)*/aData,size);
-        else axMemset(mBuffer,0,size);
+        /*
+          lii:
+          drwtsn32.exe reports a "shared violation" for the axMemcpy()
+          call bellow. but only for some images - strange...
+        */
+        trace((void*)&mBuffer);
+        trace((void*)&aData);
+        trace(size);
+        // ---
+        if (aData)
+          axMemcpy(mBuffer,/*(int)*/aData,size);
+        else
+          axMemset(mBuffer,0,size);
         return mBuffer;
       }
 
