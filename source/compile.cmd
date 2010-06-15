@@ -24,7 +24,7 @@ set warn=-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long
 set resfile="rc_default.rc"
 
 :: set optimization flags
-set opt=-mfpmath=387 -O3 -Os
+set opt=-msse -mfpmath=sse,387 -O3 -Os
 
 :: target & libraries
 set tgtlib=-mwindows -lmsimg32
@@ -65,7 +65,6 @@ if not "%infile:~-4%"=="%srcext%" goto nocpp
 
 :: check includes
 if not exist %axpath% goto noax
-if not exist %vstpath% goto novstsdk
 
 :: check for 'not move'
 if [%2]==[-nmv] set nmv=yes
@@ -108,7 +107,7 @@ if [%3]==[-exe] goto exetarget
 if [%4]==[-exe] goto exetarget
 if [%5]==[-exe] goto exetarget
 if [%6]==[-exe] goto exetarget
-goto :vsttarget
+goto :exetarget
 
 :: set lib debug
 :setlibdebug
@@ -127,6 +126,7 @@ goto getformat
 
 :: format is vst
 :vsttarget
+if not exist %vstpath% goto novstsdk
 if not [%v%]==[] echo ---------------------------------------------------------------------------
 set ext=.dll
 set tgtformat=-DAX_FORMAT_VST -shared
@@ -204,9 +204,9 @@ if not [%v%]==[] for %%I in ("%target%") do echo * filesize: %%~zI bytes
 
 :: check if '-nmv'
 if not [%nmv%]==[] goto done
-if not exist %~p0..\bin md %~p0..\bin
+if not exist "%~p0..\bin" md "%~p0..\bin"
 if exist "%target%" if not [%v%]==[] echo. && echo moving '%target%' to '%~p0..\bin'
-if exist "%target%"	move "%target%" %~p0..\bin
+if exist "%target%"	move "%target%" "%~p0..\bin"
 :: --------------------------
 :: done
 :done
