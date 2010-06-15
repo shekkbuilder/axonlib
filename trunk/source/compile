@@ -30,7 +30,7 @@ resfile="rc_default.rc"
 warn="-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long"
 
 # optimization
-opt="-mfpmath=387 -O3 -Os"
+opt="-msse -mfpmath=sse,387 -O3 -Os"
 
 # linker options
 linker="-fstack-check -fdata-sections -ffunction-sections -Wl,-gc-sections -s"
@@ -51,8 +51,8 @@ function show_help
   echo ""  
   echo "-linux : target linux (default)"
   echo "-win32 : target windows using mingw"
-  echo "-exe : create an executable"
-  echo "-vst : create a library file (default)"
+  echo "-exe : create an executable (default)"
+  echo "-vst : create a library file"
   echo "-nmv : do not move result to ../bin"
   echo "-d : enable library debug mode"
   echo "-g : enable gcc debug mode (-gstabs)"
@@ -86,9 +86,9 @@ then
 else
   # ------------------------- defaults
   compiler=$gpp
-  format="-DAX_FORMAT_VST"
-  fmt_ext=".so"
-  tgt="-lX11 -lXrender -lpthread -shared"
+  format="-DAX_FORMAT_EXE"
+  fmt_ext=""  
+  tgt="-lX11 -lXrender -lpthread"
   move="yes"
   libdebug=""
   gccdebug=""
@@ -117,19 +117,19 @@ else
       fmt_ext=".dll"
       tgt="-shared -mwindows -lmsimg32"
     fi
-    # ------------------------- format is executable
-    if [ "$2" == "-exe" ] || [ "$3" == "-exe" ] || [ "$4" == "-exe" ] || [ "$5" == "-exe" ] || [ "$6" == "-exe" ] || [ "$7" == "-exe" ];
+    # ------------------------- format is vst
+    if [ "$2" == "-exe" ] || [ "$3" == "-vst" ] || [ "$4" == "-vst" ] || [ "$5" == "-vst" ] || [ "$6" == "-vst" ] || [ "$7" == "-vst" ];
     then
-      format=-DAX_FORMAT_EXE
+      format=-DAX_FORMAT_VST
       # ------------------------- case mingw
       if [ "$compiler" == "$mingw" ];
       then
-        fmt_ext=".exe"
-        tgt="-mwindows -lmsimg32"
+        fmt_ext=".dll"
+        tgt="-mwindows -lmsimg32 -shared"
       # ------------------------- case gcc
       else
-        fmt_ext=""
-        tgt="-lX11 -lXrender -lpthread"
+        fmt_ext=".so"
+        tgt="-lX11 -lXrender -lpthread -shared"
       fi
     fi
     # ------------------------- don't move to ../bin
@@ -192,7 +192,7 @@ else
       echo "* lib debug is: $libdebugstatus"
       echo "* gcc debug is: $gccdebugstatus"
     fi
-    # ------------------------- check if axpath available
+    # ------------------------- check if axpath available    
     if [ -d "$axpath" ];
     then
       if [ "$v" == "yes" ];
@@ -204,14 +204,17 @@ else
     fi
     
     # ------------------------- check if vstpath available
-    if [ -d "$vstpath" ];
+    if [ "$format" == "-DAX_FORMAT_VST" ]
     then
-      if [ "$v" == "yes" ];
+      if [ -d "$vstpath" ];
       then
-        echo "* found vst sdk headers in '$vstpath'"
+        if [ "$v" == "yes" ];
+        then
+          echo "* found vst sdk headers in '$vstpath'"
+        fi
+      else
+        showerr "### ERR: cannot find vst sdk in '$vstpath%'"
       fi
-    else
-      showerr "### ERR: cannot find vst sdk in '$vstpath%'"
     fi
     
     # ------------------------- delete old file if available
