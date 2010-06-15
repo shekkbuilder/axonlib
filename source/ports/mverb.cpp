@@ -11,8 +11,10 @@
 #include "wdg/wdgImage.h"
 #include "wdg/wdgKnob.h"
 
-#include "../../extern/mverb/mverb_background.h"
-#include "../../extern/mverb/mverb_knob.h"
+//#include "../../extern/mverb/mverb_background.h"
+//#include "../../extern/mverb/mverb_knob.h"
+#include "mverb_background.h"
+#include "mverb_knob.h"
 
 float prog1[] = { 0.0, 0.5, 1.0, 0.5, 0.0, 0.5, 1.0, 0.15, 0.75 }; // Subtle
 float prog2[] = { 0.0, 0.5,	1.0, 0.5, 0.0, 1.0, 1.0, 0.35, 0.75 }; // Stadium
