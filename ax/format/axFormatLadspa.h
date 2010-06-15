@@ -537,13 +537,14 @@ typedef axFormatLadspa axFormatImpl;
 
   //#define AX_CONTEXT_EXIT
 
-  #define AX_ENTRYPOINT(plugclass)                                  \
-    const LADSPA_Descriptor* ladspa_descriptor(unsigned long Index) \
-    {                                                               \
-      AX_CONTEXT_INIT(plugclass)                                    \
-      plugclass* plug = new plugclass(&ctx);              \
-      LADSPA_Descriptor* descriptor = plug->getDescriptor();        \
-      return descriptor;                                            \
+  #define AX_ENTRYPOINT(plugclass)                                    \
+    __dllexport                                                       \
+    const LADSPA_Descriptor* ladspa_descriptor (unsigned long Index)  \
+    {                                                                 \
+      AX_CONTEXT_INIT(plugclass)                                      \
+      plugclass* plug = new plugclass(&ctx);                          \
+      LADSPA_Descriptor* descriptor = plug->getDescriptor();          \
+      return descriptor;                                              \
     }
 
 //----------------------------------------------------------------------
