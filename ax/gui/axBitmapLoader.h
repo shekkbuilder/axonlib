@@ -70,6 +70,8 @@ class axBitmapLoader
         int res = 0;
         //if (mPngInfo) axFree(mPngInfo);
         axPngInfo* png = axPngDecode(buffer, buffersize);
+        trace("decoded. png =" << (int)png);
+        trace("png error = " << PNG_error);
         res = (int)png;
         mWidth  = png->width;
         mHeight = png->height;

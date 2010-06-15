@@ -44,6 +44,7 @@ class axSkinDef : public axSkin
     int         mKnobCount;
     axColor     mKnobTextCol;
     axColor     mKnobValCol;
+    axPoint     mKnobTextOffset;
     axRect      mSliderBackRect;
     axRect      mSliderThumbRect;
 
@@ -84,6 +85,12 @@ class axSkinDef : public axSkin
         if (mSkinSrfLoaded) delete mSkinSrf;
         if (mKnobSrfLoaded) delete mKnobSrf;
       }
+
+    //--------------------------------------------------
+    //
+    //--------------------------------------------------
+
+    inline void setupKnob(int mNumImages) { mKnobCount = mNumImages; }
 
     //--------------------------------------------------
     //
@@ -140,7 +147,7 @@ class axSkinDef : public axSkin
 
     //----------
 
-    virtual void loadKnobBitmap(axEditor* aEditor, char* aBuffer, int aWidth, int aHeight, int aDepth)
+    virtual void loadKnobBitmap(axEditor* aEditor, char* aBuffer, int aWidth, int aHeight, int aDepth, int aNum=65)
       {
         axBitmap* bitmap = loadBitmap(aEditor,aBuffer,aWidth,aHeight,aDepth);//32,(32*65));
         mKnobSrf = aEditor->createSurface(aWidth,aHeight,aDepth);//32,(32*65),32);
