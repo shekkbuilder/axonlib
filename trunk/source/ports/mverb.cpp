@@ -1,20 +1,24 @@
+//#define NO_GUI
 #define AX_ALPHA
+
+//----------
 
 #include "format/axFormat.h"
 #include <math.h>
 #include <memory.h>
 #include "../../extern/mverb/MVerb.h"
 
-#include "gui/axEditor.h"
-#include "gui/axBitmapLoader.h"
-#include "skins/axSkinDef.h"
-#include "wdg/wdgImage.h"
-#include "wdg/wdgKnob.h"
+//#ifndef NO_GUI
+//  #include "gui/axEditor.h"
+//  #include "gui/axBitmapLoader.h"
+//  #include "skins/axSkinDef.h"
+//  #include "wdg/wdgImage.h"
+//  #include "wdg/wdgKnob.h"
+//  #include "mverb_background.h"
+//  #include "mverb_knob.h"
+//#endif //gui
 
-//#include "../../extern/mverb/mverb_background.h"
-//#include "../../extern/mverb/mverb_knob.h"
-#include "mverb_background.h"
-#include "mverb_knob.h"
+//----------------------------------------------------------------------
 
 float prog1[] = { 0.0, 0.5, 1.0, 0.5, 0.0, 0.5, 1.0, 0.15, 0.75 }; // Subtle
 float prog2[] = { 0.0, 0.5,	1.0, 0.5, 0.0, 1.0, 1.0, 0.35, 0.75 }; // Stadium
@@ -24,13 +28,21 @@ float prog5[] = { 0.5, 0.5, 0.5, 0.5, 0.5, 1.0, 0.5, 0.5,  0.75 }; // Halves
 
 //----------------------------------------------------------------------
 //
-//
+// skin
 //
 //----------------------------------------------------------------------
+#ifndef NO_GUI
 
-#include "gui/axSkin.h"
+  #include "gui/axEditor.h"
+  #include "gui/axBitmapLoader.h"
+  //#include "skins/axSkinDef.h"
+  #include "gui/axSkin.h"
+  #include "wdg/wdgImage.h"
+  #include "wdg/wdgKnob.h"
+  #include "mverb_background.h"
+  #include "mverb_knob.h"
 
-#define KNOB_TEXTYOFFSET 35
+  #define KNOB_TEXTYOFFSET 35
 
 class mverb_skin : public axSkin
 {
@@ -80,6 +92,8 @@ class mverb_skin : public axSkin
         delete bitmap;
       }
 
+    //TODO drawPanel
+
     virtual void drawKnob(axCanvas* aCanvas, axRect aRect,  axString aName, axString aDisp, float aValue, int aMode=0)
       {
         if (mKnobSrf)
@@ -96,6 +110,7 @@ class mverb_skin : public axSkin
       }
 };
 
+#endif //gui
 //----------------------------------------------------------------------
 //
 //
@@ -106,24 +121,27 @@ class myPlugin : public axFormat
 {
   private:
     MVerb<float>    em_verb;
+  #ifndef NO_GUI
   private:
     bool            m_GuiInitialized;
     axEditor*       m_Editor;
     mverb_skin*     m_Skin;
     wdgImage*       w_Panel;
-    wdgKnob*        w_Gain;
     axBitmapLoader* m_BackLoader;
     axBitmapLoader* m_KnobLoader;
+  #endif //gui
 
   public:
 
     myPlugin(axContext* aContext)
     : axFormat(aContext)
       {
-        m_GuiInitialized = false;
         describe("mverb","martin eastwood","axonlib port",0,AX_MAGIC+0x0000);
         setupAudio(2,2);
-        setupEditor(456,108);
+        #ifndef NO_GUI
+          m_GuiInitialized = false;
+          setupEditor(456,108);
+        #endif //gui
         appendParameter( new axParameter(this,"damping freq", "",0.5) );
         appendParameter( new axParameter(this,"density",      "",0.5) );
         appendParameter( new axParameter(this,"bandwidthfreq","",0.5) );
@@ -144,17 +162,20 @@ class myPlugin : public axFormat
 
     virtual ~myPlugin()
       {
+        #ifndef NO_GUI
         if (m_GuiInitialized)
         {
           delete m_BackLoader;
           delete m_KnobLoader;
         }
+        #endif //gui
       }
 
     virtual void doPreProgram(int aProgram)
       {
-        saveProgram( getCurrentProgram() );
-      }
+        if (getCurrentProgram() != aProgram)    // should this be handled lower down, so we don't
+          saveProgram( getCurrentProgram() );   // even get the the call if changing to same program?
+      }                                         // could be handy, to allow "revert..."
 
     virtual void doStateChange(int aState)
       {
@@ -179,6 +200,8 @@ class myPlugin : public axFormat
         return true;
       }
 
+#ifndef NO_GUI
+
     virtual axWindow* doOpenEditor(axContext* aContext)
       {
         if (!m_GuiInitialized)
@@ -190,21 +213,28 @@ class myPlugin : public axFormat
           m_GuiInitialized = true;
         }
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
+        // skin
         axCanvas* canvas = editor->getCanvas();
         m_Skin = new mverb_skin(canvas);
         m_Skin->loadKnobBitmap(editor,(char*)m_KnobLoader->getImage(),32,(32*129),32);  // bitmap depth
         editor->applySkin(m_Skin);
+        // background image
         editor->appendWidget( w_Panel = new wdgImage(editor,NULL_RECT,wa_Client) );
         w_Panel->loadBitmap(editor,(char*)m_BackLoader->getImage(),456,108, 24);        // screen depth
-        w_Panel->appendWidget( new wdgKnob( editor,axRect(56, 40,40,64),wa_None) );
-        w_Panel->appendWidget( new wdgKnob( editor,axRect(96, 40,40,64),wa_None) );
-        w_Panel->appendWidget( new wdgKnob( editor,axRect(136,40,40,64),wa_None) );
-        w_Panel->appendWidget( new wdgKnob( editor,axRect(176,40,40,64),wa_None) );
+        // knobs
+
+        // hopefully this is in order now :-)
+        w_Panel->appendWidget( new wdgKnob( editor,axRect(336,40,40,64),wa_None) );
         w_Panel->appendWidget( new wdgKnob( editor,axRect(216,40,40,64),wa_None) );
         w_Panel->appendWidget( new wdgKnob( editor,axRect(256,40,40,64),wa_None) );
         w_Panel->appendWidget( new wdgKnob( editor,axRect(296,40,40,64),wa_None) );
-        w_Panel->appendWidget( new wdgKnob( editor,axRect(336,40,40,64),wa_None) );
+        w_Panel->appendWidget( new wdgKnob( editor,axRect(96, 40,40,64),wa_None) );
+        w_Panel->appendWidget( new wdgKnob( editor,axRect(176,40,40,64),wa_None) );
         w_Panel->appendWidget( new wdgKnob( editor,axRect(376,40,40,64),wa_None) );
+        w_Panel->appendWidget( new wdgKnob( editor,axRect(56, 40,40,64),wa_None) );
+        w_Panel->appendWidget( new wdgKnob( editor,axRect(136,40,40,64),wa_None) );
+
+        // setup
         for (int i=0; i<9; i++) editor->connect( w_Panel->getWidget(i), mParameters[i] );
         editor->doRealign();
         editor->show();
@@ -222,6 +252,8 @@ class myPlugin : public axFormat
         delete editor;
         delete m_Skin;
       }
+
+#endif //gui
 
 };
 
