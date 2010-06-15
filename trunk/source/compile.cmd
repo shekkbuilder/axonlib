@@ -12,7 +12,7 @@ set axpath=..\ax
 set vstpath=..\..\vstsdk24
 
 :: set path to vstsdk, e.g: c:\vstsdk24\ (or relative to compile.cmd)
-set ladspapath=..\..\ladspa_sdk
+set ladspapath=..\..\ladspa_sdk\src
 
 :: set g++ path, e.g: c:\mingw\bin\g++
 set mgwpath=g++
@@ -137,7 +137,7 @@ goto getformat
 if not exist %ladspapath% goto noladspa
 if not [%v%]==[] echo ---------------------------------------------------------------------------
 set ext=.dll
-set tgtformat=-DAX_FORMAT_LADSPA -shared -nostartfiles
+set tgtformat=-DAX_FORMAT_LADSPA -shared
 set libfmt= LADSPA
 goto begin
 
@@ -204,7 +204,7 @@ if not [%v%]==[] echo * gcc debug is: %gccdstatus%
 
 :compile
 if not [%v%]==[] echo.
-set cmdline=%mgwpath% -I%axpath% -I%vstpath% %tgtformat% %opt% %warn% %gccdbg% %dbg% "%infile%" %res% -o "%target%" %tgtlib% %linker%
+set cmdline=%mgwpath% -I%axpath% -I%vstpath% -I%ladspapath% %tgtformat% %opt% %warn% %gccdbg% %dbg% "%infile%" %res% -o "%target%" %tgtlib% %linker%
 :: show cmdline
 if not [%v%]==[] echo command line is: %cmdline% && echo.
 :: call g++

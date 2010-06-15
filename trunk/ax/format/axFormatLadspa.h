@@ -536,8 +536,25 @@ typedef axFormatLadspa axFormatImpl;
     axContext ctx(0,0,0);
 
   //#define AX_CONTEXT_EXIT
-
+  
+    #ifdef AX_WIN32          
+ 
+      static __thread HINSTANCE gInstance;
+      #define __AXDLLMAIN                                             \
+        extern "C"                                                    \
+        BOOL APIENTRY                                                 \
+        DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)   \
+        {                                                             \
+          gInstance = hModule;                                        \
+          return TRUE;                                                \
+        }
+    #else
+      #define __AXDLLMAIN      
+    #endif
+    
   #define AX_ENTRYPOINT(plugclass)                                    \
+    __AXDLLMAIN                                                       \
+                                                                      \
     __dllexport                                                       \
     const LADSPA_Descriptor* ladspa_descriptor (unsigned long Index)  \
     {                                                                 \
@@ -546,6 +563,18 @@ typedef axFormatLadspa axFormatImpl;
       LADSPA_Descriptor* descriptor = plug->getDescriptor();          \
       return descriptor;                                              \
     }
+
+/*
+  #define MAKESTRING2(s) #s
+  #define MAKESTRING(s) MAKESTRING2(s)
+  #define MAKE_NAME(name) MAKESTRING(name) "_window"
+
+  #define AX_CONTEXT_INIT(name)                     \
+    HINSTANCE  instance = gInstance;                \
+    char*      winname  = (char*)MAKE_NAME(name);   \
+    AX_PTRCAST audio    = (AX_PTRCAST)audioMaster;  \
+    axContext ctx(instance,winname,audio);
+    */
 
 //----------------------------------------------------------------------
 #endif

@@ -30,13 +30,19 @@
 #include "stdio.h" // fread, fseek, fopen
 #ifdef AX_WIN32
   #include <windows.h>
+  // gInstance for axGetBasePath()
   #ifdef AX_FORMAT_LIB
     /*
       lii:
       if other dll formats are added for windows, a commont entry point    
       could be moved in a new header to get gInstance from there 
     */
-    #include "format/axFormatVst.h" // gInstance for axGetBasePath()
+    #ifdef AX_FORMAT_VST
+      #include "format/axFormatVst.h"
+    #endif
+    #ifdef AX_FORMAT_LADSPA      
+      #include "format/axFormatLadspa.h"
+    #endif
   #endif
 #endif
 #ifdef AX_LINUX
