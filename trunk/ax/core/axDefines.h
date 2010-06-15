@@ -294,17 +294,30 @@ typedef char                  __may_alias char_a;
 typedef unsigned char         __may_alias uchar_a;
 
 // msvc specific
-#ifndef __cdecl
-  #define __cdecl     __attribute__ ((cdecl))
+#ifdef AX_WIN32
+  #ifndef __cdecl
+    #define __cdecl     __attribute__ ((cdecl))
+  #endif
+  #ifndef __stdcall  
+    #define __stdcall   __attribute__ ((stdcall)))
+  #endif  
+  #ifndef __dllexport
+    #define __dllexport __attribute__ ((dllexport))
+  #endif
+  #ifdef  __dllimport
+    #define __dllimport __attribute__ ((dllimport))
+  #endif  
 #endif
-#ifndef __stdcall
-  #define __stdcall   __attribute__ ((stdcall)))
-#endif
-#ifndef __dllexport
-  #define __dllexport __attribute__((dllexport))
-#endif
-#ifndef __dllimport
-  #define __dllimport __attribute__((dllimport))
+
+#ifdef AX_LINUX
+  #undef  __cdecl
+  #define __cdecl
+  #undef  __stdcall
+  #define __stdcall
+  #undef  __dllexport
+  #define __dllexport
+  #undef  __dllimport
+  #define __dllimport
 #endif
 
 // path

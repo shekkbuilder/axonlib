@@ -1,4 +1,4 @@
-// #define AX_USE_MALLOC
+// #define AX_US_MALLOC
 #define AX_DEBUG_AUTO_STD
 #define AX_DEBUG_LOG  "test_gain_gui_skin.log"
 #define AX_DEBUG_FULL

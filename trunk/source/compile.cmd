@@ -4,12 +4,15 @@
 :: -----------------------------------------------------------------------------
 :: *** user settings here
 :: -----------------------------------------------------------------------------
-:: set path to vstsdk, e.g: c:\vstsdk24\ (or relative to compile.cmd)
-set vstpath=..\..\vstsdk24
-
 :: set path to axonlib headers
 :: e.g: c:\axonlib\ax (or relative to the compile.cmd)
 set axpath=..\ax
+
+:: set path to vstsdk, e.g: c:\vstsdk24\ (or relative to compile.cmd)
+set vstpath=..\..\vstsdk24
+
+:: set path to vstsdk, e.g: c:\vstsdk24\ (or relative to compile.cmd)
+set ladspapath=..\..\ladspa_sdk
 
 :: set g++ path, e.g: c:\mingw\bin\g++
 set mgwpath=g++
@@ -24,7 +27,7 @@ set warn=-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long
 set resfile="rc_default.rc"
 
 :: set optimization flags
-set opt=-msse -mfpmath=sse,387 -O3 -Os
+set opt=-mfpmath=387 -O3 -Os
 
 :: target & libraries
 set tgtlib=-mwindows -lmsimg32
@@ -97,6 +100,11 @@ if [%6]==[-g] goto setgccdebug
 
 :: get the tgt format
 :getformat
+if [%2]==[-ladspa] goto ladspatarget
+if [%3]==[-ladspa] goto ladspatarget
+if [%4]==[-ladspa] goto ladspatarget
+if [%5]==[-ladspa] goto ladspatarget
+if [%6]==[-ladspa] goto ladspatarget
 if [%2]==[-vst] goto vsttarget
 if [%3]==[-vst] goto vsttarget
 if [%4]==[-vst] goto vsttarget
@@ -125,11 +133,21 @@ set opt=-O3
 goto getformat
 
 :: format is vst
+:ladspatarget
+if not exist %ladspapath% goto noladspa
+if not [%v%]==[] echo ---------------------------------------------------------------------------
+set ext=.dll
+set tgtformat=-DAX_FORMAT_LADSPA -shared -nostartfiles
+set libfmt= LADSPA
+goto begin
+
+:: format is vst
 :vsttarget
 if not exist %vstpath% goto novstsdk
 if not [%v%]==[] echo ---------------------------------------------------------------------------
 set ext=.dll
 set tgtformat=-DAX_FORMAT_VST -shared
+set libfmt= VST
 goto begin
 
 :: format is exe
@@ -142,6 +160,7 @@ if exist %resfile%.o del %resfile%.o
 if not exist %resfile%.o goto nores
 set res=%resfile%.o
 :exenores
+set libfmt=
 set ext=.exe
 set tgtformat=-DAX_FORMAT_EXE
 goto begin
@@ -153,8 +172,9 @@ echo ---------------------------------------------------------------------------
 echo * axonlib compile script for windows
 echo.
 echo usage: compile.cmd [file.cpp] [format] [-nmv] [-d] [-g] [-h]
-echo  -exe : create an executable
-echo  -vst : create a vst dll (default)
+echo  -exe : create an executable (default)
+echo  -vst : create a vst dll
+echo  -ladspa : create a ladspa dll
 echo  -nmv : do not move result to ..\bin
 echo  -d : enable library debug mode
 echo  -g : enable gcc debug mode (-gstabs)
@@ -178,7 +198,7 @@ if exist %target% del %target%
 :: echo settings
 echo.
 echo * compiling windows binary for '%infile%'...
-if not [%v%]==[] echo * format is: %ext%
+if not [%v%]==[] echo * binary format is:%libfmt% %ext%
 if not [%v%]==[] echo * lib debug is: %dstatus%
 if not [%v%]==[] echo * gcc debug is: %gccdstatus%
 
@@ -228,6 +248,11 @@ goto end
 :novstsdk
 echo.
 echo ### ERR: cannot find vst sdk in '%vstpath%'
+goto end
+:: ----------------------------------------------------------------------------
+:noladspa
+echo.
+echo ### ERR: cannot find ladspa sdk in '%ladspapath%'
 goto end
 :: ----------------------------------------------------------------------------
 :nores

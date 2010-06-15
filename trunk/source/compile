@@ -6,11 +6,14 @@
 # ------------------------------------------------------------------------------
 #                               user settings
 # ------------------------------------------------------------------------------
+# axonlib 'ax' path
+axpath="../ax"
+
 # vst path
 vstpath="../../vstsdk24"
 
-# axonlib 'ax' path
-axpath="../ax"
+# ladspa path
+ladspapath="../../ladspa_sdk"
 
 # g++ command
 gpp="g++"
@@ -30,7 +33,7 @@ resfile="rc_default.rc"
 warn="-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long"
 
 # optimization
-opt="-msse -mfpmath=sse,387 -O3 -Os"
+opt="-mfpmath=387 -O3 -Os"
 
 # linker options
 linker="-fstack-check -fdata-sections -ffunction-sections -Wl,-gc-sections -s"
@@ -52,7 +55,8 @@ function show_help
   echo "-linux : target linux (default)"
   echo "-win32 : target windows using mingw"
   echo "-exe : create an executable (default)"
-  echo "-vst : create a library file"
+  echo "-ladspa : create a ladspa library"
+  echo "-vst : create a vst library"
   echo "-nmv : do not move result to ../bin"
   echo "-d : enable library debug mode"
   echo "-g : enable gcc debug mode (-gstabs)"
@@ -86,8 +90,9 @@ then
 else
   # ------------------------- defaults
   compiler=$gpp
-  format="-DAX_FORMAT_EXE"
-  fmt_ext=""  
+  format="-DAX_FORMAT_EXE"  
+  fmt_ext=""
+  libformat=""
   tgt="-lX11 -lXrender -lpthread"
   move="yes"
   libdebug=""
@@ -114,13 +119,14 @@ else
     if [ "$2" == "-win32" ] || [ "$3" == "-win32" ] || [ "$4" == "-win32" ] || [ "$5" == "-win32" ] || [ "$6" == "-win32" ] || [ "$7" == "-win32" ];
     then
       compiler=$mingw
-      fmt_ext=".dll"
-      tgt="-shared -mwindows -lmsimg32"
+      fmt_ext=".exe"
+      tgt="-mwindows -lmsimg32"
     fi
     # ------------------------- format is vst
-    if [ "$2" == "-exe" ] || [ "$3" == "-vst" ] || [ "$4" == "-vst" ] || [ "$5" == "-vst" ] || [ "$6" == "-vst" ] || [ "$7" == "-vst" ];
+    if [ "$2" == "-vst" ] || [ "$3" == "-vst" ] || [ "$4" == "-vst" ] || [ "$5" == "-vst" ] || [ "$6" == "-vst" ] || [ "$7" == "-vst" ];
     then
       format=-DAX_FORMAT_VST
+      libformat=" VST"
       # ------------------------- case mingw
       if [ "$compiler" == "$mingw" ];
       then
@@ -130,6 +136,22 @@ else
       else
         fmt_ext=".so"
         tgt="-lX11 -lXrender -lpthread -shared"
+      fi
+    fi
+    # ------------------------- format is ladspa
+    if [ "$2" == "-ladspa" ] || [ "$3" == "-ladspa" ] || [ "$4" == "-ladspa" ] || [ "$5" == "-ladspa" ] || [ "$6" == "-ladspa" ] || [ "$7" == "-ladspa" ];
+    then
+      format=-DAX_FORMAT_LADSPA
+      libformat=" LADSPA"
+      # ------------------------- case mingw
+      if [ "$compiler" == "$mingw" ];
+      then
+        fmt_ext=".dll"
+        tgt="-mwindows -lmsimg32 -shared -nostartfiles"
+      # ------------------------- case gcc
+      else
+        fmt_ext=".so"
+        tgt="-lX11 -lXrender -lpthread -shared -nostartfiles"
       fi
     fi
     # ------------------------- don't move to ../bin
@@ -185,9 +207,9 @@ else
       echo "* compiler is: $compiler"
       if [ "$fmt_ext" == "" ];
       then    
-        echo "* target format is: elf (exe)"
+        echo "* target binary format is: exe (ELF)"
       else
-        echo "* target format is: $fmt_ext"
+        echo "* target binary format is:$libformat $fmt_ext"
       fi
       echo "* lib debug is: $libdebugstatus"
       echo "* gcc debug is: $gccdebugstatus"
@@ -214,6 +236,20 @@ else
         fi
       else
         showerr "### ERR: cannot find vst sdk in '$vstpath%'"
+      fi
+    fi
+    
+    # ------------------------- check if ladspapath available
+    if [ "$format" == "-DAX_FORMAT_LADSPA" ]
+    then
+      if [ -d "$ladspapath" ];
+      then
+        if [ "$v" == "yes" ];
+        then
+          echo "* found ladspa sdk headers in '$ladspapath'"
+        fi
+      else
+        showerr "### ERR: cannot find vst sdk in '$ladspapath%'"
       fi
     fi
     
