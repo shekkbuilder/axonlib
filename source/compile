@@ -13,7 +13,7 @@ axpath="../ax"
 vstpath="../../vstsdk24"
 
 # ladspa path
-ladspapath="../../ladspa_sdk"
+ladspapath="../../ladspa_sdk/src"
 
 # g++ command
 gpp="g++"
@@ -260,7 +260,7 @@ else
     fi
     
     # ------------------------- command line (compile)
-    _cmdline="$compiler \"${1}\" -o \"${file}\"\"${fmt_ext}\" -I$vstpath -I$axpath $tgt $res $gccdebug $libdebug $format $warn $opt $linker"
+    _cmdline="$compiler \"${1}\" -o \"${file}\"\"${fmt_ext}\" -I$ladspapath -I$vstpath -I$axpath $tgt $res $gccdebug $libdebug $format $warn $opt $linker"
     if [ "$v" == "yes" ];
     then
         echo ""
