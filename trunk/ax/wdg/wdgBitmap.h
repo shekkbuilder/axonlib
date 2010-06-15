@@ -55,6 +55,7 @@ class wdgBitmap : public axWidget
       {
         //mListener->onCursor(cu_ArrowLeftRight); }
         mListener->onHint("wdgBitmap");
+      }
 
     virtual void doLeave(axWidget* aCapture)
       {
