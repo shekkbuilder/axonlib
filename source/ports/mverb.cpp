@@ -1,4 +1,4 @@
-//#define NO_GUI
+#define NO_GUI
 #define AX_ALPHA
 
 //----------
@@ -20,6 +20,8 @@
 
 //----------------------------------------------------------------------
 
+// this is bad! this is shared among all instances
+// and when changing program, we dump the parameters into this...
 float prog1[] = { 0.0, 0.5, 1.0, 0.5, 0.0, 0.5, 1.0, 0.15, 0.75 }; // Subtle
 float prog2[] = { 0.0, 0.5,	1.0, 0.5, 0.0, 1.0, 1.0, 0.35, 0.75 }; // Stadium
 float prog3[] = { 0.0, 0.5, 1.0, 0.5, 0.0, 0.25,1.0, 0.35, 0.75 }; // Cupboard
@@ -182,6 +184,7 @@ class myPlugin : public axFormat
         switch (aState)
         {
           case fs_Resume:
+            transferParameters();
             em_verb.setSampleRate(getSampleRate());
             break;
         }
@@ -189,6 +192,7 @@ class myPlugin : public axFormat
 
     virtual void doSetParameter(axParameter* aParameter)
       {
+        //trace("doSetParameter");
         int   index = aParameter->getIndex();
         float value = aParameter->getValue();
         em_verb.setParameter(index,value);
@@ -196,6 +200,7 @@ class myPlugin : public axFormat
 
     virtual bool doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize)
       {
+        //trace( aInputs[0] << "," << aInputs[1] << "," << aOutputs[0] << "," << aOutputs[1] << " - " << aSize);
         em_verb.process(aInputs,aOutputs,aSize);
         return true;
       }
