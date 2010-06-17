@@ -48,6 +48,7 @@ set res=
 set gccdbg=
 set cmdline=
 set v=
+set suffix=
 
 :: check for file input
 if [%1]==[] goto syntax
@@ -136,6 +137,7 @@ goto getformat
 :ladspatarget
 if not exist %ladspapath% goto noladspa
 if not [%v%]==[] echo ---------------------------------------------------------------------------
+set suffix=-ladspa
 set ext=.dll
 set tgtformat=-DAX_FORMAT_LADSPA -shared
 set libfmt= LADSPA
@@ -145,6 +147,7 @@ goto begin
 :vsttarget
 if not exist %vstpath% goto novstsdk
 if not [%v%]==[] echo ---------------------------------------------------------------------------
+set suffix=-vst
 set ext=.dll
 set tgtformat=-DAX_FORMAT_VST -shared
 set libfmt= VST
@@ -189,7 +192,7 @@ goto end
 :begin
 :: set target
 call set target=%%infile:%srcext%=%%
-set target=%target%%ext%
+set target=%target%%suffix%%ext%
 set cmdpath=%~p0
 
 :: delete old target
@@ -201,6 +204,9 @@ echo * compiling windows binary for '%infile%'...
 if not [%v%]==[] echo * binary format is:%libfmt% %ext%
 if not [%v%]==[] echo * lib debug is: %dstatus%
 if not [%v%]==[] echo * gcc debug is: %gccdstatus%
+if exist %axpath% echo * found axonlib path '%axpath%'
+if "%libfmt%" == " VST" echo * found vst sdk path '%vstpath%'
+if "%libfmt%" == " LADSPA" echo * found ladpsa sdk path '%ladspapath%'
 
 :compile
 if not [%v%]==[] echo.
@@ -242,17 +248,17 @@ goto end
 :: ----------------------------------------------------------------------------
 :noax
 echo.
-echo ### ERR: cannot find axonlib headers in '%axpath%'
+echo ### ERR: cannot find axonlib path '%axpath%'
 goto end
 :: ----------------------------------------------------------------------------
 :novstsdk
 echo.
-echo ### ERR: cannot find vst sdk in '%vstpath%'
+echo ### ERR: cannot find vst sdk path '%vstpath%'
 goto end
 :: ----------------------------------------------------------------------------
 :noladspa
 echo.
-echo ### ERR: cannot find ladspa sdk in '%ladspapath%'
+echo ### ERR: cannot find ladspa sdk path '%ladspapath%'
 goto end
 :: ----------------------------------------------------------------------------
 :nores
