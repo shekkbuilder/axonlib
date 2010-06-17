@@ -13,7 +13,7 @@ class myPlugin : public axFormat
 
   public:
 
-    myPlugin(axContext* aContext)
+    myPlugin(axContext* aContext, int aFormatFlags)
     : axFormat(aContext)
       {
         describe("test_gain_nogui","ccernn","axonlib example",0,AX_MAGIC+0x0000);

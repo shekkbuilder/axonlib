@@ -39,7 +39,7 @@ class myPlugin : public axFormat
 
   public:
 
-    myPlugin(axContext* aContext)
+    myPlugin(axContext* aContext, int aFormatFlags))
     : axFormat(aContext)
       {
         m_GuiInitialized = false;
