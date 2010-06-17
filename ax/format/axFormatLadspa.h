@@ -55,7 +55,7 @@ class axFormatLadspa : public axFormatBase
     char                  mLabel[64];
     char                  mName[64];
     char                  mMaker[64];
-    char                  mCopyright[64];
+    char                  mCopyright[96];
     int                   mNumInputs;
     int                   mNumOutputs;
     unsigned long         mSampleRate;
@@ -438,10 +438,11 @@ class axFormatLadspa : public axFormatBase
     virtual void describe(axString aName, axString aVendor, axString aProduct, int aVersion, unsigned int aID)
       {
         //trace("describe");
-        axStrncpy(mName,aProduct.ptr(),64);
-        axStrncpy(mLabel,aName.ptr(),64);
+        axStrncpy(mName,aName.ptr(),64);  // used by audacity and aqualung
+        axStrncpy(mLabel,aName.ptr(),64); // used by jost
         axStrncpy(mMaker,aVendor.ptr(),64);
-        axStrcpy( mCopyright,(char*)"copyright?");
+        axStrcpy( mCopyright,(char*)"Copyright (c) ");
+        axStrcat( mCopyright, mMaker); // used by audacity and aqualung
         mDescriptor.UniqueID = aID;
       }
 
