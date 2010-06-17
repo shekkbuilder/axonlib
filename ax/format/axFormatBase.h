@@ -34,6 +34,7 @@
 // format flags
 #define ff_None       0
 #define ff_HasEditor  1
+#define ff_Enumerate  2
 
 //#define AX_PLUG_DEFAULT ( pf_HasEditor )
 
@@ -76,16 +77,16 @@ struct axHostInfo
 
 //----------------------------------------------------------------------
 
-class axFormatBase// : public axParameterListener
+class axFormatBase : public axParameterListener
 {
   friend class axEditor;
   protected:
     int           mFormatFlags;
+    axParameters  mParameters;
+    axPrograms    mPrograms;
     bool          mEditorOpen;
     axRect        mEditorRect;
     axWindow*     mEditorWindow;
-    axParameters  mParameters;
-    axPrograms    mPrograms;
 
   protected:
 
@@ -99,6 +100,10 @@ class axFormatBase// : public axParameterListener
 
     virtual ~axFormatBase()
       {
+        #ifndef AX_NOAUTODELETE
+          deleteParameters();
+          //deletePrograms();
+        #endif
       }
 
   public:
@@ -112,11 +117,42 @@ class axFormatBase// : public axParameterListener
     virtual double  getBeatPos(void)    { return 0; }
     virtual double  getTempo(void)      { return 0; }
 
-    virtual void    appendParameter(axParameter* aParameter) {}
-    virtual void    deleteParameters(void) {}
-    virtual void    appendProgram(axProgram* aProgram) {}
-    virtual void    deletePrograms(void) {}
+    //----------
+
+    //virtual void    appendParameter(axParameter* aParameter) {}
+    //virtual void    deleteParameters(void) {}
+
+    virtual void appendParameter(axParameter* aParameter)
+      {
+        int index = mParameters.size();
+        aParameter->setIndex(index);
+        mParameters.append(aParameter);
+      }
+
+    virtual void deleteParameters(void)
+      {
+        for (int i=0; i<mParameters.size(); i++) delete mParameters[i];
+      }
+
+    //----------
+
+    //virtual void    appendProgram(axProgram* aProgram) {}
+    //virtual void    deletePrograms(void) {}
     virtual int     getCurrentProgram(void){ return 0; }
+
+    virtual void appendProgram(axProgram* aProgram)
+      {
+        //int index = mPrograms.size();
+        //aProgram->setIndex(index);
+        mPrograms.append(aProgram);
+      }
+
+    virtual void deletePrograms(void)
+      {
+        for (int i=0; i<mPrograms.size(); i++) delete mPrograms[i];
+      }
+
+    //----------
 
     virtual axSystemInfo* getSystemInfo(void) { return NULL; }
     virtual axHostInfo*   getHostInfo(void)   { return NULL; }
@@ -172,10 +208,10 @@ class axFormatBase// : public axParameterListener
 
     //--------------------------------------------------
     // do..
-    //--------------------------------------------------
+    //-------------------------------------------------|-
 
     // this will be called when the plugins is suspend/resume, and open/close
-    virtual void doStateChange(int aState) {}
+    virtual void doStateChange(int aState) { trace("..."); }
 
     // transport state has changed
     virtual void doTransportChange(int aState) {}

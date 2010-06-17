@@ -1,4 +1,5 @@
 /*
+
  * This file is part of Axonlib.
  *
  * Axonlib is free software: you can redistribute it and/or modify
@@ -17,12 +18,10 @@
 #ifndef axFormatLadspa_included
 #define axFormatLadspa_included
 //----------------------------------------------------------------------
-
 /*
-- when i activate in qtractor, it uses 100% on one core (audio processoing one?)
-- works in jost, audio is processed and everything...
-*/
 
+
+*/
 //----------------------------------------------------------------------
 
 #include "platform/axContext.h"
@@ -33,13 +32,18 @@
 
 // this might be overkill?
 // inputs + outputs + parameters
-#define MAX_LADSPA_PORTS 256
+#define MAX_LADSPA_PORTS    256
+
+void* create_ladspa_instance(axContext* aContext);
+
 
 //----------------------------------------------------------------------
 
 class axFormatLadspa : public axFormatBase
 {
   private:
+    axContext*            mContext;
+    //bool                  mIsDescriptor;
     LADSPA_Descriptor     mDescriptor;
     int                   mNumPorts;
     char*                 mPortNames[MAX_LADSPA_PORTS];
@@ -66,12 +70,6 @@ class axFormatLadspa : public axFormatBase
     //--------------------------------------------------
     // host callback functions
     //--------------------------------------------------
-
-    // instantiates a plugin. A handle is returned indicating the new
-    // plugin instance. This function must return NULL if instantiation
-    // fails.
-    // Note that instance initialisation should generally occur in
-    // activate() rather than here. */
 
     //static LADSPA_Handle l_instantiate(const struct _LADSPA_Descriptor * Descriptor, unsigned long SampleRate)
     static LADSPA_Handle lad_instantiate(const LADSPA_Descriptor* Descriptor, unsigned long SampleRate)
@@ -242,9 +240,7 @@ class axFormatLadspa : public axFormatBase
         //trace("lad_cleanup");
         axFormatLadspa* ladspa = (axFormatLadspa*)Instance;
         ladspa->cleanup();
-
         delete ladspa;                                          // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
       }
 
   //--------------------------------------------------
@@ -257,40 +253,42 @@ class axFormatLadspa : public axFormatBase
     : axFormatBase(aContext,aFormatFlags)
       {
         //trace("constructor");
-        mDescriptor.UniqueID            = 0;//mUniqueId;
-        mDescriptor.Label               = mLabel;//"label";
-        mDescriptor.Properties          = LADSPA_PROPERTY_REALTIME;// | LADSPA_PROPERTY_HARD_RT_CAPABLE;
-        mDescriptor.Name                = mName;//"name";
-        mDescriptor.Maker               = mMaker;//"maker";
-        mDescriptor.Copyright           = mCopyright;//"copyright";
-        mDescriptor.PortCount           = 0;//mNumPorts;
-        mDescriptor.PortDescriptors     = mPortDesc; // NULL
-        mDescriptor.PortNames           = mPortNames; // NULL
-        mDescriptor.PortRangeHints      = mPortHint; // NULL
-        mDescriptor.ImplementationData  = this;
-        mDescriptor.instantiate         = lad_instantiate;
-        mDescriptor.connect_port        = lad_connect_port;
-        mDescriptor.activate            = lad_activate;
-        mDescriptor.run                 = lad_run;                  // ala processReplacing
-        mDescriptor.run_adding          = NULL;//lad_run_adding;           // ala process, optional
-        mDescriptor.set_run_adding_gain = NULL;//lad_set_run_adding_gain;  // if above
-        mDescriptor.deactivate          = lad_deactivate;
-        mDescriptor.cleanup             = lad_cleanup;
-
+        mContext = aContext;
+        //mIsDescriptor = false;
+        //if (aFormatFlags&&ff_Enumerate)
+        //{
+          mDescriptor.UniqueID            = 0;//mUniqueId;
+          mDescriptor.Label               = mLabel;//"label";
+          mDescriptor.Properties          = LADSPA_PROPERTY_REALTIME | LADSPA_PROPERTY_HARD_RT_CAPABLE;
+          mDescriptor.Name                = mName;//"name";
+          mDescriptor.Maker               = mMaker;//"maker";
+          mDescriptor.Copyright           = mCopyright;//"copyright";
+          mDescriptor.PortCount           = 0;//mNumPorts;
+          mDescriptor.PortDescriptors     = mPortDesc; // NULL
+          mDescriptor.PortNames           = mPortNames; // NULL
+          mDescriptor.PortRangeHints      = mPortHint; // NULL
+          mDescriptor.ImplementationData  = this;
+          mDescriptor.instantiate         = lad_instantiate;
+          mDescriptor.connect_port        = lad_connect_port;
+          mDescriptor.activate            = lad_activate;
+          mDescriptor.run                 = lad_run;                  // ala processReplacing
+          mDescriptor.run_adding          = NULL;//lad_run_adding;           // ala process, optional
+          mDescriptor.set_run_adding_gain = NULL;//lad_set_run_adding_gain;  // if above
+          mDescriptor.deactivate          = lad_deactivate;
+          mDescriptor.cleanup             = lad_cleanup;
+          //mIsDescriptor = true;
+        //}
         axMemset( mParamPrev, 0, sizeof(mParamPrev));
-
-//        mDescriptor.PortDescriptors = mPortDesc;
-//        mDescriptor.PortNames       = (const char * const *)mPortNames;
-//        mDescriptor.PortRangeHints  = mPortHint;
-
-
       }
 
     //----------
 
     virtual ~axFormatLadspa()
       {
-        for (int i=0; i<mNumPorts; i++) axFree( mPortNames[i] );
+        //if (mIsDescriptor)
+        //{
+          for (int i=0; i<mNumPorts; i++) axFree( mPortNames[i] );
+        //}
       }
 
     //--------------------------------------------------
@@ -310,12 +308,30 @@ class axFormatLadspa : public axFormatBase
     //
     //--------------------------------------------------
 
+    /*
+
+    this is wrong! the second instance we create, will have the same
+    pointers and parameters as the first one, as the pointers in the
+    Descriptor struct is the same for both...
+
+    we cheat here, and use our class both as a Descriptor and a
+    plugin instance.. will create problems for multiple plugin
+    instances...
+
+    the 'return this' at the end is problematic... the second instance
+    will return the class of the first instance.
+
+    */
+
     virtual LADSPA_Handle instantiate(unsigned long SampleRate)
       {
-        //trace("instantiate");
-        mSampleRate = SampleRate;
-        doStateChange(fs_Open);
-        return this;
+        //mSampleRate = SampleRate;
+        //doStateChange(fs_Open);
+        //return this;
+        axFormatLadspa* plug = (axFormatLadspa*)create_ladspa_instance(mContext);
+        plug->mSampleRate = SampleRate;
+        plug->doStateChange(fs_Open);
+        return plug;
       }
 
     //--------------------------------------------------
@@ -566,13 +582,13 @@ typedef axFormatLadspa axFormatImpl;
 #ifdef AX_WIN32
   static __thread HINSTANCE gInstance;
 
-  #define _AX_LADSPA_DLLMAIN \
-    __externc BOOL APIENTRY \
+  #define _AX_LADSPA_DLLMAIN                                    \
+    __externc BOOL APIENTRY                                     \
     DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved) \
-    { \
-      trace("ladspa DllMain()"); \
-      gInstance = hModule; \
-      return TRUE; \
+    {                                                           \
+      trace("ladspa DllMain()");                                \
+      gInstance = hModule;                                      \
+      return TRUE;                                              \
     }
 
   __externc
@@ -582,19 +598,28 @@ typedef axFormatLadspa axFormatImpl;
   #define _AX_LADSPA_DLLMAIN
 #endif
 
-#define AX_ENTRYPOINT(plugclass) \
-    _AX_LADSPA_DLLMAIN \
-    __externc __dllexport \
-    const LADSPA_Descriptor* ladspa_descriptor (unsigned long index) \
-    { \
-      trace("ladspa_descriptor( " << index << " )" ); \
-      if (index) \
-        return NULL; \
-      AX_CONTEXT_INIT(plugclass) \
-      plugclass* plug = new plugclass(&ctx); \
-      LADSPA_Descriptor* descriptor = plug->getDescriptor(); \
-      return descriptor; \
+#define AX_ENTRYPOINT(plugclass)                                      \
+    _AX_LADSPA_DLLMAIN                                                \
+    __externc __dllexport                                             \
+    const LADSPA_Descriptor* ladspa_descriptor (unsigned long index)  \
+    {                                                                 \
+      trace("ladspa_descriptor( " << index << " )" );                 \
+      if (index)                                                      \
+        return NULL;                                                  \
+      AX_CONTEXT_INIT(plugclass)                                      \
+      plugclass* plug = new plugclass(&ctx,ff_Enumerate);             \
+      LADSPA_Descriptor* descriptor = plug->getDescriptor();          \
+      return descriptor;                                              \
+    }                                                                 \
+                                                                      \
+                                                                      \
+                                                                      \
+    void* create_ladspa_instance(axContext* aContext)                 \
+    {                                                                 \
+      plugclass* plug = new plugclass(aContext,ff_None);              \
+      return (void*)plug;                                             \
     }
+
 
 #ifdef AX_WIN32
   } // extern "C"

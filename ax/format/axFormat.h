@@ -67,7 +67,7 @@ NOTES:
 
 //----------------------------------------------------------------------
 
-class axFormat : public axFormatImpl, public axParameterListener
+class axFormat : public axFormatImpl//, public axParameterListener
 {
   protected:
     axSystemInfo mSystemInfo;
@@ -101,7 +101,7 @@ class axFormat : public axFormatImpl, public axParameterListener
     virtual ~axFormat()
       {
         #ifndef AX_NOAUTODELETE
-          deleteParameters();
+          //deleteParameters();
           deletePrograms();
         #endif
 
@@ -140,47 +140,35 @@ class axFormat : public axFormatImpl, public axParameterListener
 
     //--------------------------------------------------
 
-    virtual void appendParameter(axParameter* aParameter)
-      {
-        int index = mParameters.size();
-        aParameter->setIndex(index);
-        mParameters.append(aParameter);
-      }
-
-    //----------
-
-    virtual void deleteParameters(void)
-      {
-        for (int i=0; i<mParameters.size(); i++) delete mParameters[i];
-      }
+//    virtual void appendParameter(axParameter* aParameter)
+//      {
+//        int index = mParameters.size();
+//        aParameter->setIndex(index);
+//        mParameters.append(aParameter);
+//      }
+//
+//    //----------
+//
+//    virtual void deleteParameters(void)
+//      {
+//        for (int i=0; i<mParameters.size(); i++) delete mParameters[i];
+//      }
 
     //--------------------------------------------------
 
-    virtual void appendProgram(axProgram* aProgram)
-      {
-        //int index = mPrograms.size();
-        //aProgram->setIndex(index);
-        mPrograms.append(aProgram);
-
-//          trace("appendProgram: " <<
-//            aProgram->getValue(0) << "," <<
-//            aProgram->getValue(1) << "," <<
-//            aProgram->getValue(2) << "," <<
-//            aProgram->getValue(3) << "," <<
-//            aProgram->getValue(4) << "," <<
-//            aProgram->getValue(5) << "," <<
-//            aProgram->getValue(6) << "," <<
-//            aProgram->getValue(7) << "," <<
-//            aProgram->getValue(8) );
-
-      }
-
-    //----------
-
-    virtual void deletePrograms(void)
-      {
-        for (int i=0; i<mPrograms.size(); i++) delete mPrograms[i];
-      }
+//    virtual void appendProgram(axProgram* aProgram)
+//      {
+//        //int index = mPrograms.size();
+//        //aProgram->setIndex(index);
+//        mPrograms.append(aProgram);
+//      }
+//
+//    //----------
+//
+//    virtual void deletePrograms(void)
+//      {
+//        for (int i=0; i<mPrograms.size(); i++) delete mPrograms[i];
+//      }
 
     //--------------------------------------------------
 
