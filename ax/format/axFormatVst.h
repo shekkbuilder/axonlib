@@ -1665,7 +1665,7 @@ typedef axFormatVst axFormatImpl;
     {                                               \
       XInitThreads();                               \
       AX_CONTEXT_INIT(plugclass)                    \
-      plugclass* plug = new plugclass(&ctx);        \
+      plugclass* plug = new plugclass(&ctx,ff_None);\
       if (!plug) return 0;                          \
       AEffect* ae = plug->getInstance();            \
       return ae;                                    \
@@ -1733,7 +1733,7 @@ typedef axFormatVst axFormatImpl;
     int main(int audioMaster, char** empty)                                 \
     {                                                                       \
       AX_CONTEXT_INIT(plugclass)                                            \
-      plugclass* plug = new plugclass(&ctx);                                \
+      plugclass* plug = new plugclass(&ctx,ff_None);                                \
       if (!plug) return 0;                                                  \
       return (int)plug->getInstance();                                      \
     }
