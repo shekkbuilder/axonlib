@@ -40,12 +40,16 @@
 // end of original header
 // =============================================================================
 
+
 /*
+NOTES:
+  - the custom memory allocator is currenly disabled due to a conflict with
+    picopng.h ( using stdlib malloc() )
+
 TODO:
-  - fragmentation level tests
-  - thread safety tests (disable the mutex and make the winapi calls directly)
-  - check if possible to use implementation with axMutex
-  - better error handling ?
+  - resolve the picopng conflict
+  - better error handling 
+  - fragmentation level tests  
     ============================================================================
 */
 
@@ -173,7 +177,7 @@ TODO:
   routines (malloc1.c)
 */
 
-#define AX_M_MAX_BUCKETS = 128;
+#define AX_M_MAX_BUCKETS 32
 
 unsigned char* buckets[AX_M_MAX_BUCKETS] = {0};
 unsigned int bucket2size[AX_M_MAX_BUCKETS] = {0};
@@ -209,13 +213,14 @@ static __axmalloc_inline void init_buckets()
 // axMalloc
 static __axmalloc_inline void* axMalloc (register unsigned int size)
 {
+  __builtin_printf("%d\n", size);
   if (size <= 0)
     return NULL;
   register unsigned char* rv;
   register unsigned int b;
   if (!bucket2size[0])
     init_buckets();
-  b = size2bucket(size);    
+  b = size2bucket(size);
   if (buckets[b])
   {
     rv = buckets[b];
@@ -232,15 +237,15 @@ static __axmalloc_inline void* axMalloc (register unsigned int size)
     rv = (unsigned char*)axMmap(size);
   #endif
   *(unsigned int*)rv = b;
-  rv += 4;
-  //return (void*)rv;
-  return malloc(size);
+  rv += 4;  
+  return (void*)rv;  
 }
 
 // axCalloc
 static __axmalloc_inline void* axCalloc (register const unsigned int n,
   register unsigned int size)
 {
+  //__builtin_printf("<< axCalloc\n");
   size *= n;
   if (size <= 0)
     return NULL;
@@ -258,6 +263,7 @@ static __axmalloc_inline void* axCalloc (register const unsigned int n,
 // axFree
 static __axmalloc_inline void axFree (void* _ptr)
 {
+  //__builtin_printf("<< axFree\n");
   if (_ptr)
   {
     register unsigned char* ptr = (unsigned char*)_ptr;
@@ -274,6 +280,7 @@ static __axmalloc_inline void axFree (void* _ptr)
 static __axmalloc_inline void* axRealloc (void* _ptr,
   register const unsigned int size)
 {
+  //__builtin_printf("<< axRealloc\n");
   // case null pointer
   if (_ptr == NULL)
     return axMalloc(size);
@@ -311,8 +318,8 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
 // enable local debug
 // -----------------------------------------------------------------------------
 #if defined (AX_DEBUG) && defined (AX_DEBUG_MEM)
-  #include "core/axDebug.h"
-  #include "core/axUtils.h"
+  #include "axDebug.h"
+  #include "axUtils.h"  
 
   #ifdef AX_NO_MALLOC
     #include "malloc.h"
@@ -346,7 +353,7 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
       else
         axStrcpy(_name, "axMalloc, ");
     #endif
-    // output cout / log
+    // output cout / log    
     _trace
     (
       "[" << axGetFileName(_file) << "|" << _line << "] " << _name <<

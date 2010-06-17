@@ -559,50 +559,45 @@ typedef axFormatLadspa axFormatImpl;
 //
 //----------------------------------------------------------------------
 
-  #define AX_CONTEXT_INIT(name) \
-    axContext ctx(0,0,0);
+#define AX_CONTEXT_INIT(name) \
+  axContext ctx(0,0,0);
 
-  //#define AX_CONTEXT_EXIT
+#ifdef AX_WIN32
+  static __thread HINSTANCE gInstance;
 
-    #ifdef AX_WIN32
-
-      static __thread HINSTANCE gInstance;
-      #define __AXDLLMAIN                                             \
-        extern "C"                                                    \
-        BOOL APIENTRY                                                 \
-        DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)   \
-        {                                                             \
-          gInstance = hModule;                                        \
-          return TRUE;                                                \
-        }
-    #else
-      #define __AXDLLMAIN
-    #endif
-
-  #define AX_ENTRYPOINT(plugclass)                                    \
-    __AXDLLMAIN                                                       \
-                                                                      \
-    __dllexport                                                       \
-    const LADSPA_Descriptor* ladspa_descriptor (unsigned long Index)  \
-    {                                                                 \
-      if (Index!=0) return NULL;                                      \
-      AX_CONTEXT_INIT(plugclass)                                      \
-      plugclass* plug = new plugclass(&ctx);                          \
-      LADSPA_Descriptor* descriptor = plug->getDescriptor();          \
-      return descriptor;                                              \
+  #define _AX_LADSPA_DLLMAIN \
+    __externc BOOL APIENTRY \
+    DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved) \
+    { \
+      trace("ladspa DllMain()"); \
+      gInstance = hModule; \
+      return TRUE; \
     }
 
-/*
-  #define MAKESTRING2(s) #s
-  #define MAKESTRING(s) MAKESTRING2(s)
-  #define MAKE_NAME(name) MAKESTRING(name) "_window"
+  __externc
+  {
 
-  #define AX_CONTEXT_INIT(name)                     \
-    HINSTANCE  instance = gInstance;                \
-    char*      winname  = (char*)MAKE_NAME(name);   \
-    AX_PTRCAST audio    = (AX_PTRCAST)audioMaster;  \
-    axContext ctx(instance,winname,audio);
-    */
+#else // AX_WIN32
+  #define _AX_LADSPA_DLLMAIN
+#endif
+
+#define AX_ENTRYPOINT(plugclass) \
+    _AX_LADSPA_DLLMAIN \
+    __externc __dllexport \
+    const LADSPA_Descriptor* ladspa_descriptor (unsigned long index) \
+    { \
+      trace("ladspa_descriptor( " << index << " )" ); \
+      if (index) \
+        return NULL; \
+      AX_CONTEXT_INIT(plugclass) \
+      plugclass* plug = new plugclass(&ctx); \
+      LADSPA_Descriptor* descriptor = plug->getDescriptor(); \
+      return descriptor; \
+    }
+
+#ifdef AX_WIN32
+  } // extern "C"
+#endif
 
 //----------------------------------------------------------------------
 #endif
