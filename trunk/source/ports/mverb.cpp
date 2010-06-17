@@ -66,7 +66,7 @@ class mverb_skin : public axSkin
         mKnobWidth        = 32;
         mKnobHeight       = 32;
         mKnobCount        = 129;
-        mKnobTextCol      = aCanvas->getColor(0,0,0);ed for the class, C++ u
+        mKnobTextCol      = aCanvas->getColor(0,0,0);//ed for the class, C++ u // huh? where did this come from?
         mKnobValCol       = aCanvas->getColor(255,255,255);
       }
 

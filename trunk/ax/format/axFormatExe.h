@@ -233,7 +233,7 @@ typedef axFormatExe axFormatImpl;
 int main(void)                              \
 {                                           \
   AX_CONTEXT_INIT(classname)                \
-  axFormatImpl* app = new classname(&ctx);  \
+  axFormatImpl* app = new classname(&ctx,ff_None);  \
   int ret = app->main(&ctx);                \
   AX_CONTEXT_EXIT                           \
   delete app;                               \
