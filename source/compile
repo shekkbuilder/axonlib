@@ -147,11 +147,11 @@ else
       if [ "$compiler" == "$mingw" ];
       then
         fmt_ext=".dll"
-        tgt="-mwindows -lmsimg32 -shared -nostartfiles"
+        tgt="-mwindows -lmsimg32 -shared"
       # ------------------------- case gcc
       else
         fmt_ext=".so"
-        tgt="-lX11 -lXrender -lpthread -shared -nostartfiles"
+        tgt="-lX11 -lXrender -lpthread -shared"
       fi
     fi
     # ------------------------- don't move to ../bin

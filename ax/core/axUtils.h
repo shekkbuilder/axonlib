@@ -22,11 +22,11 @@
 #ifndef axUtils_included
 #define axUtils_included
 
-#include "core/axDefines.h"
-#include "core/axStdlib.h"
-#include "core/axMalloc.h"
-#include "core/axMath.h"
-#include "core/axDebug.h"
+#include "axDefines.h"
+#include "axStdlib.h"
+#include "axMalloc.h"
+#include "axMath.h"
+#include "axDebug.h"
 #include "stdio.h" // fread, fseek, fopen
 #ifdef AX_WIN32
   #include <windows.h>

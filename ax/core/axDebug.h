@@ -70,7 +70,7 @@ inline const char* axGetFileName(const char* path)
   #endif
 
   // case: windows
-  #ifdef WIN32
+  #ifdef AX_WIN32
     /*
      * creates a winapi debugger window (slow)
     */
@@ -246,10 +246,10 @@ inline const char* axGetFileName(const char* path)
     #define wtrace(x) \
       { axDcout(x); if (axDlog) { axDfstream(x); } }
 
-  #endif // case: windows
+  #endif // AX_WIN32
 
-  // case: linux
-  #ifdef linux
+  
+  #ifdef AX_LINUX
     #define _trace(x) { _axDcout(x); if (axDlog) { _axDfstream(x); } }
     #define trace(x)  { axDcout(x); if (axDlog) { axDfstream(x); } }
     #define wtrace(x) { axDcout(x); if (axDlog) { axDfstream(x); } }
@@ -259,10 +259,9 @@ inline const char* axGetFileName(const char* path)
     inline void axDstdDestroy(void) {}
     inline void axDwinCreate(void) {}
     inline void axDwinDestroy(void) {}
-  #endif
+  #endif // AX_LINUX
 
-// case: no debug
-#else
+#else // !AX_DEBUG
   #define NDEBUG
   #define _trace(x) ((void)0)
   #define trace(x) ((void)0)

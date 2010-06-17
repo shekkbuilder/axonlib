@@ -24,7 +24,7 @@
 #define axRand_included
 //------------------------------------------------------------------------------
 
-#include "core/axDefines.h"
+#include "axDefines.h"
 
 #ifdef AX_HOT_INLINE_RAND
   #define __axrand_inline __hotinline

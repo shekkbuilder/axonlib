@@ -31,7 +31,7 @@
 
 #ifdef AX_DEBUG /* AX_DEBUG */
 
-  #include "core/axDebug.h"
+  #include "axDebug.h"
   
   /*
     axAssert()

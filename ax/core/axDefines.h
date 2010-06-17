@@ -320,6 +320,9 @@ typedef unsigned char         __may_alias uchar_a;
   #define __dllimport
 #endif
 
+// exernc
+#define __externc extern "C"
+
 // path
 #define AX_MAX_PATH 512
 
