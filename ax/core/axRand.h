@@ -54,7 +54,7 @@
 
 #ifdef __AX64__
   // 64bit untested
-  unsigned int _axrnd;
+  __thread unsigned int _axrnd;
   #define _AXRAND_ARCH \
     register unsigned long low, high; \
     register unsigned int  a, b; \
@@ -66,7 +66,7 @@
     a = _axrnd++;
 #endif
 #ifdef __AX32__
-  unsigned long long _axrnd;
+  __thread unsigned long long _axrnd;
   #define _AXRAND_ARCH \
     register unsigned long a, b; \
     if (!_axrnd) \

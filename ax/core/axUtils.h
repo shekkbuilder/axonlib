@@ -179,7 +179,7 @@ __axutils_inline float axSumDB(unsigned int n, const float* ar)
 // ------
 // todo: a bit more thread safety
 
-bool __AX_SSE3__, __AX_SSSE3__, __AX_FPU__, __AX_CMOV__,  __AX_SSE__,
+static __thread unsigned char __AX_SSE3__, __AX_SSSE3__, __AX_FPU__, __AX_CMOV__,  __AX_SSE__,
   __AX_SSE2__, __AX_SSE4A__, __AX_SSE5__, __AX_MMX__, __AX_MMXEXT__,
   __AX_3DNOW__, __AX_3DNOWEXT__;
 /**
@@ -308,7 +308,7 @@ inline unsigned int axCpuCaps(void)
 }
 
 // axCpuCapsString
-char cpustringbuf[256];
+static __thread char cpustringbuf[256];
 char* axCpuCapsString(void)
 {
   axCPUID();
