@@ -1,4 +1,7 @@
-#define NO_GUI
+#ifdef AX_FORMAT_LADSPA
+  #undef NO_GUI
+  #define NO_GUI
+#endif
 #define AX_ALPHA
 
 //----------
