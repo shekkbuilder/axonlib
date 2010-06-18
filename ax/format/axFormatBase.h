@@ -136,9 +136,10 @@ class axFormatBase : public axParameterListener
 
     //----------
 
-    //virtual void    appendProgram(axProgram* aProgram) {}
-    //virtual void    deletePrograms(void) {}
-    virtual int     getCurrentProgram(void){ return 0; }
+    virtual int     getCurrentProgram(void)
+      {
+        return 0;
+      }
 
     virtual void appendProgram(axProgram* aProgram)
       {

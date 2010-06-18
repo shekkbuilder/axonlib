@@ -66,4 +66,4 @@
 //----------------------------------------------------------------------
 
 //#include "../source/ports/sstillwell_eventhorizon.cpp"
-//#include "../source/ports/mverb.cpp"
+#include "../source/ports/mverb.cpp"
