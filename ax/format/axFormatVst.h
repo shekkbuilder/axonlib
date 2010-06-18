@@ -677,10 +677,9 @@ class axFormatVst : public axFormatBase
 
     virtual VstIntPtr dispatcher(VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
       {
-        VstIntPtr v = 0;
+        VstIntPtr v = 0;        
         switch (opcode)
         {
-
 
           // 00
           case effOpen:
@@ -894,7 +893,11 @@ class axFormatVst : public axFormatBase
               doIdleEditor();
             }
             break;
-
+            
+          // 22
+          case DECLARE_VST_DEPRECATED (effIdentify):
+            v = CCONST ('N', 'v', 'E', 'f');
+            break;
 
           // 23
           case effGetChunk:
@@ -1422,7 +1425,7 @@ class axFormatVst : public axFormatBase
           //default:
           //  trace("axFormatVst.dispatcher :: unknown dispatch code: " << opcode);
           //  break;
-
+          
         }
         return v;
       }
