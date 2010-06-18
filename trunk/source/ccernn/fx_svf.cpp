@@ -20,7 +20,7 @@ class myPlugin : public axFormat
 
   public:
 
-    myPlugin(axContext* aContext)
+    myPlugin(axContext* aContext, int aFlags)
     : axFormat(aContext)
       {
         describe("fx_svf","ccernn","axonlib example",0,AX_MAGIC+0x1006);

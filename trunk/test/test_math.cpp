@@ -99,7 +99,7 @@ float calc(int type, float n)
       case 22:  return fabs(n);
       case 23:  return axAbs(n);
       case 24:  return signbit(n);
-      case 25:  return axSignBit(n);      
+      case 25:  return axSignBit(n);
     }
     return 0;
   }
@@ -195,7 +195,7 @@ class myPlugin : public axFormat
 
   public:
 
-    myPlugin(axContext* aContext)
+    myPlugin(axContext* aContext, int aFlags)
     : axFormat(aContext)
       {
         w_Editor = NULL;

@@ -43,7 +43,7 @@ class myPlugin : public axFormat
 
   public:
 
-    myPlugin(axContext* aContext)
+    myPlugin(axContext* aContext, int aFlags)
     : axFormat(aContext)
       {
         BUFFER = new float[MAX_BUFSIZE];
