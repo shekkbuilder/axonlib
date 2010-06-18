@@ -20,6 +20,10 @@
 //----------------------------------------------------------------------
 /*
 
+it's a little hack-ish in here... an initial plugin instance is created
+to handle the ladspa descriptor, but it's not active or doing much.
+and then, this is used to create the real instances when the host asks
+for it..
 
 */
 //----------------------------------------------------------------------

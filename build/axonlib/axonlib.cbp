@@ -304,6 +304,7 @@
 		<Unit filename="../plugin.cpp" />
 		<Unit filename="../../doc/AUTHORS" />
 		<Unit filename="../../doc/FEATURES" />
+		<Unit filename="../../doc/HISTORY" />
 		<Unit filename="../../doc/OVERVIEW" />
 		<Unit filename="../../doc/TODO" />
 		<Unit filename="../../extern/Daubechies.h" />

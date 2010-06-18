@@ -27,7 +27,7 @@ class axDemo : public axFormat
     axBitmapLoader* knobloader;
   public:
 
-    axDemo(axContext* aContext)
+    axDemo(axContext* aContext, int aFormatFlags)
     : axFormat(aContext)
       {
         m_GuiInitialized = false;

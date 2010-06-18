@@ -39,7 +39,7 @@ class myPlugin : public axFormat
 
   public:
 
-    myPlugin(axContext* aContext)
+    myPlugin(axContext* aContext, int aFlags)
     : axFormat(aContext)
       {
         describe("fx_distortion","ccernn","axonlib example",2,AX_MAGIC+0x1003);

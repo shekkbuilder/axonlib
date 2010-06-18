@@ -9,14 +9,16 @@
 #include "core/axCompress.h"
 
 #define AX_ALPHA
+#define TEST_COMPRESSION
+#define NUMSHIFT    7
+#define BUFFERSIZE  (1024*1024*4)
+#define WIDTH       256
+#define HEIGHT      256
+#define FILENAME    "img/ccernn2.png"
 
-//#define TEST_COMPRESSION
-#define NUMSHIFT 0
-#define BUFFERSIZE (1024*1024*4)
-
-unsigned char cbuf[BUFFERSIZE];
-unsigned char ebuf[BUFFERSIZE];
-unsigned char tbuf[BUFFERSIZE];
+unsigned char buf1[BUFFERSIZE];
+unsigned char buf2[BUFFERSIZE];
+unsigned char buf3[BUFFERSIZE];
 
 //---------------------------------------------------------------------
 
@@ -28,61 +30,24 @@ class test_dmc : public axFormat
     wdgBitmap*      w_Bitmap;
     axBitmap*       m_Bitmap;
     axBitmapLoader  m_Png;
-    #ifdef TEST_COMPRESSION
-    axCompress      m_Dmc;
-    #endif
+//    #ifdef TEST_COMPRESSION
+//    axCompress      m_Dmc;
+//    #endif
 
-  //--------------------------------------------------
-  #ifdef TEST_COMPRESSION
-  private:
-    void fill_layer(char* buffer, int size, int layer, unsigned char value=0)
-      {
-        unsigned char* wb = (unsigned char*)buffer;
-        int n = size/4;
-        for (int i=0;i<n;i++) { wb[i*4+layer] = value; }
-      }
-    void shift_layers(char* buffer, int size, int shift)
-      {
-        unsigned char* wb = (unsigned char*)buffer;
-        int n = size/4;
-        if (shift>0)
-        {
-          for (int i=0;i<n;i++)
-          {
-            wb[i*4+0] <<= shift;
-            wb[i*4+1] <<= shift;
-            wb[i*4+2] <<= shift;
-            wb[i*4+3] <<= shift;
-          }
-        }
-        else
-        {
-          shift = -shift;
-          for (int i=0;i<n;i++)
-          {
-            wb[i*4+0] >>= shift;
-            wb[i*4+1] >>= shift;
-            wb[i*4+2] >>= shift;
-            wb[i*4+3] >>= shift;
-          }
-        }
-      }
-  #endif
   //--------------------------------------------------
 
   public:
 
-    test_dmc(axContext* aContext)
+    test_dmc(axContext* aContext, int aFlags)
     : axFormat(aContext)
       {
         w_Editor = NULL;
         describe("test_dmc","ccernn","axonlib example",0,AX_MAGIC+0x0000);
         setupAudio(2,2);
         //setupEditor(256,256);
-        setupEditor(456,108);
+        setupEditor(WIDTH,HEIGHT);
 
-        //int res = m_Png.decodeLoadPng("img/ccernn2.png");
-        int res = m_Png.decodeLoadPng("background.png");
+        int res = m_Png.decodeLoadPng(FILENAME);
         trace("decode = " << res);
         trace("width: "   << m_Png.getWidth());
         trace("height: "  << m_Png.getHeight());
@@ -90,19 +55,28 @@ class test_dmc : public axFormat
 
         //--------------------------------------------------
         #ifdef TEST_COMPRESSION
+        axCompress m_Dmc;
         char* img = (char*)m_Png.getImage();
         int size  = m_Png.getWidth() * m_Png.getHeight() * 4;
-        axMemcpy(tbuf,img,size);                      trace("original size: " << size);
-        //fill_layer((char*)tbuf,size,3,255);
-        shift_layers((char*)tbuf,size,-NUMSHIFT);
-        m_Dmc.split_layers((char*)tbuf,size);
-        m_Dmc.delta_encode((char*)tbuf,size);
-        int csize = m_Dmc.compress(tbuf,size,cbuf);   trace("compressed size: " << csize); // ccernn2.png = 101721, dmc = 98326, 92457 w/o alpha
-        axFileWrite("img/ccernn2.dmc",(char*)cbuf,csize);
-        int esize = m_Dmc.expand(cbuf,csize,ebuf);    trace("expanded size: " << esize);
-        m_Dmc.delta_decode((char*)ebuf,size);
-        m_Dmc.join_layers((char*)ebuf,size);
-        shift_layers((char*)ebuf,size,NUMSHIFT);
+
+        trace("original size: " << size);
+        axMemcpy(buf1,img,size);
+        //m_Dmc.fill_layer(   (char*)buf1,size,3,255);
+        m_Dmc.shift_layers( (char*)buf1,size,-NUMSHIFT);
+        m_Dmc.split_layers( (char*)buf1,size);
+        m_Dmc.delta_encode( (char*)buf1,size);
+        //int rle = m_Dmc.rle_encode(buf2,buf1,size);       trace("rle: " << rle);
+        int csize = m_Dmc.compress(buf3,buf1,size);        trace("compress: " << csize);
+
+//        axFileWrite("img/ccernn2.dmc",(char*)buf3,csize);
+
+        m_Dmc.expand(    buf2,buf3,csize);
+        //m_Dmc.rle_decode(buf3,buf2,rle);
+        axMemcpy(buf3,buf2,size);
+        m_Dmc.delta_decode((char*)buf3,size);
+        m_Dmc.join_layers( (char*)buf3,size);
+        m_Dmc.shift_layers( (char*)buf3,size,NUMSHIFT);
+
         #endif
         //--------------------------------------------------
 
@@ -127,16 +101,16 @@ class test_dmc : public axFormat
         //transferParameters();
 
         //m_Bitmap = editor->createBitmap(256,256,24);    // !!!!!
-        m_Bitmap = editor->createBitmap(456,108,24);    // !!!!!
+        m_Bitmap = editor->createBitmap(WIDTH,HEIGHT,24);    // !!!!!
 
         #ifdef TEST_COMPRESSION
-        //m_Bitmap->createBuffer((char*)tbuf);
-        m_Bitmap->createBuffer((char*)ebuf);
+        m_Bitmap->createBuffer((char*)buf3);
         #else
         m_Bitmap->createBuffer((char*)m_Png.getImage());
         #endif
         m_Bitmap->convertRgbaBgra();
         m_Bitmap->setBackground(255,255,255);
+        //m_Bitmap->setBackground(0,0,0);
         m_Bitmap->prepare();
 
         w_Bitmap->setBitmap(m_Bitmap);

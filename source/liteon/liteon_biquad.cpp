@@ -50,7 +50,7 @@ private:
 
 public:
   // constructor
-  myPlugin(axContext* aContext)
+  myPlugin(axContext* aContext, int aFlags)
   : axFormat(aContext)
   {
     describe("biquad_rbj", "liteon", "biquad_rbj", 0, AX_MAGIC+0x7000);

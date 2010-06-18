@@ -22,6 +22,19 @@
 
 //#include "../source/demo/axDemo.cpp"
 
+//#define AX_SCRIPT_STDLIB
+//#include "script/axScript.h"
+//#include "script/axScriptStdlib.h"
+//char* scr = (char*)"this is my script";
+//void test(void)
+//{
+//  axScript* script = new axScript();
+//  script->append_stdlib();
+//  script->compile(scr);
+//  script->execute(0);
+//  delete script;
+//}
+
 //----------------------------------------------------------------------
 // ccernn
 //----------------------------------------------------------------------
@@ -53,4 +66,4 @@
 //----------------------------------------------------------------------
 
 //#include "../source/ports/sstillwell_eventhorizon.cpp"
-#include "../source/ports/mverb.cpp"
+//#include "../source/ports/mverb.cpp"

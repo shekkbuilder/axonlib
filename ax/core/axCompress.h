@@ -20,9 +20,8 @@
 // Dynamic Markov Compression (DMC)
 // http://en.wikipedia.org/wiki/Dynamic_Markov_Compression
 // http://plg1.cs.uwaterloo.ca/~ftp/dmc/
-
-//#include <malloc.h>
-//#include <stdio.h>
+//
+// plus some other functions useful for rgba
 
 #include "core/axStdlib.h"
 
@@ -33,18 +32,8 @@
 #define dmc_threshold 8
 #define dmc_bigthresh 8
 
-//        threshold = 32;//2;
-//        bigthresh = 32;//2;
-
-//----------------------------------------------------------------------
-
-//struct dmc_header
-//{
-//  int type;
-//  int origsize;
-//  int compsize;
-//  char data[];
-//};
+// threshold = 32;//2;
+// bigthresh = 32;//2;
 
 //----------------------------------------------------------------------
 
@@ -100,14 +89,49 @@ class axCompress
 
     //--------------------------------------------------
     //
-    //
+    // (rgba) layers
     //
     //--------------------------------------------------
 
-    // buffer = rgba (uint32) buffer
-    // size in bytes
+    void fill_layer(char* buffer, int size, int layer, unsigned char value=0)
+      {
+        unsigned char* wb = (unsigned char*)buffer;
+        int n = size/4;
+        for (int i=0;i<n;i++) { wb[i*4+layer] = value; }
+      }
 
-    virtual void split_layers(char* buffer, int size)
+    //----------
+
+    void shift_layers(char* buffer, int size, int shift)
+      {
+        unsigned char* wb = (unsigned char*)buffer;
+        int n = size/4;
+        if (shift>0)
+        {
+          for (int i=0;i<n;i++)
+          {
+            wb[i*4+0] <<= shift;
+            wb[i*4+1] <<= shift;
+            wb[i*4+2] <<= shift;
+            wb[i*4+3] <<= shift;
+          }
+        }
+        else
+        {
+          shift = -shift;
+          for (int i=0;i<n;i++)
+          {
+            wb[i*4+0] >>= shift;
+            wb[i*4+1] >>= shift;
+            wb[i*4+2] >>= shift;
+            wb[i*4+3] >>= shift;
+          }
+        }
+      }
+
+    //----------
+
+    void split_layers(char* buffer, int size)
       {
         unsigned int*  rb = (unsigned int*)buffer;
         unsigned char* wb = (unsigned char*)axMalloc(size);
@@ -127,7 +151,7 @@ class axCompress
 
     //----------
 
-    virtual void join_layers(char* buffer, int size)
+    void join_layers(char* buffer, int size)
       {
         unsigned char* rb = (unsigned char*)buffer;
         unsigned int*  wb = (unsigned int*)axMalloc(size);
@@ -148,11 +172,11 @@ class axCompress
 
     //--------------------------------------------------
     //
-    //
+    // delta
     //
     //--------------------------------------------------
 
-    virtual void delta_encode(char* buffer, int size)
+    void delta_encode(char* buffer, int size)
       {
         char cur;
         char prev = 0;
@@ -165,7 +189,7 @@ class axCompress
         }
       }
 
-    virtual void delta_decode(char* buffer, int size)
+    void delta_decode(char* buffer, int size)
       {
         char cur;
         char prev = 0;
@@ -178,7 +202,188 @@ class axCompress
         }
       }
 
-    //TODO: rle
+    //--------------------------------------------------
+    //
+    // rle
+    //
+    //--------------------------------------------------
+
+    // TODO
+
+//	Description:  A Run-Length Encoding (RLE) Implementation.
+//	How it works:
+//		If there is a run of bytes, two bytes are output
+//		and then the next number of runs are encoded.
+//		Example:   abcddddd
+//		Encoding:  abcdd3	{regard '3' as a value.}
+//	Written by:   Gerald Tamayo
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//void copyright (void);
+//void rle_encode (FILE *in, FILE *out);
+//void rle_decode (FILE *in, FILE *out);
+
+//int main (int argc, char *argv[])
+//{
+//	FILE *in, *out;
+//
+//	if (argc < 3 || argc > 4){
+//		fprintf(stderr, "\n Run Length Encoding (RLE) implementation.\n"
+//			"\n Usage : gtrle inputfile outputfile [/d]");
+//		copyright();
+//		return 0;
+//	}
+//
+//	in = fopen(argv[1], "rb");
+//	if (!in) {
+//		fprintf(stderr, "\n Error opening input file!");
+//		copyright();
+//		return 0;
+//	}
+//	out = fopen(argv[2], "wb");
+//	if (!out) {
+//		fprintf(stderr, "\n Error opening output file!");
+//		copyright();
+//		return 0;
+//	}
+//
+//	if (argc == 4){
+//		if (!strcmp(argv[3], "/d") || !strcmp(argv[3], "/D")){
+//			fprintf(stderr, "\n Run-Length decoding...");
+//			rle_decode(in, out);
+//		}
+//		else {
+//			fprintf(stderr, "\n Error! Unknown: \"%s\"\n", argv[3]);
+//			return 0;
+//		}
+//	}
+//	else {
+//		fprintf(stderr, "\n Run-Length encoding...");
+//		rle_encode(in, out);
+//	}
+//	fprintf(stderr, "complete.\n");
+//
+//	if (in ) fclose(in);
+//	if (out) fclose(out);
+//	return 0;
+//}
+
+    //void rle_encode (FILE *in, FILE *out)
+    int rle_encode(unsigned char* out, unsigned char* in, int size)
+      {
+        int res = 0;
+        unsigned char* theend = in+size;
+        int c, prev, rle_cnt = 0;
+        // get first byte and assign it as the *previous* byte.
+        c = *in++;
+        //if ((c=getc(in)) != EOF)
+        //{
+          //putc((unsigned char) c, out);
+          *out++ = c;
+          prev = c;
+          res++;
+        //}
+        //else return;
+
+        //while ( (c=getc(in) ) != EOF)
+        while (in<theend)
+        {
+          c = *in++;
+          //trace(theend-in);
+          if (c != prev)
+          {
+            /* if there's a run, encode it. */
+            if (rle_cnt)
+            {
+              //putc((unsigned char) prev, out);
+              //putc((unsigned char) rle_cnt-1, out);
+              *out++ = prev;
+              *out++ = rle_cnt-1;
+              rle_cnt = 0;
+              res+=2;
+            }
+            /* then encode the new byte. */
+            //putc((unsigned char) c, out);
+            *out++ = c;
+            res++;
+            prev = c;
+          }
+          else
+          {
+            /* increment count; if count == 256, quickly encode it. */
+            if ((++rle_cnt) == 256)
+            {
+              /* the first byte of the 256 bytes. */
+              //putc((unsigned char) prev, out);
+              *out++ = prev;
+              /* the next 255 bytes. (rle_cnt-1) == 255. */
+              //putc((unsigned char) 255, out);
+              *out++ = 255;
+              rle_cnt = 0;
+              res+=2;
+            }
+          }
+        }
+        /* if there's a run, encode it. */
+        if (rle_cnt)
+        {
+          //putc((unsigned char) prev, out);
+          *out++ = prev;
+          *out++ = rle_cnt-1;
+          res += 2;
+          //putc((unsigned char) rle_cnt-1, out);
+        }
+        return res;
+      }
+
+    int rle_decode(unsigned char* out, unsigned char* in, int size)
+      {
+        int res = 0;
+        unsigned char* theend = in+size;
+        int c, prev, rle_cnt;
+        /* get first byte and assign it as the *previous* byte. */
+        //if ((c=getc(in)) != EOF) {
+          c = *in++;
+          prev = c;
+          //putc((unsigned char) c, out);
+          *out++ = c;
+          res++;
+        //}
+        //else return;
+
+        //while ((c=getc(in)) != EOF) {
+        while (in<theend)
+        {
+          c = *in++;
+          if (c == prev)
+          {
+            //putc((unsigned char) prev, out);
+            *out++ = prev;
+            res++;
+            /*	output the next "run" of bytes, as
+              stored in the rle_cnt variable.
+            */
+            //if ((rle_cnt = getc(in)) != EOF) {
+            rle_cnt = *in++;
+            while(rle_cnt--)
+            {
+              //putc((unsigned char) prev, out);
+              *out++ = prev;
+              res++;
+            }
+          }
+          else
+          {
+            //putc((unsigned char) c, out);
+            *out++ = c;
+            res++;
+            prev = c;
+          }
+        }
+        return res;
+      }
 
     //--------------------------------------------------
     //
@@ -186,7 +391,7 @@ class axCompress
     //
     //--------------------------------------------------
 
-    virtual int get_char(void)
+    int get_char(void)
       {
         //return getchar();
         unsigned char c;
@@ -200,7 +405,7 @@ class axCompress
 
     //----------
 
-    virtual void/*int*/ put_char(int c)
+    void/*int*/ put_char(int c)
       {
         //putchar(c);
         //if (wbufpos<wbufsize)
@@ -214,7 +419,7 @@ class axCompress
 
     //--------------------------------------------------
     //
-    //
+    // dmc (dynamic markov compression
     //
     //--------------------------------------------------
 
@@ -301,12 +506,8 @@ class axCompress
       }
 
     //--------------------------------------------------
-    //
-    //
-    //
-    //--------------------------------------------------
 
-    virtual int compress(unsigned char* inbuf, int insize, unsigned char* outbuf)
+    int compress(unsigned char* outbuf, unsigned char* inbuf, int insize)
       {
         rbuf     = inbuf;
         rbufsize = insize;
@@ -376,12 +577,8 @@ class axCompress
       }
 
     //--------------------------------------------------
-    //
-    //
-    //
-    //--------------------------------------------------
 
-    virtual int expand(unsigned char* inbuf, int insize, unsigned char* outbuf)
+    int expand(unsigned char* outbuf, unsigned char* inbuf, int insize)
       {
         rbuf     = inbuf;
         rbufsize = insize;
