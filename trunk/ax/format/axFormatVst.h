@@ -82,7 +82,7 @@ class axFormatVst : public axFormatBase
     char          mProductString[kVstMaxProductStrLen];
     int           mVendorVersion;
   //protected:
-    char          mProgramName[kVstMaxProgNameLen];
+    //char          mProgramName[kVstMaxProgNameLen];
     //int           mNumPrograms;
     VstInt32      mCurrentProgram;
     int           mPlayState;
@@ -94,13 +94,12 @@ class axFormatVst : public axFormatBase
 
   public:
 
-    virtual int    getPlayState(void)  { return mPlayState; }
-    virtual double getSamplePos(void)  { return mSamplePos; }
-    virtual double getSampleRate(void) { if (mSampleRate==0) updateSampleRate(); return mSampleRate; }
-    virtual double getBeatPos(void)    { return mBeatPos; }
-    virtual double getTempo(void)      { return mTempo; }
-
-    virtual int getCurrentProgram(void){ return mCurrentProgram; }
+    virtual int     getPlayState(void)      { return mPlayState; }
+    virtual double  getSamplePos(void)      { return mSamplePos; }
+    virtual double  getSampleRate(void)     { if (mSampleRate==0) updateSampleRate(); return mSampleRate; }
+    virtual double  getBeatPos(void)        { return mBeatPos; }
+    virtual double  getTempo(void)          { return mTempo; }
+    virtual int     getCurrentProgram(void) { return mCurrentProgram; }
 
   private:
 
@@ -701,7 +700,7 @@ class axFormatVst : public axFormatBase
           case effSetProgram:
 
             // set the current program
-            //trace("axFormatVst.dispatcher :: effSetProgram");
+            trace("axFormatVst.dispatcher :: effSetProgram " << (int)value);
             //if (value<numPrograms) setProgram((VstInt32)value);
 
             doPreProgram(mCurrentProgram);
@@ -728,7 +727,7 @@ class axFormatVst : public axFormatBase
           case effGetProgram:
 
             // return the index to the current program
-            //trace("axFormatVst.dispatcher :: effGetProgram");
+            trace("axFormatVst.dispatcher :: effGetProgram");
             //v = getProgram();
             v = mCurrentProgram;
             break;
@@ -738,7 +737,7 @@ class axFormatVst : public axFormatBase
 
             // stuff the name field of the current program with name.
             // Limited to kVstMaxProgNameLen.
-            //trace("axFormatVst.dispatcher :: effSetProgramName");
+            trace("axFormatVst.dispatcher :: effSetProgramName");
             //setProgramName((char*)ptr);
             //strncpy(mProgramName,(char*)ptr,kVstMaxProgNameLen);
             if (mPrograms.size() > 0)
@@ -752,7 +751,7 @@ class axFormatVst : public axFormatBase
 
             // stuff name with the name of the current program.
             // Limited to kVstMaxProgNameLen.
-            //trace("axFormatVst.dispatcher :: effGetProgramName");
+            trace("axFormatVst.dispatcher :: effGetProgramName");
             //getProgramName((char*)ptr);
 //            strncpy((char*)ptr,mProgramName,kVstMaxProgNameLen);
             if (mPrograms.size() > 0)
@@ -980,8 +979,11 @@ class axFormatVst : public axFormatBase
 
             //trace("axFormatVst.dispatcher :: effGetProgramNameIndexed");
             //v = getProgramNameIndexed ((VstInt32)value, index, (char*)ptr) ? 1 : 0;
+            //break;
+            trace("axFormatVst.dispatcher :: effGetProgramNameIndexed " << index);
+            strncpy( (char*)ptr, mPrograms[index]->getName().ptr(), kVstMaxProgNameLen );
+            v = 1;
             break;
-
 
           // 33
           case effGetInputProperties:

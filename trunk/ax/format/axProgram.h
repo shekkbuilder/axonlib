@@ -21,53 +21,33 @@
 class axProgram
 {
   private:
-    int       mNumVal;
-    //axString  mName;
     char      mName[33];
+    int       mNumVal;
     float*    mValues;
-    //bool      mDidAlloc;
 
   public:
 
     axProgram(axString aName, int aNumVal, float* aValues)
       {
-        //mName   = aName;//"default";
         axStrncpy(mName,aName.ptr(),32);
-        mNumVal = aNumVal;//0;
-        //mValues = aValues;//NULL;
+        mNumVal = aNumVal;
         mValues = (float*)axMalloc( aNumVal*sizeof(float) );
         axMemcpy(mValues,aValues,aNumVal*sizeof(float));
-        //trace("malloc: " << sizeof(aNumVal*sizeof(float)) );
-        //mDidAlloc = true;
-
-//          trace(mValues[0] << "," <<
-//                mValues[1] << "," <<
-//                mValues[2] << "," <<
-//                mValues[3] << "," <<
-//                mValues[4] << "," <<
-//                mValues[5] << "," <<
-//                mValues[6] << "," <<
-//                mValues[7] << "," <<
-//                mValues[8] );
-
       }
 
     axProgram(axString aName, int aNumVal)
       {
-        //mName   = aName;//"default";
         axStrncpy(mName,aName.ptr(),32);
-        mNumVal = aNumVal;//0;
-        mValues = (float*)axMalloc( aNumVal*sizeof(float) );//NULL;
-        //trace("malloc: " << sizeof(aNumVal*sizeof(float)) );
-        //mDidAlloc = true;
+        mNumVal = aNumVal;
+        mValues = (float*)axMalloc( aNumVal*sizeof(float) );
       }
 
     ~axProgram()
       {
-        if (/*mDidAlloc &&*/ mValues) axFree(mValues);
+        if (mValues) axFree(mValues);
       }
 
-    void      setName(axString aName)             { axStrncpy(mName,aName.ptr(),32);/*mName=aName;*/ }
+    void      setName(axString aName)             { axStrncpy(mName,aName.ptr(),32); }
     axString  getName(void)                       { return mName; }
     void      setValue(int aIndex, float aValue)  { mValues[aIndex]=aValue; }
     float     getValue(int aIndex)                { return mValues[aIndex]; }
