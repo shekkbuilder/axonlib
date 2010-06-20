@@ -37,7 +37,7 @@ typedef unsigned char byte;
 #include "core/axMath.h"
 
 // axSin, axCos, axTan run for a while, until their turn the landscape into
-// a plot that summarizes the extra dimesions of "string theory".. 
+// a plot that summarizes the extra dimesions of "string theory"..
 #define sin axSinf
 #define cos axCosf
 #define tan axTanf
@@ -189,7 +189,7 @@ class CVoxel
               *b     = (cc>>16);//(blue  * (cc>>16)) >> 8;
               *(b+1) = (cc>>16);//(green * (cc>>16)) >> 8;
               *(b+2) = (cc>>17);//(red   * (cc>>16)) >> 8;
-              *(b+3) = 0;//cc>>16;
+              *(b+3) = 255;//0;//cc>>16;
               cc += sc;
               b  -= 320 * 4;
               a--;

@@ -39,7 +39,7 @@ class myPlugin : public axFormat
 
   public:
 
-    myPlugin(axContext* aContext, int aFormatFlags))
+    myPlugin(axContext* aContext, int aFormatFlags)
     : axFormat(aContext)
       {
         m_GuiInitialized = false;
@@ -87,8 +87,8 @@ class myPlugin : public axFormat
           m_SkinLoader = new axBitmapLoader();
           m_SkinLoader->decodePng((unsigned char*)skin1,skin1_size);
           m_KnobLoader = new axBitmapLoader();
-          //m_KnobLoader->decodePng((unsigned char*)knob1,knob1_size);
-          m_KnobLoader->decodeLoadPng("background.png");
+          m_KnobLoader->decodePng((unsigned char*)knob1,knob1_size);
+          //m_KnobLoader->decodeLoadPng("background.png");
           m_GuiInitialized = true;
         }
         axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);

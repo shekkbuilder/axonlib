@@ -1,4 +1,4 @@
-
+#define NO_GUI
 #include "format/axFormat.h"
 
 float prog0 = { 0.0 };

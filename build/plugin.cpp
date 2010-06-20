@@ -20,7 +20,7 @@
 //#include "../test/test_render.cpp"
 //#include "../test/test_skin.cpp"
 
-//#include "../source/demo/axDemo.cpp"
+#include "../source/demo/axDemo.cpp"
 
 //#define AX_SCRIPT_STDLIB
 //#include "script/axScript.h"
@@ -66,4 +66,4 @@
 //----------------------------------------------------------------------
 
 //#include "../source/ports/sstillwell_eventhorizon.cpp"
-#include "../source/ports/mverb.cpp"
+//#include "../source/ports/mverb.cpp"

@@ -19,7 +19,7 @@ class myPlugin : public axFormat
 
   public:
 
-    myPlugin(axContext* aContext, int aFormatFlags))
+    myPlugin(axContext* aContext, int aFormatFlags)
     : axFormat(aContext)
       {
         m_Gain = 0;

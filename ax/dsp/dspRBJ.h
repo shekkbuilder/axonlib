@@ -121,7 +121,7 @@ class dspRBJ
       seltype = type;
 
       // check if filter type out of range
-      if (seltype < 0 || seltype > 7)
+      if (/*seltype < 0 ||*/ seltype > 7) // seltype = unsigned
       {
         seltype = 0;
       }

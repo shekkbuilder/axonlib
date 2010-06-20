@@ -1,14 +1,15 @@
 #!/bin/bash
 
-./compileall ccernn -win32
-./compileall demo -win32
-./compileall liteon -win32
-./compileall ports -win32
-./compileall test -win32
+./compileall ccernn -win32 -vst
+./compileall demo -win32 -vst
+./compileall liteon -win32 -vst
+./compileall ports -win32 -vst
+./compileall test -win32 -vst
 
 ./compile demo/axDemo.cpp -win32 -exe
 ./compile ccernn/fx_grains.cpp -win32 -exe
 ./compile ccernn/fx_tempodelay.cpp -win32 -exe
+./compile ports/mverb.cpp -exe
 ./compile test/test_gain_gui.cpp -win32 -exe
 ./compile test/test_gain_gui_skin.cpp -win32 -exe
 
