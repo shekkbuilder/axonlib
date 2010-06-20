@@ -1,4 +1,4 @@
-
+#define NO_GUI
 #include "format/axFormat.h"
 #include "par/parFloat.h"
 #include "par/parInteger.h"

@@ -676,7 +676,7 @@ class axFormatVst : public axFormatBase
 
     virtual VstIntPtr dispatcher(VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
       {
-        VstIntPtr v = 0;        
+        VstIntPtr v = 0;
         switch (opcode)
         {
 
@@ -700,7 +700,7 @@ class axFormatVst : public axFormatBase
           case effSetProgram:
 
             // set the current program
-            trace("axFormatVst.dispatcher :: effSetProgram " << (int)value);
+            //trace("axFormatVst.dispatcher :: effSetProgram " << (int)value);
             //if (value<numPrograms) setProgram((VstInt32)value);
 
             doPreProgram(mCurrentProgram);
@@ -727,7 +727,7 @@ class axFormatVst : public axFormatBase
           case effGetProgram:
 
             // return the index to the current program
-            trace("axFormatVst.dispatcher :: effGetProgram");
+            //trace("axFormatVst.dispatcher :: effGetProgram");
             //v = getProgram();
             v = mCurrentProgram;
             break;
@@ -737,7 +737,7 @@ class axFormatVst : public axFormatBase
 
             // stuff the name field of the current program with name.
             // Limited to kVstMaxProgNameLen.
-            trace("axFormatVst.dispatcher :: effSetProgramName");
+            //trace("axFormatVst.dispatcher :: effSetProgramName");
             //setProgramName((char*)ptr);
             //strncpy(mProgramName,(char*)ptr,kVstMaxProgNameLen);
             if (mPrograms.size() > 0)
@@ -751,7 +751,7 @@ class axFormatVst : public axFormatBase
 
             // stuff name with the name of the current program.
             // Limited to kVstMaxProgNameLen.
-            trace("axFormatVst.dispatcher :: effGetProgramName");
+            //trace("axFormatVst.dispatcher :: effGetProgramName");
             //getProgramName((char*)ptr);
 //            strncpy((char*)ptr,mProgramName,kVstMaxProgNameLen);
             if (mPrograms.size() > 0)
@@ -892,7 +892,7 @@ class axFormatVst : public axFormatBase
               doIdleEditor();
             }
             break;
-            
+
           // 22
           case DECLARE_VST_DEPRECATED (effIdentify):
             v = CCONST ('N', 'v', 'E', 'f');
@@ -980,9 +980,11 @@ class axFormatVst : public axFormatBase
             //trace("axFormatVst.dispatcher :: effGetProgramNameIndexed");
             //v = getProgramNameIndexed ((VstInt32)value, index, (char*)ptr) ? 1 : 0;
             //break;
-            trace("axFormatVst.dispatcher :: effGetProgramNameIndexed " << index);
-            strncpy( (char*)ptr, mPrograms[index]->getName().ptr(), kVstMaxProgNameLen );
-            v = 1;
+            if (index<mPrograms.size())
+            {
+              strncpy( (char*)ptr, mPrograms[index]->getName().ptr(), kVstMaxProgNameLen );
+              v = 1;
+            }
             break;
 
           // 33
@@ -1427,7 +1429,7 @@ class axFormatVst : public axFormatBase
           //default:
           //  trace("axFormatVst.dispatcher :: unknown dispatch code: " << opcode);
           //  break;
-          
+
         }
         return v;
       }
@@ -1660,10 +1662,24 @@ typedef axFormatVst axFormatImpl;
     AX_PTRCAST audio = (AX_PTRCAST)audioMaster;     \
     axContext ctx(display,window,audio);
 
-/*
+  /*
   #define AX_CONTEXT_EXIT                           \
     XCloseDisplay(display);
-*/
+  */
+
+  #ifdef NO_GUI
+
+  #define AX_ENTRYPOINT(plugclass)                  \
+    AEffect* main(audioMasterCallback audioMaster)  \
+    {                                               \
+      AX_CONTEXT_INIT(plugclass)                    \
+      plugclass* plug = new plugclass(&ctx,ff_None);\
+      if (!plug) return 0;                          \
+      AEffect* ae = plug->getInstance();            \
+      return ae;                                    \
+    }
+
+  #else
 
   #define AX_ENTRYPOINT(plugclass)                  \
     AEffect* main(audioMasterCallback audioMaster)  \
@@ -1675,6 +1691,8 @@ typedef axFormatVst axFormatImpl;
       AEffect* ae = plug->getInstance();            \
       return ae;                                    \
     }
+
+  #endif //NO_GUI
 
 #endif
 
@@ -1738,7 +1756,7 @@ typedef axFormatVst axFormatImpl;
     int main(int audioMaster, char** empty)                                 \
     {                                                                       \
       AX_CONTEXT_INIT(plugclass)                                            \
-      plugclass* plug = new plugclass(&ctx,ff_None);                                \
+      plugclass* plug = new plugclass(&ctx,ff_None);                        \
       if (!plug) return 0;                                                  \
       return (int)plug->getInstance();                                      \
     }

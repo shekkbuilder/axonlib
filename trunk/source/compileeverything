@@ -1,14 +1,15 @@
 #!/bin/bash
 
-./compileall ccernn
-./compileall demo
-./compileall liteon
-./compileall ports
-./compileall test
+./compileall ccernn -vst
+./compileall demo -vst
+./compileall liteon -vst
+./compileall ports -vst
+./compileall test -vst
 
 ./compile demo/axDemo.cpp -exe
 ./compile ccernn/fx_grains.cpp -exe
 ./compile ccernn/fx_tempodelay.cpp -exe
+./compile ports/mverb.cpp -exe
 ./compile test/test_gain_gui.cpp -exe
 ./compile test/test_gain_gui_skin.cpp -exe
 
