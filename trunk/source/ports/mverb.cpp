@@ -1,3 +1,8 @@
+/*
+  axonlib port of mverb (by martin eastwood)
+  see 'extern/mverb/MVerb.h' for details and license (gpl)!
+*/
+
 #define AX_ALPHA
 
 //----------
