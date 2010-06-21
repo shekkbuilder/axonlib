@@ -1,7 +1,3 @@
-#ifdef AX_FORMAT_LADSPA
-  #undef NO_GUI
-  #define NO_GUI
-#endif
 #define AX_ALPHA
 
 //----------
@@ -11,7 +7,7 @@
 #include <memory.h>
 #include "../../extern/mverb/MVerb.h"
 
-//#ifndef NO_GUI
+//#ifndef AX_NOGUI
 //  #include "gui/axEditor.h"
 //  #include "gui/axBitmapLoader.h"
 //  #include "skins/axSkinDef.h"
@@ -36,7 +32,7 @@ float prog5[] = { 0.5, 0.5, 0.5, 0.5, 0.5, 1.0, 0.5, 0.5,  0.75 }; // Halves
 // skin
 //
 //----------------------------------------------------------------------
-#ifndef NO_GUI
+#ifndef AX_NOGUI
 
   #include "gui/axEditor.h"
   #include "gui/axBitmapLoader.h"
@@ -126,7 +122,7 @@ class myPlugin : public axFormat
 {
   private:
     MVerb<float>    em_verb;
-  #ifndef NO_GUI
+  #ifndef AX_NOGUI
   private:
     bool            m_GuiInitialized;
     axEditor*       m_Editor;
@@ -141,9 +137,9 @@ class myPlugin : public axFormat
     myPlugin(axContext* aContext, int aFormatFlags)
     : axFormat(aContext,aFormatFlags)
       {
-        describe("mverb","martin eastwood","axonlib port",0,AX_MAGIC+0x0000);
+        describe("mverb","martin eastwood","mverb",0,AX_MAGIC+0x0000);
         setupAudio(2,2);
-        #ifndef NO_GUI
+        #ifndef AX_NOGUI
           m_GuiInitialized = false;
           setupEditor(456,108);
         #endif //gui
@@ -167,7 +163,7 @@ class myPlugin : public axFormat
 
     virtual ~myPlugin()
       {
-        #ifndef NO_GUI
+        #ifndef AX_NOGUI
         if (m_GuiInitialized)
         {
           delete m_BackLoader;
@@ -211,7 +207,7 @@ class myPlugin : public axFormat
         return true;
       }
 
-#ifndef NO_GUI
+#ifndef AX_NOGUI
 
     virtual axWindow* doOpenEditor(axContext* aContext)
       {

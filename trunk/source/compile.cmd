@@ -42,6 +42,7 @@ set linker=-fstack-check -fdata-sections -ffunction-sections -Wl,-gc-sections -s
 :: default values
 set dstatus=OFF
 set gccdstatus=OFF
+set noguisx=
 set nmv=
 set dbg=
 set res=
@@ -57,6 +58,7 @@ set ext_p5=
 set ext_p6=
 set ext_p7=
 set ext_p8=
+set ext_p9=
 
 :: check for file input
 if [%1]==[] goto syntax
@@ -79,14 +81,15 @@ if not "%infile:~-4%"=="%srcext%" goto nocpp
 if not exist %axpath% goto noax
 
 :: check for additional params
-if not [%2]==[] (if not [%2]==[-v] (if not [%2]==[-d] (if not [%2]==[-g] (if not [%2]==[-ladspa] (if not [%2]==[-vst] (if not [%2]==[-exe] (if not [%2]==[-ts] set ext_p2= %2)))))))
-if not [%3]==[] (if not [%3]==[-v] (if not [%3]==[-d] (if not [%3]==[-g] (if not [%3]==[-ladspa] (if not [%3]==[-vst] (if not [%3]==[-exe] (if not [%3]==[-ts] set ext_p3= %3)))))))
-if not [%4]==[] (if not [%4]==[-v] (if not [%4]==[-d] (if not [%4]==[-g] (if not [%4]==[-ladspa] (if not [%4]==[-vst] (if not [%4]==[-exe] (if not [%4]==[-ts] set ext_p4= %4)))))))
-if not [%5]==[] (if not [%5]==[-v] (if not [%5]==[-d] (if not [%5]==[-g] (if not [%5]==[-ladspa] (if not [%5]==[-vst] (if not [%5]==[-exe] (if not [%5]==[-ts] set ext_p5= %5)))))))
-if not [%6]==[] (if not [%6]==[-v] (if not [%6]==[-d] (if not [%6]==[-g] (if not [%6]==[-ladspa] (if not [%6]==[-vst] (if not [%6]==[-exe] (if not [%6]==[-ts] set ext_p6= %6)))))))
-if not [%7]==[] (if not [%7]==[-v] (if not [%7]==[-d] (if not [%7]==[-g] (if not [%7]==[-ladspa] (if not [%7]==[-vst] (if not [%7]==[-exe] (if not [%7]==[-ts] set ext_p7= %7)))))))
-if not [%8]==[] (if not [%8]==[-v] (if not [%8]==[-d] (if not [%8]==[-g] (if not [%8]==[-ladspa] (if not [%8]==[-vst] (if not [%8]==[-exe] (if not [%8]==[-ts] set ext_p8= %8)))))))
-set ext_params=%ext_p2%%ext_p3%%ext_p4%%ext_p5%%ext_p6%%ext_p7%%ext_p8%
+if not [%2]==[] (if not [%2]==[-v] (if not [%2]==[-d] (if not [%2]==[-g] (if not [%2]==[-ladspa] (if not [%2]==[-vst] (if not [%2]==[-exe] (if not [%2]==[-ts] (if not [%2]==[-nogui] set ext_p2= %2))))))))
+if not [%3]==[] (if not [%3]==[-v] (if not [%3]==[-d] (if not [%3]==[-g] (if not [%3]==[-ladspa] (if not [%3]==[-vst] (if not [%3]==[-exe] (if not [%3]==[-ts] (if not [%3]==[-nogui] set ext_p3= %3))))))))
+if not [%4]==[] (if not [%4]==[-v] (if not [%4]==[-d] (if not [%4]==[-g] (if not [%4]==[-ladspa] (if not [%4]==[-vst] (if not [%4]==[-exe] (if not [%4]==[-ts] (if not [%4]==[-nogui] set ext_p4= %4))))))))
+if not [%5]==[] (if not [%5]==[-v] (if not [%5]==[-d] (if not [%5]==[-g] (if not [%5]==[-ladspa] (if not [%5]==[-vst] (if not [%5]==[-exe] (if not [%5]==[-ts] (if not [%5]==[-nogui] set ext_p5= %5))))))))
+if not [%6]==[] (if not [%6]==[-v] (if not [%6]==[-d] (if not [%6]==[-g] (if not [%6]==[-ladspa] (if not [%6]==[-vst] (if not [%6]==[-exe] (if not [%6]==[-ts] (if not [%6]==[-nogui] set ext_p6= %6))))))))
+if not [%7]==[] (if not [%7]==[-v] (if not [%7]==[-d] (if not [%7]==[-g] (if not [%7]==[-ladspa] (if not [%7]==[-vst] (if not [%7]==[-exe] (if not [%7]==[-ts] (if not [%7]==[-nogui] set ext_p7= %7))))))))
+if not [%8]==[] (if not [%8]==[-v] (if not [%8]==[-d] (if not [%8]==[-g] (if not [%8]==[-ladspa] (if not [%8]==[-vst] (if not [%8]==[-exe] (if not [%8]==[-ts] (if not [%8]==[-nogui] set ext_p8= %8))))))))
+if not [%9]==[] (if not [%9]==[-v] (if not [%9]==[-d] (if not [%9]==[-g] (if not [%9]==[-ladspa] (if not [%9]==[-vst] (if not [%9]==[-exe] (if not [%9]==[-ts] (if not [%9]==[-nogui] set ext_p9= %9))))))))
+set ext_params=%ext_p2%%ext_p3%%ext_p4%%ext_p5%%ext_p6%%ext_p7%%ext_p8%%ext_p9%
 
 :: check for 'not move'
 if [%2]==[-nmv] set nmv=yes
@@ -95,6 +98,18 @@ if [%4]==[-nmv] set nmv=yes
 if [%5]==[-nmv] set nmv=yes
 if [%6]==[-nmv] set nmv=yes
 if [%7]==[-nmv] set nmv=yes
+if [%8]==[-nmv] set nmv=yes
+if [%9]==[-nmv] set nmv=yes
+
+if [%2]==[-nogui] set nogui=yes
+if [%3]==[-nogui] set nogui=yes
+if [%4]==[-nogui] set nogui=yes
+if [%5]==[-nogui] set nogui=yes
+if [%6]==[-nogui] set nogui=yes
+if [%7]==[-nogui] set nogui=yes
+if [%8]==[-nogui] set nogui=yes
+if [%9]==[-nogui] set nogui=yes
+if [%nogui%]==[yes] set tgtlib=-DAX_NOGUI -mwindows && set noguisx=-nogui
 
 :: check for verbose
 if [%2]==[-v] set v=yes
@@ -103,6 +118,8 @@ if [%4]==[-v] set v=yes
 if [%5]==[-v] set v=yes
 if [%6]==[-v] set v=yes
 if [%7]==[-v] set v=yes
+if [%8]==[-v] set v=yes
+if [%9]==[-v] set v=yes
 
 :: check for gcc debug mode
 if [%2]==[-ts] set usets=yes
@@ -111,6 +128,8 @@ if [%4]==[-ts] set usets=yes
 if [%5]==[-ts] set usets=yes
 if [%6]==[-ts] set usets=yes
 if [%7]==[-ts] set usets=yes
+if [%8]==[-ts] set usets=yes
+if [%9]==[-ts] set usets=yes
 
 :: check for lib debug mode
 if [%2]==[-d] goto setlibdebug
@@ -119,6 +138,8 @@ if [%4]==[-d] goto setlibdebug
 if [%5]==[-d] goto setlibdebug
 if [%6]==[-d] goto setlibdebug
 if [%7]==[-d] goto setlibdebug
+if [%8]==[-d] goto setlibdebug
+if [%9]==[-d] goto setlibdebug
 
 :getgccdebug
 :: check for gcc debug mode
@@ -128,6 +149,8 @@ if [%4]==[-g] goto setgccdebug
 if [%5]==[-g] goto setgccdebug
 if [%6]==[-g] goto setgccdebug
 if [%7]==[-g] goto setgccdebug
+if [%8]==[-g] goto setgccdebug
+if [%9]==[-g] goto setgccdebug
 
 :: get the tgt format
 :getformat
@@ -137,6 +160,8 @@ if [%4]==[-ladspa] goto ladspatarget
 if [%5]==[-ladspa] goto ladspatarget
 if [%6]==[-ladspa] goto ladspatarget
 if [%7]==[-ladspa] goto ladspatarget
+if [%8]==[-ladspa] goto ladspatarget
+if [%9]==[-ladspa] goto ladspatarget
 
 if [%2]==[-vst] goto vsttarget
 if [%3]==[-vst] goto vsttarget
@@ -144,6 +169,8 @@ if [%4]==[-vst] goto vsttarget
 if [%5]==[-vst] goto vsttarget
 if [%6]==[-vst] goto vsttarget
 if [%7]==[-vst] goto vsttarget
+if [%8]==[-vst] goto vsttarget
+if [%9]==[-vst] goto vsttarget
 
 if [%2]==[-exe] goto exetarget
 if [%3]==[-exe] goto exetarget
@@ -151,6 +178,8 @@ if [%4]==[-exe] goto exetarget
 if [%5]==[-exe] goto exetarget
 if [%6]==[-exe] goto exetarget
 if [%7]==[-exe] goto exetarget
+if [%8]==[-exe] goto exetarget
+if [%9]==[-exe] goto exetarget
 goto :exetarget
 
 :: set lib debug
@@ -209,11 +238,12 @@ echo.
 echo ---------------------------------------------------------------------------
 echo * axonlib compile script for windows
 echo.
-echo usage: compile.cmd [file.cpp] [-h] [format] [-nmv] [-d] [-g] [...]
+echo usage: compile.cmd [file.cpp] [-h] [format] [-nmv] [-nogui] [-d] [-g] [...]
 echo  -exe : create an executable (default)
 echo  -vst : create a vst dll
 echo  -ladspa : create a ladspa dll
 echo  -nmv : do not move result to ..\bin
+echo  -nogui : compile without gui
 echo  -ts : add time stamp to name e.g. plugin-vst-20153569.dll
 echo  -d : enable library debug mode
 echo  -g : enable gcc debug mode (-gstabs)
@@ -245,7 +275,7 @@ if not [%usets%]==yes set td1=
 :: set target
 :settarget
 call set target=%%infile:%srcext%=%%
-set target=%target%%suffix%%td1%%ext%
+set target=%target%%suffix%%noguisx%%td1%%ext%
 set cmdpath=%~p0
 
 :: delete old target
@@ -253,10 +283,13 @@ if exist %target% del %target%
 
 :: echo settings
 echo.
+For /F "Tokens=*" %%I in ('g++ -dumpversion') Do set gccversion=%%I
 echo * compiling windows binary for '%infile%'...
+if not [%v%]==[] echo * using gcc version: %gccversion%
 if not [%v%]==[] echo * binary format is:%libfmt% %ext%
 if not [%v%]==[] echo * lib debug is: %dstatus%
 if not [%v%]==[] echo * gcc debug is: %gccdstatus%
+if not [%v%]==[] if "%noguisx%" == "-nogui" echo * gui is: OFF
 if not [%v%]==[] if exist %axpath% echo * found axonlib path '%axpath%'
 if not [%v%]==[] if "%libfmt%" == " VST" echo * found vst sdk path '%vstpath%'
 if not [%v%]==[] if "%libfmt%" == " LADSPA" echo * found ladpsa sdk path '%ladspapath%'

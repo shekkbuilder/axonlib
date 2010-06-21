@@ -183,7 +183,7 @@
   \endcode 
 
   notes: <br>
-  the extra params for compile scripts are custom and not hardcoded in the scripts, so anything that is not in the (-h) help screen will be passed to gcc. mostly useful for definitions e.g. -DNO_GUI, but will not work to override the target output, for example "-o newfile_name"
+  the extra params for compile scripts are custom and not hardcoded in the scripts, so anything that is not in the (-h) help screen will be passed to gcc. mostly useful for definitions e.g. -DSOME_DEF, but will not work to override the target output, for example "-o newfile_name"
 
 */
 

@@ -55,6 +55,12 @@
   #define AX_FORMAT_LIB
 #endif
 
+/* automatic -nogui for ladspa */
+#ifdef AX_FORMAT_LADSPA
+  #undef AX_NOGUI
+  #define AX_NOGUI
+#endif
+
 /* enable 'full' debug mode */ 
 #if defined AX_DEBUG_FULL && defined AX_DEBUG
   #undef  AX_DEBUG

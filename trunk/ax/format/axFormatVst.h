@@ -1667,7 +1667,7 @@ typedef axFormatVst axFormatImpl;
     XCloseDisplay(display);
   */
 
-  #ifdef NO_GUI
+  #ifdef AX_NOGUI
 
   #define AX_ENTRYPOINT(plugclass)                  \
     AEffect* main(audioMasterCallback audioMaster)  \
@@ -1692,7 +1692,7 @@ typedef axFormatVst axFormatImpl;
       return ae;                                    \
     }
 
-  #endif //NO_GUI
+  #endif //AX_NOGUI
 
 #endif
 
