@@ -1,8 +1,10 @@
 VERSION HISTORY
 ================
 
-v0.1.1 - 18062010
+v0.1.1(pre) - 210610
 + ladspa: added support for ladspa (win32 & linux)
 + compile: added timestamp option (-ts) and extra parameters 
 * vst: fixed support for older vst hosts
-* ?
+* vst: fixed blank presest in energyxt
+* vst: fixed crash if no programs  
++ extern/mverb: added open source reverb (GPL)

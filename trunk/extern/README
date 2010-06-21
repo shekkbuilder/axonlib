@@ -10,28 +10,28 @@ LIST OF INCLUDED EXTERNAL LIBRARIES:
   - lib: Daubechies D4 wavelet transform
   - author: unknown
   - license: unknown
-
 * ladspa.h
   - lib: Linux Audio Developer's Simple Plugin API 
   - authors: Richard W.E. Furse et al
   - license: LGPL
-
 * mayer_fft.h
   - lib: FFT and FHT routines
   - authors: Ron Mayer
   - license: GPL or public domain
-
 * mtrand.h
   - lib: Mersenne Twister random number generator
   - authors: Makoto Matsumoto, Richard J. Wagner et al
   - license: new BSD
-
 * picopng.h
   - lib: PNG image decoder
   - author: Lode Vandevenne et al
   - license: public domain
-
 * stb_truetype.h
   - lib: TrueType font processor
   - author: Sean Barrett et al
   - license: public domain
+* mverb/*
+  - lib: Reverb engine
+  - author: Martin Eastwood
+  - license: GPL
+
