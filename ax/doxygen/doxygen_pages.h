@@ -41,6 +41,7 @@
   - \subpage examples
   - \subpage compile
   - \subpage debug
+  - \subpage math
   - \subpage bin2h
   - \subpage screenshots  
   - \subpage license
@@ -176,8 +177,13 @@
   // to enable debug
   ./compile ./myplug.cpp -d 
   // verbose output
-  ./compile ./myplug.cpp -v
+  ./compile ./myplug.cpp -v  
+  // pass definition
+  ./compile ./myplug.cpp -DSOME_DEF
   \endcode 
+
+  notes: <br>
+  the extra params for compile scripts are custom and not hardcoded in the scripts, so anything that is not in the (-h) help screen will be passed to gcc. mostly useful for definitions e.g. -DNO_GUI, but will not work to override the target output, for example "-o newfile_name"
 
 */
 
@@ -195,6 +201,33 @@
  see axDebug.h for more info on syntax and examples. 
 
  */
+
+//----------------------------------------------------------------------
+//
+// MATH
+//
+//----------------------------------------------------------------------
+
+/**
+ \page math math
+ 
+ <b>info on the math functions that are part of the library</b>
+ <br>
+ 
+ notes: <br>
+  - look at the description for each method and see if it has limited input ranges.
+    e.g. axSin() but not axSinf() <br>
+  - as much as the functions are faster than the ones in math.h, its possible
+    that they will break the code, due to optimization flags or compiler bugs. 
+    we encourage the use of the local methods, but if something does not work 
+    well try using the math.h alternative. <br>
+  - some of the methods will not work for x64 or little endian systems
+  
+  <br>
+  see axMath.h for more info on syntax and examples.
+  
+ */
+
 
 //----------------------------------------------------------------------
 //
