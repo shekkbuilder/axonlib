@@ -52,14 +52,15 @@ function show_help
   echo "* axonlib compile script for linux"
   echo ""
   echo "usage:"
-  echo "./compile [file.cpp] [-h] [-linux or -win32] [format] [-nmv] [-d] [-v] [...]"
+  echo "./compile [file.cpp] [-h] [-linux or -win32] [format] [-nogui] [-nmv] [-d] [-v] [...]"
   echo ""  
   echo "-linux : target linux (default)"
   echo "-win32 : target windows using mingw"
   echo "-exe : create an executable (default)"
   echo "-ladspa : create a ladspa library"
-  echo "-vst : create a vst library"
-  echo "-nmv : do not move result to ../bin" 
+  echo "-vst : create a vst library"   
+  echo "-nogui : compile without gui"
+  echo "-nmv : do not move result to ../bin"
   echo "-ts : add time stamp to name e.g. plugin-vst-20153569.so" 
   echo "-d : enable library debug mode"
   echo "-g : enable gcc debug mode (-gstabs)"  
@@ -107,6 +108,8 @@ else
   v="no"
   suffix=""
   ts=""
+  nogui=""
+  noguisx=""
     
   # ------------------------- get timestamp
   if [ "$2" == "-ts" ] || [ "$3" == "-ts" ] || [ "$4" == "-ts" ] || [ "$5" == "-ts" ] || [ "$6" == "-ts" ] || [ "$7" == "-ts" ] || [ "$8" == "-ts" ]
@@ -119,37 +122,49 @@ else
   
   # ------------------------- check for extra paramers
   ext_params=""
-  if [ "$2" != "-linux" ] && [ "$2" != "-win32" ] && [ "$2" != "-exe" ] && [ "$2" != "-ladspa" ] && [ "$2" != "-vst" ] && [ "$2" != "-nmv" ] && [ "$2" != "-d" ] && [ "$2" != "-g" ] && [ "$2" != "-v" ] && [ "$2" != "-ts" ];
+  if [ "$2" != "-linux" ] && [ "$2" != "-win32" ] && [ "$2" != "-exe" ] && [ "$2" != "-ladspa" ] && [ "$2" != "-vst" ] && [ "$2" != "-nmv" ] && [ "$2" != "-d" ] && [ "$2" != "-g" ] && [ "$2" != "-v" ] && [ "$2" != "-ts" ] && [ "$2" != "-nogui" ];
     then
   # exp_t2=" $2"
       ext_p2=" $2"
   fi
-  if [ "$3" != "-linux" ] && [ "$3" != "-win32" ] && [ "$3" != "-exe" ] && [ "$3" != "-ladspa" ] && [ "$3" != "-vst" ] && [ "$3" != "-nmv" ] && [ "$3" != "-d" ] && [ "$3" != "-g" ] && [ "$3" != "-v" ] && [ "$3" != "-ts" ];
+  if [ "$3" != "-linux" ] && [ "$3" != "-win32" ] && [ "$3" != "-exe" ] && [ "$3" != "-ladspa" ] && [ "$3" != "-vst" ] && [ "$3" != "-nmv" ] && [ "$3" != "-d" ] && [ "$3" != "-g" ] && [ "$3" != "-v" ] && [ "$3" != "-ts" ] && [ "$3" != "-nogui" ];
     then
       ext_p3=" $3"
   fi
-  if [ "$4" != "-linux" ] && [ "$4" != "-win32" ] && [ "$4" != "-exe" ] && [ "$4" != "-ladspa" ] && [ "$4" != "-vst" ] && [ "$4" != "-nmv" ] && [ "$4" != "-d" ] && [ "$4" != "-g" ] && [ "$4" != "-v" ] && [ "$4" != "-ts" ];
+  if [ "$4" != "-linux" ] && [ "$4" != "-win32" ] && [ "$4" != "-exe" ] && [ "$4" != "-ladspa" ] && [ "$4" != "-vst" ] && [ "$4" != "-nmv" ] && [ "$4" != "-d" ] && [ "$4" != "-g" ] && [ "$4" != "-v" ] && [ "$4" != "-ts" ] && [ "$4" != "-nogui" ];
     then
       ext_p4=" $4"
   fi
-  if [ "$5" != "-linux" ] && [ "$5" != "-win32" ] && [ "$5" != "-exe" ] && [ "$5" != "-ladspa" ] && [ "$5" != "-vst" ] && [ "$5" != "-nmv" ] && [ "$5" != "-d" ] && [ "$5" != "-g" ] && [ "$5" != "-v" ] && [ "$5" != "-ts" ];
+  if [ "$5" != "-linux" ] && [ "$5" != "-win32" ] && [ "$5" != "-exe" ] && [ "$5" != "-ladspa" ] && [ "$5" != "-vst" ] && [ "$5" != "-nmv" ] && [ "$5" != "-d" ] && [ "$5" != "-g" ] && [ "$5" != "-v" ] && [ "$5" != "-ts" ] && [ "$5" != "-nogui" ];
     then
       ext_p5=" $5"
   fi
-  if [ "$6" != "-linux" ] && [ "$6" != "-win32" ] && [ "$6" != "-exe" ] && [ "$6" != "-ladspa" ] && [ "$6" != "-vst" ] && [ "$6" != "-nmv" ] && [ "$6" != "-d" ] && [ "$6" != "-g" ] && [ "$6" != "-v" ] && [ "$6" != "-ts" ];
+  if [ "$6" != "-linux" ] && [ "$6" != "-win32" ] && [ "$6" != "-exe" ] && [ "$6" != "-ladspa" ] && [ "$6" != "-vst" ] && [ "$6" != "-nmv" ] && [ "$6" != "-d" ] && [ "$6" != "-g" ] && [ "$6" != "-v" ] && [ "$6" != "-ts" ] && [ "$6" != "-nogui" ];
     then
       ext_p6=" $6"
   fi
-  if [ "$7" != "-linux" ] && [ "$7" != "-win32" ] && [ "$7" != "-exe" ] && [ "$7" != "-ladspa" ] && [ "$7" != "-vst" ] && [ "$7" != "-nmv" ] && [ "$7" != "-d" ] && [ "$7" != "-g" ] && [ "$7" != "-v" ] && [ "$7" != "-ts" ];
+  if [ "$7" != "-linux" ] && [ "$7" != "-win32" ] && [ "$7" != "-exe" ] && [ "$7" != "-ladspa" ] && [ "$7" != "-vst" ] && [ "$7" != "-nmv" ] && [ "$7" != "-d" ] && [ "$7" != "-g" ] && [ "$7" != "-v" ] && [ "$7" != "-ts" ] && [ "$7" != "-nogui" ];
     then
       ext_p7=" $7"
   fi
-  if [ "$8" != "-linux" ] && [ "$8" != "-win32" ] && [ "$8" != "-exe" ] && [ "$8" != "-ladspa" ] && [ "$8" != "-vst" ] && [ "$8" != "-nmv" ] && [ "$8" != "-d" ] && [ "$8" != "-g" ] && [ "$8" != "-v" ] && [ "$8" != "-ts" ];
+  if [ "$8" != "-linux" ] && [ "$8" != "-win32" ] && [ "$8" != "-exe" ] && [ "$8" != "-ladspa" ] && [ "$8" != "-vst" ] && [ "$8" != "-nmv" ] && [ "$8" != "-d" ] && [ "$8" != "-g" ] && [ "$8" != "-v" ] && [ "$8" != "-ts" ] && [ "$8" != "-nogui" ];
     then
       ext_p8=" $8"
   fi
+  if [ "$9" != "-linux" ] && [ "$9" != "-win32" ] && [ "$9" != "-exe" ] && [ "$9" != "-ladspa" ] && [ "$9" != "-vst" ] && [ "$9" != "-nmv" ] && [ "$9" != "-d" ] && [ "$9" != "-g" ] && [ "$9" != "-v" ] && [ "$9" != "-ts" ] && [ "$9" != "-nogui" ];
+    then
+      ext_p9=" $9"
+  fi
   
-  ext_params=$ext_p2$ext_p3$ext_p4$ext_p5$ext_p6$ext_p7$ext_p8
+  ext_params=$ext_p2$ext_p3$ext_p4$ext_p5$ext_p6$ext_p7$ext_p8$ext_p9
+  
+  # ------------------------- check if no gui
+  
+  if [ "$2" == "-nogui" ] || [ "$3" == "-nogui" ] || [ "$4" == "-nogui" ] || [ "$5" == "-nogui" ] || [ "$6" == "-nogui" ] || [ "$7" == "-nogui" ] || [ "$8" == "-nogui" ] || [ "$9" == "-nogui" ];
+  then
+    nogui="yes"
+    noguisx="-nogui"
+  fi
   
   # ------------------------- check if extension is .cpp
   if [ "${1: -4}" != ".cpp" ];
@@ -157,42 +172,53 @@ else
     showerr "### ERR: first argument has to be a .cpp file"
   else
     # ------------------------- use mingw
-    if [ "$2" == "-v" ] || [ "$3" == "-v" ] || [ "$4" == "-v" ] || [ "$5" == "-v" ] || [ "$6" == "-v" ] || [ "$7" == "-v" ] || [ "$8" == "-v" ];
+    if [ "$2" == "-v" ] || [ "$3" == "-v" ] || [ "$4" == "-v" ] || [ "$5" == "-v" ] || [ "$6" == "-v" ] || [ "$7" == "-v" ] || [ "$8" == "-v" ] || [ "$9" == "-v" ];
     then
       v="yes"
     fi
     # ------------------------- use mingw
-    if [ "$2" == "-win32" ] || [ "$3" == "-win32" ] || [ "$4" == "-win32" ] || [ "$5" == "-win32" ] || [ "$6" == "-win32" ] || [ "$7" == "-win32" ] || [ "$8" == "-win32" ];
+    if [ "$2" == "-win32" ] || [ "$3" == "-win32" ] || [ "$4" == "-win32" ] || [ "$5" == "-win32" ] || [ "$6" == "-win32" ] || [ "$7" == "-win32" ] || [ "$8" == "-win32" ] || [ "$9" == "-win32" ];
     then
       compiler=$mingw
       fmt_ext=".exe"
-      tgt="-mwindows -lmsimg32"
+      if [ "$nogui" == "yes" ]; 
+      then
+        tgt="-DAX_NOGUI -mwindows"
+      else
+        tgt="-mwindows -lmsimg32"
+      fi
     fi
     # ------------------------- format is vst
-    if [ "$2" == "-vst" ] || [ "$3" == "-vst" ] || [ "$4" == "-vst" ] || [ "$5" == "-vst" ] || [ "$6" == "-vst" ] || [ "$7" == "-vst" ] || [ "$8" == "-vst" ];
+    if [ "$2" == "-vst" ] || [ "$3" == "-vst" ] || [ "$4" == "-vst" ] || [ "$5" == "-vst" ] || [ "$6" == "-vst" ] || [ "$7" == "-vst" ] || [ "$8" == "-vst" ] || [ "$9" == "-vst" ];
     then
       format=-DAX_FORMAT_VST
       libformat=" VST"
       suffix="-vst"
+      
       # ------------------------- case mingw
       if [ "$compiler" == "$mingw" ];
       then
         fmt_ext=".dll"
-
-# TODO: don't link with msimg32 if NO_GUI        
-
-        tgt="-mwindows -lmsimg32 -shared"
+        if [ "$nogui" == "yes" ];
+        then
+          tgt="-DAX_NOGUI -mwindows -shared"
+        else
+          tgt="-mwindows -lmsimg32 -shared"
+        fi
+                
       # ------------------------- case gcc
       else
         fmt_ext=".so"
-        
-# TODO: don't link with X libs if NO_GUI        
-        
-        tgt="-lX11 -lXrender -lpthread -shared"
+        if [ "$nogui" == "yes" ]; 
+        then
+          tgt="-DAX_NOGUI -lX11 -lpthread -shared"
+        else
+          tgt="-lX11 -lXrender -lpthread -shared"
+        fi        
       fi
     fi
     # ------------------------- format is ladspa
-    if [ "$2" == "-ladspa" ] || [ "$3" == "-ladspa" ] || [ "$4" == "-ladspa" ] || [ "$5" == "-ladspa" ] || [ "$6" == "-ladspa" ] || [ "$7" == "-ladspa" ] || [ "$8" == "-ladspa" ];
+    if [ "$2" == "-ladspa" ] || [ "$3" == "-ladspa" ] || [ "$4" == "-ladspa" ] || [ "$5" == "-ladspa" ] || [ "$6" == "-ladspa" ] || [ "$7" == "-ladspa" ] || [ "$8" == "-ladspa" ] || [ "$9" == "-ladspa" ];
     then
       format=-DAX_FORMAT_LADSPA
       libformat=" LADSPA"
@@ -201,7 +227,7 @@ else
       if [ "$compiler" == "$mingw" ];
       then
         fmt_ext=".dll"
-        tgt="-mwindows -lmsimg32 -shared"
+        tgt="-mwindows -shared"
       # ------------------------- case gcc
       else
         fmt_ext=".so"
@@ -209,18 +235,18 @@ else
       fi
     fi
     # ------------------------- don't move to ../bin
-    if [ "$2" == "-nmv" ] || [ "$3" == "-nmv" ] || [ "$4" == "-nmv" ] || [ "$5" == "-nmv" ] || [ "$6" == "-nmv" ] || [ "$7" == "-nmv" ] || [ "$7" == "-nmv" ] || [ "$8" == "-nmv" ];
+    if [ "$2" == "-nmv" ] || [ "$3" == "-nmv" ] || [ "$4" == "-nmv" ] || [ "$5" == "-nmv" ] || [ "$6" == "-nmv" ] || [ "$7" == "-nmv" ] || [ "$7" == "-nmv" ] || [ "$8" == "-nmv" ] || [ "$9" == "-nmv" ];
     then
       move="no"
     fi
     # ------------------------- enable lib debug
-    if [ "$2" == "-d" ] || [ "$3" == "-d" ] || [ "$4" == "-d" ] || [ "$5" == "-d" ] || [ "$6" == "-d" ] || [ "$7" == "-d" ] || [ "$8" == "-d" ];
+    if [ "$2" == "-d" ] || [ "$3" == "-d" ] || [ "$4" == "-d" ] || [ "$5" == "-d" ] || [ "$6" == "-d" ] || [ "$7" == "-d" ] || [ "$8" == "-d" ] || [ "$9" == "-d" ];
     then
       libdebug="-DAX_DEBUG"
       libdebugstatus="ON"
     fi
     # ------------------------- enable gcc debug
-    if [ "$2" == "-g" ] || [ "$3" == "-g" ] || [ "$4" == "-g" ] || [ "$5" == "-g" ] || [ "$6" == "-g" ] || [ "$7" == "-g" ] || [ "$8" == "-g" ];
+    if [ "$2" == "-g" ] || [ "$3" == "-g" ] || [ "$4" == "-g" ] || [ "$5" == "-g" ] || [ "$6" == "-g" ] || [ "$7" == "-g" ] || [ "$8" == "-g" ] || [ "$9" == "-g" ];
     then
       gccdebug="-DDEBUG -gstabs"
       linker=""
@@ -254,19 +280,23 @@ else
     
     # ------------------------- echo settings
     echo ""
-    echo "compiling binary for '$1'..."
+    echo "* compiling binary for '$1'..."
     if [ "$v" == "yes" ];
     then
       echo ""
-      echo "* compiler is: $compiler"
+      echo "* compiler is: $compiler `$compiler -dumpversion`" 
       if [ "$fmt_ext" == "" ];
       then    
         echo "* target binary format is: exe (ELF)"
       else
         echo "* target binary format is:$libformat $fmt_ext"
-      fi
+      fi      
       echo "* lib debug is: $libdebugstatus"
       echo "* gcc debug is: $gccdebugstatus"
+      if [ "$nogui" == "yes" ];
+      then
+        echo "* gui is: OFF"
+      fi
     fi
     # ------------------------- check if axpath available    
     if [ -d "$axpath" ];
@@ -307,9 +337,9 @@ else
       fi
     fi
     
-    target_s_ext=$file$suffix$ts$fmt_ext
+    target_s_ext=$file$suffix$noguisx$ts$fmt_ext
     
-    # ------------------------- delete old file if available
+    # ------------------------- delete old file if exist
     if [ -e "$target_s_ext" ];
     then
       `rm -f "$target_s_ext"`

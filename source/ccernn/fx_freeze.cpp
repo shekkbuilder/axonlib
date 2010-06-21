@@ -1,4 +1,4 @@
-#define NO_GUI
+#define AX_NOGUI
 #define AX_DEBUG_AUTO_STD
 //#define AX_DEBUG_MEM
 //#define AX_DEBUG_NEW

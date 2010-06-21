@@ -13,7 +13,7 @@
     // in doStateChange(fs_Resume), the s.rate has been set, it seems
     // so we force a recalc there
 
-#define NO_GUI
+#define AX_NOGUI
 
 #include "format/axFormat.h"
 #include "par/parInteger.h"
