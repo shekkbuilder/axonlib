@@ -61,6 +61,12 @@
   #define AX_NOGUI
 #endif
 
+/* set AX_GUI */
+#ifdef AX_NOGUI
+  #undef AX_GUI
+  #define AX_GUI
+#endif
+
 /* enable 'full' debug mode */ 
 #if defined AX_DEBUG_FULL && defined AX_DEBUG
   #undef  AX_DEBUG
@@ -299,30 +305,21 @@ typedef unsigned short        __may_alias ushort_a;
 typedef char                  __may_alias char_a;
 typedef unsigned char         __may_alias uchar_a;
 
-// msvc specific
-#ifdef AX_WIN32
-  #ifndef __cdecl
-    #define __cdecl     __attribute__ ((cdecl))
-  #endif
-  #ifndef __stdcall  
-    #define __stdcall   __attribute__ ((stdcall)))
-  #endif  
-  #ifndef __dllexport
-    #define __dllexport __attribute__ ((dllexport))
-  #endif
-  #ifdef  __dllimport
-    #define __dllimport __attribute__ ((dllimport))
-  #endif  
-#endif
+// cdecl, stdcall 
+#undef  __cdecl
+#define __cdecl     __attribute__((cdecl))
+#undef  __stdcall
+#define __stdcall   __attribute__((stdcall))
 
+// dllexport, dllimport
+#undef  __dllexport
+#undef  __dllimport
+#ifdef AX_WIN32
+  #define __dllexport __attribute__ ((dllexport))
+  #define __dllimport __attribute__ ((dllimport))
+#endif
 #ifdef AX_LINUX
-  #undef  __cdecl
-  #define __cdecl
-  #undef  __stdcall
-  #define __stdcall
-  #undef  __dllexport
   #define __dllexport
-  #undef  __dllimport
   #define __dllimport
 #endif
 
@@ -333,8 +330,8 @@ typedef unsigned char         __may_alias uchar_a;
 #define AX_MAX_PATH 512
 
 // other
-#define __hotinline               ___always_inline __hot __optimize(3)
-#define __asmv                    __asm__ __volatile__
+#define __hotinline   ___always_inline __hot __optimize(3)
+#define __asmv        __asm__ __volatile__
 
 #endif // axDefines_included
 

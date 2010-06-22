@@ -142,29 +142,25 @@ TODO:
     return ptr;
   }
 
-  /*
-  // ### MUNMAP emulation is currently disabled
-  
   __axmalloc_inline long axMunmap (void *ptr,
-    __attribute__((unused)) long size)
+    __attribute__((unused)) long size=0)
   {
     static long g_pagesize;
     static long g_regionsize;
     int rc = NULL;
     //slwait(&g_sl);
-    while ( InterlockedCompareExchange( sl, 1, 0) != 0 )
+    while ( InterlockedCompareExchange( &g_sl, 1, 0) != 0 )
       Sleep(0);
     if (!g_pagesize)
       g_pagesize = getpagesize ();
     if (!g_regionsize)
       g_regionsize = getregionsize ();
-    if (!VirtualFree (ptr, 0,  MEM_RELEASE) )
+    if (!VirtualFree (ptr, 0, MEM_RELEASE) )
       rc = 0;
     //slrelease (&g_sl);
     InterlockedExchange( &g_sl, 0 );
     return rc;
   }
-  */
 
 #endif
 
@@ -224,10 +220,10 @@ static __axmalloc_inline void* axMalloc (register unsigned int size)
   if (buckets[b])
   {
     rv = buckets[b];
-    buckets[b] = *(unsigned char**)rv;    
+    buckets[b] = *(unsigned char**)rv; // !!
     return rv;
   }  
-  size = bucket2size[b]+4;
+  size = bucket2size[b] + 4;
   // os specific calls
   #ifdef linux
     //rv = (char*)mmap(rv, size, ...);  // #include "sys/mman.h"
@@ -273,6 +269,8 @@ static __axmalloc_inline void axFree (void* _ptr)
       *(unsigned char**)ptr = buckets[b];
       buckets[b] = ptr;
     }
+    // compare and free
+    axMunmap(_ptr);
   }
 }
 

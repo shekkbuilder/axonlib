@@ -183,7 +183,7 @@ else
       fmt_ext=".exe"
       if [ "$nogui" == "yes" ]; 
       then
-        tgt="-DAX_NOGUI -mwindows"
+        tgt="-DAX_NOGUI"
       else
         tgt="-mwindows -lmsimg32"
       fi
@@ -201,7 +201,7 @@ else
         fmt_ext=".dll"
         if [ "$nogui" == "yes" ];
         then
-          tgt="-DAX_NOGUI -mwindows -shared"
+          tgt="-DAX_NOGUI -shared"
         else
           tgt="-mwindows -lmsimg32 -shared"
         fi
@@ -211,7 +211,7 @@ else
         fmt_ext=".so"
         if [ "$nogui" == "yes" ]; 
         then
-          tgt="-DAX_NOGUI -lX11 -lpthread -shared"
+          tgt="-DAX_NOGUI -shared"
         else
           tgt="-lX11 -lXrender -lpthread -shared"
         fi        
@@ -227,11 +227,11 @@ else
       if [ "$compiler" == "$mingw" ];
       then
         fmt_ext=".dll"
-        tgt="-mwindows -shared"
+        tgt="-shared"
       # ------------------------- case gcc
       else
         fmt_ext=".so"
-        tgt="-lX11 -lXrender -lpthread -shared"
+        tgt="-shared"
       fi
     fi
     # ------------------------- don't move to ../bin
