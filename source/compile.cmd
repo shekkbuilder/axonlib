@@ -109,7 +109,7 @@ if [%6]==[-nogui] set nogui=yes
 if [%7]==[-nogui] set nogui=yes
 if [%8]==[-nogui] set nogui=yes
 if [%9]==[-nogui] set nogui=yes
-if [%nogui%]==[yes] set tgtlib=-DAX_NOGUI -mwindows && set noguisx=-nogui
+if [%nogui%]==[yes] set tgtlib=-DAX_NOGUI && set noguisx=-nogui
 
 :: check for verbose
 if [%2]==[-v] set v=yes
@@ -203,6 +203,7 @@ if not exist %ladspapath% goto noladspa
 if not [%v%]==[] echo ---------------------------------------------------------------------------
 set suffix=-ladspa
 set ext=.dll
+set tgtlib=
 set tgtformat=-DAX_FORMAT_LADSPA -shared
 set libfmt= LADSPA
 goto begin
