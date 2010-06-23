@@ -32,7 +32,41 @@
   #define __axrand_inline inline
 #endif
 
-#ifndef AX_NO_RAND      // if not defined: use axonlib's axRand()
+#ifndef AX_NO_RAND      // if not defined: use axonlib's axRand() methods
+
+#ifndef AX_USE_BETTER_RAND // if not defined: use simpler axRand()
+
+static __thread int _axrnd = 1;
+
+/// set seed
+__axrand_inline void axRandSeed (const unsigned int seed)
+{ _axrnd = seed; }
+
+/// get random float between 0, 1
+__axrand_inline float axRand(void)
+{ return (float)((_axrnd *= 16807) & 0x7FFFFFFF) * 4.6566129e-010f; }
+
+/// get random float between 0, x
+__axrand_inline float axRand(const float range)
+{ return axRand() * range; }
+
+/// get random float between -1, 1
+__axrand_inline float axRandSigned(void)
+{ return (float)(_axrnd *= 16807) * 4.6566129e-010f; }
+
+/// get random float between -x, x
+__axrand_inline float axRandSigned(const float range)
+{ return axRandSigned() * range; }
+
+/// get random integer number between 0, x
+__axrand_inline unsigned int axRandInt(const unsigned int range=32767)
+{ return (unsigned int)(axRand() * range); }
+
+/// get random integer from bit range (0, 31)
+__axrand_inline unsigned int axRandBit(const unsigned int range=16)
+{ return ((_axrnd *= 16807) & 0x7FFFFFFF) >> (31 - range); }
+
+#else // AX_USE_BETTER_RAND
 
 /*
   ------------------------------------------------------------------------------
@@ -96,6 +130,10 @@ __axrand_inline unsigned long axRandInt(void)
 __axrand_inline unsigned long axRandInt(const unsigned long s)
 { _AXRAND;
   return (unsigned long)( _AXRAND_FLOAT_C ); }
+
+#endif  // AX_USE_BETTER_RAND
+
+#ifdef AX_USE_RANDSINF
 
 /*
   ------------------------------------------------------------------------------
@@ -173,6 +211,8 @@ class axRandSinf
     { _AXRANDSINF; return (unsigned long) ( _top * _AXRANDSINF_SHIFT ); }
 };
 
+#endif // AX_USE_RANDSINF
+
 #else // AX_NO_RAND
 
 /*
@@ -196,7 +236,7 @@ __deprecated __axrand_inline float axRand(const float f = 1)
 __deprecated __axrand_inline float axRand(const float aLow, const float aHigh)
 { return aLow + ( (float)rand() / (float)RAND_MAX ) *(aHigh - aLow); }
 
-__deprecated __axmath_inline int axRandInt(const int i)
+__deprecated __axmath_inline int axRandInt(const int i=RAND_MAX)
 { return axMinInt
     (i, (int)axFloor( (i + 1) * (float)rand() / (float)RAND_MAX ) ); }
 
