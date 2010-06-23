@@ -1,13 +1,14 @@
 VERSION HISTORY
 ================
 
-v0.1.1(pre) - 220610
+v0.1.1 - 230610
 + ladspa: added support for ladspa (win32 & linux)
 + extern/mverb: added open source (gpl) reverb engine by martin eastwood
++ ports: added mverb plugin port
++ ports: added sstillwell_eventhorizon port
 + compile: added timestamp option (-ts)
 + compile: added option to disable gui (-nogui)
 + compile: added the option to pass additional flags to the compiler
 * vst: fixed support for older vst hosts
 * vst: fixed blank presets in energyxt
 * vst: fixed crash if no programs  
-* added sstillwell_eventhorizon:
