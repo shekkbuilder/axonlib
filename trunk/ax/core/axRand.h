@@ -196,11 +196,11 @@ __deprecated __axrand_inline float axRand(const float f = 1)
 __deprecated __axrand_inline float axRand(const float aLow, const float aHigh)
 { return aLow + ( (float)rand() / (float)RAND_MAX ) *(aHigh - aLow); }
 
-__deprecated __axmath_inline int axRandomInt(const int i)
+__deprecated __axmath_inline int axRandInt(const int i)
 { return axMinInt
     (i, (int)axFloor( (i + 1) * (float)rand() / (float)RAND_MAX ) ); }
 
-__deprecated __axrand_inline float axRandomSigned(void)
+__deprecated __axrand_inline float axRandSigned(void)
 { return (2 * (float)rand() / (float)RAND_MAX) - 1; }
 
 #endif // AX_NO_RAND
