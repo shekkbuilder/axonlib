@@ -849,6 +849,8 @@ class axFormatVst : public axFormatBase
               {
               #ifdef AX_LINUX
                 Display* disp = XOpenDisplay(NULL);
+                //axAssert(disp!=NULL);
+trace("XOpenDisplay = " << (int)disp);
                 Window win    = (Window)ptr;
                 axContext ctx(disp,win);
               #endif

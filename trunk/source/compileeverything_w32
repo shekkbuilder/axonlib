@@ -6,10 +6,17 @@
 ./compileall ports -win32 -vst
 ./compileall test -win32 -vst
 
+./compileall ccernn -win32 -vst -nogui
+./compileall demo -win32 -vst -nogui
+./compileall liteon -win32 -vst -nogui
+./compileall ports -win32 -vst -nogui
+./compileall test -win32 -vst -nogui
+
+./compileall ccernn -win32 -ladspa -nogui
+./compileall demo -win32 -ladspa -nogui
+./compileall liteon -win32 -ladspa -nogui
+./compileall ports -win32 -ladspa -nogui
+./compileall test -win32 -ladspa -nogui
+
 ./compile demo/axDemo.cpp -win32 -exe
-./compile ccernn/fx_grains.cpp -win32 -exe
-./compile ccernn/fx_tempodelay.cpp -win32 -exe
-./compile ports/mverb.cpp -exe
-./compile test/test_gain_gui.cpp -win32 -exe
-./compile test/test_gain_gui_skin.cpp -win32 -exe
 
