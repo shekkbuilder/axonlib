@@ -163,6 +163,18 @@
 		<Unit filename="..\..\ax\script\axScriptStdlib.h" />
 		<Unit filename="..\..\ax\skins\axSkinBasic.h" />
 		<Unit filename="..\..\ax\skins\axSkinDef.h" />
+		<Unit filename="..\..\ax\temporary\axFormat.h" />
+		<Unit filename="..\..\ax\temporary\axFormatExe.h" />
+		<Unit filename="..\..\ax\temporary\axFormatLadspa.h" />
+		<Unit filename="..\..\ax\temporary\axFormatVst.h" />
+		<Unit filename="..\..\ax\temporary\axInterface.h" />
+		<Unit filename="..\..\ax\temporary\axInterfaceLinux.h" />
+		<Unit filename="..\..\ax\temporary\axInterfaceNone.h" />
+		<Unit filename="..\..\ax\temporary\axInterfaceWin32.h" />
+		<Unit filename="..\..\ax\temporary\axPlatform.h" />
+		<Unit filename="..\..\ax\temporary\axPlatformLinux.h" />
+		<Unit filename="..\..\ax\temporary\axPlatformWin32.h" />
+		<Unit filename="..\..\ax\temporary\main.cpp" />
 		<Unit filename="..\..\ax\wdg\wdgBitmap.h" />
 		<Unit filename="..\..\ax\wdg\wdgButton.h" />
 		<Unit filename="..\..\ax\wdg\wdgButtons.h" />
@@ -181,7 +193,6 @@
 		<Unit filename="..\..\ax\wdg\wdgSizer.h" />
 		<Unit filename="..\..\ax\wdg\wdgSlider.h" />
 		<Unit filename="..\..\ax\wdg\wdgValue.h" />
-		<Unit filename="..\plugin.cpp" />
 		<Unit filename="..\..\doc\AUTHORS" />
 		<Unit filename="..\..\doc\FEATURES" />
 		<Unit filename="..\..\doc\OVERVIEW" />
