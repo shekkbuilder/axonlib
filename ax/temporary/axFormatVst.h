@@ -2,6 +2,8 @@
 #define axFormatVst_included
 //----------------------------------------------------------------------
 
+#include <stdio.h> // printf
+
 #include "pluginterfaces/vst2.x/aeffect.h"
 #include "pluginterfaces/vst2.x/aeffectx.h"
 
@@ -56,10 +58,16 @@ class axInstance
     axDescriptor* mDescriptor;
     axInterface*  mInterface;
 
+  //--------------------------------------------------
   private:
+  //--------------------------------------------------
+
+    // static callbacks
+    // called from vst dispatcher (from aeffect)
 
     static VstIntPtr dispatcher_callback(AEffect* ae, VstInt32 opCode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
       {
+        printf("vst: dispatcher\n"); \
         axInstance* instance = (axInstance*)(ae->object);
         if (opCode==effClose)
         {
@@ -70,31 +78,25 @@ class axInstance
         return instance->dispatcher(opCode,index,value,ptr,opt);
       }
 
-    //----------
-
     static float getParameter_callback(AEffect* ae, VstInt32 index)
       {
+        printf("vst: getParameter\n"); \
         axInstance* instance = (axInstance*)(ae->object);
         return instance->getParameter(index);
       }
 
-    //----------
-
     static void setParameter_callback(AEffect* ae, VstInt32 index, float value)
       {
+        printf("vst: setParameter\n"); \
         axInstance* instance = (axInstance*)(ae->object);
         instance->setParameter(index,value);
       }
-
-    //----------
 
     static void processReplacing_callback(AEffect* ae, float** inputs, float** outputs, VstInt32 sampleFrames)
       {
         axInstance* instance = (axInstance*)(ae->object);
         instance->processReplacing(inputs,outputs,sampleFrames);
       }
-
-    //----------
 
     static void processDoubleReplacing_callback(AEffect* e, double** inputs, double** outputs, VstInt32 sampleFrames)
       {
@@ -110,25 +112,25 @@ class axInstance
     virtual void      processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames) {}
     virtual void      processDoubleReplacing(double** aInputs, double** aOutputs, VstInt32 aLength) {}
 
-
+  //--------------------------------------------------
   public:
+  //--------------------------------------------------
 
     // we could have the interface as an argument too?
-    axInstance(axDescriptor* aDescriptor)
+     axInstance(axDescriptor* aDescriptor)
       {
         mDescriptor = aDescriptor;
         mInterface  = NULL;
         //TODO: read info from descriptor
         memset(&mAEffect,0,sizeof(mAEffect));
         mAEffect.magic                   = kEffectMagic;
-        mAEffect.object                  = NULL;
+        mAEffect.object                  = this;
         mAEffect.user                    = NULL;
         mAEffect.dispatcher              = dispatcher_callback;
         mAEffect.setParameter            = setParameter_callback;
         mAEffect.getParameter            = getParameter_callback;
         mAEffect.processReplacing        = processReplacing_callback;
-      //mAEffect.processDoubleReplacing  = processDoubleReplacing_callback;
-        mAEffect.processDoubleReplacing  = NULL;
+        mAEffect.processDoubleReplacing  = NULL;// processDoubleReplacing_callback;
         mAEffect.flags                   = effFlagsCanReplacing;
         mAEffect.version                 = 0;
         mAEffect.uniqueID                = 0;
@@ -243,6 +245,7 @@ class axFormat
                                                                                           \
   AEffect* main(audioMasterCallback audioMaster)                                          \
   {                                                                                       \
+    printf("AX_ENTRYPOINT [linux vst]\n"); \
     axFormat<_desc,_inst,_iface,_plat>* plug =  new axFormat<_desc,_inst,_iface,_plat>(); \
     _inst* instance = (_inst*)plug->getInstance();                                        \
     if (!instance) return 0;                                                              \
