@@ -1,4 +1,5 @@
-#define AX_LINUX
+#define AX_WIN32
+#define AX_FORMAT_VST
 //#define AX_FORMAT_VST
 //#define AX_NOGUI
 
@@ -78,11 +79,11 @@ class myInstance : public axInstance
 
     //----------
 
-    // only called for standalone EXEs
-    virtual int main(int argc, char** argv)
-      {
-        return 0;
-      }
+//    // only called for standalone EXEs
+//    virtual int main(int argc, char** argv)
+//      {
+//        return 0;
+//      }
 
     // virtual void doProcessSample(SPL** aInputs, SPL** aOutputs) {}
     // virtual void doSetParameter(axParameter* aParameter) {}
@@ -94,8 +95,7 @@ class myInstance : public axInstance
     //axWindow* createEditor(int w int h)
     void doSetupEditor(void* aWindow, int aWidth, int aHeight) //TODO: void* -> axWindow
       {
-        void* window = getInterface()->createWindow(w,h); // TODO: axWindow()
-        return window;
+        //void* window = getInterface()->createWindow(aWidth,aHeight); // TODO: axWindow()
       }
 
     void doDeleteEditor(void)
@@ -140,6 +140,7 @@ class myInstance : public axInstance
 //----------------------------------------------------------------------
 
 AX_MAIN(myDescriptor,myInstance,axInterface)
+
 // AX_MAIN(myDescriptor,myInstance)
 //AX_ENTRYPOINT(axDescriptor,axInstance,axPlatform)
 //AX_ENTRYPOINT(myDescriptor,myInstance,myPlatform)
