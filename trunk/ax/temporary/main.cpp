@@ -1,6 +1,6 @@
 #define AX_LINUX
-#define AX_FORMAT_EXE
-#define AX_NOGUI
+//#define AX_FORMAT_VST
+//#define AX_NOGUI
 
 #include "axFormat.h"
 
@@ -8,7 +8,7 @@
 
 /*
 
-global/static names for parameters, inputs & outputs
+  global/static names for parameters, inputs & outputs
 
 */
 
@@ -20,10 +20,10 @@ static char* g_params[]  = { (char*)"gain" };
 
 /*
 
-this class is created once, when the main entrypoint function is called,
-after the host loads the ddll/so.
-handles things that the host want to know about the plugin before any
-instances is created. the plugin. name, number of parameters, etc..
+  this class is created once, when the main entrypoint function is called,
+  after the host loads the ddll/so.
+  handles things that the host want to know about the plugin before any
+  instances is created. the plugin. name, number of parameters, etc..
 
 */
 
@@ -49,9 +49,9 @@ class myDescriptor : public axDescriptor
 
 /*
 
-this is the actual plugin...
-quite similar to what was our main plugin class, except that the plugin
-info/description (enumeration info) has moved to axDescriptor.
+  this is the actual plugin...
+  quite similar to what was our main plugin class, except that the plugin
+  info/description (enumeration info) has moved to axDescriptor.
 
 */
 
@@ -67,17 +67,30 @@ class myInstance : public axInstance
 
 //----------------------------------------------------------------------
 
-class myEditor : public axEditor
-{
-  public:
-    myEditor(axInstance* aInstance) : axEditor(aInstance) {}
-};
+/*
 
+  editor
+
+*/
+
+//class myEditor : public axEditor
+//{
+//  public:
+//    myEditor(axInstance* aInstance) : axEditor(aInstance) {}
+//};
 
 //----------------------------------------------------------------------
 
-AX_MAIN(myDescriptor,myInstance,NULL_EDITOR)
-//AX_MAIN(myDescriptor,myInstance,myEditor)
+/*
+
+  main/editor
+
+*/
+
+// AX_NOGUI
+// AX_MAIN(myDescriptor,myInstance)
+
+AX_MAIN(myDescriptor,myInstance,axInterface)
 
 //AX_ENTRYPOINT(axDescriptor,axInstance,axPlatform)
 //AX_ENTRYPOINT(myDescriptor,myInstance,myPlatform)

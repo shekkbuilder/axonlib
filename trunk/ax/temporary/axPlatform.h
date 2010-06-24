@@ -41,3 +41,13 @@ class axPlatform
 //----------------------------------------------------------------------
 #endif
 
+/*
+
+class axPlatform
+{
+  public:
+    axPlatform(int aFormat) { }
+    virtual ~axPlatform() { }
+};
+
+*/

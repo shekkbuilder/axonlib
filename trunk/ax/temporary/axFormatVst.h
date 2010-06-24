@@ -44,42 +44,41 @@ class axInstance
 //
 //----------------------------------------------------------------------
 
+#include "axInterface.h"
+
 // Descriptor
 // Instance
 // Platform
 // {Editor]
 
-template<class _D, class _I, class _P>
+template<class _D, class _I, class _In, class _P>
 class axFormat
 {
   private:
-    _P* mPlatform;
-    _D* mDescriptor;
-    _I* mInstance;
-
+    _P*   mPlatform;
+    _D*   mDescriptor;
+    _I*   mInstance;
+    _In*  mInterface;
   public:
-
     axFormat()
       {
         mPlatform   = new _P(ft_Vst);
         mDescriptor = new _D(mPlatform);
         mInstance   = new _I(mDescriptor);
+        mInterface  = new _In(mInstance);
       }
-
-    //----------
-
     virtual ~axFormat()
       {
+        delete mInterface;
         delete mInstance;
         delete mDescriptor;
         delete mPlatform;
       }
-
-    //----------
-
+  public:
     inline axPlatform*   getPlatform(void)    { return mPlatform; }
     inline axDescriptor* getDescriptor(void)  { return mDescriptor; }
     inline axInstance*   getInstance(void)    { return mInstance; }
+    inline axInterface*  getInterface(void)   { return mInterface; }
 
     //----------
 
@@ -91,13 +90,21 @@ class axFormat
 //
 //----------------------------------------------------------------------
 
-#define AX_ENTRYPOINT(_desc,_inst,_plat)                                  \
-                                                                          \
-int main(int argc, char** argv)                                           \
-{                                                                         \
-  axFormat<_desc,_inst,_plat>* plug = new axFormat<_desc,_inst,_plat>();  \
-  _inst* instance   = (_inst*)plug->getInstance();                        \
-  return instance->getAEffect();                                          \
+#ifdef AX_NOGUI
+  #define AX_MAIN(_desc,_inst) AX_ENTRYPOINT(_desc,_inst,axEditor,axPlatform)
+#else
+  #define AX_MAIN(_desc,_inst,_iface) AX_ENTRYPOINT(_desc,_inst,_iface,axPlatform)
+#endif
+
+//----------------------------------------------------------------------
+
+#define AX_ENTRYPOINT(_desc,_inst,_iface,_plat)                                         \
+                                                                                        \
+int main(int argc, char** argv)                                                         \
+{                                                                                       \
+  axFormat<_desc,_inst,_iface,_plat>* plug = new axFormat<_desc,_inst,_iface,_plat>();  \
+  _inst* instance = (_inst*)plug->getInstance();                                      \
+  return instance->getAEffect();                                                        \
 }
 
 //----------------------------------------------------------------------

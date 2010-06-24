@@ -10,7 +10,9 @@ class axPlatform
     axPlatform(int aFormat)
       {
         //mFormat = aFormat;
-        //XInitThread
+        //#ifndef AX_NOGUI
+        //  XInitThreads();
+        //#endif
       }
     virtual ~axPlatform() { }
     //inline int  getOs(void)     { return pf_Linux; }

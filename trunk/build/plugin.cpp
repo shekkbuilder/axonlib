@@ -6,6 +6,52 @@
 //#define AX_DEBUG_LOG "plugin.log"
 
 //----------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+#include "temporary/main.cpp"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//----------------------------------------------------------------------
 // test / demo
 //----------------------------------------------------------------------
 
@@ -20,7 +66,7 @@
 //#include "../test/test_render.cpp"
 //#include "../test/test_skin.cpp"
 
-#include "../source/demo/axDemo.cpp"
+//#include "../source/demo/axDemo.cpp"
 
 //#define AX_SCRIPT_STDLIB
 //#include "script/axScript.h"

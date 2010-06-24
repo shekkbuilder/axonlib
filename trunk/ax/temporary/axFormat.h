@@ -32,3 +32,18 @@
 //----------------------------------------------------------------------
 #endif
 
+/*
+
+template<class _D, class _I, class _In, class _P>
+class axFormat
+{
+  public:
+    axFormat() {}
+    virtual ~axFormat() {}
+    // axDescriptor* getDescriptor()
+    // axInstance*   getInstance()
+    // axInterface*  getInterface()
+    // axPlatform*   getPlatform()
+}:
+
+*/
