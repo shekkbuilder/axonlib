@@ -8,25 +8,26 @@
 #include "axFormat.h"
 
 //----------------------------------------------------------------------
+//
+// descriptor
+//
+//----------------------------------------------------------------------
 
-/*
-
-  global/static names for parameters, inputs & outputs
-
-*/
+// global/static names for parameters, inputs & outputs
+// these could be set up programmatically, but this is easier..
 
 static char* g_inputs[]  = { (char*)"in1", (char*)"in2" };
 static char* g_outputs[] = { (char*)"out1",(char*)"out2" };
 static char* g_params[]  = { (char*)"gain" };
 
-//----------------------------------------------------------------------
+//----------
 
 /*
 
   this class is created once, when the main entrypoint function is called,
-  after the host loads the ddll/so.
-  handles things that the host want to know about the plugin before any
-  instances is created. the plugin. name, number of parameters, etc..
+  after the host loads the dll/so.
+  handles things that the host might want to know about the plugin before
+  any instances is created. the plugin. name, number of parameters, etc..
 
 */
 
@@ -49,10 +50,14 @@ class myDescriptor : public axDescriptor
 };
 
 //----------------------------------------------------------------------
+//
+// instance
+//
+//----------------------------------------------------------------------
 
 /*
 
-  this is the actual plugin...
+  the actual plugin (instance).
   quite similar to what was our main plugin class, except that the plugin
   info/description (enumeration info) has moved to axDescriptor.
 
@@ -61,12 +66,57 @@ class myDescriptor : public axDescriptor
 class myInstance : public axInstance
 {
   public:
-    //myInstance() : axInstance() {}
-    myInstance(axDescriptor* aDescriptor) : axInstance(aDescriptor) {}
-    virtual int main(int argc, char** argv) { return 0; } // only called for standalone EXEs
+
+    myInstance(axDescriptor* aDescriptor)
+    : axInstance(aDescriptor)
+      {
+      }
+
+    virtual ~myInstance()
+      {
+      }
+
+    //----------
+
+    // only called for standalone EXEs
+    virtual int main(int argc, char** argv)
+      {
+        return 0;
+      }
+
     // virtual void doProcessSample(SPL** aInputs, SPL** aOutputs) {}
     // virtual void doSetParameter(axParameter* aParameter) {}
     // ...
+
+    //----------------------------------------
+    // editor
+
+    //axWindow* createEditor(int w int h)
+    void doSetupEditor(void* aWindow, int aWidth, int aHeight) //TODO: void* -> axWindow
+      {
+        void* window = getInterface()->createWindow(w,h); // TODO: axWindow()
+        return window;
+      }
+
+    void doDeleteEditor(void)
+      {
+      }
+
+    void doOpenEditor(void)
+      {
+      }
+
+    void doCloseEditor(void)
+      {
+      }
+
+    void doIdleEditor(void)
+      {
+      }
+
+    //----------------------------------------
+
+
 };
 
 //----------------------------------------------------------------------
@@ -84,19 +134,12 @@ class myInstance : public axInstance
 //};
 
 //----------------------------------------------------------------------
-
-/*
-
-  main/editor
-
-*/
-
-// AX_NOGUI
-// AX_MAIN(myDescriptor,myInstance)
+//
+// main / entrypoint
+//
+//----------------------------------------------------------------------
 
 AX_MAIN(myDescriptor,myInstance,axInterface)
-
+// AX_MAIN(myDescriptor,myInstance)
 //AX_ENTRYPOINT(axDescriptor,axInstance,axPlatform)
 //AX_ENTRYPOINT(myDescriptor,myInstance,myPlatform)
-
-

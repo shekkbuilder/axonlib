@@ -60,14 +60,31 @@ class axInstance
         mInterface  = NULL;
       }
 
-    // /*virtual*/ ~axInstance() {}
+    virtual ~axInstance()
+      {
+      }
 
-    //----------
+    //----------------------------------------
 
     inline axDescriptor*  getDescriptor(void) { return mDescriptor; }
     inline axInterface*   getInterface(void)  { return mInterface; }
     inline AEffect*       getAEffect(void)    { return &mAEffect; };
     inline void           setInterface(axInterface* aInterface) { mInterface=aInterface; }
+
+    //----------------------------------------
+    // lib-user overrides these:
+    //----------------------------------------
+
+    // programs & parameters
+    virtual void  doSetupParameters(void) {}
+    virtual void  doSetupPrograms(void) {}
+
+    // editor
+    virtual void  doSetupEditor(void* aWindow, int aWidth, int aHeight) {} // todo: void* -> axWindow*
+    virtual void  doFinishEditor(void) {}
+    virtual void  doOpenEditor(void) {}
+    virtual void  doCloseEditor(void) {}
+    virtual void  doIdleEditor(void) {}
 
 };
 
@@ -94,7 +111,7 @@ class axFormat
       {
         mPlatform   = new _P(ft_Vst);
         mDescriptor = new _D(mPlatform);
-        mInstance   = new _I(mDescriptor);    // for vst, automatically create the instance (ladspa will create it later
+        mInstance   = new _I(mDescriptor);    // for vst, automatically create the instance (ladspa will create it later)
         mInterface  = new _In(mInstance);     // the interface/"editor-manager"
         mInstance->setInterface(mInterface);  // so the pugin/instace can create its editor
       }
@@ -140,7 +157,8 @@ class axFormat
 //----------
 
 #ifdef AX_WIN32
-#endif
+  //TODO
+#endif //WIN32
 
 //----------------------------------------------------------------------
 

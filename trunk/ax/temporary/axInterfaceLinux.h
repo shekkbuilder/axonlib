@@ -18,6 +18,8 @@ class axInterface
     int       getScreenDepth(void) { return 0; }
     //axWindow* createWindow(int aWidth, int aHeight) { return NULL; }
     //axWindow* createEmbeddedWindow(int aParent, int aWidth, int aHeight) { return NULL; }
+    void* createWindow(int aWidth, int aHeight) { return NULL; }
+    void* createEmbeddedWindow(int aParent, int aWidth, int aHeight) { return NULL; }
 };
 
 //----------------------------------------------------------------------
