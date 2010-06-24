@@ -1,17 +1,18 @@
-#ifndef axEditorNone_included
-#define axEditorNone_included
+#ifndef axInterfaceNone_included
+#define axInterfaceNone_included
 //----------------------------------------------------------------------
 /*
 
-empty/no-op editor (for AX_NOGUI)
+empty/no-op Interface (for AX_NOGUI)
 
 */
 
-class axEditor
+class axInterface
 {
   public:
-    axEditor(axInstance* aInstance) {}
-    virtual ~axEditor() {}
+    axInterface(axInstance* aInstance) {}
+    virtual ~axInterface() {}
+    //axWindow* createWindow(int w, int h) { return NULL; }
 };
 
 // simplifies AX_MAIN/AX_ENTRYPOINT
