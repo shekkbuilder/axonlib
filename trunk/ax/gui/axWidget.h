@@ -42,7 +42,7 @@ TODO:
 //#include "core/axRect.h"
 #include "gui/axCanvas.h"
 #include "gui/axSkin.h"
-//#include "axParameter.h"
+#include "par/axParameter.h"
 
 //----------------------------------------------------------------------
 

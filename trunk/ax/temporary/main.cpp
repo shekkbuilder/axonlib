@@ -2,6 +2,9 @@
 //#define AX_FORMAT_VST
 //#define AX_NOGUI
 
+#include "core/axDefines.h"
+#include "core/axDebug.h"
+
 #include "axFormat.h"
 
 //----------------------------------------------------------------------
