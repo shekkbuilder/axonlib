@@ -4,6 +4,9 @@
 
 #include "axPlatform.h"
 
+#include "pluginterfaces/vst2.x/aeffect.h"
+#include "pluginterfaces/vst2.x/aeffectx.h"
+
 //----------------------------------------------------------------------
 //
 // descriptor
@@ -14,7 +17,6 @@ class axDescriptor
 {
   private:
     axPlatform* mPlatform;
-    //AEffect mEffect;
   public:
     axDescriptor(axPlatform* aPlatform) { mPlatform=aPlatform; }
     virtual ~axDescriptor() { }
@@ -31,11 +33,12 @@ class axInstance
 {
   private:
     axDescriptor* mDescriptor;
+    AEffect mEffect;
   public:
     axInstance(axDescriptor* aDescriptor) { mDescriptor=aDescriptor; }
     virtual ~axInstance() { }
     inline axDescriptor* getDescriptor(void) { return mDescriptor; }
-    virtual int getAEffect(void) { return 0; };
+    virtual AEffect* getEffect(void) { return &mEffect; };
 };
 
 //----------------------------------------------------------------------
@@ -59,6 +62,8 @@ class axFormat
     _D*   mDescriptor;
     _I*   mInstance;
     _In*  mInterface;
+  //private:
+  //  AEffect mAEffect;
   public:
     axFormat()
       {
@@ -98,15 +103,29 @@ class axFormat
 
 //----------------------------------------------------------------------
 
+#ifdef AX_LINUX
+
+  AEffect* main_plugin(audioMasterCallback audioMaster) asm ("main");
+  #define main main_plugin
+
+#endif //LINUX
+
+//----------------------------------------------------------------------
+
 #define AX_ENTRYPOINT(_desc,_inst,_iface,_plat)                                         \
                                                                                         \
-int main(int argc, char** argv)                                                         \
+AEffect* main(audioMasterCallback audioMaster)                                          \
 {                                                                                       \
-  axFormat<_desc,_inst,_iface,_plat>* plug = new axFormat<_desc,_inst,_iface,_plat>();  \
-  _inst* instance = (_inst*)plug->getInstance();                                      \
-  return instance->getAEffect();                                                        \
+  axFormat<_desc,_inst,_iface,_plat>* plug =  new axFormat<_desc,_inst,_iface,_plat>(); \
+  _inst* instance = (_inst*)plug->getInstance();                                        \
+  if (!instance) return 0;                                                              \
+  AEffect* ae = instance->getEffect();                                                  \
+  return ae;                                                                            \
 }
+
+// XInitThreads(); -> interfacelinux
 
 //----------------------------------------------------------------------
 #endif
+
 
