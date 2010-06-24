@@ -34,6 +34,21 @@
 
 /*
 
+class axDescriptor
+{
+  public:
+    axDescriptor(axPlatform* aPlatform) { mPlatform=aPlatform; }
+    virtual ~axDescriptor() { }
+};
+
+class axInstance
+{
+  public:
+    axInstance(axDescriptor* aDescriptor)
+    axInstance() {}
+    virtual ~axInstance() {}
+}
+
 template<class _D, class _I, class _In, class _P>
 class axFormat
 {

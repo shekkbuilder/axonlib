@@ -2,8 +2,8 @@
 //#define AX_FORMAT_VST
 //#define AX_NOGUI
 
-#include "core/axDefines.h"
-#include "core/axDebug.h"
+//#include "core/axDefines.h"
+//#include "core/axDebug.h"
 
 #include "axFormat.h"
 
@@ -61,6 +61,7 @@ class myDescriptor : public axDescriptor
 class myInstance : public axInstance
 {
   public:
+    //myInstance() : axInstance() {}
     myInstance(axDescriptor* aDescriptor) : axInstance(aDescriptor) {}
     virtual int main(int argc, char** argv) { return 0; } // only called for standalone EXEs
     // virtual void doProcessSample(SPL** aInputs, SPL** aOutputs) {}

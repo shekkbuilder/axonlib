@@ -19,7 +19,7 @@ class axInterface
 // use NULL_EDITOR instead of axEditor to clarify that there is
 // no editor
 
-#define NULL_EDITOR axEditor
+#define NULL_INTERFACE axInterface
 
 //----------------------------------------------------------------------
 #endif
