@@ -1,10 +1,12 @@
-#define AX_WIN32
+#define AX_LINUX
 #define AX_FORMAT_VST
 //#define AX_FORMAT_VST
 //#define AX_NOGUI
 
 //#include "core/axDefines.h"
 //#include "core/axDebug.h"
+
+#include <stdio.h> // printf
 
 #include "axFormat.h"
 
