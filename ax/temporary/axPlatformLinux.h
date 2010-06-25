@@ -2,21 +2,29 @@
 #define axPlatformLinux_included
 //----------------------------------------------------------------------
 
+#ifndef AX_NOGUI
+  //#include "Xlib.h"
+#endif
+
+
 class axPlatform
 {
-  //private:
-  //  int mFormat;
+  private:
+    int mFormat;
   public:
     axPlatform(int aFormat)
       {
-        //mFormat = aFormat;
-        //#ifndef AX_NOGUI
-        //  XInitThreads();
-        //#endif
+        mFormat = aFormat;
+        #ifndef AX_NOGUI
+          //XInitThreads();
+        #endif
       }
-    virtual ~axPlatform() { }
-    //inline int  getOs(void)     { return pf_Linux; }
-    //inline int  getFormat(void) { return mFormat; }
+    virtual ~axPlatform()
+      {
+      }
+
+    inline int  getOS(void)     { return pf_Linux; }
+    inline int  getFormat(void) { return mFormat; }
 };
 
 //----------------------------------------------------------------------
