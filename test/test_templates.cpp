@@ -1,7 +1,9 @@
+// we might add audio here too (to replace axContext)
+
 //#define AX_FORMAT_VST
 #define AX_FORMAT_LADSPA
 
-#include <stdio.h>
+#include <stdio.h> // printf
 
 class axFormat;
 class axPlatform;
@@ -10,8 +12,14 @@ class axInstance;
 class axInterface;
 
 //----------------------------------------------------------------------
+
 // these two would be in other .h files, and selectively inbcluded
 // depending on platform (AXLINUX, AX_WIN32)
+// see axPlatform.h
+
+// axPlatform.h + axPlatformLinux.h, axPlatformWin32.h
+
+// win32: hinstance
 
 class axPlatform
 {
@@ -19,6 +27,11 @@ class axPlatform
     axPlatform(axFormat* aFormat) {}
     virtual char* getName(void) { return (char*)"no platform specificed"; }
 };
+
+// axInterface.h + axInterfaceNone.h, axInterfaceLinux.h, axInterfaceWin32.h,
+
+// linux: XInitThreads
+// win32: register/unregister window class
 
 class axInterface
 {
@@ -37,6 +50,10 @@ class axInterface
 // using AX_FORMAT_VST, AX_FORMAT_LADSPA, ...
 
 #ifdef AX_FORMAT_VST
+// axFormatVst.h
+
+// describe/setup
+// num ins/outs/params + names
 
 class axDescriptor
 {
@@ -44,6 +61,8 @@ class axDescriptor
     axDescriptor(axFormat* aFormat) {}
     virtual char* getName(void) { return (char*)"vst descriptor"; }
 };
+
+// precess audio, handle midi/params
 
 class axInstance
 {
@@ -57,6 +76,7 @@ class axInstance
 //----------
 
 #ifdef AX_FORMAT_LADSPA
+// axFormatLadspa.h
 
 class axDescriptor
 {
@@ -79,6 +99,12 @@ class axInstance
 // format implementation
 //
 //----------------------------------------------------------------------
+// axFormat.h
+
+// this is passed around in the constructor as an argument, and gives
+// the other classes access to the low level 'root'
+// some of the functions is not valid until all constructors have
+// been properly run. depending on the order of creation
 
 class axFormat
 {
@@ -92,6 +118,14 @@ class axFormat
 };
 
 //----------
+
+// _D  = Descriptor class
+// _I  = Instance
+// _P  = Platform
+// _In = Interface
+
+// prepare (and make available) platform specific things
+// and get the ball rolling for the specific format type
 
 template<class _D,class _I,class _P,class _In>
 class axFormatImpl : public axFormat
@@ -124,6 +158,10 @@ class axFormatImpl : public axFormat
 };
 
 //----------------------------------------------------------------------
+// for example...
+//----------------------------------------------------------------------
+// main.cpp
+
 //these two would be our plugin
 
 class myDescriptor : public axDescriptor
@@ -145,10 +183,12 @@ class myInstance : public axInstance
       }
     virtual char* getName(void) { return (char*)"my instance"; }
 };
+
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
-// AX_ENTRYPOINT
-// using main() here, to simplify example..
+// axFormatExe.h, axFormatLadspa, axFormatVst.h
+
+// AX_ENTRYPOINT, using main() here, to simplify example..
 
 int main(void)
 {
@@ -158,6 +198,8 @@ int main(void)
 
   axFormatImpl<myDescriptor,myInstance,axPlatform,axInterface>*
     exe = new axFormatImpl<myDescriptor,myInstance,axPlatform,axInterface>();
+
+  // now our plugin/exe should be aive...
 
 //    axFormat* format = exe->getFormat();
 //    printf("  platform    = '%s'\n",format->getPlatform()->getName());
