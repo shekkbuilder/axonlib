@@ -1,4 +1,6 @@
-#define AX_WIN32
+#if 0
+
+#define AX_LINUX
 //#define AX_FORMAT_VST
 #define AX_NOGUI
 
@@ -34,7 +36,8 @@ static char* g_params[]  = { (char*)"gain" };
 class myDescriptor : public axDescriptor
 {
   public:
-    myDescriptor(axPlatform* aPlatform) : axDescriptor(aPlatform) {}
+    //myDescriptor(axPlatform* aPlatform) : axDescriptor(aPlatform) {}
+    myDescriptor(axFormat* aFormat) : axDescriptor(aFormat) {}
     virtual char*         getName(void)             { return (char*)"gain"; }
     virtual char*         getAuthor(void)           { return (char*)"ccernn"; }
     virtual char*         getProduct(void)          { return (char*)"axonlib example plugin"; }
@@ -60,8 +63,10 @@ class myInstance : public axInstance
 {
   public:
 
-    myInstance(axDescriptor* aDescriptor)
-    : axInstance(aDescriptor)
+    //myInstance(axDescriptor* aDescriptor)
+    myInstance(axFormat* aFormat)
+    //: axInstance(aDescriptor)
+    : axInstance(aFormat)
       {
       }
 
@@ -104,3 +109,5 @@ class myInstance : public axInstance
 //AX_MAIN(myDescriptor,myInstance,myInterface)
 
 AX_ENTRYPOINT(myDescriptor,myInstance,axInterface,axPlatform)
+
+#endif // 0

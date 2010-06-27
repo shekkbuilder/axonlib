@@ -2,31 +2,19 @@
 #define axFormatExe_included
 //----------------------------------------------------------------------
 
-#include "axPlatform.h"
-
-//----------------------------------------------------------------------
-//
-// descriptor
-//
-//----------------------------------------------------------------------
-
 class axDescriptor
 {
   public:
-    axDescriptor(axPlatform* aPlatform) { }
+    axDescriptor(axFormat* aFormat) { }
     virtual ~axDescriptor() { }
 };
 
-//----------------------------------------------------------------------
-//
-// instance
-//
 //----------------------------------------------------------------------
 
 class axInstance
 {
   public:
-    axInstance(axDescriptor* aDescriptor) { }
+    axInstance(axFormat* aFormat) { }
     virtual ~axInstance() { }
     virtual int main(int argc, char** argv) { return 0; }
 };
@@ -37,36 +25,36 @@ class axInstance
 //
 //----------------------------------------------------------------------
 
-#include "axInterface.h"
-
-template<class _D, class _I, class _In, class _P>
-class axFormat
+template<class _D,class _I,class _In,class _P>
+class axFormatImpl : public axFormat
 {
   private:
-    _P*   mPlatform;
-    _D*   mDescriptor;
-    _I*   mInstance;
-    _In*  mInterface;
+    /* _P*  */ axPlatform*   mPlatform;
+    /* _D*  */ axDescriptor* mDescriptor;
+    /* _I*  */ axInstance*   mInstance;
+    /* _In* */ axInterface*  mInterface;
+
   public:
-    axFormat()
+    axFormatImpl() : axFormat()
       {
-        mPlatform   = new _P(ft_Exe);
-        mDescriptor = new _D(mPlatform);
-        mInstance   = new _I(mDescriptor);
-        mInterface  = new _In(mInstance);
+        printf("axFormatImpl: exe\n");
+        mPlatform   = new _P(this);
+        mDescriptor = new _D(this);
+        mInstance   = new _I(this);
+        mInterface  = new _In(this);
       }
-    virtual ~axFormat()
+    virtual ~axFormatImpl()
       {
-        delete mInterface;
-        delete mInstance;
-        delete mDescriptor;
         delete mPlatform;
+        delete mDescriptor;
+        delete mInstance;
+        delete mInterface;
       }
-  public:
-    inline axDescriptor* getDescriptor(void)  { return mDescriptor; }
-    inline axInstance*   getInstance(void)    { return mInstance; }
-    inline axInterface*  getInterface(void)   { return mInterface; }
-    inline axPlatform*   getPlatform(void)    { return mPlatform; }
+    virtual axFormat*     getFormat(void)     { return this; }
+    virtual axPlatform*   getPlatform(void)   { return mPlatform; }
+    virtual axDescriptor* getDescriptor(void) { return mDescriptor; }
+    virtual axInstance*   getInstance(void)   { return mInstance; }
+    virtual axInterface*  getInterface(void)  { return mInterface; }
 };
 
 //----------------------------------------------------------------------
@@ -76,22 +64,22 @@ class axFormat
 //----------------------------------------------------------------------
 
 #ifdef AX_NOGUI
-  #define AX_MAIN(_desc,_inst) AX_ENTRYPOINT(_desc,_inst,axEditor,axPlatform)
+  #define AX_MAIN(_desc,_inst) AX_ENTRYPOINT(_desc,_inst,axInterface,axPlatform)
 #else
   #define AX_MAIN(_desc,_inst,_iface) AX_ENTRYPOINT(_desc,_inst,_iface,axPlatform)
 #endif
 
 //----------------------------------------------------------------------
 
-#define AX_ENTRYPOINT(_desc,_inst,_iface,_plat)                                         \
-                                                                                        \
-int main(int argc, char** argv)                                                         \
-{                                                                                       \
-  axFormat<_desc,_inst,_iface,_plat>* exe =  new axFormat<_desc,_inst,_iface,_plat>();  \
-  _inst* instance = (_inst*)exe->getInstance();                                         \
-  int result = instance->main(argc,argv);                                               \
-  delete exe;                                                                           \
-  return result;                                                                        \
+#define AX_ENTRYPOINT(_desc,_inst,_iface,_plat)                                                 \
+                                                                                                \
+int main(int argc, char** argv)                                                                 \
+{                                                                                               \
+  axFormatImpl<_desc,_inst,_iface,_plat>* exe =  new axFormatImpl<_desc,_inst,_iface,_plat>();  \
+  _inst* instance = (_inst*)exe->getInstance();                                                 \
+  int result = instance->main(argc,argv);                                                       \
+  delete exe;                                                                                   \
+  return result;                                                                                \
 }
 
 //----------------------------------------------------------------------

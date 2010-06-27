@@ -2,20 +2,48 @@
 #define axFormat_included
 //----------------------------------------------------------------------
 
-//#include "axEditor.h"
+#ifndef NULL
+  #define NULL 0
+#endif
+
+//// format types
+//#define ft_Unknown  0
+//#define ft_Exe      1
+//#define ft_Vst      2
+//#define ft_Ladspa   3
+//#define ft_Dssi     4
+//#define ft_Lv2      5
+//#define ft_Au       6
+
+#define DEFAULT_DESCRIPTOR axDescriptor
 
 //----------------------------------------------------------------------
 
-// format types
-#define ft_Unknown  0
-#define ft_Exe      1
-#define ft_Vst      2
-#define ft_Ladspa   3
-#define ft_Dssi     4
-#define ft_Lv2      5
-#define ft_Au       6
+class axFormat;
+class axPlatform;
+class axDescriptor;
+class axInstance;
+class axInterface;
 
-//----------------------------------------------------------------------
+//----------
+
+class axFormat
+{
+  public:
+    axFormat() {}
+    virtual axFormat*     getFormat(void)     { return this; }
+    virtual axPlatform*   getPlatform(void)   { return NULL; }
+    virtual axDescriptor* getDescriptor(void) { return NULL; }
+    virtual axInstance*   getInstance(void)   { return NULL; }
+    virtual axInterface*  getInterface(void)  { return NULL; }
+};
+
+//----------
+
+#include "temporary/axPlatform.h"
+#include "temporary/axInterface.h"
+
+//----------
 
 #ifdef AX_FORMAT_EXE
 #include "axFormatExe.h"
@@ -31,34 +59,3 @@
 
 //----------------------------------------------------------------------
 #endif
-
-/*
-
-class axDescriptor
-{
-  public:
-    axDescriptor(axPlatform* aPlatform) { mPlatform=aPlatform; }
-    virtual ~axDescriptor() { }
-};
-
-class axInstance
-{
-  public:
-    axInstance(axDescriptor* aDescriptor)
-    axInstance() {}
-    virtual ~axInstance() {}
-}
-
-template<class _D, class _I, class _In, class _P>
-class axFormat
-{
-  public:
-    axFormat() {}
-    virtual ~axFormat() {}
-    // axDescriptor* getDescriptor()
-    // axInstance*   getInstance()
-    // axInterface*  getInterface()
-    // axPlatform*   getPlatform()
-}:
-
-*/
