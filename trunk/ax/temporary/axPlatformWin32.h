@@ -4,16 +4,15 @@
 
 class axPlatform
 {
-  //private:
-  //  int mFormat;
   public:
-    axPlatform(int aFormat)
+    axPlatform(axFormat* aFormat)
       {
-        //mFormat = aFormat;
+        printf("axPlatform win32\n");
+        #ifndef AX_NOGUI
+          //register windows class
+        #endif
       }
     virtual ~axPlatform() { }
-    //inline int  getOs(void)     { return pt_Win32; }
-    //inline int  getFormat(void) { return mFormat; }
 };
 
 //----------------------------------------------------------------------

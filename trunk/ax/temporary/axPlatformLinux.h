@@ -9,12 +9,10 @@
 
 class axPlatform
 {
-  private:
-    int mFormat;
   public:
-    axPlatform(int aFormat)
+    axPlatform(axFormat* aFormat)
       {
-        mFormat = aFormat;
+        printf("axPlatform linux\n");
         #ifndef AX_NOGUI
           //XInitThreads();
         #endif
@@ -23,8 +21,6 @@ class axPlatform
       {
       }
 
-    inline int  getOS(void)     { return pf_Linux; }
-    inline int  getFormat(void) { return mFormat; }
 };
 
 //----------------------------------------------------------------------

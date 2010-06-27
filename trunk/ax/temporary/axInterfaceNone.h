@@ -10,14 +10,17 @@ empty/no-op Interface (for AX_NOGUI)
 class axInterface
 {
   public:
-    axInterface(axInstance* aInstance) {}
+    axInterface(axFormat* aFormat) { printf("axInterface: none\n" ); }
     virtual ~axInterface() {}
-    //axWindow* createWindow(int w, int h) { return NULL; }
-};
 
-// simplifies AX_MAIN/AX_ENTRYPOINT
-// use NULL_EDITOR instead of axEditor to clarify that there is
-// no editor
+    int       getScreenWidth(void) { return 0; }
+    int       getScreenHeight(void) { return 0; }
+    int       getScreenDepth(void) { return 0; }
+
+    /* axWindow* */ void* createWindow(int aWidth, int aHeight) { return NULL; }
+    /* axWindow* */ void* createEmbeddedWindow(int aWidth, int aHeight) { return NULL; }
+
+};
 
 #define NULL_INTERFACE axInterface
 

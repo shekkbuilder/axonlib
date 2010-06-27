@@ -235,6 +235,9 @@ class axInstance// : public axParameterListener
     // do...
     //----------------------------------------
 
+  //protected: // should other classes be able to call these?
+  public:
+
     // lib-user overrides these:
 
     // programs & parameters

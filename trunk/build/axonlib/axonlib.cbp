@@ -325,6 +325,7 @@
 		<Unit filename="../../extern/picopng.h" />
 		<Unit filename="../../extern/stb_truetype.h" />
 		<Unit filename="../../source/SERIALS" />
+		<Unit filename="../../test/test_templates.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
