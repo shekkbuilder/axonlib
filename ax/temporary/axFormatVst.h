@@ -289,6 +289,18 @@ class axFormatImpl : public axFormat
 };
 
 //----------------------------------------------------------------------
+
+class axGlobalScope
+{
+  public:
+    axFormat* mFormat;
+    axGlobalScope()  { printf("axGlobalScope.constructor\n"); mFormat=NULL; }
+    ~axGlobalScope() { printf("axGlobalScope.destructor\n");  if (mFormat) delete mFormat; }
+};
+
+axGlobalScope g_Scope;
+
+//----------------------------------------------------------------------
 //
 // entrypoint
 //
@@ -301,6 +313,7 @@ class axFormatImpl : public axFormat
   #define main main_plugin
 
   #define _AX_VST_MAIN_DEF    AEffect* main(audioMasterCallback audioMaster)
+  #define _AX_VST_RET_DEF     return ae
 
 #endif //LINUX
 
@@ -310,6 +323,7 @@ class axFormatImpl : public axFormat
 #ifdef AX_WIN32
 
   #define _AX_VST_MAIN_DEF    int main(int audioMaster, char** empty)
+  #define _AX_VST_RET_DEF     return (int)ae
 
 #endif //WIN32
 
@@ -319,13 +333,16 @@ class axFormatImpl : public axFormat
   _AX_VST_MAIN_DEF                                                                                \
   {                                                                                               \
     axFormatImpl<_desc,_inst,_iface,_plat>* plug =  new axFormatImpl<_desc,_inst,_iface,_plat>(); \
+    g_Scope.mFormat = plug;                                                                       \
     _inst* instance = (_inst*)plug->getInstance();                                                \
     if (!instance) return 0;                                                                      \
     AEffect* ae = instance->getAEffect();                                                         \
-    return (int)ae;                                                                               \
+    _AX_VST_RET_DEF;                                                                              \
   }
 
 // - cast to int at the end can be troublesome
+
+// error: invalid conversion from ‘int’ to ‘AEffect*’|
 
 //----------------------------------------------------------------------
 

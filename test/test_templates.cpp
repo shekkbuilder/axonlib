@@ -1,5 +1,5 @@
 #define AX_NOGUI
-#define AX_WIN32
+#define AX_LINUX//WIN32
 
 #include <stdio.h> // printf
 #include "temporary/axFormat.h"
