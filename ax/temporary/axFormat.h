@@ -40,8 +40,8 @@ class axFormat
 
 //----------
 
-#include "temporary/axPlatform.h"
-#include "temporary/axInterface.h"
+#include "axPlatform.h"
+#include "axInterface.h"
 
 //----------
 
