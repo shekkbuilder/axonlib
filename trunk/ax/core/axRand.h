@@ -18,6 +18,9 @@
   axonlib's builtin random number generators
   64 bit integers are used so you might need to disable the 'long long'
   warning in g++: -Wno-long-long
+  
+  TODO: improve version of axRand() algorithm when AX_USE_BETTER_RAND is used
+  
 */
 
 #ifndef axRand_included
@@ -97,7 +100,7 @@ __axrand_inline unsigned int axRandBit(const unsigned int range=16)
       __asm__ ( "rdtsc;" : "=a" (low), "=d" (high) ) \
       _axrnd = (unsigned int)( (low) | ( (unsigned long)(high) << 32 ) ) \
     } else if (_axrnd > AXRAND_MAXLL) _axrnd = 0; \
-    a = _axrnd++;
+    a = _axrnd++
 #endif
 #ifdef __AX32__
   __thread unsigned long long _axrnd;

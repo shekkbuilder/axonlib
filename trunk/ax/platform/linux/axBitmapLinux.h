@@ -81,7 +81,7 @@ class axBitmapLinux : public axBitmapBase
 
     //----------
 
-    virtual int getHandle(void) { return (int)mImage; }
+    virtual int getHandle(void) { return (size_t)mImage; }
 
 
 };
