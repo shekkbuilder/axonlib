@@ -1,7 +1,7 @@
 #if 0
 
-#define AX_LINUX
-//#define AX_FORMAT_VST
+#define AX_WIN32
+#define AX_FORMAT_VST
 #define AX_NOGUI
 
 //#include "core/axDefines.h"
