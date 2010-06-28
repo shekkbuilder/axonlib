@@ -3,23 +3,147 @@
 //----------------------------------------------------------------------
 
 #include "../extern/ladspa.h"
-#include "axPlatform.h"
 
-class   axPlatform;
-class   axDescriptor;
-class   axInstance;
-class   axInterface;
+//----------------------------------------------------------------------
+//
+// descriptor
+//
+//----------------------------------------------------------------------
+
+// g_ = global
+
+// default names for (default) stereo in/out
+static char* g_stereo_inputs[]  = { (char*)"in1", (char*)"in2" };
+static char* g_stereo_outputs[] = { (char*)"out1",(char*)"out2" };
 
 //----------
 
-class axFormat//Base
+class axDescriptor
 {
-  //protected:
-  public: // todo: protected & friend classes
-    virtual axPlatform*   getPlatform(void)    { return NULL; }
-    virtual axDescriptor* getDescriptor(void)  { return NULL; }
-    virtual axInstance*   getInstance(void)    { return NULL; }
-    virtual axInterface*  getInterface(void)   { return NULL; }
+  private:
+
+    // redirect to instantiate() in axDescriptor
+    static LADSPA_Handle lad_instantiate(const LADSPA_Descriptor* Descriptor, unsigned long SampleRate)
+      {
+        axDescriptor* ladspa = (axDescriptor*)Descriptor->ImplementationData;
+        return ladspa->instantiate(SampleRate);
+      }
+
+    //----------
+
+    // the rest are redirected to the instance(s)
+
+    static void lad_connect_port(LADSPA_Handle Instance, unsigned long Port, LADSPA_Data * DataLocation)
+      {
+        axInstance* ladspa = (axInstance*)Instance;
+        ladspa->connect_port(Port,DataLocation);
+      }
+
+    //----------
+
+    static void lad_activate(LADSPA_Handle Instance)
+      {
+        axInstance* ladspa = (axInstance*)Instance;
+        ladspa->activate();
+      }
+
+    //----------
+
+    static void lad_run(LADSPA_Handle Instance, unsigned long SampleCount)
+      {
+        axInstance* ladspa = (axInstance*)Instance;
+        ladspa->run(SampleCount);
+      }
+
+    //----------
+
+    //static void lad_run_adding(LADSPA_Handle Instance, unsigned long SampleCount)
+    //  {
+    //    axInstance* ladspa = (axInstance*)Instance;
+    //    ladspa->run_adding(SampleCount);
+    //  }
+
+    //----------
+
+    //static void lad_set_run_adding_gain(LADSPA_Handle Instance, LADSPA_Data Gain)
+    //  {
+    //    axInstance* ladspa = (axInstance*)Instance;
+    //    ladspa->set_run_adding_gain(Gain);
+    //  }
+
+    //----------
+
+    static void lad_deactivate(LADSPA_Handle Instance)
+      {
+        axInstance* ladspa = (axInstance*)Instance;
+        ladspa->deactivate();
+      }
+
+    //----------
+
+    static void lad_cleanup(LADSPA_Handle Instance)
+      {
+        axInstance* ladspa = (axInstance*)Instance;
+        ladspa->cleanup();
+        delete ladspa; // !!!
+      }
+
+  //----------
+
+  private:
+    LADSPA_Descriptor ladescr;
+
+  public:
+
+    axDescriptor(axFormat* aFormat)
+      {
+        ladescr.UniqueID            = 0;//mUniqueId;
+        ladescr.Label               = mLabel;//"label";
+        ladescr.Properties          = LADSPA_PROPERTY_REALTIME | LADSPA_PROPERTY_HARD_RT_CAPABLE;
+        ladescr.Name                = mName;//"name";
+        ladescr.Maker               = mMaker;//"maker";
+        ladescr.Copyright           = mCopyright;//"copyright";
+        ladescr.PortCount           = 0;//mNumPorts;
+        ladescr.PortDescriptors     = mPortDesc; // NULL
+        ladescr.PortNames           = mPortNames; // NULL
+        ladescr.PortRangeHints      = mPortHint; // NULL
+        ladescr.ImplementationData  = this;
+        ladescr.instantiate         = lad_instantiate;
+        ladescr.connect_port        = lad_connect_port;
+        ladescr.activate            = lad_activate;
+        ladescr.run                 = lad_run;                  // ala processReplacing
+        ladescr.run_adding          = NULL;//lad_run_adding;           // ala process, optional
+        ladescr.set_run_adding_gain = NULL;//lad_set_run_adding_gain;  // if above
+        ladescr.deactivate          = lad_deactivate;
+        ladescr.cleanup             = lad_cleanup;
+      }
+
+    ~axDescriptor()
+      {
+      }
+
+    private:
+
+    // called from static callback function (above)
+    virtual LADSPA_Handle instantiate(unsigned long SampleRate)
+      {
+        return mFormat->getInstance(); // create instance
+      }
+
+  public:
+    virtual char*         getName(void)             { return (char*)"plugin"; }
+    virtual char*         getAuthor(void)           { return (char*)"anonymous"; }
+    virtual char*         getProduct(void)          { return (char*)"unknwon plugin"; }
+    virtual int           getVersion(void)          { return 0; }
+    virtual unsigned int  getUniqueId(void)         { return 0x00000000; }
+    virtual int           getNumInputs(void)        { return 2; }
+    virtual int           getNumOutputs(void)       { return 2; }
+    virtual int           getNumParams(void)        { return 0; }
+    virtual int           getNumProgs(void)         { return 0; }
+    virtual char*         getInputName(int aIndex)  { return g_stereo_inputs[aIndex]; }
+    virtual char*         getOutputName(int aIndex) { return g_stereo_outputs[aIndex]; }
+    virtual char*         getParamName(int aIndex)  { return (char*)"param"; }
+    // TODO: double-check with ladspa (and exe)
 };
 
 //----------------------------------------------------------------------
@@ -43,119 +167,6 @@ class axInstance
     //virtual void set_run_adding_gain(LADSPA_Data Gain) {}
     virtual void deactivate(void) {}
     virtual void cleanup(void) {}
-
-};
-
-//----------------------------------------------------------------------
-//
-// descriptor
-//
-//----------------------------------------------------------------------
-
-class axDescriptor
-{
-
-  // ----------
-  // static callback functions, called by ladspa host...
-
-  private:
-
-    // redirect to instantiate() in axDescriptor
-    static LADSPA_Handle lad_instantiate(const LADSPA_Descriptor* Descriptor, unsigned long SampleRate)
-      {
-        axDescriptor* ladspa = (axDescriptor*)Descriptor->ImplementationData;
-        return ladspa->instantiate(SampleRate);
-      }
-
-    //----------
-
-    // the rest are redirected to the instance(s)
-
-    static void lad_connect_port(LADSPA_Handle Instance, unsigned long Port, LADSPA_Data * DataLocation)
-      {
-        axInstance* ladspa = (axInstance*)Instance;
-        ladspa->connect_port(Port,DataLocation);
-      }
-
-    static void lad_activate(LADSPA_Handle Instance)
-      {
-        axInstance* ladspa = (axInstance*)Instance;
-        ladspa->activate();
-      }
-
-    static void lad_run(LADSPA_Handle Instance, unsigned long SampleCount)
-      {
-        axInstance* ladspa = (axInstance*)Instance;
-        ladspa->run(SampleCount);
-      }
-
-    //static void lad_run_adding(LADSPA_Handle Instance, unsigned long SampleCount)
-    //  {
-    //    axInstance* ladspa = (axInstance*)Instance;
-    //    ladspa->run_adding(SampleCount);
-    //  }
-
-    //static void lad_set_run_adding_gain(LADSPA_Handle Instance, LADSPA_Data Gain)
-    //  {
-    //    axInstance* ladspa = (axInstance*)Instance;
-    //    ladspa->set_run_adding_gain(Gain);
-    //  }
-
-    static void lad_deactivate(LADSPA_Handle Instance)
-      {
-        axInstance* ladspa = (axInstance*)Instance;
-        ladspa->deactivate();
-      }
-
-    static void lad_cleanup(LADSPA_Handle Instance)
-      {
-        axInstance* ladspa = (axInstance*)Instance;
-        ladspa->cleanup();
-        delete ladspa; // !!!
-      }
-
-  //----------
-
-  private:
-    axFormat* mFormat;
-
-  public:
-
-    axDescriptor(axFormat* aFormat)
-      {
-        mFormat = aFormat;
-        //mDescriptor.UniqueID            = 0;//mUniqueId;
-        //mDescriptor.Label               = mLabel;//"label";
-        //mDescriptor.Properties          = LADSPA_PROPERTY_REALTIME | LADSPA_PROPERTY_HARD_RT_CAPABLE;
-        //mDescriptor.Name                = mName;//"name";
-        //mDescriptor.Maker               = mMaker;//"maker";
-        //mDescriptor.Copyright           = mCopyright;//"copyright";
-        //mDescriptor.PortCount           = 0;//mNumPorts;
-        //mDescriptor.PortDescriptors     = mPortDesc; // NULL
-        //mDescriptor.PortNames          questions? things that are unclear? = mPortNames; // NULL
-        //mDescriptor.PortRangeHints      = mPortHint; // NULL
-        //mDescriptor.ImplementationData  = this;
-        //mDescriptor.instantiate         = lad_instantiate;
-        //mDescriptor.connect_port        = lad_connect_port;
-        //mDescriptor.activate            = lad_activate;
-        //mDescriptor.run                 = lad_run;                  // ala processReplacing
-        //mDescriptor.run_adding          = NULL;//lad_run_adding;           // ala process, optional
-        //mDescriptor.set_run_adding_gain = NULL;//lad_set_run_adding_gain;  // if above
-        //mDescriptor.deactivate          = lad_deactivate;
-        //mDescriptor.cleanup             = lad_cleanup;
-      }
-
-    virtual ~axDescriptor()
-      {
-      }
-
-  private:
-
-    // called from static callback function (above)
-    virtual LADSPA_Handle instantiate(unsigned long SampleRate)
-      {
-        return mFormat->getInstance(); // create instance
-      }
 
 };
 
