@@ -261,7 +261,9 @@ class axWindowLinux : public axWindowBase
           Atom atom;
           void* data;
           // --- eventproc ---
-          data = (void*)(int)&eventProc;  // the (int) to make the compiler shut up its complaining!
+          data = (void*)(size_t)&eventProc;  // the (int) to make the compiler shut up its complaining!
+          // ^ lii: loses precision with (int) on 64bit
+          // use 'size_t' temp..
           atom = XInternAtom(mDisplay,"_XEventProc",false);
           XChangeProperty(mDisplay,mWindow,atom,atom,32,PropModeReplace,(unsigned char*)&data,1);
           // --- this ---

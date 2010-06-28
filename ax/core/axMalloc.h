@@ -514,12 +514,12 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
     }
    
     // overload operators new & delete with debug    
-    __axmalloc_inline void* operator new (const unsigned int size,
+    __axmalloc_inline void* operator new (const size_t size,
       const char* file, unsigned int line) throw (std::bad_alloc)
     {
       return axMallocDebug(size, file, line, 1);
     }
-    __axmalloc_inline void* operator new[] (const unsigned int size,
+    __axmalloc_inline void* operator new[] (const size_t size,
       const char* file, unsigned int line) throw (std::bad_alloc)
     {
       return axMallocDebug(size, file, line, 1);
@@ -543,12 +543,12 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
   // overload operators new & delete without debug
   #include <new>
 
-  __axmalloc_inline void* operator new (unsigned int size)
+  __axmalloc_inline void* operator new (size_t size)
     throw (std::bad_alloc)
   {
     return axMalloc(size);
   }
-  __axmalloc_inline void* operator new[] (unsigned int size)
+  __axmalloc_inline void* operator new[] (size_t size)
     throw (std::bad_alloc)
   {
     return axMalloc(size);
