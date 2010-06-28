@@ -240,7 +240,7 @@ __axutils_inline void axCPUID(const int fcall=33139, int* eax=0, int* ebx=0,
     __asmv
     (
       "cpuid;"
-      : "=a" (a), "=b" (b), "=c" (c), "=d" (d) : "a" (0x00000001)
+      : "=a" (a), "=S" (b), "=c" (c), "=d" (d) : "a" (0x00000001)
     );
     __AX_SSE3__   = axGetBit(c, 0);
     __AX_SSSE3__  = axGetBit(c, 9);
@@ -253,7 +253,7 @@ __axutils_inline void axCPUID(const int fcall=33139, int* eax=0, int* ebx=0,
     __asmv
     (
       "cpuid;"
-      : "=a" (a), "=b" (b), "=c" (c), "=d" (d) : "a" (0x80000001)
+      : "=a" (a), "=S" (b), "=c" (c), "=d" (d) : "a" (0x80000001)
     );
     __AX_SSE4A__    = axGetBit(c, 4);
     __AX_SSE5__     = axGetBit(c, 11);
@@ -268,7 +268,7 @@ __axutils_inline void axCPUID(const int fcall=33139, int* eax=0, int* ebx=0,
     __asmv
     (
       "cpuid;"
-      : "=a" (*eax), "=b" (*ebx), "=c" (*ecx), "=d" (*edx) : "a" (fcall)
+      : "=a" (*eax), "=S" (*ebx), "=c" (*ecx), "=d" (*edx) : "a" (fcall)
     );
 }
 

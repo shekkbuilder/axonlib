@@ -1,4 +1,4 @@
-#if 0
+//#if 0
 
 #define AX_WIN32
 #define AX_FORMAT_VST
@@ -110,4 +110,4 @@ class myInstance : public axInstance
 
 AX_ENTRYPOINT(myDescriptor,myInstance,axInterface,axPlatform)
 
-#endif // 0
+//#endif // 0
