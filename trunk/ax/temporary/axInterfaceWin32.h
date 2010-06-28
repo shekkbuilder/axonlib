@@ -11,15 +11,19 @@
 class axInterface
 {
   public:
-    axInterface(axFormat* aFormat) {}
-    virtual ~axInterface() {}
+    axInterface(axFormat* aFormat)
+      {
+        //register windows class
+      }
+    virtual ~axInterface()
+      {
+      }
 
     int       getScreenWidth(void) { return 0; }
     int       getScreenHeight(void) { return 0; }
     int       getScreenDepth(void) { return 0; }
 
-    /* axWindow* */ void* createWindow(int aWidth, int aHeight) { return NULL; }
-    /* axWindow* */ void* createEmbeddedWindow(int aParent, int aWidth, int aHeight) { return NULL; }
+    axWindow* createWindow(int aWidth, int aHeight, int aDepth, int aFlags) { return NULL; }
 };
 
 //----------------------------------------------------------------------

@@ -13,9 +13,6 @@ class axPlatform
     axPlatform(axFormat* aFormat)
       {
         printf("axPlatform linux\n");
-        #ifndef AX_NOGUI
-          //XInitThreads();
-        #endif
       }
     virtual ~axPlatform()
       {

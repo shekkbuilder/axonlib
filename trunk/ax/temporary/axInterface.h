@@ -7,10 +7,11 @@
 #define if_Buffered     1 // else Unbuffered
 #define if_Embedded     2 // else Windowed
 #define if_Transparent  4 // else Opaque
-// ...off
 #define if_Unbuffered   0
 #define if_Windowed     0
 #define if_Opaque       0
+
+// #define IF_VST ( if_Buffered | if_Embedded | if_Opaque )
 
 #define DEFAULT_INTERFACE axInterface
 

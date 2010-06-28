@@ -13,6 +13,8 @@
 //
 //----------------------------------------------------------------------
 
+// g_ = global
+
 // default names for (default) stereo in/out
 static char* g_stereo_inputs[]  = { (char*)"in1", (char*)"in2" };
 static char* g_stereo_outputs[] = { (char*)"out1",(char*)"out2" };
@@ -91,6 +93,14 @@ class axInstance// : public axParameterListener
 
     //----------
 
+    //static void process_callback(AEffect* ae, float** inputs, float** outputs, VstInt32 sampleFrames)
+    //  {
+    //    axInstance* instance = (axInstance*)(ae->object);
+    //    instance->processReplacing(inputs,outputs,sampleFrames);
+    //  }
+
+    //----------
+
     static void processReplacing_callback(AEffect* ae, float** inputs, float** outputs, VstInt32 sampleFrames)
       {
         axInstance* instance = (axInstance*)(ae->object);
@@ -106,13 +116,16 @@ class axInstance// : public axParameterListener
     //  }
 
   //--------------------------------------------------
+
+  private:
+    axDescriptor* mDescriptor;
+
   public:
-  //--------------------------------------------------
 
      axInstance(axFormat* aFormat)
       {
-        axDescriptor* descriptor = aFormat->getDescriptor();
-        memset(&mAEffect,0,sizeof(mAEffect));
+        mDescriptor = aFormat->getDescriptor();
+        memset(&mAEffect,0,sizeof(mAEffect)); // axMemset
         mAEffect.magic                   = kEffectMagic;
         mAEffect.object                  = this;
         mAEffect.user                    = NULL;
@@ -122,22 +135,17 @@ class axInstance// : public axParameterListener
         mAEffect.processReplacing        = processReplacing_callback;
         mAEffect.processDoubleReplacing  = NULL;// processDoubleReplacing_callback;
         mAEffect.flags                   = effFlagsCanReplacing;
-        mAEffect.version                 = descriptor->getVersion();
-        mAEffect.uniqueID                = descriptor->getUniqueId();
-        mAEffect.numPrograms             = descriptor->getNumProgs();
-        mAEffect.numParams               = descriptor->getNumParams();
-        mAEffect.numInputs               = descriptor->getNumInputs();
-        mAEffect.numOutputs              = descriptor->getNumOutputs();
+        mAEffect.version                 = mDescriptor->getVersion();
+        mAEffect.uniqueID                = mDescriptor->getUniqueId();
+        mAEffect.numPrograms             = mDescriptor->getNumProgs();
+        mAEffect.numParams               = mDescriptor->getNumParams();
+        mAEffect.numInputs               = mDescriptor->getNumInputs();
+        mAEffect.numOutputs              = mDescriptor->getNumOutputs();
         mAEffect.initialDelay            = 0;
-        //printf("name:    %s\n",mDescriptor->getName());
-        //printf("author:  %s\n",mDescriptor->getAuthor());
-        //printf("product: %s\n",mDescriptor->getProduct());
-        //printf("version: %i\n",mDescriptor->getVersion());
-        //printf("uid:     %i\n",mDescriptor->getUniqueId());
-        //printf("inputs   %i\n",mDescriptor->getNumInputs());
-        //printf("outputs  %i\n",mDescriptor->getNumOutputs());
-        //printf("params   %i\n",mDescriptor->getNumParams());
-        //printf("progs    %i\n",mDescriptor->getNumProgs());
+
+        // our plugins must replace the values in the above struct
+        // before it is returned to the host (AX_ENTRYPOINT)
+
       }
 
     //----------
@@ -167,34 +175,56 @@ class axInstance// : public axParameterListener
   private: // hide them
   //protected:
 
-    virtual VstIntPtr dispatcher(VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
+    /*virtual*/ VstIntPtr dispatcher(VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
       {
-        // the big switch/case here...
+        VstIntPtr v = 0;
+        switch (opcode)
+        {
+          // 45
+          case effGetEffectName:
+            strcpy((char*)ptr,mDescriptor->getName());
+            v = 1;
+            break;
+          // 47
+          case effGetVendorString:
+            strcpy((char*)ptr,mDescriptor->getAuthor());
+            v = 1;
+            break;
+          // 48
+          case effGetProductString:
+            strcpy((char*)ptr,mDescriptor->getProduct());
+            v = 1;
+            break;
+          // 49
+          case effGetVendorVersion:
+            v = mDescriptor->getVersion();
+            break;
+        }
+        return v;
+      }
+
+    //----------
+
+    /*virtual*/ float getParameter(VstInt32 aIndex)
+      {
         return 0;
       }
 
     //----------
 
-    virtual float getParameter(VstInt32 aIndex)
-      {
-        return 0;
-      }
-
-    //----------
-
-    virtual void setParameter(VstInt32 aIndex, float aValue)
+    /*virtual*/ void setParameter(VstInt32 aIndex, float aValue)
       {
       }
 
     //----------
 
-    virtual void processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames)
+    /*virtual*/ void processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames)
       {
       }
 
     //----------
 
-    virtual void processDoubleReplacing(double** aInputs, double** aOutputs, VstInt32 aLength)
+    /*virtual*/ void processDoubleReplacing(double** aInputs, double** aOutputs, VstInt32 aLength)
       {
       }
 
@@ -203,7 +233,6 @@ class axInstance// : public axParameterListener
   //----------------------------------------
 
   public:
-  //protected: // should other classes be able to call these?
     // lib-user overrides these:
     // programs & parameters
     //virtual void  doSetupParameters(void) {}
@@ -270,8 +299,6 @@ class axFormatImpl : public axFormat
 
   AEffect* main_plugin(audioMasterCallback audioMaster) asm ("main");
   #define main main_plugin
-
-  //----------
 
   #define AX_ENTRYPOINT(_desc,_inst,_iface,_plat)                                                 \
                                                                                                   \

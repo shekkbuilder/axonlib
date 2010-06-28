@@ -10,10 +10,13 @@
 
 class axInterface
 {
+  private:
+    //Display* mDisplay;
   public:
     axInterface(axFormat* aFormat)
       {
         printf("axInterface linux\n");
+        //XInitThreads();
       }
     virtual ~axInterface() {}
 
@@ -21,8 +24,9 @@ class axInterface
     int       getScreenHeight(void) { return 0; }
     int       getScreenDepth(void) { return 0; }
 
-    /* axWindow* */ void* createWindow(int aWidth, int aHeight) { return NULL; }
-    /* axWindow* */ void* createEmbeddedWindow(int aParent, int aWidth, int aHeight) { return NULL; }
+    axWindow*   createWindow(int aWidth, int aHeight, int aDepth, int aFlags) { return NULL; }
+    //axSurface*  createSurface(int aWidth, int aHeight, int aDepth, int aFlags) { return NULL; }
+    //axBitmap*   createBitmap(int aWidth, int aHeight, int aDepth, int aFlags) { return NULL; }
 };
 
 //----------------------------------------------------------------------
