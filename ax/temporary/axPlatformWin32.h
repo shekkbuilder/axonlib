@@ -8,9 +8,7 @@ class axPlatform
     axPlatform(axFormat* aFormat)
       {
         printf("axPlatform win32\n");
-        #ifndef AX_NOGUI
-          //register windows class
-        #endif
+        // hmodule, hinstance
       }
     virtual ~axPlatform() { }
 };

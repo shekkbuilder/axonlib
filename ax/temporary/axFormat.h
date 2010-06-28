@@ -6,6 +6,8 @@
   #define NULL 0
 #endif
 
+typedef void axWindow;
+
 //// format types
 //#define ft_Unknown  0
 //#define ft_Exe      1
