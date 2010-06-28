@@ -2,13 +2,8 @@
 #define axFormatLadspa_included
 //----------------------------------------------------------------------
 
-#include "../extern/ladspa.h"
-
-//----------------------------------------------------------------------
-//
-// descriptor
-//
-//----------------------------------------------------------------------
+#include <memory.h> // memset
+#include "../extern/ladspa.h" //TODO: proper ladspa sdk
 
 // g_ = global
 
@@ -16,17 +11,73 @@
 static char* g_stereo_inputs[]  = { (char*)"in1", (char*)"in2" };
 static char* g_stereo_outputs[] = { (char*)"out1",(char*)"out2" };
 
-//----------
+static char* g_stereo_ports[] = { (char*)"in1", (char*)"in2",(char*)"out1",(char*)"out2" };
+
+//----------------------------------------------------------------------
+//
+// instance
+//
+//----------------------------------------------------------------------
+
+class axInstance
+{
+  private:
+    axFormat* mFormat;
+  public:
+    axInstance(axFormat* aFormat)
+      {
+        printf("axInstance.constructor [ladspa]\n");
+        mFormat=aFormat;
+      }
+    virtual ~axInstance()
+      {
+        printf("axInstance.destructor\n");
+      }
+
+    virtual void connect_port(unsigned long Port, LADSPA_Data* DataLocation)
+      {
+        printf("axInstance.connect_port\n");
+      }
+    virtual void activate(void)
+      {
+        printf("axInstance.activate\n");
+      }
+    virtual void run(unsigned long SampleCount)
+      {
+        //printf("axInstance.run\n");
+      }
+  //virtual void run_adding(unsigned long SampleCount) {}
+  //virtual void set_run_adding_gain(LADSPA_Data Gain) {}
+    virtual void deactivate(void)
+      {
+        printf("axInstance.deactivate\n");
+      }
+    virtual void cleanup(void)
+      {
+        printf("axInstance.cleanup\n");
+      }
+
+};
+
+//----------------------------------------------------------------------
+//
+// descriptor
+//
+//----------------------------------------------------------------------
 
 class axDescriptor
 {
+
+  // static callbacks
+
   private:
 
     // redirect to instantiate() in axDescriptor
     static LADSPA_Handle lad_instantiate(const LADSPA_Descriptor* Descriptor, unsigned long SampleRate)
       {
-        axDescriptor* ladspa = (axDescriptor*)Descriptor->ImplementationData;
-        return ladspa->instantiate(SampleRate);
+        printf("lad_instantiate\n");
+        axDescriptor* desc = (axDescriptor*)Descriptor->ImplementationData;
+        return desc->instantiate(SampleRate);
       }
 
     //----------
@@ -35,102 +86,136 @@ class axDescriptor
 
     static void lad_connect_port(LADSPA_Handle Instance, unsigned long Port, LADSPA_Data * DataLocation)
       {
-        axInstance* ladspa = (axInstance*)Instance;
-        ladspa->connect_port(Port,DataLocation);
+        printf("lad_connect_port\n");
+        axInstance* inst = (axInstance*)Instance;
+        inst->connect_port(Port,DataLocation);
       }
 
     //----------
 
     static void lad_activate(LADSPA_Handle Instance)
       {
-        axInstance* ladspa = (axInstance*)Instance;
-        ladspa->activate();
+        printf("lad_activate\n");
+        axInstance* inst = (axInstance*)Instance;
+        inst->activate();
       }
 
     //----------
 
     static void lad_run(LADSPA_Handle Instance, unsigned long SampleCount)
       {
-        axInstance* ladspa = (axInstance*)Instance;
-        ladspa->run(SampleCount);
+        //printf("lad_run\n");
+        axInstance* inst = (axInstance*)Instance;
+        inst->run(SampleCount);
       }
 
     //----------
 
     //static void lad_run_adding(LADSPA_Handle Instance, unsigned long SampleCount)
     //  {
-    //    axInstance* ladspa = (axInstance*)Instance;
-    //    ladspa->run_adding(SampleCount);
+    //    axInstance* inst = (axInstance*)Instance;
+    //    inst->run_adding(SampleCount);
     //  }
 
     //----------
 
     //static void lad_set_run_adding_gain(LADSPA_Handle Instance, LADSPA_Data Gain)
     //  {
-    //    axInstance* ladspa = (axInstance*)Instance;
-    //    ladspa->set_run_adding_gain(Gain);
+    //    axInstance* inst = (axInstance*)Instance;
+    //    inst->set_run_adding_gain(Gain);
     //  }
 
     //----------
 
     static void lad_deactivate(LADSPA_Handle Instance)
       {
-        axInstance* ladspa = (axInstance*)Instance;
-        ladspa->deactivate();
+        //printf("lad_deactivate\n");
+        axInstance* inst = (axInstance*)Instance;
+        inst->deactivate();
       }
 
     //----------
 
     static void lad_cleanup(LADSPA_Handle Instance)
       {
-        axInstance* ladspa = (axInstance*)Instance;
-        ladspa->cleanup();
-        delete ladspa; // !!!
+        //printf("lad_cleanup\n");
+        axInstance* inst = (axInstance*)Instance;
+        inst->cleanup();
+        delete inst;                                        // !!!
       }
 
   //----------
 
   private:
-    LADSPA_Descriptor ladescr;
+    axFormat*         mFormat;
+    LADSPA_Descriptor mLDescr;
 
   public:
 
     axDescriptor(axFormat* aFormat)
       {
-        ladescr.UniqueID            = 0;//mUniqueId;
-        ladescr.Label               = mLabel;//"label";
-        ladescr.Properties          = LADSPA_PROPERTY_REALTIME | LADSPA_PROPERTY_HARD_RT_CAPABLE;
-        ladescr.Name                = mName;//"name";
-        ladescr.Maker               = mMaker;//"maker";
-        ladescr.Copyright           = mCopyright;//"copyright";
-        ladescr.PortCount           = 0;//mNumPorts;
-        ladescr.PortDescriptors     = mPortDesc; // NULL
-        ladescr.PortNames           = mPortNames; // NULL
-        ladescr.PortRangeHints      = mPortHint; // NULL
-        ladescr.ImplementationData  = this;
-        ladescr.instantiate         = lad_instantiate;
-        ladescr.connect_port        = lad_connect_port;
-        ladescr.activate            = lad_activate;
-        ladescr.run                 = lad_run;                  // ala processReplacing
-        ladescr.run_adding          = NULL;//lad_run_adding;           // ala process, optional
-        ladescr.set_run_adding_gain = NULL;//lad_set_run_adding_gain;  // if above
-        ladescr.deactivate          = lad_deactivate;
-        ladescr.cleanup             = lad_cleanup;
+        printf("axDescriptor [ladspa]\n");
+        mFormat     = aFormat;
+        memset(&mLDescr,0,sizeof(mLDescr)); // axMemset
+        mLDescr.UniqueID            = 0;//mUniqueId;
+        mLDescr.Label               = this->getName();
+        mLDescr.Properties          = LADSPA_PROPERTY_REALTIME | LADSPA_PROPERTY_HARD_RT_CAPABLE;
+        mLDescr.Name                = this->getName();
+        mLDescr.Maker               = this->getAuthor();
+        mLDescr.Copyright           = this->getProduct();;
+        mLDescr.PortCount           = 0;
+        mLDescr.PortDescriptors     = NULL;
+        mLDescr.PortNames           = NULL;//g_stereo_ports;
+        mLDescr.PortRangeHints      = NULL;
+        mLDescr.ImplementationData  = this;
+        mLDescr.instantiate         = lad_instantiate;
+        mLDescr.connect_port        = lad_connect_port;
+        mLDescr.activate            = lad_activate;
+        mLDescr.run                 = lad_run;                          // ala processReplacing
+        mLDescr.run_adding          = NULL;//lad_run_adding;            // ala process, optional
+        mLDescr.set_run_adding_gain = NULL;//lad_set_run_adding_gain;   // if above
+        mLDescr.deactivate          = lad_deactivate;
+        mLDescr.cleanup             = lad_cleanup;
       }
+
+    //----------
 
     ~axDescriptor()
       {
+        printf("axDescriptor.constructor [ladspa]\n");
       }
 
-    private:
+    //----------------------------------------
+    // accessors
+
+    inline LADSPA_Descriptor* getLDescr(void) { return &mLDescr; };
+
+  //----------------------------------------
+  // helpers / internal
+  //----------------------------------------
+
+  public:
+
+  //----------------------------------------
+  // callbacks
+  //----------------------------------------
+
+  private: // hide them
+  //protected:
 
     // called from static callback function (above)
     virtual LADSPA_Handle instantiate(unsigned long SampleRate)
       {
+        printf("axDescriptor.instantiate\n");
         return mFormat->getInstance(); // create instance
       }
 
+  //----------------------------------------
+  //
+  //----------------------------------------
+
   public:
+
     virtual char*         getName(void)             { return (char*)"plugin"; }
     virtual char*         getAuthor(void)           { return (char*)"anonymous"; }
     virtual char*         getProduct(void)          { return (char*)"unknwon plugin"; }
@@ -144,30 +229,6 @@ class axDescriptor
     virtual char*         getOutputName(int aIndex) { return g_stereo_outputs[aIndex]; }
     virtual char*         getParamName(int aIndex)  { return (char*)"param"; }
     // TODO: double-check with ladspa (and exe)
-};
-
-//----------------------------------------------------------------------
-//
-// instance
-//
-//----------------------------------------------------------------------
-
-class axInstance
-{
-  private:
-    axFormat* mFormat;
-  public:
-    axInstance(axFormat* aFormat) { mFormat=aFormat; }
-    virtual ~axInstance() { }
-    //virtual int getAEffect(void) { return 0; };
-    virtual void connect_port(unsigned long Port, LADSPA_Data* DataLocation) {}
-    virtual void activate(void) {}
-    virtual void run(unsigned long SampleCount) {}
-    //virtual void run_adding(unsigned long SampleCount) {}
-    //virtual void set_run_adding_gain(LADSPA_Data Gain) {}
-    virtual void deactivate(void) {}
-    virtual void cleanup(void) {}
-
 };
 
 //----------------------------------------------------------------------
@@ -187,16 +248,14 @@ class axFormatImpl : public axFormat//Base
 
     axFormatImpl() : axFormat()//Base()
       {
-        mPlatform   = new _P(0); // todo: this (axFormat* param in platform constructor
+        mPlatform   = new _P(this);
         mDescriptor = new _D(this);
-        //mInstance   = new _I(mDescriptor);
       }
 
     //----------
 
     virtual ~axFormatImpl()
       {
-        //delete mInstance;
         delete mDescriptor;
         delete mPlatform;
       }
@@ -205,7 +264,7 @@ class axFormatImpl : public axFormat//Base
 
     virtual axPlatform*   getPlatform(void)    { return mPlatform; }
     virtual axDescriptor* getDescriptor(void)  { return mDescriptor; }
-    //virtual axInstance*   getInstance(void)    { return mInstance; }
+    virtual axInstance*   getInstance(void)    { return new _I(this); }
 
     //----------
 
@@ -213,26 +272,72 @@ class axFormatImpl : public axFormat//Base
 
 //----------------------------------------------------------------------
 
-#define AX_ENTRYPOINT(_desc,_inst,_iface,_plat) \
-  axFormatImpl<_desc,_inst,_iface,_plat>* plug =  new axFormatImpl<_desc,_inst,_iface,_plat>(); \
+class axGlobalScope
+{
+  public:
+    axFormat* mFormat;
+    axGlobalScope()  { printf("axGlobalScope.constructor\n"); mFormat=NULL; }
+    ~axGlobalScope() { printf("axGlobalScope.destructor\n");  if (mFormat) delete mFormat; }
+};
 
-  //return plug->lad_descr;
+axGlobalScope g_Scope;
 
-// creates an axFormatImpl class..
+//----------------------------------------------------------------------
+//
+// entry point
+//
+//----------------------------------------------------------------------
+
+//TODO: test windows version...
+
+#ifdef AX_WIN32
+
+  // this could be moved to axPlatform
+
+  static __thread HINSTANCE gInstance;
+
+  #define _AX_LADSPA_DLLMAIN                                    \
+    __externc BOOL APIENTRY                                     \
+    DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved) \
+    {                                                           \
+      trace("ladspa DllMain()");                                \
+      gInstance = hModule;                                      \
+      return TRUE;                                              \
+    }
+
+  // should this, and the } be -inside- the AX_ENTRYPOINT define?
+  __externc
+  {
+
+#else // AX_WIN32
+
+  #define _AX_LADSPA_DLLMAIN
+
+#endif
+
+//----------
+
+#define AX_ENTRYPOINT(_desc,_inst,_iface,_plat)                                                   \
+                                                                                                  \
+  _AX_LADSPA_DLLMAIN                                                                              \
+  __externc __dllexport                                                                           \
+  const LADSPA_Descriptor* ladspa_descriptor (unsigned long index)                                \
+  {                                                                                               \
+    if (index>0) return NULL;                                                                     \
+    axFormatImpl<_desc,_inst,_iface,_plat>* plug =  new axFormatImpl<_desc,_inst,_iface,_plat>(); \
+    g_Scope.mFormat = plug;                                                                       \
+    _inst* instance = (_inst*)plug->getInstance();                                                \
+    if (!instance) return 0;                                                                      \
+    LADSPA_Descriptor* descr = plug->getDescriptor()->getLDescr();                                \
+    return descr;                                                                                 \
+  }                                                                                               \
+
+#ifdef AX_WIN32
+  } // extern "C"
+#endif
 
 //----------------------------------------------------------------------
 #endif
-
-
-
-
-
-
-
-
-
-
-
 
 
 //TODO: move the things below into the AX_ENTRYPOINT above

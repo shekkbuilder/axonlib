@@ -1,7 +1,9 @@
 #define AX_NOGUI
-#define AX_LINUX//WIN32
+//#define AX_WIN32
+#define AX_LINUX
 
 #include <stdio.h> // printf
+#include "core/axDefines.h"
 #include "temporary/axFormat.h"
 
 //----------
