@@ -29,7 +29,7 @@ class axDescriptor
   public:
     virtual char*         getName(void)             { return (char*)"plugin"; }
     virtual char*         getAuthor(void)           { return (char*)"anonymous"; }
-    virtual char*         getProduct(void)          { return (char*)"unknwon plugin"; }
+    virtual char*         getProduct(void)          { return (char*)"unknown plugin"; }
     virtual int           getVersion(void)          { return 0; }
     virtual unsigned int  getUniqueId(void)         { return 0x00000000; }
     virtual int           getNumInputs(void)        { return 2; }
@@ -300,16 +300,7 @@ class axFormatImpl : public axFormat
   AEffect* main_plugin(audioMasterCallback audioMaster) asm ("main");
   #define main main_plugin
 
-  #define AX_ENTRYPOINT(_desc,_inst,_iface,_plat)                                                 \
-                                                                                                  \
-  AEffect* main(audioMasterCallback audioMaster)                                                  \
-  {                                                                                               \
-    axFormatImpl<_desc,_inst,_iface,_plat>* plug =  new axFormatImpl<_desc,_inst,_iface,_plat>(); \
-    _inst* instance = (_inst*)plug->getInstance();                                                \
-    if (!instance) return 0;                                                                      \
-    AEffect* ae = instance->getAEffect();                                                         \
-    return ae;                                                                                    \
-  }
+  #define _AX_VST_MAIN_DEF    AEffect* main(audioMasterCallback audioMaster)
 
 #endif //LINUX
 
@@ -318,9 +309,14 @@ class axFormatImpl : public axFormat
 
 #ifdef AX_WIN32
 
-  #define AX_ENTRYPOINT(_desc,_inst,_iface,_plat)                                                 \
+  #define _AX_VST_MAIN_DEF    int main(int audioMaster, char** empty)
+
+#endif //WIN32
+
+
+#define AX_ENTRYPOINT(_desc,_inst,_iface,_plat)                                                   \
                                                                                                   \
-  int main(int audioMaster, char** empty)                                                         \
+  _AX_VST_MAIN_DEF                                                                                \
   {                                                                                               \
     axFormatImpl<_desc,_inst,_iface,_plat>* plug =  new axFormatImpl<_desc,_inst,_iface,_plat>(); \
     _inst* instance = (_inst*)plug->getInstance();                                                \
@@ -329,7 +325,7 @@ class axFormatImpl : public axFormat
     return (int)ae;                                                                               \
   }
 
-#endif //WIN32
+// - cast to int at the end can be troublesome
 
 //----------------------------------------------------------------------
 
