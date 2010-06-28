@@ -7,19 +7,17 @@
 #include "pluginterfaces/vst2.x/aeffect.h"
 #include "pluginterfaces/vst2.x/aeffectx.h"
 
-//----------------------------------------------------------------------
-//
-// descriptor
-//
-//----------------------------------------------------------------------
-
 // g_ = global
 
 // default names for (default) stereo in/out
 static char* g_stereo_inputs[]  = { (char*)"in1", (char*)"in2" };
 static char* g_stereo_outputs[] = { (char*)"out1",(char*)"out2" };
 
-//----------
+//----------------------------------------------------------------------
+//
+// descriptor
+//
+//----------------------------------------------------------------------
 
 class axDescriptor
 {
@@ -50,15 +48,11 @@ class axDescriptor
 
 class axInstance// : public axParameterListener
 {
-  private:
-    AEffect mAEffect; // vst-specific
 
-  //--------------------------------------------------
-  private:
-  //--------------------------------------------------
+  // static callbacks
+  // called from vst dispatcher (via aeffect)
 
-    // static callbacks
-    // called from vst dispatcher (via aeffect)
+  private:
 
     static VstIntPtr dispatcher_callback(AEffect* ae, VstInt32 opCode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
       {
@@ -119,6 +113,8 @@ class axInstance// : public axParameterListener
 
   private:
     axDescriptor* mDescriptor;
+    AEffect       mAEffect; // vst-specific
+
 
   public:
 
