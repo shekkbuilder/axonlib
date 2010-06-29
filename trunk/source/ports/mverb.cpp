@@ -148,16 +148,15 @@ class myPlugin : public axFormat
           m_GuiInitialized = false;
           setupEditor(456,108);
         #endif //gui
-        // 0.0, 0.5, 1.0, 0.5, 0.0, 0.5, 1.0, 0.15, 0.75
-        appendParameter( new axParameter(this,"damping freq", "",0.0) );
+        appendParameter( new axParameter(this,"damping freq", "",0.5) );
         appendParameter( new axParameter(this,"density",      "",0.5) );
-        appendParameter( new axParameter(this,"bandwidthfreq","",1.0) );
+        appendParameter( new axParameter(this,"bandwidthfreq","",0.5) );
         appendParameter( new axParameter(this,"decay",        "",0.5) );
-        appendParameter( new axParameter(this,"predelay",     "",0.0) );
+        appendParameter( new axParameter(this,"predelay",     "",0.5) );
         appendParameter( new axParameter(this,"size",         "",0.5) );
-        appendParameter( new axParameter(this,"gain",         "",1.0) );
-        appendParameter( new axParameter(this,"mix",          "",0.15) );
-        appendParameter( new axParameter(this,"earlymix",     "",0.75) );
+        appendParameter( new axParameter(this,"gain",         "",0.5) );
+        appendParameter( new axParameter(this,"mix",          "",0.5) );
+        appendParameter( new axParameter(this,"earlymix",     "",0.5) );
         setupParameters();
         appendProgram( new axProgram("subtle",  9, prog1) );
         appendProgram( new axProgram("stadium", 9, prog2) );
