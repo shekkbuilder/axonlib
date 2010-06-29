@@ -34,4 +34,7 @@ LIST OF INCLUDED EXTERNAL LIBRARIES:
   - lib: Reverb engine
   - author: Martin Eastwood
   - license: GPL
-
+* isaac.h
+  - lib: cryptographically safe random number generator
+  - author: Robert J. Jenkins Jr. & Quinn Tyler Jackson
+  - license: public domain
