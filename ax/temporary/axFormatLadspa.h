@@ -300,6 +300,13 @@ axGlobalScope g_Scope;
 
 //TODO: test windows version...
 
+/*
+- audacity does not recognizes the dll with the new structure.
+- the "rtladspa.exe" debug tool reads the descriptor but returns 0 ports
+and crashes soon after.
+- also something broke mverb-ladspa-win32 (strange?) with the old structure
+*/
+
 #ifdef AX_WIN32
   // this could (should?) be moved to axPlatform
   static __thread HINSTANCE gInstance;
@@ -313,8 +320,13 @@ axGlobalScope g_Scope;
     }
   // should this, and the } be -inside- the AX_ENTRYPOINT define? or is it only the DLLMAIN
   // doesn't (only) the AX_ENTRYPOINT expands wherever we put the macro?
-  __externc
+  
+  /*
+  yes no need for the __externc {}
+   __externc
   {
+  */
+  
 #else // AX_WIN32
   #define _AX_LADSPA_DLLMAIN
 #endif
@@ -338,9 +350,11 @@ axGlobalScope g_Scope;
 
 //----------
 
+/*
 #ifdef AX_WIN32
   } // extern "C"
 #endif
+*/
 
 //----------------------------------------------------------------------
 #endif

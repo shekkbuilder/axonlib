@@ -227,7 +227,7 @@ else
       if [ "$compiler" == "$mingw" ];
       then
         fmt_ext=".dll"
-        tgt="-shared -fPIC"
+        tgt="-shared"
       # ------------------------- case gcc
       else
         fmt_ext=".so"

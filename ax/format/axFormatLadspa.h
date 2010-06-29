@@ -584,6 +584,7 @@ typedef axFormatLadspa axFormatImpl;
   axContext ctx(0,0,0);
 
 #ifdef AX_WIN32
+
   static __thread HINSTANCE gInstance;
 
   #define _AX_LADSPA_DLLMAIN                                    \
@@ -594,9 +595,6 @@ typedef axFormatLadspa axFormatImpl;
       gInstance = hModule;                                      \
       return TRUE;                                              \
     }
-
-  __externc
-  {
 
 #else // AX_WIN32
   #define _AX_LADSPA_DLLMAIN
@@ -623,11 +621,6 @@ typedef axFormatLadspa axFormatImpl;
       plugclass* plug = new plugclass(aContext,ff_None);              \
       return (void*)plug;                                             \
     }
-
-
-#ifdef AX_WIN32
-  } // extern "C"
-#endif
 
 //----------------------------------------------------------------------
 #endif
