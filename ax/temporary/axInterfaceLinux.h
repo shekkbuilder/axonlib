@@ -20,11 +20,11 @@ class axInterface
       }
     virtual ~axInterface() {}
 
-    int       getScreenWidth(void) { return 0; }
+    int       getScreenWidth(void)  { return 0; }
     int       getScreenHeight(void) { return 0; }
-    int       getScreenDepth(void) { return 0; }
+    int       getScreenDepth(void)  { return 0; }
 
-    axWindow*   createWindow(int aWidth, int aHeight, int aDepth, int aFlags) { return NULL; }
+    axWindow* createWindow(int aWidth, int aHeight, int aDepth, int aFlags) { return NULL; }
     //axSurface*  createSurface(int aWidth, int aHeight, int aDepth, int aFlags) { return NULL; }
     //axBitmap*   createBitmap(int aWidth, int aHeight, int aDepth, int aFlags) { return NULL; }
 };

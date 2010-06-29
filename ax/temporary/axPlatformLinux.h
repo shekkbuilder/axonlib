@@ -6,7 +6,6 @@
   //#include "Xlib.h"
 #endif
 
-
 class axPlatform
 {
   public:
