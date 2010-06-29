@@ -1,6 +1,4 @@
 #define AX_NOGUI
-//#define AX_WIN32
-#define AX_LINUX
 
 #include <stdio.h> // printf
 #include "core/axDefines.h"
@@ -11,9 +9,13 @@
 class myDescriptor : public axDescriptor
 {
   public:
-    myDescriptor(axFormat* aFormat) : axDescriptor(aFormat) { printf("myDescriptor\n"); }
-    virtual char*         getName(void)             { return (char*)"test_template"; }
-    virtual char*         getAuthor(void)           { return (char*)"ccernn"; }
+    myDescriptor(axFormat* aFormat)
+    : axDescriptor(aFormat)
+      {
+        printf("myDescriptor\n");
+      }
+    virtual char* getName(void)   { return (char*)"test_template"; }
+    virtual char* getAuthor(void) { return (char*)"ccernn"; }
 };
 
 //----------
@@ -21,8 +23,16 @@ class myDescriptor : public axDescriptor
 class myInstance : public axInstance
 {
   public:
-    myInstance(axFormat* aFormat) : axInstance(aFormat) { printf("myInstance\n"); }
-    int main(int argc,char** argv) { printf("myInstance.main\n"); return 0; }
+    myInstance(axFormat* aFormat)
+    : axInstance(aFormat)
+      {
+        printf("myInstance\n");
+      }
+    int main(int argc,char** argv)
+      {
+        printf("myInstance.main\n");
+        return 0;
+      }
 };
 
 //----------

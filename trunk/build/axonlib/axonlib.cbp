@@ -295,7 +295,6 @@
 		<Unit filename="../../ax/temporary/axPlatform.h" />
 		<Unit filename="../../ax/temporary/axPlatformLinux.h" />
 		<Unit filename="../../ax/temporary/axPlatformWin32.h" />
-		<Unit filename="../../ax/temporary/main.cpp" />
 		<Unit filename="../../ax/wdg/wdgBitmap.h" />
 		<Unit filename="../../ax/wdg/wdgButton.h" />
 		<Unit filename="../../ax/wdg/wdgButtons.h" />

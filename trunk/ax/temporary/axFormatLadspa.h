@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include <memory.h> // memset
+
 #include "../extern/ladspa.h" //TODO: proper ladspa sdk
 
 // g_ = global
@@ -23,12 +24,15 @@ class axInstance
 {
   private:
     axFormat* mFormat;
+
   public:
+
     axInstance(axFormat* aFormat)
       {
         printf("axInstance.constructor [ladspa]\n");
         mFormat=aFormat;
       }
+
     virtual ~axInstance()
       {
         printf("axInstance.destructor\n");
@@ -38,20 +42,25 @@ class axInstance
       {
         printf("axInstance.connect_port\n");
       }
+
     virtual void activate(void)
       {
         printf("axInstance.activate\n");
       }
+
     virtual void run(unsigned long SampleCount)
       {
         //printf("axInstance.run\n");
       }
+
   //virtual void run_adding(unsigned long SampleCount) {}
   //virtual void set_run_adding_gain(LADSPA_Data Gain) {}
+
     virtual void deactivate(void)
       {
         printf("axInstance.deactivate\n");
       }
+
     virtual void cleanup(void)
       {
         printf("axInstance.cleanup\n");
@@ -176,6 +185,7 @@ class axDescriptor
         mLDescr.set_run_adding_gain = NULL;//lad_set_run_adding_gain;   // if above
         mLDescr.deactivate          = lad_deactivate;
         mLDescr.cleanup             = lad_cleanup;
+        //TODO: fix
       }
 
     //----------
@@ -291,11 +301,8 @@ axGlobalScope g_Scope;
 //TODO: test windows version...
 
 #ifdef AX_WIN32
-
-  // this could be moved to axPlatform
-
+  // this could (should?) be moved to axPlatform
   static __thread HINSTANCE gInstance;
-
   #define _AX_LADSPA_DLLMAIN                                    \
     __externc BOOL APIENTRY                                     \
     DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved) \
@@ -304,15 +311,12 @@ axGlobalScope g_Scope;
       gInstance = hModule;                                      \
       return TRUE;                                              \
     }
-
-  // should this, and the } be -inside- the AX_ENTRYPOINT define?
+  // should this, and the } be -inside- the AX_ENTRYPOINT define? or is it only the DLLMAIN
+  // doesn't (only) the AX_ENTRYPOINT expands wherever we put the macro?
   __externc
   {
-
 #else // AX_WIN32
-
   #define _AX_LADSPA_DLLMAIN
-
 #endif
 
 //----------
@@ -332,86 +336,11 @@ axGlobalScope g_Scope;
     return descr;                                                                                 \
   }                                                                                               \
 
+//----------
+
 #ifdef AX_WIN32
   } // extern "C"
 #endif
 
 //----------------------------------------------------------------------
 #endif
-
-
-//TODO: move the things below into the AX_ENTRYPOINT above
-
-#if 0
-
-
-
-
-
-
-
-
-
-
-
-
-
-#define AX_CONTEXT_INIT(name) \
-  axContext ctx(0,0,0);
-
-#ifdef AX_WIN32
-  static __thread HINSTANCE gInstance;
-
-  #define _AX_LADSPA_DLLMAIN                                    \
-    __externc BOOL APIENTRY                                     \
-    DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved) \
-    {                                                           \
-      trace("ladspa DllMain()");                                \
-      gInstance = hModule;                                      \
-      return TRUE;                                              \
-    }
-
-  __externc
-  {
-
-#else // AX_WIN32
-  #define _AX_LADSPA_DLLMAIN
-#endif
-
-#define AX_ENTRYPOINT(plugclass)                                      \
-    _AX_LADSPA_DLLMAIN                                                \
-    __externc __dllexport                                             \
-    const LADSPA_Descriptor* ladspa_descriptor (unsigned long index)  \
-    {                                                                 \
-      trace("ladspa_descriptor( " << index << " )" );                 \
-      if (index)                                                      \
-        return NULL;                                                  \
-      AX_CONTEXT_INIT(plugclass)                                      \
-      plugclass* plug = new plugclass(&ctx,ff_Enumerate);             \
-      LADSPA_Descriptor* descriptor = plug->getDescriptor();          \
-      return descriptor;                                              \
-    }                                                                 \
-                                                                      \
-                                                                      \
-                                                                      \
-    void* create_ladspa_instance(axContext* aContext)                 \
-    {                                                                 \
-      plugclass* plug = new plugclass(aContext,ff_None);              \
-      return (void*)plug;                                             \
-    }
-
-
-#ifdef AX_WIN32
-  } // extern "C"
-#endif
-
-
-
-
-
-
-
-
-
-
-#endif // 0
