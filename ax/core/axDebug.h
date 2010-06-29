@@ -71,6 +71,9 @@ inline const char* axGetFileName(const char* path)
 
   // case: windows
   #ifdef AX_WIN32
+  
+    
+    
     /*
      * creates a winapi debugger window (slow)
     */
@@ -79,7 +82,12 @@ inline const char* axGetFileName(const char* path)
     #include <io.h>
     #include <stdio.h>            // gcc-4.4.1-tdm
     #include <sstream>
-
+    
+    #define axDwinCreate() ((void)0)
+    #define axDwinDestroy() ((void)0)
+    
+    #if 0
+    
     static __thread HWND axDtext;        // edit control handle
     ostringstream axDoss;                // string stream for window
 
@@ -170,7 +178,9 @@ inline const char* axGetFileName(const char* path)
         axDoss << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << "\r\n"; \
         wdebug_write(); \
       }
-
+      
+    #endif // #if 0
+      
     /*
      * create a console debugger window (only one instance per process, fast)
      * allocates console and routes stdout as seen in example:

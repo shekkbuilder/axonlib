@@ -197,7 +197,7 @@ set linker=
 set opt=-O3
 goto getformat
 
-:: format is vst
+:: format is ladspa
 :ladspatarget
 if not exist %ladspapath% goto noladspa
 if not [%v%]==[] echo ---------------------------------------------------------------------------
