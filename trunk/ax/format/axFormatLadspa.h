@@ -525,15 +525,46 @@ class axFormatLadspa : public axFormatBase
           mPortHint[po].UpperBound      = 1;
           po++;
         }
+        
+        // ------------------------------------------------------
+        // bellow we override the user parameters and set hints
+        
+        // lii: set tmp value for the parameter list
+        float pval;
         for (int i=0; i<par; i++)
         {
-          mPortNames[po] = (char*)axMalloc(16);                             // TODO: free
+          mPortNames[po] = (char*)axMalloc(16);                   // TODO: free
           axStrcpy( mPortNames[po], mParameters[i]->getName().ptr() );
           mPortDesc[po]                 = LADSPA_PORT_CONTROL
                                         | LADSPA_PORT_INPUT;
-          mPortHint[po].HintDescriptor  = LADSPA_HINT_BOUNDED_BELOW
-                                        | LADSPA_HINT_BOUNDED_ABOVE
-                                        | LADSPA_HINT_DEFAULT_MIDDLE;
+          
+          // lii: get the user value          
+          pval = (float)mParameters[i]->getValue();
+          if (pval < 0.33f)
+          {
+            // lii: override to 0.25 and set a hint for def. logaritmic low 
+            mParameters[i]->setValue(0.25f);
+            mPortHint[po].HintDescriptor = LADSPA_HINT_DEFAULT_LOW;
+          }
+          else if (pval > 0.66f)
+          {
+            // lii: override to 0.75 and set a hint for def. logaritmic high
+            mParameters[i]->setValue(0.75f);
+            mPortHint[po].HintDescriptor = LADSPA_HINT_DEFAULT_HIGH;
+          }
+          else
+          {
+            // lii: override to 0.5 and set a hint to def. middle
+            mParameters[i]->setValue(0.5f);
+            mPortHint[po].HintDescriptor = LADSPA_HINT_DEFAULT_MIDDLE;            
+          }
+          
+          // lii: add hints for limits
+          mPortHint[po].HintDescriptor |= LADSPA_HINT_BOUNDED_BELOW
+                                       |  LADSPA_HINT_BOUNDED_ABOVE;
+                                       
+          // ------------------------------------------------------          
+          
           mPortHint[po].LowerBound      = 0;
           mPortHint[po].UpperBound      = 1;
           po++;
