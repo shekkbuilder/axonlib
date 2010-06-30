@@ -7,7 +7,7 @@ class axPlatform
   public:
     axPlatform(axFormat* aFormat)
       {
-        printf("axPlatform win32\n");
+        trace("axPlatform win32");
         // hmodule, hinstance
       }
     virtual ~axPlatform() { }
