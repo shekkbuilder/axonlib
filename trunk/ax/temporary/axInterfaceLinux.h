@@ -42,7 +42,7 @@ class axInterface
 
     //----------
 
-    virtual axWindow* createWindow(void* aParent, int aWidth, int aHeight/*, int aFlags*/)
+    virtual axWindow* createWindow(void* aParent, int aWidth, int aHeight)
       {
         trace("axInterfaceLinux.createWindow");
         //int winflags = (if_Buffered|if_MsgDelete|if_MsgThread);

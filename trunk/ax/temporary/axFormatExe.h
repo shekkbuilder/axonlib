@@ -29,7 +29,7 @@ class axInstance
 
     virtual int main(int argc, char** argv)
       {
-        axInterface* interface = mFormat->getInterface();
+        //axInterface* interface = mFormat->getInterface();
         //axWindow* win = (axWindow*)doOpenEditor(aContext);
         //win->setTitle(mTitle);
         //win->eventLoop();

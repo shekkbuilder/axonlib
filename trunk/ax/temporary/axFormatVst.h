@@ -308,8 +308,8 @@ axGlobalScope g_Scope;
   AEffect* main_plugin(audioMasterCallback audioMaster) asm ("main");
   #define main main_plugin
 
-  #define _AX_VST_MAIN_DEF    AEffect* main(audioMasterCallback audioMaster)
-  #define _AX_VST_RET_DEF     return ae
+  #define _AX_VST_MAIN_DEF  AEffect* main(audioMasterCallback audioMaster)
+  #define _AX_VST_RET_DEF   return ae
 
 #endif //LINUX
 
@@ -318,8 +318,8 @@ axGlobalScope g_Scope;
 
 #ifdef AX_WIN32
 
-  #define _AX_VST_MAIN_DEF    int main(int audioMaster, char** empty)
-  #define _AX_VST_RET_DEF     return (int)ae
+  #define _AX_VST_MAIN_DEF  int main(int audioMaster, char** empty)
+  #define _AX_VST_RET_DEF   return (int)ae
 
 #endif //WIN32
 
