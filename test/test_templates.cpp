@@ -24,21 +24,23 @@ class myDescriptor : public axDescriptor
 
 class myInstance : public axInstance
 {
+  private:
+    axFormat* mFormat;
   public:
     myInstance(axFormat* aFormat)
     : axInstance(aFormat)
       {
         trace("myInstance.constructor");
+        mFormat = aFormat;
       }
     int main(int argc,char** argv)
       {
         trace("myInstance.main");
-        axInterface* interface = mFormat->getInterface();
-        axWindow* win = interface->createWindow(NULL,320,240);
-
+        axInterface* iface;
+        iface = mFormat->getInterface();
+        axWindow* win = iface->createWindow(NULL,320,240);
           win->appendWidget( new wdgPanel(win,axRect(0,0,100,100),wa_None) );
           win->doRealign();
-
         win->show();
         win->eventLoop();
         win->hide();
