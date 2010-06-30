@@ -1,8 +1,10 @@
-#define AX_NOGUI
+//#define AX_NOGUI
 
-#include <stdio.h> // printf
+//#include <stdio.h> // printf
 #include "core/axDefines.h"
+#include "core/axDebug.h"
 #include "temporary/axFormat.h"
+#include "wdg/wdgPanel.h"
 
 //----------
 
@@ -12,7 +14,7 @@ class myDescriptor : public axDescriptor
     myDescriptor(axFormat* aFormat)
     : axDescriptor(aFormat)
       {
-        printf("myDescriptor\n");
+        trace("myDescriptor");
       }
     virtual char* getName(void)   { return (char*)"test_template"; }
     virtual char* getAuthor(void) { return (char*)"ccernn"; }
@@ -26,14 +28,42 @@ class myInstance : public axInstance
     myInstance(axFormat* aFormat)
     : axInstance(aFormat)
       {
-        printf("myInstance\n");
+        trace("myInstance.constructor");
       }
     int main(int argc,char** argv)
       {
-        printf("myInstance.main\n");
+        trace("myInstance.main");
+        axInterface* interface = mFormat->getInterface();
+        axWindow* win = interface->createWindow(NULL,320,240);
+
+          win->appendWidget( new wdgPanel(win,axRect(0,0,100,100),wa_None) );
+          win->doRealign();
+
+        win->show();
+        win->eventLoop();
+        win->hide();
+        delete win;
         return 0;
       }
 };
+
+//----------
+
+//class myInterface : public axInterface
+//{
+//  public:
+//    myInterface(axFormat* aFormat)
+//    : axInterface(aFormat)
+//      {
+//        trace("myInterface");
+//        axWindow* win = createWindow(NULL,320,240);
+//        win->show();
+//        win->setTitle("qweqwe");
+//        win->eventLoop();
+//        win->hide();
+//        delete win;
+//      }
+//};
 
 //----------
 

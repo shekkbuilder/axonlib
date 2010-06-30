@@ -2,18 +2,32 @@
 #define axInterface_included
 //----------------------------------------------------------------------
 
-// Interface flags
-#define if_None         0
-#define if_Buffered     1 // else Unbuffered
-#define if_Embedded     2 // else Windowed
-#define if_Transparent  4 // else Opaque
-#define if_Unbuffered   0
-#define if_Windowed     0
-#define if_Opaque       0
+//#define AX_WIN_EMBEDDED   1
+//#define AX_WIN_BUFFERED   2
+//#define AX_WIN_MSGTHREAD  4
+//#define AX_WIN_MSGPROC    8
+//#define AX_WIN_MSGDELETE  16
 
-// #define IF_VST ( if_Buffered | if_Embedded | if_Opaque )
+// Interface flags
+//#define if_None         0
+//#define if_Embedded     1   // else Windowed
+//#define if_Buffered     2   // else Unbuffered
+//#define if_MsgThread    4   // else MsgProc
+//#define if_MsgProc      8   // else MsgProc
+//#define if_MsgDelete    16
+//#define if_Alpha        32   // else Opaque
 
 #define DEFAULT_INTERFACE axInterface
+
+//----------
+
+#ifdef AX_FORMAT_VST
+  #define AX_WIN_DEFAULT (AX_WIN_BUFFERED|AX_WIN_MSGTHREAD|AX_WIN_EMBEDDED)
+#endif
+
+#ifdef AX_FORMAT_EXE
+  #define AX_WIN_DEFAULT (AX_WIN_BUFFERED|AX_WIN_MSGDELETE)
+#endif
 
 //----------------------------------------------------------------------
 

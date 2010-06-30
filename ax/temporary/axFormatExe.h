@@ -2,6 +2,8 @@
 #define axFormatExe_included
 //----------------------------------------------------------------------
 
+#define AX_WIN_DEFAULT (AX_WIN_BUFFERED|AX_WIN_MSGDELETE)
+
 // not really used for exe's, but, perhaps later..
 class axDescriptor
 {
@@ -14,10 +16,26 @@ class axDescriptor
 
 class axInstance
 {
+  protected:
+    axFormat* mFormat;
   public:
-    axInstance(axFormat* aFormat) { }
-    virtual ~axInstance() { }
-    virtual int main(int argc, char** argv) { return 0; }
+    axInstance(axFormat* aFormat)
+      {
+        mFormat = aFormat;
+      }
+    virtual ~axInstance()
+      {
+      }
+
+    virtual int main(int argc, char** argv)
+      {
+        axInterface* interface = mFormat->getInterface();
+        //axWindow* win = (axWindow*)doOpenEditor(aContext);
+        //win->setTitle(mTitle);
+        //win->eventLoop();
+        //doCloseEditor();
+        return 0;
+      }
 };
 
 //----------------------------------------------------------------------
@@ -43,7 +61,7 @@ class axFormatImpl : public axFormat
   public:
     axFormatImpl() : axFormat()
       {
-        printf("axFormatImpl: exe\n");
+        trace("axFormatImpl: exe");
         // for exe's create everything
         // vst will be similar
         // ladspa will create instance later (getInstance)

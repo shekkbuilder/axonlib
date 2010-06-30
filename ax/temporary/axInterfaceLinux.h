@@ -8,28 +8,55 @@
   - alpha/noalpha
 */
 
+#include "core/axRect.h"
+#include "platform/axContext.h"
+#include "gui/axWindow.h"
+
+//void* threadProc(void* data);
+//void* timerProc(void* data);
+//void  eventProc(XEvent* ev);
+
 class axInterface
 {
   private:
-    //Display* mDisplay;
+    Display*  mDisplay;
+
   public:
+
     axInterface(axFormat* aFormat)
       {
-        printf("axInterface linux\n");
-        //XInitThreads();
+        trace("axInterface linux");
+        XInitThreads();
+        mDisplay = XOpenDisplay(NULL);
       }
-    virtual ~axInterface() {}
+    virtual ~axInterface()
+      {
+        XCloseDisplay(mDisplay);
+      }
 
-    int       getScreenWidth(void)  { return 0; }
-    int       getScreenHeight(void) { return 0; }
-    int       getScreenDepth(void)  { return 0; }
+    //----------
 
-    axWindow* createWindow(int aWidth, int aHeight, int aDepth, int aFlags) { return NULL; }
-    //axSurface*  createSurface(int aWidth, int aHeight, int aDepth, int aFlags) { return NULL; }
-    //axBitmap*   createBitmap(int aWidth, int aHeight, int aDepth, int aFlags) { return NULL; }
+    //int getScreenWidth(void)  { return 0; }
+    //int getScreenHeight(void) { return 0; }
+    //int getScreenDepth(void)  { return 0; }
+
+    //----------
+
+    virtual axWindow* createWindow(void* aParent, int aWidth, int aHeight/*, int aFlags*/)
+      {
+        trace("axInterfaceLinux.createWindow");
+        //int winflags = (if_Buffered|if_MsgDelete|if_MsgThread);
+        axContext context;
+        context.mDisplay = mDisplay; // all uses same connection, or one each?
+        if (aParent==NULL) context.mWindow = XDefaultRootWindow(mDisplay);
+        else context.mWindow = (Window)aParent;
+        context.mAudio = NULL;
+        axWindow* window = new axWindow(&context,axRect(0,0,aWidth,aHeight),AX_WIN_DEFAULT);
+        return window;
+        //return NULL;
+      }
+
 };
 
 //----------------------------------------------------------------------
 #endif
-
-

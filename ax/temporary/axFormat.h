@@ -6,16 +6,16 @@
   #define NULL 0
 #endif
 
-typedef void axWindow;
+//typedef void axWindow;
 
 //// format types
-//#define ft_Unknown  0
-//#define ft_Exe      1
-//#define ft_Vst      2
-//#define ft_Ladspa   3
-//#define ft_Dssi     4
-//#define ft_Lv2      5
-//#define ft_Au       6
+#define ft_Unknown  0
+#define ft_Exe      1
+#define ft_Vst      2
+#define ft_Ladspa   3
+#define ft_Dssi     4
+#define ft_Lv2      5
+#define ft_Au       6
 
 #define DEFAULT_DESCRIPTOR axDescriptor
 
@@ -33,11 +33,12 @@ class axFormat
 {
   public:
     axFormat() {}
-    virtual axFormat*     getFormat(void)     { return this; }
-    virtual axPlatform*   getPlatform(void)   { return NULL; }
-    virtual axDescriptor* getDescriptor(void) { return NULL; }
-    virtual axInstance*   getInstance(void)   { return NULL; }
-    virtual axInterface*  getInterface(void)  { return NULL; }
+    virtual axFormat*     getFormat(void)       { return this; }
+    virtual axPlatform*   getPlatform(void)     { return NULL; }
+    virtual axDescriptor* getDescriptor(void)   { return NULL; }
+    virtual axInstance*   getInstance(void)     { return NULL; }
+    virtual axInterface*  getInterface(void)    { return NULL; }
+    virtual int           getType(void)         { return ft_Unknown; }
 };
 
 //----------

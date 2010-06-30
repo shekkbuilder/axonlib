@@ -11,7 +11,7 @@ class axPlatform
   public:
     axPlatform(axFormat* aFormat)
       {
-        printf("axPlatform linux\n");
+        trace("axPlatform linux");
       }
     virtual ~axPlatform()
       {

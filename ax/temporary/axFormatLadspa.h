@@ -29,28 +29,28 @@ class axInstance
 
     axInstance(axFormat* aFormat)
       {
-        printf("axInstance.constructor [ladspa]\n");
+        trace("axInstance.constructor [ladspa]");
         mFormat=aFormat;
       }
 
     virtual ~axInstance()
       {
-        printf("axInstance.destructor\n");
+        trace("axInstance.destructor");
       }
 
     virtual void connect_port(unsigned long Port, LADSPA_Data* DataLocation)
       {
-        printf("axInstance.connect_port\n");
+        trace("axInstance.connect_port");
       }
 
     virtual void activate(void)
       {
-        printf("axInstance.activate\n");
+        trace("axInstance.activate");
       }
 
     virtual void run(unsigned long SampleCount)
       {
-        //printf("axInstance.run\n");
+        //trace("axInstance.run");
       }
 
   //virtual void run_adding(unsigned long SampleCount) {}
@@ -58,12 +58,12 @@ class axInstance
 
     virtual void deactivate(void)
       {
-        printf("axInstance.deactivate\n");
+        trace("axInstance.deactivate");
       }
 
     virtual void cleanup(void)
       {
-        printf("axInstance.cleanup\n");
+        trace("axInstance.cleanup");
       }
 
 };
@@ -84,7 +84,7 @@ class axDescriptor
     // redirect to instantiate() in axDescriptor
     static LADSPA_Handle lad_instantiate(const LADSPA_Descriptor* Descriptor, unsigned long SampleRate)
       {
-        printf("lad_instantiate\n");
+        trace("lad_instantiate");
         axDescriptor* desc = (axDescriptor*)Descriptor->ImplementationData;
         return desc->instantiate(SampleRate);
       }
@@ -95,7 +95,7 @@ class axDescriptor
 
     static void lad_connect_port(LADSPA_Handle Instance, unsigned long Port, LADSPA_Data * DataLocation)
       {
-        printf("lad_connect_port\n");
+        trace("lad_connect_port");
         axInstance* inst = (axInstance*)Instance;
         inst->connect_port(Port,DataLocation);
       }
@@ -104,7 +104,7 @@ class axDescriptor
 
     static void lad_activate(LADSPA_Handle Instance)
       {
-        printf("lad_activate\n");
+        trace("lad_activate");
         axInstance* inst = (axInstance*)Instance;
         inst->activate();
       }
@@ -113,7 +113,7 @@ class axDescriptor
 
     static void lad_run(LADSPA_Handle Instance, unsigned long SampleCount)
       {
-        //printf("lad_run\n");
+        //trace("lad_run");
         axInstance* inst = (axInstance*)Instance;
         inst->run(SampleCount);
       }
@@ -138,7 +138,7 @@ class axDescriptor
 
     static void lad_deactivate(LADSPA_Handle Instance)
       {
-        //printf("lad_deactivate\n");
+        //trace("lad_deactivate");
         axInstance* inst = (axInstance*)Instance;
         inst->deactivate();
       }
@@ -147,7 +147,7 @@ class axDescriptor
 
     static void lad_cleanup(LADSPA_Handle Instance)
       {
-        //printf("lad_cleanup\n");
+        //trace("lad_cleanup");
         axInstance* inst = (axInstance*)Instance;
         inst->cleanup();
         delete inst;                                        // !!!
@@ -163,7 +163,7 @@ class axDescriptor
 
     axDescriptor(axFormat* aFormat)
       {
-        printf("axDescriptor [ladspa]\n");
+        trace("axDescriptor [ladspa]");
         mFormat     = aFormat;
         memset(&mLDescr,0,sizeof(mLDescr)); // axMemset
         mLDescr.UniqueID            = 0;//mUniqueId;
@@ -192,7 +192,7 @@ class axDescriptor
 
     ~axDescriptor()
       {
-        printf("axDescriptor.constructor [ladspa]\n");
+        trace("axDescriptor.constructor [ladspa]");
       }
 
     //----------------------------------------
@@ -216,7 +216,7 @@ class axDescriptor
     // called from static callback function (above)
     virtual LADSPA_Handle instantiate(unsigned long SampleRate)
       {
-        printf("axDescriptor.instantiate\n");
+        trace("axDescriptor.instantiate");
         return mFormat->getInstance(); // create instance
       }
 
@@ -286,8 +286,8 @@ class axGlobalScope
 {
   public:
     axFormat* mFormat;
-    axGlobalScope()  { printf("axGlobalScope.constructor\n"); mFormat=NULL; }
-    ~axGlobalScope() { printf("axGlobalScope.destructor\n");  if (mFormat) delete mFormat; }
+    axGlobalScope()  { trace("axGlobalScope.constructor"); mFormat=NULL; }
+    ~axGlobalScope() { trace("axGlobalScope.destructor");  if (mFormat) delete mFormat; }
 };
 
 axGlobalScope g_Scope;
@@ -307,6 +307,19 @@ and crashes soon after.
 - also something broke mverb-ladspa-win32 (strange?) with the old structure
 */
 
+/*
+
+  ah, ok, well, no ports are reported back to ladspa host at the moment,
+  only the comiplastion and plugin loading is active...
+  but, should a hopst really crash if zero ports? even if a plugin is
+  completely useless without inputs/outputs, it shouldn't crash?
+  seems like audacity has no errror checking or fallbacks for unsupported
+  number of ports, or something..
+  any, will be fixed as soon as we add back the proper code from earlier
+  revisions
+
+*/
+
 #ifdef AX_WIN32
   // this could (should?) be moved to axPlatform
   static __thread HINSTANCE gInstance;
@@ -320,13 +333,13 @@ and crashes soon after.
     }
   // should this, and the } be -inside- the AX_ENTRYPOINT define? or is it only the DLLMAIN
   // doesn't (only) the AX_ENTRYPOINT expands wherever we put the macro?
-  
+
   /*
   yes no need for the __externc {}
    __externc
   {
   */
-  
+
 #else // AX_WIN32
   #define _AX_LADSPA_DLLMAIN
 #endif

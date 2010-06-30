@@ -2,7 +2,7 @@
 #define axFormatVst_included
 //----------------------------------------------------------------------
 
-#include <stdio.h> // printf
+//#include <stdio.h> // printf
 
 #include "pluginterfaces/vst2.x/aeffect.h"
 #include "pluginterfaces/vst2.x/aeffectx.h"
@@ -56,7 +56,7 @@ class axInstance// : public axParameterListener
 
     static VstIntPtr dispatcher_callback(AEffect* ae, VstInt32 opCode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
       {
-        //printf("vst: dispatcher\n");
+        //trace("vst: dispatcher");
         axInstance* instance = (axInstance*)(ae->object);
         if (opCode==effClose)
         {
@@ -71,7 +71,7 @@ class axInstance// : public axParameterListener
 
     static float getParameter_callback(AEffect* ae, VstInt32 index)
       {
-        //printf("vst: getParameter\n");
+        //trace("vst: getParameter");
         axInstance* instance = (axInstance*)(ae->object);
         return instance->getParameter(index);
       }
@@ -80,7 +80,7 @@ class axInstance// : public axParameterListener
 
     static void setParameter_callback(AEffect* ae, VstInt32 index, float value)
       {
-        //printf("vst: setParameter\n");
+        //trace("vst: setParameter");
         axInstance* instance = (axInstance*)(ae->object);
         instance->setParameter(index,value);
       }
@@ -261,7 +261,7 @@ class axFormatImpl : public axFormat
   public:
     axFormatImpl() : axFormat()
       {
-        printf("axFormatImpl: vst\n");
+        trace("axFormatImpl: vst");
         mPlatform   = new _P(this);
         mDescriptor = new _D(this);
         mInstance   = new _I(this);
@@ -290,8 +290,8 @@ class axGlobalScope
 {
   public:
     axFormat* mFormat;
-    axGlobalScope()  { printf("axGlobalScope.constructor\n"); mFormat=NULL; }
-    ~axGlobalScope() { printf("axGlobalScope.destructor\n");  if (mFormat) delete mFormat; }
+    axGlobalScope()  { trace("axGlobalScope.constructor"); mFormat=NULL; }
+    ~axGlobalScope() { trace("axGlobalScope.destructor");  if (mFormat) delete mFormat; }
 };
 
 axGlobalScope g_Scope;
@@ -338,8 +338,6 @@ axGlobalScope g_Scope;
 
 // - cast to int at the end can be troublesome
 
-// error: invalid conversion from ‘int’ to ‘AEffect*’|
-
 //----------------------------------------------------------------------
 
 #ifdef AX_NOGUI
@@ -351,12 +349,6 @@ axGlobalScope g_Scope;
 //----------------------------------------------------------------------
 
 // the instance is deleted in the event handlers
-//
-// TODO: currently, the axFormat is not deleted anywhere???
-// it shouldn't be deleted until the dll/so ios unloaded,
-// but does the os handle this?
-// windows could handle this with DllUnload (?) in axPlatform
-// linux? _fini?
 
 //----------------------------------------------------------------------
 #endif
