@@ -4,12 +4,30 @@
 
 #define AX_WIN_DEFAULT (AX_WIN_BUFFERED|AX_WIN_MSGDELETE)
 
+// g_ = global
+
+// default names for (default) stereo in/out
+static char* g_stereo_inputs[]  = { (char*)"in1", (char*)"in2" };
+static char* g_stereo_outputs[] = { (char*)"out1",(char*)"out2" };
+
 // not really used for exe's, but, perhaps later..
 class axDescriptor
 {
   public:
     axDescriptor(axFormat* aFormat) { }
     virtual ~axDescriptor() { }
+    virtual char*         getName(void)             { return (char*)"plugin"; }
+    virtual char*         getAuthor(void)           { return (char*)"anonymous"; }
+    virtual char*         getProduct(void)          { return (char*)"unknown plugin"; }
+    virtual int           getVersion(void)          { return 0; }
+    virtual unsigned int  getUniqueId(void)         { return 0x00000000; }
+    virtual int           getNumInputs(void)        { return 2; }
+    virtual int           getNumOutputs(void)       { return 2; }
+    virtual int           getNumParams(void)        { return 0; }
+    virtual int           getNumProgs(void)         { return 0; }
+    virtual char*         getInputName(int aIndex)  { return g_stereo_inputs[aIndex]; }
+    virtual char*         getOutputName(int aIndex) { return g_stereo_outputs[aIndex]; }
+    virtual char*         getParamName(int aIndex)  { return (char*)"param"; }
 };
 
 //----------------------------------------------------------------------
@@ -87,6 +105,7 @@ class axFormatImpl : public axFormat
     virtual axDescriptor* getDescriptor(void) { return mDescriptor; }
     virtual axInstance*   getInstance(void)   { return mInstance; }
     virtual axInterface*  getInterface(void)  { return mInterface; }
+    virtual char*         getName(void)       { return mDescriptor->getName(); }
 };
 
 //----------------------------------------------------------------------

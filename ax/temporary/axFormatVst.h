@@ -253,6 +253,7 @@ template<class _D,class _I,class _In,class _P>
 class axFormatImpl : public axFormat
 {
   private:
+    char* mWinClassName;
     /* _P*  */ axPlatform*   mPlatform;
     /* _D*  */ axDescriptor* mDescriptor;
     /* _I*  */ axInstance*   mInstance;
@@ -303,26 +304,25 @@ axGlobalScope g_Scope;
 //----------------------------------------------------------------------
 // wrap it up into a dll/so
 
-#ifdef AX_LINUX
+//#define MAKESTRING2(s) #s
+//#define MAKESTRING(s) MAKESTRING2(s)
+//#define MAKEWINDOWNAME(name) MAKESTRING(name) "_window"
 
+#ifdef AX_LINUX
   AEffect* main_plugin(audioMasterCallback audioMaster) asm ("main");
   #define main main_plugin
-
   #define _AX_VST_MAIN_DEF  AEffect* main(audioMasterCallback audioMaster)
   #define _AX_VST_RET_DEF   return ae
-
 #endif //LINUX
 
-//----------------------------------------------------------------------
-// (only the 'main' part is different)
+//----------
 
 #ifdef AX_WIN32
-
   #define _AX_VST_MAIN_DEF  int main(int audioMaster, char** empty)
   #define _AX_VST_RET_DEF   return (int)ae
-
 #endif //WIN32
 
+//----------
 
 #define AX_ENTRYPOINT(_desc,_inst,_iface,_plat)                                                   \
                                                                                                   \
@@ -335,8 +335,6 @@ axGlobalScope g_Scope;
     AEffect* ae = instance->getAEffect();                                                         \
     _AX_VST_RET_DEF;                                                                              \
   }
-
-// - cast to int at the end can be troublesome
 
 //----------------------------------------------------------------------
 

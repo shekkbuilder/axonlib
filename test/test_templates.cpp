@@ -36,15 +36,19 @@ class myInstance : public axInstance
     int main(int argc,char** argv)
       {
         trace("myInstance.main");
+        #ifndef AX_NOGUI
         axInterface* iface;
         iface = mFormat->getInterface();
         axWindow* win = iface->createWindow(NULL,320,240);
+
           win->appendWidget( new wdgPanel(win,axRect(0,0,100,100),wa_None) );
           win->doRealign();
+
         win->show();
         win->eventLoop();
         win->hide();
         delete win;
+        #endif
         return 0;
       }
 };

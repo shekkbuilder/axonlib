@@ -7,62 +7,61 @@
 
 //----------------------------------------------------------------------
 
-static HINSTANCE g_HInstance; // __thread?
+#ifndef AX__NOGUI
 
-//----------
+static HINSTANCE g_WinInstance; // __thread?
 
 extern "C"
 BOOL APIENTRY DllMain(HINSTANCE hModule,DWORD reason,LPVOID lpReserved)
 {
-  trace("DllMain");
   switch(reason)
   {
     case DLL_PROCESS_ATTACH:
-      g_HInstance = hModule;
+      wtrace("DllMain DLL_PROCESS_ATTACH");
+      g_WinInstance = hModule;
       //register_winclass(hModule);
       break;
     case DLL_PROCESS_DETACH:
+      wtrace("DllMain DLL_PROCESS_DETACH");
       //unregister_winclass(hModule);
+      break;
+    case DLL_THREAD_ATTACH:
+      wtrace("DllMain DLL_THREAD_ATTACH");
+      break;
+    case DLL_THREAD_DETACH:
+      wtrace("DllMain DLL_THREAD_DETACH");
       break;
   }
   return TRUE;
 }
+
+#endif
 
 //----------------------------------------------------------------------
 
 class axPlatform
 {
   private:
-    HINSTANCE mHInstance;
+    HINSTANCE mWinInstance;
 
   public:
 
     axPlatform(axFormat* aFormat)
       {
-        mHInstance = g_HInstance;
-        trace("axPlatform win32");
-        // hmodule, hinstance
+        wtrace("axPlatform win32");
+        #ifdef AX__NOGUI
+        mWinInstance = (HINSTANCE)GetModuleHandle(NULL);
+        #else
+        mWinInstance = g_WinInstance;
+        #endif
       }
 
     virtual ~axPlatform()
       {
       }
 
-    inline HINSTANCE getHInstance(void) { return mHInstance; }
+    inline HINSTANCE getWinInstance(void) { return mWinInstance; }
 };
-
-//
-
-//void register_winclass(HINSTANCE aInstance)
-//  {
-//    //trace("register...");
-//  }
-//
-//void unregister_winclass(HINSTANCE aInstance)
-//  {
-//    //trace("unregister...");
-//  }
-//
 
 //----------------------------------------------------------------------
 #endif
