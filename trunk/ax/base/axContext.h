@@ -18,6 +18,11 @@
 #define axContext_included
 //----------------------------------------------------------------------
 
+// TODO:
+// remove this, not needed, we can use the new axFormat setup
+// instead, to get to the platform/format specific stuff that we
+// have used this for...
+
 #include "core/axDefines.h"
 //#include "extern/vstsdk24/aeffect.h"
 //#include "extern/vstsdk24/aeffectx.h"

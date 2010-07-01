@@ -7,6 +7,8 @@
 #include "pluginterfaces/vst2.x/aeffect.h"
 #include "pluginterfaces/vst2.x/aeffectx.h"
 
+#include "par/axParameter.h"
+
 // g_ = global
 
 // default names for (default) stereo in/out

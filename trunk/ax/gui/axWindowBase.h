@@ -18,7 +18,7 @@
 #define axWindowBase_included
 //----------------------------------------------------------------------
 
-#include "platform/axContext.h"
+#include "base/axContext.h"
 #include "core/axRect.h"
 #include "core/axString.h"
 #include "gui/axWidget.h"

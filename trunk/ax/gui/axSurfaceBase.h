@@ -18,7 +18,7 @@
 #define axSurfaceBase_included
 //----------------------------------------------------------------------
 
-#include "platform/axContext.h"
+#include "base/axContext.h"
 #include "gui/axCanvas.h"
 //#include "base/axImage.h"
 

@@ -2,13 +2,18 @@
 #define axFormatExe_included
 //----------------------------------------------------------------------
 
-#define AX_WIN_DEFAULT (AX_WIN_BUFFERED|AX_WIN_MSGDELETE)
+#include "par/axParameter.h"
+#include "par/axProgram.h"
 
-// g_ = global
+//----------------------------------------------------------------------
 
 // default names for (default) stereo in/out
 static char* g_stereo_inputs[]  = { (char*)"in1", (char*)"in2" };
 static char* g_stereo_outputs[] = { (char*)"out1",(char*)"out2" };
+
+#define AX_WIN_DEFAULT (AX_WIN_BUFFERED|AX_WIN_MSGDELETE)
+
+//----------------------------------------------------------------------
 
 // not really used for exe's, but, perhaps later..
 class axDescriptor
@@ -54,6 +59,11 @@ class axInstance
         //doCloseEditor();
         return 0;
       }
+
+    //----------
+
+    int  getCurrentProgram(void)      { return 0; }
+    void saveProgram(int aNum) { }
 };
 
 //----------------------------------------------------------------------

@@ -35,7 +35,7 @@
 #include <pthread.h>
 #include <unistd.h>   // sleep
 
-#include "platform/axContext.h"
+#include "base/axContext.h"
 #include "core/axDefines.h"
 #include "core/axRect.h"
 #include "core/axString.h"

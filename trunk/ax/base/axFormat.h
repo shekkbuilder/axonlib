@@ -2,11 +2,17 @@
 #define axFormat_included
 //----------------------------------------------------------------------
 
-#ifndef NULL
-  #define NULL 0
-#endif
+#include "axConfig.h"
+#include "core/axDefines.h"
+#include "core/axMalloc.h"
+#include "core/axDebug.h"
+#include "core/axAssert.h"
+#include "core/axUtils.h"
+#include "base/axContext.h"
+#include "par/axParameter.h"
+//#include "gui/axWindow.h"
 
-//typedef void axWindow;
+//----------------------------------------------------------------------
 
 //// format types
 #define ft_Unknown  0
