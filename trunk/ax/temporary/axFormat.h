@@ -39,6 +39,7 @@ class axFormat
     virtual axInstance*   getInstance(void)     { return NULL; }
     virtual axInterface*  getInterface(void)    { return NULL; }
     virtual int           getType(void)         { return ft_Unknown; }
+    virtual char*         getName(void)         { return (char*)"noname"; } // for window class registration
 };
 
 //----------
