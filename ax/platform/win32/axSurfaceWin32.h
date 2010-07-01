@@ -18,7 +18,7 @@
 #define axSurfaceWin32_included
 //----------------------------------------------------------------------
 
-#include "platform/axContext.h"
+#include "base/axContext.h"
 #include "core/axDefines.h"
 //#include "base/axSurfaceBase.h"
 #include "gui/axSurfaceBase.h"

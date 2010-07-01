@@ -25,7 +25,7 @@
 #include <X11/extensions/Xrender.h>
 #endif
 
-#include "platform/axContext.h"
+#include "base/axContext.h"
 #include "core/axDefines.h"
 //#include "base/axCanvasBase.h"
 #include "gui/axCanvasBase.h"

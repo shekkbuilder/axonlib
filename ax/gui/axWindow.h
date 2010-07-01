@@ -23,7 +23,7 @@
 #include "gui/axWindowBase.h"
 //#include "gui/axSkin.h"
 //#include "gui/axSkinDefault.h"
-#include "platform/axContext.h"
+#include "base/axContext.h"
 #include "par/axParameter.h"
 
 //----------

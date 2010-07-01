@@ -9,7 +9,7 @@
 */
 
 #include "core/axRect.h"
-#include "platform/axContext.h"
+#include "base/axContext.h"
 #include "gui/axWindow.h"
 
 //void* threadProc(void* data);

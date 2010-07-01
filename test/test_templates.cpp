@@ -3,7 +3,7 @@
 //#include <stdio.h> // printf
 #include "core/axDefines.h"
 #include "core/axDebug.h"
-#include "temporary/axFormat.h"
+#include "base/axFormat.h"
 #include "wdg/wdgPanel.h"
 
 //----------
