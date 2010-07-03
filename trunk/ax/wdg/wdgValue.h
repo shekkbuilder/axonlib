@@ -42,6 +42,7 @@ class wdgValue : public axWidget
              axString aName="", float aValue=0)
     : axWidget(aListener,aRect,aAlignment)
       {
+        //trace("wdgValue : aListener = " << aListener);
         mName = aName;
         mValue = aValue;
         mIsDragging = false;
@@ -79,7 +80,7 @@ class wdgValue : public axWidget
       {
         if (mIsDragging)
         {
-          trace("doMouseMove, dragging");
+          //trace("doMouseMove, dragging");
           int dx = aXpos - mClickX;
           int dy = aYpos - mClickY;
           float v;
@@ -92,9 +93,9 @@ class wdgValue : public axWidget
           mValue = mClickVal + v;
           mValue = axMin(1,mValue);
           mValue = axMax(0,mValue);
-          trace("mListener: " << mListener);
+          //trace("mListener: " << mListener);
           mListener->onChange(this);
-          trace("ok");
+          //trace("ok");
         }
       }
 

@@ -27,6 +27,7 @@ class wdgPanel : public axWidget//axContainer
     wdgPanel(axWidgetListener* aListener, axRect aRect, int aAlignment=wa_None)
     : axWidget(aListener,aRect,aAlignment)
       {
+        //trace("wdgPanel : aListener = " << aListener);
       }
 
     virtual void doPaint(axCanvas* aCanvas, axRect aRect)

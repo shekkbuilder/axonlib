@@ -123,8 +123,8 @@ class axWindowBase : public axWidget//axContainer
 
     // axWidgetListener
 
-    //virtual void onChange(axWidget* aWidget) { trace(":: axWindowBase.onChange(wdg)"); }
-    //virtual void onRedraw(axWidget* aWidget) { trace(":: axWindowBase.onRedraw(wdg)"); }
+    virtual void onChange(axWidget* aWidget) { trace(":: axWindowBase.onChange(wdg)"); }
+    virtual void onRedraw(axWidget* aWidget) { trace(":: axWindowBase.onRedraw(wdg)"); }
 
 };
 
