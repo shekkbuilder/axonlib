@@ -53,8 +53,8 @@ class axBitmap : public axBitmapImpl
   //public:
   protected:
 
-    axBitmap(axContext* aContext, int aWidth, int aHeight, int aDepth)
-    : axBitmapImpl(aContext,aWidth, aHeight, aDepth)
+    axBitmap(axInterface* aInterface, int aWidth, int aHeight, int aDepth)
+    : axBitmapImpl(aInterface,aWidth, aHeight, aDepth)
       {
         //wtrace("axBitmap.constructor");
       }

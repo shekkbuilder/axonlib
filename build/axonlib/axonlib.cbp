@@ -214,7 +214,6 @@
 		<Unit filename="../../ax/audio/axModule.h" />
 		<Unit filename="../../ax/audio/axVoices.h" />
 		<Unit filename="../../ax/axConfig.h" />
-		<Unit filename="../../ax/base/README" />
 		<Unit filename="../../ax/base/axContext.h" />
 		<Unit filename="../../ax/base/axFormat.h" />
 		<Unit filename="../../ax/base/axFormatExe.h" />
@@ -227,7 +226,6 @@
 		<Unit filename="../../ax/base/axPlatform.h" />
 		<Unit filename="../../ax/base/axPlatformLinux.h" />
 		<Unit filename="../../ax/base/axPlatformWin32.h" />
-		<Unit filename="../../ax/base/main.cpp" />
 		<Unit filename="../../ax/core/axArray.h" />
 		<Unit filename="../../ax/core/axAssert.h" />
 		<Unit filename="../../ax/core/axBuffer.h" />
@@ -245,6 +243,16 @@
 		<Unit filename="../../ax/core/axString.h" />
 		<Unit filename="../../ax/core/axThread.h" />
 		<Unit filename="../../ax/core/axUtils.h" />
+		<Unit filename="../../ax/deprecated/axFormat.h" />
+		<Unit filename="../../ax/deprecated/axFormatAu.h" />
+		<Unit filename="../../ax/deprecated/axFormatBase.h" />
+		<Unit filename="../../ax/deprecated/axFormatDssi.h" />
+		<Unit filename="../../ax/deprecated/axFormatExe.h" />
+		<Unit filename="../../ax/deprecated/axFormatLadspa.h" />
+		<Unit filename="../../ax/deprecated/axFormatLv2.h" />
+		<Unit filename="../../ax/deprecated/axFormatVst.h" />
+		<Unit filename="../../ax/deprecated/axProgram.h" />
+		<Unit filename="../../ax/deprecated/axReaperExt.h" />
 		<Unit filename="../../ax/dsp/dspDCF.h" />
 		<Unit filename="../../ax/dsp/dspInterpolate.h" />
 		<Unit filename="../../ax/dsp/dspOnePole.h" />
@@ -272,6 +280,8 @@
 		<Unit filename="../../ax/gui/axWindow.h" />
 		<Unit filename="../../ax/gui/axWindowBase.h" />
 		<Unit filename="../../ax/par/axParameter.h" />
+		<Unit filename="../../ax/par/axProgram.h" />
+		<Unit filename="../../ax/par/parDb.h" />
 		<Unit filename="../../ax/par/parFloat.h" />
 		<Unit filename="../../ax/par/parInteger.h" />
 		<Unit filename="../../ax/platform/linux/axBitmapLinux.h" />
@@ -286,7 +296,6 @@
 		<Unit filename="../../ax/script/axScriptStdlib.h" />
 		<Unit filename="../../ax/skins/axSkinBasic.h" />
 		<Unit filename="../../ax/skins/axSkinDef.h" />
-		<Unit filename="../../ax/temporary/README" />
 		<Unit filename="../../ax/wdg/wdgBitmap.h" />
 		<Unit filename="../../ax/wdg/wdgButton.h" />
 		<Unit filename="../../ax/wdg/wdgButtons.h" />
@@ -316,7 +325,7 @@
 		<Unit filename="../../extern/picopng.h" />
 		<Unit filename="../../extern/stb_truetype.h" />
 		<Unit filename="../../source/SERIALS" />
-		<Unit filename="../../test/test_templates.cpp" />
+		<Unit filename="../../source/test/gain.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

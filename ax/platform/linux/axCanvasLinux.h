@@ -53,6 +53,12 @@ class axSurface;
 
 // needs mDisplay & mWindow (Drawable) set in aContext
 
+// drawable (context.window) = unsigned long
+// window = HWND = void*
+
+
+
+
 class axCanvasLinux : public axCanvasBase
 {
   private:
@@ -78,11 +84,13 @@ class axCanvasLinux : public axCanvasBase
 
   public:
 
-    axCanvasLinux(axContext* aContext)
+    axCanvasLinux(axInterface* aInterface, void* aSource)
     : axCanvasBase(/*aContext*/)
       {
-        mDisplay  = aContext->mDisplay;                         //trace(":: mDisplay = " << mDisplay);
-        mDrawable = aContext->mWindow;                          //trace(":: mDrawable = " << mDrawable);
+        mDisplay = (Display*)aInterface->getHandle();//(Display*)aFormat->getInterface()->getHandle();
+        mDrawable = *(Drawable*)aSource;
+        //mDisplay  = (Display*)aFormat->linux_getDisplay();//aContext->mDisplay;                         //trace(":: mDisplay = " << mDisplay);
+        //mDrawable = aContext->mWindow;                          //trace(":: mDrawable = " << mDrawable);
         #ifdef AX_ALPHA
         mPicture  = -2;
         #endif

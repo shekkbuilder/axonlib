@@ -23,7 +23,7 @@
 #include "gui/axWindowBase.h"
 //#include "gui/axSkin.h"
 //#include "gui/axSkinDefault.h"
-#include "base/axContext.h"
+//#include "base/axContext.h"
 #include "par/axParameter.h"
 
 //----------
@@ -50,8 +50,8 @@ class axWindow : public axWindowImpl
 
   public:
 
-    axWindow(axContext* aContext, axRect aRect, int aWinFlags)
-    : axWindowImpl(aContext,aRect,aWinFlags)
+    axWindow(axInterface* aInterface, void* aParent,axRect aRect, int aWinFlags)
+    : axWindowImpl(aInterface,aParent,aRect,aWinFlags)
       {
         mModalWidget = NULL;
         mModalIndex  = -1;

@@ -41,8 +41,8 @@ class axSurface : public axSurfaceImpl
   friend class axWindowLinux;
   //public:
   protected:
-    axSurface(axContext* aContext, int aWidth, int aHeight, int aDepth)
-    : axSurfaceImpl(aContext,aWidth,aHeight,aDepth)
+    axSurface(axInterface* aInterface, void* aSource, int aWidth, int aHeight, int aDepth)
+    : axSurfaceImpl(aInterface,aSource,aWidth,aHeight,aDepth)
       {
       }
     //virtual ~axSurface() {}

@@ -35,7 +35,7 @@
 
 */
 
-#include "format/axFormat.h"
+#include "base/axFormat.h"
 #include "core/axArray.h"
 #include "gui/axWindow.h"
 #include "skins/axSkinBasic.h"
@@ -69,7 +69,8 @@ typedef axArray<wp_connection> wp_connections;
 class axEditor : public axWindow
 {
   protected:
-    axFormat*       mFormat;
+    //axFormat*       mFormat;
+    axInterface*    mInterface;
     wp_connections  mConnections;
     axSkinBasic*    mDefaultSkin;
 
@@ -81,10 +82,12 @@ class axEditor : public axWindow
   // aWinFlags = flags to pass on to (os-specific) window
   //             defines double-buffering, message--threading, window-parenting
 
-    axEditor(axFormat* aFormat, axContext* aContext, axRect aRect, int aWinFlags)
-    : axWindow(aContext,aRect,aWinFlags)
+    axEditor(axInterface* aInterface, void* aParent, axRect aRect, int aWinFlags)
+    : axWindow(aInterface,aParent,aRect,aWinFlags)
       {
-        mFormat = aFormat;
+        trace("axEditor");
+        //mFormat = aFormat;
+        mInterface = aInterface;
         axCanvas* canvas = getCanvas();
         mDefaultSkin = new axSkinBasic(canvas);
         applySkin(mDefaultSkin);
@@ -206,7 +209,7 @@ class axEditor : public axWindow
     virtual void doSetSize(int aWidth, int aHeight)
       {
         //trace("axEditor.doSetSize: " << aWidth << "," << aHeight);
-        if (mFormat) mFormat->notifyResizeEditor(aWidth,aHeight);
+        /*if (mInterface)*/ mInterface->notifyResizeEditor(aWidth,aHeight);
         axWindow::doSetSize(aWidth,aHeight);
       }
 
@@ -229,7 +232,7 @@ class axEditor : public axWindow
         {
           axParameter* par = mConnections[conn].mParameter;
           float val = aWidget->getValue();
-          mFormat->notifyParamChanged(par);
+          mInterface->notifyParamChanged(par);
           //par->doSetValue(val,false);
           par->doSetValue(val,true); // true = notify listener
         }
@@ -256,7 +259,7 @@ class axEditor : public axWindow
       {
         if (aMode<0)
         {
-          axRect R = mFormat->getEditorRect();
+          axRect R = mInterface->getEditorRect();
           int w = R.w + aDeltaX; //mRect.w + aDeltaX;
           int h = R.h + aDeltaY; //mRect.h + aDeltaY;
           //axWidget::doSetSize(w,h);

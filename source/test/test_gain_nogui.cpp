@@ -8,20 +8,20 @@ float prog2 = { 1.0 };
 
 static char* g_params[]  = { (char*)"gain" };
 
-//----------
+//----------------------------------------------------------------------
 
 class myDescriptor : public axDescriptor
 {
   public:
     myDescriptor(axFormat* aFormat) : axDescriptor(aFormat) {}
-    virtual char*         getName(void)             { return (char*)"test_gain_nogui"; }
-    virtual char*         getAuthor(void)           { return (char*)"ccernn"; }
-    virtual char*         getProduct(void)          { return (char*)"axonlib example plugin"; }
-    virtual int           getNumParams(void)        { return 1; }
-    virtual char*         getParamName(int aIndex)  { return g_params[aIndex]; }
+    virtual char* getName(void)             { return (char*)"test_gain_nogui"; }
+    virtual char* getAuthor(void)           { return (char*)"ccernn"; }
+    virtual char* getProduct(void)          { return (char*)"axonlib example plugin"; }
+    virtual int   getNumParams(void)        { return 1; }
+    virtual char* getParamName(int aIndex)  { return g_params[aIndex]; }
 };
 
-//----------
+//----------------------------------------------------------------------
 
 class myInstance : public axInstance
 {

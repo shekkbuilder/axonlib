@@ -56,7 +56,7 @@ class axWindowBase : public axWidget//axContainer
   //protected:
   public:
 
-    axWindowBase(axContext* aContext, axRect aRect, int aWinFlags)
+    axWindowBase(axInterface* aInterface, void* aParent, axRect aRect, int aWinFlags)
     : axWidget(NULL,/*-1,*/aRect,wa_Client)
       {
         mWinFlags = aWinFlags;

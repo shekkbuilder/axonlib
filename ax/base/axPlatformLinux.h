@@ -6,18 +6,20 @@
   //#include "Xlib.h"
 #endif
 
-class axPlatform
+class axPlatform : public axPlatformBase
 {
   public:
-    axPlatform(axFormat* aFormat)
+    axPlatform(axFormat* aFormat)// : axPlatformBase(aFormat)
       {
-        trace("axPlatform linux");
+        //trace("axPlatform linux");
       }
     virtual ~axPlatform()
       {
       }
 
 };
+
+//typedef axPlatformLinux axPlatformImpl;
 
 //----------------------------------------------------------------------
 #endif

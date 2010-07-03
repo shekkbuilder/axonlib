@@ -38,11 +38,12 @@ class axCanvas;
 class axSurfaceLinux : public axSurfaceBase
 {
   private:
-    Display*  mDisplay;
-    Drawable  mDrawable;
-    Pixmap    mPixmap;
-
-    int       mPicture;
+    //axFormat* mFormat;
+    axInterface*  mInterface;
+    Display*      mDisplay;
+    Drawable      mDrawable;
+    Pixmap        mPixmap;
+    int           mPicture;
 
   //protected:
   //  int       mWidth;
@@ -57,24 +58,17 @@ class axSurfaceLinux : public axSurfaceBase
     //  unsigned int width, height; // 	Specify the width and height, which define the dimensions of the pixmap.
     //  unsigned int depth; // Specifies the depth of the pixmap.
 
-    axSurfaceLinux(axContext* aContext, int aWidth, int aHeight, int aDepth)
-    //: axSurfaceBase(aContext)
-    //: axSurfaceBase(/*aContext,*/aWidth,aHeight)
+    axSurfaceLinux(axInterface* aInterface, void* aSource, int aWidth, int aHeight, int aDepth)
     : axSurfaceBase(aWidth,aHeight,aDepth)
       {
-        //trace("axSurfaceLinux constructor");
-        mDisplay  = aContext->mDisplay;
-        mDrawable = aContext->mWindow;  // XDefaultRootWindow(mDisplay);
+        mInterface = aInterface;
+        mDisplay  = (Display*)aInterface->getHandle();
+        mDrawable = *(Drawable*)aSource;
         mWidth    = aWidth;
         mHeight   = aHeight;
-        //mDepth = DefaultDepth(mDisplay,DefaultScreen(mDisplay));
-        mDepth = aDepth;
-        mPixmap  = XCreatePixmap(mDisplay,mDrawable,mWidth,mHeight,mDepth);
-
-        //axContext ctx(mDisplay,mPixmap); // display, drawable
-        //mCanvas = new axCanvas(&ctx);
-        mCanvas = createCanvas();
-
+        mDepth    = aDepth;
+        mPixmap   = XCreatePixmap(mDisplay,mDrawable,mWidth,mHeight,mDepth);
+        mCanvas   = createCanvas();
         //#ifdef AX_XRENDER
         #ifdef AX_ALPHA
           XRenderPictFormat* fmt;
@@ -88,7 +82,6 @@ class axSurfaceLinux : public axSurfaceBase
           //pict_attr.component_alpha = true;
           int pict_bits = /*CPComponentAlpha |*/ CPPolyEdge | CPPolyMode;
           mPicture = XRenderCreatePicture(mDisplay,/*mDrawable*/mPixmap,fmt,pict_bits,&pict_attr);
-          //trace("  mPicture: " << mPicture);
           mCanvas->setPicture(mPicture);
 
         #endif
@@ -117,18 +110,16 @@ class axSurfaceLinux : public axSurfaceBase
 
     //----------
 
-    virtual  int          getWidth(void)  { return 0; }
-    virtual  int          getHeight(void) { return 0; }
-    virtual  int          getDepth(void)  { return 0; }
-    virtual axCanvas*     getCanvas(void) { return mCanvas; }
+    virtual  int      getWidth(void)  { return 0; }
+    virtual  int      getHeight(void) { return 0; }
+    virtual  int      getDepth(void)  { return 0; }
+    virtual axCanvas* getCanvas(void) { return mCanvas; }
 
     //----------
 
     virtual axCanvas* createCanvas(void)
       {
-        axContext ctx(mDisplay,mPixmap);
-        axCanvas* can = new axCanvas(&ctx);
-        //can->setPicture(mPicture);
+        axCanvas* can = new axCanvas(mInterface,(void*)&mPixmap);
         return can;
       }
 
@@ -138,4 +129,3 @@ typedef axSurfaceLinux axSurfaceImpl;
 
 #endif
 //----------------------------------------------------------------------
-

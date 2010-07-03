@@ -1,34 +1,32 @@
 #ifndef axInterfaceLinux_included
 #define axInterfaceLinux_included
 //----------------------------------------------------------------------
-/*
-  variations (flags, see axInterface.h)
-  - embedded/windowed
-  - buffered/unbuffered
-  - alpha/noalpha
-*/
+
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 #include "core/axRect.h"
-#include "base/axContext.h"
 #include "gui/axWindow.h"
 
 //void* threadProc(void* data);
 //void* timerProc(void* data);
 //void  eventProc(XEvent* ev);
 
-class axInterface
+class axInterface : public axInterfaceBase
 {
   private:
-    Display*  mDisplay;
+    axPlatform* mPlatform;
+    Display*    mDisplay;
 
   public:
 
-    axInterface(axFormat* aFormat)
+    axInterface(axPlatform* aPlatform)
       {
-        trace("axInterface linux");
+        mPlatform = aPlatform;
         XInitThreads();
         mDisplay = XOpenDisplay(NULL);
       }
+
     virtual ~axInterface()
       {
         XCloseDisplay(mDisplay);
@@ -36,25 +34,36 @@ class axInterface
 
     //----------
 
-    //int getScreenWidth(void)  { return 0; }
-    //int getScreenHeight(void) { return 0; }
-    //int getScreenDepth(void)  { return 0; }
+    virtual void* getHandle(void)
+      {
+        return (void*)mDisplay;
+      }
 
     //----------
 
-    virtual axWindow* createWindow(void* aParent, int aWidth, int aHeight)
-      {
-        trace("axInterfaceLinux.createWindow");
-        //int winflags = (if_Buffered|if_MsgDelete|if_MsgThread);
-        axContext context;
-        context.mDisplay = mDisplay; // all uses same connection, or one each?
-        if (aParent==NULL) context.mWindow = XDefaultRootWindow(mDisplay);
-        else context.mWindow = (Window)aParent;
-        context.mAudio = NULL;
-        axWindow* window = new axWindow(&context,axRect(0,0,aWidth,aHeight),AX_WIN_DEFAULT);
-        return window;
-        //return NULL;
-      }
+//    virtual void* createWindow(void* aParent, int aWidth, int aHeight)
+//      {
+//        trace("axInterfaceLinux.createWindow");
+//        Window parent;
+//        if (aParent==NULL) parent = XDefaultRootWindow(mDisplay);
+//        else parent = (Window)/**(Window*)*/aParent;
+//        trace("parent = " <<(int)parent);
+//        //Window parent = (aParent==NULL) ? XDefaultRootWindow(mDisplay) : (Window)*(Window*)aParent;
+//        axWindow* window;
+////        window = new axWindow(this,&parent,axRect(0,0,aWidth,aHeight),AX_WIN_DEFAULT);
+////        return window;
+//        return NULL;
+//      }
+
+/*
+
+axFormat -> axInterface -> axInterfaceLinux
+
+axInterfaceLinux.createWindow doesn't know anout axWindow yet ???
+(window need to know about axInterface...)
+
+*/
+
 
 };
 

@@ -5,34 +5,38 @@
 #include "par/axParameter.h"
 #include "par/axProgram.h"
 
+#include "gui/axEditor.h"
+#include "wdg/wdgPanel.h"
+
 //----------------------------------------------------------------------
 
-// default names for (default) stereo in/out
-static char* g_stereo_inputs[]  = { (char*)"in1", (char*)"in2" };
-static char* g_stereo_outputs[] = { (char*)"out1",(char*)"out2" };
-
-#define AX_WIN_DEFAULT (AX_WIN_BUFFERED|AX_WIN_MSGDELETE)
+//// default names for (default) stereo in/out
+//static char* g_stereo_inputs[]  = { (char*)"in1", (char*)"in2" };
+//static char* g_stereo_outputs[] = { (char*)"out1",(char*)"out2" };
 
 //----------------------------------------------------------------------
 
 // not really used for exe's, but, perhaps later..
 class axDescriptor
 {
+  private:
+    axInterface* mInterface;
   public:
-    axDescriptor(axFormat* aFormat) { }
-    virtual ~axDescriptor() { }
-    virtual char*         getName(void)             { return (char*)"plugin"; }
-    virtual char*         getAuthor(void)           { return (char*)"anonymous"; }
-    virtual char*         getProduct(void)          { return (char*)"unknown plugin"; }
-    virtual int           getVersion(void)          { return 0; }
-    virtual unsigned int  getUniqueId(void)         { return 0x00000000; }
-    virtual int           getNumInputs(void)        { return 2; }
-    virtual int           getNumOutputs(void)       { return 2; }
-    virtual int           getNumParams(void)        { return 0; }
-    virtual int           getNumProgs(void)         { return 0; }
-    virtual char*         getInputName(int aIndex)  { return g_stereo_inputs[aIndex]; }
-    virtual char*         getOutputName(int aIndex) { return g_stereo_outputs[aIndex]; }
-    virtual char*         getParamName(int aIndex)  { return (char*)"param"; }
+    axDescriptor(axInterface* aInterface) { mInterface = aInterface; }
+    virtual ~axDescriptor() {}
+    virtual axInterface* getInterface(void) { return mInterface; }
+//    virtual char*         getName(void)             { return (char*)"plugin"; }
+//    virtual char*         getAuthor(void)           { return (char*)"anonymous"; }
+//    virtual char*         getProduct(void)          { return (char*)"unknown plugin"; }
+//    virtual int           getVersion(void)          { return 0; }
+//    virtual unsigned int  getUniqueId(void)         { return 0x00000000; }
+//    virtual int           getNumInputs(void)        { return 2; }
+//    virtual int           getNumOutputs(void)       { return 2; }
+//    virtual int           getNumParams(void)        { return 0; }
+//    virtual int           getNumProgs(void)         { return 0; }
+//    virtual char*         getInputName(int aIndex)  { return g_stereo_inputs[aIndex]; }
+//    virtual char*         getOutputName(int aIndex) { return g_stereo_outputs[aIndex]; }
+//    virtual char*         getParamName(int aIndex)  { return (char*)"param"; }
 };
 
 //----------------------------------------------------------------------
@@ -40,30 +44,39 @@ class axDescriptor
 class axInstance
 {
   protected:
-    axFormat* mFormat;
+    axDescriptor* mDescriptor;
+    axRect        mEditorRect;
   public:
-    axInstance(axFormat* aFormat)
+    axInstance(axDescriptor* aDescriptor)
       {
-        mFormat = aFormat;
+        mDescriptor = aDescriptor;
+        mEditorRect = axRect(0,0,256,256);
       }
-    virtual ~axInstance()
-      {
-      }
-
-    virtual int main(int argc, char** argv)
-      {
-        //axInterface* interface = mFormat->getInterface();
-        //axWindow* win = (axWindow*)doOpenEditor(aContext);
-        //win->setTitle(mTitle);
-        //win->eventLoop();
-        //doCloseEditor();
-        return 0;
-      }
+    virtual ~axInstance() {}
 
     //----------
 
-    int  getCurrentProgram(void)      { return 0; }
-    void saveProgram(int aNum) { }
+    virtual void* doOpenEditor(axInterface* aInterface, void* aParent) { return NULL; }
+    virtual void doCloseEditor(axInterface* aInterface, void* aParent) {}
+
+    virtual int  getCurrentProgram(void)      { return 0; }
+    virtual void saveProgram(int aNum) { }
+
+    virtual int main(int argc, char** argv)
+      {
+//        #ifndef AX_NOGUI
+//        axInterface* interface = mDescriptor->getInterface();   trace("interface: " << interface);
+//        Display* display = (Display*)interface->getHandle();    trace("display: " << display);
+//        Window parent = XDefaultRootWindow(display);            trace("parent: " << parent);
+//        axWindow* window = (axWindow*)doOpenEditor(interface,&parent);
+//        //axWindow* win = (axWindow*)window;
+//        //win->eventLoop();
+//        #endif
+        return 0;
+      }
+
+
+
 };
 
 //----------------------------------------------------------------------
@@ -89,14 +102,13 @@ class axFormatImpl : public axFormat
   public:
     axFormatImpl() : axFormat()
       {
-        trace("axFormatImpl: exe");
         // for exe's create everything
         // vst will be similar
         // ladspa will create instance later (getInstance)
         mPlatform   = new _P(this);
-        mDescriptor = new _D(this);
-        mInstance   = new _I(this);
-        mInterface  = new _In(this);
+        mInterface  = new _In(mPlatform);
+        mDescriptor = new _D(mInterface);
+        mInstance   = new _I(mDescriptor);
         // audio?
       }
     virtual ~axFormatImpl()
@@ -110,12 +122,12 @@ class axFormatImpl : public axFormat
   public:
     // make them available to other classes that know about axFormat:
     // platform,interface,descriptor/instance
-    virtual axFormat*     getFormat(void)     { return this; }
+    //virtual axFormat*     getFormat(void)     { return this; }
     virtual axPlatform*   getPlatform(void)   { return mPlatform; }
     virtual axDescriptor* getDescriptor(void) { return mDescriptor; }
     virtual axInstance*   getInstance(void)   { return mInstance; }
     virtual axInterface*  getInterface(void)  { return mInterface; }
-    virtual char*         getName(void)       { return mDescriptor->getName(); }
+//    virtual char*             getName(void)       { return mDescriptor->getName(); }
 };
 
 //----------------------------------------------------------------------

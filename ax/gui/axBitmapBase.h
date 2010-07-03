@@ -37,8 +37,9 @@
 
 */
 
-#include "base/axContext.h"
+//#include "base/axContext.h"
 //#include "base/axImage.h"
+#include "base/axInterface.h"
 
 class axBitmapBase
 {
@@ -60,7 +61,7 @@ class axBitmapBase
       \param aHeight height of bitmap (in pixels)
     */
 
-    axBitmapBase(axContext* aContext, int aWidth, int aHeight, int aDepth)
+    axBitmapBase(axInterface* aInterface, int aWidth, int aHeight, int aDepth)
       {
         mPrepared = false;
         mWidth    = aWidth;

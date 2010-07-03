@@ -87,45 +87,44 @@ void  eventProc(XEvent* ev);
 // empty/blank mouse cursor
 static char noData[] = { 0,0,0,0,0,0,0,0 };
 
-//char* x11_event_names[] =
-//{
-//  (char*)"0",
-//  (char*)"1",
-//  (char*)"KeyPress",
-//  (char*)"KeyRelease",
-//  (char*)"ButtonPress",
-//  (char*)"ButtonRelease",
-//  (char*)"MotionNotify",
-//  (char*)"EnterNotify",
-//  (char*)"LeaveNotify",
-//  (char*)"FocusIn",
-//  (char*)"FocusOut",
-//  (char*)"KeymapNotify",
-//  (char*)"Expose",
-//  (char*)"GraphicsExpose",
-//  (char*)"NoExpose",
-//  (char*)"VisibilityNotify",
-//  (char*)"CreateNotify",
-//  (char*)"DestroyNotify",
-//  (char*)"UnmapNotify",
-//  (char*)"MapNotify",
-//  (char*)"MapRequest",
-//  (char*)"ReparentNotify",
-//  (char*)"ConfigureNotify",
-//  (char*)"ConfigureRequest",
-//  (char*)"GravityNotify",
-//  (char*)"ResizeRequest",
-//  (char*)"CirculateNotify",
-//  (char*)"CirculateRequest",
-//  (char*)"PropertyNotify",
-//  (char*)"SelectionClear",
-//  (char*)"SelectionRequest",
-//  (char*)"SelectionNotify",
-//  (char*)"ColormapNotify",
-//  (char*)"ClientMessage",
-//  (char*)"MappingNotify",
-//  (char*)"GenericEvent"
-//};
+    char* x11_event_names[] = {
+      (char*)"0",
+      (char*)"1",
+      (char*)"KeyPress",
+      (char*)"KeyRelease",
+      (char*)"ButtonPress",
+      (char*)"ButtonRelease",
+      (char*)"MotionNotify",
+      (char*)"EnterNotify",
+      (char*)"LeaveNotify",
+      (char*)"FocusIn",
+      (char*)"FocusOut",
+      (char*)"KeymapNotify",
+      (char*)"Expose",
+      (char*)"GraphicsExpose",
+      (char*)"NoExpose",
+      (char*)"VisibilityNotify",
+      (char*)"CreateNotify",
+      (char*)"DestroyNotify",
+      (char*)"UnmapNotify",
+      (char*)"MapNotify",
+      (char*)"MapRequest",
+      (char*)"ReparentNotify",
+      (char*)"ConfigureNotify",
+      (char*)"ConfigureRequest",
+      (char*)"GravityNotify",
+      (char*)"ResizeRequest",
+      (char*)"CirculateNotify",
+      (char*)"CirculateRequest",
+      (char*)"PropertyNotify",
+      (char*)"SelectionClear",
+      (char*)"SelectionRequest",
+      (char*)"SelectionNotify",
+      (char*)"ColormapNotify",
+      (char*)"ClientMessage",
+      (char*)"MappingNotify",
+      (char*)"GenericEvent"
+    };
 
 //----------------------------------------------------------------------
 //
@@ -140,6 +139,8 @@ class axWindowLinux : public axWindowBase
   friend class axFormatVst;
 
   private:
+    //axFormat*   mFormat;
+    axInterface*   mInterface;
     Display*    mDisplay;
     Window      mParent;
     long        mEventMask;
@@ -179,19 +180,17 @@ class axWindowLinux : public axWindowBase
     //
     //----------------------------------------
 
-    axWindowLinux(axContext* aContext, axRect aRect, int aWinFlags)
-    : axWindowBase(aContext,aRect,aWinFlags)
+    axWindowLinux(axInterface* aInterface, void* aParent,axRect aRect, int aWinFlags)
+    : axWindowBase(aInterface,aParent,aRect,aWinFlags)
       {
 
+        //mFormat = aFormat;
+        mInterface = aInterface;
         mTimerRunning = false;
         mTimerSleep = 30; // 30 ms between each timer signal
 
-        //mContext  =  aContext;
-        //mRect     = aRect;
-        //mWinFlags = aWinFlags;
-
-        mDisplay  = aContext->mDisplay;
-        mParent   = aContext->mWindow;
+        mDisplay  = (Display*)aInterface->getHandle();
+        mParent   = *(Window*)aParent;
 
         mEventMask  = ExposureMask
                     | ButtonPressMask
@@ -272,8 +271,6 @@ class axWindowLinux : public axWindowBase
           XChangeProperty(mDisplay,mWindow,atom,atom,32,PropModeReplace,(unsigned char*)&data,1);
         }
 
-//trace("creating window canvas");
-
         mCanvas = createCanvas(); // window canvas
 
         if (mWinFlags&AX_WIN_BUFFERED)
@@ -305,9 +302,8 @@ class axWindowLinux : public axWindowBase
           //trace("screen: " << attr.screen); /* back pointer to correct screen */
 
           int depth = attr.depth;//DefaultDepth(mDisplay,DefaultScreen(mDisplay));
-          mSurface = createSurface(mRect.w,mRect.h,depth); // see also: resizeBuffer
 
-//trace("  win picture " << mSurface->getPicture() );
+          mSurface = createSurface(mRect.w,mRect.h,depth); // see also: resizeBuffer
 
           //#ifdef AX_XRENDER
           #ifdef AX_ALPHA
@@ -319,16 +315,9 @@ class axWindowLinux : public axWindowBase
             XRenderPictureAttributes pict_attr;
             mPicture = XRenderCreatePicture(mDisplay,mWindow,format,None,&pict_attr);
             //mPicture = XRenderCreatePicture(mDisplay,mParent,format,None,&pict_attr);
-
-//trace("  setPicture");
-mCanvas->setPicture( mPicture );
-//trace("  win picture " << mSurface->getPicture() );
-
+            mCanvas->setPicture( mPicture );
           //}
-            bool hasAlpha  = ( format->type == PictTypeDirect && format->direct.alphaMask );
-//trace("hasAlpha: " << hasAlpha);
-//trace("main window mPicture: " << mPicture);
-
+          bool hasAlpha  = ( format->type == PictTypeDirect && format->direct.alphaMask );
           #endif
         }
 
@@ -390,25 +379,21 @@ mCanvas->setPicture( mPicture );
 
     virtual axCanvas* createCanvas(void)
       {
-        axContext ctx(mDisplay,mWindow);
-        axCanvas* canvas = new axCanvas(&ctx);
+        //axContext ctx(mDisplay,mWindow);
+        axCanvas* canvas = new axCanvas(mInterface,&mWindow);
         return canvas;
       }
 
     virtual axSurface* createSurface(int aWidth, int aHeight, int aDepth)
       {
-        //axContext ctx(mDisplay,mParent);
-        axContext ctx(mDisplay,mWindow);
-        axSurface* surface = new axSurface(&ctx,aWidth,aHeight,aDepth);
+        //axSurface* surface = new axSurface(mInterface,&mParent,aWidth,aHeight,aDepth);
+        axSurface* surface = new axSurface(mInterface,&mWindow,aWidth,aHeight,aDepth);
         return surface;
       }
 
     virtual axBitmap* createBitmap(int aWidth, int aHeight, int aDepth)
       {
-        //wtrace("axWindowLinux.createBitmap");
-        //axContext ctx(mDisplay,mParent);
-        axContext ctx(mDisplay,mWindow);
-        return new axBitmap(&ctx,aWidth,aHeight,aDepth);
+        return new axBitmap(mInterface,aWidth,aHeight,aDepth);
       }
 
     //----------------------------------------
@@ -488,20 +473,20 @@ mCanvas->setPicture( mPicture );
 
     //----------
 
-// valgrind reports memory leak here ('definitely lost')
-// XStringListToTextProperty, malloc
+    // valgrind reports memory leak here ('definitely lost')
+    // XStringListToTextProperty, malloc
 
-// lii:
-// there could be malloc() in XStringListToTextProperty(),
-// so 'free(window_title);' might be needed after XFlush(..); ?
+    // lii:
+    // there could be malloc() in XStringListToTextProperty(),
+    // so 'free(window_title);' might be needed after XFlush(..); ?
 
     virtual void setTitle(axString aTitle)
       {
-//        XTextProperty window_title_property;
-//        char* window_title = aTitle.ptr();
-//        XStringListToTextProperty(&window_title,1,&window_title_property);
-//        XSetWMName(mDisplay,mWindow,&window_title_property);
-//        XFlush(mDisplay);
+        //XTextProperty window_title_property;
+        //char* window_title = aTitle.ptr();
+        //XStringListToTextProperty(&window_title,1,&window_title_property);
+        //XSetWMName(mDisplay,mWindow,&window_title_property);
+        //XFlush(mDisplay);
       }
 
     //----------
@@ -702,13 +687,13 @@ mCanvas->setPicture( mPicture );
     //
     //----------------------------------------
 
-//#define bu_None    0
-//#define bu_Left    1
-//#define bu_Right   2
-//#define bu_Middle  4
-//#define bu_Shift   8
-//#define bu_Ctrl    16
-//#define bu_Alt     32
+    //#define bu_None    0
+    //#define bu_Left    1
+    //#define bu_Right   2
+    //#define bu_Middle  4
+    //#define bu_Shift   8
+    //#define bu_Ctrl    16
+    //#define bu_Alt     32
 
     int remapButton(int aButton)
       {
@@ -741,7 +726,6 @@ mCanvas->setPicture( mPicture );
 
     void eventHandler(XEvent* ev)
       {
-        //wtrace("axWindowX11.eventHandler");
         //trace("axWindowX11.eventHandler: " << ev->type << " : " << x11_event_names[ev->type]);
         axRect rc;
         int but,key,val;
@@ -780,16 +764,23 @@ mCanvas->setPicture( mPicture );
               can->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
               doPaint(can,rc);
 
-//TODO: investigate this. should the window buffer be blitter w/transparency?
-//      make it similar to how it works in windows...
+              //TODO:
+              //investigate this. should the window buffer be blitter w/transparency?
+              //make it similar to how it works in windows...
 
-//              //#ifdef AX_XRENDER
-//              #ifdef AX_ALPHA
-//              mCanvas->renderImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
-//              #else
+              /*
+              //#ifdef AX_XRENDER
+              #ifdef AX_ALPHA
+              mCanvas->renderImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
+              #else
+              */
+
               //mCanvas->drawImage(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
               mCanvas->drawSurface(mSurface,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
-//              #endif
+
+              /*
+              #endif
+              */
 
               //mCanvas->renderPicture(mPicture,rc.x,rc.y,rc.x,rc.y,rc.w,rc.h);
 
@@ -800,7 +791,6 @@ mCanvas->setPicture( mPicture );
               mCanvas->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
               doPaint(mCanvas,rc);
               mCanvas->clearClipRect();
-
               //XFlush(mDisplay);
             }
             //mCanvas->clearClipRect();

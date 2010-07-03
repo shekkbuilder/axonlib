@@ -18,6 +18,9 @@
 #define axBitmapLinux_included
 //----------------------------------------------------------------------
 
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+
 #include "core/axDefines.h"
 #include "base/axContext.h"
 //#include "base/axBitmapBase.h"
@@ -31,12 +34,16 @@ class axBitmapLinux : public axBitmapBase
 
   public:
 
-    axBitmapLinux(axContext* aContext, int aWidth, int aHeight, int aDepth)
-    : axBitmapBase(aContext,aWidth,aHeight,aDepth)
+    //axBitmapLinux(axContext* aContext, int aWidth, int aHeight, int aDepth)
+    //: axBitmapBase(aContext,aWidth,aHeight,aDepth)
+    axBitmapLinux(axInterface* aInterface, int aWidth, int aHeight, int aDepth)
+    : axBitmapBase(aInterface,aWidth,aHeight,aDepth)
       {
+        //mDisplay = (Display*)aFormat->linux_getDisplay();
+        mDisplay = (Display*)aInterface->getHandle();
         //wtrace("axBitmap.constructor");
         //mDepth    = 24; // 32
-        mDisplay = aContext->mDisplay;
+        //mDisplay = aFormat->getInterface()->getDisplay();
       }
 
     virtual ~axBitmapLinux()

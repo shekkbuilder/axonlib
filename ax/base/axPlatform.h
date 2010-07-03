@@ -20,17 +20,26 @@
 
 //----------------------------------------------------------------------
 
+class axPlatformBase
+{
+  public:
+    //axPlatformBase(axFormat* aFormat) {}
+    //virtual ~axPlatformBase() {}
+    virtual void* getHandle(void) { return NULL; } // win32:HINSTANCE
+};
+
+//----------
+
+
 #ifdef AX_WIN32
-#include "axPlatformWin32.h"
+#include "base/axPlatformWin32.h"
 #endif
 
 #ifdef AX_LINUX
-#include "axPlatformLinux.h"
+#include "base/axPlatformLinux.h"
 #endif
 
-//#ifdef AX_MAC
-//#include "axPlatformMac.h"
-//#endif
+//typedef axPlatformBase axPlatform;
 
 //----------------------------------------------------------------------
 #endif
