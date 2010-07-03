@@ -7,10 +7,10 @@ empty/no-op Interface (for AX_NOGUI)
 
 */
 
-class axInterface
+class axInterface : public axInterfaceBase
 {
   public:
-    axInterface(axFormat* aFormat) { trace("axInterface: none" ); }
+    axInterface(axPlatform* aPlatform) { trace("axInterface: none" ); }
     virtual ~axInterface() {}
 
 };

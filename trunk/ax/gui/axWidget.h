@@ -904,6 +904,8 @@ class axWidget : public axWidgetListener
 
     virtual void onChange(axWidget* aWidget)
       {
+        trace("axWidget.onChange");
+        trace("mListener: " << mListener);
         mListener->onChange(aWidget);
       }
 

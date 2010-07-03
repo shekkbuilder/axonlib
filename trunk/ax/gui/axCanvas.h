@@ -53,8 +53,8 @@ class axCanvas : public axCanvasImpl
   friend class axWindowLinux;
   //public:
   protected:
-    axCanvas(axContext* aContext)
-    : axCanvasImpl(aContext)
+    axCanvas(axInterface* aInterface, void* aSource)
+    : axCanvasImpl(aInterface,aSource)
       {
       }
   public:

@@ -16,19 +16,38 @@
 
 //----------------------------------------------------------------------
 
+#include "base/axPlatform.h"
+
+class axInterfaceBase
+{
+  public:
+    //axInterfaceBase(axPlatform* aPlatform) {}
+    //virtual ~axInterfaceBase() {}
+    virtual void*   getHandle(void) { trace("axInterface.getHandle: NULL"); return NULL; } // linux: Display*
+//    virtual void*   createWindow(void* aParent, int aWidth, int aHeight) { trace("axInterface.createWindow"); return NULL; }
+    virtual void    notifyResizeEditor(int aWidth,int aHeight) {}
+    virtual void    notifyParamChanged(axParameter* par) {}
+    virtual axRect  getEditorRect(void) { return axRect(0,0,256,256); }
+
+};
+
+//----------
+
 #ifdef AX_NOGUI
-#include "axInterfaceNone.h"
+#include "base/axInterfaceNone.h"
 #else
 
   #ifdef AX_LINUX
-  #include "axInterfaceLinux.h"
+  #include "base/axInterfaceLinux.h"
   #endif
 
   #ifdef AX_WIN32
-  #include "axInterfaceWin32.h"
+  #include "base/axInterfaceWin32.h"
   #endif
 
 #endif // !NOGUI
+
+//typedef axInterfaceBase axInterface;
 
 //----------------------------------------------------------------------
 #endif
