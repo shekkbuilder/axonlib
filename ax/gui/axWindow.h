@@ -203,10 +203,10 @@ class axWindow : public axWindowImpl
     // on..
     //----------------------------------------
 
-    //virtual void onChange(axWidget* aWidget)
-    //  {
-    //    redrawWidget(aWidget);
-    //  }
+    virtual void onChange(axWidget* aWidget)
+      {
+        redrawWidget(aWidget);
+      }
 
     virtual void onRedraw(axWidget* aWidget)
       {

@@ -269,6 +269,7 @@ class axWidget : public axWidgetListener
 
     virtual int appendWidget(axWidget* aWidget)
       {
+        //trace("axWidget.appendWidget");
         int index = mWidgets.size();
         aWidget->applySkin(mSkin,true,true);
         //aWidget->doSetPos( mRect.x + aWidget->getRect().x, mRect.y + aWidget->getRect().y );
