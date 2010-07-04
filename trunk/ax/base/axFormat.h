@@ -25,8 +25,8 @@
 class axFormat
 {
   public:
-    axFormat() {}
-    virtual ~axFormat() {}
+    //axFormat() {}
+    //virtual ~axFormat() {}
 };
 
 //----------

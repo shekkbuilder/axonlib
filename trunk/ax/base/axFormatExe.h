@@ -14,6 +14,10 @@
 //static char* g_stereo_outputs[] = { (char*)"out1",(char*)"out2" };
 
 //----------------------------------------------------------------------
+//
+// app descriptor
+//
+//----------------------------------------------------------------------
 
 // not really used for exe's, but, perhaps later..
 class axDescriptor
@@ -39,6 +43,10 @@ class axDescriptor
 };
 
 //----------------------------------------------------------------------
+//
+// app instance
+//
+//----------------------------------------------------------------------
 
 class axInstance
 {
@@ -49,16 +57,16 @@ class axInstance
     axInstance(axDescriptor* aDescriptor)
       {
         mDescriptor = aDescriptor;
-        mEditorRect = axRect(0,0,256,256);
+        mEditorRect = axRect(320,240);
       }
     virtual ~axInstance() {}
 
-    //----------
+    //----------------------------------------
 
     virtual axDescriptor* getDescriptor(void) { return mDescriptor; }
     virtual axRect getEditorRect(void) { return mEditorRect; }
 
-    //----------
+    //----------------------------------------
 
     // exe
     virtual int main(int argc, char** argv)
@@ -76,10 +84,8 @@ class axInstance
 
     //----------
 
-    // vst
-    virtual int   getCurrentProgram(void) { return 0; }
-    virtual void  saveProgram(int aNum) {}
-
+    //virtual int   getCurrentProgram(void) { return 0; }
+    //virtual void  saveProgram(int aNum) {}
     virtual void* doOpenEditor(axInterface* aInterface, void* aParent) { return NULL; }
     virtual void  doCloseEditor(axInterface* aInterface, void* aParent) {}
 

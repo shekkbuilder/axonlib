@@ -23,7 +23,7 @@
 #include <X11/extensions/Xrender.h>
 #endif
 
-#include "base/axContext.h"
+//#include "base/axContext.h"
 #include "core/axDefines.h"
 //#include "base/axSurfaceBase.h"
 #include "gui/axSurfaceBase.h"

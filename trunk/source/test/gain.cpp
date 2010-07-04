@@ -70,32 +70,37 @@ class myInstance : public axInstance
 
   public:
 
-    #ifdef AX_FORMAT_EXE
+    //#ifdef AX_FORMAT_EXE
     virtual int main(int argc, char** argv)
       {
         trace("main");
         #ifndef AX_NOGUI
-        axInterface* interface = mDescriptor->getInterface();
-        Display* display = (Display*)interface->getHandle();
-        Window parent = XDefaultRootWindow(display);
-        axWindow* window = new axWindow(interface,&parent,axRect(0,0,320,240),AX_WIN_DEFAULT);
+
+        axInterface* interface = getDescriptor()->getInterface();
+        void* parent = interface->getRootWindow();
+        axWindow* window = new axWindow(interface,parent,getEditorRect(),AX_WIN_DEFAULT);
         axCanvas* canvas = window->getCanvas();
         mSkin = new axSkinBasic(canvas);
         window->applySkin(mSkin);
+
         wdgPanel* panel = new wdgPanel( window,NULL_RECT,wa_Client);
         window->appendWidget( panel );
-        panel->appendWidget( new wdgKnob( window,axRect(10,10,100,32),wa_None,"knob1"));
-        panel->appendWidget( new wdgKnob( window,axRect(10,50,100,32),wa_None,"knob2"));
+        panel->setBorders(20,20,5,5);
+        for (int i=0; i<10; i++)
+          panel->appendWidget( new wdgKnob( window,axRect(80,26),wa_StackedVert,"knob") );
         window->doRealign();
+
         window->show();
         window->eventLoop();
         window->hide();
+
         delete window;
         delete mSkin;
+
         #endif //AX_NOGUI
         return 0;
       }
-    #endif //AX_FORMAT_EXE
+    //#endif //AX_FORMAT_EXE
 
 
   //----------------------------------------
