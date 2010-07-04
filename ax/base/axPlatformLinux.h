@@ -9,7 +9,7 @@
 class axPlatform : public axPlatformBase
 {
   public:
-    axPlatform(axFormat* aFormat)
+    axPlatform(axFormatBase* aFormat)
     : axPlatformBase(aFormat)
       {
       }

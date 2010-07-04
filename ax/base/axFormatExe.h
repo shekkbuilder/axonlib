@@ -98,7 +98,7 @@ class axInstance
 //----------------------------------------------------------------------
 
 template<class _D,class _I,class _In,class _P>
-class axFormatImpl : public axFormat
+class axFormatImpl : public axFormatBase
 {
   private:
     /* _P*  */ axPlatform*   mPlatform;
@@ -107,7 +107,7 @@ class axFormatImpl : public axFormat
     /* _In* */ axInterface*  mInterface;
 
   public:
-    axFormatImpl() : axFormat()
+    axFormatImpl() : axFormatBase()
       {
         mPlatform   = new _P(this);
         mInterface  = new _In(mPlatform);

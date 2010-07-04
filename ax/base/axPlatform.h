@@ -6,9 +6,12 @@
 
 class axPlatformBase
 {
+  private:
+    axFormatBase* mFormat;
   public:
-    axPlatformBase(axFormat* aFormat) {}
+    axPlatformBase(axFormatBase* aFormat) { mFormat=aFormat; }
     virtual ~axPlatformBase() {}
+    virtual axFormatBase* getFormat(void) { return mFormat; }
     virtual void* getHandle(void) { return NULL; } // win32:HINSTANCE
 };
 
