@@ -1,7 +1,6 @@
 #ifndef axFormat_included
 #define axFormat_included
 //----------------------------------------------------------------------
-// 'main' include file
 
 #include "axConfig.h"
 #include "core/axDefines.h"
@@ -22,11 +21,11 @@
 
 //----------------------------------------------------------------------
 
-class axFormat
+class axFormatBase
 {
   public:
-    //axFormat() {}
-    //virtual ~axFormat() {}
+    axFormatBase() {}
+    virtual ~axFormatBase() {}
 };
 
 //----------
@@ -44,13 +43,6 @@ class axFormat
 #endif
 
 //----------------------------------------------------------------------
-
-// included elsewhere?
-
-//#include "base/axPlatform.h"
-//#include "base/axInterface.h"
-
-//----------
 
 #define DEFAULT_DESCRIPTOR axDescriptor
 #define DEFAULT_INSTANCE   axInstance
