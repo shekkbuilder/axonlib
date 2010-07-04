@@ -107,7 +107,7 @@ class axFormatImpl : public axFormatBase
     /* _In* */ axInterface*  mInterface;
 
   public:
-    axFormatImpl() : axFormatBase()
+    axFormatImpl()// : axFormatBase()
       {
         mPlatform   = new _P(this);
         mInterface  = new _In(mPlatform);
