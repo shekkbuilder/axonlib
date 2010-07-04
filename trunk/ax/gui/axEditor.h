@@ -35,7 +35,6 @@
 
 */
 
-#include "base/axFormat.h"
 #include "core/axArray.h"
 #include "gui/axWindow.h"
 #include "skins/axSkinBasic.h"
@@ -114,11 +113,13 @@ class axEditor : public axWindow
         aWidget->setParameter(aParameter);
         aParameter->setConnection(conn);
         aWidget->setValue( aParameter->doGetValue() );
+        //TODO: fix!!
         mConnections.append( wp_connection(aWidget,aParameter) );   // ??? delete?
       }
 
     //void deleteConnections(void)
     //  {
+    //    for (int i=0; i<mConnections.size(); i++) delete
     //  }
 
     //--------------------------------------------------

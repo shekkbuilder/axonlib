@@ -8,6 +8,10 @@
 #include "pluginterfaces/vst2.x/aeffectx.h"
 
 #include "par/axParameter.h"
+#include "par/axProgram.h"
+#include "gui/axEditor.h"
+#include "base/axInterface.h"
+
 
 // g_ = global
 
@@ -23,9 +27,12 @@ static char* g_stereo_outputs[] = { (char*)"out1",(char*)"out2" };
 
 class axDescriptor
 {
+  private:
+    axInterface* mInterface;
   public:
-    axDescriptor(axFormat* aFormat) {}
-    ~axDescriptor() {}
+    axDescriptor(axInterface* aInterface) { mInterface = aInterface; }
+    virtual ~axDescriptor() {}
+    virtual axInterface* getInterface(void) { return mInterface; }
   public:
     virtual char*         getName(void)             { return (char*)"plugin"; }
     virtual char*         getAuthor(void)           { return (char*)"anonymous"; }
@@ -39,7 +46,6 @@ class axDescriptor
     virtual char*         getInputName(int aIndex)  { return g_stereo_inputs[aIndex]; }
     virtual char*         getOutputName(int aIndex) { return g_stereo_outputs[aIndex]; }
     virtual char*         getParamName(int aIndex)  { return (char*)"param"; }
-    // TODO: double-check with ladspa (and exe)
 };
 
 //----------------------------------------------------------------------
@@ -63,7 +69,7 @@ class axInstance// : public axParameterListener
         if (opCode==effClose)
         {
           instance->dispatcher(opCode,index,value,ptr,opt);
-          delete instance;
+          delete instance; // should we delete this in the axFormatImpl destructor?
           return 1;
         }
         return instance->dispatcher(opCode,index,value,ptr,opt);
@@ -89,6 +95,7 @@ class axInstance// : public axParameterListener
 
     //----------
 
+    //{deprecated in vst 2.4]
     //static void process_callback(AEffect* ae, float** inputs, float** outputs, VstInt32 sampleFrames)
     //  {
     //    axInstance* instance = (axInstance*)(ae->object);
@@ -116,14 +123,16 @@ class axInstance// : public axParameterListener
   private:
     axDescriptor* mDescriptor;
     AEffect       mAEffect; // vst-specific
-
+    axRect        mEditorRect;
 
   public:
 
-     axInstance(axFormat* aFormat)
+    axInstance(axDescriptor* aDescriptor)
+    //axInstance(axFormat* aFormat)
       {
-        mDescriptor = aFormat->getDescriptor();
-        memset(&mAEffect,0,sizeof(mAEffect)); // axMemset
+        mDescriptor = aDescriptor;
+        mEditorRect = axRect(0,0,256,256);
+        axMemset(&mAEffect,0,sizeof(mAEffect));
         mAEffect.magic                   = kEffectMagic;
         mAEffect.object                  = this;
         mAEffect.user                    = NULL;
@@ -157,6 +166,9 @@ class axInstance// : public axParameterListener
 
     inline AEffect* getAEffect(void) { return &mAEffect; };
 
+    virtual axDescriptor* getDescriptor(void) { return mDescriptor; }
+    virtual axRect getEditorRect(void) { return mEditorRect; }
+
   //----------------------------------------
   // helpers / internal
   //----------------------------------------
@@ -164,7 +176,10 @@ class axInstance// : public axParameterListener
   public:
 
     //sendMidi
+
     //programs/banks..
+    virtual int   getCurrentProgram(void) { return 0; }
+    virtual void  saveProgram(int aNum) {}
 
   //----------------------------------------
   // callbacks
@@ -203,26 +218,30 @@ class axInstance// : public axParameterListener
 
     //----------
 
-    /*virtual*/ float getParameter(VstInt32 aIndex)
+    /*virtual*/
+    float getParameter(VstInt32 aIndex)
       {
         return 0;
       }
 
     //----------
 
-    /*virtual*/ void setParameter(VstInt32 aIndex, float aValue)
+    /*virtual*/
+    void setParameter(VstInt32 aIndex, float aValue)
       {
       }
 
     //----------
 
-    /*virtual*/ void processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames)
+    /*virtual*/
+    void processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames)
       {
       }
 
     //----------
 
-    /*virtual*/ void processDoubleReplacing(double** aInputs, double** aOutputs, VstInt32 aLength)
+    /*virtual*/
+    void processDoubleReplacing(double** aInputs, double** aOutputs, VstInt32 aLength)
       {
       }
 
@@ -231,16 +250,22 @@ class axInstance// : public axParameterListener
   //----------------------------------------
 
   public:
-    // lib-user overrides these:
+
+
     // programs & parameters
+
     //virtual void  doSetupParameters(void) {}
     //virtual void  doSetupPrograms(void) {}
+
     // editor
+
     //virtual void  doSetupEditor(void* aWindow, int aWidth, int aHeight) {} // todo: void* -> axWindow*
     //virtual void  doFinishEditor(void) {}
     //virtual void  doOpenEditor(void) {}
     //virtual void  doCloseEditor(void) {}
     //virtual void  doIdleEditor(void) {}
+    virtual void* doOpenEditor(axInterface* aInterface, void* aParent) { return NULL; }
+    virtual void  doCloseEditor(axInterface* aInterface, void* aParent) {}
 
 };
 
@@ -264,30 +289,40 @@ class axFormatImpl : public axFormat
   public:
     axFormatImpl() : axFormat()
       {
-        trace("axFormatImpl: vst");
+        //trace("axFormatImpl: vst");
         mPlatform   = new _P(this);
-        mDescriptor = new _D(this);
-        mInstance   = new _I(this);
-        mInterface  = NULL;//new _In(this);
+        mInterface  = new _In(mPlatform);
+        mDescriptor = new _D(mInterface);
+        mInstance   = new _I(mDescriptor);
         // audio?
       }
     virtual ~axFormatImpl()
       {
         delete mPlatform;
         delete mDescriptor;
-        delete mInstance;
-        if (mInterface) delete mInterface;
+        //delete mInstance; // deleted in dispatcher_callback
+        delete mInterface;
       }
   //protected: //TODO: friend func..
   public:
-    virtual axFormat*     getFormat(void)     { return this; }
+    //virtual axFormat*     getFormat(void)     { return this; }
     virtual axPlatform*   getPlatform(void)   { return mPlatform; }
     virtual axDescriptor* getDescriptor(void) { return mDescriptor; }
     virtual axInstance*   getInstance(void)   { return mInstance; }
     virtual axInterface*  getInterface(void)  { return mInterface; }
+    virtual char*         getName(void)       { return (char*)"vst"; }
 };
 
 //----------------------------------------------------------------------
+
+/*
+
+the axGlobalScope destructor is called after all other classes
+has been deleted... also the mem-debug class?
+so we don't see the final mem alloc go to 0
+(in debugg output window)
+
+*/
 
 class axGlobalScope
 {
@@ -297,7 +332,7 @@ class axGlobalScope
     ~axGlobalScope() { trace("axGlobalScope.destructor");  if (mFormat) delete mFormat; }
 };
 
-axGlobalScope g_Scope;
+static axGlobalScope g_Scope;
 
 //----------------------------------------------------------------------
 //
@@ -345,10 +380,6 @@ axGlobalScope g_Scope;
 #else
   #define AX_MAIN(_desc,_inst,_iface) AX_ENTRYPOINT(_desc,_inst,_iface,axPlatform)
 #endif
-
-//----------------------------------------------------------------------
-
-// the instance is deleted in the event handlers
 
 //----------------------------------------------------------------------
 #endif

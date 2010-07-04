@@ -1,6 +1,7 @@
 #ifndef axFormat_included
 #define axFormat_included
 //----------------------------------------------------------------------
+// 'main' include file
 
 #include "axConfig.h"
 #include "core/axDefines.h"
@@ -10,7 +11,7 @@
 
 //----------------------------------------------------------------------
 
-//// format types
+// format types
 #define ft_Unknown  0
 #define ft_Exe      1
 #define ft_Vst      2
@@ -18,10 +19,6 @@
 //#define ft_Dssi     4
 //#define ft_Lv2      5
 //#define ft_Au       6
-
-//----------
-
-#define DEFAULT_DESCRIPTOR axDescriptor
 
 //----------------------------------------------------------------------
 
@@ -48,8 +45,15 @@ class axFormat
 
 //----------------------------------------------------------------------
 
-#include "base/axPlatform.h"
-#include "base/axInterface.h"
+// included elsewhere?
+
+//#include "base/axPlatform.h"
+//#include "base/axInterface.h"
+
+//----------
+
+#define DEFAULT_DESCRIPTOR axDescriptor
+#define DEFAULT_INSTANCE   axInstance
 
 //----------------------------------------------------------------------
 #endif

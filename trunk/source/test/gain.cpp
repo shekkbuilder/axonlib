@@ -1,9 +1,9 @@
 //#define AX_NOGUI
 
 #define AX_DEBUG_AUTO_STD
-//#define AX_DEBUG_MEM
-//#define AX_DEBUG_PNG
-//#define AX_DEBUG_NEW
+#define AX_DEBUG_MEM
+#define AX_DEBUG_PNG
+#define AX_DEBUG_NEW
 //#define AX_DEBUG_LOG  "test_gain_gui_skin.log"
 
 //----------------------------------------------------------------------
@@ -43,14 +43,15 @@ class myInstance : public axInstance
 
     myInstance(axDescriptor* aDescriptor) : axInstance(aDescriptor)
       {
-//        m_Gain = 0;
-//        describe("test_gain_gui","ccernn","axonlib example",0,AX_MAGIC+0x0000);
-//        setupAudio(2,2,false);
-//        setupEditor(200,200);
-//        appendParameter( p_Gain = new axParameter(this,"gain","") );
-//        setupParameters();
+        m_Gain = 0.5;
+        //describe("test_gain_gui","ccernn","axonlib example",0,AX_MAGIC+0x0000);
+        //setupAudio(2,2,false);
+        //setupEditor(200,200);
+        //appendParameter( p_Gain = new axParameter(this,"gain","") );
+        //setupParameters();
       }
 
+    // called from editor
     virtual void  doSetParameter(axParameter* aParameter)
       {
         trace("doSetParameter");
@@ -64,11 +65,12 @@ class myInstance : public axInstance
       }
 
   //----------------------------------------
-  // main
+  // main (only called if exe)
   //----------------------------------------
 
   public:
 
+    #ifdef AX_FORMAT_EXE
     virtual int main(int argc, char** argv)
       {
         trace("main");
@@ -77,35 +79,34 @@ class myInstance : public axInstance
         Display* display = (Display*)interface->getHandle();
         Window parent = XDefaultRootWindow(display);
         axWindow* window = new axWindow(interface,&parent,axRect(0,0,320,240),AX_WIN_DEFAULT);
-
         axCanvas* canvas = window->getCanvas();
         mSkin = new axSkinBasic(canvas);
         window->applySkin(mSkin);
-
-        wdgPanel* panel;
-        window->appendWidget( panel = new wdgPanel( window,NULL_RECT,wa_Client) );
-
-        panel->appendWidget( new wdgKnob( window,axRect(10,10,128,32),wa_None));
+        wdgPanel* panel = new wdgPanel( window,NULL_RECT,wa_Client);
+        window->appendWidget( panel );
+        panel->appendWidget( new wdgKnob( window,axRect(10,10,100,32),wa_None,"knob1"));
+        panel->appendWidget( new wdgKnob( window,axRect(10,50,100,32),wa_None,"knob2"));
         window->doRealign();
-
         window->show();
         window->eventLoop();
         window->hide();
         delete window;
-        #endif
+        delete mSkin;
+        #endif //AX_NOGUI
         return 0;
       }
+    #endif //AX_FORMAT_EXE
 
 
   //----------------------------------------
   // gui
   //----------------------------------------
 
-  private:
-    axEditor* mEditor;
-    wdgPanel* wPanel;
-    wdgKnob*  w_Gain;
-
+//  private:
+//    axEditor* mEditor;
+//    wdgPanel* wPanel;
+//    wdgKnob*  w_Gain;
+//
 //  public:
 //
 //    virtual void* doOpenEditor(axInterface* aInterface, void* aParent)
