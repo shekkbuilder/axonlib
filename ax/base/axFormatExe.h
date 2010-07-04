@@ -4,9 +4,8 @@
 
 #include "par/axParameter.h"
 #include "par/axProgram.h"
-
 #include "gui/axEditor.h"
-#include "wdg/wdgPanel.h"
+#include "base/axInterface.h"
 
 //----------------------------------------------------------------------
 
@@ -56,26 +55,33 @@ class axInstance
 
     //----------
 
-    virtual void* doOpenEditor(axInterface* aInterface, void* aParent) { return NULL; }
-    virtual void doCloseEditor(axInterface* aInterface, void* aParent) {}
+    virtual axDescriptor* getDescriptor(void) { return mDescriptor; }
+    virtual axRect getEditorRect(void) { return mEditorRect; }
 
-    virtual int  getCurrentProgram(void)      { return 0; }
-    virtual void saveProgram(int aNum) { }
+    //----------
 
+    // exe
     virtual int main(int argc, char** argv)
       {
-//        #ifndef AX_NOGUI
-//        axInterface* interface = mDescriptor->getInterface();   trace("interface: " << interface);
-//        Display* display = (Display*)interface->getHandle();    trace("display: " << display);
-//        Window parent = XDefaultRootWindow(display);            trace("parent: " << parent);
-//        axWindow* window = (axWindow*)doOpenEditor(interface,&parent);
-//        //axWindow* win = (axWindow*)window;
-//        //win->eventLoop();
-//        #endif
+        //#ifndef AX_NOGUI
+        //axInterface* interface = mDescriptor->getInterface();   trace("interface: " << interface);
+        //Display* display = (Display*)interface->getHandle();    trace("display: " << display);
+        //Window parent = XDefaultRootWindow(display);            trace("parent: " << parent);
+        //axWindow* window = (axWindow*)doOpenEditor(interface,&parent);
+        ////axWindow* win = (axWindow*)window;
+        ////win->eventLoop();
+        //#endif
         return 0;
       }
 
+    //----------
 
+    // vst
+    virtual int   getCurrentProgram(void) { return 0; }
+    virtual void  saveProgram(int aNum) {}
+
+    virtual void* doOpenEditor(axInterface* aInterface, void* aParent) { return NULL; }
+    virtual void  doCloseEditor(axInterface* aInterface, void* aParent) {}
 
 };
 
@@ -84,11 +90,6 @@ class axInstance
 // format implementation
 //
 //----------------------------------------------------------------------
-
-// thought: should this have the static callback methods for vst & ladspa?
-
-// the exe file, abstracted out into 4 parts:
-// system, info, process, gui
 
 template<class _D,class _I,class _In,class _P>
 class axFormatImpl : public axFormat
@@ -102,9 +103,6 @@ class axFormatImpl : public axFormat
   public:
     axFormatImpl() : axFormat()
       {
-        // for exe's create everything
-        // vst will be similar
-        // ladspa will create instance later (getInstance)
         mPlatform   = new _P(this);
         mInterface  = new _In(mPlatform);
         mDescriptor = new _D(mInterface);
@@ -118,16 +116,13 @@ class axFormatImpl : public axFormat
         delete mInstance;
         delete mInterface;
       }
-  //protected: //TODO: friend func..
+  //protected:
   public:
-    // make them available to other classes that know about axFormat:
-    // platform,interface,descriptor/instance
-    //virtual axFormat*     getFormat(void)     { return this; }
     virtual axPlatform*   getPlatform(void)   { return mPlatform; }
     virtual axDescriptor* getDescriptor(void) { return mDescriptor; }
     virtual axInstance*   getInstance(void)   { return mInstance; }
     virtual axInterface*  getInterface(void)  { return mInterface; }
-//    virtual char*             getName(void)       { return mDescriptor->getName(); }
+    virtual char*         getName(void)       { return (char*)"exe"; }
 };
 
 //----------------------------------------------------------------------
@@ -135,6 +130,8 @@ class axFormatImpl : public axFormat
 // entrypoint
 //
 //----------------------------------------------------------------------
+
+// calls instance.main
 
 #define AX_ENTRYPOINT(_desc,_inst,_iface,_plat)                                                 \
                                                                                                 \

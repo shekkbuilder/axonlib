@@ -61,7 +61,7 @@ class axInterface
 
     axWindow* createWindow(void* parent, int aWidth, int aHeight)
       {
-        trace("axInterfaceWin32.createWindow");
+        trace("axInterfaceWin32");
         //axContext context;
         //context.mInstance     = mWinInstance;
         //context.mWinClassName = mWinClassName;;

@@ -9,17 +9,15 @@
 class axPlatform : public axPlatformBase
 {
   public:
-    axPlatform(axFormat* aFormat)// : axPlatformBase(aFormat)
+    axPlatform(axFormat* aFormat)
+    : axPlatformBase(aFormat)
       {
-        //trace("axPlatform linux");
       }
     virtual ~axPlatform()
       {
       }
 
 };
-
-//typedef axPlatformLinux axPlatformImpl;
 
 //----------------------------------------------------------------------
 #endif

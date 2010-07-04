@@ -19,11 +19,10 @@
 //----------------------------------------------------------------------
 
 #include "core/axDefines.h"
-//#include "base/axWindowBase.h"
+#include "base/axInterface.h"
 #include "gui/axWindowBase.h"
 //#include "gui/axSkin.h"
 //#include "gui/axSkinDefault.h"
-//#include "base/axContext.h"
 #include "par/axParameter.h"
 
 //----------

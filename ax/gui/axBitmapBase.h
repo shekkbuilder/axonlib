@@ -39,7 +39,7 @@
 
 //#include "base/axContext.h"
 //#include "base/axImage.h"
-#include "base/axInterface.h"
+//#include "base/axInterface.h"
 
 class axBitmapBase
 {
