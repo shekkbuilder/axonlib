@@ -19,7 +19,7 @@
 //----------------------------------------------------------------------
 
 #include "core/axDefines.h"
-#include "base/axContext.h"
+//#include "base/axContext.h"
 //#include "base/axSurfaceBase.h"
 #include "gui/axSurfaceBase.h"
 

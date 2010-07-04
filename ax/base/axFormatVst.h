@@ -128,7 +128,6 @@ class axInstance// : public axParameterListener
   public:
 
     axInstance(axDescriptor* aDescriptor)
-    //axInstance(axFormat* aFormat)
       {
         mDescriptor = aDescriptor;
         mEditorRect = axRect(0,0,256,256);
@@ -149,10 +148,8 @@ class axInstance// : public axParameterListener
         mAEffect.numInputs               = mDescriptor->getNumInputs();
         mAEffect.numOutputs              = mDescriptor->getNumOutputs();
         mAEffect.initialDelay            = 0;
-
         // our plugins must replace the values in the above struct
         // before it is returned to the host (AX_ENTRYPOINT)
-
       }
 
     //----------
@@ -164,10 +161,9 @@ class axInstance// : public axParameterListener
     //----------------------------------------
     // accessors
 
-    inline AEffect* getAEffect(void) { return &mAEffect; };
-
+    inline  AEffect* getAEffect(void)         { return &mAEffect; };
     virtual axDescriptor* getDescriptor(void) { return mDescriptor; }
-    virtual axRect getEditorRect(void) { return mEditorRect; }
+    virtual axRect getEditorRect(void)        { return mEditorRect; }
 
   //----------------------------------------
   // helpers / internal
@@ -185,10 +181,10 @@ class axInstance// : public axParameterListener
   // callbacks
   //----------------------------------------
 
-  private: // hide them
   //protected:
+  private: // hide them
 
-    /*virtual*/ VstIntPtr dispatcher(VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
+    virtual VstIntPtr dispatcher(VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
       {
         VstIntPtr v = 0;
         switch (opcode)
@@ -218,30 +214,26 @@ class axInstance// : public axParameterListener
 
     //----------
 
-    /*virtual*/
-    float getParameter(VstInt32 aIndex)
+    virtual float getParameter(VstInt32 aIndex)
       {
         return 0;
       }
 
     //----------
 
-    /*virtual*/
-    void setParameter(VstInt32 aIndex, float aValue)
+    virtual void setParameter(VstInt32 aIndex, float aValue)
       {
       }
 
     //----------
 
-    /*virtual*/
-    void processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames)
+    virtual void processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames)
       {
       }
 
     //----------
 
-    /*virtual*/
-    void processDoubleReplacing(double** aInputs, double** aOutputs, VstInt32 aLength)
+    virtual void processDoubleReplacing(double** aInputs, double** aOutputs, VstInt32 aLength)
       {
       }
 

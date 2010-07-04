@@ -13,6 +13,7 @@ class axInterface : public axInterfaceBase
   private:
     axPlatform* mPlatform;
     Display*    mDisplay;
+    Window      mRootWindow;
 
   public:
 
@@ -23,6 +24,7 @@ class axInterface : public axInterfaceBase
         mPlatform = aPlatform;
         XInitThreads();
         mDisplay = XOpenDisplay(NULL);
+        mRootWindow = XDefaultRootWindow(mDisplay);
       }
 
     virtual ~axInterface()
@@ -32,7 +34,8 @@ class axInterface : public axInterfaceBase
 
     //----------
 
-    virtual void* getHandle(void) { return (void*)mDisplay; }
+    virtual void* getHandle(void)     { return (void*)mDisplay; }
+    virtual void* getRootWindow(void) { return &mRootWindow; }
 
 };
 

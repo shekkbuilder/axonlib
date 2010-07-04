@@ -22,7 +22,7 @@
 #include <X11/Xutil.h>
 
 #include "core/axDefines.h"
-#include "base/axContext.h"
+//#include "base/axContext.h"
 //#include "base/axBitmapBase.h"
 #include "gui/axBitmapBase.h"
 

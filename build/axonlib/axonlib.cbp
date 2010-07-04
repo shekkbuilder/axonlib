@@ -214,6 +214,7 @@
 		<Unit filename="../../ax/audio/axModule.h" />
 		<Unit filename="../../ax/audio/axVoices.h" />
 		<Unit filename="../../ax/axConfig.h" />
+		<Unit filename="../../ax/base/README" />
 		<Unit filename="../../ax/base/axContext.h" />
 		<Unit filename="../../ax/base/axFormat.h" />
 		<Unit filename="../../ax/base/axFormatExe.h" />

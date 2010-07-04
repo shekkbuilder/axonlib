@@ -11,12 +11,7 @@
 #include <windows.h>
 
 #include "core/axRect.h"
-#include "base/axContext.h"
 #include "gui/axWindow.h"
-
-//
-//  #define AX_CONTEXT_INIT(name)
-//    char* winname  = (char*)MAKE_NAME(name);
 
 class axInterface
 {
@@ -62,10 +57,6 @@ class axInterface
     axWindow* createWindow(void* parent, int aWidth, int aHeight)
       {
         trace("axInterfaceWin32");
-        //axContext context;
-        //context.mInstance     = mWinInstance;
-        //context.mWinClassName = mWinClassName;;
-        //context.mWindow       = (HWND)parent;
         axWindow* window      = new axWindow(&context,axRect(0,0,aWidth,aHeight),AX_WIN_DEFAULT);
         return window;
         return NULL;
