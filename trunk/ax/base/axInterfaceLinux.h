@@ -1,43 +1,110 @@
-#ifndef axInterfaceLinux_included
-#define axInterfaceLinux_included
-//----------------------------------------------------------------------
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#include "core/axRect.h"
-#include "gui/axWindow.h"
+#include "base/test_Window.h"
 
-class axInterface : public axInterfaceBase
+//----------------------------------------------------------------------
+
+class axInterfaceLinux : public axInterface
 {
   private:
-    axPlatform* mPlatform;
-    Display*    mDisplay;
-    Window      mRootWindow;
+    axBase*   mBase;
+    Display*  mDisplay;
+    Window    mRootWindow;
 
   public:
 
-    axInterface(axPlatform* aPlatform)
-    : axInterfaceBase(aPlatform)
+    axInterfaceLinux(axBase* aBase) : axInterface(aBase)
       {
-        trace("axInterfaceLinux" );
-        mPlatform = aPlatform;
+        trace("- axInterfaceLinux.constructor");
+        mBase = aBase;
         XInitThreads();
         mDisplay = XOpenDisplay(NULL);
         mRootWindow = XDefaultRootWindow(mDisplay);
       }
 
-    virtual ~axInterface()
+    virtual ~axInterfaceLinux()
       {
         XCloseDisplay(mDisplay);
       }
 
-    //----------
-
-    virtual void* getHandle(void)     { return (void*)mDisplay; }
-    virtual void* getRootWindow(void) { return &mRootWindow; }
+    virtual void* createWindow(axInstance* aInstance,void* parent)
+      {
+        return new axWindow(mBase,aInstance,parent);
+      }
 
 };
 
+//----------
+
+typedef axInterfaceLinux AX_INTERFACE;
+
 //----------------------------------------------------------------------
-#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//#ifndef axInterfaceLinux_included
+//#define axInterfaceLinux_included
+////----------------------------------------------------------------------
+//
+//#include <X11/Xlib.h>
+//#include <X11/Xutil.h>
+//
+////#include "core/axRect.h"
+//
+//class axInterface : public axInterfaceBase
+//{
+//  private:
+//    axPlatform* mPlatform;
+//    Display*    mDisplay;
+//    Window      mRootWindow;
+//
+//  public:
+//
+//    axInterface(axPlatform* aPlatform)
+//    : axInterfaceBase(aPlatform)
+//      {
+//        trace("axInterfaceLinux.constructor");
+//        mPlatform = aPlatform;
+//        XInitThreads();
+//        mDisplay = XOpenDisplay(NULL);
+//        mRootWindow = XDefaultRootWindow(mDisplay);
+//      }
+//
+//    virtual ~axInterface()
+//      {
+//        XCloseDisplay(mDisplay);
+//      }
+//
+//    //----------
+//
+//    virtual void* getHandle(void)     { return (void*)mDisplay; }
+//    virtual void* getRootWindow(void) { return &mRootWindow; }
+//
+//    //----------
+//
+//};
+//
+////----------------------------------------------------------------------
+//#endif

@@ -1,28 +1,97 @@
-#ifndef axInterfaceNone_included
-#define axInterfaceNone_included
-//----------------------------------------------------------------------
-/*
 
-empty/no-op Interface (for AX_NOGUI)
-
-*/
-
-class axInterface : public axInterfaceBase
+class axInterfaceNone : public axInterface
 {
+  //private:
+  //  axBase*   mBase;
+
   public:
-    axInterface(axPlatform* aPlatform)
-    : axInterfaceBase(aPlatform)
+
+    axInterfaceNone(axBase* aBase) : axInterface(aBase)
       {
-        trace("axInterfaceNone" );
+        trace("- axInterfaceNone.constructor");
+        //mBase = aBase;
       }
-    virtual ~axInterface() {}
+
+    virtual ~axInterfaceNone()
+      {
+        trace("- axInterfaceNone.destructor");
+      }
+
+    virtual void* createWindow(axInstance* aInstance,void* parent)
+      {
+        trace("- axInterfaceNone.createWindow");
+        return NULL;
+      }
 
 };
 
-#define NULL_INTERFACE axInterface
+//----------
+
+typedef axInterfaceNone AX_INTERFACE;
 
 //----------------------------------------------------------------------
-#endif
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//#ifndef axInterfaceNone_included
+//#define axInterfaceNone_included
+////----------------------------------------------------------------------
+///*
+//
+//empty/no-op Interface (for AX_NOGUI)
+//
+//*/
+//
+//class axInterface : public axInterfaceBase
+//{
+//  public:
+//    axInterface(axPlatform* aPlatform)
+//    : axInterfaceBase(aPlatform)
+//      {
+//        trace("axInterfaceNone,constructor" );
+//      }
+//    virtual ~axInterface() {}
+//
+//};
+//
+//#define NULL_INTERFACE axInterface
+//
+////----------------------------------------------------------------------
+//#endif
+//
+//
+//
