@@ -7,6 +7,15 @@
 
 class axFormatVst : public axFormat
 {
+
+  friend AEffect* main_plugin(audioMasterCallback audioMaster); // linux
+  //#ifdef linux
+  //  friend int main(audioMasterCallback audioMaster);
+  //#endif
+  //#ifdef WIN32
+    friend int main(int audioMaster, char** empty); // win32
+  //#endif
+
   private:
     AEffect             aeffect;
     audioMasterCallback audioMaster;
@@ -51,12 +60,12 @@ class axFormatVst : public axFormat
 
     //----------
 
-    //{deprecated in vst 2.4]
-    static void vst_process_callback(AEffect* ae, float** inputs, float** outputs, VstInt32 sampleFrames)
-      {
-        axFormatVst* instance = (axFormatVst*)(ae->object);
-        instance->vst_processReplacing(inputs,outputs,sampleFrames);
-      }
+    ////{deprecated in vst 2.4]
+    //static void vst_process_callback(AEffect* ae, float** inputs, float** outputs, VstInt32 sampleFrames)
+    //  {
+    //    axFormatVst* instance = (axFormatVst*)(ae->object);
+    //    instance->vst_processReplacing(inputs,outputs,sampleFrames);
+    //  }
 
     //----------
 
@@ -124,30 +133,15 @@ class axFormatVst : public axFormat
     //--------------------------------------------------
 
   protected:
-    axBase*   mBase;
+    axBase* mBase;
 
-    //--------------------------------------------------
-    //
-    //--------------------------------------------------
-
-  public:
-
-    axFormatVst(axBase* aBase) : axFormat(aBase)
-      {
-        trace("- axFormatVst.constructor");
-        mBase = aBase;
-      }
-
-    virtual ~axFormatVst()
-      {
-        trace("- axFormatVst.destructor");
-      }
+  protected:
 
     virtual void* entrypoint(void* ptr)
       {
         trace("* axFormatVst.entrypoint");
         audioMaster = (audioMasterCallback)ptr;
-        /*axMemset*/memset(&aeffect,0,sizeof(aeffect));
+        axMemset(&aeffect,0,sizeof(aeffect));
         aeffect.magic                   = kEffectMagic;
         aeffect.object                  = this;
         aeffect.user                    = NULL; // instance?
@@ -166,6 +160,25 @@ class axFormatVst : public axFormat
         aeffect.initialDelay            = 0;
         return &aeffect;
       }
+
+
+    //--------------------------------------------------
+    //
+    //--------------------------------------------------
+
+  public:
+
+    axFormatVst(axBase* aBase) : axFormat(aBase)
+      {
+        trace("- axFormatVst.constructor");
+        mBase = aBase;
+      }
+
+    virtual ~axFormatVst()
+      {
+        trace("- axFormatVst.destructor");
+      }
+
 
 //    virtual axDescriptor* createDescriptor(void)
 //      {

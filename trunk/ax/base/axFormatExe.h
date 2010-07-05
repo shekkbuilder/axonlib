@@ -4,10 +4,27 @@
 
 class axFormatExe : public axFormat
 {
+
+  friend int main(int argc, char** argv);
+
   private:
-    int       result;
+    int result;
+
+  //----------
+
   protected:
-    axBase*   mBase;
+    axBase* mBase;
+
+  protected:
+
+    virtual void* entrypoint(void* ptr)
+      {
+        trace("* axFormatExe.entrypoint");
+        result = 42;
+        return &result;
+      }
+
+  //----------
 
   public:
 
@@ -22,12 +39,6 @@ class axFormatExe : public axFormat
         trace("- axFormatExe.destructor");
       }
 
-    virtual void* entrypoint(void* ptr)
-      {
-        trace("* axFormatExe.entrypoint");
-        result = 42;
-        return &result;
-      }
 
 //    virtual axDescriptor* createDescriptor(void)
 //      {
