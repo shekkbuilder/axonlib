@@ -2,13 +2,17 @@
 #define axBase_included
 //----------------------------------------------------------------------
 
+// we could remove the constructor/destructor from all base classes,
+// also, examine the virtual-ness of everything..
+// and third, descriptor/instance?
+
 #include "axConfig.h"
 #include "core/axDefines.h"
 #include "core/axMalloc.h"
 #include "core/axDebug.h"
 #include "core/axAssert.h"
-#include "core/axRect.h"
-#include "par/axParameter.h"
+//#include "core/axRect.h"
+//#include "par/axParameter.h"
 
 //----------------------------------------------------------------------
 
@@ -63,7 +67,7 @@ class axInterface
 
 // entrypoint:
 // Vst:    ptr = audioMasterCallback, return AEffect
-// Ladspa: ptr =
+// Ladspa: ptr = ?, return = LADSPA_Descriptor
 // Exe:    ptr = portaudio/rtaudio/libaam/.., return ?
 
 class axFormat
@@ -160,6 +164,7 @@ class axGlobalScope
 
 //----------
 
+// __thread?
 static axGlobalScope g_GlobalScope;
 
 //----------------------------------------------------------------------

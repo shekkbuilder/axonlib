@@ -2,24 +2,7 @@
 #define axFormatLadspa_included
 //----------------------------------------------------------------------
 
-//TODO: remove these when using axDefines, etc...
-
-#include <memory.h>
-
-#ifndef __externc
-  #define __externc extern "C"
-#endif
-
-#ifndef __dllexport
-  #ifdef AX_WIN32
-    #define __dllexport __attribute__ ((dllexport))
-  #endif
-  #ifdef AX_LINUX
-    #define __dllexport
-  #endif
-#endif
-
-//----------
+//TODO: fix instances
 
 //TODO: proper ladspa sdk
 #include "../extern/ladspa.h"
@@ -28,6 +11,9 @@
 
 class axFormatLadspa : public axFormat
 {
+
+  friend const LADSPA_Descriptor* ladspa_descriptor(unsigned long index);
+
   private:
     LADSPA_Descriptor ladspadescr;
 
@@ -37,7 +23,9 @@ class axFormatLadspa : public axFormat
     // static callback functions, host -> plugin
     //--------------------------------------------------
 
-    // redirect to instantiate() in axDescriptor
+    // called by host to instantiate a plugin..
+    // return the ptr to the instance (LADSPA_Handle)
+
     static LADSPA_Handle lad_instantiate_callback(const LADSPA_Descriptor* Descriptor, unsigned long SampleRate)
       {
         trace("lad_instantiate_callback");
@@ -115,13 +103,18 @@ class axFormatLadspa : public axFormat
     //--------------------------------------------------
 
     // called from static callback function (above)
+
+    // return ptr to instance
     virtual LADSPA_Handle lad_instantiate(unsigned long SampleRate)
       {
         trace("axFormatLadspa.lad_instantiate");
-        return this;//mFormat->getInstance(); // create instance
+        return this; // create instance
+        //     !!!!
       }
 
     //----------
+
+    // the following couldd be in an instance class
 
     virtual void lad_connect_port(unsigned long Port, LADSPA_Data* DataLocation)
       {
@@ -138,8 +131,8 @@ class axFormatLadspa : public axFormat
         //trace("axFormatLadspa.lad_run");
       }
 
-  //virtual void lad_run_adding(unsigned long SampleCount) {}
-  //virtual void lad_set_run_adding_gain(LADSPA_Data Gain) {}
+    //virtual void lad_run_adding(unsigned long SampleCount) {}
+    //virtual void lad_set_run_adding_gain(LADSPA_Data Gain) {}
 
     virtual void lad_deactivate(void)
       {
@@ -156,29 +149,14 @@ class axFormatLadspa : public axFormat
     //--------------------------------------------------
 
   protected:
-    axBase*   mBase;
+    axBase* mBase;
 
-    //--------------------------------------------------
-    //
-    //--------------------------------------------------
-
-  public:
-
-    axFormatLadspa(axBase* aBase) : axFormat(aBase)
-      {
-        trace("- axFormatLadspa.constructor");
-        mBase = aBase;
-      }
-
-    virtual ~axFormatLadspa()
-      {
-        trace("- axFormatLadspa.destructor");
-      }
+  protected:
 
     virtual void* entrypoint(void* ptr)
       {
         trace("* axFormatLadspa.entrypoint");
-        memset(&ladspadescr,0,sizeof(ladspadescr)); // axMemset
+        axMemset(&ladspadescr,0,sizeof(ladspadescr));
         ladspadescr.UniqueID            = 0;//mUniqueId;
         ladspadescr.Label               = (char*)"label";
         ladspadescr.Properties          = LADSPA_PROPERTY_REALTIME | LADSPA_PROPERTY_HARD_RT_CAPABLE;
@@ -201,6 +179,24 @@ class axFormatLadspa : public axFormat
         return (void*)&ladspadescr;
         //TODO: fix
       }
+
+    //--------------------------------------------------
+    //
+    //--------------------------------------------------
+
+  public:
+
+    axFormatLadspa(axBase* aBase) : axFormat(aBase)
+      {
+        trace("- axFormatLadspa.constructor");
+        mBase = aBase;
+      }
+
+    virtual ~axFormatLadspa()
+      {
+        trace("- axFormatLadspa.destructor");
+      }
+
 
 //    virtual axDescriptor* createDescriptor(void)
 //      {
@@ -262,7 +258,7 @@ typedef axFormatLadspa AX_FORMAT;
                                                                             \
 _AX_LADSPA_DLLMAIN                                                          \
 __externc __dllexport                                                       \
-const LADSPA_Descriptor* ladspa_descriptor (unsigned long index)            \
+const LADSPA_Descriptor* ladspa_descriptor(unsigned long index)             \
 {                                                                           \
   if (index>0) return NULL;                                                 \
   axBaseImpl<_PL,_IF,_FO>* base = new axBaseImpl<_PL,_IF,_FO>();            \
