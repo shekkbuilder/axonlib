@@ -216,23 +216,23 @@ typedef axFormatLadspa AX_FORMAT;
 
 //----------------------------------------------------------------------
 
-#ifdef AX_WIN32
+//#ifdef AX_WIN32
 
-  //---
-
-  // this could (should?) be moved to axPlatform
-  static __thread HINSTANCE gInstance;
-
-  #define _AX_LADSPA_DLLMAIN                                    \
-    __externc BOOL APIENTRY                                     \
-    DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved) \
-    {                                                           \
-      trace("ladspa DllMain()");                                \
-      gInstance = hModule;                                      \
-      return TRUE;                                              \
-    }
-
-  //---
+//  //---
+//
+//  // this could (should?) be moved to axPlatform
+//  static __thread HINSTANCE gInstance;
+//
+//  #define _AX_LADSPA_DLLMAIN                                    \
+//    __externc BOOL APIENTRY                                     \
+//    DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved) \
+//    {                                                           \
+//      trace("ladspa DllMain()");                                \
+//      gInstance = hModule;                                      \
+//      return TRUE;                                              \
+//    }
+//
+//  //---
 
   /*
   yes no need for the __externc {}
@@ -242,15 +242,15 @@ typedef axFormatLadspa AX_FORMAT;
 
   //---
 
-#endif
+//#endif
 
 //----------
 
-#ifdef AX_LINUX
+//#ifdef AX_LINUX
 
   #define _AX_LADSPA_DLLMAIN
 
-#endif
+//#endif
 
 //----------------------------------------------------------------------
 

@@ -2,7 +2,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#include "base/test_Window.h"
+//#include "base/test_Window.h"
 
 //----------------------------------------------------------------------
 
@@ -29,10 +29,10 @@ class axInterfaceLinux : public axInterface
         XCloseDisplay(mDisplay);
       }
 
-    virtual void* createWindow(axInstance* aInstance,void* parent)
-      {
-        return new axWindow(mBase,aInstance,parent);
-      }
+    //virtual void* createWindow(axInstance* aInstance,void* parent)
+    //  {
+    //    return new axWindow(mBase,aInstance,parent);
+    //  }
 
 };
 

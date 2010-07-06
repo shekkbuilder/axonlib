@@ -5,6 +5,7 @@
 class axFormatExe : public axFormat
 {
 
+  //friend int main(void);
   friend int main(int argc, char** argv);
 
   private:
@@ -20,7 +21,7 @@ class axFormatExe : public axFormat
     virtual void* entrypoint(void* ptr)
       {
         trace("* axFormatExe.entrypoint");
-        result = 42;
+        result = 0;
         return &result;
       }
 
