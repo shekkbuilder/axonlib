@@ -1,17 +1,11 @@
-// some of the debug stuff doesn't work properly yet.
-// might be something with global or platform-specific
-// things that are handled a bit different now...
-
 //#define AX_DEBUG_AUTO_STD
 //#define AX_DEBUG_MEM
 //#define AX_DEBUG_PNG
 //#define AX_DEBUG_NEW
 //#define AX_DEBUG_LOG "test.log"
 
-#define AX_NOGUI
-
+//#define AX_NOGUI
 #include "base/axBase.h"
-//#include "base/test_Window.h"
 
 class myPlugin : public AX_FORMAT
 {
@@ -21,7 +15,9 @@ class myPlugin : public AX_FORMAT
 
     myPlugin(axBase* aBase) : AX_FORMAT(aBase)
       {
-        wtrace("- myPlugin.constructor");
+        trace("- myPlugin.constructor");
+        //axDebugConsole* console = new axDebugConsole();
+        //delete console;
       }
 
     //virtual void* entrypoint(void* ptr)
@@ -42,5 +38,7 @@ class myPlugin : public AX_FORMAT
 };
 
 //----------------------------------------------------------------------
+
 //AX_MAIN(myPlugin)
+
 AX_ENTRYPOINT(AX_PLATFORM,AX_INTERFACE,myPlugin)

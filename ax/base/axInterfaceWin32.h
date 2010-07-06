@@ -4,6 +4,7 @@
 
 //#include <windows.h>
 //#include "base/test_Window.h"
+//#include "core/axStdlib.h"
 
 //----------------------------------------------------------------------
 

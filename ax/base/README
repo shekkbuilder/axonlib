@@ -1,3 +1,27 @@
+
+axBase.h
+------------------------------
+  axBase
+    axPlatform
+      axPlatformLinux
+      axPlatformWin32
+    axInterface
+      axInterfaceLinux (xlib)
+      axInterfaceWin32 (gdi)
+      axInterfaceNone (nogui)
+    axFormat
+      axFormatExe
+      axFormatVst
+      axFormatLadspa
+  axBaseImpl
+  axGlobalScope
+  AX_ENTRYPOINT
+
+----------------------------------------------------------------------
+
+----------------------------------------------------------------------
+
+
 Format
 
   encapsulates the following classes,

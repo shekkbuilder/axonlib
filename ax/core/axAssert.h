@@ -32,7 +32,7 @@
 #ifdef AX_DEBUG /* AX_DEBUG */
 
   #include "axDebug.h"
-  
+
   /*
     axAssert()
     runtime assertion
@@ -47,14 +47,14 @@
     return 1;
   }
   #define axAssert(e) _axAssert((e), __FILE__, __LINE__, #e)
-  
+
   /*
     axStaticAssert()
     compile time assertion ( requires GCC 4.4.x )
   */
   #if (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 4)
     _AXSA_INLINE unsigned int __axSA_true (void) { return 1; }
-    unsigned int __axSA (void)    
+    unsigned int __axSA (void)
       __attribute__ (( error("### axStaticAssert") ))
       __attribute__ (( optimize(0) ));
     #define axStaticAssert(e) ( (!(e)) ? __axSA(): __axSA_true() )

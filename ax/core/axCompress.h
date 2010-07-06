@@ -208,68 +208,6 @@ class axCompress
     //
     //--------------------------------------------------
 
-    // TODO
-
-//	Description:  A Run-Length Encoding (RLE) Implementation.
-//	How it works:
-//		If there is a run of bytes, two bytes are output
-//		and then the next number of runs are encoded.
-//		Example:   abcddddd
-//		Encoding:  abcdd3	{regard '3' as a value.}
-//	Written by:   Gerald Tamayo
-
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
-//void copyright (void);
-//void rle_encode (FILE *in, FILE *out);
-//void rle_decode (FILE *in, FILE *out);
-
-//int main (int argc, char *argv[])
-//{
-//	FILE *in, *out;
-//
-//	if (argc < 3 || argc > 4){
-//		fprintf(stderr, "\n Run Length Encoding (RLE) implementation.\n"
-//			"\n Usage : gtrle inputfile outputfile [/d]");
-//		copyright();
-//		return 0;
-//	}
-//
-//	in = fopen(argv[1], "rb");
-//	if (!in) {
-//		fprintf(stderr, "\n Error opening input file!");
-//		copyright();
-//		return 0;
-//	}
-//	out = fopen(argv[2], "wb");
-//	if (!out) {
-//		fprintf(stderr, "\n Error opening output file!");
-//		copyright();
-//		return 0;
-//	}
-//
-//	if (argc == 4){
-//		if (!strcmp(argv[3], "/d") || !strcmp(argv[3], "/D")){
-//			fprintf(stderr, "\n Run-Length decoding...");
-//			rle_decode(in, out);
-//		}
-//		else {
-//			fprintf(stderr, "\n Error! Unknown: \"%s\"\n", argv[3]);
-//			return 0;
-//		}
-//	}
-//	else {
-//		fprintf(stderr, "\n Run-Length encoding...");
-//		rle_encode(in, out);
-//	}
-//	fprintf(stderr, "complete.\n");
-//
-//	if (in ) fclose(in);
-//	if (out) fclose(out);
-//	return 0;
-//}
-
     //void rle_encode (FILE *in, FILE *out)
     int rle_encode(unsigned char* out, unsigned char* in, int size)
       {

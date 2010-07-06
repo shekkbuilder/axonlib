@@ -6,13 +6,22 @@
 // also, examine the virtual-ness of everything..
 // and third, descriptor/instance?
 
-#include "axConfig.h"
+//----------
+
+// including axDefines, axDebug, etc, creates a lot of problems, as they
+// aren't following 'the new rules', they depend on some #define things
+// set up, or uses global data (gInstance, ..)
+
+//#include "core/axDebug.h"
+//#include "core/axAssert.h" // axDebug (_trace)
+
 #include "core/axDefines.h"
 #include "core/axMalloc.h"
-#include "core/axDebug.h"
-#include "core/axAssert.h"
-//#include "core/axRect.h"
-//#include "par/axParameter.h"
+#include "core/axRand.h"
+#include "core/axStdlib.h"
+#include "core/axUtils.h"
+
+#include "hack_hack.h"
 
 //----------------------------------------------------------------------
 
@@ -35,9 +44,7 @@ class axBase
 };
 
 //----------------------------------------------------------------------
-//
 // cross-*
-//
 //----------------------------------------------------------------------
 
 // Win32: DllMain, HINSTANCE
@@ -60,7 +67,7 @@ class axInterface
   public:
     axInterface(axBase* aBase)  { trace("  axInterface.constructor"); }
     virtual ~axInterface()      { trace("  axInterface.destructor"); }
-    virtual void* createWindow(axInstance* aInstance, void* parent) { return NULL; }
+    //virtual void* createWindow(axInstance* aInstance, void* parent) { return NULL; }
 };
 
 //----------------------------------------------------------------------
@@ -84,6 +91,8 @@ class axFormat
 };
 
 //----------------------------------------------------------------------
+//
+//----------------------------------------------------------------------
 
 //class axDescriptor
 //{
@@ -94,49 +103,49 @@ class axFormat
 
 //----------
 
-class axInstance
-{
-  public:
-    axInstance(axBase* aBase) { trace("  axInstance.constructor"); }
-    virtual ~axInstance()     { trace("  axInstance.destructor"); }
-    //virtual char* getName(void) { return (char*)"axInstance"; }
-};
+//class axInstance
+//{
+//  public:
+//    axInstance(axBase* aBase) { trace("  axInstance.constructor"); }
+//    virtual ~axInstance()     { trace("  axInstance.destructor"); }
+//    //virtual char* getName(void) { return (char*)"axInstance"; }
+//};
 
 //----------------------------------------------------------------------
-//
 // base implementation
-//
 //----------------------------------------------------------------------
 
-/*
-
-PL - Platform
-IF - Interface
-FO - Format
-
-D  - Descriptor
-I  - Instance
-
-*/
+//  PL - Platform
+//  IF - Interface
+//  FO - Format
+//
+//  D  - Descriptor
+//  I  - Instance
 
 template<class _PL, class _IF, class _FO>
 class axBaseImpl : public axBase
 {
   private:
-    axPlatform*   mPlatform;
-    axInterface*  mInterface;
-    axFormat*     mFormat;
+    axPlatform*     mPlatform;
+    axInterface*    mInterface;
+    axFormat*       mFormat;
+    //axDebugWindow*  mDebugWindow;
+    //axLogFile*      mLogFile;
   public:
     axBaseImpl()
       {
         trace("  axBaseImpl.constructor");
-        mPlatform   = new _PL(this);
-        mInterface  = new _IF(this);
-        mFormat     = new _FO(this);
+        mPlatform     = new _PL(this);
+        mInterface    = new _IF(this);
+        mFormat       = new _FO(this);
+        //mDebugWindow  = new axDebugWindow(this);
+        //mLogFile      = new axLogFile(this);
       }
     virtual ~axBaseImpl()
       {
         trace("  axBaseImpl.destructor");
+        //delete mDebugWindow;
+        //delete mLogFile;
         delete mPlatform;
         delete mInterface;
         delete mFormat;
@@ -148,6 +157,8 @@ class axBaseImpl : public axBase
     virtual axFormat*     getFormat(void)     { return mFormat; }
 };
 
+//----------------------------------------------------------------------
+//
 //----------------------------------------------------------------------
 
 // singleton???
