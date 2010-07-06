@@ -1,24 +1,51 @@
+#ifndef axPlatformWin32_included
+#define axPlatformWin32_included
+//----------------------------------------------------------------------
 
 #include <windows.h>
 
-static __thread HINSTANCE g_Instance;
+//----------------------------------------------------------------------
+
+// used in axUtils,getBasePath
+static __thread HINSTANCE gWinInstance;
+
+//----------
 
 __externc BOOL APIENTRY
-DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved) \
+DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
 {
-  trace("ladspa DllMain()");
-  gInstance = hModule;
+  trace("win32 DllMain");
+  //g_Instance = hModule;
+  switch(reason)
+  {
+    case DLL_PROCESS_ATTACH:
+      //trace("DllMain DLL_PROCESS_ATTACH");
+      gWinInstance = hModule;
+      break;
+    case DLL_PROCESS_DETACH:
+      //trace("DllMain DLL_PROCESS_DETACH");
+      break;
+    case DLL_THREAD_ATTACH:
+      //trace("DllMain DLL_THREAD_ATTACH");
+      break;
+    case DLL_THREAD_DETACH:
+      //trace("DllMain DLL_THREAD_DETACH");
+      break;
+  }
   return TRUE;
 }
 
 //----------------------------------------------------------------------
 
-class axPlatformLinux : public axPlatform
+class axPlatformWin32 : public axPlatform
 {
+  private:
+    HINSTANCE mWinInstance;
   public:
-    axPlatformLinux(axBase* aBase) : axPlatform(aBase)
+    axPlatformWin32(axBase* aBase) : axPlatform(aBase)
       {
-        trace("- axPlatformLinux.constructor");
+        trace("- axPlatformWin32.constructor");
+        mWinInstance = gWinInstance;
       }
 };
 
@@ -27,7 +54,7 @@ class axPlatformLinux : public axPlatform
 typedef axPlatformWin32 AX_PLATFORM;
 
 //----------------------------------------------------------------------
-
+#endif
 
 
 
