@@ -7,38 +7,33 @@
 //#define AX_NOGUI
 #include "base/axBase.h"
 
-class myPlugin : public AX_FORMAT
+//----------------------------------------------------------------------
+
+//class myPlugin : public AX_FORMAT
+//{
+//  public:
+//    myPlugin(axBase* aBase) : AX_FORMAT(aBase)
+//      {
+//        trace("- myPlugin.constructor");
+//      }
+//};
+
+//----------------------------------------------------------------------
+
+class myDescriptor : public axDescriptor
 {
-  //private:
-  //  axWindow* mWindow;
   public:
+    myDescriptor(axBase* aBase) : axDescriptor(aBase) { trace("- myDescriptor.constructor"); }
+};
 
-    myPlugin(axBase* aBase) : AX_FORMAT(aBase)
-      {
-        trace("- myPlugin.constructor");
-        //axDebugConsole* console = new axDebugConsole();
-        //delete console;
-      }
-
-    //virtual void* entrypoint(void* ptr)
-    //  {
-    //    wtrace("> myPlugin.entrypoint");
-    //    return AX_FORMAT::entrypoint(ptr);
-    //  }
-
-    //virtual axInstance* createInstance(void)
-    //  {
-    //    wtrace("> myPlugin.createInstance");
-    //    axInstance*  instance  = new axInstance(mBase);
-    //    axInterface* interface = mBase->getInterface();
-    //    mWindow = (axWindow*)interface->createWindow(instance,NULL);
-    //    return instance;
-    //  }
-
+class myInstance : public axInstance
+{
+  public:
+    myInstance(axBase* aBase) : axInstance(aBase) { trace("- myInstance.constructor"); }
 };
 
 //----------------------------------------------------------------------
 
 //AX_MAIN(myPlugin)
 
-AX_ENTRYPOINT(AX_PLATFORM,AX_INTERFACE,myPlugin)
+AX_ENTRYPOINT(AX_PLATFORM,AX_INTERFACE,AX_FORMAT,myDescriptor,myInstance)
