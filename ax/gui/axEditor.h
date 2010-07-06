@@ -68,7 +68,6 @@ typedef axArray<wp_connection> wp_connections;
 class axEditor : public axWindow
 {
   protected:
-    //axFormat*       mFormat;
     axInterface*    mInterface;
     wp_connections  mConnections;
     axSkinBasic*    mDefaultSkin;
@@ -210,8 +209,8 @@ class axEditor : public axWindow
     virtual void doSetSize(int aWidth, int aHeight)
       {
         //trace("axEditor.doSetSize: " << aWidth << "," << aHeight);
-        /*if (mInterface)*/ mInterface->notifyResizeEditor(aWidth,aHeight);
-        axWindow::doSetSize(aWidth,aHeight);
+//        if (mInterface) mInterface->notifyResizeEditor(aWidth,aHeight);
+//        axWindow::doSetSize(aWidth,aHeight);
       }
 
     //--------------------------------------------------

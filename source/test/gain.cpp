@@ -1,10 +1,11 @@
+
 //#define AX_NOGUI
 
-#define AX_DEBUG_AUTO_STD
-#define AX_DEBUG_MEM
-#define AX_DEBUG_PNG
-#define AX_DEBUG_NEW
-//#define AX_DEBUG_LOG  "test_gain_gui_skin.log"
+//#define AX_DEBUG_AUTO_STD
+//#define AX_DEBUG_MEM
+//#define AX_DEBUG_PNG
+//#define AX_DEBUG_NEW
+//#define AX_DEBUG_LOG  "gain.log"
 
 //----------------------------------------------------------------------
 
@@ -44,11 +45,11 @@ class myInstance : public axInstance
     myInstance(axDescriptor* aDescriptor) : axInstance(aDescriptor)
       {
         m_Gain = 0.5;
-        //describe("test_gain_gui","ccernn","axonlib example",0,AX_MAGIC+0x0000);
-        //setupAudio(2,2,false);
-        //setupEditor(200,200);
-        //appendParameter( p_Gain = new axParameter(this,"gain","") );
-        //setupParameters();
+        describe("test_gain_gui","ccernn","axonlib example",0,AX_MAGIC+0x0000);
+        setupAudio(2,2,false);
+        setupEditor(200,200);
+        appendParameter( p_Gain = new axParameter(this,"gain","") );
+        setupParameters();
       }
 
     // called from editor
@@ -107,39 +108,36 @@ class myInstance : public axInstance
   // gui
   //----------------------------------------
 
-//  private:
-//    axEditor* mEditor;
-//    wdgPanel* wPanel;
-//    wdgKnob*  w_Gain;
-//
-//  public:
-//
-//    virtual void* doOpenEditor(axInterface* aInterface, void* aParent)
-//      {
-//        trace("doOpenEditor");
-//        trace("aInterface: " << aInterface);
-//        trace("aParent: " << aParent);
-//        trace("AX_WIN_DEFAULT: " << AX_WIN_DEFAULT);
-//        axEditor* editor = new axEditor(aInterface,aParent,mEditorRect,AX_WIN_DEFAULT);
-//        trace("editor: " << (int)editor);
-//        //editor->appendWidget( wPanel = new wdgPanel(editor,NULL_RECT,wa_Client) );
-////        wPanel->appendWidget( w_Gain = new wdgKnob( editor,axRect(10,10,128,32),wa_None,"gain",0.75) );
-////        editor->connect(w_Gain,p_Gain);
-////        editor->doRealign();
-//        editor->show();
-//        mEditor = editor;
-//        return mEditor;
-//      }
+  private:
+    axEditor* mEditor;
+    wdgPanel* wPanel;
+    wdgKnob*  w_Gain;
+
+  public:
+
+    virtual void* doOpenEditor(/*axInterface* aInterface,*/ void* aParent)
+      {
+        axInterface* interface = getDescriptor()->getInterface();
+        //void* parent = interface->getRootWindow();
+        axEditor* editor = new axEditor(interface,aParent,getEditorRect(),AX_WIN_DEFAULT);
+        editor->appendWidget( wPanel = new wdgPanel(editor,NULL_RECT,wa_Client) );
+        wPanel->appendWidget( w_Gain = new wdgKnob( editor,axRect(10,10,128,32),wa_None,"gain",0.75) );
+        editor->connect(w_Gain,p_Gain);
+        editor->doRealign();
+        editor->show();
+        mEditor = editor;
+        return mEditor;
+      }
 ////
 ////    //----------
 ////
-//    virtual void doCloseEditor(void)
-//      {
-//        axEditor* editor = mEditor;
-//        mEditor->hide();
-//        mEditor = NULL;
-//        delete editor;
-//      }
+    virtual void doCloseEditor(void)
+      {
+        axEditor* editor = mEditor;
+        mEditor->hide();
+        mEditor = NULL;
+        delete editor;
+      }
 
 };
 
