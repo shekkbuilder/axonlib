@@ -28,7 +28,7 @@
 class axPlatform;
 class axInterface;
 class axFormat;
-//class axDescriptor;
+class axDescriptor;
 class axInstance;
 
 //----------------------------------------------------------------------
@@ -41,6 +41,8 @@ class axBase
     virtual axPlatform*   getPlatform(void)       { return NULL; }
     virtual axInterface*  getInterface(void)      { return NULL; }
     virtual axFormat*     getFormat(void)         { return NULL; }
+    virtual axDescriptor* getDescriptor(void)     { return NULL; }
+    virtual axInstance*   createInstance(void)    { return NULL; }
 };
 
 //----------------------------------------------------------------------
@@ -67,7 +69,7 @@ class axInterface
   public:
     axInterface(axBase* aBase)  { trace("  axInterface.constructor"); }
     virtual ~axInterface()      { trace("  axInterface.destructor"); }
-    //virtual void* createWindow(axInstance* aInstance, void* parent) { return NULL; }
+    virtual void* createWindow(axInstance* aInstance, void* parent) { return NULL; }
 };
 
 //----------------------------------------------------------------------
@@ -84,32 +86,29 @@ class axFormat
   public:
     axFormat(axBase* aBase) { trace("  axFormat.constructor"); }
     virtual ~axFormat()     { trace("  axFormat.destructor"); }
-    virtual void*         entrypoint(void* ptr)   { result=0; return &result; }
-    //virtual axDescriptor* createDescriptor(void)  { return NULL; }
-    virtual axInstance*   createInstance(void)    { return NULL; }
-
+    virtual void* entrypoint(void* ptr) { result=0; return &result; }
 };
 
 //----------------------------------------------------------------------
 //
 //----------------------------------------------------------------------
 
-//class axDescriptor
-//{
-//  public:
-//    axDescriptor(axBase* aBase) { trace("  axDescriptor.constructor"); }
-//    virtual ~axDescriptor()     { trace("  axDescriptor.destructor"); }
-//};
+class axDescriptor
+{
+  public:
+    axDescriptor(axBase* aBase) { trace("  axDescriptor.constructor"); }
+    virtual ~axDescriptor()     { trace("  axDescriptor.destructor"); }
+};
 
 //----------
 
-//class axInstance
-//{
-//  public:
-//    axInstance(axBase* aBase) { trace("  axInstance.constructor"); }
-//    virtual ~axInstance()     { trace("  axInstance.destructor"); }
-//    //virtual char* getName(void) { return (char*)"axInstance"; }
-//};
+class axInstance
+{
+  public:
+    axInstance(axBase* aBase) { trace("  axInstance.constructor"); }
+    virtual ~axInstance()     { trace("  axInstance.destructor"); }
+    //virtual char* getName(void) { return (char*)"axInstance"; }
+};
 
 //----------------------------------------------------------------------
 // base implementation
@@ -122,15 +121,14 @@ class axFormat
 //  D  - Descriptor
 //  I  - Instance
 
-template<class _PL, class _IF, class _FO>
+template<class _PL, class _IF, class _FO, class _D, class _I>
 class axBaseImpl : public axBase
 {
   private:
     axPlatform*     mPlatform;
     axInterface*    mInterface;
     axFormat*       mFormat;
-    //axDebugWindow*  mDebugWindow;
-    //axLogFile*      mLogFile;
+    axDescriptor*   mDescriptor;
   public:
     axBaseImpl()
       {
@@ -138,23 +136,23 @@ class axBaseImpl : public axBase
         mPlatform     = new _PL(this);
         mInterface    = new _IF(this);
         mFormat       = new _FO(this);
-        //mDebugWindow  = new axDebugWindow(this);
-        //mLogFile      = new axLogFile(this);
+        mDescriptor   = new _D(this);
       }
     virtual ~axBaseImpl()
       {
         trace("  axBaseImpl.destructor");
-        //delete mDebugWindow;
-        //delete mLogFile;
         delete mPlatform;
         delete mInterface;
         delete mFormat;
+        delete mDescriptor;
       }
   //protected:
   public:
-    virtual axPlatform*   getPlatform(void)   { return mPlatform; }
-    virtual axInterface*  getInterface(void)  { return mInterface; }
-    virtual axFormat*     getFormat(void)     { return mFormat; }
+    virtual axPlatform*   getPlatform(void)     { return mPlatform; }
+    virtual axInterface*  getInterface(void)    { return mInterface; }
+    virtual axFormat*     getFormat(void)       { return mFormat; }
+    virtual axDescriptor* getDescriptor(void)   { return mDescriptor; }
+    virtual axInstance*   createInstance(void)  { return new _I(this); } // you have to delete the instance yourself
 };
 
 //----------------------------------------------------------------------
@@ -183,8 +181,6 @@ static axGlobalScope g_GlobalScope;
 #include "base/axPlatform.h"
 #include "base/axInterface.h"
 #include "base/axFormat.h"
-
-#define AX_MAIN(format) AX_ENTRYPOINT(AX_PLATFORM,AX_INTERFACE,format)
 
 //----------------------------------------------------------------------
 #endif

@@ -198,15 +198,15 @@ class axFormatLadspa : public axFormat
       }
 
 
-//    virtual axDescriptor* createDescriptor(void)
-//      {
-//        return NULL;
-//      }
+    virtual axDescriptor* createDescriptor(void)
+      {
+        return NULL;
+      }
 
-//    virtual axInstance* createInstance(void)
-//      {
-//        return NULL;
-//      }
+    virtual axInstance* createInstance(void)
+      {
+        return NULL;
+      }
 
 };
 
@@ -254,18 +254,18 @@ typedef axFormatLadspa AX_FORMAT;
 
 //----------------------------------------------------------------------
 
-#define AX_ENTRYPOINT(_PL,_IF,_FO)                                          \
-                                                                            \
-_AX_LADSPA_DLLMAIN                                                          \
-__externc __dllexport                                                       \
-const LADSPA_Descriptor* ladspa_descriptor(unsigned long index)             \
-{                                                                           \
-  if (index>0) return NULL;                                                 \
-  axBaseImpl<_PL,_IF,_FO>* base = new axBaseImpl<_PL,_IF,_FO>();            \
-  g_GlobalScope.setBase(base);                                              \
-  _FO* format = (_FO*)base->getFormat();                                    \
-  LADSPA_Descriptor* descr = (LADSPA_Descriptor*)format->entrypoint(NULL);  \
-  return descr;                                                             \
+#define AX_ENTRYPOINT(_PL,_IF,_FO,_D,_I)                                      \
+                                                                              \
+_AX_LADSPA_DLLMAIN                                                            \
+__externc __dllexport                                                         \
+const LADSPA_Descriptor* ladspa_descriptor(unsigned long index)               \
+{                                                                             \
+  if (index>0) return NULL;                                                   \
+  axBaseImpl<_PL,_IF,_FO,_D,_I>* base = new axBaseImpl<_PL,_IF,_FO,_D,_I>();  \
+  g_GlobalScope.setBase(base);                                                \
+  _FO* format = (_FO*)base->getFormat();                                      \
+  LADSPA_Descriptor* descr = (LADSPA_Descriptor*)format->entrypoint(NULL);    \
+  return descr;                                                               \
 }
 
 //----------
