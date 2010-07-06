@@ -21,18 +21,18 @@ class myPlugin : public AX_FORMAT
 
     myPlugin(axBase* aBase) : AX_FORMAT(aBase)
       {
-        trace("- myPlugin.constructor");
+        wtrace("- myPlugin.constructor");
       }
 
     //virtual void* entrypoint(void* ptr)
     //  {
-    //    trace("> myPlugin.entrypoint");
+    //    wtrace("> myPlugin.entrypoint");
     //    return AX_FORMAT::entrypoint(ptr);
     //  }
 
     //virtual axInstance* createInstance(void)
     //  {
-    //    trace("> myPlugin.createInstance");
+    //    wtrace("> myPlugin.createInstance");
     //    axInstance*  instance  = new axInstance(mBase);
     //    axInterface* interface = mBase->getInterface();
     //    mWindow = (axWindow*)interface->createWindow(instance,NULL);
@@ -42,4 +42,5 @@ class myPlugin : public AX_FORMAT
 };
 
 //----------------------------------------------------------------------
-AX_MAIN(myPlugin)
+//AX_MAIN(myPlugin)
+AX_ENTRYPOINT(AX_PLATFORM,AX_INTERFACE,myPlugin)

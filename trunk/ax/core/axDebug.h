@@ -31,7 +31,7 @@ inline const char* axGetFileName(const char* path)
       return slash + 1;
     else if (backslash)
       return backslash;
-  }  
+  }
   return "NULL";
 }
 
@@ -53,7 +53,7 @@ inline const char* axGetFileName(const char* path)
   #define _axDcout(x) \
     cout << x << endl; \
     cout.flush()
-    
+
   // log file
   #ifdef AX_DEBUG_LOG
     fstream axDlog;
@@ -69,11 +69,17 @@ inline const char* axGetFileName(const char* path)
     #define _axDfstream(x) (void(0))
   #endif
 
+  /*
+
+  some of the stuff in here should be moved to axPlatform
+
+  */
+
   // case: windows
   #ifdef AX_WIN32
-  
-    
-    
+
+
+
     /*
      * creates a winapi debugger window (slow)
     */
@@ -82,12 +88,12 @@ inline const char* axGetFileName(const char* path)
     #include <io.h>
     #include <stdio.h>            // gcc-4.4.1-tdm
     #include <sstream>
-    
+
     #define axDwinCreate() ((void)0)
     #define axDwinDestroy() ((void)0)
-    
+
     #if 0
-    
+
     static __thread HWND axDtext;        // edit control handle
     ostringstream axDoss;                // string stream for window
 
@@ -178,9 +184,9 @@ inline const char* axGetFileName(const char* path)
         axDoss << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << "\r\n"; \
         wdebug_write(); \
       }
-      
+
     #endif // #if 0
-      
+
     /*
      * create a console debugger window (only one instance per process, fast)
      * allocates console and routes stdout as seen in example:
@@ -250,7 +256,7 @@ inline const char* axGetFileName(const char* path)
     #define _trace(x) \
       { if (axHcrt) { _axDcout(x); } if (axDlog) { _axDfstream(x); } }
     #define trace(x)  \
-      { if (axHcrt) { axDcout(x); } if (axDlog) { axDfstream(x); } }    
+      { if (axHcrt) { axDcout(x); } if (axDlog) { axDfstream(x); } }
     #define msg(x)    \
       { if (axHcrt) { axDprintf(x); } if (axDlog) axDfstream(x); } }
     #define wtrace(x) \
@@ -258,7 +264,7 @@ inline const char* axGetFileName(const char* path)
 
   #endif // AX_WIN32
 
-  
+
   #ifdef AX_LINUX
     #define _trace(x) { _axDcout(x); if (axDlog) { _axDfstream(x); } }
     #define trace(x)  { axDcout(x); if (axDlog) { axDfstream(x); } }
@@ -292,44 +298,44 @@ inline const char* axGetFileName(const char* path)
  * @file axDebug.h
  * \brief debugger methods
  *
- * if AX_DEBUG is defined, library debug mode will be enabled. usually using the 
- * compile flag -DAX_DEBUG <br><br> 
+ * if AX_DEBUG is defined, library debug mode will be enabled. usually using the
+ * compile flag -DAX_DEBUG <br><br>
  *
  * while you can observe program output in linux by running a program directly
  * from a terminal, on win32 you have to create a attach a console/or a text
  * window to the
  * process.
- * 
+ *
  * axonlib will do that for you if you define AX_DEBUG_AUTO_STD or
  * AX_DEBUG_AUTO_WIN (deprecated). the same definitions do not weight on linux.
- * 
+ *
  * debug methods:
  * \code
- * msg("text");                \\ write text to stdout  
+ * msg("text");                \\ write text to stdout
  * trace(variable << "text");  \\ write to stdout. simillar to cout
  * wtrace(variable << "text"); \\ same as trace() but for wine
  * axAssert(expression);       \\ runtime assertion
- * axStaticAssert(expression); \\ statatic assertion 
- * wdebug(variable << "text"); \\ (deprecated, win32 only) write to a text 
+ * axStaticAssert(expression); \\ statatic assertion
+ * wdebug(variable << "text"); \\ (deprecated, win32 only) write to a text
  *                             \\ window
  * \endcode
- *  
+ *
  * <br>
- *   
+ *
  * file logging: <br>
  * you can log all output that is passed to stdout into a text file located in
  * a relative path to the path of the binary by using:
- * \code  
+ * \code
  * #define AX_DEBUG_LOG "./logs/filename.log"
  * \endcode
- * <br> 
+ * <br>
  * on win32, due to fact that a console window is closed with a program,
  * the only way to see the complete debug output is to log it using
  * this method.
- *  
+ *
  * <br><br>
- *      
- * <i>other notes: <br> - on win32, text windows are shared between plugin   
+ *
+ * <i>other notes: <br> - on win32, text windows are shared between plugin
  * instances and only one console can be allocated per process.<i><br>
- * 
+ *
 */

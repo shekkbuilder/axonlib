@@ -1,3 +1,6 @@
+#ifndef axPlatformLinux_included
+#define axPlatformLinux_included
+//----------------------------------------------------------------------
 
 class axPlatformLinux : public axPlatform
 {
@@ -13,55 +16,4 @@ class axPlatformLinux : public axPlatform
 typedef axPlatformLinux AX_PLATFORM;
 
 //----------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//#ifndef axPlatformLinux_included
-//#define axPlatformLinux_included
-////----------------------------------------------------------------------
-//
-//#ifndef AX_NOGUI
-//  //#include "Xlib.h"
-//#endif
-//
-//class axPlatform : public axPlatformBase
-//{
-//  public:
-//    axPlatform(axFormatBase* aFormat)
-//    : axPlatformBase(aFormat)
-//      {
-//        trace("axPlatformLinux.constructor");
-//      }
-//    virtual ~axPlatform()
-//      {
-//      }
-//
-//};
-//
-////----------------------------------------------------------------------
-//#endif
-//
+#endif
