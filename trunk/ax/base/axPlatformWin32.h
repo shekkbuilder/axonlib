@@ -2,9 +2,12 @@
 #define axPlatformWin32_included
 //----------------------------------------------------------------------
 
+#define WINVER 0x0501
 #define _WIN32_WINNT 0x0501
+
 #include <windows.h>
 
+//----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
 // used in axUtils,getBasePath
@@ -36,6 +39,25 @@ DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
   return TRUE;
 }
 
+//----------------------------------------------------------------------
+//
+//----------------------------------------------------------------------
+
+//class axDebugWindow
+//{
+//  public:
+//    axDebugWindow(axBase* aBase) {}
+//    ~axDebugWindow() {}
+//};
+//
+//class axLogFile
+//{
+//  public:
+//    axLogFile(axBase* aBase) {}
+//    ~axLogFile() {}
+//};
+
+//----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
 class axPlatformWin32 : public axPlatform

@@ -26,25 +26,33 @@
 #include "axStdlib.h"
 #include "axMalloc.h"
 #include "axMath.h"
-#include "axDebug.h"
+//#include "axDebug.h"
 #include "stdio.h" // fread, fseek, fopen
+
 #ifdef AX_WIN32
   #include <windows.h>
   // gInstance for axGetBasePath()
   #ifdef AX_FORMAT_LIB
     /*
       lii:
-      if other dll formats are added for windows, a commont entry point    
-      could be moved in a new header to get gInstance from there 
+      if other dll formats are added for windows, a commont entry point
+      could be moved in a new header to get gInstance from there
     */
-    #ifdef AX_FORMAT_VST
-      #include "format/axFormatVst.h"
-    #endif
-    #ifdef AX_FORMAT_LADSPA      
-      #include "format/axFormatLadspa.h"
-    #endif
+
+    // ccernn:
+    // the /format directory doesn't exist anymore...
+    // and the gInstance dependent stuff shouldn't be in here
+
+//    #ifdef AX_FORMAT_VST
+//      #include "format/axFormatVst.h"
+//    #endif
+//    #ifdef AX_FORMAT_LADSPA
+//      #include "format/axFormatLadspa.h"
+//    #endif
+
   #endif
 #endif
+
 #ifdef AX_LINUX
   #include <dlfcn.h>
   #include <unistd.h>
@@ -57,6 +65,7 @@
 #endif
 
 // -------------------------------------------
+
 #define axStrExpand(x) #x
 #define axStr(x) axStrExpand(x)
 
@@ -74,6 +83,8 @@
  * @return void
  */
 #define axSwap(x,y) { typeof(x) tmp = (x);(x) = (y);(y) = (tmp); }
+
+//----------
 
 /**
  * axGetArrSize() helper function
@@ -95,6 +106,8 @@ template<class T, size_t N> T decay_array_to_subtype(T (&a)[N]);
  * @return unsigned int
  */
 #define axGetArrSize(x) (sizeof(x)/sizeof(decay_array_to_subtype(x)))
+
+//----------------------------------------------------------------------
 
 /**
  * bit reverse algorithm <br>
@@ -120,6 +133,8 @@ __axutils_inline unsigned int axBitReverse(unsigned int v)
   return r;
 }
 
+//----------
+
 /**
  * returns a specific bit of an integer
  * \code
@@ -135,6 +150,8 @@ __axutils_inline unsigned int axBitReverse(unsigned int v)
  */
 #define axGetBit(x, bit) ( 1 & ((x) >> (bit)) )
 
+//----------
+
 /**
  * converts linear value to decibel
  * \code
@@ -148,6 +165,8 @@ __axutils_inline unsigned int axBitReverse(unsigned int v)
  */
 #define axLin2DB(lin) ( LOG2DB*axLogf( (lin) ) )
 
+//----------
+
 /**
  * converts decibel value to linear
  * \code
@@ -158,6 +177,8 @@ __axutils_inline unsigned int axBitReverse(unsigned int v)
  * @return result float
  */
 #define axDB2Lin(dB) ( axExpf( DB2LOG*(dB) ) )
+
+//----------
 
 /**
  * sums a set (array) of dBFS values
@@ -176,7 +197,8 @@ __axutils_inline float axSumDB(unsigned int n, const float* ar)
   return axLogf(sum)*LOG2DB;
 }
 
-// ------
+//----------------------------------------------------------------------
+
 // todo: a bit more thread safety
 
 static __thread unsigned char __AX_SSE3__, __AX_SSSE3__, __AX_FPU__, __AX_CMOV__,  __AX_SSE__,
@@ -227,6 +249,7 @@ static __thread unsigned char __AX_SSE3__, __AX_SSSE3__, __AX_FPU__, __AX_CMOV__
  * http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/25481.pdf <br>
  * http://www.intel.com/Assets/PDF/appnote/241618.pdf
  */
+
 __axutils_inline void axCPUID(const int fcall=33139, int* eax=0, int* ebx=0,
   int* ecx=0, int* edx=0)
 {
@@ -272,6 +295,8 @@ __axutils_inline void axCPUID(const int fcall=33139, int* eax=0, int* ebx=0,
     );
 }
 
+//----------
+
 // axCpuCaps
 /*
 #define cc_SSE3     0x0001
@@ -307,6 +332,8 @@ inline unsigned int axCpuCaps(void)
   return caps;
 }
 
+//----------
+
 // axCpuCapsString
 static __thread char cpustringbuf[256];
 char* axCpuCapsString(void)
@@ -328,7 +355,7 @@ char* axCpuCapsString(void)
   return cpustringbuf;
 }
 
-//-----
+//----------------------------------------------------------------------
 
 /**
  * conversation from bandwidth (octaves) to q factor
@@ -341,6 +368,8 @@ __axutils_inline float axOctaves2Q(const float n)
   return -axSqrtf(_pow2n) / (1.f - _pow2n);
 }
 
+//----------
+
 /**
  * conversation from q factor to bandwidth (octaves)
  * @param[in] q float - q factor
@@ -350,6 +379,8 @@ __axutils_inline float axQ2Octaves(const float q)
 {
   return 1.4426950408889634f * axSinhf(0.5f * (q));
 }
+
+//----------
 
 /**
  * denormalize input value
@@ -367,6 +398,8 @@ __axutils_inline float axDenorm(register float n)
   if ( !(u.i & 0x7f800000) ) n = 0.f;
   return n;
 }
+
+//----------------------------------------------------------------------
 
 /**
  * call the 'rdtsc' (Read Time Stamp Counter) instruction
@@ -399,6 +432,8 @@ __axutils_inline float axDenorm(register float n)
   }
 #endif
 
+//----------------------------------------------------------------------
+
 /**
  * radix algorithm
  * @param[in] source long*
@@ -422,13 +457,23 @@ __axutils_inline void axRadix(long *source, long *dest,
     dest[ index[ ((source[i])>>(byte*8))&0xff ]++ ] = source[i];
 }
 
+//----------------------------------------------------------------------
+
 // check for little endian
 __axutils_inline unsigned int axLittleEndian (void)
   { const int i = 1; return  (*(char*)&i); }
 
+//----------
+
 // check for big endian
 __axutils_inline unsigned int axBigEndian (void)
   { const int i = 1; return !(*(char*)&i); }
+
+//----------------------------------------------------------------------
+
+//::::::::::::::::::::::::::::::::::::::::::::::::::
+// needs gInstance and trace()
+#if 0
 
 // retrieve the path from where the binary (pe / elf) is loaded
 __axstdlib_inline const char* axGetBasePath (char* path)
@@ -438,10 +483,11 @@ __axstdlib_inline const char* axGetBasePath (char* path)
   #ifdef WIN32
     char filepath[AX_MAX_PATH] = "";
     #ifdef AX_FORMAT_LIB
+      #error there is no gInstance anymore...
       GetModuleFileName(gInstance, filepath, MAX_PATH);
     #endif
     #ifdef AX_FORMAT_EXE
-      GetModuleFileName(NULL, filepath, MAX_PATH);      
+      GetModuleFileName(NULL, filepath, MAX_PATH);
     #endif
     const char* slash = axStrrchr(filepath, '\\') + 1;
     if (slash)
@@ -479,6 +525,8 @@ __axstdlib_inline const char* axGetBasePath (char* path)
   return path_init;
 }
 
+//----------------------------------------------------------------------
+
 // read file from base path
 __axstdlib_inline unsigned char* axFileRead (const char* _file,
   unsigned int* _size, const unsigned int mode = 0)
@@ -488,14 +536,14 @@ __axstdlib_inline unsigned char* axFileRead (const char* _file,
   const char* path = axGetBasePath(_path);
   axStrcat(filepath, (char*)path);
   axStrcat(filepath, (char*)_file);
-  
+
   trace("axFileRead(" << mode << "): " << filepath);
   FILE* f = NULL;
   switch (mode)
   {
     case 0: f = fopen(filepath, "rb"); break;
     case 1: f = fopen(filepath, "r");  break;
-  }  
+  }
   if (!f)
   {
     trace("axFileRead, #ERR open(" << mode << "): " << filepath);
@@ -511,14 +559,16 @@ __axstdlib_inline unsigned char* axFileRead (const char* _file,
   }
   unsigned char* b = (unsigned char*)axMalloc(*_size);
   unsigned int res = fread(b, *_size, 1, f);
-  fclose(f);  
+  fclose(f);
   if (!res)
   {
     trace("axFileRead, #ERR read: " << filepath);
     return 0;
-  }  
+  }
   return b;
 }
+
+//----------
 
 // write file to base path
 __axstdlib_inline unsigned int axFileWrite (const char* _file,
@@ -529,7 +579,7 @@ __axstdlib_inline unsigned int axFileWrite (const char* _file,
   const char* path = axGetBasePath(_path);
   axStrcat(filepath, (char*)path);
   axStrcat(filepath, (char*)_file);
-  
+
   trace("axFileWrite(" << mode << "): " << filepath);
   FILE* f = NULL;
   switch (mode)
@@ -538,7 +588,7 @@ __axstdlib_inline unsigned int axFileWrite (const char* _file,
     case 1: f = fopen(filepath, "w");  break;
     case 2: f = fopen(filepath, "ab"); break;
     case 3: f = fopen(filepath, "a");  break;
-  }  
+  }
   if (!f)
   {
     trace("axFileWrite, #ERR open(" << mode << "): " << filepath);
@@ -550,9 +600,12 @@ __axstdlib_inline unsigned int axFileWrite (const char* _file,
   {
     trace("axFileWrite, #ERR write: " << filepath);
     return 0;
-  }  
+  }
   return 1;
 }
+
+#endif //0
+//::::::::::::::::::::::::::::::::::::::::::::::::::
 
 //----------------------------------------------------------------------
 #endif

@@ -1,5 +1,5 @@
-#ifndef axInterface_included
-#define axInterface_included
+#ifndef axInterfaceLinux_included
+#define axInterfaceLinux_included
 //----------------------------------------------------------------------
 
 #include <X11/Xlib.h>

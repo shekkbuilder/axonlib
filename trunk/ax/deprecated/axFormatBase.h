@@ -1,3 +1,4 @@
+#error deprecated!
 /*
  * This file is part of Axonlib.
  *

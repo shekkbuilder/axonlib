@@ -16,6 +16,7 @@
 
 #ifndef axDefines_included
 #define axDefines_included
+//----------------------------------------------------------------------
 
 // architechture
 // -----------------------------------------------------------------------------
@@ -61,13 +62,15 @@
   #define AX_NOGUI
 #endif
 
+// ??? if nogui, then gui?
+
 /* set AX_GUI */
 #ifdef AX_NOGUI
   #undef AX_GUI
   #define AX_GUI
 #endif
 
-/* enable 'full' debug mode */ 
+/* enable 'full' debug mode */
 #if defined AX_DEBUG_FULL && defined AX_DEBUG
   #undef  AX_DEBUG
   #define AX_DEBUG
@@ -173,7 +176,7 @@
 
   #define AX_LONG_MAX       2147483647L
   #define AX_ULONG_MAX      8589934591UL
-  
+
 #endif
 #ifdef __AX64__
 
@@ -181,10 +184,10 @@
   #define ax_uint32 unsigned int
   #define ax_int64  long
   #define ax_uint64 unsigned long
-  
+
   #define AX_LONG_MAX       9223372036854775807L
   #define AX_ULONG_MAX      18446744073709551615UL
-  
+
 #endif
 
 #ifdef AX_USE_SHORT_DATA_TYPES
@@ -305,7 +308,7 @@ typedef unsigned short        __may_alias ushort_a;
 typedef char                  __may_alias char_a;
 typedef unsigned char         __may_alias uchar_a;
 
-// cdecl, stdcall 
+// cdecl, stdcall
 #undef  __cdecl
 #define __cdecl     __attribute__((cdecl))
 #undef  __stdcall
@@ -323,7 +326,7 @@ typedef unsigned char         __may_alias uchar_a;
   #define __dllimport
 #endif
 
-// exernc
+// externc
 #define __externc extern "C"
 
 // path
@@ -333,5 +336,6 @@ typedef unsigned char         __may_alias uchar_a;
 #define __hotinline   ___always_inline __hot __optimize(3)
 #define __asmv        __asm__ __volatile__
 
+//----------------------------------------------------------------------
 #endif // axDefines_included
 
