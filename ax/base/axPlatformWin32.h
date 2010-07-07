@@ -74,6 +74,8 @@ class axPlatformWin32 : public axPlatform
       {
         trace("axPlatformWin32.destructor");
       }
+    //----------
+    HINSTANCE getWinInstance(void) { return mWinInstance; }
 };
 
 //----------

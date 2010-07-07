@@ -6,7 +6,6 @@
 
 //#define AX_NOGUI
 #include "base/axBase.h"
-
 //----------------------------------------------------------------------
 
 //class myPlugin : public AX_FORMAT
