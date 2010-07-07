@@ -20,7 +20,7 @@ class axInterfaceLinux : public axInterface
 
     axInterfaceLinux(axBase* aBase) : axInterface(aBase)
       {
-        trace("- axInterfaceLinux.constructor");
+        trace("axInterfaceLinux.constructor");
         mBase = aBase;
         XInitThreads();
         mDisplay = XOpenDisplay(NULL);
@@ -29,6 +29,7 @@ class axInterfaceLinux : public axInterface
 
     virtual ~axInterfaceLinux()
       {
+        trace("axInterfaceLinux.destructor");
         XCloseDisplay(mDisplay);
       }
 

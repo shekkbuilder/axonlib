@@ -41,8 +41,29 @@ class axBase
     virtual axPlatform*   getPlatform(void)       { return NULL; }
     virtual axInterface*  getInterface(void)      { return NULL; }
     virtual axFormat*     getFormat(void)         { return NULL; }
-    virtual axDescriptor* getDescriptor(void)     { return NULL; }
+    virtual axDescriptor* createDescriptor(void)  { return NULL; }
     virtual axInstance*   createInstance(void)    { return NULL; }
+};
+
+//----------------------------------------------------------------------
+//
+//----------------------------------------------------------------------
+
+class axDescriptor
+{
+  public:
+    axDescriptor(axBase* aBase) { trace("axDescriptor.constructor"); }
+    virtual ~axDescriptor()     { trace("axDescriptor.destructor"); }
+};
+
+//----------
+
+class axInstance
+{
+  public:
+    axInstance(axBase* aBase) { trace("axInstance.constructor"); }
+    virtual ~axInstance()     { trace("axInstance.destructor"); }
+    //virtual char* getName(void) { return (char*)"axInstance"; }
 };
 
 //----------------------------------------------------------------------
@@ -55,8 +76,8 @@ class axBase
 class axPlatform
 {
   public:
-    axPlatform(axBase* aBase) { trace("  axPlatform.constructor"); }
-    virtual ~axPlatform()     { trace("  axPlatform.destructor"); }
+    axPlatform(axBase* aBase) { trace("axPlatform.constructor"); }
+    virtual ~axPlatform()     { trace("axPlatform.destructor"); }
 };
 
 //----------------------------------------------------------------------
@@ -67,8 +88,8 @@ class axPlatform
 class axInterface
 {
   public:
-    axInterface(axBase* aBase)  { trace("  axInterface.constructor"); }
-    virtual ~axInterface()      { trace("  axInterface.destructor"); }
+    axInterface(axBase* aBase)  { trace("axInterface.constructor"); }
+    virtual ~axInterface()      { trace("axInterface.destructor"); }
     virtual void* createWindow(axInstance* aInstance, void* parent) { return NULL; }
 };
 
@@ -81,33 +102,12 @@ class axInterface
 
 class axFormat
 {
-  private:
-    int result;
+  //private:
+  //  int result;
   public:
-    axFormat(axBase* aBase) { trace("  axFormat.constructor"); }
-    virtual ~axFormat()     { trace("  axFormat.destructor"); }
-    virtual void* entrypoint(void* ptr) { result=0; return &result; }
-};
-
-//----------------------------------------------------------------------
-//
-//----------------------------------------------------------------------
-
-class axDescriptor
-{
-  public:
-    axDescriptor(axBase* aBase) { trace("  axDescriptor.constructor"); }
-    virtual ~axDescriptor()     { trace("  axDescriptor.destructor"); }
-};
-
-//----------
-
-class axInstance
-{
-  public:
-    axInstance(axBase* aBase) { trace("  axInstance.constructor"); }
-    virtual ~axInstance()     { trace("  axInstance.destructor"); }
-    //virtual char* getName(void) { return (char*)"axInstance"; }
+    axFormat(axBase* aBase) { trace("axFormat.constructor"); }
+    virtual ~axFormat()     { trace("axFormat.destructor"); }
+    //virtual void* entrypoint(void* ptr) { result=0; return &result; }
 };
 
 //----------------------------------------------------------------------
@@ -128,31 +128,31 @@ class axBaseImpl : public axBase
     axPlatform*     mPlatform;
     axInterface*    mInterface;
     axFormat*       mFormat;
-    axDescriptor*   mDescriptor;
+    //axDescriptor*   mDescriptor;
   public:
     axBaseImpl()
       {
-        trace("  axBaseImpl.constructor");
+        trace("axBaseImpl.constructor");
         mPlatform     = new _PL(this);
         mInterface    = new _IF(this);
+        //mDescriptor   = new _D(this);
         mFormat       = new _FO(this);
-        mDescriptor   = new _D(this);
       }
     virtual ~axBaseImpl()
       {
-        trace("  axBaseImpl.destructor");
+        trace("axBaseImpl.destructor");
         delete mPlatform;
         delete mInterface;
+        //delete mDescriptor;
         delete mFormat;
-        delete mDescriptor;
       }
   //protected:
   public:
-    virtual axPlatform*   getPlatform(void)     { return mPlatform; }
-    virtual axInterface*  getInterface(void)    { return mInterface; }
-    virtual axFormat*     getFormat(void)       { return mFormat; }
-    virtual axDescriptor* getDescriptor(void)   { return mDescriptor; }
-    virtual axInstance*   createInstance(void)  { return new _I(this); } // you have to delete the instance yourself
+    virtual axPlatform*   getPlatform(void)       { return mPlatform; }
+    virtual axInterface*  getInterface(void)      { return mInterface; }
+    virtual axFormat*     getFormat(void)         { return mFormat; }
+    virtual axDescriptor* createDescriptor(void)  { return new _D(this); } // you have to delete it yourself
+    virtual axInstance*   createInstance(void)    { return new _I(this); } // --"--
 };
 
 //----------------------------------------------------------------------
@@ -166,8 +166,8 @@ class axGlobalScope
   private:
     axBase* mBase;
   public:
-    axGlobalScope()  { trace("  axGlobalScope.constructor"); mBase=NULL; }
-    ~axGlobalScope() { trace("  axGlobalScope.destructor");  if (mBase) delete mBase; }
+    axGlobalScope()  { trace("axGlobalScope.constructor"); mBase=NULL; }
+    ~axGlobalScope() { trace("axGlobalScope.destructor"); if (mBase) delete mBase; }
     inline void setBase(axBase* aBase) { mBase=aBase; }
 };
 

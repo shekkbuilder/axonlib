@@ -18,22 +18,22 @@ static __thread HINSTANCE gWinInstance;
 __externc BOOL APIENTRY
 DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
 {
-  trace("win32 DllMain");
+  //trace("win32 DllMain");
   //g_Instance = hModule;
   switch(reason)
   {
     case DLL_PROCESS_ATTACH:
-      //trace("DllMain DLL_PROCESS_ATTACH");
+      trace("DllMain DLL_PROCESS_ATTACH");
       gWinInstance = hModule;
       break;
     case DLL_PROCESS_DETACH:
-      //trace("DllMain DLL_PROCESS_DETACH");
+      trace("DllMain DLL_PROCESS_DETACH");
       break;
     case DLL_THREAD_ATTACH:
-      //trace("DllMain DLL_THREAD_ATTACH");
+      trace("DllMain DLL_THREAD_ATTACH");
       break;
     case DLL_THREAD_DETACH:
-      //trace("DllMain DLL_THREAD_DETACH");
+      trace("DllMain DLL_THREAD_DETACH");
       break;
   }
   return TRUE;
@@ -67,8 +67,12 @@ class axPlatformWin32 : public axPlatform
   public:
     axPlatformWin32(axBase* aBase) : axPlatform(aBase)
       {
-        trace("- axPlatformWin32.constructor");
+        trace("axPlatformWin32.constructor");
         mWinInstance = gWinInstance;
+      }
+    virtual ~axPlatformWin32()
+      {
+        trace("axPlatformWin32.destructor");
       }
 };
 

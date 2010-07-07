@@ -19,11 +19,11 @@ class axInterfaceWin32 : public axInterface
 
     axInterfaceWin32(axBase* aBase) : axInterface(aBase)
       {
-        trace("- axInterfaceWin32.constructor");
+        trace("axInterfaceWin32.constructor");
         mBase = aBase;
         axStrcpy( mWinClassName, "test" );                    // TODO
         axStrcat( mWinClassName, "_window" );
-        trace("mWinClassName: " << mWinClassName);
+        //trace("mWinClassName: " << mWinClassName);
 //        axMemset(&mWinClass,0,sizeof(mWinClass));
 //        mWinClass.style          = CS_HREDRAW | CS_VREDRAW;
 //        mWinClass.lpfnWndProc    = &eventProc;                    // !!!
@@ -37,6 +37,7 @@ class axInterfaceWin32 : public axInterface
 
     virtual ~axInterfaceWin32()
       {
+        trace("axInterfaceWin32.destructor");
 //        UnregisterClass(mWinClassName,mWinInstance);
 
       }
