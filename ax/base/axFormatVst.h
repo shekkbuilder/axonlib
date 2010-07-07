@@ -5,6 +5,50 @@
 #include "pluginterfaces/vst2.x/aeffect.h"
 #include "pluginterfaces/vst2.x/aeffectx.h"
 
+//----------------------------------------------------------------------
+//
+// descriptor
+//
+//----------------------------------------------------------------------
+
+class axDescriptorVst : public axDescriptor
+{
+  public:
+    axDescriptorVst(axBase* aBase) : axDescriptor(aBase) { trace("axDescriptorVst.constructor"); }
+    virtual ~axDescriptorVst()     { trace("axDescriptorVst.destructor"); }
+};
+
+typedef axDescriptorVst AX_DESCRIPTOR;
+
+//----------------------------------------------------------------------
+//
+// instance
+//
+//----------------------------------------------------------------------
+
+class axInstanceVst : public axInstance
+{
+  public:
+    axInstanceVst(axBase* aBase) : axInstance(aBase) { trace("axInstanceVst.constructor"); }
+    virtual ~axInstanceVst()     { trace("axInstanceVst.destructor"); }
+    //
+    virtual VstIntPtr vst_dispatcher(VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt) { return 0; }
+    virtual float     vst_getParameter(VstInt32 aIndex) { return 0; }
+    virtual void      vst_setParameter(VstInt32 aIndex, float aValue) {}
+    virtual void      vst_process(float** inputs, float** outputs, VstInt32 sampleFrames) {}
+    virtual void      vst_processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames) {}
+    virtual void      vst_processDoubleReplacing(double** aInputs, double** aOutputs, VstInt32 aLength) {}
+
+};
+
+typedef axInstanceVst AX_INSTANCE;
+
+//----------------------------------------------------------------------
+//
+// format
+//
+//----------------------------------------------------------------------
+
 class axFormatVst : public axFormat
 {
 
@@ -13,7 +57,7 @@ class axFormatVst : public axFormat
   //  friend int main(audioMasterCallback audioMaster);
   //#endif
   //#ifdef WIN32
-    friend int main(int audioMaster, char** empty); // win32
+  friend int main(int audioMaster, char** empty); // win32
   //#endif
 
   private:
@@ -29,12 +73,11 @@ class axFormatVst : public axFormat
     static VstIntPtr vst_dispatcher_callback(AEffect* ae, VstInt32 opCode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
       {
         //trace("vst: dispatcher");
-        axFormatVst* instance = (axFormatVst*)(ae->object);
+        axInstanceVst* instance = (axInstanceVst*)(ae->object);
         if (opCode==effClose)
         {
           instance->vst_dispatcher(opCode,index,value,ptr,opt);
-          //TODO: delete instance, not format-wrapper
-          //delete instance;
+          delete instance;
           return 1;
         }
         return instance->vst_dispatcher(opCode,index,value,ptr,opt);
@@ -45,7 +88,7 @@ class axFormatVst : public axFormat
     static float vst_getParameter_callback(AEffect* ae, VstInt32 index)
       {
         //trace("vst: getParameter");
-        axFormatVst* instance = (axFormatVst*)(ae->object);
+        axInstanceVst* instance = (axInstanceVst*)(ae->object);
         return instance->vst_getParameter(index);
       }
 
@@ -54,7 +97,7 @@ class axFormatVst : public axFormat
     static void vst_setParameter_callback(AEffect* ae, VstInt32 index, float value)
       {
         //trace("vst: setParameter");
-        axFormatVst* instance = (axFormatVst*)(ae->object);
+        axInstanceVst* instance = (axInstanceVst*)(ae->object);
         instance->vst_setParameter(index,value);
       }
 
@@ -63,7 +106,7 @@ class axFormatVst : public axFormat
     ////{deprecated in vst 2.4]
     //static void vst_process_callback(AEffect* ae, float** inputs, float** outputs, VstInt32 sampleFrames)
     //  {
-    //    axFormatVst* instance = (axFormatVst*)(ae->object);
+    //    axInstanceVst* instance = (axInstanceVst*)(ae->object);
     //    instance->vst_processReplacing(inputs,outputs,sampleFrames);
     //  }
 
@@ -71,7 +114,7 @@ class axFormatVst : public axFormat
 
     static void vst_processReplacing_callback(AEffect* ae, float** inputs, float** outputs, VstInt32 sampleFrames)
       {
-        axFormatVst* instance = (axFormatVst*)(ae->object);
+        axInstanceVst* instance = (axInstanceVst*)(ae->object);
         instance->vst_processReplacing(inputs,outputs,sampleFrames);
       }
 
@@ -79,53 +122,8 @@ class axFormatVst : public axFormat
 
     static void vst_processDoubleReplacing_callback(AEffect* e, double** inputs, double** outputs, VstInt32 sampleFrames)
       {
-        axFormatVst* instance = (axFormatVst*)(e->object);
+        axInstanceVst* instance = (axInstanceVst*)(e->object);
         instance->vst_processDoubleReplacing(inputs,outputs,sampleFrames);
-      }
-
-    //--------------------------------------------------
-    // redirected callback functions
-    // (these could be in an instance class)
-    //--------------------------------------------------
-
-    virtual VstIntPtr vst_dispatcher(VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
-      {
-        VstIntPtr v = 0;
-        //switch (opcode)
-        //{
-        //}
-        return v;
-      }
-
-    //----------
-
-    virtual float vst_getParameter(VstInt32 aIndex)
-      {
-        return 0;
-      }
-
-    //----------
-
-    virtual void vst_setParameter(VstInt32 aIndex, float aValue)
-      {
-      }
-
-    //----------
-
-    virtual void vst_process(float** inputs, float** outputs, VstInt32 sampleFrames)
-      {
-      }
-
-    //----------
-
-    virtual void vst_processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames)
-      {
-      }
-
-    //----------
-
-    virtual void vst_processDoubleReplacing(double** aInputs, double** aOutputs, VstInt32 aLength)
-      {
       }
 
     //--------------------------------------------------
@@ -133,7 +131,8 @@ class axFormatVst : public axFormat
     //--------------------------------------------------
 
   protected:
-    axBase* mBase;
+    axBase*       mBase;
+    axDescriptor* mDescriptor;
 
   protected:
 
@@ -141,9 +140,11 @@ class axFormatVst : public axFormat
       {
         trace("* axFormatVst.entrypoint");
         audioMaster = (audioMasterCallback)ptr;
+        axInstanceVst* instance = new axInstanceVst(mBase);
+        //TODO: read from descriptor
         axMemset(&aeffect,0,sizeof(aeffect));
         aeffect.magic                   = kEffectMagic;
-        aeffect.object                  = this;
+        aeffect.object                  = instance;//this;
         aeffect.user                    = NULL; // instance?
         aeffect.dispatcher              = vst_dispatcher_callback;
         aeffect.setParameter            = vst_setParameter_callback;
@@ -161,7 +162,6 @@ class axFormatVst : public axFormat
         return &aeffect;
       }
 
-
     //--------------------------------------------------
     //
     //--------------------------------------------------
@@ -171,23 +171,14 @@ class axFormatVst : public axFormat
     axFormatVst(axBase* aBase) : axFormat(aBase)
       {
         trace("- axFormatVst.constructor");
-        mBase = aBase;
+        mBase       = aBase;
+        mDescriptor = mBase->createDescriptor();
       }
 
     virtual ~axFormatVst()
       {
         trace("- axFormatVst.destructor");
-      }
-
-
-    virtual axDescriptor* createDescriptor(void)
-      {
-        return NULL;
-      }
-
-    virtual axInstance* createInstance(void)
-      {
-        return NULL;
+        delete mDescriptor;
       }
 
 };
@@ -196,6 +187,10 @@ class axFormatVst : public axFormat
 
 typedef axFormatVst AX_FORMAT;
 
+//----------------------------------------------------------------------
+//
+// entrypoint
+//
 //----------------------------------------------------------------------
 
 #ifdef AX_LINUX
@@ -221,15 +216,15 @@ typedef axFormatVst AX_FORMAT;
 // _IF = interface  win32, linux, nogui
 // _FO = format     exe, vst, ladspa
 
-#define AX_ENTRYPOINT(_PL,_IF,_FO,_D,_I)                                \
-                                                                  \
-_AX_VST_MAIN_DEF                                                  \
-{                                                                 \
+#define AX_ENTRYPOINT(_PL,_IF,_FO,_D,_I)                                      \
+                                                                              \
+_AX_VST_MAIN_DEF                                                              \
+{                                                                             \
   axBaseImpl<_PL,_IF,_FO,_D,_I>* base = new axBaseImpl<_PL,_IF,_FO,_D,_I>();  \
-  g_GlobalScope.setBase(base);                                    \
-  _FO* format = (_FO*)base->getFormat();                          \
-  AEffect* ae = (AEffect*)format->entrypoint((void*)audioMaster); \
-  _AX_VST_RET_DEF;                                                \
+  g_GlobalScope.setBase(base);                                                \
+  _FO* format = (_FO*)base->getFormat();                                      \
+  AEffect* ae = (AEffect*)format->entrypoint((void*)audioMaster);             \
+  _AX_VST_RET_DEF;                                                            \
 }
 
 //----------------------------------------------------------------------

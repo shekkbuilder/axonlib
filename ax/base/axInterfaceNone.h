@@ -13,13 +13,13 @@ class axInterfaceNone : public axInterface
 
     axInterfaceNone(axBase* aBase) : axInterface(aBase)
       {
-        trace("- axInterfaceNone.constructor");
+        trace("axInterfaceNone.constructor");
         //mBase = aBase;
       }
 
     virtual ~axInterfaceNone()
       {
-        trace("- axInterfaceNone.destructor");
+        trace("axInterfaceNone.destructor");
       }
 
     virtual void* createWindow(axInstance* aInstance,void* parent)

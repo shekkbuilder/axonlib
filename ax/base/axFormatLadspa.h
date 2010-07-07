@@ -2,11 +2,51 @@
 #define axFormatLadspa_included
 //----------------------------------------------------------------------
 
-//TODO: fix instances
-
 //TODO: proper ladspa sdk
 #include "../extern/ladspa.h"
 
+//----------------------------------------------------------------------
+//
+// descriptor
+//
+//----------------------------------------------------------------------
+
+class axDescriptorLadspa : public axDescriptor
+{
+  public:
+    axDescriptorLadspa(axBase* aBase) : axDescriptor(aBase) { trace("  axDescriptorLadspa.constructor"); }
+    virtual ~axDescriptorLadspa()     { trace("  axDescriptorLadspa.destructor"); }
+};
+
+typedef axDescriptorLadspa AX_DESCRIPTOR;
+
+//----------------------------------------------------------------------
+//
+// instance
+//
+//----------------------------------------------------------------------
+
+class axInstanceLadspa : public axInstance
+{
+  public:
+    axInstanceLadspa(axBase* aBase) : axInstance(aBase) { trace("  axInstanceLadspa.constructor"); }
+    virtual ~axInstanceLadspa()     { trace("  axInstanceLadspa.destructor"); }
+    //
+    virtual void lad_connect_port(unsigned long Port, LADSPA_Data* DataLocation) { trace("axFormatLadspa.lad_connect_port"); }
+    virtual void lad_activate(void) { trace("axFormatLadspa.lad_activate"); }
+    virtual void lad_run(unsigned long SampleCount) { /*trace("axFormatLadspa.lad_run");*/ }
+  //virtual void lad_run_adding(unsigned long SampleCount) {}
+  //virtual void lad_set_run_adding_gain(LADSPA_Data Gain) {}
+    virtual void lad_deactivate(void) { trace("axFormatLadspa.lad_deactivate"); }
+    virtual void lad_cleanup(void) { trace("axFormatLadspa.lad_cleanup"); }
+};
+
+typedef axInstanceLadspa AX_INSTANCE;
+
+//----------------------------------------------------------------------
+//
+// format
+//
 //----------------------------------------------------------------------
 
 class axFormatLadspa : public axFormat
@@ -40,7 +80,8 @@ class axFormatLadspa : public axFormat
     static void lad_connect_port_callback(LADSPA_Handle Instance, unsigned long Port, LADSPA_Data * DataLocation)
       {
         trace("lad_connect_port_callback");
-        axFormatLadspa* inst = (axFormatLadspa*)Instance;
+        //axFormatLadspa* inst = (axFormatLadspa*)Instance;
+        axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_connect_port(Port,DataLocation);
       }
 
@@ -49,7 +90,7 @@ class axFormatLadspa : public axFormat
     static void lad_activate_callback(LADSPA_Handle Instance)
       {
         trace("lad_activate_callback");
-        axFormatLadspa* inst = (axFormatLadspa*)Instance;
+        axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_activate();
       }
 
@@ -58,7 +99,7 @@ class axFormatLadspa : public axFormat
     static void lad_run_callback(LADSPA_Handle Instance, unsigned long SampleCount)
       {
         //trace("lad_run_callback");
-        axFormatLadspa* inst = (axFormatLadspa*)Instance;
+        axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_run(SampleCount);
       }
 
@@ -66,7 +107,7 @@ class axFormatLadspa : public axFormat
 
     //static void lad_run_adding_callback(LADSPA_Handle Instance, unsigned long SampleCount)
     //  {
-    //    axFormatLadspa* inst = (axFormatLadspa*)Instance;
+    //    axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
     //    inst->lad_run_adding(SampleCount);
     //  }
 
@@ -74,7 +115,7 @@ class axFormatLadspa : public axFormat
 
     //static void lad_set_run_adding_gain_callback(LADSPA_Handle Instance, LADSPA_Data Gain)
     //  {
-    //    axFormatLadspa* inst = (axFormatLadspa*)Instance;
+    //    axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
     //    inst->lad_set_run_adding_gain(Gain);
     //  }
 
@@ -83,7 +124,7 @@ class axFormatLadspa : public axFormat
     static void lad_deactivate_callback(LADSPA_Handle Instance)
       {
         trace("lad_deactivate_callback");
-        axFormatLadspa* inst = (axFormatLadspa*)Instance;
+        axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_deactivate();
       }
 
@@ -92,9 +133,9 @@ class axFormatLadspa : public axFormat
     static void lad_cleanup_callback(LADSPA_Handle Instance)
       {
         trace("lad_cleanup_callback");
-        axFormatLadspa* inst = (axFormatLadspa*)Instance;
+        axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_cleanup();
-        //delete inst; // !!!
+        delete inst; // !!!
       }
 
     //--------------------------------------------------
@@ -108,40 +149,8 @@ class axFormatLadspa : public axFormat
     virtual LADSPA_Handle lad_instantiate(unsigned long SampleRate)
       {
         trace("axFormatLadspa.lad_instantiate");
-        return this; // create instance
-        //     !!!!
-      }
-
-    //----------
-
-    // the following couldd be in an instance class
-
-    virtual void lad_connect_port(unsigned long Port, LADSPA_Data* DataLocation)
-      {
-        trace("axFormatLadspa.lad_connect_port");
-      }
-
-    virtual void lad_activate(void)
-      {
-        trace("axFormatLadspa.lad_activate");
-      }
-
-    virtual void lad_run(unsigned long SampleCount)
-      {
-        //trace("axFormatLadspa.lad_run");
-      }
-
-    //virtual void lad_run_adding(unsigned long SampleCount) {}
-    //virtual void lad_set_run_adding_gain(LADSPA_Data Gain) {}
-
-    virtual void lad_deactivate(void)
-      {
-        trace("axFormatLadspa.lad_deactivate");
-      }
-
-    virtual void lad_cleanup(void)
-      {
-        trace("axFormatLadspa.lad_cleanup");
+        axInstance* instance = mBase->createInstance();
+        return instance;
       }
 
     //--------------------------------------------------
@@ -149,7 +158,8 @@ class axFormatLadspa : public axFormat
     //--------------------------------------------------
 
   protected:
-    axBase* mBase;
+    axBase*       mBase;
+    axDescriptor* mDescriptor;
 
   protected:
 
@@ -190,22 +200,13 @@ class axFormatLadspa : public axFormat
       {
         trace("- axFormatLadspa.constructor");
         mBase = aBase;
+        mDescriptor = mBase->createDescriptor();
       }
 
     virtual ~axFormatLadspa()
       {
         trace("- axFormatLadspa.destructor");
-      }
-
-
-    virtual axDescriptor* createDescriptor(void)
-      {
-        return NULL;
-      }
-
-    virtual axInstance* createInstance(void)
-      {
-        return NULL;
+        delete mDescriptor;
       }
 
 };
@@ -214,6 +215,10 @@ class axFormatLadspa : public axFormat
 
 typedef axFormatLadspa AX_FORMAT;
 
+//----------------------------------------------------------------------
+//
+// entrypoint
+//
 //----------------------------------------------------------------------
 
 //#ifdef AX_WIN32

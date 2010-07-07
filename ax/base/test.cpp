@@ -20,16 +20,20 @@
 
 //----------------------------------------------------------------------
 
-class myDescriptor : public axDescriptor
+class myDescriptor : public AX_DESCRIPTOR
 {
   public:
-    myDescriptor(axBase* aBase) : axDescriptor(aBase) { trace("- myDescriptor.constructor"); }
+    myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { trace("myDescriptor.constructor"); }
+    virtual ~myDescriptor() { trace("myDescriptor.destructor"); }
 };
 
-class myInstance : public axInstance
+//----------
+
+class myInstance : public AX_INSTANCE
 {
   public:
-    myInstance(axBase* aBase) : axInstance(aBase) { trace("- myInstance.constructor"); }
+    myInstance(axBase* aBase) : AX_INSTANCE(aBase) { trace("myInstance.constructor"); }
+    virtual ~myInstance() { trace("myInstance.destructor"); }
 };
 
 //----------------------------------------------------------------------
