@@ -6,6 +6,8 @@
 //#include "base/test_Window.h"
 //#include "core/axStdlib.h"
 
+#include "gui/axWindow.h"
+
 //----------------------------------------------------------------------
 
 class axInterfaceWin32 : public axInterface
@@ -42,10 +44,22 @@ class axInterfaceWin32 : public axInterface
 
       }
 
-    //virtual void* createWindow(axInstance* aInstance,void* parent)
-    //  {
-    //    return new axWindow(mBase,aInstance,parent);
-    //  }
+    //virtual void* getHandle(void) { return NULL; } // linux: display*
+
+    virtual char* getName(void)
+      {
+        return mWinClassName;
+      }
+
+    virtual void* createWindow(void* aParent, axRect aRect, int aFlags)
+      {
+        trace("axInterfaceWin32.createWindow");
+        axWindow* window;
+        if (aParent) window = new axWindow(mBase,aParent,aRect,aFlags);
+        else window = new axWindow(mBase,NULL,aRect,aFlags);
+        //trace("  window " << window);
+        return (void*)window;
+      }
 
 };
 

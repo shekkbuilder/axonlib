@@ -21,7 +21,7 @@
 //#include <math.h>
 #include "core/axMath.h" // axMax
 
-#include "base/axContext.h"
+//#include "base/axContext.h"
 #include "core/axDefines.h"
 //#include "base/axCanvasBase.h"
 #include "gui/axCanvasBase.h"
@@ -57,7 +57,8 @@ class axCanvasWin32 : public axCanvasBase
     HRGN    mClipRegion;
     BLENDFUNCTION mBlendFunc;
   protected:
-		int     mWinHandle;   // from context
+		//int     mWinHandle;   // from context
+		HWND    mWinHandle;   // from context
     axColor mPenColor;
     axColor mBrushColor;
     axColor mTextColor;
@@ -69,7 +70,7 @@ class axCanvasWin32 : public axCanvasBase
 
   public:
 
-    axCanvasWin32(axContext* aContext)
+    axCanvasWin32(axBase* aBase, void* aSource)
     : axCanvasBase(/*aContext*/)
       {
         mPenColor   = getColor(AX_GREY_LIGHT);
@@ -79,16 +80,18 @@ class axCanvasWin32 : public axCanvasBase
         mCurrentBrush = 0;
         mHasClipRect = false;
         HDC tempdc = GetDC(0);
-        if (aContext->mWindow)
+        mWinHandle = (HWND)aSource;
+        //if (aContext->mWindow)
+        if (mWinHandle)
         {
           // window
-          mWinHandle = (int)aContext->mWindow;
-          mDC = GetDC(aContext->mWindow);
+          //mWinHandle = (int)aContext->mWindow;
+          mDC = GetDC(mWinHandle);
         }
         else
         {
           // surface
-          mWinHandle = 0;
+          //mWinHandle = 0;
           mDC = CreateCompatibleDC(tempdc);
         }
 // font

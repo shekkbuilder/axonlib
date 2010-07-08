@@ -72,6 +72,7 @@ LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 class axWindowWin32 : public axWindowBase
 {
   private:
+    axBase*     mBase;
     HINSTANCE   mInstance;
     HWND        mWindow;
     axString    mWinName;
@@ -81,17 +82,24 @@ class axWindowWin32 : public axWindowBase
     HCURSOR     mWinCursor;
     int         mPrevCursor;
     int         mClickedButton;
-    int         mParent;
+    //int         mParent;                                      // HWND!
+    HWND mParent; // hwnd =pvoid
     int         mAdjustWidth, mAdjustHeight;
 
   public:
-    axWindowWin32(axContext* aContext, axRect aRect, int aWinFlags)
-    : axWindowBase(aContext,aRect,aWinFlags)
+    axWindowWin32(axBase* aBase, void* aParent, axRect aRect, int aWinFlags)
+    : axWindowBase(aBase,aParent,aRect,aWinFlags)
       {
         //trace("axWindowWin32.constructor()");
-        mInstance   = aContext->mInstance;
-        mWinName    = aContext->mWinClassName;
-        mParent     = (int)aContext->mWindow;
+        mBase = aBase;
+        //mInstance   = aContext->mInstance;
+        //mWinName    = aContext->mWinClassName;
+        //mParent     = (int)aContext->mWindow;
+
+        mInstance = (HINSTANCE)aBase->getInterface()->getHandle();
+        mWinName  = aBase->getInterface()->getName();
+        mParent   = (HWND)aParent;
+
         mWinCursor  = LoadCursor(NULL,IDC_ARROW);
         mPrevCursor = 0;
         //trace(mWinName.ptr());
@@ -202,7 +210,7 @@ class axWindowWin32 : public axWindowBase
             mInstance,
             0
           );
-          reparent(mParent);
+          reparent((int)mParent);   // !!!
         } //embedded
 
         else // windowed ---
@@ -275,8 +283,9 @@ class axWindowWin32 : public axWindowBase
 
     virtual axCanvas* createCanvas(void)
       {
-        axContext ctx(mWindow);
-        return new axCanvas(&ctx);
+        //axContext ctx(mWindow);
+        //return new axCanvas(&ctx);
+        return new axCanvas(mBase,mWindow);
       }
 
     //----------
@@ -284,16 +293,18 @@ class axWindowWin32 : public axWindowBase
     virtual axSurface* createSurface(int aWidth, int aHeight, int aDepth)
       {
         //axContext ctx(mParent);
-        axContext ctx(mWindow);
-        return new axSurface(&ctx,aWidth,aHeight, aDepth);
+        //axContext ctx(mWindow);
+        //return new axSurface(&ctx,aWidth,aHeight, aDepth);
+        return new axSurface(mBase,mWindow,aWidth,aHeight, aDepth);
       }
 
     //----------
 
     virtual axBitmap* createBitmap(int aWidth, int aHeight, int aDepth)
       {
-        axContext ctx(mWindow);
-        return new axBitmap(&ctx,aWidth,aHeight,aDepth);
+        //axContext ctx(mWindow);
+        //return new axBitmap(&ctx,aWidth,aHeight,aDepth);
+        return new axBitmap(mBase,aWidth,aHeight,aDepth);
       }
 
 
@@ -436,7 +447,7 @@ class axWindowWin32 : public axWindowBase
     virtual void reparent(int aParent)
       {
         //trace("reparent");
-        mParent = aParent;
+        mParent = (HWND)aParent; // !!!
         SetWindowLong(mWindow,GWL_STYLE,(GetWindowLong(mWindow,GWL_STYLE)&~WS_POPUP)|WS_CHILD);
         SetParent(mWindow, (HWND)aParent);
       }

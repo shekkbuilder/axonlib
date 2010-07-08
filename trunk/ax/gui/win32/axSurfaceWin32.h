@@ -18,7 +18,7 @@
 #define axSurfaceWin32_included
 //----------------------------------------------------------------------
 
-#include "base/axContext.h"
+//#include "base/axContext.h"
 #include "core/axDefines.h"
 //#include "base/axSurfaceBase.h"
 #include "gui/axSurfaceBase.h"
@@ -26,6 +26,7 @@
 class axSurfaceWin32 : public axSurfaceBase
 {
   private:
+    axBase* mBase;
     HWND    mWindow;
     HBITMAP mBitmap, mOldHandle;
   protected:
@@ -34,10 +35,11 @@ class axSurfaceWin32 : public axSurfaceBase
 //    int       mDepth;
 //    axCanvas* mCanvas;
   public:
-    axSurfaceWin32(axContext* aContext, int aWidth, int aHeight, int aDepth)
+    axSurfaceWin32(axBase* aBase, void* aSource, int aWidth, int aHeight, int aDepth)
     : axSurfaceBase(aWidth,aHeight,aDepth)
       {
-        mWindow   = aContext->mWindow;
+        mBase = aBase;
+        mWindow   = (HWND)aSource;
         //mWidth    = aWidth;
         //mHeight   = aHeight;
         //mDepth    = 24;
@@ -83,8 +85,9 @@ class axSurfaceWin32 : public axSurfaceBase
       {
         //wtrace("axSurfaceWin32.createCanvas");
         //axContext ctx(mWindow);
-        axContext ctx(0);
-        axCanvas* can = new axCanvas(&ctx);
+        //axContext ctx(0);
+        //axCanvas* can = new axCanvas(&ctx);
+        axCanvas* can = new axCanvas(mBase,NULL);
         return can;
       }
 
