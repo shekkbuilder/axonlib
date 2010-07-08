@@ -39,7 +39,8 @@ class axSurfaceLinux : public axSurfaceBase
 {
   private:
     //axFormat* mFormat;
-    axInterface*  mInterface;
+    //axInterface*  mInterface;
+    axBase*       mBase;
     Display*      mDisplay;
     Drawable      mDrawable;
     Pixmap        mPixmap;
@@ -58,11 +59,13 @@ class axSurfaceLinux : public axSurfaceBase
     //  unsigned int width, height; // 	Specify the width and height, which define the dimensions of the pixmap.
     //  unsigned int depth; // Specifies the depth of the pixmap.
 
-    axSurfaceLinux(axInterface* aInterface, void* aSource, int aWidth, int aHeight, int aDepth)
+    axSurfaceLinux(axBase* aBase, void* aSource, int aWidth, int aHeight, int aDepth)
     : axSurfaceBase(aWidth,aHeight,aDepth)
       {
-        mInterface = aInterface;
-        mDisplay  = (Display*)aInterface->getHandle();
+        mBase = aBase;
+        //mInterface = aInterface;
+        //mDisplay  = (Display*)aInterface->getHandle();
+        mDisplay = (Display*)aBase->getInterface()->getHandle();
         mDrawable = *(Drawable*)aSource;
         mWidth    = aWidth;
         mHeight   = aHeight;
@@ -119,7 +122,7 @@ class axSurfaceLinux : public axSurfaceBase
 
     virtual axCanvas* createCanvas(void)
       {
-        axCanvas* can = new axCanvas(mInterface,(void*)&mPixmap);
+        axCanvas* can = new axCanvas(mBase,(void*)&mPixmap);
         return can;
       }
 

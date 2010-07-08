@@ -84,10 +84,11 @@ class axCanvasLinux : public axCanvasBase
 
   public:
 
-    axCanvasLinux(axInterface* aInterface, void* aSource)
+    axCanvasLinux(axBase* aBase, void* aSource)
     : axCanvasBase(/*aContext*/)
       {
-        mDisplay = (Display*)aInterface->getHandle();//(Display*)aFormat->getInterface()->getHandle();
+        //mDisplay = (Display*)aInterface->getHandle();//(Display*)aFormat->getInterface()->getHandle();
+        mDisplay = (Display*)aBase->getInterface()->getHandle();//(Display*)aFormat->getInterface()->getHandle();
         mDrawable = *(Drawable*)aSource;
         //mDisplay  = (Display*)aFormat->linux_getDisplay();//aContext->mDisplay;                         //trace(":: mDisplay = " << mDisplay);
         //mDrawable = aContext->mWindow;                          //trace(":: mDrawable = " << mDrawable);

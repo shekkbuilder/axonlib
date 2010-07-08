@@ -140,7 +140,8 @@ class axWindowLinux : public axWindowBase
 
   private:
     //axFormat*   mFormat;
-    axInterface*   mInterface;
+    //axInterface*   mInterface;
+    axBase*     mBase;
     Display*    mDisplay;
     Window      mParent;
     long        mEventMask;
@@ -180,17 +181,21 @@ class axWindowLinux : public axWindowBase
     //
     //----------------------------------------
 
-    axWindowLinux(axInterface* aInterface, void* aParent,axRect aRect, int aWinFlags)
-    : axWindowBase(aInterface,aParent,aRect,aWinFlags)
+    axWindowLinux(axBase* aBase, void* aParent,axRect aRect, int aWinFlags)
+    : axWindowBase(aBase,aParent,aRect,aWinFlags)
       {
-
+        //trace("axWindowLinux.constructor");
         //mFormat = aFormat;
-        mInterface = aInterface;
+        //mInterface = aInterface;
+        mBase     = aBase;
+        mDisplay  = (Display*)aBase->getInterface()->getHandle();
+        mParent   = *(Window*)aParent;
+        //trace("  mBase:    " << mBase);
+        //trace("  mDisplay: " << mDisplay);
+        //trace("  mParent:  " << mParent);
+
         mTimerRunning = false;
         mTimerSleep = 30; // 30 ms between each timer signal
-
-        mDisplay  = (Display*)aInterface->getHandle();
-        mParent   = *(Window*)aParent;
 
         mEventMask  = ExposureMask
                     | ButtonPressMask
@@ -221,6 +226,10 @@ class axWindowLinux : public axWindowBase
           CWBackPixmap|CWEventMask,
           &swa
         );
+
+        //trace("window created...");
+        //trace("  mWindow:   " << mWindow);
+        //trace("  mWinFlags: " << mWinFlags);
 
         // --- WM_DELETE_WINDOW ClientMessage ---
 
@@ -380,20 +389,20 @@ class axWindowLinux : public axWindowBase
     virtual axCanvas* createCanvas(void)
       {
         //axContext ctx(mDisplay,mWindow);
-        axCanvas* canvas = new axCanvas(mInterface,&mWindow);
+        axCanvas* canvas = new axCanvas(mBase,&mWindow);
         return canvas;
       }
 
     virtual axSurface* createSurface(int aWidth, int aHeight, int aDepth)
       {
         //axSurface* surface = new axSurface(mInterface,&mParent,aWidth,aHeight,aDepth);
-        axSurface* surface = new axSurface(mInterface,&mWindow,aWidth,aHeight,aDepth);
+        axSurface* surface = new axSurface(mBase,&mWindow,aWidth,aHeight,aDepth);
         return surface;
       }
 
     virtual axBitmap* createBitmap(int aWidth, int aHeight, int aDepth)
       {
-        return new axBitmap(mInterface,aWidth,aHeight,aDepth);
+        return new axBitmap(mBase,aWidth,aHeight,aDepth);
       }
 
     //----------------------------------------
@@ -755,12 +764,13 @@ class axWindowLinux : public axWindowBase
             {
               rc.combine( ev->xexpose.x, ev->xexpose.y, ev->xexpose.width, ev->xexpose.height );
             }
-            //wtrace(":: Expose " << rc.x << "," << rc.y << "," << rc.w << "," << rc.h);
+            trace("Expose " << rc.x << "," << rc.y << "," << rc.w << "," << rc.h);
             //mCanvas->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
             if ((mWinFlags&AX_WIN_BUFFERED) && mSurface )
             {
-              //wtrace("   :: double buffered");
+              trace("- double buffered");
               axCanvas* can = mSurface->getCanvas();
+              trace("  can: " << can);
               can->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
               doPaint(can,rc);
 
@@ -788,6 +798,7 @@ class axWindowLinux : public axWindowBase
             }
             else
             {
+              trace("- not double buffered");
               mCanvas->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
               doPaint(mCanvas,rc);
               mCanvas->clearClipRect();

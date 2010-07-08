@@ -26,11 +26,11 @@
 //----------------------------------------------------------------------
 
 #ifdef AX_LINUX
-  #include "platform/linux/axSurfaceLinux.h"
+  #include "gui/linux/axSurfaceLinux.h"
 #endif
 
 #ifdef AX_WIN32
-  #include "platform/win32/axSurfaceWin32.h"
+  #include "gui/win32/axSurfaceWin32.h"
 #endif
 
 //----------------------------------------------------------------------
@@ -41,8 +41,8 @@ class axSurface : public axSurfaceImpl
   friend class axWindowLinux;
   //public:
   protected:
-    axSurface(axInterface* aInterface, void* aSource, int aWidth, int aHeight, int aDepth)
-    : axSurfaceImpl(aInterface,aSource,aWidth,aHeight,aDepth)
+    axSurface(axBase* aBase, void* aSource, int aWidth, int aHeight, int aDepth)
+    : axSurfaceImpl(aBase,aSource,aWidth,aHeight,aDepth)
       {
       }
     //virtual ~axSurface() {}

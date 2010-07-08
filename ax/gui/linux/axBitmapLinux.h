@@ -36,11 +36,12 @@ class axBitmapLinux : public axBitmapBase
 
     //axBitmapLinux(axContext* aContext, int aWidth, int aHeight, int aDepth)
     //: axBitmapBase(aContext,aWidth,aHeight,aDepth)
-    axBitmapLinux(axInterface* aInterface, int aWidth, int aHeight, int aDepth)
-    : axBitmapBase(aInterface,aWidth,aHeight,aDepth)
+    axBitmapLinux(axBase* aBase, int aWidth, int aHeight, int aDepth)
+    : axBitmapBase(aBase,aWidth,aHeight,aDepth)
       {
         //mDisplay = (Display*)aFormat->linux_getDisplay();
-        mDisplay = (Display*)aInterface->getHandle();
+        //mDisplay = (Display*)aInterface->getHandle();
+        mDisplay = (Display*)aBase->getInterface()->getHandle();
         //wtrace("axBitmap.constructor");
         //mDepth    = 24; // 32
         //mDisplay = aFormat->getInterface()->getDisplay();

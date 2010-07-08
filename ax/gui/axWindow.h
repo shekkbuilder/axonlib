@@ -28,11 +28,11 @@
 //----------
 
 #ifdef AX_LINUX
-  #include "platform/linux/axWindowLinux.h"
+  #include "gui/linux/axWindowLinux.h"
 #endif
 
 #ifdef AX_WIN32
-  #include "platform/win32/axWindowWin32.h"
+  #include "gui/win32/axWindowWin32.h"
 #endif
 
 //----------------------------------------------------------------------
@@ -49,8 +49,8 @@ class axWindow : public axWindowImpl
 
   public:
 
-    axWindow(axInterface* aInterface, void* aParent,axRect aRect, int aWinFlags)
-    : axWindowImpl(aInterface,aParent,aRect,aWinFlags)
+    axWindow(axBase* aBase, void* aParent,axRect aRect, int aWinFlags)
+    : axWindowImpl(aBase,aParent,aRect,aWinFlags)
       {
         mModalWidget = NULL;
         mModalIndex  = -1;

@@ -61,7 +61,7 @@ class axBitmapBase
       \param aHeight height of bitmap (in pixels)
     */
 
-    axBitmapBase(axInterface* aInterface, int aWidth, int aHeight, int aDepth)
+    axBitmapBase(axBase* aBase, int aWidth, int aHeight, int aDepth)
       {
         mPrepared = false;
         mWidth    = aWidth;

@@ -18,6 +18,7 @@
 #include "core/axDefines.h"
 #include "core/axMalloc.h"
 #include "core/axRand.h"
+#include "core/axRect.h"
 #include "core/axStdlib.h"
 #include "core/axUtils.h"
 
@@ -52,8 +53,8 @@ class axBase
 class axDescriptor
 {
   public:
-    axDescriptor(axBase* aBase) { trace("axDescriptor.constructor"); }
-    virtual ~axDescriptor()     { trace("axDescriptor.destructor"); }
+    axDescriptor(axBase* aBase) { /*trace("axDescriptor.constructor");*/ }
+    virtual ~axDescriptor()     { /*trace("axDescriptor.destructor");*/ }
 };
 
 //----------
@@ -61,8 +62,8 @@ class axDescriptor
 class axInstance
 {
   public:
-    axInstance(axBase* aBase) { trace("axInstance.constructor"); }
-    virtual ~axInstance()     { trace("axInstance.destructor"); }
+    axInstance(axBase* aBase) { /*trace("axInstance.constructor");*/ }
+    virtual ~axInstance()     { /*trace("axInstance.destructor");*/ }
     //virtual char* getName(void) { return (char*)"axInstance"; }
 };
 
@@ -76,8 +77,9 @@ class axInstance
 class axPlatform
 {
   public:
-    axPlatform(axBase* aBase) { trace("axPlatform.constructor"); }
-    virtual ~axPlatform()     { trace("axPlatform.destructor"); }
+    axPlatform(axBase* aBase) { /*trace("axPlatform.constructor");*/ }
+    virtual ~axPlatform()     { /*trace("axPlatform.destructor");*/ }
+    virtual void* getHandle(void) { return NULL; }  // win32: hinstance
 };
 
 //----------------------------------------------------------------------
@@ -88,9 +90,11 @@ class axPlatform
 class axInterface
 {
   public:
-    axInterface(axBase* aBase)  { trace("axInterface.constructor"); }
-    virtual ~axInterface()      { trace("axInterface.destructor"); }
-    virtual void* createWindow(axInstance* aInstance, void* parent) { return NULL; }
+    axInterface(axBase* aBase)  { /*trace("axInterface.constructor");*/ }
+    virtual ~axInterface()      { /*trace("axInterface.destructor");*/ }
+    virtual void* getHandle(void) { return NULL; } // linux: display*
+    virtual void* createWindow(void* aParent, axRect aRect, int aFlags) { return NULL; }
+
 };
 
 //----------------------------------------------------------------------
@@ -105,8 +109,8 @@ class axFormat
   //private:
   //  int result;
   public:
-    axFormat(axBase* aBase) { trace("axFormat.constructor"); }
-    virtual ~axFormat()     { trace("axFormat.destructor"); }
+    axFormat(axBase* aBase) { /*trace("axFormat.constructor");*/ }
+    virtual ~axFormat()     { /*trace("axFormat.destructor");*/ }
     //virtual void* entrypoint(void* ptr) { result=0; return &result; }
 };
 
@@ -132,7 +136,7 @@ class axBaseImpl : public axBase
   public:
     axBaseImpl()
       {
-        trace("axBaseImpl.constructor");
+        //trace("axBaseImpl.constructor");
         mPlatform     = new _PL(this);
         mInterface    = new _IF(this);
         //mDescriptor   = new _D(this);
@@ -140,7 +144,7 @@ class axBaseImpl : public axBase
       }
     virtual ~axBaseImpl()
       {
-        trace("axBaseImpl.destructor");
+        //trace("axBaseImpl.destructor");
         delete mPlatform;
         delete mInterface;
         //delete mDescriptor;
@@ -166,8 +170,8 @@ class axGlobalScope
   private:
     axBase* mBase;
   public:
-    axGlobalScope()  { trace("axGlobalScope.constructor"); mBase=NULL; }
-    ~axGlobalScope() { trace("axGlobalScope.destructor"); if (mBase) delete mBase; }
+    axGlobalScope()  { /*trace("axGlobalScope.constructor");*/ mBase=NULL; }
+    ~axGlobalScope() { /*trace("axGlobalScope.destructor");*/ if (mBase) delete mBase; }
     inline void setBase(axBase* aBase) { mBase=aBase; }
 };
 

@@ -5,6 +5,8 @@
 #include "pluginterfaces/vst2.x/aeffect.h"
 #include "pluginterfaces/vst2.x/aeffectx.h"
 
+#define AX_WIN_DEFAULT (AX_WIN_BUFFERED|AX_WIN_MSGTHREAD|AX_WIN_EMBEDDED)
+
 //----------------------------------------------------------------------
 //
 // descriptor
