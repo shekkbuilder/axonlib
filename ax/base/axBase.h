@@ -2,27 +2,26 @@
 #define axBase_included
 //----------------------------------------------------------------------
 
+// when everything is up'n'running again:
 // we could remove the constructor/destructor from all base classes,
-// also, examine the virtual-ness of everything..
-// and third, descriptor/instance?
+// also, examine the virtual-ness of everything (what's needed, etc)
 
 //----------
 
-// including axDefines, axDebug, etc, creates a lot of problems, as they
-// aren't following 'the new rules', they depend on some #define things
-// set up, or uses global data (gInstance, ..)
+#include "hack_hack.h"
 
-//#include "core/axDebug.h"
-//#include "core/axAssert.h" // axDebug (_trace)
-
+#include "axConfig.h"
 #include "core/axDefines.h"
+//#include "core/axDebug.h"
+//#include "core/axAssert.h"
+#include "core/axRect.h"
 #include "core/axMalloc.h"
 #include "core/axRand.h"
-#include "core/axRect.h"
 #include "core/axStdlib.h"
 #include "core/axUtils.h"
 
-#include "hack_hack.h"
+//----------------------------------------------------------------------
+
 
 //----------------------------------------------------------------------
 
@@ -44,6 +43,12 @@ class axBase
     virtual axFormat*     getFormat(void)         { return NULL; }
     virtual axDescriptor* createDescriptor(void)  { return NULL; }
     virtual axInstance*   createInstance(void)    { return NULL; }
+    //virtual char* getPlatformClassName(void)      { return (char*)"axPlatform"; }
+    //virtual char* getInterfaceClassName(void)     { return (char*)"axInterface"; }
+    //virtual char* getFormatClassName(void)        { return (char*)"axFormat"; }
+    //virtual char* getDescriptorClassName(void)    { return (char*)"axDescriptor"; }
+    //virtual char* getInstanceClassName(void)      { return (char*)"axInstance"; }
+
 };
 
 //----------------------------------------------------------------------
@@ -64,7 +69,6 @@ class axInstance
   public:
     axInstance(axBase* aBase) { /*trace("axInstance.constructor");*/ }
     virtual ~axInstance()     { /*trace("axInstance.destructor");*/ }
-    //virtual char* getName(void) { return (char*)"axInstance"; }
 };
 
 //----------------------------------------------------------------------
@@ -92,8 +96,8 @@ class axInterface
   public:
     axInterface(axBase* aBase)  { /*trace("axInterface.constructor");*/ }
     virtual ~axInterface()      { /*trace("axInterface.destructor");*/ }
-    virtual void* getHandle(void) { return NULL; } // linux: display*
-    virtual char* getName(void) { return (char*)"win"; } // win32: window class name
+    virtual void* getHandle(void) { return NULL; }        // linux: display*
+    virtual char* getName(void) { return (char*)""; }  // win32: window class name
     virtual void* createWindow(void* aParent, axRect aRect, int aFlags) { return NULL; }
 
 };
@@ -118,6 +122,12 @@ class axFormat
 //----------------------------------------------------------------------
 // base implementation
 //----------------------------------------------------------------------
+
+  #define MAKESTRING2(s) #s
+  #define MAKESTRING(s) MAKESTRING2(s)
+  #define MAKE_NAME(name) MAKESTRING(name) "_window"
+
+//char* winname = (char*)MAKE_NAME(name);
 
 //  PL - Platform
 //  IF - Interface
@@ -158,6 +168,11 @@ class axBaseImpl : public axBase
     virtual axFormat*     getFormat(void)         { return mFormat; }
     virtual axDescriptor* createDescriptor(void)  { return new _D(this); } // you have to delete it yourself
     virtual axInstance*   createInstance(void)    { return new _I(this); } // --"--
+    //virtual char* getPlatformClassName(void)      { return (char*)MAKESTRING(_PL); }
+    //virtual char* getInterfaceClassName(void)     { return (char*)MAKESTRING(_IF); }
+    //virtual char* getFormatClassName(void)        { return (char*)MAKESTRING(_FO); }
+    //virtual char* getDescriptorClassName(void)    { return (char*)MAKESTRING(_D); }
+    //virtual char* getInstanceClassName(void)      { return (char*)MAKESTRING(_I); }
 };
 
 //----------------------------------------------------------------------
@@ -189,3 +204,9 @@ static axGlobalScope gGlobalScope;
 
 //----------------------------------------------------------------------
 #endif
+
+
+// win32: HWND   = pvoid
+// linux: Window = unsigned long
+
+//TODO: reparent (axWindowWin32/Linux), use void* as parent, not int (32/64 bit safety)

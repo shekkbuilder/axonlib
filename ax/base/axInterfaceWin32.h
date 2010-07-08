@@ -2,11 +2,19 @@
 #define axInterfaceWin32_included
 //----------------------------------------------------------------------
 
-//#include <windows.h>
-//#include "base/test_Window.h"
-//#include "core/axStdlib.h"
-
+#include "core/axStdlib.h"
 #include "gui/axWindow.h"
+
+//----------------------------------------------------------------------
+
+//LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+  axWindowWin32* wnd = (axWindowWin32*)GetWindowLong(hWnd,GWL_USERDATA);
+	if (wnd==0) return DefWindowProc(hWnd,message,wParam,lParam);
+  return wnd->eventHandler(hWnd, message, wParam, lParam);
+}
 
 //----------------------------------------------------------------------
 
@@ -14,46 +22,60 @@ class axInterfaceWin32 : public axInterface
 {
   private:
     axBase*   mBase;
-    WNDCLASS  mWinClass;
+    HINSTANCE mWinInstance;
     char      mWinClassName[256];
+    HCURSOR   mWinCursor;
+    HICON     mWinIcon;
+    WNDCLASS  mWinClass;
 
   public:
 
     axInterfaceWin32(axBase* aBase) : axInterface(aBase)
       {
-        trace("axInterfaceWin32.constructor");
+        //trace("axInterfaceWin32.constructor");
         mBase = aBase;
-        axStrcpy( mWinClassName, "test" );                    // TODO
+        mWinInstance = (HINSTANCE)aBase->getPlatform()->getHandle();
+        //axStrcpy( mWinClassName, mBase->getInstanceClassName() ); // TODO
+        // we might need to increase the 0 if eventProc or axWindowWin32 changes
+        axStrcpy( mWinClassName, "axonlib_" );
+        axStrcat( mWinClassName, (char*)AX_VERSION_STRING );
         axStrcat( mWinClassName, "_window" );
-        //trace("mWinClassName: " << mWinClassName);
-//        axMemset(&mWinClass,0,sizeof(mWinClass));
-//        mWinClass.style          = CS_HREDRAW | CS_VREDRAW;
-//        mWinClass.lpfnWndProc    = &eventProc;                    // !!!
-//        mWinClass.hInstance      = mWinInstance;
-//        mWinClass.lpszClassName  = mWinClassName;
-//        //mWinClass.hCursor        = (HICON)mWinCursor;//LoadCursor(NULL, IDC_ARROW);
-//        //HICON hIcon = LoadIcon(mWinInstance, "axicon");
-//        //if (hIcon)mWinClass.hIcon = hIcon;
-//        RegisterClass(&mWinClass);
+        mWinIcon = LoadIcon(mWinInstance, "axicon");
+        mWinCursor = NULL; // LoadCursor(NULL, IDC_ARROW);
+        axMemset(&mWinClass,0,sizeof(mWinClass));
+        mWinClass.style         = CS_HREDRAW | CS_VREDRAW;
+        mWinClass.lpfnWndProc   = &eventProc;                    // !!!
+        mWinClass.hInstance     = mWinInstance;  //(HINSTANCE)aBase->getPlatform()->getHandle();
+        mWinClass.lpszClassName = mWinClassName; //   mWinClassName;
+        mWinClass.hCursor       = mWinCursor;//
+        mWinClass.hIcon         = mWinIcon;
+        RegisterClass(&mWinClass);
       }
+
+    //----------
 
     virtual ~axInterfaceWin32()
       {
-        trace("axInterfaceWin32.destructor");
-//        UnregisterClass(mWinClassName,mWinInstance);
-
+        //trace("axInterfaceWin32.destructor");
+        UnregisterClass(mWinClassName,mWinInstance);
       }
 
-    //virtual void* getHandle(void) { return NULL; } // linux: display*
+    //--------------------------------------------------
+
+    //virtual void* getHandle(void) { return NULL; }
+
+    //----------
 
     virtual char* getName(void)
       {
         return mWinClassName;
       }
 
+    //----------
+
     virtual void* createWindow(void* aParent, axRect aRect, int aFlags)
       {
-        trace("axInterfaceWin32.createWindow");
+        //trace("axInterfaceWin32.createWindow");
         axWindow* window;
         if (aParent) window = new axWindow(mBase,aParent,aRect,aFlags);
         else window = new axWindow(mBase,NULL,aRect,aFlags);

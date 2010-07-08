@@ -5,10 +5,15 @@
 //#define AX_DEBUG_LOG "test.log"
 
 //#define AX_NOGUI
+
 #include "base/axBase.h"
 #include "gui/axWindow.h"
 #include "skins/axSkinBasic.h"
+
 #include "wdg/wdgPanel.h"
+#include "wdg/wdgButton.h"
+
+
 //----------------------------------------------------------------------
 
 //class myPlugin : public AX_FORMAT
@@ -41,29 +46,33 @@ class myInstance : public AX_INSTANCE
     myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
         //trace("myInstance.constructor");
-        //char temp[256];
-        //trace( axGetBasePath(temp) );
+        char temp[256];
+        //axMemset(temp,0,sizeof(temp));
+        trace( "axGetBasePath:     '" << axGetBasePath(temp) << "'");
+        trace( "interface.getName: '" << aBase->getInterface()->getName() << "'");
+        trace( "AX_AXONLIB_TEXT:   '" << AX_AXONLIB_TEXT << "'");
+#ifndef AX_NOGUI
         win = (axWindow*)aBase->getInterface()->createWindow(NULL,axRect(0,0,320,240),AX_WIN_DEFAULT);
         win->show();
-
         axCanvas* canvas = win->getCanvas();
         skin = new axSkinBasic(canvas);
         win->applySkin(skin);
-
-        win->appendWidget( new wdgPanel(win,NULL_RECT,wa_Client));
+        //win->appendWidget( new wdgPanel(win,NULL_RECT,wa_Client));
+        win->appendWidget( new wdgButton(win,NULL_RECT,wa_Client));
         win->doRealign();
-
-// test
+        // test
+        // TODO: -> entrypoint ???
         win->eventLoop();
         win->hide();
         delete win;
         delete skin;
-// ----
+        // ----
+#endif
       }
-    virtual ~myInstance()
-      {
-        /*trace("myInstance.destructor");*/
-      }
+    //virtual ~myInstance()
+    //  {
+    //    /*trace("myInstance.destructor");*/
+    //  }
 };
 
 //----------------------------------------------------------------------

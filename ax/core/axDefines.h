@@ -18,6 +18,12 @@
 #define axDefines_included
 //----------------------------------------------------------------------
 
+#define AX_MAJOR_VERSION   0
+#define AX_MINOR_VERSION   1
+#define AX_SUB_VERSION     2
+#define AX_VERSION_STRING "0.1.2"
+#define AX_AXONLIB_TEXT   "uses axonlib v" AX_VERSION_STRING " (http://axonlib.googlecode.com/)"
+
 // architechture
 // -----------------------------------------------------------------------------
 #if defined  (__i386__) || defined (_X86_) || defined (__X86__)
