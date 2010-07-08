@@ -38,6 +38,7 @@ const char* axGetBasePath(char* path)
         else axStrcpy(path, (char*)"./");
       }
     #endif
+    axStrcat(path, '\0');
     return path_init;
   }
 

@@ -149,8 +149,9 @@ template<int ALPHA, class T>
          ctx->randc = 0;
       }
    
-    // scramble it
-      for(int i=0; i < 4; ++i)         
+      // scramble it
+      int i;    
+      for(i=0; i < 4; ++i)         
       {
          shuffle(a,b,c,d,e,f,g,h);
       }
