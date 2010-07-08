@@ -1,3 +1,7 @@
+todo:
+- use void* when typecasting int/ptr's (to be more 64-bit safe)
+- axWindow (Win32/Linux), reparent(), use void*
+
 
 axBase.h
 ------------------------------

@@ -24,7 +24,7 @@
 
 //----------------------------------------------------------------------
 
-LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+//LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 //----------------------------------------------------------------------
 
@@ -75,7 +75,7 @@ class axWindowWin32 : public axWindowBase
     axBase*     mBase;
     HINSTANCE   mInstance;
     HWND        mWindow;
-    axString    mWinName;
+    //axString    mWinName;
     PAINTSTRUCT mPS;
     //int mWinCursor,mPrevCursor;
     //HCURSOR mWinCursor;
@@ -83,7 +83,7 @@ class axWindowWin32 : public axWindowBase
     int         mPrevCursor;
     int         mClickedButton;
     //int         mParent;                                      // HWND!
-    HWND mParent; // hwnd =pvoid
+    HWND        mParent; // hwnd =pvoid
     int         mAdjustWidth, mAdjustHeight;
 
   public:
@@ -95,11 +95,9 @@ class axWindowWin32 : public axWindowBase
         //mInstance   = aContext->mInstance;
         //mWinName    = aContext->mWinClassName;
         //mParent     = (int)aContext->mWindow;
-
         mInstance = (HINSTANCE)aBase->getInterface()->getHandle();
-        mWinName  = aBase->getInterface()->getName();
         mParent   = (HWND)aParent;
-
+        //mWinName  = aBase->getInterface()->getName();
         mWinCursor  = LoadCursor(NULL,IDC_ARROW);
         mPrevCursor = 0;
         //trace(mWinName.ptr());
@@ -120,20 +118,20 @@ class axWindowWin32 : public axWindowBase
         // and shouldn't we unregister it?
         // (or is it done automatically when dll is unloaded?)
 
-        char* classname = mWinName.ptr();//(char*)"axonlib";
-        //trace("window class name:" << classname);
-        WNDCLASS wc;
-        memset(&wc,0,sizeof(wc));
-        wc.style          = CS_HREDRAW | CS_VREDRAW;
-        wc.lpfnWndProc    = &eventProc;
-        wc.hInstance      = mInstance;
-        wc.lpszClassName  = classname;
-        wc.hCursor        = (HICON)mWinCursor; //LoadCursor(NULL, IDC_ARROW);
-        // rc_default.rc: axicon ICON "rc_axlogo.ico"
-        HICON hIcon = LoadIcon(mInstance, "axicon");
-        if (hIcon) wc.hIcon = hIcon;
-
-        RegisterClass(&wc);
+//        char* classname = mWinName.ptr();//(char*)"axonlib";
+//        //trace("window class name:" << classname);
+//        WNDCLASS wc;
+//        memset(&wc,0,sizeof(wc));
+//        wc.style          = CS_HREDRAW | CS_VREDRAW;
+//        wc.lpfnWndProc    = &eventProc;
+//        wc.hInstance      = mInstance;
+//        wc.lpszClassName  = classname;
+//        wc.hCursor        = (HICON)mWinCursor; //LoadCursor(NULL, IDC_ARROW);
+//        // rc_default.rc: axicon ICON "rc_axlogo.ico"
+//        HICON hIcon = LoadIcon(mInstance, "axicon");
+//        if (hIcon) wc.hIcon = hIcon;
+//
+//        RegisterClass(&wc);
 
         // The AdjustWindowRectEx function calculates the required size of the
         // window rectangle, based on the desired client-rectangle size.
@@ -198,7 +196,7 @@ class axWindowWin32 : public axWindowBase
           //trace("adjusted rc (embedded): " << rc.left << "," << rc.top << " : " << rc.right << "," << rc.bottom);
           mWindow = CreateWindowEx(
             WS_EX_TOOLWINDOW,
-            classname,
+            mBase->getInterface()->getName(), //   classname,
             0,
             WS_POPUP,
             rc.left,//wPosX,          // center x
@@ -210,7 +208,7 @@ class axWindowWin32 : public axWindowBase
             mInstance,
             0
           );
-          reparent((int)mParent);   // !!!
+          reparent((int)mParent);   // !!! int is not 64-bit safe, i guess... use void*
         } //embedded
 
         else // windowed ---
@@ -223,7 +221,7 @@ class axWindowWin32 : public axWindowBase
             ((GetSystemMetrics(SM_CYSCREEN)-mRect.h)>>1) + rc.top;
           mWindow = CreateWindowEx(
             WS_EX_OVERLAPPEDWINDOW,   // dwExStyle
-            classname,                // lpClassName
+            mBase->getInterface()->getName(), //   classname,               // lpClassName
             0,                        // lpWindowName
             WS_OVERLAPPEDWINDOW,      // dwStyle
             wPosX,                    // center x
@@ -274,7 +272,7 @@ class axWindowWin32 : public axWindowBase
         //  that was created with the class, the return value is zero
         // unregister window?
         // what if multiple instances is using the same window?
-        UnregisterClass( mWinName.ptr(), mInstance);
+//        UnregisterClass( mWinName.ptr(), mInstance);
       }
 
     //----------------------------------------
@@ -826,12 +824,13 @@ class axWindowWin32 : public axWindowBase
 //
 //----------------------------------------------------------------------
 
-LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-  axWindowWin32* wnd = (axWindowWin32*)GetWindowLong(hWnd,GWL_USERDATA);
-	if (wnd==0) return DefWindowProc(hWnd,message,wParam,lParam);
-  return wnd->eventHandler(hWnd, message, wParam, lParam);
-}
+//LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+//{
+//  axWindowWin32* wnd = (axWindowWin32*)GetWindowLong(hWnd,GWL_USERDATA);
+//	if (wnd==0) return DefWindowProc(hWnd,message,wParam,lParam);
+//  return wnd->eventHandler(hWnd, message, wParam, lParam);
+//}
+
 //----------------------------------------------------------------------
 
 typedef axWindowWin32 axWindowImpl;

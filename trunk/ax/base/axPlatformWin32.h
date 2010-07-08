@@ -23,7 +23,7 @@ DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
   switch(reason)
   {
     case DLL_PROCESS_ATTACH:
-      trace("DllMain DLL_PROCESS_ATTACH");
+      //trace("DllMain DLL_PROCESS_ATTACH");
       gWinInstance = hModule;
       break;
     case DLL_PROCESS_DETACH:
@@ -67,15 +67,18 @@ class axPlatformWin32 : public axPlatform
   public:
     axPlatformWin32(axBase* aBase) : axPlatform(aBase)
       {
-        trace("axPlatformWin32.constructor");
+        //trace("axPlatformWin32.constructor");
         mWinInstance = gWinInstance;
       }
     virtual ~axPlatformWin32()
       {
-        trace("axPlatformWin32.destructor");
+        //trace("axPlatformWin32.destructor");
       }
     //----------
-    HINSTANCE getWinInstance(void) { return mWinInstance; }
+
+    //HINSTANCE getWinInstance(void) { return mWinInstance; }
+    virtual void* getHandle(void) { return (void*)mWinInstance; }
+
 };
 
 //----------
@@ -94,9 +97,11 @@ const char* axGetBasePath(char* path)
     char filepath[AX_MAX_PATH] = "";
     GetModuleFileName(gWinInstance, filepath, MAX_PATH);
     const char* slash = axStrrchr(filepath, '\\') + 1;
-    if (slash) axStrncpy(path, filepath, (axStrrchr(filepath, '\\') + 1) - (char*)filepath);
+    int len = (axStrrchr(filepath, '\\') + 1) - (char*)filepath;
+    if (slash) axStrncpy(path, filepath, len);
     else axStrcpy(path, (char*)".\\");
-    axStrcat(path, '\0');
+    //axStrcat(path, '\0');
+    path[len] = 0;
     return path_init;
   }
 

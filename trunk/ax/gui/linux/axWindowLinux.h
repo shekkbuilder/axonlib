@@ -764,13 +764,13 @@ class axWindowLinux : public axWindowBase
             {
               rc.combine( ev->xexpose.x, ev->xexpose.y, ev->xexpose.width, ev->xexpose.height );
             }
-            trace("Expose " << rc.x << "," << rc.y << "," << rc.w << "," << rc.h);
+            //trace("Expose " << rc.x << "," << rc.y << "," << rc.w << "," << rc.h);
             //mCanvas->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
             if ((mWinFlags&AX_WIN_BUFFERED) && mSurface )
             {
-              trace("- double buffered");
+              //trace("- double buffered");
               axCanvas* can = mSurface->getCanvas();
-              trace("  can: " << can);
+              //trace("  can: " << can);
               can->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
               doPaint(can,rc);
 
