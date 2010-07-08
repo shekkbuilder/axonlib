@@ -93,6 +93,7 @@ class axInterface
     axInterface(axBase* aBase)  { /*trace("axInterface.constructor");*/ }
     virtual ~axInterface()      { /*trace("axInterface.destructor");*/ }
     virtual void* getHandle(void) { return NULL; } // linux: display*
+    virtual char* getName(void) { return (char*)"win"; } // win32: window class name
     virtual void* createWindow(void* aParent, axRect aRect, int aFlags) { return NULL; }
 
 };
