@@ -38,8 +38,6 @@ inline const char* axGetFileName(const char* path)
 // case: debug enabled
 #ifdef AX_DEBUG
 
-  #define _WIN32_WINNT 0x0501
-
   #include <iostream>
   #include <fstream>
   using namespace std;
@@ -69,123 +67,13 @@ inline const char* axGetFileName(const char* path)
     #define _axDfstream(x) (void(0))
   #endif
 
-  /*
-
-  some of the stuff in here should be moved to axPlatform
-
-  */
-
   // case: windows
   #ifdef AX_WIN32
-
-
-
-    /*
-     * creates a winapi debugger window (slow)
-    */
+  
+    #define _WIN32_WINNT 0x0501
     #include <windows.h>
-    #include <windowsx.h>         // macros
     #include <io.h>
     #include <stdio.h>            // gcc-4.4.1-tdm
-    #include <sstream>
-
-    #define axDwinCreate() ((void)0)
-    #define axDwinDestroy() ((void)0)
-
-    #if 0
-
-    static __thread HWND axDtext;        // edit control handle
-    ostringstream axDoss;                // string stream for window
-
-    // ----------------
-    // destroy window
-    #define axDwinDestroy(void) \
-    { \
-      DestroyWindow(axDtext); axDtext = NULL; \
-      axDoss.flush(); \
-    }
-
-    // ----------------
-    // message listener
-    bool WINAPI axDwinListner(HWND hwnd, UINT message)
-    {
-      // destroy
-      if (message == WM_DESTROY || message == WM_CLOSE) { axDwinDestroy(); }
-      return false;
-    }
-
-    // ----------------
-    // create window
-    void axDwinCreate(void)
-    {
-      if (axDtext == NULL)
-      {
-        // attach window
-        axDtext = CreateWindowEx
-        (
-          0, "EDIT", "axDebug\r\n",
-          WS_SYSMENU|WS_MINIMIZEBOX|WS_POPUPWINDOW|WS_CAPTION|
-          WS_VISIBLE|WS_BORDER|WS_VSCROLL|WS_HSCROLL|
-          ES_READONLY|ES_MULTILINE|ES_WANTRETURN|WS_SIZEBOX|
-          ES_AUTOHSCROLL|ES_AUTOVSCROLL,
-          400, 400, 440-5, 320-25, NULL, NULL, NULL, NULL
-        );
-        //set window properties
-        // - on top
-        SetWindowPos(axDtext, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
-        // - default win32 font
-        HFONT hfDefault;
-        hfDefault = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
-        SendMessage(axDtext, WM_SETFONT, (WPARAM)hfDefault, MAKELPARAM(FALSE, 0));
-        //icon
-        HICON hIcon = LoadIcon((HINSTANCE)GetModuleHandle(NULL), "axicon");
-        if (hIcon) SendMessage(axDtext, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
-        // - listener
-        SetWindowLong(axDtext, DWL_DLGPROC, (long)axDwinListner);
-        // - set limit
-        Edit_LimitText(axDtext, 1000);
-      }
-    }
-
-    // -------------------
-    // window debug write
-    __deprecated inline void wdebug_write(void)
-    {
-        // cast stream to string
-        const string s2 = axDoss.str();
-        // clear
-        axDoss.str("");
-        axDoss.flush();
-        // cast std::string to char* then to LPCTSTR (win32)
-        const char* string = s2.c_str();
-        const LPCTSTR text = (LPCTSTR)string;
-        // get length of new string & old text
-        const int str_len = s2.length();
-        unsigned int len = Edit_GetTextLength(axDtext);
-        // clear a portion (str_len*2) of text if too much already exist
-        if ((len + str_len) >= 1000)
-        {
-          Edit_SetSel(axDtext, 0, str_len << 1);
-          Edit_ReplaceSel(axDtext, "");
-          len = Edit_GetTextLength(axDtext);
-        }
-        // append the string at the end of the entire text
-        Edit_SetSel(axDtext, len, len);
-        Edit_ReplaceSel(axDtext, text);
-        // kill focus
-        SendMessage(axDtext, WM_KILLFOCUS, 0, 0);
-    }
-
-    // -------------------
-    // window debug macro
-    #define wdebug(x) \
-      if (axDtext) \
-      { \
-        axDoss << "[" << axGetFileName(__FILE__) << "|" << __LINE__ << "] " << x << "\r\n"; \
-        wdebug_write(); \
-      }
-
-    #endif // #if 0
 
     /*
      * create a console debugger window (only one instance per process, fast)
@@ -193,8 +81,8 @@ inline const char* axGetFileName(const char* path)
      * http://support.microsoft.com/kb/105305
      *
      */
-    static __thread unsigned int axHcrt = 0;          // crt handle
-    static __thread FILE *axSfile;                    // file stream
+    static __thread unsigned int  axHcrt = 0;          // crt handle
+    static __thread FILE*         axSfile;             // file stream
 
     // ----------------
     // destroy console
@@ -216,12 +104,10 @@ inline const char* axGetFileName(const char* path)
         // set title
         SetConsoleTitle("axDebug");
         // get handle for console
-        // requires _WIN32_WINNT >= 0x0500 (set before windows.h)
         HWND hCw = GetConsoleWindow();
         if(hCw)
 	      {
-          // ENABLE_EXTENDED_FLAGS = 0x0080
-          // ENABLE_QUICK_EDIT_MODE = 0x0040
+          // ENABLE_EXTENDED_FLAGS: 0x0080, ENABLE_QUICK_EDIT_MODE = 0x0040
           HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
           SetConsoleMode(hIn, 0x0080|0x0040);
           // size & color
@@ -254,9 +140,9 @@ inline const char* axGetFileName(const char* path)
 
     // print macros
     #define _trace(x) \
-      { if (axHcrt) { _axDcout(x); } if (axDlog) { _axDfstream(x); } }
+      { if (axHcrt) { _axDcout(x); }  if (axDlog) { _axDfstream(x); } }
     #define trace(x)  \
-      { if (axHcrt) { axDcout(x); } if (axDlog) { axDfstream(x); } }
+      { if (axHcrt) { axDcout(x); }   if (axDlog) { axDfstream(x); } }
     #define msg(x)    \
       { if (axHcrt) { axDprintf(x); } if (axDlog) axDfstream(x); } }
     #define wtrace(x) \
@@ -266,29 +152,26 @@ inline const char* axGetFileName(const char* path)
 
 
   #ifdef AX_LINUX
-    #define _trace(x) { _axDcout(x); if (axDlog) { _axDfstream(x); } }
-    #define trace(x)  { axDcout(x); if (axDlog) { axDfstream(x); } }
-    #define wtrace(x) { axDcout(x); if (axDlog) { axDfstream(x); } }
+  
+    #define _trace(x) { _axDcout(x);  if (axDlog) { _axDfstream(x); } }
+    #define trace(x)  { axDcout(x);   if (axDlog) { axDfstream(x); } }
     #define msg(x)    { axDprintf(x); if (axDlog) { axDfstream(x); } }
-    #define wdebug(x) ((void)0)
     inline void axDstdCreate(void) {}
     inline void axDstdDestroy(void) {}
-    inline void axDwinCreate(void) {}
-    inline void axDwinDestroy(void) {}
+    
   #endif // AX_LINUX
 
 #else // !AX_DEBUG
+
   #define NDEBUG
-  #define _trace(x) ((void)0)
-  #define trace(x) ((void)0)
-  #define msg(x) ((void)0)
-  #define assert(x) ((void)0)
-  #define wtrace(x) ((void)0)
-  #define wdebug(x) ((void)0)
+  #define _trace(x)             ((void)0)
+  #define trace(x)              ((void)0)
+  #define msg(x)                ((void)0)
+  #define axAssert(x)           ((void)0)
+  #define axStaticAssert(x)     ((void)0)
   inline void axDstdCreate(void) {}
   inline void axDstdDestroy(void) {}
-  inline void axDwinCreate(void) {}
-  inline void axDwinDestroy(void) {}
+  
 #endif
 
 //----------------------------------------------------------------------
@@ -313,11 +196,8 @@ inline const char* axGetFileName(const char* path)
  * \code
  * msg("text");                \\ write text to stdout
  * trace(variable << "text");  \\ write to stdout. simillar to cout
- * wtrace(variable << "text"); \\ same as trace() but for wine
  * axAssert(expression);       \\ runtime assertion
  * axStaticAssert(expression); \\ statatic assertion
- * wdebug(variable << "text"); \\ (deprecated, win32 only) write to a text
- *                             \\ window
  * \endcode
  *
  * <br>

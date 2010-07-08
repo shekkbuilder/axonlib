@@ -96,6 +96,7 @@ const char* axGetBasePath(char* path)
     const char* slash = axStrrchr(filepath, '\\') + 1;
     if (slash) axStrncpy(path, filepath, (axStrrchr(filepath, '\\') + 1) - (char*)filepath);
     else axStrcpy(path, (char*)".\\");
+    axStrcat(path, '\0');
     return path_init;
   }
 
