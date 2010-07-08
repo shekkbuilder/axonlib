@@ -107,7 +107,7 @@ typedef axFormatExe AX_FORMAT;
 int main(int argc, char** argv)                                               \
 {                                                                             \
   axBaseImpl<_PL,_IF,_FO,_D,_I>* base = new axBaseImpl<_PL,_IF,_FO,_D,_I>();  \
-  g_GlobalScope.setBase(base);                                                \
+  gGlobalScope.setBase(base);                                                 \
   _FO* format = (_FO*)base->getFormat();                                      \
   int result = *(int*)format->entrypoint(NULL);                               \
   return result;                                                              \

@@ -13,7 +13,7 @@
 // used in axUtils,getBasePath
 static __thread HINSTANCE gWinInstance;
 
-//----------
+//----------------------------------------------------------------------
 
 __externc BOOL APIENTRY
 DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
@@ -81,6 +81,24 @@ class axPlatformWin32 : public axPlatform
 //----------
 
 typedef axPlatformWin32 AX_PLATFORM;
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+const char* axGetBasePath(char* path)
+  {
+    char* path_init = path;
+    char filepath[AX_MAX_PATH] = "";
+    GetModuleFileName(gWinInstance, filepath, MAX_PATH);
+    const char* slash = axStrrchr(filepath, '\\') + 1;
+    if (slash) axStrncpy(path, filepath, (axStrrchr(filepath, '\\') + 1) - (char*)filepath);
+    else axStrcpy(path, (char*)".\\");
+    return path_init;
+  }
+
 
 //----------------------------------------------------------------------
 #endif

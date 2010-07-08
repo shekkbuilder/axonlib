@@ -31,7 +31,7 @@ class axInstanceVst : public axInstance
   public:
     axInstanceVst(axBase* aBase) : axInstance(aBase) { trace("axInstanceVst.constructor"); }
     virtual ~axInstanceVst()     { trace("axInstanceVst.destructor"); }
-    //
+    // callbacks
     virtual VstIntPtr vst_dispatcher(VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt) { return 0; }
     virtual float     vst_getParameter(VstInt32 aIndex) { return 0; }
     virtual void      vst_setParameter(VstInt32 aIndex, float aValue) {}
@@ -140,7 +140,7 @@ class axFormatVst : public axFormat
       {
         trace("* axFormatVst.entrypoint");
         audioMaster = (audioMasterCallback)ptr;
-        axInstanceVst* instance = new axInstanceVst(mBase);
+        axInstance* instance = mBase->createInstance();//new axInstanceVst(mBase);
         //TODO: read from descriptor
         axMemset(&aeffect,0,sizeof(aeffect));
         aeffect.magic                   = kEffectMagic;
@@ -221,7 +221,7 @@ typedef axFormatVst AX_FORMAT;
 _AX_VST_MAIN_DEF                                                              \
 {                                                                             \
   axBaseImpl<_PL,_IF,_FO,_D,_I>* base = new axBaseImpl<_PL,_IF,_FO,_D,_I>();  \
-  g_GlobalScope.setBase(base);                                                \
+  gGlobalScope.setBase(base);                                                 \
   _FO* format = (_FO*)base->getFormat();                                      \
   AEffect* ae = (AEffect*)format->entrypoint((void*)audioMaster);             \
   _AX_VST_RET_DEF;                                                            \

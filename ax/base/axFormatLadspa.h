@@ -31,7 +31,7 @@ class axInstanceLadspa : public axInstance
   public:
     axInstanceLadspa(axBase* aBase) : axInstance(aBase) { trace("  axInstanceLadspa.constructor"); }
     virtual ~axInstanceLadspa()     { trace("  axInstanceLadspa.destructor"); }
-    //
+    // callbacks
     virtual void lad_connect_port(unsigned long Port, LADSPA_Data* DataLocation) { trace("axFormatLadspa.lad_connect_port"); }
     virtual void lad_activate(void) { trace("axFormatLadspa.lad_activate"); }
     virtual void lad_run(unsigned long SampleCount) { /*trace("axFormatLadspa.lad_run");*/ }
@@ -267,7 +267,7 @@ const LADSPA_Descriptor* ladspa_descriptor(unsigned long index)               \
 {                                                                             \
   if (index>0) return NULL;                                                   \
   axBaseImpl<_PL,_IF,_FO,_D,_I>* base = new axBaseImpl<_PL,_IF,_FO,_D,_I>();  \
-  g_GlobalScope.setBase(base);                                                \
+  gGlobalScope.setBase(base);                                                 \
   _FO* format = (_FO*)base->getFormat();                                      \
   LADSPA_Descriptor* descr = (LADSPA_Descriptor*)format->entrypoint(NULL);    \
   return descr;                                                               \
