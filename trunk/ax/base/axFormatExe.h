@@ -2,6 +2,7 @@
 #define axFormatExe_included
 //----------------------------------------------------------------------
 
+#define AX_WIN_DEFAULT (AX_WIN_BUFFERED|AX_WIN_MSGDELETE)
 
 //----------------------------------------------------------------------
 //
@@ -12,8 +13,8 @@
 class axDescriptorExe : public axDescriptor
 {
   public:
-    axDescriptorExe(axBase* aBase) : axDescriptor(aBase) { trace("axDescriptorExe.constructor"); }
-    virtual ~axDescriptorExe() { trace("axDescriptorExe.destructor"); }
+    axDescriptorExe(axBase* aBase) : axDescriptor(aBase) { /*trace("axDescriptorExe.constructor");*/ }
+    virtual ~axDescriptorExe() { /*trace("axDescriptorExe.destructor");*/ }
 };
 
 typedef axDescriptorExe AX_DESCRIPTOR;
@@ -29,8 +30,8 @@ class axInstanceExe : public axInstance
   private:
     int result;
   public:
-    axInstanceExe(axBase* aBase) : axInstance(aBase) { trace("axInstanceExe.constructor"); }
-    virtual ~axInstanceExe() { trace("axInstanceExe.destructor"); }
+    axInstanceExe(axBase* aBase) : axInstance(aBase) { /*trace("axInstanceExe.constructor");*/ }
+    virtual ~axInstanceExe() { /*trace("axInstanceExe.destructor");*/ }
 
 };
 
@@ -62,7 +63,7 @@ class axFormatExe : public axFormat
 
     virtual void* entrypoint(void* ptr)
       {
-        trace("*   axFormatExe.entrypoint   *");
+        //trace("*   axFormatExe.entrypoint   *");
         result = 0;
         return &result;
       }
@@ -73,7 +74,7 @@ class axFormatExe : public axFormat
 
     axFormatExe(axBase* aBase) : axFormat(aBase)
       {
-        trace("axFormatExe.constructor");
+        //trace("axFormatExe.constructor");
         mBase       = aBase;
         mDescriptor = mBase->createDescriptor();
         mInstance   = mBase->createInstance();
@@ -81,7 +82,7 @@ class axFormatExe : public axFormat
 
     virtual ~axFormatExe()
       {
-        trace("axFormatExe.destructor");
+        //trace("axFormatExe.destructor");
         delete mDescriptor;
         delete mInstance;
       }

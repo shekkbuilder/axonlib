@@ -5,14 +5,8 @@
 class axPlatformLinux : public axPlatform
 {
   public:
-    axPlatformLinux(axBase* aBase) : axPlatform(aBase)
-      {
-        trace("axPlatformLinux.constructor");
-      }
-    virtual ~axPlatformLinux()
-      {
-        trace("axPlatformLinux.destructor");
-      }
+    axPlatformLinux(axBase* aBase) : axPlatform(aBase) { /*trace("axPlatformLinux.constructor");*/ }
+    virtual ~axPlatformLinux() { /*trace("axPlatformLinux.destructor");*/ }
 };
 
 //----------

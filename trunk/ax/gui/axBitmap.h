@@ -38,11 +38,11 @@
 //----------
 
 #ifdef AX_LINUX
-  #include "platform/linux/axBitmapLinux.h"
+  #include "gui/linux/axBitmapLinux.h"
 #endif
 
 #ifdef AX_WIN32
-  #include "platform/win32/axBitmapWin32.h"
+  #include "gui/win32/axBitmapWin32.h"
 #endif
 
 
@@ -53,8 +53,8 @@ class axBitmap : public axBitmapImpl
   //public:
   protected:
 
-    axBitmap(axInterface* aInterface, int aWidth, int aHeight, int aDepth)
-    : axBitmapImpl(aInterface,aWidth, aHeight, aDepth)
+    axBitmap(axBase* aBase, int aWidth, int aHeight, int aDepth)
+    : axBitmapImpl(aBase,aWidth, aHeight, aDepth)
       {
         //wtrace("axBitmap.constructor");
       }
