@@ -31,7 +31,12 @@ class myDescriptor : public AX_DESCRIPTOR
 class myInstance : public AX_INSTANCE
 {
   public:
-    myInstance(axBase* aBase) : AX_INSTANCE(aBase) { trace("myInstance.constructor"); }
+    myInstance(axBase* aBase) : AX_INSTANCE(aBase)
+      {
+        trace("myInstance.constructor");
+        char temp[256];
+        trace( axGetBasePath(temp) );
+      }
     virtual ~myInstance() { trace("myInstance.destructor"); }
 };
 

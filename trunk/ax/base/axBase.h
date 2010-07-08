@@ -174,7 +174,7 @@ class axGlobalScope
 //----------
 
 // __thread?
-static axGlobalScope g_GlobalScope;
+static axGlobalScope gGlobalScope;
 
 //----------------------------------------------------------------------
 
