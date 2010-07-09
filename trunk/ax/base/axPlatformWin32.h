@@ -76,6 +76,7 @@ class axPlatformWin32 : public axPlatform
       }
     //----------
 
+    virtual char* getPlatformName(void) { return (char*)"win32"; }
     //HINSTANCE getWinInstance(void) { return mWinInstance; }
     virtual void* getHandle(void) { return (void*)mWinInstance; }
 

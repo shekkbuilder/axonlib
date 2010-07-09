@@ -58,12 +58,28 @@ class axFormatExe : public axFormat
     axBase*       mBase;
     axDescriptor* mDescriptor;
     axInstance*   mInstance;
+    //int           mFormatFlags;
 
   protected:
 
     virtual void* entrypoint(void* ptr)
       {
-        //trace("*   axFormatExe.entrypoint   *");
+        //trace("++ axFormatExe.entrypoint   *");
+        #ifndef AX_NOGUI
+        if (mDescriptor->hasEditor())
+        {
+          //trace("hasEditor");
+          axWindow* win = (axWindow*)mInstance->doOpenEditor(ptr/*NULL*/);
+          if (win)
+          {
+            win->show();
+            win->eventLoop();
+            win->hide();
+          }
+          mInstance->doCloseEditor();
+        }
+        //trace("-- axFormatExe.entrypoint   *");
+        #endif
         result = 0;
         return &result;
       }
@@ -78,13 +94,22 @@ class axFormatExe : public axFormat
         mBase       = aBase;
         mDescriptor = mBase->createDescriptor();
         mInstance   = mBase->createInstance();
+        //mFormatFlags = ff_None;
       }
 
     virtual ~axFormatExe()
       {
         //trace("axFormatExe.destructor");
+        //mInstance->doCloseEditor();
         delete mDescriptor;
         delete mInstance;
+      }
+
+    //----------
+
+    virtual char* getFormatName(void)
+      {
+        return (char*)"exe";
       }
 
 };

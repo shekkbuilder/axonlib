@@ -43,12 +43,6 @@ class axBase
     virtual axFormat*     getFormat(void)         { return NULL; }
     virtual axDescriptor* createDescriptor(void)  { return NULL; }
     virtual axInstance*   createInstance(void)    { return NULL; }
-    //virtual char* getPlatformClassName(void)      { return (char*)"axPlatform"; }
-    //virtual char* getInterfaceClassName(void)     { return (char*)"axInterface"; }
-    //virtual char* getFormatClassName(void)        { return (char*)"axFormat"; }
-    //virtual char* getDescriptorClassName(void)    { return (char*)"axDescriptor"; }
-    //virtual char* getInstanceClassName(void)      { return (char*)"axInstance"; }
-
 };
 
 //----------------------------------------------------------------------
@@ -60,6 +54,8 @@ class axDescriptor
   public:
     axDescriptor(axBase* aBase) { /*trace("axDescriptor.constructor");*/ }
     virtual ~axDescriptor()     { /*trace("axDescriptor.destructor");*/ }
+    //
+    virtual bool hasEditor(void) { /*trace("hasEditor");*/ return false; }
 };
 
 //----------
@@ -69,6 +65,12 @@ class axInstance
   public:
     axInstance(axBase* aBase) { /*trace("axInstance.constructor");*/ }
     virtual ~axInstance()     { /*trace("axInstance.destructor");*/ }
+    //
+    virtual bool hasFlag(int aFlag) { return false; }
+    //
+    virtual void*   doOpenEditor(void* ptr) { return NULL; }
+    virtual void    doCloseEditor(void)     { }
+    virtual axRect  getEditorRect(void) { return axRect(0,0,100,100); }
 };
 
 //----------------------------------------------------------------------
@@ -84,6 +86,7 @@ class axPlatform
     axPlatform(axBase* aBase) { /*trace("axPlatform.constructor");*/ }
     virtual ~axPlatform()     { /*trace("axPlatform.destructor");*/ }
     virtual void* getHandle(void) { return NULL; }  // win32: hinstance
+    virtual char* getPlatformName(void) { return (char*)""; }
 };
 
 //----------------------------------------------------------------------
@@ -96,8 +99,8 @@ class axInterface
   public:
     axInterface(axBase* aBase)  { /*trace("axInterface.constructor");*/ }
     virtual ~axInterface()      { /*trace("axInterface.destructor");*/ }
-    virtual void* getHandle(void) { return NULL; }        // linux: display*
-    virtual char* getName(void) { return (char*)""; }  // win32: window class name
+    virtual void* getHandle(void) { return NULL; }    // linux: display*
+    virtual char* getName(void) { return (char*)""; } // win32: window class name
     virtual void* createWindow(void* aParent, axRect aRect, int aFlags) { return NULL; }
 
 };
@@ -117,6 +120,8 @@ class axFormat
     axFormat(axBase* aBase) { /*trace("axFormat.constructor");*/ }
     virtual ~axFormat()     { /*trace("axFormat.destructor");*/ }
     //virtual void* entrypoint(void* ptr) { result=0; return &result; }
+    virtual char* getFormatName(void) { return (char*)""; }
+
 };
 
 //----------------------------------------------------------------------
@@ -168,11 +173,6 @@ class axBaseImpl : public axBase
     virtual axFormat*     getFormat(void)         { return mFormat; }
     virtual axDescriptor* createDescriptor(void)  { return new _D(this); } // you have to delete it yourself
     virtual axInstance*   createInstance(void)    { return new _I(this); } // --"--
-    //virtual char* getPlatformClassName(void)      { return (char*)MAKESTRING(_PL); }
-    //virtual char* getInterfaceClassName(void)     { return (char*)MAKESTRING(_IF); }
-    //virtual char* getFormatClassName(void)        { return (char*)MAKESTRING(_FO); }
-    //virtual char* getDescriptorClassName(void)    { return (char*)MAKESTRING(_D); }
-    //virtual char* getInstanceClassName(void)      { return (char*)MAKESTRING(_I); }
 };
 
 //----------------------------------------------------------------------

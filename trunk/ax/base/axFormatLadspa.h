@@ -209,6 +209,8 @@ class axFormatLadspa : public axFormat
         delete mDescriptor;
       }
 
+    virtual char* getFormatName(void) { return (char*)"ladspa"; }
+
 };
 
 //----------
