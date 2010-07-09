@@ -7,6 +7,7 @@ class axPlatformLinux : public axPlatform
   public:
     axPlatformLinux(axBase* aBase) : axPlatform(aBase) { /*trace("axPlatformLinux.constructor");*/ }
     virtual ~axPlatformLinux() { /*trace("axPlatformLinux.destructor");*/ }
+    virtual char* getPlatformName(void) { return (char*)"linux"; }
 };
 
 //----------
@@ -16,11 +17,10 @@ typedef axPlatformLinux AX_PLATFORM;
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
-
-//BUG: missing terminating 0
 const char* axGetBasePath(char* path)
   {
     int len;
+    char filepath[AX_MAX_PATH] = "";
     //char* path_init = path;
     #ifdef AX_FORMAT_LIB
       Dl_info dli;
@@ -28,14 +28,13 @@ const char* axGetBasePath(char* path)
       const char* slash = axStrrchr(dli.dli_fname, '/');
       if (slash)
       {
-        len = (axStrrchr(filepath, '/') + 1) - (char*)dli.dli_fname;
+        len = (axStrrchr(dli.dli_fname, '/') + 1) - (char*)dli.dli_fname;
         axStrncpy(path, dli.dli_fname, len/*(axStrrchr(dli.dli_fname, '/') + 1) - (char*)dli.dli_fname*/);
         path[len] = 0;
       }
       else axStrcpy(path, (char*)"./");
     #endif
     #ifdef AX_FORMAT_EXE
-      char filepath[AX_MAX_PATH] = "";
       unsigned int rl = readlink("/proc/self/exe", filepath, sizeof(filepath));
       if (rl)
       {

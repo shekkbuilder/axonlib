@@ -16,8 +16,8 @@
 class axDescriptorVst : public axDescriptor
 {
   public:
-    axDescriptorVst(axBase* aBase) : axDescriptor(aBase) { trace("axDescriptorVst.constructor"); }
-    virtual ~axDescriptorVst()     { trace("axDescriptorVst.destructor"); }
+    axDescriptorVst(axBase* aBase) : axDescriptor(aBase) { /*trace("axDescriptorVst.constructor");*/ }
+    virtual ~axDescriptorVst()     { /*trace("axDescriptorVst.destructor");*/ }
 };
 
 typedef axDescriptorVst AX_DESCRIPTOR;
@@ -31,8 +31,8 @@ typedef axDescriptorVst AX_DESCRIPTOR;
 class axInstanceVst : public axInstance
 {
   public:
-    axInstanceVst(axBase* aBase) : axInstance(aBase) { trace("axInstanceVst.constructor"); }
-    virtual ~axInstanceVst()     { trace("axInstanceVst.destructor"); }
+    axInstanceVst(axBase* aBase) : axInstance(aBase) { /*trace("axInstanceVst.constructor");*/ }
+    virtual ~axInstanceVst()     { /*trace("axInstanceVst.destructor");*/ }
     // callbacks
     virtual VstIntPtr vst_dispatcher(VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt) { return 0; }
     virtual float     vst_getParameter(VstInt32 aIndex) { return 0; }
@@ -182,6 +182,8 @@ class axFormatVst : public axFormat
         trace("- axFormatVst.destructor");
         delete mDescriptor;
       }
+
+    virtual char* getFormatName(void) { return (char*)"vst"; }
 
 };
 

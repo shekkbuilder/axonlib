@@ -37,9 +37,9 @@ class axInterfaceWin32 : public axInterface
         mWinInstance = (HINSTANCE)aBase->getPlatform()->getHandle();
         //axStrcpy( mWinClassName, mBase->getInstanceClassName() ); // TODO
         // we might need to increase the 0 if eventProc or axWindowWin32 changes
-        axStrcpy( mWinClassName, "axonlib_" );
-        axStrcat( mWinClassName, (char*)AX_VERSION_STRING );
-        axStrcat( mWinClassName, "_window" );
+          axStrcpy( mWinClassName, "axonlib_" );
+          axStrcat( mWinClassName, (char*)AX_VERSION_STRING );
+          axStrcat( mWinClassName, "_window" );
         mWinIcon = LoadIcon(mWinInstance, "axicon");
         mWinCursor = NULL; // LoadCursor(NULL, IDC_ARROW);
         axMemset(&mWinClass,0,sizeof(mWinClass));

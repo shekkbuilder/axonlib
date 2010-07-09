@@ -5,26 +5,22 @@
 //#define AX_DEBUG_LOG "test.log"
 
 //#define AX_NOGUI
+#define AX_USE_CPU_CAPS
 
+//----------
+
+#include "core/axCpu.h"
 #include "base/axBase.h"
 #include "gui/axWindow.h"
+#include "gui/axEditor.h"
 #include "skins/axSkinBasic.h"
-
-#include "wdg/wdgPanel.h"
+//#include "wdg/wdgPanel.h"
 #include "wdg/wdgButton.h"
 
-
 //----------------------------------------------------------------------
-
-//class myPlugin : public AX_FORMAT
-//{
-//  public:
-//    myPlugin(axBase* aBase) : AX_FORMAT(aBase)
-//      {
-//        trace("- myPlugin.constructor");
-//      }
-//};
-
+//
+// descriptor
+//
 //----------------------------------------------------------------------
 
 class myDescriptor : public AX_DESCRIPTOR
@@ -32,51 +28,96 @@ class myDescriptor : public AX_DESCRIPTOR
   public:
     myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { /*trace("myDescriptor.constructor");*/ }
     virtual ~myDescriptor() { /*trace("myDescriptor.destructor");*/ }
+    virtual bool hasEditor(void) { return true; }
 };
 
-//----------
+//----------------------------------------------------------------------
+//
+// instance
+//
+//----------------------------------------------------------------------
 
 class myInstance : public AX_INSTANCE
 {
   private:
-    axWindow*     win;
+    axBase*       mBase;
+    //axWindow*     win;
+    axEditor*     edit;
     axSkinBasic*  skin;
 
+    char temp[256];
+
   public:
+
     myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
         //trace("myInstance.constructor");
-        char temp[256];
-        //axMemset(temp,0,sizeof(temp));
-        trace( "axGetBasePath:     '" << axGetBasePath(temp) << "'");
-        trace( "interface.getName: '" << aBase->getInterface()->getName() << "'");
-        trace( "AX_AXONLIB_TEXT:   '" << AX_AXONLIB_TEXT << "'");
-#ifndef AX_NOGUI
-        win = (axWindow*)aBase->getInterface()->createWindow(NULL,axRect(0,0,320,240),AX_WIN_DEFAULT);
-        win->show();
-        axCanvas* canvas = win->getCanvas();
-        skin = new axSkinBasic(canvas);
-        win->applySkin(skin);
-        //win->appendWidget( new wdgPanel(win,NULL_RECT,wa_Client));
-        win->appendWidget( new wdgButton(win,NULL_RECT,wa_Client));
-        win->doRealign();
-        // test
-        // TODO: -> entrypoint ???
-        win->eventLoop();
-        win->hide();
-        delete win;
-        delete skin;
-        // ----
-#endif
+        mBase = aBase;
+        //win = NULL;
+        edit = NULL;
+        skin = NULL;
+
+        axCpu cpu;
+        cpu.axCpuId();
+        unsigned long long start_time, end_time, diff;
+        start_time = cpu.rdtsc(); // may not work correctly for multi-core
+        end_time   = cpu.rdtsc();
+        diff       = end_time - start_time;
+
+        trace("platform:          '" << aBase->getPlatform()->getPlatformName() << "'");
+        // we can't access the mFormat class in the constructor/destructor of axInstance or axDescriptor
+        // since these classes are created in the constructor  of axFormatExe/Vst/..
+        trace("format:            '" << aBase->getFormat()/*->getFormatName() << "'"*/);   // NULL ???
+        trace("axGetBasePath:     '" << axGetBasePath(temp) << "'");
+        trace("interface.getName: '" << aBase->getInterface()->getName() << "'");
+        trace("AX_AXONLIB_TEXT:   '" << AX_AXONLIB_TEXT << "'");
+        trace("axCpuCaps:          " << cpu.axCpuCaps() );
+        trace("axCpuCapsString:   '" << cpu.axCpuCapsString() << "'");
+        trace("rdtsc:              " << diff << " (may not be correct for multi-core)");
       }
+
+    //----------
+
     //virtual ~myInstance()
     //  {
     //    /*trace("myInstance.destructor");*/
     //  }
+
+    //--------------------------------------------------
+
+    virtual void* doOpenEditor(void* ptr)
+      {
+        //trace("doOpenEditor");
+        //win = (axWindow*)mBase->getInterface()->createWindow(ptr,axRect(0,0,320,240),AX_WIN_DEFAULT);
+        edit = (axEditor*)mBase->getInterface()->createWindow(ptr,axRect(0,0,320,240),AX_WIN_DEFAULT);
+        if (edit)
+        {
+          //win->show();
+          axCanvas* canvas = edit->getCanvas();
+          skin = new axSkinBasic(canvas);
+          edit->applySkin(skin);
+          edit->setInstance(this);
+          //win->appendWidget( new wdgPanel(win,NULL_RECT,wa_Client));
+          edit->appendWidget( new wdgButton(edit,NULL_RECT,wa_Client));
+          edit->doRealign();
+        }
+        return edit;
+      }
+
+    //----------
+
+    virtual void  doCloseEditor(void)
+      {
+        if (edit) delete edit;
+        if (skin) delete skin;
+        edit = NULL;
+        skin = NULL;
+
+      }
+
 };
 
 //----------------------------------------------------------------------
 
 //AX_MAIN(myPlugin)
-
 AX_ENTRYPOINT(AX_PLATFORM,AX_INTERFACE,AX_FORMAT,myDescriptor,myInstance)
