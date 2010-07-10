@@ -66,7 +66,8 @@ class axFormatExe : public axFormat
       {
         //trace("++ axFormatExe.entrypoint   *");
         #ifndef AX_NOGUI
-        if (mDescriptor->hasEditor())
+        //if (mFlags&if_HasEditor)
+        //if (mDescriptor->hasEditor())
         {
           //trace("hasEditor");
           axWindow* win = (axWindow*)mInstance->doOpenEditor(ptr/*NULL*/);
@@ -92,7 +93,7 @@ class axFormatExe : public axFormat
       {
         //trace("axFormatExe.constructor");
         mBase       = aBase;
-        mDescriptor = mBase->createDescriptor();
+        mDescriptor = mBase->getDescriptor();
         mInstance   = mBase->createInstance();
         //mFormatFlags = ff_None;
       }

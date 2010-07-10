@@ -5,7 +5,8 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#include "gui/axWindow.h"
+//#include "gui/axWindow.h"
+#include "gui/axEditor.h"
 
 //----------------------------------------------------------------------
 
@@ -40,14 +41,23 @@ class axInterfaceLinux : public axInterface
         return (void*)mDisplay;
       }
 
-    virtual void* createWindow(void* aParent, axRect aRect, int aFlags)
+//    virtual void* createWindow(void* aParent, axRect aRect, int aFlags)
+//      {
+//        //trace("axInterfaceLinux.createWindow");
+//        axWindow* window;
+//        if (aParent) window = new axWindow(mBase,aParent,aRect,aFlags);
+//        else window = new axWindow(mBase,&mRootWindow,aRect,aFlags);
+//        //trace("  window " << window);
+//        return (void*)window;
+//      }
+
+    virtual void* createEditor(void* aParent, axRect aRect, int aFlags)
       {
-        //trace("axInterfaceLinux.createWindow");
-        axWindow* window;
-        if (aParent) window = new axWindow(mBase,aParent,aRect,aFlags);
-        else window = new axWindow(mBase,&mRootWindow,aRect,aFlags);
+        axEditor* editor;
+        if (aParent) editor = new axEditor(mBase,aParent,aRect,aFlags);
+        else editor = new axEditor(mBase,&mRootWindow,aRect,aFlags);
         //trace("  window " << window);
-        return (void*)window;
+        return (void*)editor;
       }
 
 };

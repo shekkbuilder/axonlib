@@ -67,6 +67,9 @@ typedef axArray<wp_connection> wp_connections;
 
 class axEditor : public axWindow
 {
+  private:
+    axBase*         mBase;
+    axInstance*     mInstance;
   protected:
     axInterface*    mInterface;
     wp_connections  mConnections;
@@ -80,12 +83,12 @@ class axEditor : public axWindow
   // aWinFlags = flags to pass on to (os-specific) window
   //             defines double-buffering, message--threading, window-parenting
 
-    axEditor(axInterface* aInterface, void* aParent, axRect aRect, int aWinFlags)
-    : axWindow(aInterface,aParent,aRect,aWinFlags)
+    axEditor(axBase* aBase, void* aParent, axRect aRect, int aWinFlags)
+    : axWindow(aBase,aParent,aRect,aWinFlags)
       {
         trace("axEditor");
         //mFormat = aFormat;
-        mInterface = aInterface;
+        mBase = aBase;
         axCanvas* canvas = getCanvas();
         mDefaultSkin = new axSkinBasic(canvas);
         applySkin(mDefaultSkin);
@@ -101,6 +104,7 @@ class axEditor : public axWindow
 
     //--------------------------------------------------
 
+    inline void    setInstance(axInstance* aInstance) { mInstance=aInstance; }
     inline axSkin* defaultSkin(void) { return mDefaultSkin; }
 
     //--------------------------------------------------
@@ -232,7 +236,7 @@ class axEditor : public axWindow
         {
           axParameter* par = mConnections[conn].mParameter;
           float val = aWidget->getValue();
-          mInterface->notifyParamChanged(par);
+//          mInterface->notifyParamChanged(par);
           //par->doSetValue(val,false);
           par->doSetValue(val,true); // true = notify listener
         }
@@ -259,7 +263,7 @@ class axEditor : public axWindow
       {
         if (aMode<0)
         {
-          axRect R = mInterface->getEditorRect();
+          axRect R = mInstance->getEditorRect();
           int w = R.w + aDeltaX; //mRect.w + aDeltaX;
           int h = R.h + aDeltaY; //mRect.h + aDeltaY;
           //axWidget::doSetSize(w,h);
