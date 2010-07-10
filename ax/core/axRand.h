@@ -19,7 +19,7 @@
   64 bit integers are used so you might need to disable the 'long long'
   warning in g++: -Wno-long-long
   
-  TODO: improve version of axRand() algorithm when AX_USE_BETTER_RAND is used
+  // more algorithms ?
   
 */
 
@@ -28,6 +28,7 @@
 //------------------------------------------------------------------------------
 
 #include "axDefines.h"
+#include "axCpu.h"
 
 #ifdef AX_HOT_INLINE_RAND
   #define __axrand_inline __hotinline
@@ -37,106 +38,57 @@
 
 #ifndef AX_NO_RAND      // if not defined: use axonlib's axRand() methods
 
-#ifndef AX_USE_BETTER_RAND // if not defined: use simpler axRand()
+#include <iostream>
 
-static __thread int _axrnd = 1;
+class axRand
+{
+  private:
+    unsigned int _axrnd;
 
-/// set seed
-__axrand_inline void axRandSeed (const unsigned int seed)
-{ _axrnd = seed; }
+  public:
+    axRand(const unsigned int x)
+    {
+      _axrnd = x;
+    }
+    
+    axRand()
+    {
+      axCpu c;
+      _axrnd = (unsigned int)c.rdtsc();
+      std::cout << _axrnd << "\n";
+    }
+    
+    ~axRand() {}
+  
+    /// set seed
+    __axrand_inline void seed (const unsigned int seed)
+    { _axrnd = seed; }
+    
+    /// get random float between 0, 1
+    __axrand_inline float rand(void)
+    { return (float)((_axrnd *= 16807) & 0x7FFFFFFF) * 4.6566129e-010f; }
+    
+    /// get random float between 0, x
+    __axrand_inline float rand(const float range)
+    { return rand() * range; }
+    
+    /// get random float between -1, 1
+    __axrand_inline float randSigned(void)
+    { return (float)(_axrnd *= 16807) * 4.6566129e-010f; }
+    
+    /// get random float between -x, x
+    __axrand_inline float randSigned(const float range)
+    { return randSigned() * range; }
+    
+    /// get random integer number between 0, x
+    __axrand_inline unsigned int randInt(const unsigned int range=32767)
+    { return (unsigned int)(rand() * range); }
+    
+    /// get random integer from bit range (0, 31)
+    __axrand_inline unsigned int randBit(const unsigned int range=16)
+    { return ((_axrnd *= 16807) & 0x7FFFFFFF) >> (31 - range); }
 
-/// get random float between 0, 1
-__axrand_inline float axRand(void)
-{ return (float)((_axrnd *= 16807) & 0x7FFFFFFF) * 4.6566129e-010f; }
-
-/// get random float between 0, x
-__axrand_inline float axRand(const float range)
-{ return axRand() * range; }
-
-/// get random float between -1, 1
-__axrand_inline float axRandSigned(void)
-{ return (float)(_axrnd *= 16807) * 4.6566129e-010f; }
-
-/// get random float between -x, x
-__axrand_inline float axRandSigned(const float range)
-{ return axRandSigned() * range; }
-
-/// get random integer number between 0, x
-__axrand_inline unsigned int axRandInt(const unsigned int range=32767)
-{ return (unsigned int)(axRand() * range); }
-
-/// get random integer from bit range (0, 31)
-__axrand_inline unsigned int axRandBit(const unsigned int range=16)
-{ return ((_axrnd *= 16807) & 0x7FFFFFFF) >> (31 - range); }
-
-#else // AX_USE_BETTER_RAND
-
-/*
-  ------------------------------------------------------------------------------
-  axRand()
-  - "rdtsc" 64 bit register dependant
-  - seeded from "rdtsc"
-  - uniform distribution
-  - returns integer or floats in specified ranges
-  author: lubomir i. ivanov (lii) for axonlib
-  ------------------------------------------------------------------------------
-*/
-
-#define AXRAND_MAX        2147483647L
-#define INV_AXRAND_MAX    4.656612875245796924105750827168e-10f
-#define AXRAND_MAXLL      9223372036854775806LL
-
-#define _AXRAND_FLOAT     ( ( (float)( ( a * b ) >> 2) ) * 0.00000000093f )
-#define _AXRAND_FLOAT_C   s * ( (float)( ( a * b ) >> 1) ) * INV_AXRAND_MAX
-
-#ifdef __AX64__
-  // 64bit untested
-  __thread unsigned int _axrnd;
-  #define _AXRAND_ARCH \
-    register unsigned long low, high; \
-    register unsigned int  a, b; \
-    if (!_axrnd) \
-    { \
-      __asm__ ( "rdtsc;" : "=a" (low), "=d" (high) ) \
-      _axrnd = (unsigned int)( (low) | ( (unsigned long)(high) << 32 ) ) \
-    } else if (_axrnd > AXRAND_MAXLL) _axrnd = 0; \
-    a = _axrnd++
-#endif
-#ifdef __AX32__
-  __thread unsigned long long _axrnd;
-  #define _AXRAND_ARCH \
-    register unsigned long a, b; \
-    if (!_axrnd) \
-      __asm__ ( "rdtsc;" : "=A" (_axrnd) ); \
-    else if (_axrnd > AXRAND_MAXLL) _axrnd = 0; \
-    a = (unsigned long) _axrnd++
-#endif
-
-#define _AXRAND \
-  _AXRAND_ARCH; \
-  b = a; \
-  a = ( (a * -29999531) & -30000469 ) * 20000469; \
-  b = ( (b * -20000085) & -19999915 ) * 19999915;
-
-__axrand_inline float axRand(void)
-{ _AXRAND; return _AXRAND_FLOAT; }
-
-__axrand_inline float axRand(const float s)
-{ _AXRAND;  return _AXRAND_FLOAT_C; }
-
-__axrand_inline float axRandSigned(void)
-{ _AXRAND; return ( 2.f * _AXRAND_FLOAT - 1.f ); }
-
-__axrand_inline unsigned long axRandInt(void)
-{ _AXRAND; return ( a * b ); }
-
-__axrand_inline unsigned long axRandInt(const unsigned long s)
-{ _AXRAND;
-  return (unsigned long)( _AXRAND_FLOAT_C ); }
-
-#endif  // AX_USE_BETTER_RAND
-
-#ifdef AX_USE_RANDSINF
+};
 
 /*
   ------------------------------------------------------------------------------
@@ -178,17 +130,8 @@ class axRandSinf
   public:
     axRandSinf(void)
     {
-      #ifdef __AX64__
-      // 64bit untested
-        register unsigned long low, high;
-        register unsigned int _x;
-        __asmv ( "rdtsc;" : "=a" (low), "=d" (high) );
-        _x = (unsigned int) ( (low) | ( (unsigned long)(high) << 32 ) );
-      #endif
-      #ifdef __AX32__
-        register unsigned long long _x;
-        __asmv ( "rdtsc;" : "=A" (_x) );
-      #endif
+      axCpu c;
+      unsigned int _x = (unsigned int)c.rdtsc();
       x = (float)(_x >> 16);
       y = 1.f;
     }
@@ -213,8 +156,6 @@ class axRandSinf
     __axrand_inline unsigned long randInt(const unsigned long _top)
     { _AXRANDSINF; return (unsigned long) ( _top * _AXRANDSINF_SHIFT ); }
 };
-
-#endif // AX_USE_RANDSINF
 
 #else // AX_NO_RAND
 

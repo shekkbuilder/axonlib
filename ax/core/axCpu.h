@@ -54,6 +54,7 @@ class axCpu
     {
       if (fcall == 33139)  // 33139 = some default number
       {
+        isCalled = 1;
         int a, b, c, d;
         // -----------------
         // 0x00000001
@@ -91,8 +92,6 @@ class axCpu
           : "=a" (*eax), "=S" (*ebx), "=c" (*ecx), "=d" (*edx) : "a" (fcall)
         );
     }
-    
-    #ifdef AX_USE_CPU_CAPS
     
     // get cpu caps
     char cpustringbuf[256];
@@ -138,9 +137,6 @@ class axCpu
       if (_3DNOWEXT) axStrcat(cpustringbuf,(char*)"3dnowext ");
       return cpustringbuf;
     }
-    
-    #endif // AX_USE_CPU_CAPS
-    
     
     // call rdtsc()
     #ifdef __AX64__      

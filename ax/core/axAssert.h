@@ -31,8 +31,6 @@
 
 #ifdef AX_DEBUG /* AX_DEBUG */
 
-  #include "axDebug.h"
-
   /*
     axAssert()
     runtime assertion

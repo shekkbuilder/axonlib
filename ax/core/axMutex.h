@@ -18,7 +18,7 @@
 #define axMutex_included
 //----------------------------------------------------------------------
 
-#include "core/axDefines.h"
+#include "axDefines.h"
 
 class axMutexBase
 {
