@@ -90,13 +90,18 @@ class axWindowWin32 : public axWindowBase
     axWindowWin32(axBase* aBase, void* aParent, axRect aRect, int aWinFlags)
     : axWindowBase(aBase,aParent,aRect,aWinFlags)
       {
+trace("axWindowWin32");
         //trace("axWindowWin32.constructor()");
         mBase = aBase;
         //mInstance   = aContext->mInstance;
         //mWinName    = aContext->mWinClassName;
         //mParent     = (int)aContext->mWindow;
         mInstance = (HINSTANCE)aBase->getInterface()->getHandle();
-        mParent   = (HWND)aParent;
+
+        // this is set in reparent()
+        //mParent   = (HWND)aParent;
+
+trace("mParent" << mParent);
         //mWinName  = aBase->getInterface()->getName();
         mWinCursor  = LoadCursor(NULL,IDC_ARROW);
         mPrevCursor = 0;
@@ -192,6 +197,7 @@ class axWindowWin32 : public axWindowBase
 
         if (mWinFlags&AX_WIN_EMBEDDED) // embedded ---
         {
+trace("embedded");
           AdjustWindowRectEx(&rc,/*WS_OVERLAPPEDWINDOW|*/WS_POPUP,FALSE,WS_EX_TOOLWINDOW);
           //trace("adjusted rc (embedded): " << rc.left << "," << rc.top << " : " << rc.right << "," << rc.bottom);
           mWindow = CreateWindowEx(
@@ -201,18 +207,19 @@ class axWindowWin32 : public axWindowBase
             WS_POPUP,
             rc.left,//wPosX,          // center x
             rc.top,//wPosY,           // center y
-            rc.right-rc.left+1,         //wWidth,
-            rc.bottom-rc.top+1,         //wHeight,
+            rc.right-rc.left+1,       //wWidth,
+            rc.bottom-rc.top+1,       //wHeight,
             0,                        //(HWND)mParent,//0,
             0,
             mInstance,
             0
           );
-          reparent((int)mParent);   // !!! int is not 64-bit safe, i guess... use void*
+          reparent((int)aParent);   // !!! int is not 64-bit safe, i guess... use void*
         } //embedded
 
         else // windowed ---
         {
+trace("windowed");
           AdjustWindowRectEx(&rc,WS_OVERLAPPEDWINDOW,FALSE,WS_EX_OVERLAPPEDWINDOW);
           //trace("adjusted rc (windowed): " << rc.left << "," << rc.top << " : " << rc.right << "," << rc.bottom);
           const unsigned int wPosX =
@@ -444,10 +451,10 @@ class axWindowWin32 : public axWindowBase
 
     virtual void reparent(int aParent)
       {
-        //trace("reparent");
+        trace("reparent");
         mParent = (HWND)aParent; // !!!
         SetWindowLong(mWindow,GWL_STYLE,(GetWindowLong(mWindow,GWL_STYLE)&~WS_POPUP)|WS_CHILD);
-        SetParent(mWindow, (HWND)aParent);
+        SetParent(mWindow,(HWND)aParent);
       }
 
     //virtual void resetCursor(void)

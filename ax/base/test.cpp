@@ -28,7 +28,8 @@ class myDescriptor : public AX_DESCRIPTOR
   public:
     myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { /*trace("myDescriptor.constructor");*/ }
     virtual ~myDescriptor() { /*trace("myDescriptor.destructor");*/ }
-    //virtual bool hasEditor(void) { return true; }
+    virtual bool    hasEditor(void)     { return true; }
+    virtual axRect  getEditorRect(void) { return axRect(0,0,320,240); }
 };
 
 //----------------------------------------------------------------------
@@ -45,7 +46,6 @@ class myInstance : public AX_INSTANCE
     //axWindow*     win;
     axEditor*     edit;
     axSkinBasic*  skin;
-
     char temp[256];
 
   public:
@@ -62,6 +62,7 @@ class myInstance : public AX_INSTANCE
         // we can't access the mFormat class in the constructor/destructor of axInstance or axDescriptor
         // since these classes are created in the constructor  of axFormatExe/Vst/..
         trace("format:            '" << aBase->getFormat()/*->getFormatName() << "'"*/);   // NULL ???
+        trace("format:            '" << aBase->getFormat()->getFormatName() << "'");   // NULL ???
         trace("axGetBasePath:     '" << axGetBasePath(temp) << "'");
         trace("interface.getName: '" << aBase->getInterface()->getName() << "'");
         trace("AX_AXONLIB_TEXT:   '" << AX_AXONLIB_TEXT << "'");
@@ -77,7 +78,7 @@ class myInstance : public AX_INSTANCE
         trace("axCpuCapsString:   '" << cpu.axCpuCapsString() << "'");
         trace("rdtsc:              " << diff << " (may not be correct for multi-core)");
 
-        setupEditor(320,240);
+        //setupEditor(320,240);
         trace("MyInstace ok");
       }
 
@@ -90,12 +91,12 @@ class myInstance : public AX_INSTANCE
 
     //--------------------------------------------------
 
-    virtual void setupEditor(int aWidth, int aHeight)
-      {
-        mEditorRect.set(0,0,aWidth,aHeight);
-      }
-
-    virtual axRect getEditorRect(void) { return mEditorRect; }
+//    virtual void setupEditor(int aWidth, int aHeight)
+//      {
+//        mEditorRect.set(0,0,aWidth,aHeight);
+//      }
+//
+//    virtual axRect getEditorRect(void) { return mEditorRect; }
 
     //--------------------------------------------------
 
@@ -107,6 +108,7 @@ class myInstance : public AX_INSTANCE
         edit = (axEditor*)mBase->getInterface()->createEditor(ptr, getEditorRect()/*axRect(0,0,320,240)*/,AX_WIN_DEFAULT);
         if (edit)
         {
+          edit->show();
           //win->show();
           axCanvas* canvas = edit->getCanvas();
           skin = new axSkinBasic(canvas);

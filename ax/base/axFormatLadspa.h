@@ -166,6 +166,7 @@ class axFormatLadspa : public axFormat
     virtual void* entrypoint(void* ptr)
       {
         trace("* axFormatLadspa.entrypoint");
+        mDescriptor = mBase->getDescriptor();
         axMemset(&ladspadescr,0,sizeof(ladspadescr));
         ladspadescr.UniqueID            = 0;//mUniqueId;
         ladspadescr.Label               = (char*)"label";
@@ -200,13 +201,12 @@ class axFormatLadspa : public axFormat
       {
         trace("- axFormatLadspa.constructor");
         mBase = aBase;
-        mDescriptor = mBase->createDescriptor();
       }
 
     virtual ~axFormatLadspa()
       {
         trace("- axFormatLadspa.destructor");
-        delete mDescriptor;
+        //delete mDescriptor;
       }
 
     virtual char* getFormatName(void) { return (char*)"ladspa"; }

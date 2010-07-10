@@ -28,11 +28,16 @@ typedef axDescriptorExe AX_DESCRIPTOR;
 class axInstanceExe : public axInstance
 {
   private:
-    int result;
+    //int result;
+    axRect mEditorRect;
   public:
-    axInstanceExe(axBase* aBase) : axInstance(aBase) { /*trace("axInstanceExe.constructor");*/ }
+    axInstanceExe(axBase* aBase) : axInstance(aBase)
+      {
+        /*trace("axInstanceExe.constructor");*/
+        mEditorRect =aBase->getDescriptor()->getEditorRect();
+      }
     virtual ~axInstanceExe() { /*trace("axInstanceExe.destructor");*/ }
-
+    virtual axRect getEditorRect(void) { return mEditorRect; }
 };
 
 typedef axInstanceExe AX_INSTANCE;
@@ -65,6 +70,9 @@ class axFormatExe : public axFormat
     virtual void* entrypoint(void* ptr)
       {
         //trace("++ axFormatExe.entrypoint   *");
+        mDescriptor = mBase->getDescriptor();
+        mInstance   = mBase->createInstance();
+
         #ifndef AX_NOGUI
         //if (mFlags&if_HasEditor)
         //if (mDescriptor->hasEditor())
@@ -93,8 +101,6 @@ class axFormatExe : public axFormat
       {
         //trace("axFormatExe.constructor");
         mBase       = aBase;
-        mDescriptor = mBase->getDescriptor();
-        mInstance   = mBase->createInstance();
         //mFormatFlags = ff_None;
       }
 
@@ -102,7 +108,7 @@ class axFormatExe : public axFormat
       {
         //trace("axFormatExe.destructor");
         //mInstance->doCloseEditor();
-        delete mDescriptor;
+        //delete mDescriptor;
         delete mInstance;
       }
 
