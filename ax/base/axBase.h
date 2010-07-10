@@ -19,6 +19,7 @@
 #include "core/axRand.h"
 #include "core/axStdlib.h"
 #include "core/axUtils.h"
+#include "par/axParameter.h"
 
 //----------------------------------------------------------------------
 
@@ -38,39 +39,77 @@ class axBase
   public:
     axBase() {}
     virtual ~axBase() {}
-    virtual axPlatform*   getPlatform(void)       { return NULL; }
-    virtual axInterface*  getInterface(void)      { return NULL; }
-    virtual axFormat*     getFormat(void)         { return NULL; }
-    virtual axDescriptor* createDescriptor(void)  { return NULL; }
-    virtual axInstance*   createInstance(void)    { return NULL; }
+    virtual axPlatform*   getPlatform(void)     { return NULL; }
+    virtual axInterface*  getInterface(void)    { return NULL; }
+    virtual axFormat*     getFormat(void)       { return NULL; }
+    virtual axDescriptor* getDescriptor(void)   { return NULL; }
+    virtual axInstance*   createInstance(void)  { return NULL; }
 };
 
 //----------------------------------------------------------------------
 //
 //----------------------------------------------------------------------
 
+// default names for (default) stereo in/out
+static char* g_default_stereo_inputs[]  = { (char*)"in1", (char*)"in2" };
+static char* g_default_stereo_outputs[] = { (char*)"out1",(char*)"out2" };
+
+//----------
+
+
 class axDescriptor
 {
   public:
-    axDescriptor(axBase* aBase) { /*trace("axDescriptor.constructor");*/ }
-    virtual ~axDescriptor()     { /*trace("axDescriptor.destructor");*/ }
+    axDescriptor(axBase* aBase)  { /*trace("axDescriptor.constructor");*/ }
+    virtual ~axDescriptor()      { /*trace("axDescriptor.destructor");*/ }
     //
-    virtual bool hasEditor(void) { /*trace("hasEditor");*/ return false; }
+    virtual char*         getName(void)             { return (char*)"plugin"; }
+    virtual char*         getAuthor(void)           { return (char*)"anonymous"; }
+    virtual char*         getProduct(void)          { return (char*)"unknown plugin"; }
+    virtual int           getVersion(void)          { return 0; }
+    virtual unsigned int  getUniqueId(void)         { return 0x00000000; }
+    virtual int           getNumInputs(void)        { return 2; }
+    virtual int           getNumOutputs(void)       { return 2; }
+    virtual int           getNumParams(void)        { return 0; }
+    virtual int           getNumProgs(void)         { return 0; }
+    virtual char*         getInputName(int aIndex)  { return g_default_stereo_inputs[aIndex]; }
+    virtual char*         getOutputName(int aIndex) { return g_default_stereo_outputs[aIndex]; }
+    virtual char*         getParamName(int aIndex)  { return (char*)"param"; }
+    //virtual bool          hasEditor(void)           { return false; }
+    //virtual bool          isSynth(void)             { return false; }
 };
 
 //----------
 
+#define is_Open     1
+#define is_Close    2
+#define is_Suspend  3
+#define is_Resume   4
+#define is_Rate     5
+#define is_Block    6
+
 class axInstance
 {
   public:
-    axInstance(axBase* aBase) { /*trace("axInstance.constructor");*/ }
-    virtual ~axInstance()     { /*trace("axInstance.destructor");*/ }
+    axInstance(axBase* aBase)  { /*trace("axInstance.constructor");*/ }
+    virtual ~axInstance()      { /*trace("axInstance.destructor");*/ }
     //
-    virtual bool hasFlag(int aFlag) { return false; }
+    //virtual void prepare(void* aHost, void* aUser) {}
+
     //
-    virtual void*   doOpenEditor(void* ptr) { return NULL; }
-    virtual void    doCloseEditor(void)     { }
+    virtual void    doStateChange(int aState) {}
+    virtual void    doSetParameter(axParameter* aParameter) {}
+    virtual void    doPreProgram(int aProgram) {}
+    virtual void    doSetProgram(int aProgram) {}
+    virtual void    doProcessMidi(int aOffset, unsigned char aMsg1, unsigned char aMsg2, unsigned char aMsg3) {}
+    virtual bool    doProcessBlock(float** aInputs, float** aOutputs, int Length) { return false; }
+    virtual void    doProcessSample(float** aInputs, float** aOutputs) {}
+    virtual void    doPostProcess(float** aInputs, float** aOutputs, int Length) {}
+    //
     virtual axRect  getEditorRect(void) { return axRect(0,0,100,100); }
+    virtual void*   doOpenEditor(void* ptr) { return NULL; }
+    virtual void    doCloseEditor(void) {}
+    virtual void    doIdleEditor(void) {}
 };
 
 //----------------------------------------------------------------------
@@ -101,7 +140,8 @@ class axInterface
     virtual ~axInterface()      { /*trace("axInterface.destructor");*/ }
     virtual void* getHandle(void) { return NULL; }    // linux: display*
     virtual char* getName(void) { return (char*)""; } // win32: window class name
-    virtual void* createWindow(void* aParent, axRect aRect, int aFlags) { return NULL; }
+    //virtual void* createWindow(void* aParent, axRect aRect, int aFlags) { return NULL; }
+    virtual void* createEditor(void* aParent, axRect aRect, int aFlags) { return NULL; }
 
 };
 
@@ -121,6 +161,8 @@ class axFormat
     virtual ~axFormat()     { /*trace("axFormat.destructor");*/ }
     //virtual void* entrypoint(void* ptr) { result=0; return &result; }
     virtual char* getFormatName(void) { return (char*)""; }
+    virtual void* getHostPtr(void) { return NULL; }
+    virtual void* getUserPtr(void) { return NULL; }
 
 };
 
@@ -148,14 +190,14 @@ class axBaseImpl : public axBase
     axPlatform*     mPlatform;
     axInterface*    mInterface;
     axFormat*       mFormat;
-    //axDescriptor*   mDescriptor;
+    axDescriptor*   mDescriptor;
   public:
     axBaseImpl()
       {
         //trace("axBaseImpl.constructor");
         mPlatform     = new _PL(this);
         mInterface    = new _IF(this);
-        //mDescriptor   = new _D(this);
+        mDescriptor   = new _D(this);
         mFormat       = new _FO(this);
       }
     virtual ~axBaseImpl()
@@ -163,16 +205,16 @@ class axBaseImpl : public axBase
         //trace("axBaseImpl.destructor");
         delete mPlatform;
         delete mInterface;
-        //delete mDescriptor;
+        delete mDescriptor;
         delete mFormat;
       }
   //protected:
   public:
-    virtual axPlatform*   getPlatform(void)       { return mPlatform; }
-    virtual axInterface*  getInterface(void)      { return mInterface; }
-    virtual axFormat*     getFormat(void)         { return mFormat; }
-    virtual axDescriptor* createDescriptor(void)  { return new _D(this); } // you have to delete it yourself
-    virtual axInstance*   createInstance(void)    { return new _I(this); } // --"--
+    virtual axPlatform*   getPlatform(void)     { return mPlatform; }
+    virtual axInterface*  getInterface(void)    { return mInterface; }
+    virtual axFormat*     getFormat(void)       { return mFormat; }
+    virtual axDescriptor* getDescriptor(void)   { return mDescriptor; }
+    virtual axInstance*   createInstance(void)  { return new _I(this); }  // you have to delete it yourself
 };
 
 //----------------------------------------------------------------------

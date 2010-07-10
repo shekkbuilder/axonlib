@@ -28,7 +28,7 @@ class myDescriptor : public AX_DESCRIPTOR
   public:
     myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { /*trace("myDescriptor.constructor");*/ }
     virtual ~myDescriptor() { /*trace("myDescriptor.destructor");*/ }
-    virtual bool hasEditor(void) { return true; }
+    //virtual bool hasEditor(void) { return true; }
 };
 
 //----------------------------------------------------------------------
@@ -41,6 +41,7 @@ class myInstance : public AX_INSTANCE
 {
   private:
     axBase*       mBase;
+    axRect        mEditorRect;
     //axWindow*     win;
     axEditor*     edit;
     axSkinBasic*  skin;
@@ -57,13 +58,6 @@ class myInstance : public AX_INSTANCE
         edit = NULL;
         skin = NULL;
 
-        axCpu cpu;
-        cpu.axCpuId();
-        unsigned long long start_time, end_time, diff;
-        start_time = cpu.rdtsc(); // may not work correctly for multi-core
-        end_time   = cpu.rdtsc();
-        diff       = end_time - start_time;
-
         trace("platform:          '" << aBase->getPlatform()->getPlatformName() << "'");
         // we can't access the mFormat class in the constructor/destructor of axInstance or axDescriptor
         // since these classes are created in the constructor  of axFormatExe/Vst/..
@@ -71,9 +65,20 @@ class myInstance : public AX_INSTANCE
         trace("axGetBasePath:     '" << axGetBasePath(temp) << "'");
         trace("interface.getName: '" << aBase->getInterface()->getName() << "'");
         trace("AX_AXONLIB_TEXT:   '" << AX_AXONLIB_TEXT << "'");
+
+        axCpu cpu;
+        cpu.axCpuId();
+        unsigned long long start_time, end_time, diff;
+        start_time = cpu.rdtsc(); // may not work correctly for multi-core
+        end_time   = cpu.rdtsc();
+        diff       = end_time - start_time;
+
         trace("axCpuCaps:          " << cpu.axCpuCaps() );
         trace("axCpuCapsString:   '" << cpu.axCpuCapsString() << "'");
         trace("rdtsc:              " << diff << " (may not be correct for multi-core)");
+
+        setupEditor(320,240);
+        trace("MyInstace ok");
       }
 
     //----------
@@ -85,11 +90,21 @@ class myInstance : public AX_INSTANCE
 
     //--------------------------------------------------
 
+    virtual void setupEditor(int aWidth, int aHeight)
+      {
+        mEditorRect.set(0,0,aWidth,aHeight);
+      }
+
+    virtual axRect getEditorRect(void) { return mEditorRect; }
+
+    //--------------------------------------------------
+
     virtual void* doOpenEditor(void* ptr)
       {
-        //trace("doOpenEditor");
+        trace("doOpenEditor");
         //win = (axWindow*)mBase->getInterface()->createWindow(ptr,axRect(0,0,320,240),AX_WIN_DEFAULT);
-        edit = (axEditor*)mBase->getInterface()->createWindow(ptr,axRect(0,0,320,240),AX_WIN_DEFAULT);
+        //edit = (axEditor*)mBase->getInterface()->createWindow(ptr,axRect(0,0,320,240),AX_WIN_DEFAULT);
+        edit = (axEditor*)mBase->getInterface()->createEditor(ptr, getEditorRect()/*axRect(0,0,320,240)*/,AX_WIN_DEFAULT);
         if (edit)
         {
           //win->show();
@@ -108,11 +123,10 @@ class myInstance : public AX_INSTANCE
 
     virtual void  doCloseEditor(void)
       {
-        if (edit) delete edit;
         if (skin) delete skin;
-        edit = NULL;
         skin = NULL;
-
+        if (edit) delete edit;
+        edit = NULL;
       }
 
 };

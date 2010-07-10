@@ -3,7 +3,8 @@
 //----------------------------------------------------------------------
 
 #include "core/axStdlib.h"
-#include "gui/axWindow.h"
+//#include "gui/axWindow.h"
+#include "gui/axEditor.h"
 
 //----------------------------------------------------------------------
 
@@ -73,14 +74,24 @@ class axInterfaceWin32 : public axInterface
 
     //----------
 
-    virtual void* createWindow(void* aParent, axRect aRect, int aFlags)
+//    virtual void* createWindow(void* aParent, axRect aRect, int aFlags)
+//      {
+//        //trace("axInterfaceWin32.createWindow");
+//        axWindow* window;
+//        if (aParent) window = new axWindow(mBase,aParent,aRect,aFlags);
+//        else window = new axWindow(mBase,NULL,aRect,aFlags);
+//        //trace("  window " << window);
+//        return (void*)window;
+//      }
+//
+    virtual void* createEditor(void* aParent, axRect aRect, int aFlags)
       {
         //trace("axInterfaceWin32.createWindow");
-        axWindow* window;
-        if (aParent) window = new axWindow(mBase,aParent,aRect,aFlags);
-        else window = new axWindow(mBase,NULL,aRect,aFlags);
+        axEditor* editor;
+        if (aParent) editor = new axEditor(mBase,aParent,aRect,aFlags);
+        else editor = new axEditor(mBase,NULL,aRect,aFlags);
         //trace("  window " << window);
-        return (void*)window;
+        return (void*)editor;
       }
 
 };
