@@ -75,8 +75,10 @@ class axDescriptor
     virtual char*         getInputName(int aIndex)  { return g_default_stereo_inputs[aIndex]; }
     virtual char*         getOutputName(int aIndex) { return g_default_stereo_outputs[aIndex]; }
     virtual char*         getParamName(int aIndex)  { return (char*)"param"; }
-    //virtual bool          hasEditor(void)           { return false; }
-    //virtual bool          isSynth(void)             { return false; }
+    //
+    virtual bool          isSynth(void)             { return false; }
+    virtual bool          hasEditor(void)           { return false; }
+    virtual axRect        getEditorRect(void)       { return axRect(0,0,100,100); }
 };
 
 //----------
@@ -203,10 +205,10 @@ class axBaseImpl : public axBase
     virtual ~axBaseImpl()
       {
         //trace("axBaseImpl.destructor");
-        delete mPlatform;
-        delete mInterface;
-        delete mDescriptor;
         delete mFormat;
+        delete mDescriptor;
+        delete mInterface;
+        delete mPlatform;
       }
   //protected:
   public:

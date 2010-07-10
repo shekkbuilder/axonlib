@@ -24,7 +24,7 @@ class axInterfaceLinux : public axInterface
         //trace("axInterfaceLinux.constructor");
         mBase = aBase;
         XInitThreads();
-        mDisplay = XOpenDisplay(NULL);
+        mDisplay = XOpenDisplay(NULL);              // må denne være unik for hver instance? i så fall, fløuytt til createWindow
         mRootWindow = XDefaultRootWindow(mDisplay);
         //trace("  mDisplay:    " << mDisplay);
         //trace("  mRootWindow: " << mRootWindow);
@@ -41,19 +41,10 @@ class axInterfaceLinux : public axInterface
         return (void*)mDisplay;
       }
 
-//    virtual void* createWindow(void* aParent, axRect aRect, int aFlags)
-//      {
-//        //trace("axInterfaceLinux.createWindow");
-//        axWindow* window;
-//        if (aParent) window = new axWindow(mBase,aParent,aRect,aFlags);
-//        else window = new axWindow(mBase,&mRootWindow,aRect,aFlags);
-//        //trace("  window " << window);
-//        return (void*)window;
-//      }
-
     virtual void* createEditor(void* aParent, axRect aRect, int aFlags)
       {
         axEditor* editor;
+        void* parent = aParent;
         if (aParent) editor = new axEditor(mBase,aParent,aRect,aFlags);
         else editor = new axEditor(mBase,&mRootWindow,aRect,aFlags);
         //trace("  window " << window);
