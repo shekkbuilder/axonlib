@@ -41,10 +41,10 @@ inline const char* axGetFileName(const char* path)
 
 // set macros depending on which flags are enabled
 #ifdef AX_DEBUG
+  #include <iostream>
+  #include <fstream>
 
-  #ifdef AX_DEBUG_LOG
-    #include <iostream>
-    #include <fstream>      
+  #ifdef AX_DEBUG_LOG    
     #include "axDebugLog.h"    
     axDebugLog axCout;
   #else
