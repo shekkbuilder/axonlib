@@ -3,9 +3,12 @@ VERSION HISTORY
 
 v ???
 ! debug: disabled the winapi window
+! debug: new class structure
+! axRand: moved the default axRand methods into a class
 + extern/isaac - crypto-safe random number generator
 * axUtils: fixed a -fPIC / axCPUID issue
 * ladspa: added hints and override values for the parameters
+??
 
 v0.1.1a - 290610
 * fixed some issue with 64bit builds

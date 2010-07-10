@@ -14,6 +14,7 @@
 #include "axDebugConsole.h"
 
 #include "axRand.h"
+#include "axCpu.h"
 
 ///////////////////////////////
 // test code
@@ -22,7 +23,9 @@
   \
   axDebugConsole dbg_c; \
   axRand r; \
+  axCpu cpu; \
   \
+  trace("cpuid=" << cpu.axCpuCaps()); \
   trace(" \
   \n this test will output a random value 5000 \
   \n times in the console. \

@@ -38,7 +38,7 @@
 
 #ifndef AX_NO_RAND      // if not defined: use axonlib's axRand() methods
 
-#include <iostream>
+//#include <iostream>
 
 class axRand
 {
@@ -55,7 +55,7 @@ class axRand
     {
       axCpu c;
       _axrnd = (unsigned int)c.rdtsc();
-      std::cout << _axrnd << "\n";
+      //std::cout << _axrnd << "\n";
     }
     
     ~axRand() {}
