@@ -24,13 +24,22 @@
   #define axGetBit(x, bit) ( 1 & ((x) >> (bit)) )
 #endif
 
+// fPIC compatible
+#define _AXCPU_EBX_REG "r"
+#define _AXCPU_EBX_STORE  \
+  "pushl %%ebx;"          \
+  "cpuid;"                \
+  "movl %%ebx, %1;"       \
+  "popl %%ebx;"
+
 class axCpu
 {
   private:
     unsigned char isCalled;
+    char          cpustringbuf[256];
         
   public:
-    unsigned int caps;
+    unsigned int  caps;
     unsigned char _SSE3,
                   _SSSE3,
                   _FPU,
@@ -60,8 +69,9 @@ class axCpu
         // 0x00000001
         __asmv
         (
-          "cpuid;"
-          : "=a" (a), "=S" (b), "=c" (c), "=d" (d) : "a" (0x00000001)
+          _AXCPU_EBX_STORE
+          : "=a" (a), "="_AXCPU_EBX_REG"" (b),
+            "=c" (c), "=d" (d) : "a" (0x00000001) : "cc"
         );
         _SSE3   = axGetBit(c, 0);
         _SSSE3  = axGetBit(c, 9);
@@ -73,8 +83,9 @@ class axCpu
         // 0x80000001
         __asmv
         (
-          "cpuid;"
-          : "=a" (a), "=S" (b), "=c" (c), "=d" (d) : "a" (0x80000001)
+          _AXCPU_EBX_STORE
+          : "=a" (a), "="_AXCPU_EBX_REG"" (b),
+            "=c" (c), "=d" (d) : "a" (0x80000001) : "cc"
         );
         _SSE4A    = axGetBit(c, 4);
         _SSE5     = axGetBit(c, 11);
@@ -88,13 +99,13 @@ class axCpu
       else
         __asmv
         (
-          "cpuid;"
-          : "=a" (*eax), "=S" (*ebx), "=c" (*ecx), "=d" (*edx) : "a" (fcall)
+          _AXCPU_EBX_STORE
+          : "=a" (*eax), "="_AXCPU_EBX_REG"" (*ebx),
+            "=c" (*ecx), "=d" (*edx) : "a" (fcall) : "cc"
         );
     }
     
-    // get cpu caps
-    char cpustringbuf[256];
+    // get cpu caps    
     
     unsigned int
     axCpuCaps(void)
@@ -116,7 +127,7 @@ class axCpu
       return caps;
     }
     
-    // axCpuCapsString  
+    // axCpuCapsString
     char*
     axCpuCapsString(void)
     {
