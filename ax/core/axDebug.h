@@ -21,9 +21,6 @@
 // axDebug.h
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <iostream>
-#include <fstream>
-
 #include "axDefines.h"
 #include "axStdlib.h"
 
@@ -46,7 +43,9 @@ inline const char* axGetFileName(const char* path)
 #ifdef AX_DEBUG
 
   #ifdef AX_DEBUG_LOG
-    #include "axDebugLog.h"
+    #include <iostream>
+    #include <fstream>      
+    #include "axDebugLog.h"    
     axDebugLog axCout;
   #else
     #define axCout std::cout
