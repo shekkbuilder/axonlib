@@ -69,7 +69,7 @@ typedef axDescriptorVst AX_DESCRIPTOR;
 //
 //----------------------------------------------------------------------
 
-class axInstanceVst : public axInstance
+class axInstanceVst : public axInstance, public axParameterListener
 {
   protected:
     axBase*             mBase;
@@ -1412,7 +1412,7 @@ class axInstanceVst : public axInstance
     // axInstanceBase
     //----------------------------------------
 
-    virtual void  notifyParamChanged(axParameter* aParameter)
+    virtual void notifyParamChanged(axParameter* aParameter)
       {
         int index = aParameter->getIndex();
         float value = aParameter->doGetValue(); // 0..1
@@ -1540,7 +1540,7 @@ class axFormatVst : public axFormat
         mDescriptor = mBase->getDescriptor();
 
         axMemset(&aeffect,0,sizeof(aeffect));
-        mInstance   = mBase->createInstance(); // only one instance for vst, so we create i here..
+        mInstance = mBase->createInstance(); // only one instance for vst, so we create i here..
 
         aeffect.magic                   = kEffectMagic;
         aeffect.object                  = mInstance;//this;
@@ -1596,6 +1596,8 @@ class axFormatVst : public axFormat
     virtual char* getFormatName(void) { return (char*)"vst"; }
     virtual void* getHostPtr(void) { return (void*)audioMaster; }
     virtual void* getUserPtr(void) { return &aeffect; }
+
+    //----------
 
 };
 

@@ -103,6 +103,9 @@ class axInstance
     virtual void*   doOpenEditor(void* ptr) { return NULL; }
     virtual void    doCloseEditor(void) {}
     virtual void    doIdleEditor(void) {}
+    //
+    virtual void    notifyResizeEditor(int aWidth, int aHeight) {}
+    virtual void    notifyParamChanged(axParameter* aParameter) {}
 };
 
 //----------------------------------------------------------------------

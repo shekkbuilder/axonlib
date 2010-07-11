@@ -1,8 +1,8 @@
-#define AX_DEBUG_AUTO_STD
-#define AX_DEBUG_MEM
-#define AX_DEBUG_PNG
-#define AX_DEBUG_NEW
-#define AX_DEBUG_LOG "test.log"
+//#define AX_DEBUG_AUTO_STD
+//#define AX_DEBUG_MEM
+//#define AX_DEBUG_PNG
+//#define AX_DEBUG_NEW
+//#define AX_DEBUG_LOG "test.log"
 
 //#define AX_NOGUI
 #define AX_USE_CPU_CAPS
@@ -17,6 +17,7 @@
 #include "wdg/wdgPanel.h"
 #include "wdg/wdgButton.h"
 #include "wdg/wdgKnob.h"
+#include "par/parFloat.h"
 
 //----------------------------------------------------------------------
 //
@@ -31,6 +32,8 @@ class myDescriptor : public AX_DESCRIPTOR
     //virtual ~myDescriptor() {}
     virtual bool    hasEditor(void)     { return true; }
     virtual axRect  getEditorRect(void) { return axRect(0,0,320,240); }
+    virtual int   getNumParams(void) { return 1; }
+    virtual char* getParamName(int aIndex)  { if (aIndex==0) return (char*)"param"; return (char*)""; }
 };
 
 //----------------------------------------------------------------------
@@ -46,6 +49,11 @@ class myInstance : public AX_INSTANCE
     axRect        mEditorRect;
     axEditor*     edit;
     axSkinBasic*  skin;
+    axRand        rnd;
+    parFloat*     gain;
+    wdgButton*    button;
+    wdgKnob*      knob;
+    float         m_gain;
 
   public:
 
@@ -55,6 +63,9 @@ class myInstance : public AX_INSTANCE
         edit  = NULL;
         skin  = NULL;
         test();
+        m_gain = 1;
+        appendParameter( gain = new parFloat(this,"gain","",0.5) );
+        setupParameters();
       }
 
     //----------
@@ -91,6 +102,28 @@ class myInstance : public AX_INSTANCE
     //    trace("doStateChange: " << aState);
     //  }
 
+    virtual void doSetParameter(axParameter* aParameter)
+      {
+        int   index = aParameter->getIndex();
+        float value = aParameter->getValue();
+        trace("doSetParameter(" << index << ") = " << value);
+        if (index==0) m_gain = value;
+      }
+
+
+    //virtual bool doProcessBlock(float** aInputs, float** aOutputs, int Length)
+    //  {
+    //    trace("block");
+    //    return false;
+    //  }
+
+    virtual void doProcessSample(float** aInputs, float** aOutputs)
+      {
+        *aOutputs[0] = rnd.randSigned() * m_gain;
+        *aOutputs[1] = rnd.randSigned() * m_gain;
+        //trace(".");
+      }
+
     //--------------------------------------------------
 
     virtual void* doOpenEditor(void* ptr)
@@ -106,9 +139,10 @@ class myInstance : public AX_INSTANCE
           edit->setInstance(this);
           wdgPanel* panel;
           edit->appendWidget( panel = new wdgPanel(edit,NULL_RECT,wa_Client));
-            panel->appendWidget( new wdgButton(edit,axRect(10,10,100,30),wa_None));
-            panel->appendWidget( new wdgKnob(  edit,axRect(10,50,100,30),wa_None));
+            panel->appendWidget( button = new wdgButton(edit,axRect(10,10,100,30),wa_None));
+            panel->appendWidget( knob   = new wdgKnob(  edit,axRect(10,50,100,30),wa_None));
           edit->doRealign();
+          edit->connect(knob,gain);
         }
         return edit;
       }
@@ -122,6 +156,14 @@ class myInstance : public AX_INSTANCE
       }
 
     //
+
+    virtual void doIdleEditor(void)
+      {
+        #ifndef AX_WIDGET_NOUPDATELIST
+          //trace("axFormat.doIdleEditor");
+          if (edit) edit->redrawUpdates();
+        #endif
+      }
 
 };
 
