@@ -37,7 +37,7 @@ class axCpu
   private:
     unsigned char isCalled;
     char          cpustringbuf[256];
-        
+
   public:
     unsigned int  caps;
     unsigned char _SSE3,
@@ -55,7 +55,7 @@ class axCpu
 
     axCpu(void)   { isCalled = 0; caps = 0; }
     ~axCpu(void)  {}
-  
+
     // get cpu specifiction
     void
     axCpuId(const int fcall=33139, int* eax=NULL, int* ebx=NULL,
@@ -104,9 +104,9 @@ class axCpu
             "=c" (*ecx), "=d" (*edx) : "a" (fcall) : "cc"
         );
     }
-    
-    // get cpu caps    
-    
+
+    // get cpu caps
+
     unsigned int
     axCpuCaps(void)
     {
@@ -126,7 +126,7 @@ class axCpu
       if (_3DNOWEXT)  caps |= 0x0800;
       return caps;
     }
-    
+
     // axCpuCapsString
     char*
     axCpuCapsString(void)
@@ -148,9 +148,9 @@ class axCpu
       if (_3DNOWEXT) axStrcat(cpustringbuf,(char*)"3dnowext ");
       return cpustringbuf;
     }
-    
+
     // call rdtsc()
-    #ifdef __AX64__      
+    #ifdef __AX64__
       inline unsigned long long rdtsc(void)
       {
         unsigned low, high;
@@ -166,7 +166,7 @@ class axCpu
         return val;
       }
     #endif
-    
+
 };
 
 #endif // axCpu_included
@@ -174,25 +174,25 @@ class axCpu
 /**
  * @file axCpu.h
  * \brief axCpu class
- * 
- * usage: 
+ *
+ * usage:
  * \code
  * axCpu mycpu;
  * mycpu.axCpuId();
  * if (mycpu._FPU) { printf("processor has FPU\n"); }
- *  
+ *
  * int eax, ebx, ecx, edx;
  * mycpu.axCpuId(0x00000001, &eax, &ebx, &ecx, &edx);
  * // do something with variable 'eax'
- * 
+ *
  * unsigned long long start_time, end_time, diff;
- * 
+ *
  * start_time = mycpu.rdtsc();
- * // do something 
+ * // do something
  * end_time = mycpu.rdtsc();
  * diff = end_time - start_time;
  * // note will not work correctly for multi-core
- * 
+ *
  * \endcode
  * for more information see: <br>
  * http://en.wikipedia.org/wiki/CPUID <br>

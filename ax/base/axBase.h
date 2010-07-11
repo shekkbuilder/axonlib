@@ -2,18 +2,12 @@
 #define axBase_included
 //----------------------------------------------------------------------
 
-// when everything is up'n'running again:
-// we could remove the constructor/destructor from all base classes,
-// also, examine the virtual-ness of everything (what's needed, etc)
-
-//----------
-
-#include "hack_hack.h"
+//#include "hack_hack.h"
 
 #include "axConfig.h"
 #include "core/axDefines.h"
-//#include "core/axDebug.h"
-//#include "core/axAssert.h"
+#include "core/axDebug.h"
+#include "core/axAssert.h"
 #include "core/axRect.h"
 #include "core/axMalloc.h"
 #include "core/axRand.h"
@@ -96,9 +90,6 @@ class axInstance
     axInstance(axBase* aBase)  { /*trace("axInstance.constructor");*/ }
     virtual ~axInstance()      { /*trace("axInstance.destructor");*/ }
     //
-    //virtual void prepare(void* aHost, void* aUser) {}
-
-    //
     virtual void    doStateChange(int aState) {}
     virtual void    doSetParameter(axParameter* aParameter) {}
     virtual void    doPreProgram(int aProgram) {}
@@ -142,9 +133,7 @@ class axInterface
     virtual ~axInterface()      { /*trace("axInterface.destructor");*/ }
     virtual void* getHandle(void) { return NULL; }    // linux: display*
     virtual char* getName(void) { return (char*)""; } // win32: window class name
-    //virtual void* createWindow(void* aParent, axRect aRect, int aFlags) { return NULL; }
     virtual void* createEditor(void* aParent, axRect aRect, int aFlags) { return NULL; }
-
 };
 
 //----------------------------------------------------------------------
@@ -156,27 +145,18 @@ class axInterface
 
 class axFormat
 {
-  //private:
-  //  int result;
   public:
     axFormat(axBase* aBase) { /*trace("axFormat.constructor");*/ }
     virtual ~axFormat()     { /*trace("axFormat.destructor");*/ }
-    //virtual void* entrypoint(void* ptr) { result=0; return &result; }
+    virtual void* entrypoint(void* ptr) { return NULL; }
     virtual char* getFormatName(void) { return (char*)""; }
-    virtual void* getHostPtr(void) { return NULL; }
-    virtual void* getUserPtr(void) { return NULL; }
-
+    virtual void* getHostPtr(void) { return NULL; } // vst: audioMasterCallback
+    virtual void* getUserPtr(void) { return NULL; } // vst: aeffect
 };
 
 //----------------------------------------------------------------------
 // base implementation
 //----------------------------------------------------------------------
-
-  #define MAKESTRING2(s) #s
-  #define MAKESTRING(s) MAKESTRING2(s)
-  #define MAKE_NAME(name) MAKESTRING(name) "_window"
-
-//char* winname = (char*)MAKE_NAME(name);
 
 //  PL - Platform
 //  IF - Interface
@@ -253,4 +233,5 @@ static axGlobalScope gGlobalScope;
 // win32: HWND   = pvoid
 // linux: Window = unsigned long
 
-//TODO: reparent (axWindowWin32/Linux), use void* as parent, not int (32/64 bit safety)
+//TODO: reparent (axWindowWin32/Linux)
+//      use void* as parent, not int (32/64 bit safety)

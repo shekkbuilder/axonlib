@@ -513,7 +513,7 @@ class axInstanceVst : public axInstance
               //if (strcmp(ptr,"midiProgramNames"))     return 0; // plug-in supports function #getMidiProgramName ()
               //if (strcmp(ptr,"bypass"))               return 0; // plug-in supports function #setBypass ()
               if (!strcmp(p,"hasCockosExtensions"))  v=0xbeef0000;
-              trace("effCanDo: '" << p << "' (return: " << hex << v << dec << ")");
+              trace("effCanDo: '" << p << "' (return: " << /*hex <<*/ v << /*dec <<*/ ")");
             }
             break;
 

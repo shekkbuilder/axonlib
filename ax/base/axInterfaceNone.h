@@ -22,12 +22,6 @@ class axInterfaceNone : public axInterface
         //trace("axInterfaceNone.destructor");
       }
 
-//    virtual void* createWindow(axInstance* aInstance,void* parent)
-//      {
-//        //trace("axInterfaceNone.createWindow");
-//        return NULL;
-//      }
-//
     virtual void* createEditor(axInstance* aInstance,void* parent)
       {
         //trace("axInterfaceNone.createWindow");

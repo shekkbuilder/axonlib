@@ -14,8 +14,8 @@
 class axDescriptorLadspa : public axDescriptor
 {
   public:
-    axDescriptorLadspa(axBase* aBase) : axDescriptor(aBase) { trace("  axDescriptorLadspa.constructor"); }
-    virtual ~axDescriptorLadspa()     { trace("  axDescriptorLadspa.destructor"); }
+    axDescriptorLadspa(axBase* aBase) : axDescriptor(aBase) { /*trace("  axDescriptorLadspa.constructor");*/ }
+    virtual ~axDescriptorLadspa()     { /*trace("  axDescriptorLadspa.destructor");*/ }
 };
 
 typedef axDescriptorLadspa AX_DESCRIPTOR;
@@ -29,16 +29,16 @@ typedef axDescriptorLadspa AX_DESCRIPTOR;
 class axInstanceLadspa : public axInstance
 {
   public:
-    axInstanceLadspa(axBase* aBase) : axInstance(aBase) { trace("  axInstanceLadspa.constructor"); }
-    virtual ~axInstanceLadspa()     { trace("  axInstanceLadspa.destructor"); }
+    axInstanceLadspa(axBase* aBase) : axInstance(aBase) { /*trace("  axInstanceLadspa.constructor");*/ }
+    virtual ~axInstanceLadspa()     { /*trace("  axInstanceLadspa.destructor");*/ }
     // callbacks
-    virtual void lad_connect_port(unsigned long Port, LADSPA_Data* DataLocation) { trace("axFormatLadspa.lad_connect_port"); }
-    virtual void lad_activate(void) { trace("axFormatLadspa.lad_activate"); }
+    virtual void lad_connect_port(unsigned long Port, LADSPA_Data* DataLocation) { /*trace("axFormatLadspa.lad_connect_port");*/ }
+    virtual void lad_activate(void) { /*trace("axFormatLadspa.lad_activate");*/ }
     virtual void lad_run(unsigned long SampleCount) { /*trace("axFormatLadspa.lad_run");*/ }
   //virtual void lad_run_adding(unsigned long SampleCount) {}
   //virtual void lad_set_run_adding_gain(LADSPA_Data Gain) {}
-    virtual void lad_deactivate(void) { trace("axFormatLadspa.lad_deactivate"); }
-    virtual void lad_cleanup(void) { trace("axFormatLadspa.lad_cleanup"); }
+    virtual void lad_deactivate(void) { /*trace("axFormatLadspa.lad_deactivate");*/ }
+    virtual void lad_cleanup(void) { /*trace("axFormatLadspa.lad_cleanup");*/ }
 };
 
 typedef axInstanceLadspa AX_INSTANCE;
@@ -68,7 +68,7 @@ class axFormatLadspa : public axFormat
 
     static LADSPA_Handle lad_instantiate_callback(const LADSPA_Descriptor* Descriptor, unsigned long SampleRate)
       {
-        trace("lad_instantiate_callback");
+        //trace("lad_instantiate_callback");
         axFormatLadspa* desc = (axFormatLadspa*)Descriptor->ImplementationData;
         return desc->lad_instantiate(SampleRate);
       }
@@ -79,8 +79,7 @@ class axFormatLadspa : public axFormat
 
     static void lad_connect_port_callback(LADSPA_Handle Instance, unsigned long Port, LADSPA_Data * DataLocation)
       {
-        trace("lad_connect_port_callback");
-        //axFormatLadspa* inst = (axFormatLadspa*)Instance;
+        //trace("lad_connect_port_callback");
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_connect_port(Port,DataLocation);
       }
@@ -89,7 +88,7 @@ class axFormatLadspa : public axFormat
 
     static void lad_activate_callback(LADSPA_Handle Instance)
       {
-        trace("lad_activate_callback");
+        //trace("lad_activate_callback");
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_activate();
       }
@@ -123,7 +122,7 @@ class axFormatLadspa : public axFormat
 
     static void lad_deactivate_callback(LADSPA_Handle Instance)
       {
-        trace("lad_deactivate_callback");
+        //trace("lad_deactivate_callback");
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_deactivate();
       }
@@ -132,7 +131,7 @@ class axFormatLadspa : public axFormat
 
     static void lad_cleanup_callback(LADSPA_Handle Instance)
       {
-        trace("lad_cleanup_callback");
+        //trace("lad_cleanup_callback");
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_cleanup();
         delete inst; // !!!
@@ -148,7 +147,7 @@ class axFormatLadspa : public axFormat
     // return ptr to instance
     virtual LADSPA_Handle lad_instantiate(unsigned long SampleRate)
       {
-        trace("axFormatLadspa.lad_instantiate");
+        //trace("axFormatLadspa.lad_instantiate");
         axInstance* instance = mBase->createInstance();
         return instance;
       }
@@ -165,15 +164,15 @@ class axFormatLadspa : public axFormat
 
     virtual void* entrypoint(void* ptr)
       {
-        trace("* axFormatLadspa.entrypoint");
+        //trace("* axFormatLadspa.entrypoint");
         mDescriptor = mBase->getDescriptor();
         axMemset(&ladspadescr,0,sizeof(ladspadescr));
         ladspadescr.UniqueID            = 0;//mUniqueId;
-        ladspadescr.Label               = (char*)"label";
+        ladspadescr.Label               = mDescriptor->getName();//(char*)"label";
         ladspadescr.Properties          = LADSPA_PROPERTY_REALTIME | LADSPA_PROPERTY_HARD_RT_CAPABLE;
-        ladspadescr.Name                = (char*)"name";
-        ladspadescr.Maker               = (char*)"maker";
-        ladspadescr.Copyright           = (char*)"copyright";
+        ladspadescr.Name                = mDescriptor->getName();// (char*)"name";
+        ladspadescr.Maker               = mDescriptor->getAuthor();//(char*)"maker";
+        ladspadescr.Copyright           = mDescriptor->getProduct();//(char*)"copyright";
         ladspadescr.PortCount           = 0;
         ladspadescr.PortDescriptors     = NULL;
         ladspadescr.PortNames           = NULL;//g_stereo_ports;
@@ -199,17 +198,19 @@ class axFormatLadspa : public axFormat
 
     axFormatLadspa(axBase* aBase) : axFormat(aBase)
       {
-        trace("- axFormatLadspa.constructor");
+        //trace("- axFormatLadspa.constructor");
         mBase = aBase;
       }
 
     virtual ~axFormatLadspa()
       {
-        trace("- axFormatLadspa.destructor");
-        //delete mDescriptor;
+        //trace("- axFormatLadspa.destructor");
       }
 
-    virtual char* getFormatName(void) { return (char*)"ladspa"; }
+    virtual char* getFormatName(void)
+      {
+        return (char*)"ladspa";
+      }
 
 };
 

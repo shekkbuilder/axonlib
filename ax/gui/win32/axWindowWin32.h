@@ -18,9 +18,7 @@
 #define axWindowWin32_included
 //----------------------------------------------------------------------
 
-#include <windows.h>
-
-// where's the #includes? :-)
+//#include <windows.h>
 
 //----------------------------------------------------------------------
 
@@ -75,14 +73,10 @@ class axWindowWin32 : public axWindowBase
     axBase*     mBase;
     HINSTANCE   mInstance;
     HWND        mWindow;
-    //axString    mWinName;
     PAINTSTRUCT mPS;
-    //int mWinCursor,mPrevCursor;
-    //HCURSOR mWinCursor;
     HCURSOR     mWinCursor;
     int         mPrevCursor;
     int         mClickedButton;
-    //int         mParent;                                      // HWND!
     HWND        mParent; // hwnd =pvoid
     int         mAdjustWidth, mAdjustHeight;
 
@@ -90,114 +84,18 @@ class axWindowWin32 : public axWindowBase
     axWindowWin32(axBase* aBase, void* aParent, axRect aRect, int aWinFlags)
     : axWindowBase(aBase,aParent,aRect,aWinFlags)
       {
-trace("axWindowWin32");
         //trace("axWindowWin32.constructor()");
         mBase = aBase;
-        //mInstance   = aContext->mInstance;
-        //mWinName    = aContext->mWinClassName;
-        //mParent     = (int)aContext->mWindow;
         mInstance = (HINSTANCE)aBase->getInterface()->getHandle();
-
-        // this is set in reparent()
-        //mParent   = (HWND)aParent;
-
-trace("mParent" << mParent);
-        //mWinName  = aBase->getInterface()->getName();
         mWinCursor  = LoadCursor(NULL,IDC_ARROW);
         mPrevCursor = 0;
-        //trace(mWinName.ptr());
         mClickedButton = bu_None;
-        //mAdjustWidth = 0;
-        //mAdjustHeight = 0;
-
-        // --- register window class ---
-
-        //http://msdn.microsoft.com/en-us/library/ms633586%28v=VS.85%29.aspx
-        //RegisterClass:
-        //  All window classes that an application registers are unregistered when it terminates.
-        //  Windows NT/2000/XP: No window classes registered by a DLL are unregistered when the DLL is unloaded.
-        //  A DLL must explicitly unregister its classes when it is unloaded.
-
-        // multiple instances:
-        // what happens when we try to register a window with similar name
-        // and shouldn't we unregister it?
-        // (or is it done automatically when dll is unloaded?)
-
-//        char* classname = mWinName.ptr();//(char*)"axonlib";
-//        //trace("window class name:" << classname);
-//        WNDCLASS wc;
-//        memset(&wc,0,sizeof(wc));
-//        wc.style          = CS_HREDRAW | CS_VREDRAW;
-//        wc.lpfnWndProc    = &eventProc;
-//        wc.hInstance      = mInstance;
-//        wc.lpszClassName  = classname;
-//        wc.hCursor        = (HICON)mWinCursor; //LoadCursor(NULL, IDC_ARROW);
-//        // rc_default.rc: axicon ICON "rc_axlogo.ico"
-//        HICON hIcon = LoadIcon(mInstance, "axicon");
-//        if (hIcon) wc.hIcon = hIcon;
-//
-//        RegisterClass(&wc);
-
-        // The AdjustWindowRectEx function calculates the required size of the
-        // window rectangle, based on the desired client-rectangle size.
-        // The window rectangle can then be passed to the CreateWindow function
-        // to create a window whose client area is the desired size.
-        // To specify an extended window style, use the AdjustWindowRectEx function.
-        //
-        // BOOL AdjustWindowRectEx(
-        //   __inout  LPRECT lpRect,
-        //   __in     DWORD dwStyle,
-        //   __in     BOOL bMenu,
-        //   __in     DWORD dwExStyle
-        // );
-        //
-        // lpRect: Pointer to a RECT  structure that contains the coordinates of
-        // the top-left and bottom-right corners of the desired client area.
-        // When the function returns, the structure contains the coordinates of
-        // the top-left and bottom-right corners of the window to accommodate
-        // the desired client area.
-        // dwStyle: Specifies the window style of the window whose required size
-        // is to be calculated. Note that you cannot specify the WS_OVERLAPPED style.
-        // bMenu: Specifies whether the window has a menu.
-        // dwExStyle: Specifies the extended window style of the window whose
-        // required size is to be calculated. For more information, see CreateWindowEx.
-
-        // --- adjust window size ---
-
-        // Remarks
-        // By convention, the right and bottom edges of the rectangle are normally
-        // considered exclusive. In other words, the pixel whose coordinates are
-        // (right,bottom) lies immediately outside of the the rectangle.
-        // For example, when RECT is passed to the FillRect function, the rectangle
-        // is filled up to, but not including, the right column and bottom row of pixels.
-
-        //trace("width/height: " << mRect.w << "," << mRect.h);
         RECT rc = { mRect.x, mRect.y, mRect.x2(), mRect.y2() }; // left, top, right, bottom
-        //trace("RECT rc: " << rc.left << "," << rc.top << " : " << rc.right << "," << rc.bottom);
-
-//        //RECT rc = {mRect.x,mRect.y,mRect.x2(),mRect.y2()};
-//        RECT rc = { mRect.x, mRect.y, mRect.w, mRect.h };
-//        // get w, h
-//        const u32 wWidth = (rc.right - rc.left - 1);  // -1 reduces the window dim by 1 px
-//        const u32 wHeight = (rc.bottom - rc.top - 1);
-//        #ifdef AX_FORMAT_EXE
-//          // adjust rect for exe
-//          AdjustWindowRect(&rc,WS_OVERLAPPEDWINDOW|WS_POPUP,FALSE);
-//          // get screen w, h and define a center pos
-//          const u32 wPosX = ((GetSystemMetrics(SM_CXSCREEN)-wWidth)>>1) + rc.left;
-//          const u32 wPosY = ((GetSystemMetrics(SM_CYSCREEN)-wHeight)>>1) + rc.top;
-//        #endif
-//        #ifdef AX_FORMAT_VST
-//          // no centering for vst
-//          const u32 wPosX = rc.left;
-//          const u32 wPosY = rc.top;
-//        #endif
 
         // --- create window ---
 
         if (mWinFlags&AX_WIN_EMBEDDED) // embedded ---
         {
-trace("embedded");
           AdjustWindowRectEx(&rc,/*WS_OVERLAPPEDWINDOW|*/WS_POPUP,FALSE,WS_EX_TOOLWINDOW);
           //trace("adjusted rc (embedded): " << rc.left << "," << rc.top << " : " << rc.right << "," << rc.bottom);
           mWindow = CreateWindowEx(
@@ -219,7 +117,6 @@ trace("embedded");
 
         else // windowed ---
         {
-trace("windowed");
           AdjustWindowRectEx(&rc,WS_OVERLAPPEDWINDOW,FALSE,WS_EX_OVERLAPPEDWINDOW);
           //trace("adjusted rc (windowed): " << rc.left << "," << rc.top << " : " << rc.right << "," << rc.bottom);
           const unsigned int wPosX =
@@ -245,12 +142,6 @@ trace("windowed");
 
         mAdjustWidth = (rc.right - rc.left + 1) - mRect.w;
         mAdjustHeight = (rc.bottom - rc.top + 1) - mRect.h;
-        //trace("mAdjustWidth: " << mAdjustWidth << ", mAdjustHeight: " << mAdjustHeight);
-
-        //mRect.x = rc.left;
-        //mRect.y = rc.top;
-        //mRect.w = (rc.right-rc.left);
-        //mRect.h = (rc.bottom-rc.top);
 
         // ---
 
@@ -265,21 +156,9 @@ trace("windowed");
 
     ~axWindowWin32()
       {
-        //if (mWinCursor>=0) XFreeCursor(mDisplay,mWinCursor);
         DestroyWindow(mWindow);
         if (mCanvas) delete mCanvas;
         if (mSurface) delete mSurface;
-
-        // can this be dangerous if moutlple plugin instances uses the plugin?
-        // or is there some reference-counting going on?
-        //http://msdn.microsoft.com/en-us/library/ms644899%28v=VS.85%29.aspx
-        //UnregisterClass:
-        //  If the function succeeds, the return value is nonzero.
-        //  If the class could not be found or if a window still exists
-        //  that was created with the class, the return value is zero
-        // unregister window?
-        // what if multiple instances is using the same window?
-//        UnregisterClass( mWinName.ptr(), mInstance);
       }
 
     //----------------------------------------
@@ -288,8 +167,6 @@ trace("windowed");
 
     virtual axCanvas* createCanvas(void)
       {
-        //axContext ctx(mWindow);
-        //return new axCanvas(&ctx);
         return new axCanvas(mBase,mWindow);
       }
 
@@ -297,9 +174,6 @@ trace("windowed");
 
     virtual axSurface* createSurface(int aWidth, int aHeight, int aDepth)
       {
-        //axContext ctx(mParent);
-        //axContext ctx(mWindow);
-        //return new axSurface(&ctx,aWidth,aHeight, aDepth);
         return new axSurface(mBase,mWindow,aWidth,aHeight, aDepth);
       }
 
@@ -307,8 +181,6 @@ trace("windowed");
 
     virtual axBitmap* createBitmap(int aWidth, int aHeight, int aDepth)
       {
-        //axContext ctx(mWindow);
-        //return new axBitmap(&ctx,aWidth,aHeight,aDepth);
         return new axBitmap(mBase,aWidth,aHeight,aDepth);
       }
 
@@ -451,7 +323,7 @@ trace("windowed");
 
     virtual void reparent(int aParent)
       {
-        trace("reparent");
+        //trace("reparent");
         mParent = (HWND)aParent; // !!!
         SetWindowLong(mWindow,GWL_STYLE,(GetWindowLong(mWindow,GWL_STYLE)&~WS_POPUP)|WS_CHILD);
         SetParent(mWindow,(HWND)aParent);
