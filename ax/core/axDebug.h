@@ -65,7 +65,7 @@ inline const char* axGetFileName(const char* path)
   // the axDebugLog.h below needs _trace,
   // but that is not defined until AFTER the axDebugLog.h has been included
   //
-  // also some problems with axGetBasePasth (redefinition)
+  // also some problems with axGetBasePath (redefinition)
 
   #ifdef AX_DEBUG_LOG
     #include "axDebugLog.h"
