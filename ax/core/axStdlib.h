@@ -45,7 +45,7 @@
 #define axStdlib_included
 
 #include "axDefines.h"
-#include "axMalloc.h" // axStrdup
+// #include "axMalloc.h" // axStrdup!
 
 #ifdef AX_HOT_INLINE_STDLIB
   #define __axstdlib_inline __hotinline
@@ -195,8 +195,11 @@ __axstdlib_inline char* axStrncpy (register char* dest,
 }
 
 /**
- * axStrdup
+ * axStrdup 
+ *  
  */
+ 
+/*
 __axstdlib_inline char* axStrdup (register char* src)
 {
   register char* dst = (char*) axMalloc(axStrlen(src) + 1);
@@ -204,6 +207,7 @@ __axstdlib_inline char* axStrdup (register char* src)
   axStrcpy (dst, src);
   return dst;
 }
+*/
 
 /**
  * axStrchr

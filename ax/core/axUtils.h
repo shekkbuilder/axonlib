@@ -19,59 +19,14 @@
  * \brief contains various utility methods.
  */
 
-
-
  ///////////////
  // TODO: CLEAN
-
 
 #ifndef axUtils_included
 #define axUtils_included
 
 #include "axDefines.h"
-
-//#include "axStdlib.h" // axMemset
-void* ax__Memset(register void* dest, register int val, register unsigned int len)
-{
-  register unsigned char _v = (unsigned char) val;
-  register char* _d = (char*) dest;
-  while (len--) *_d++ = _v;
-  return dest;
-}
-
-#include "axMalloc.h"
 #include "axMath.h"
-//#include "axDebug.h"
-#include "stdio.h" // fread, fseek, fopen
-
-#ifdef AX_WIN32
-  #include <windows.h>
-  // gInstance for axGetBasePath()
-  #ifdef AX_FORMAT_LIB
-    /*
-      lii:
-      if other dll formats are added for windows, a commont entry point
-      could be moved in a new header to get gInstance from there
-    */
-
-    // ccernn:
-    // the /format directory doesn't exist anymore...
-    // and the gInstance dependent stuff shouldn't be in here
-
-//    #ifdef AX_FORMAT_VST
-//      #include "format/axFormatVst.h"
-//    #endif
-//    #ifdef AX_FORMAT_LADSPA
-//      #include "format/axFormatLadspa.h"
-//    #endif
-
-  #endif
-#endif
-
-#ifdef AX_LINUX
-  #include <dlfcn.h>
-  #include <unistd.h>
-#endif
 
 #ifdef AX_HOT_INLINE_UTILS
   #define __axutils_inline __hotinline
@@ -256,20 +211,28 @@ __axutils_inline float axDenorm(register float n)
 
 //----------------------------------------------------------------------
 
-/**
- * radix algorithm
- * @param[in] source long*
- * @param[in] dest long*
- * @param[in] N long
- * @param[in] byte int
- */
+
+#if 0
+
+  // test or write better algorithm
+  
 __axutils_inline void axRadix(long *source, long *dest,
   unsigned long N, int byte)
 {
   unsigned int i;
   long count[256];
   long index[256];
-  ax__Memset(count, 0, sizeof(count)); // axMemset was not declared in this scope
+  
+  // ax__Memset(count, 0, sizeof(count));
+    
+  // inline memset 0
+  register unsigned int len = sizeof(count);
+  register unsigned char _v = 0;
+  register char* _d = (char*) count;
+  while (len--)
+    *_d++ = _v;
+  // ---------------
+  
   for (i=0; i<N; i++)
     count[ ((source[i]) >> (byte*8)) & 0xff ]++;
   index[0] = 0;
@@ -278,6 +241,9 @@ __axutils_inline void axRadix(long *source, long *dest,
   for (i=0; i<N; i++)
     dest[ index[ ((source[i])>>(byte*8))&0xff ]++ ] = source[i];
 }
+
+
+#endif
 
 //----------------------------------------------------------------------
 
