@@ -48,8 +48,8 @@ NOTES:
 
 TODO:
   - resolve the picopng conflict
-  - better error handling 
-  - fragmentation level tests  
+  - better error handling
+  - fragmentation level tests
     ============================================================================
 */
 
@@ -72,7 +72,7 @@ TODO:
   #define axCalloc    calloc
   #define axRealloc   realloc
   #define axFree      free
-  
+
   // no debug for these
   #define _axMalloc   malloc
   #define _axCalloc   calloc
@@ -184,7 +184,7 @@ static __axmalloc_inline unsigned int size2bucket(unsigned size)
   int bit = ~0x10;
   if (size < 4) size = 4;
   size = (size + 3) & ~3;
-  unsigned int i = 0;   
+  unsigned int i = 0;
   while (i < 5)
   {
     if ((rv & bit) < AX_M_MAX_BUCKETS)
@@ -222,7 +222,7 @@ static __axmalloc_inline void* axMalloc (register unsigned int size)
     rv = buckets[b];
     buckets[b] = *(unsigned char**)rv; // !!
     return rv;
-  }  
+  }
   size = bucket2size[b] + 4;
   // os specific calls
   #ifdef linux
@@ -233,8 +233,8 @@ static __axmalloc_inline void* axMalloc (register unsigned int size)
     rv = (unsigned char*)axMmap(size);
   #endif
   *(unsigned int*)rv = b;
-  rv += 4;  
-  return (void*)rv;  
+  rv += 4;
+  return (void*)rv;
 }
 
 // axCalloc
@@ -280,7 +280,8 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
 {
   //__builtin_printf("<< axRealloc\n");
   // case null pointer
-  if (_ptr == NULL)
+  if (_ptr == NULL)a lot of what i call "circular dependencies/includes" is coming to light...
+
     return axMalloc(size);
   else
   {
@@ -301,7 +302,7 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
       axFree(ptr);
       return (void*)newptr;
     }
-  }  
+  }
   return _ptr;
 }
 
@@ -317,7 +318,13 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
 // -----------------------------------------------------------------------------
 #if defined (AX_DEBUG) && defined (AX_DEBUG_MEM)
   #include "axDebug.h"
-  #include "axUtils.h"  
+
+//  #include "axUtils.h" // axStrcpy
+char* ax__Strcpy(register char* dest, register const char* src)
+{
+  while ( (*dest++ = *src++) );
+  return dest;
+}
 
   #ifdef AX_NO_MALLOC
     #include "malloc.h"
@@ -340,18 +347,18 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
       void* _ptr = malloc(_size);
       _axMemTotal += malloc_usable_size(_ptr);
       if (flag)
-        axStrcpy(_name, "malloc(new), ");
+        ax__Strcpy(_name, "malloc(new), ");
       else
-        axStrcpy(_name, "malloc, ");
+        ax__Strcpy(_name, "malloc, ");
     #else
       void* _ptr = axMalloc(_size);
-      _axMemTotal += bucket2size[*(unsigned int*)((char*)_ptr-4)];     
+      _axMemTotal += bucket2size[*(unsigned int*)((char*)_ptr-4)];
       if (flag)
         axStrcpy(_name, "axMalloc(new), ");
       else
         axStrcpy(_name, "axMalloc, ");
     #endif
-    // output cout / log    
+    // output cout / log
     _trace
     (
       "[" << axGetFileName(_file) << "|" << _line << "] " << _name <<
@@ -370,7 +377,7 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
       void* _ptr = calloc(_n, _size);
       unsigned int size = malloc_usable_size(_ptr);
       _axMemTotal += size;
-      axStrcpy(_name, "calloc, ");
+      ax__Strcpy(_name, "calloc, ");
     #else
       void* _ptr = axCalloc(_n, _size);
       unsigned int size = bucket2size[*(unsigned int*)((char*)_ptr-4)];
@@ -401,7 +408,7 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
         _axMemTotal = 0;
       void* _ptr0 = realloc(_ptr, _size);
       _axMemTotal += malloc_usable_size(_ptr0);
-      axStrcpy(_name, "realloc, ");
+      ax__Strcpy(_name, "realloc, ");
     #else
       int nsize = bucket2size[*(unsigned int*)((char*)_ptr-4)];
       if (_axMemTotal - nsize >= 0)
@@ -433,9 +440,9 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
       #ifdef AX_NO_MALLOC
         _size = malloc_usable_size(_ptr);
         if (flag)
-          axStrcpy(_name, "free(delete), ");
+          ax__Strcpy(_name, "free(delete), ");
         else
-          axStrcpy(_name, "free, ");
+          ax__Strcpy(_name, "free, ");
       #else
         unsigned int b = *(unsigned int*)((char*)_ptr-4);
         if (b < AX_M_MAX_BUCKETS)
@@ -461,7 +468,7 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
           axFree(_ptr);
         #endif
       }
-      else 
+      else
         _axMemTotal = 0;
     }
   }
@@ -474,12 +481,12 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
   __axmalloc_inline void* _axMalloc (register const unsigned int size)
     { return axMalloc(size); }
   __axmalloc_inline void* _axCalloc (register const unsigned int n,
-    register unsigned int size)  { return axCalloc(n, size); }  
+    register unsigned int size)  { return axCalloc(n, size); }
   __axmalloc_inline void* _axRealloc (register void* _ptr,
     register const unsigned int size) { return axRealloc(_ptr, size); }
   __axmalloc_inline void  _axFree (register void* _ptr)
     { axFree(_ptr); }
-    
+
   // clear previous definitions (if any)
   #ifdef AX_NO_MALLOC
     #undef axMalloc
@@ -487,7 +494,7 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
     #undef axRealloc
     #undef axFree
   #endif
-  
+
   // macro overrides here
   #define axMalloc(s)     axMallocDebug   (s, __FILE__, __LINE__)
   #define axCalloc(n, s)  axCallocDebug   (n, s, __FILE__, __LINE__)
@@ -500,8 +507,8 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
     #define calloc(n, s)    axCallocDebug   (n, s, __FILE__, __LINE__)
     #define realloc(p, s)   axReallocDebug  (p, s, __FILE__, __LINE__)
     #define free(p)         axFreeDebug     (p, __FILE__, __LINE__)
-  #endif  
-  
+  #endif
+
   #ifdef AX_DEBUG_NEW
     // define some helpers for the delete operator
     static __thread char* ax_del_file;
@@ -512,8 +519,8 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
       ax_del_line = line;
       return 1;
     }
-   
-    // overload operators new & delete with debug    
+
+    // overload operators new & delete with debug
     __axmalloc_inline void* operator new (const size_t size,
       const char* file, unsigned int line) throw (std::bad_alloc)
     {
@@ -532,10 +539,10 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
     {
      return axFreeDebug(ptr, ax_del_file, ax_del_line, 1);
     }
-    
-    #define new new(__FILE__, __LINE__)    
+
+    #define new new(__FILE__, __LINE__)
     #define delete if(axDebugSetDelete(__FILE__, __LINE__)) delete
-      
+
   #endif // AX_DEBUG_NEW
 
 #else // AX_DEBUG && AX_DEBUG_MEM

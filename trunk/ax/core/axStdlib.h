@@ -45,7 +45,7 @@
 #define axStdlib_included
 
 #include "axDefines.h"
-#include "axMalloc.h"
+#include "axMalloc.h" // axStrdup
 
 #ifdef AX_HOT_INLINE_STDLIB
   #define __axstdlib_inline __hotinline

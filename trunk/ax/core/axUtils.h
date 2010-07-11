@@ -18,18 +18,27 @@
  * @file axUtils.h
  * \brief contains various utility methods.
  */
- 
- 
- 
+
+
+
  ///////////////
  // TODO: CLEAN
- 
+
 
 #ifndef axUtils_included
 #define axUtils_included
 
 #include "axDefines.h"
-#include "axStdlib.h"
+
+//#include "axStdlib.h" // axMemset
+void* ax__Memset(register void* dest, register int val, register unsigned int len)
+{
+  register unsigned char _v = (unsigned char) val;
+  register char* _d = (char*) dest;
+  while (len--) *_d++ = _v;
+  return dest;
+}
+
 #include "axMalloc.h"
 #include "axMath.h"
 //#include "axDebug.h"
@@ -260,7 +269,7 @@ __axutils_inline void axRadix(long *source, long *dest,
   unsigned int i;
   long count[256];
   long index[256];
-  axMemset(count, 0, sizeof(count));
+  ax__Memset(count, 0, sizeof(count)); // axMemset was not declared in this scope
   for (i=0; i<N; i++)
     count[ ((source[i]) >> (byte*8)) & 0xff ]++;
   index[0] = 0;
