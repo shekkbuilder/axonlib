@@ -31,16 +31,17 @@
 
 //////////////////////////////////////////  temp stuff
 
-#define gWinInstance NULL 
+// the below is disturbing !!!
 
+#define gWinInstance NULL
 
 //axGetBasePath() is needed by class axDebugLog
 #ifdef AX_WIN32
 #ifndef axPlatformWin32_included
-  
+
   const char* axGetBasePath(char* path)
   {
-    #if defined AX_FORMAT_LIB || defined AX_FORMAT_EXE 
+    #if defined AX_FORMAT_LIB || defined AX_FORMAT_EXE
       char filepath[AX_MAX_PATH] = "";
       GetModuleFileName(gWinInstance, filepath, MAX_PATH);
       const char* slash = axStrrchr(filepath, '\\');
@@ -53,7 +54,7 @@
     #endif
     return path;
   }
-    
+
 #endif
 #endif
 
@@ -65,7 +66,7 @@
 const char* axGetBasePath(char* path)
 {
   #ifdef AX_FORMAT_LIB
-  
+
     char filepath[AX_MAX_PATH] = "";
     Dl_info dli;
     dladdr(__func__, &dli);
@@ -74,9 +75,9 @@ const char* axGetBasePath(char* path)
 	    axStrncpy(path, dli.dli_fname, (slash + 1) - (char*)dli.dli_fname);
     else
       axStrcat(path, (char*)"./");
-      
+
   #elif defined AX_FORMAT_EXE
-    
+
     char filepath[AX_MAX_PATH] = "";
     if (readlink("/proc/self/exe", filepath, AX_MAX_PATH))
     {
@@ -86,7 +87,7 @@ const char* axGetBasePath(char* path)
       else
         axStrcat(path, (char*)"./");
     }
-    
+
   #else
     axStrcat(path, (char*)"./");
   #endif
@@ -112,10 +113,10 @@ const char* axGetBasePath(char* path)
 class axTeebuf : public std::streambuf
 {
   private:
-  
+
     std::streambuf* sb1;
     std::streambuf* sb2;
-            
+
     virtual int overflow(int c)
     {
       if (c == EOF)
@@ -127,16 +128,16 @@ class axTeebuf : public std::streambuf
         return r1 == EOF || r2 == EOF ? EOF : c;
       }
     }
-    
+
     virtual int sync()
     {
       int const r1 = sb1->pubsync();
       int const r2 = sb2->pubsync();
       return (r1 == 0 && r2 == 0) ? 0 : -1;
     }
-    
+
   public:
-  
+
    axTeebuf(std::streambuf* sb1, std::streambuf* sb2)
     : sb1(sb1), sb2(sb2) {}
 
@@ -151,9 +152,9 @@ class axDebugLog : public std::ostream
     std::fstream    axfstream;
     axTeebuf        tbuf;
     // axMutex         mtx;
-  
+
   public:
-  
+
     axDebugLog() :
       std::ostream(&tbuf), tbuf(std::cout.rdbuf(), axfstream.rdbuf())
     {
@@ -164,7 +165,7 @@ class axDebugLog : public std::ostream
       // mtx.lock();
       axfstream.open(AX_DEBUG_LOG, std::fstream::out AX_DEBUG_LOG_APPEND);
     }
-    
+
     ~axDebugLog()
     {
       // mtx.unlock();
