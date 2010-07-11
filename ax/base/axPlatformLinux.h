@@ -17,6 +17,8 @@ typedef axPlatformLinux AX_PLATFORM;
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
+#include <dlfcn.h>
+
 const char* axGetBasePath(char* path)
   {
     int len;

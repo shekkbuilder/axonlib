@@ -8,12 +8,55 @@
 #include <windows.h>
 
 //----------------------------------------------------------------------
+
+// from:
+// http://old.nabble.com/build-dll-without-c-runtime-dependency-td22210375.html
+//
+// Here's what I used to link C++ code without a CRT under MinGW:
+// compile: "-fno-exceptions -fno-rtti"
+// link: "-mdll -entry=_DllMain@12 -lkernel32 -nostdlib"
+
+// multiple definition of.. (dllcrt1.c)
+
+//g++ -Wl,--subsystem,console -nodefaultlibs -nostartfiles -shared -s -o mydll.dll main.o
+
+//extern "C" BOOL WINAPI DllMainCRTStartup(HINSTANCE hinstDLL, DWORD
+//fdwReason, LPVOID lpvReserved)
+//  {
+//    printf("DllMainCRTStartup\n");
+//    return TRUE;
+//  }
+
+//
+
+////You could use the gcc way to handle dll init code. Declare two functions like:
+//
+//static void MyStartupFunc(void) __attribute__((constructor));
+//void MyStartupFunc(void)
+//{
+//	// your code
+//  printf("constructor\n");
+//}
+//static void MyExitFunc(void) __attribute__((destructor));
+//void MyExitFunc(void)
+//{
+//	// your code
+//  printf("destructor\n");
+//}
+
+//See __attribute__ in the gcc manual or in the mingw archives.
+//
+// ccernn: also called after global object initialization
+
+
 //----------------------------------------------------------------------
 
 // used in axUtils,getBasePath
 static __thread HINSTANCE gWinInstance;
 
 //----------------------------------------------------------------------
+
+// The lpReserved parameter indicates whether the DLL is being loaded statically or dynamically.
 
 __externc BOOL APIENTRY
 DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
@@ -25,6 +68,7 @@ DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
     case DLL_PROCESS_ATTACH:
       trace("DllMain DLL_PROCESS_ATTACH");
       gWinInstance = hModule;
+      printf("gWinInstance = %i\n",(int)gWinInstance);
       break;
     case DLL_PROCESS_DETACH:
       trace("DllMain DLL_PROCESS_DETACH");
@@ -34,6 +78,9 @@ DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
       break;
     case DLL_THREAD_DETACH:
       trace("DllMain DLL_THREAD_DETACH");
+      break;
+    default:
+      trace("DllMain ???");
       break;
   }
   return TRUE;
@@ -102,6 +149,7 @@ const char* axGetBasePath(char* path)
     else axStrcpy(path, (char*)".\\");
     //axStrcat(path, '\0');
     path[len] = 0;
+
     return path_init;
   }
 

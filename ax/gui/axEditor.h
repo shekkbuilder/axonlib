@@ -104,7 +104,9 @@ class axEditor : public axWindow
 
     //--------------------------------------------------
 
-    inline void    setInstance(axInstance* aInstance) { mInstance=aInstance; }
+    // called from doOpenEditor
+    inline void setInstance(axInstance* aInstance) { mInstance=aInstance; }
+
     inline axSkin* defaultSkin(void) { return mDefaultSkin; }
 
     //--------------------------------------------------
@@ -165,7 +167,7 @@ class axEditor : public axWindow
 
     virtual void paramChanged(axParameter* aParameter)
       {
-        //trace("paramChanged");
+        trace("paramChanged");
         int conn = aParameter->getConnection();
         if (conn>=0)
         {
@@ -203,7 +205,7 @@ class axEditor : public axWindow
         //resizeBuffer(aWidth,aHeight);
         //doSetSize(aWidth,aHeight);
         //#endif
-//        mFormat->notifyResizeEditor(aWidth,aHeight);
+        if (mInstance) mInstance->notifyResizeEditor(aWidth,aHeight);
       }
 
     //--------------------------------------------------
@@ -213,8 +215,8 @@ class axEditor : public axWindow
     virtual void doSetSize(int aWidth, int aHeight)
       {
         //trace("axEditor.doSetSize: " << aWidth << "," << aHeight);
-//        if (mInterface) mInterface->notifyResizeEditor(aWidth,aHeight);
-//        axWindow::doSetSize(aWidth,aHeight);
+        if (mInstance) mInstance->notifyResizeEditor(aWidth,aHeight);
+        axWindow::doSetSize(aWidth,aHeight);
       }
 
     //--------------------------------------------------
@@ -230,13 +232,13 @@ class axEditor : public axWindow
 
     virtual void onChange(axWidget* aWidget)
       {
-        //trace("onChange wdg");
+        trace("onChange wdg");
         int conn = aWidget->getConnection();
         if (conn>=0)
         {
           axParameter* par = mConnections[conn].mParameter;
           float val = aWidget->getValue();
-//          mInterface->notifyParamChanged(par);
+          if (mInstance) mInstance->notifyParamChanged(par);
           //par->doSetValue(val,false);
           par->doSetValue(val,true); // true = notify listener
         }
