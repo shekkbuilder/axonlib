@@ -51,6 +51,9 @@ class axBitmap : public axBitmapImpl
   friend class axWindowWin32;
   friend class axWindowLinux;
   //public:
+
+  private:
+    axRand rand;
   protected:
 
     axBitmap(axBase* aBase, int aWidth, int aHeight, int aDepth)
@@ -286,7 +289,7 @@ class axBitmap : public axBitmapImpl
               //unsigned char g = mBuffer[pos+1];
               //unsigned char b = mBuffer[pos+2];
               //unsigned char a = mBuffer[pos+3];
-              unsigned char a = axRandInt(255);
+              unsigned char a = rand.randInt(255);
               //mBuffer[pos+0] = b;
               //mBuffer[pos+1] = g;
               //mBuffer[pos+2] = r;

@@ -5,7 +5,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-//#include "gui/axWindow.h"
 #include "gui/axEditor.h"
 
 //----------------------------------------------------------------------
@@ -26,8 +25,6 @@ class axInterfaceLinux : public axInterface
         XInitThreads();
         mDisplay = XOpenDisplay(NULL);              // må denne være unik for hver instance? i så fall, fløuytt til createWindow
         mRootWindow = XDefaultRootWindow(mDisplay);
-        //trace("  mDisplay:    " << mDisplay);
-        //trace("  mRootWindow: " << mRootWindow);
       }
 
     virtual ~axInterfaceLinux()
@@ -47,7 +44,6 @@ class axInterfaceLinux : public axInterface
         void* parent = aParent;
         if (aParent) editor = new axEditor(mBase,aParent,aRect,aFlags);
         else editor = new axEditor(mBase,&mRootWindow,aRect,aFlags);
-        //trace("  window " << window);
         return (void*)editor;
       }
 

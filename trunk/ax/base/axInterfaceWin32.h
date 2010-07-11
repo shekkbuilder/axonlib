@@ -8,7 +8,7 @@
 
 //----------------------------------------------------------------------
 
-//LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+// axonlib_0.1.2_window
 
 LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -36,19 +36,17 @@ class axInterfaceWin32 : public axInterface
         //trace("axInterfaceWin32.constructor");
         mBase = aBase;
         mWinInstance = (HINSTANCE)aBase->getPlatform()->getHandle();
-        //axStrcpy( mWinClassName, mBase->getInstanceClassName() ); // TODO
-        // we might need to increase the 0 if eventProc or axWindowWin32 changes
-          axStrcpy( mWinClassName, "axonlib_" );
-          axStrcat( mWinClassName, (char*)AX_VERSION_STRING );
-          axStrcat( mWinClassName, "_window" );
+        axStrcpy( mWinClassName, "axonlib_" );
+        axStrcat( mWinClassName, (char*)AX_VERSION_STRING );
+        axStrcat( mWinClassName, "_window" );
         mWinIcon = LoadIcon(mWinInstance, "axicon");
         mWinCursor = NULL; // LoadCursor(NULL, IDC_ARROW);
         axMemset(&mWinClass,0,sizeof(mWinClass));
         mWinClass.style         = CS_HREDRAW | CS_VREDRAW;
-        mWinClass.lpfnWndProc   = &eventProc;                    // !!!
-        mWinClass.hInstance     = mWinInstance;  //(HINSTANCE)aBase->getPlatform()->getHandle();
-        mWinClass.lpszClassName = mWinClassName; //   mWinClassName;
-        mWinClass.hCursor       = mWinCursor;//
+        mWinClass.lpfnWndProc   = &eventProc;
+        mWinClass.hInstance     = mWinInstance;
+        mWinClass.lpszClassName = mWinClassName;
+        mWinClass.hCursor       = mWinCursor;
         mWinClass.hIcon         = mWinIcon;
         RegisterClass(&mWinClass);
       }
@@ -63,7 +61,10 @@ class axInterfaceWin32 : public axInterface
 
     //--------------------------------------------------
 
-    //virtual void* getHandle(void) { return NULL; }
+    //virtual void* getHandle(void)
+    //  {
+    //    return NULL
+    //  }
 
     //----------
 
@@ -74,23 +75,12 @@ class axInterfaceWin32 : public axInterface
 
     //----------
 
-//    virtual void* createWindow(void* aParent, axRect aRect, int aFlags)
-//      {
-//        //trace("axInterfaceWin32.createWindow");
-//        axWindow* window;
-//        if (aParent) window = new axWindow(mBase,aParent,aRect,aFlags);
-//        else window = new axWindow(mBase,NULL,aRect,aFlags);
-//        //trace("  window " << window);
-//        return (void*)window;
-//      }
-//
     virtual void* createEditor(void* aParent, axRect aRect, int aFlags)
       {
         //trace("axInterfaceWin32.createWindow");
         axEditor* editor;
         if (aParent) editor = new axEditor(mBase,*(void**)aParent,aRect,aFlags);
         else editor = new axEditor(mBase,NULL,aRect,aFlags);
-        //trace("  window " << window);
         return (void*)editor;
       }
 

@@ -23,7 +23,7 @@ DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
   switch(reason)
   {
     case DLL_PROCESS_ATTACH:
-      //trace("DllMain DLL_PROCESS_ATTACH");
+      trace("DllMain DLL_PROCESS_ATTACH");
       gWinInstance = hModule;
       break;
     case DLL_PROCESS_DETACH:
@@ -77,7 +77,6 @@ class axPlatformWin32 : public axPlatform
     //----------
 
     virtual char* getPlatformName(void) { return (char*)"win32"; }
-    //HINSTANCE getWinInstance(void) { return mWinInstance; }
     virtual void* getHandle(void) { return (void*)mWinInstance; }
 
 };
@@ -105,7 +104,6 @@ const char* axGetBasePath(char* path)
     path[len] = 0;
     return path_init;
   }
-
 
 //----------------------------------------------------------------------
 #endif

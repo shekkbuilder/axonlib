@@ -86,7 +86,7 @@ class axEditor : public axWindow
     axEditor(axBase* aBase, void* aParent, axRect aRect, int aWinFlags)
     : axWindow(aBase,aParent,aRect,aWinFlags)
       {
-        trace("axEditor");
+        //trace("axEditor");
         //mFormat = aFormat;
         mBase = aBase;
         axCanvas* canvas = getCanvas();

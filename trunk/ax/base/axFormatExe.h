@@ -28,7 +28,6 @@ typedef axDescriptorExe AX_DESCRIPTOR;
 class axInstanceExe : public axInstance
 {
   private:
-    //int result;
     axRect mEditorRect;
   public:
     axInstanceExe(axBase* aBase) : axInstance(aBase)
@@ -63,21 +62,15 @@ class axFormatExe : public axFormat
     axBase*       mBase;
     axDescriptor* mDescriptor;
     axInstance*   mInstance;
-    //int           mFormatFlags;
 
   protected:
 
     virtual void* entrypoint(void* ptr)
       {
-        //trace("++ axFormatExe.entrypoint   *");
         mDescriptor = mBase->getDescriptor();
         mInstance   = mBase->createInstance();
-
         #ifndef AX_NOGUI
-        //if (mFlags&if_HasEditor)
-        //if (mDescriptor->hasEditor())
         {
-          //trace("hasEditor");
           axWindow* win = (axWindow*)mInstance->doOpenEditor(ptr/*NULL*/);
           if (win)
           {
@@ -87,7 +80,6 @@ class axFormatExe : public axFormat
           }
           mInstance->doCloseEditor();
         }
-        //trace("-- axFormatExe.entrypoint   *");
         #endif
         result = 0;
         return &result;
