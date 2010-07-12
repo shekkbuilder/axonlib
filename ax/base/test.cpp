@@ -20,6 +20,77 @@
 #include "par/parFloat.h"
 
 //----------------------------------------------------------------------
+
+class debug_log
+{
+  public:
+    debug_log() {}
+    ~debug_log() {}
+    void print(char* str)
+      {
+        //printf("%s\n",str);
+        //printf("module path: '%s'\n",        gGlobalScope.getBase()->getPlatform()->getPath());
+        //printf("hinstance:    0x%08x\n",(int)gGlobalScope.getBase()->getPlatform()->getHandle());
+      }
+};
+
+//----------
+
+class debug_console
+{
+  public:
+    debug_console() {}
+    ~debug_console() {}
+    void print(char* str)
+      {
+        //printf("%s\n",str);
+      }
+};
+
+//--------------------------------------------------
+
+class axDebug : public AX_PLATFORM
+{
+  private:
+    debug_log* log;
+    debug_console* console;
+  public:
+    axDebug(axBase* aBase) : AX_PLATFORM(aBase)
+      {
+        printf("module path: '%s'\n",        getPath());
+        printf("hinstance:    0x%08x\n",(int)getHandle());
+        log = new debug_log(/*aBase*/);
+        console = new debug_console(/*aBase*/);
+        gGlobalScope.setPtr(this);
+      }
+    virtual ~axDebug()
+      {
+        /*if (log)*/ delete log;
+        /*if (console)*/ delete console;
+      }
+    void print(char* str)
+      {
+        printf("axDebug: '%s'\n",str);
+        if (log) log->print(str);
+        if (console) console->print(str);
+      }
+    // getLog/Console???
+};
+
+//----------
+
+#ifdef AX_DEBUG
+  #define trc(s) ((axDebug*)gGlobalScope.getPtr())->print((char*)s)
+#endif
+
+void testfunc(char* s)
+{
+  axDebug* dbg = (axDebug*)gGlobalScope.getPtr();
+  //printf("testfunc: '%s'\n",s);
+  dbg->print( s );
+}
+
+//----------------------------------------------------------------------
 //
 // descriptor
 //
@@ -59,6 +130,7 @@ class myInstance : public AX_INSTANCE
 
     myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
+        trc("myInstance");
         mBase = aBase;
         edit  = NULL;
         skin  = NULL;
@@ -81,7 +153,7 @@ class myInstance : public AX_INSTANCE
       {
         trace(AX_AXONLIB_TEXT);
         char temp[256];
-        trace("basepath:        '" << axGetBasePath(temp) << "'");
+        //trace("basepath:        '" << axGetBasePath(temp) << "'");
         trace("platform:        '" << mBase->getPlatform()->getPlatformName() << "'");
         trace("format:          '" << mBase->getFormat()->getFormatName() << "'");
         trace("w32 class name   '" << mBase->getInterface()->getName() << "'");
@@ -107,10 +179,10 @@ class myInstance : public AX_INSTANCE
       {
         int   index = aParameter->getIndex();
         float value = aParameter->getValue();
-        trace("doSetParameter(" << index << ") = " << value);
+        //trace("doSetParameter(" << index << ") = " << value);
         if (index==0) m_gain = value;
+        testfunc( (char*)"doSetParameter" );
       }
-
 
     //virtual bool doProcessBlock(float** aInputs, float** aOutputs, int Length)
     //  {
@@ -171,5 +243,10 @@ class myInstance : public AX_INSTANCE
 
 //----------------------------------------------------------------------
 
-//AX_MAIN(myPlugin)
-AX_ENTRYPOINT(AX_PLATFORM,AX_INTERFACE,AX_FORMAT,myDescriptor,myInstance)
+#ifdef AX_MAIN
+  #undef AX_MAIN
+#endif
+//AX_ENTRYPOINT(axDebug,AX_INTERFACE,AX_FORMAT,myDescriptor,myInstance)
+#define AX_MAIN(d,i) AX_ENTRYPOINT(axDebug,AX_INTERFACE,AX_FORMAT,d,i)
+AX_MAIN(myDescriptor,myInstance)
+

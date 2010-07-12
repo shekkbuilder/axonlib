@@ -167,7 +167,7 @@ class axEditor : public axWindow
 
     virtual void paramChanged(axParameter* aParameter)
       {
-        trace("paramChanged");
+        //trace("paramChanged");
         int conn = aParameter->getConnection();
         if (conn>=0)
         {
@@ -232,7 +232,7 @@ class axEditor : public axWindow
 
     virtual void onChange(axWidget* aWidget)
       {
-        trace("onChange wdg");
+        //trace("onChange wdg");
         int conn = aWidget->getConnection();
         //trace("  conn: " << conn);
         if (conn>=0)
