@@ -6,7 +6,7 @@
 
 //#define AX_NOGUI
 #define AX_USE_CPU_CAPS
-
+//#define AX_WIDGET_NOUPDATELIST
 //----------
 
 #include "base/axBase.h"
@@ -32,8 +32,8 @@ class myDescriptor : public AX_DESCRIPTOR
     //virtual ~myDescriptor() {}
     virtual bool    hasEditor(void)     { return true; }
     virtual axRect  getEditorRect(void) { return axRect(0,0,320,240); }
-    virtual int   getNumParams(void) { return 1; }
-    virtual char* getParamName(int aIndex)  { if (aIndex==0) return (char*)"param"; return (char*)""; }
+    virtual int     getNumParams(void) { return 1; }
+    virtual char*   getParamName(int aIndex)  { if (aIndex==0) return (char*)"param"; return (char*)""; }
 };
 
 //----------------------------------------------------------------------
@@ -64,7 +64,8 @@ class myInstance : public AX_INSTANCE
         skin  = NULL;
         test();
         m_gain = 1;
-        appendParameter( gain = new parFloat(this,"gain","",0.5) );
+        gain = new parFloat(this,"gain","",0.5);
+        appendParameter( gain );
         setupParameters();
       }
 
@@ -159,6 +160,7 @@ class myInstance : public AX_INSTANCE
 
     virtual void doIdleEditor(void)
       {
+        //trace("doIdleEditor");
         #ifndef AX_WIDGET_NOUPDATELIST
           //trace("axFormat.doIdleEditor");
           if (edit) edit->redrawUpdates();

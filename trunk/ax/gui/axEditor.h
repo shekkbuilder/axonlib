@@ -205,7 +205,7 @@ class axEditor : public axWindow
         //resizeBuffer(aWidth,aHeight);
         //doSetSize(aWidth,aHeight);
         //#endif
-        if (mInstance) mInstance->notifyResizeEditor(aWidth,aHeight);
+//        if (mInstance) mInstance->notifyResizeEditor(aWidth,aHeight);
       }
 
     //--------------------------------------------------
@@ -215,7 +215,7 @@ class axEditor : public axWindow
     virtual void doSetSize(int aWidth, int aHeight)
       {
         //trace("axEditor.doSetSize: " << aWidth << "," << aHeight);
-        if (mInstance) mInstance->notifyResizeEditor(aWidth,aHeight);
+//        if (mInstance) mInstance->notifyResizeEditor(aWidth,aHeight);
         axWindow::doSetSize(aWidth,aHeight);
       }
 
@@ -234,10 +234,12 @@ class axEditor : public axWindow
       {
         trace("onChange wdg");
         int conn = aWidget->getConnection();
+        //trace("  conn: " << conn);
         if (conn>=0)
         {
           axParameter* par = mConnections[conn].mParameter;
           float val = aWidget->getValue();
+          //trace("  mInstance: " << mInstance);
           if (mInstance) mInstance->notifyParamChanged(par);
           //par->doSetValue(val,false);
           par->doSetValue(val,true); // true = notify listener

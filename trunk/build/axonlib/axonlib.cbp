@@ -216,10 +216,12 @@
 		<Unit filename="../../ax/axConfig.h" />
 		<Unit filename="../../ax/base/README" />
 		<Unit filename="../../ax/base/axBase.h" />
+		<Unit filename="../../ax/base/axDescriptor.h" />
 		<Unit filename="../../ax/base/axFormat.h" />
 		<Unit filename="../../ax/base/axFormatExe.h" />
 		<Unit filename="../../ax/base/axFormatLadspa.h" />
 		<Unit filename="../../ax/base/axFormatVst.h" />
+		<Unit filename="../../ax/base/axInstance.h" />
 		<Unit filename="../../ax/base/axInterface.h" />
 		<Unit filename="../../ax/base/axInterfaceLinux.h" />
 		<Unit filename="../../ax/base/axInterfaceNone.h" />
