@@ -6,14 +6,9 @@
 
 #include "axConfig.h"
 #include "core/axDefines.h"
-#include "core/axDebug.h"
-#include "core/axAssert.h"
 #include "core/axRect.h"
-#include "core/axMalloc.h"
-#include "core/axRand.h"
-#include "core/axStdlib.h"
-#include "core/axUtils.h"
 #include "par/axParameter.h"
+//^ moved some of the includes bellow the global singleton 
 
 //----------------------------------------------------------------------
 
@@ -145,24 +140,47 @@ class axBaseImpl : public axBase
 //
 //----------------------------------------------------------------------
 
-// singleton???
+// we need axDebugLog at this point
+#include "core/axDebugLog.h"
 
+// singleton???
 class axGlobalScope
 {
   private:
-    axBase* mBase;
+    // here is the axDebugLog instance
+    // but if AX_DEBUG_LOG is not defined it will just be a blank class see
+    // axDebugLog.h    
+    axDebugLog mDebugLog;    
+    axBase*    mBase;
   public:
     axGlobalScope()  { /*trace("axGlobalScope.constructor");*/ mBase=NULL; }
     ~axGlobalScope() { /*trace("axGlobalScope.destructor");*/ if (mBase) delete mBase; }
-    inline void setBase(axBase* aBase) { mBase=aBase; }
+    inline void setBase(axBase* aBase)
+    {
+      mBase=aBase;
+      // call axDebugLog.setup() that will open the file stream (with axGetBasePath)
+      // the global handle for win32 dll's should be available at this point
+      mDebugLog.setup();
+    }
 };
 
 //----------
 
 // __thread?
+// __thread works only for primitive data types like 'int' or 'void*'
 static axGlobalScope gGlobalScope;
 
 //----------------------------------------------------------------------
+
+// after gGlobalScope is defined we can include axDebug, which will need it
+// 
+
+#include "core/axMalloc.h"
+#include "core/axDebug.h"
+#include "core/axAssert.h"
+#include "core/axRand.h"
+#include "core/axStdlib.h"
+#include "core/axUtils.h"
 
 #include "base/axPlatform.h"
 #include "base/axInterface.h"

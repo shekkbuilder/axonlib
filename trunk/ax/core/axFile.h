@@ -23,10 +23,30 @@
 
 // possible #include issues here...
 
-#include "axMalloc.h" // axMalloc
-#include "axDebug.h"  // trace()
+#include "axDefines.h"
 #include "axStdlib.h" // ...
-// ### axGetBasePath() is needed from axPlatform at this stage 
+#include "axDebug.h"  // trace()
+#include "axMalloc.h" // axMalloc
+#include "axBasePath.h"
+
+//#include "axStdlib.h"
+
+// ccernn:
+// this created a curcular-inclusion (if AX_DEBUG_MEM or something defined)
+// axStdlib includes axMalloc, and axMalloc again, includes axDebug..
+// a simple solution (for this single case) is to have this internal
+// function inline:
+
+/*
+inline char* __axStrrchr(const char* s, int c)
+{
+  char* p = NULL;
+  while (*s++) if (*s == c) p = (char*) s;
+  return p;
+}
+*/
+
+//----------
 
 class axFile
 {
@@ -36,7 +56,7 @@ class axFile
   public:
     unsigned int* size;  // size of a buffer is stored here
     
-    axFile()  { FILE* f = NULL; }
+    axFile()  { f = NULL; }
     ~axFile() {}
     
     // close
@@ -74,7 +94,7 @@ class axFile
         trace("axFileRead, #ERR null sized: " << filepath);
         return 0;
       }
-      unsigned char* b = (unsigned char*)axMalloc(size);
+      unsigned char* b;// = (unsigned char*)axMalloc(size);
       unsigned int res = fread(b, size, 1, f);      
       close();      
       if (!res)

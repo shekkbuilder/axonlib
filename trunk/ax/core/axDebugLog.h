@@ -21,84 +21,17 @@
 // axDebugLog.h
 ///////////////////////////////////////////////////////////////////////////////
 
+#if defined AX_DEBUG && defined AX_DEBUG_LOG 
+
 #include <iostream>
 #include <fstream>
 
 #include "axDefines.h"
 #include "axStdlib.h"
 #include "axMutex.h" // linux: undefined reference to `pthread_mutex_trylock'
-
+#include "axBasePath.h" // axGetBasePath is now there
 
 //////////////////////////////////////////  temp stuff
-
-extern const char* axGetBasePath(char* path);
-
-//// the below is disturbing !!!
-//
-//#define gWinInstance NULL
-//
-////axGetBasePath() is needed by class axDebugLog
-//#ifdef AX_WIN32
-//#ifndef axPlatformWin32_included
-//
-//  const char* axGetBasePath(char* path)
-//  {
-//    #if defined AX_FORMAT_LIB || defined AX_FORMAT_EXE
-//      char filepath[AX_MAX_PATH] = "";
-//      GetModuleFileName(gWinInstance, filepath, MAX_PATH);
-//      const char* slash = axStrrchr(filepath, '\\');
-//      if (slash)
-//        axStrncpy(path, filepath, (slash + 1) - (char*)filepath);
-//      else
-//        axStrcat(path, (char*)".\\");
-//    #else
-//      axStrcat(path, (char*)".\\");
-//    #endif
-//    return path;
-//  }
-//
-//#endif
-//#endif
-//
-////////////////////////////////////////////
-//
-//#ifdef AX_LINUX
-//#ifndef axPlatformLinux_included
-//
-//const char* axGetBasePath(char* path)
-//{
-//  #ifdef AX_FORMAT_LIB
-//
-//    char filepath[AX_MAX_PATH] = "";
-//    Dl_info dli;
-//    dladdr(__func__, &dli);
-//    const char* slash = axStrrchr(dli.dli_fname, '/');
-//    if (slash)
-//	    axStrncpy(path, dli.dli_fname, (slash + 1) - (char*)dli.dli_fname);
-//    else
-//      axStrcat(path, (char*)"./");
-//
-//  #elif defined AX_FORMAT_EXE
-//
-//    char filepath[AX_MAX_PATH] = "";
-//    if (readlink("/proc/self/exe", filepath, AX_MAX_PATH))
-//    {
-//      const char* slash = axStrrchr(filepath, '/');
-//      if (slash)
-//		    axStrncpy(path, filepath, (slash + 1) - (char*)filepath);
-//      else
-//        axStrcat(path, (char*)"./");
-//    }
-//
-//  #else
-//    axStrcat(path, (char*)"./");
-//  #endif
-//  return path;
-//}
-//
-//#endif
-//#endif
-
 
 ////////////////////////////////////////// end of temp stuff
 
@@ -159,6 +92,16 @@ class axDebugLog : public std::ostream
 
     axDebugLog() :
       std::ostream(&tbuf), tbuf(std::cout.rdbuf(), axfstream.rdbuf())
+    {    
+    }
+
+    ~axDebugLog()
+    {
+      // mtx.unlock();
+      axfstream.close();
+    }
+    
+    void setup(void)
     {
       char filepath[AX_MAX_PATH] = "";
       axGetBasePath(filepath);
@@ -167,12 +110,19 @@ class axDebugLog : public std::ostream
       // mtx.lock();
       axfstream.open(AX_DEBUG_LOG, std::fstream::out AX_DEBUG_LOG_APPEND);
     }
-
-    ~axDebugLog()
-    {
-      // mtx.unlock();
-      axfstream.close();
-    }
 };
+
+#else // !AX_DEBUG_LOG
+
+// blank axDebugLog
+class axDebugLog
+{
+  public:    
+    axDebugLog() {}
+    ~axDebugLog() {}
+    void setup(void) {}    
+}
+
+#endif
 
 #endif // axDebugLog_included

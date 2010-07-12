@@ -4,12 +4,19 @@
 
 */
 
-//#define AX_FORMAT_EXE // !
+
+#define ___TMP_NO_GLOBAL
+#define AX_FORMAT_EXE // !
 #define AX_DEBUG
 #define AX_DEBUG_LOG "./test.log"
-#define AX_DEBUG_LOG_APPEND // append will append to the log file
+// #define AX_DEBUG_LOG_APPEND // append will append to the log file
 
 #include "axDefines.h"
+
+#ifdef AX_WIN32
+  static void* gWinInstance = 0;
+#endif
+
 #include "axDebug.h"
 #include "axDebugConsole.h"
 
@@ -25,6 +32,7 @@
   axRand r; \
   axCpu cpu; \
   \
+  axCout.setup(); \
   trace("cpuid=" << cpu.axCpuCaps()); \
   trace(" \
   \n this test will output a random value 5000 \
@@ -79,7 +87,7 @@
     // in this case
     _TEST_CODE_PORTION;
     
-    trace("test done");
+    trace("test done");    
     return 0;
   }
 

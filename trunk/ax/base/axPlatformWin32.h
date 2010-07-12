@@ -138,20 +138,7 @@ typedef axPlatformWin32 AX_PLATFORM;
 //
 //----------------------------------------------------------------------
 
-const char* axGetBasePath(char* path)
-  {
-    char* path_init = path;
-    char filepath[AX_MAX_PATH] = "";
-    GetModuleFileName(gWinInstance, filepath, MAX_PATH);
-    const char* slash = axStrrchr(filepath, '\\') + 1;
-    int len = (axStrrchr(filepath, '\\') + 1) - (char*)filepath;
-    if (slash) axStrncpy(path, filepath, len);
-    else axStrcpy(path, (char*)".\\");
-    //axStrcat(path, '\0');
-    path[len] = 0;
 
-    return path_init;
-  }
 
 //----------------------------------------------------------------------
 #endif
