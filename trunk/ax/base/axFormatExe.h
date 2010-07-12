@@ -288,7 +288,7 @@ class axInstanceExe : public axInstance
     // indicating, about to change the value..
     virtual void notifyParamChanged(axParameter* aParameter)
       {
-        trace("notifyParamChanged");
+        //trace("notifyParamChanged");
         int index = aParameter->getIndex();
         float value = aParameter->doGetValue(); // 0..1
         //vst_setParameterAutomated(index,value);
@@ -297,7 +297,7 @@ class axInstanceExe : public axInstance
 
     virtual void onChange(axParameter* aParameter)
       {
-        trace("onChange par");
+        //trace("onChange par");
         if (mEditorOpen) mEditor->paramChanged(aParameter);
       }
 

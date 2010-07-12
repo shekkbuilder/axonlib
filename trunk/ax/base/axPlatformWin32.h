@@ -61,26 +61,26 @@ static __thread HINSTANCE gWinInstance;
 __externc BOOL APIENTRY
 DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
 {
-  //trace("win32 DllMain");
+  trace("win32 DllMain");
   //g_Instance = hModule;
   switch(reason)
   {
     case DLL_PROCESS_ATTACH:
-      trace("DllMain DLL_PROCESS_ATTACH");
+      trace("DllMain (reason: process attach)");
       gWinInstance = hModule;
       printf("gWinInstance = %i\n",(int)gWinInstance);
       break;
     case DLL_PROCESS_DETACH:
-      trace("DllMain DLL_PROCESS_DETACH");
+      trace("DllMain (reason: process detach)");
       break;
     case DLL_THREAD_ATTACH:
-      trace("DllMain DLL_THREAD_ATTACH");
+      trace("DllMain (reason: thread attach)");
       break;
     case DLL_THREAD_DETACH:
-      trace("DllMain DLL_THREAD_DETACH");
+      trace("DllMain (reason: thread detach)");
       break;
     default:
-      trace("DllMain ???");
+      trace("DllMain (reason: unknown)");
       break;
   }
   return TRUE;
@@ -111,11 +111,17 @@ class axPlatformWin32 : public axPlatform
 {
   private:
     HINSTANCE mWinInstance;
+    char      mPath[AX_MAX_PATH];
+
   public:
     axPlatformWin32(axBase* aBase) : axPlatform(aBase)
       {
         //trace("axPlatformWin32.constructor");
         mWinInstance = gWinInstance;
+        //trace("mWinInstance: " << mWinInstance);
+        //trc("mWinInstance: " << mWinInstance);
+        mPath[0] = 0;
+        GetModuleFileName(mWinInstance,mPath,MAX_PATH);
       }
     virtual ~axPlatformWin32()
       {
@@ -125,6 +131,7 @@ class axPlatformWin32 : public axPlatform
 
     virtual char* getPlatformName(void) { return (char*)"win32"; }
     virtual void* getHandle(void) { return (void*)mWinInstance; }
+    virtual char* getPath(void) { return mPath; }
 
 };
 

@@ -233,6 +233,7 @@
 		<Unit filename="../../ax/base/test.cpp" />
 		<Unit filename="../../ax/core/axArray.h" />
 		<Unit filename="../../ax/core/axAssert.h" />
+		<Unit filename="../../ax/core/axBasePath.h" />
 		<Unit filename="../../ax/core/axBuffer.h" />
 		<Unit filename="../../ax/core/axCompress.h" />
 		<Unit filename="../../ax/core/axCpu.h" />

@@ -2,13 +2,21 @@
 #define axBase_included
 //----------------------------------------------------------------------
 
-//#include "hack_hack.h"
+#include "hack_hack.h"
 
 #include "axConfig.h"
 #include "core/axDefines.h"
 #include "core/axRect.h"
+
+#include "core/axMalloc.h"
+//#include "core/axDebug.h"
+//#include "core/axAssert.h"
+#include "core/axRand.h"
+#include "core/axStdlib.h"
+#include "core/axUtils.h"
+
 #include "par/axParameter.h"
-//^ moved some of the includes bellow the global singleton 
+//^ moved some of the includes bellow the global singleton
 
 //----------------------------------------------------------------------
 
@@ -56,6 +64,7 @@ class axPlatform
     virtual ~axPlatform()     { /*trace("axPlatform.destructor");*/ }
     virtual void* getHandle(void) { return NULL; }  // win32: hinstance
     virtual char* getPlatformName(void) { return (char*)""; }
+    virtual char* getPath(void) { return (char*)""; }
 };
 
 //----------------------------------------------------------------------
@@ -141,7 +150,7 @@ class axBaseImpl : public axBase
 //----------------------------------------------------------------------
 
 // we need axDebugLog at this point
-#include "core/axDebugLog.h"
+//#include "core/axDebugLog.h"
 
 // singleton???
 class axGlobalScope
@@ -149,19 +158,17 @@ class axGlobalScope
   private:
     // here is the axDebugLog instance
     // but if AX_DEBUG_LOG is not defined it will just be a blank class see
-    // axDebugLog.h    
-    axDebugLog mDebugLog;    
-    axBase*    mBase;
+    // axDebugLog.h
+//    axDebugLog  mDebugLog;
+    axBase*     mBase;
+    void*       mPtr;
   public:
-    axGlobalScope()  { /*trace("axGlobalScope.constructor");*/ mBase=NULL; }
-    ~axGlobalScope() { /*trace("axGlobalScope.destructor");*/ if (mBase) delete mBase; }
-    inline void setBase(axBase* aBase)
-    {
-      mBase=aBase;
-      // call axDebugLog.setup() that will open the file stream (with axGetBasePath)
-      // the global handle for win32 dll's should be available at this point
-      mDebugLog.setup();
-    }
+    axGlobalScope()  { mBase=NULL; mPtr=NULL; }
+    ~axGlobalScope() { if (mBase) delete mBase; }
+    inline void     setBase(axBase* aBase)  { mBase=aBase; }
+    inline void     setPtr(void* aPtr)      { mPtr=aPtr; }
+    inline axBase*  getBase(void)           { return mBase; }
+    inline void*    getPtr(void)            { return mPtr; }
 };
 
 //----------
@@ -173,14 +180,14 @@ static axGlobalScope gGlobalScope;
 //----------------------------------------------------------------------
 
 // after gGlobalScope is defined we can include axDebug, which will need it
-// 
+//
 
-#include "core/axMalloc.h"
-#include "core/axDebug.h"
-#include "core/axAssert.h"
-#include "core/axRand.h"
-#include "core/axStdlib.h"
-#include "core/axUtils.h"
+//#include "core/axMalloc.h"
+//#include "core/axDebug.h"
+//#include "core/axAssert.h"
+//#include "core/axRand.h"
+//#include "core/axStdlib.h"
+//#include "core/axUtils.h"
 
 #include "base/axPlatform.h"
 #include "base/axInterface.h"
