@@ -44,69 +44,8 @@ class axBase
 //
 //----------------------------------------------------------------------
 
-// default names for (default) stereo in/out
-static char* g_default_stereo_inputs[]  = { (char*)"in1", (char*)"in2" };
-static char* g_default_stereo_outputs[] = { (char*)"out1",(char*)"out2" };
-
-//----------
-
-
-class axDescriptor
-{
-  public:
-    axDescriptor(axBase* aBase)  { /*trace("axDescriptor.constructor");*/ }
-    virtual ~axDescriptor()      { /*trace("axDescriptor.destructor");*/ }
-    //
-    virtual char*         getName(void)             { return (char*)"plugin"; }
-    virtual char*         getAuthor(void)           { return (char*)"anonymous"; }
-    virtual char*         getProduct(void)          { return (char*)"unknown plugin"; }
-    virtual int           getVersion(void)          { return 0; }
-    virtual unsigned int  getUniqueId(void)         { return 0x00000000; }
-    virtual int           getNumInputs(void)        { return 2; }
-    virtual int           getNumOutputs(void)       { return 2; }
-    virtual int           getNumParams(void)        { return 0; }
-    virtual int           getNumProgs(void)         { return 0; }
-    virtual char*         getInputName(int aIndex)  { return g_default_stereo_inputs[aIndex]; }
-    virtual char*         getOutputName(int aIndex) { return g_default_stereo_outputs[aIndex]; }
-    virtual char*         getParamName(int aIndex)  { return (char*)"param"; }
-    //
-    virtual bool          isSynth(void)             { return false; }
-    virtual bool          hasEditor(void)           { return false; }
-    virtual axRect        getEditorRect(void)       { return axRect(0,0,100,100); }
-};
-
-//----------
-
-#define is_Open     1
-#define is_Close    2
-#define is_Suspend  3
-#define is_Resume   4
-#define is_Rate     5
-#define is_Block    6
-
-class axInstance
-{
-  public:
-    axInstance(axBase* aBase)  { /*trace("axInstance.constructor");*/ }
-    virtual ~axInstance()      { /*trace("axInstance.destructor");*/ }
-    //
-    virtual void    doStateChange(int aState) {}
-    virtual void    doSetParameter(axParameter* aParameter) {}
-    virtual void    doPreProgram(int aProgram) {}
-    virtual void    doSetProgram(int aProgram) {}
-    virtual void    doProcessMidi(int aOffset, unsigned char aMsg1, unsigned char aMsg2, unsigned char aMsg3) {}
-    virtual bool    doProcessBlock(float** aInputs, float** aOutputs, int Length) { return false; }
-    virtual void    doProcessSample(float** aInputs, float** aOutputs) {}
-    virtual void    doPostProcess(float** aInputs, float** aOutputs, int Length) {}
-    //
-    virtual axRect  getEditorRect(void) { return axRect(0,0,100,100); }
-    virtual void*   doOpenEditor(void* ptr) { return NULL; }
-    virtual void    doCloseEditor(void) {}
-    virtual void    doIdleEditor(void) {}
-    //
-    virtual void    notifyResizeEditor(int aWidth, int aHeight) {}
-    virtual void    notifyParamChanged(axParameter* aParameter) {}
-};
+#include "base/axDescriptor.h"
+#include "base/axInstance.h"
 
 //----------------------------------------------------------------------
 // cross-*

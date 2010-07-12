@@ -69,7 +69,8 @@ typedef axDescriptorVst AX_DESCRIPTOR;
 //
 //----------------------------------------------------------------------
 
-class axInstanceVst : public axInstance, public axParameterListener
+class axInstanceVst : public axInstance//,
+                      //public axParameterListener
 {
   protected:
     axBase*             mBase;
@@ -80,13 +81,15 @@ class axInstanceVst : public axInstance, public axParameterListener
     VstTimeInfo*        mTimeInfo;
     VstEvent            mMidiEvents[MAX_MIDI_SEND];
     axVstEvents         mMidiEventList;
+
     axParameters        mParameters;
     axPrograms          mPrograms;
     int                 mCurrentProgram;
     int                 mFlags;
     bool                mEditorOpen;
     axRect              mEditorRect;
-    void*               mEditorWindow;
+    //void*               mEditorWindow;
+    axEditor*           mEditorWindow;
     int                 mPlayState;
     double              mSamplePos;
     double              mSampleRate;
@@ -103,7 +106,7 @@ class axInstanceVst : public axInstance, public axParameterListener
         //trace("format: " << mBase->getFormat());
         audioMaster = (audioMasterCallback)mBase->getFormat()->getHostPtr();
         aeffect     = (AEffect*)mBase->getFormat()->getUserPtr();
-        //trace("audioMaster: " << (int)audioMaster);
+        trace("audioMaster: " << (int)audioMaster);
         //trace("aeffect: "     << (int)aeffect);
         /*trace("axInstanceVst.constructor");*/
         mFlags                    = 0;
@@ -246,7 +249,7 @@ class axInstanceVst : public axInstance, public axParameterListener
             {
 
               //mEditorWindow = doOpenEditor(&ptr);
-              mEditorWindow = doOpenEditor(&ptr);
+              mEditorWindow = (axEditor*)doOpenEditor(&ptr);
 
               //mEditorWindow->reparent((int)win);
               mEditorOpen = true;
@@ -743,6 +746,7 @@ class axInstanceVst : public axInstance, public axParameterListener
 
     virtual void vst_setParameter(VstInt32 aIndex, float aValue)
       {
+        trace("vst_setParameter");
         axParameter* par = mParameters[aIndex];
         par->doSetValue(aValue,true);
       }
@@ -831,8 +835,8 @@ class axInstanceVst : public axInstance, public axParameterListener
     virtual double        getBeatPos(void)        { return mBeatPos; }
     virtual double        getTempo(void)          { return mTempo; }
 
-  //protected:
-  private:
+  protected:
+  //private:
 
     //----------------------------------------
     // AEffect flags
@@ -877,7 +881,7 @@ class axInstanceVst : public axInstance, public axParameterListener
     // [return value]: Host VST version (for example 2400 for VST 2.4)
     // @see AudioEffect::getMasterVersion
 
-    VstInt32 vst_getMasterVersion(void)
+    virtual VstInt32 vst_getMasterVersion(void)
       {
         VstInt32 version = 1;
         if (audioMaster) version = (VstInt32)audioMaster(aeffect,audioMasterVersion,0,0,0,0);
@@ -891,7 +895,7 @@ class axInstanceVst : public axInstance, public axParameterListener
     // [return value]: current unique identifier on shell plug-in
     // @see AudioEffect::getCurrentUniqueId
 
-    VstInt32 vst_getCurrentUniqueId()
+    virtual VstInt32 vst_getCurrentUniqueId()
       {
         VstInt32 id = 0;
         if (audioMaster) id = (VstInt32)audioMaster(aeffect,audioMasterCurrentId,0,0,0,0);
@@ -910,11 +914,12 @@ class axInstanceVst : public axInstance, public axParameterListener
     // call setParameterAutomated (). This ensures that the Host is notified of the parameter change, which
     // allows it to record these changes for automation.
 
-    void vst_setParameterAutomated(VstInt32 index, float value)
+    virtual void vst_setParameterAutomated(VstInt32 index, float value)
       {
-        //wtrace("  axFormatVst.setParameterAutomated  index: " << index << " value: " << value);
+        //trace("audioMaster: " << (int)audioMaster);
+        trace("vst_setParameterAutomated(" << index << ") =  " << value);
         if (audioMaster) audioMaster(aeffect,audioMasterAutomate,index,0,0,value);
-        vst_setParameter(index,value);
+        //vst_setParameter(index,value);
       }
 
     //----------
@@ -925,7 +930,7 @@ class axInstanceVst : public axInstance, public axParameterListener
     // @see AudioEffect::masterIdle
     // masterIdle
 
-    void vst_masterIdle(void)
+    virtual void vst_masterIdle(void)
       {
         if (audioMaster) audioMaster(aeffect,audioMasterIdle,0,0,0,0);
       }
@@ -937,7 +942,7 @@ class axInstanceVst : public axInstance, public axParameterListener
     // [return value]: #VstTimeInfo* or null if not supported
     // @see VstTimeInfoFlags @see AudioEffectX::getTimeInfo
 
-    VstTimeInfo* vst_getTime(VstInt32 filter)
+    virtual VstTimeInfo* vst_getTime(VstInt32 filter)
       {
         if (audioMaster)
         {
@@ -955,7 +960,7 @@ class axInstanceVst : public axInstance, public axParameterListener
     // param events Fill with VST events
     // return Returns \e true on success
 
-    bool vst_processEvents(VstEvents* events)
+    virtual bool vst_processEvents(VstEvents* events)
       {
         if (audioMaster) return audioMaster(aeffect,audioMasterProcessEvents,0,0,events,0)==1;
         return false;
@@ -973,7 +978,7 @@ class axInstanceVst : public axInstance, public axParameterListener
 	  // return true on success
 	  // see also: setSpeakerArrangement(), getSpeakerArrangement()
 
-    bool vst_ioChanged(void)
+    virtual bool vst_ioChanged(void)
       {
         if (audioMaster) return (audioMaster(aeffect,audioMasterIOChanged,0,0,0,0) != 0);
         return false;
@@ -986,7 +991,7 @@ class axInstanceVst : public axInstance, public axParameterListener
     // [value]: new height
     // [return value]: 1 if supported  @see AudioEffectX::sizeWindow
 
-    bool vst_sizeWindow(int aWidth, int aHeight)
+    virtual bool vst_sizeWindow(int aWidth, int aHeight)
       {
         if (audioMaster) return audioMaster(aeffect,audioMasterSizeWindow,aWidth,aHeight,0,0)==1;
         return false;
@@ -1094,7 +1099,7 @@ class axInstanceVst : public axInstance, public axParameterListener
     // param index Index of the parameter
     // Returns true on success
 
-    bool vst_beginEdit(VstInt32 index)
+    virtual bool vst_beginEdit(VstInt32 index)
       {
         if (audioMaster) return (audioMaster(aeffect,audioMasterBeginEdit,index,0,0,0)) ? true : false;
         return 0;
@@ -1110,7 +1115,7 @@ class axInstanceVst : public axInstance, public axParameterListener
     // param index Index of the parameter
     // Returns \e true on success
 
-    bool vst_endEdit(VstInt32 index)
+    virtual bool vst_endEdit(VstInt32 index)
     {
       if (audioMaster) return (audioMaster(aeffect,audioMasterEndEdit,index,0,0,0)) ? true : false;
       return 0;
@@ -1134,7 +1139,6 @@ class axInstanceVst : public axInstance, public axParameterListener
   //----------------------------------------
 
   protected:
-
 
     //----------------------------------------
     // description
@@ -1172,6 +1176,7 @@ class axInstanceVst : public axInstance, public axParameterListener
     // parameters
     //----------------------------------------
 
+    // should be in axInstanceBase
     virtual void appendParameter(axParameter* aParameter)
       {
         int index = mParameters.size();
@@ -1412,11 +1417,22 @@ class axInstanceVst : public axInstance, public axParameterListener
     // axInstanceBase
     //----------------------------------------
 
+    // called from editor
+    // indicating, about to change the value..
     virtual void notifyParamChanged(axParameter* aParameter)
       {
+        trace("notifyParamChanged");
         int index = aParameter->getIndex();
         float value = aParameter->doGetValue(); // 0..1
+        //aParameter->doSetValue(value,true);
         vst_setParameterAutomated(index,value);
+        //doSetParameter(aParameter);
+      }
+
+    virtual void onChange(axParameter* aParameter)
+      {
+        trace("onChange");
+        mEditorWindow->paramChanged(aParameter);
       }
 
     //----------
@@ -1488,7 +1504,7 @@ class axFormatVst : public axFormat
 
     static void vst_setParameter_callback(AEffect* ae, VstInt32 index, float value)
       {
-        //trace("vst: setParameter");
+        //trace("vst_setParameter");
         axInstanceVst* instance = (axInstanceVst*)(ae->object);
         instance->vst_setParameter(index,value);
       }

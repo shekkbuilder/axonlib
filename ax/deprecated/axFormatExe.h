@@ -113,6 +113,13 @@ class axFormatExe : public axFormatBase//,
         mFormatFlags |= ff_HasEditor;
       }
 
+    virtual void appendParameter(axParameter* aParameter)
+      {
+        int index = mParameters.size();
+        aParameter->setIndex(index);
+        mParameters.append(aParameter);
+      }
+
 //    virtual void setupParameters(void)
 //      {
 //        int num = mParameters.size();
