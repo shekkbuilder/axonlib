@@ -130,7 +130,7 @@ class myInstance : public AX_INSTANCE
 
     myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
-        trc("myInstance");
+        //trc("myInstance");
         mBase = aBase;
         edit  = NULL;
         skin  = NULL;

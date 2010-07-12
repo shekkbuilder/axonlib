@@ -23,7 +23,7 @@
 
 #include "axDefines.h"
 
-#ifdef AX_WIN32
+#if defined AX_WIN32 && defined AX_DEBUG && defined AX_DEBUG_CONSOLE
 
 #ifndef _WIN32_WINNT
   #define _WIN32_WINNT 0x0501
@@ -84,14 +84,13 @@ class axDebugConsole
 
 };
 
-#else // AX_WIN32
+#else // defined AX_WIN32 && defined AX_DEBUG && defined AX_DEBUG_AUTOSTD
 
 class axDebugConsole
 {
-  public:
-    axDebugConsole() {}
+  // blank
 };
 
-#endif // !AX_WIN32
+#endif
 
 #endif // axDebugConsole_included
