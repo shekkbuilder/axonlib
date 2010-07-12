@@ -1643,6 +1643,7 @@ typedef axFormatVst AX_FORMAT;
 
 // that (int) above...
 // what about 64-bit platform?
+// ^ does 'long' work for the above ?
 
 //----------------------------------------------------------------------
 

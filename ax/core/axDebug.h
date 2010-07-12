@@ -25,40 +25,9 @@
 
 //----------
 
-//#include "axStdlib.h"
-
-// ccernn:
-// this created a curcular-inclusion (if AX_DEBUG_MEM or something defined)
-// axStdlib includes axMalloc, and axMalloc again, includes axDebug..
-// a simple solution (for this single case) is to have this internal
-// function inline:
-
-inline char* ax__Strrchr(const char* s, int c)
-{
-  char* p = NULL;
-  while (*s++) if (*s == c) p = (char*) s;
-  return p;
-}
-
-//----------
-
-//axGetFileName() is needed by trace()
-inline const char* axGetFileName(const char* path)
-{
-  if (!path)
-    return "NULL";
-  const char *slash, *backslash;
-  slash = ax__Strrchr(path, '/');
-  backslash = ax__Strrchr(path, '\\');
-  if (slash)
-    return slash + 1;
-  else if (backslash)
-    return backslash + 1;
-  return path;
-}
-
 // set macros depending on which flags are enabled
 #ifdef AX_DEBUG
+
   #include <iostream>
   #include <fstream>
 
@@ -68,8 +37,15 @@ inline const char* axGetFileName(const char* path)
   // also some problems with axGetBasePath (redefinition)
 
   #ifdef AX_DEBUG_LOG
-    #include "axDebugLog.h"
-    axDebugLog axCout;
+    //define axCout mDebugLog
+    
+    #ifndef ___TMP_NO_GLOBAL
+      #define axCout gGlobalScope.mDebugLog
+    #else
+      #include "axDebugLog.h"
+      axDebugLog axCout;
+    #endif
+        
   #else
     #define axCout std::cout
   #endif
@@ -80,7 +56,7 @@ inline const char* axGetFileName(const char* path)
   #define _trace(x) \
     axCout  <<  x << std::endl
 
-#else
+#else // AX_DEBUG
 
   #define trace(x)
   #define _trace(x)
