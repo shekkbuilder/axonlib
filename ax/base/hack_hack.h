@@ -46,9 +46,9 @@
 //----------------------------------------------------------------------
 // debug
 
-#include <iostream>
-using namespace std;
-#define trace(x) cout << x << endl; cout.flush()
+//#include <iostream>
+//using namespace std;
+//#define trace(x) cout << x << endl; cout.flush()
 
 //----------------------------------------------------------------------
 #endif

@@ -54,12 +54,12 @@ class axDebugConsole
         SetConsoleWindowInfo(hOut,true,&cDim);
         SetConsoleCtrlHandler(NULL,true);
         SetWindowPos(hCw,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
-//	      HMENU hMenu = GetSystemMenu(hCw,0);
-//	      if (hMenu)
-//	      {
-//          DeleteMenu(hMenu,SC_CLOSE,MF_BYCOMMAND);
-//          DrawMenuBar(hCw);
-//	      }
+	      HMENU hMenu = GetSystemMenu(hCw,0);
+	      if (hMenu)
+	      {
+          DeleteMenu(hMenu,SC_CLOSE,MF_BYCOMMAND);
+          DrawMenuBar(hCw);
+	      }
         // _O_TEXT = 0x4000
         int axHcrt = _open_osfhandle((long)GetStdHandle(STD_OUTPUT_HANDLE),
                         0x4000);
