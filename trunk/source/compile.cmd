@@ -15,7 +15,7 @@ set vstpath=..\..\vstsdk24
 set ladspapath=..\..\ladspa_sdk\src
 
 :: set g++ path, e.g: c:\mingw\bin\g++
-set mgwpath=g++
+set mgwpath=g++3
 
 :: set windres path, e.g: c:\mingw\bin\windres
 set windrespath=windres
@@ -81,14 +81,14 @@ if not "%infile:~-4%"=="%srcext%" goto nocpp
 if not exist %axpath% goto noax
 
 :: check for additional params
-if not [%2]==[] (if not [%2]==[-v] (if not [%2]==[-d] (if not [%2]==[-g] (if not [%2]==[-ladspa] (if not [%2]==[-vst] (if not [%2]==[-exe] (if not [%2]==[-ts] (if not [%2]==[-nogui] set ext_p2= %2))))))))
-if not [%3]==[] (if not [%3]==[-v] (if not [%3]==[-d] (if not [%3]==[-g] (if not [%3]==[-ladspa] (if not [%3]==[-vst] (if not [%3]==[-exe] (if not [%3]==[-ts] (if not [%3]==[-nogui] set ext_p3= %3))))))))
-if not [%4]==[] (if not [%4]==[-v] (if not [%4]==[-d] (if not [%4]==[-g] (if not [%4]==[-ladspa] (if not [%4]==[-vst] (if not [%4]==[-exe] (if not [%4]==[-ts] (if not [%4]==[-nogui] set ext_p4= %4))))))))
-if not [%5]==[] (if not [%5]==[-v] (if not [%5]==[-d] (if not [%5]==[-g] (if not [%5]==[-ladspa] (if not [%5]==[-vst] (if not [%5]==[-exe] (if not [%5]==[-ts] (if not [%5]==[-nogui] set ext_p5= %5))))))))
-if not [%6]==[] (if not [%6]==[-v] (if not [%6]==[-d] (if not [%6]==[-g] (if not [%6]==[-ladspa] (if not [%6]==[-vst] (if not [%6]==[-exe] (if not [%6]==[-ts] (if not [%6]==[-nogui] set ext_p6= %6))))))))
-if not [%7]==[] (if not [%7]==[-v] (if not [%7]==[-d] (if not [%7]==[-g] (if not [%7]==[-ladspa] (if not [%7]==[-vst] (if not [%7]==[-exe] (if not [%7]==[-ts] (if not [%7]==[-nogui] set ext_p7= %7))))))))
-if not [%8]==[] (if not [%8]==[-v] (if not [%8]==[-d] (if not [%8]==[-g] (if not [%8]==[-ladspa] (if not [%8]==[-vst] (if not [%8]==[-exe] (if not [%8]==[-ts] (if not [%8]==[-nogui] set ext_p8= %8))))))))
-if not [%9]==[] (if not [%9]==[-v] (if not [%9]==[-d] (if not [%9]==[-g] (if not [%9]==[-ladspa] (if not [%9]==[-vst] (if not [%9]==[-exe] (if not [%9]==[-ts] (if not [%9]==[-nogui] set ext_p9= %9))))))))
+if not [%2]==[] (if not [%2]==[-v] (if not [%2]==[-d] (if not [%2]==[-g] (if not [%2]==[-ladspa] (if not [%2]==[-vst] (if not [%2]==[-exe] (if not [%2]==[-ts] (if not [%2]==[-nogui] (if not [%2]==[-nmv] set ext_p2= %2)))))))))
+if not [%3]==[] (if not [%3]==[-v] (if not [%3]==[-d] (if not [%3]==[-g] (if not [%3]==[-ladspa] (if not [%3]==[-vst] (if not [%3]==[-exe] (if not [%3]==[-ts] (if not [%3]==[-nogui] (if not [%3]==[-nmv] set ext_p3= %3)))))))))
+if not [%4]==[] (if not [%4]==[-v] (if not [%4]==[-d] (if not [%4]==[-g] (if not [%4]==[-ladspa] (if not [%4]==[-vst] (if not [%4]==[-exe] (if not [%4]==[-ts] (if not [%4]==[-nogui] (if not [%4]==[-nmv] set ext_p4= %4)))))))))
+if not [%5]==[] (if not [%5]==[-v] (if not [%5]==[-d] (if not [%5]==[-g] (if not [%5]==[-ladspa] (if not [%5]==[-vst] (if not [%5]==[-exe] (if not [%5]==[-ts] (if not [%5]==[-nogui] (if not [%5]==[-nmv] set ext_p5= %5)))))))))
+if not [%6]==[] (if not [%6]==[-v] (if not [%6]==[-d] (if not [%6]==[-g] (if not [%6]==[-ladspa] (if not [%6]==[-vst] (if not [%6]==[-exe] (if not [%6]==[-ts] (if not [%6]==[-nogui] (if not [%6]==[-nmv] set ext_p6= %6)))))))))
+if not [%7]==[] (if not [%7]==[-v] (if not [%7]==[-d] (if not [%7]==[-g] (if not [%7]==[-ladspa] (if not [%7]==[-vst] (if not [%7]==[-exe] (if not [%7]==[-ts] (if not [%7]==[-nogui] (if not [%7]==[-nmv] set ext_p7= %7)))))))))
+if not [%8]==[] (if not [%8]==[-v] (if not [%8]==[-d] (if not [%8]==[-g] (if not [%8]==[-ladspa] (if not [%8]==[-vst] (if not [%8]==[-exe] (if not [%8]==[-ts] (if not [%8]==[-nogui] (if not [%8]==[-nmv] set ext_p8= %8)))))))))
+if not [%9]==[] (if not [%9]==[-v] (if not [%9]==[-d] (if not [%9]==[-g] (if not [%9]==[-ladspa] (if not [%9]==[-vst] (if not [%9]==[-exe] (if not [%9]==[-ts] (if not [%9]==[-nogui] (if not [%9]==[-nmv] set ext_p9= %9)))))))))
 set ext_params=%ext_p2%%ext_p3%%ext_p4%%ext_p5%%ext_p6%%ext_p7%%ext_p8%%ext_p9%
 
 :: check for 'not move'
