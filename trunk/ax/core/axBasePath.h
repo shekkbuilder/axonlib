@@ -49,9 +49,9 @@ inline const char* axGetFileName(const char* path)
         axStrncpy(path, filepath, (slash + 1) - (char*)filepath);
       else
         axStrcat(path, (char*)".\\");
-        
-    #else    
-      axStrcat(path, (char*)".\\");      
+
+    #else
+      axStrcat(path, (char*)".\\");
     #endif
     return path;
   }

@@ -49,17 +49,17 @@ class axDebugConsole
         HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
         // ENABLE_EXTENDED_FLAGS = 0x0080, ENABLE_QUICK_EDIT_MODE = 0x0040
         SetConsoleMode(hIn,0x0080|0x0040);
-        HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);        
+        HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
         SMALL_RECT cDim = {0,0,70,20};
         SetConsoleWindowInfo(hOut,true,&cDim);
         SetConsoleCtrlHandler(NULL,true);
         SetWindowPos(hCw,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
-	      HMENU hMenu = GetSystemMenu(hCw,0);
-	      if (hMenu)
-	      {
-          DeleteMenu(hMenu,SC_CLOSE,MF_BYCOMMAND);
-          DrawMenuBar(hCw);
-	      }
+//	      HMENU hMenu = GetSystemMenu(hCw,0);
+//	      if (hMenu)
+//	      {
+//          DeleteMenu(hMenu,SC_CLOSE,MF_BYCOMMAND);
+//          DrawMenuBar(hCw);
+//	      }
         // _O_TEXT = 0x4000
         int axHcrt = _open_osfhandle((long)GetStdHandle(STD_OUTPUT_HANDLE),
                         0x4000);

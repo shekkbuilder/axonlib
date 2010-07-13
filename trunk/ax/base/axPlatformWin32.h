@@ -109,14 +109,16 @@ DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
 
 // axDebugConsole will handle #ifdef's
 #include "core/axDebugConsole.h"
+#include "core/axDebugLog.h"
 
 class axPlatformWin32 : public axPlatform
 {
   private:
     // axDebugConsole here?
-    axDebugConsole mDebugConsole;        
-    HINSTANCE mWinInstance;
-    char      mPath[AX_MAX_PATH];
+    axDebugConsole  mDebugConsole;
+    axDebugLog      mDebugLog;
+    HINSTANCE       mWinInstance;
+    char            mPath[AX_MAX_PATH];
 
   public:
     axPlatformWin32(axBase* aBase) : axPlatform(aBase)
@@ -127,6 +129,7 @@ class axPlatformWin32 : public axPlatform
         //trc("mWinInstance: " << mWinInstance);
         mPath[0] = 0;
         GetModuleFileName(mWinInstance,mPath,MAX_PATH);
+        mDebugLog.setup(mPath);
       }
     virtual ~axPlatformWin32()
       {
