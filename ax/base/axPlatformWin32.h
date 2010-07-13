@@ -59,6 +59,8 @@
 
 #ifdef AX_DEBUG
   #define __trace(x) trace (std::cout << x << std::endl)
+#else
+  #define __trace(x)
 #endif
 
 //----------------------------------------------------------------------
