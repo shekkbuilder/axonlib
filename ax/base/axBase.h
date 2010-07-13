@@ -1,6 +1,27 @@
 #ifndef axBase_included
 #define axBase_included
 //----------------------------------------------------------------------
+/*
+
+- axGlobalScope
+  - base = NULL
+  - ptr = NULL
+- DllMain [win32]
+  - gWinInstance
+- AX_ENTRYPOINT
+  - create base <template classes>
+    - create platform
+      - GetModuleFileName/dladdr (for axGetBasePath)
+      - create debug
+        - global.setPtr(debug)
+    - create interface
+    - create descriptor
+    - create format
+  - global.setBase(base)
+  - format.entrypoiunt
+    - create instance [vst]
+
+*/
 
 #include "hack_hack.h"
 

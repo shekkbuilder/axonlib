@@ -21,7 +21,7 @@
 // axDebugLog.h
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined AX_DEBUG && defined AX_DEBUG_LOG 
+#if defined AX_DEBUG && defined AX_DEBUG_LOG
 
 #include <iostream>
 #include <fstream>
@@ -29,7 +29,7 @@
 #include "axDefines.h"
 #include "axStdlib.h"
 #include "axMutex.h" // linux: undefined reference to `pthread_mutex_trylock'
-#include "axBasePath.h" // axGetBasePath is now there
+//#include "axBasePath.h" // axGetBasePath is now there
 
 //////////////////////////////////////////  temp stuff
 
@@ -92,7 +92,7 @@ class axDebugLog : public std::ostream
 
     axDebugLog() :
       std::ostream(&tbuf), tbuf(std::cout.rdbuf(), axfstream.rdbuf())
-    {    
+    {
     }
 
     ~axDebugLog()
@@ -100,11 +100,13 @@ class axDebugLog : public std::ostream
       // mtx.unlock();
       axfstream.close();
     }
-    
-    void setup(void)
+
+    //void setup(void)
+    void setup(char* path)
     {
       char filepath[AX_MAX_PATH] = "";
-      axGetBasePath(filepath);
+      //axGetBasePath(filepath);
+      axStrcpy(filepath,path);
       axStrcat(filepath, AX_DEBUG_LOG);
       std::cout << "dbg_log_filepath = " << filepath << std::endl;
       // mtx.lock();
@@ -117,11 +119,11 @@ class axDebugLog : public std::ostream
 // blank axDebugLog
 class axDebugLog
 {
-  public:    
+  public:
     axDebugLog() {}
     ~axDebugLog() {}
-    void setup(void) {}    
-}
+    void setup(void) {}
+};
 
 #endif
 

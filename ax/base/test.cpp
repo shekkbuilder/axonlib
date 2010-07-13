@@ -7,6 +7,9 @@
 //#define AX_NOGUI
 #define AX_USE_CPU_CAPS
 //#define AX_WIDGET_NOUPDATELIST
+#define AX_DEBUG_CONSOLE
+#define AX_DEBUG_LOG "test.log"
+
 //----------
 
 #include "base/axBase.h"
