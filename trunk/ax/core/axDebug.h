@@ -31,21 +31,9 @@
   #include <iostream>
   #include <fstream>
 
-  // the axDebugLog.h below needs _trace,
-  // but that is not defined until AFTER the axDebugLog.h has been included
-  //
-  // also some problems with axGetBasePath (redefinition)
-
   #ifdef AX_DEBUG_LOG
-    //define axCout mDebugLog
-    
-    #ifndef ___TMP_NO_GLOBAL
-      #define axCout gGlobalScope.mDebugLog
-    #else
-      #include "axDebugLog.h"
-      axDebugLog axCout;
-    #endif
-        
+    #include "axDebugLog.h"
+    axDebugLog axCout;
   #else
     #define axCout std::cout
   #endif

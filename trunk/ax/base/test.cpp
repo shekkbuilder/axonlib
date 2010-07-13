@@ -5,7 +5,6 @@
 //#define AX_DEBUG_LOG "test.log"
 
 //#define AX_NOGUI
-#define AX_USE_CPU_CAPS
 //#define AX_WIDGET_NOUPDATELIST
 #define AX_DEBUG_CONSOLE
 #define AX_DEBUG_LOG "test.log"
@@ -52,6 +51,7 @@ class debug_console
 
 //--------------------------------------------------
 
+/*
 class axDebug : public AX_PLATFORM
 {
   private:
@@ -62,14 +62,14 @@ class axDebug : public AX_PLATFORM
       {
         printf("module path: '%s'\n",        getPath());
         printf("hinstance:    0x%08x\n",(int)getHandle());
-        log = new debug_log(/*aBase*/);
-        console = new debug_console(/*aBase*/);
+        //log = new debug_log(aBase);
+        //console = new debug_console(aBase);
         gGlobalScope.setPtr(this);
       }
     virtual ~axDebug()
       {
-        /*if (log)*/ delete log;
-        /*if (console)*/ delete console;
+        // if (log) delete log;
+        // if (console) delete console;
       }
     void print(char* str)
       {
@@ -79,18 +79,19 @@ class axDebug : public AX_PLATFORM
       }
     // getLog/Console???
 };
+*/
 
 //----------
 
 #ifdef AX_DEBUG
-  #define trc(s) ((axDebug*)gGlobalScope.getPtr())->print((char*)s)
+  //#define trc(s) ((axDebug*)gGlobalScope.getPtr())->print((char*)s)
 #endif
 
 void testfunc(char* s)
 {
-  axDebug* dbg = (axDebug*)gGlobalScope.getPtr();
+  //axDebug* dbg = (axDebug*)gGlobalScope.getPtr();
   //printf("testfunc: '%s'\n",s);
-  dbg->print( s );
+  //dbg->print( s );
 }
 
 //----------------------------------------------------------------------
@@ -250,6 +251,6 @@ class myInstance : public AX_INSTANCE
   #undef AX_MAIN
 #endif
 //AX_ENTRYPOINT(axDebug,AX_INTERFACE,AX_FORMAT,myDescriptor,myInstance)
-#define AX_MAIN(d,i) AX_ENTRYPOINT(axDebug,AX_INTERFACE,AX_FORMAT,d,i)
+#define AX_MAIN(d,i) AX_ENTRYPOINT(AX_PLATFORM, AX_INTERFACE,AX_FORMAT,d,i)
 AX_MAIN(myDescriptor,myInstance)
 

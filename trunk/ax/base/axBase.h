@@ -30,8 +30,7 @@
 #include "core/axRect.h"
 
 #include "core/axMalloc.h"
-//#include "core/axDebug.h"
-//#include "core/axAssert.h"
+#include "core/axDebug.h"
 #include "core/axRand.h"
 #include "core/axStdlib.h"
 #include "core/axUtils.h"
@@ -170,23 +169,22 @@ class axBaseImpl : public axBase
 //
 //----------------------------------------------------------------------
 
-// we need axDebugLog at this point
-//#include "core/axDebugLog.h"
-
 // singleton???
 class axGlobalScope
 {
-  private:
-    // here is the axDebugLog instance
-    // but if AX_DEBUG_LOG is not defined it will just be a blank class see
-    // axDebugLog.h
-//    axDebugLog  mDebugLog;
+  private:    
     axBase*     mBase;
     void*       mPtr;
   public:
     axGlobalScope()  { mBase=NULL; mPtr=NULL; }
     ~axGlobalScope() { if (mBase) delete mBase; }
-    inline void     setBase(axBase* aBase)  { mBase=aBase; }
+    inline void     setBase(axBase* aBase)
+    {
+      mBase=aBase;
+      #if defined AX_DEBUG && defined AX_DEBUG_LOG 
+        axCout.setup();
+      #endif
+    }
     inline void     setPtr(void* aPtr)      { mPtr=aPtr; }
     inline axBase*  getBase(void)           { return mBase; }
     inline void*    getPtr(void)            { return mPtr; }

@@ -38,12 +38,14 @@ inline const char* axGetFileName(const char* path)
 // axGetBasePath
 #ifdef AX_WIN32
 
+  #include "base/axPlatformWin32.h"
+
   const char* axGetBasePath(char* path)
   {
     #if defined AX_FORMAT_LIB || defined AX_FORMAT_EXE
-
+    
       char filepath[AX_MAX_PATH] = "";
-      GetModuleFileName((HINSTANCE__*)gWinInstance, filepath, MAX_PATH);
+      GetModuleFileName((HINSTANCE)gWinInstance, filepath, MAX_PATH);
       const char* slash = axStrrchr(filepath, '\\');
       if (slash)
         axStrncpy(path, filepath, (slash + 1) - (char*)filepath);

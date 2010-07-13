@@ -54,6 +54,10 @@
 // used in axUtils,getBasePath
 static __thread HINSTANCE gWinInstance;
 
+#ifdef AX_DEBUG
+  #define __trace(x) (std::cout << x << std::endl)
+#endif
+
 //----------------------------------------------------------------------
 
 // The lpReserved parameter indicates whether the DLL is being loaded statically or dynamically.
@@ -61,26 +65,26 @@ static __thread HINSTANCE gWinInstance;
 __externc BOOL APIENTRY
 DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
 {
-  trace("win32 DllMain");
+  __trace("win32 DllMain");
   //g_Instance = hModule;
   switch(reason)
   {
     case DLL_PROCESS_ATTACH:
-      trace("DllMain (reason: process attach)");
+      __trace("DllMain (reason: process attach)");
       gWinInstance = hModule;
       printf("gWinInstance = %i\n",(int)gWinInstance);
       break;
     case DLL_PROCESS_DETACH:
-      trace("DllMain (reason: process detach)");
+      __trace("DllMain (reason: process detach)");
       break;
     case DLL_THREAD_ATTACH:
-      trace("DllMain (reason: thread attach)");
+      __trace("DllMain (reason: thread attach)");
       break;
     case DLL_THREAD_DETACH:
-      trace("DllMain (reason: thread detach)");
+      __trace("DllMain (reason: thread detach)");
       break;
     default:
-      trace("DllMain (reason: unknown)");
+      __trace("DllMain (reason: unknown)");
       break;
   }
   return TRUE;
@@ -109,14 +113,12 @@ DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
 
 // axDebugConsole will handle #ifdef's
 #include "core/axDebugConsole.h"
-#include "core/axDebugLog.h"
 
 class axPlatformWin32 : public axPlatform
 {
   private:
-    // axDebugConsole here?
-    axDebugConsole  mDebugConsole;
-    axDebugLog      mDebugLog;
+    //axDebugLog      mDebugLog;
+    axDebugConsole  mDebugConsole;    
     HINSTANCE       mWinInstance;
     char            mPath[AX_MAX_PATH];
 
@@ -127,9 +129,9 @@ class axPlatformWin32 : public axPlatform
         mWinInstance = gWinInstance;
         //trace("mWinInstance: " << mWinInstance);
         //trc("mWinInstance: " << mWinInstance);
-        mPath[0] = 0;
-        GetModuleFileName(mWinInstance,mPath,MAX_PATH);
-        mDebugLog.setup(mPath);
+        //mPath[0] = 0;
+        //GetModuleFileName(mWinInstance,mPath,MAX_PATH);
+        //mDebugLog.setup(mPath);
       }
     virtual ~axPlatformWin32()
       {
