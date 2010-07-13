@@ -7,6 +7,10 @@
 
 #include <windows.h>
 
+#include "core/axDebugConsole.h"
+#include "core/axBasePath.h"
+
+
 //----------------------------------------------------------------------
 
 // from:
@@ -52,10 +56,9 @@
 //----------------------------------------------------------------------
 
 // used in axUtils,getBasePath
-static __thread HINSTANCE gWinInstance;
 
 #ifdef AX_DEBUG
-  #define __trace(x) (std::cout << x << std::endl)
+  #define __trace(x) trace (std::cout << x << std::endl)
 #endif
 
 //----------------------------------------------------------------------
@@ -111,10 +114,6 @@ DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
-// axDebugConsole will handle #ifdef's
-#include "core/axDebugConsole.h"
-#include "core/axBasePath.h"
-
 class axPlatformWin32 : public axPlatform
 {
   private:
@@ -127,7 +126,7 @@ class axPlatformWin32 : public axPlatform
     axPlatformWin32(axBase* aBase) : axPlatform(aBase)
       {
         //trace("axPlatformWin32.constructor");
-        mWinInstance = gBasePathInstance = gWinInstance;
+        mWinInstance = gWinInstance;
         //trace("mWinInstance: " << mWinInstance);
         //trc("mWinInstance: " << mWinInstance);
         //mPath[0] = 0;
