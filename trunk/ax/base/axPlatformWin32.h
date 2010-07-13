@@ -113,6 +113,7 @@ DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
 
 // axDebugConsole will handle #ifdef's
 #include "core/axDebugConsole.h"
+#include "core/axBasePath.h"
 
 class axPlatformWin32 : public axPlatform
 {
@@ -126,7 +127,7 @@ class axPlatformWin32 : public axPlatform
     axPlatformWin32(axBase* aBase) : axPlatform(aBase)
       {
         //trace("axPlatformWin32.constructor");
-        mWinInstance = gWinInstance;
+        mWinInstance = gBasePathInstance = gWinInstance;
         //trace("mWinInstance: " << mWinInstance);
         //trc("mWinInstance: " << mWinInstance);
         //mPath[0] = 0;
