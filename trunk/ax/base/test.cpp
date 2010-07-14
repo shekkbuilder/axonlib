@@ -137,7 +137,7 @@ class myInstance : public AX_INSTANCE
         trace("w32 class name   '" << mBase->getInterface()->getName() << "'");
         axCpu cpu;
         //cpu.axCpuId();
-        unsigned long long start_time, end_time, diff;
+        unsigned long start_time, end_time, diff;
         start_time = cpu.rdtsc();
         trace("---------------"); // some code to measure
         end_time   = cpu.rdtsc();

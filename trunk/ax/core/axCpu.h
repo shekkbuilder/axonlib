@@ -151,15 +151,15 @@ class axCpu
 
     // call rdtsc()
     #ifdef __AX64__
-      inline unsigned long long rdtsc(void)
+      inline unsigned int rdtsc(void)
       {
-        unsigned low, high;
+        unsigned int low, high;
         __asmv ( "rdtsc;" : "=a" (low), "=d" (high) );
         return ( (low) | ( (unsigned long)(high) << 32 ) );
       }
     #endif
     #ifdef __AX32__
-      inline unsigned long long rdtsc(void)
+      inline unsigned long rdtsc(void)
       {
         unsigned long long val;
         __asmv
@@ -172,8 +172,8 @@ class axCpu
           //"movl %%edx, 4(%%ecx);"
           : "=A" (val)
           //:: "%eax", "%ebx", "%ecx", "%edx" 
-        );
-        return val;
+        );        
+        return (long)val;
       }
     #endif
 
