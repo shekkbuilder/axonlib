@@ -124,6 +124,21 @@ class axFormat
 // base implementation
 //----------------------------------------------------------------------
 
+// #############################################################################
+// helper function which is never optimized 
+// a.k.a. " a test with the ugliest hack ever !!!"
+// #############################################################################
+
+inline axInstance* __instance_no_opt(axInstance* aMember)
+  __attribute__ ((optimize(0)))  // <- specify a stable optimization level
+  ;
+
+inline axInstance* __instance_no_opt(axInstance* aMember)
+{
+  return aMember;
+}
+// #############################################################################
+
 //  PL - Platform
 //  IF - Interface
 //  FO - Format
@@ -162,7 +177,13 @@ class axBaseImpl : public axBase
     virtual axInterface*  getInterface(void)    { return mInterface; }
     virtual axFormat*     getFormat(void)       { return mFormat; }
     virtual axDescriptor* getDescriptor(void)   { return mDescriptor; }
-    virtual axInstance*   createInstance(void)  { return new _I(this); }  // you have to delete it yourself
+    
+    virtual axInstance*   createInstance(void)
+    {
+      axInstance* aInstance = new _I(this);
+      return aInstance;
+      //return __instance_no_opt(aInstance);
+    }
 };
 
 //----------------------------------------------------------------------

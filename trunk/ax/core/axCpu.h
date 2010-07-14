@@ -154,7 +154,7 @@ class axCpu
       inline unsigned long long rdtsc(void)
       {
         unsigned low, high;
-        __asmv ( "cpuid;" "rdtsc;" : "=a" (low), "=d" (high) );
+        __asmv ( "rdtsc;" : "=a" (low), "=d" (high) );
         return ( (low) | ( (unsigned long)(high) << 32 ) );
       }
     #endif
@@ -162,7 +162,17 @@ class axCpu
       inline unsigned long long rdtsc(void)
       {
         unsigned long long val;
-        __asmv ( "cpuid;" "rdtsc;" : "=A" (val) );
+        __asmv
+        (
+          // ## serialization causes delayed segmentation faults !
+          //"cpuid;"
+          "rdtsc;"
+          //"leal %0, %%ecx;"
+          //"movl %%eax, (%%ecx);"
+          //"movl %%edx, 4(%%ecx);"
+          : "=A" (val)
+          //:: "%eax", "%ebx", "%ecx", "%edx" 
+        );
         return val;
       }
     #endif
