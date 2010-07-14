@@ -6,6 +6,7 @@
 
 
 #define ___TMP_NO_GLOBAL
+#define AX_DEBUG // !
 #define AX_FORMAT_EXE // !
 #define AX_DEBUG
 #define AX_DEBUG_LOG "./test.log"
@@ -14,7 +15,7 @@
 #include "axDefines.h"
 
 #ifdef AX_WIN32
-  static void* gWinInstance = 0;
+  //static void* gWinInstance = 0;
 #endif
 
 #include "axDebug.h"

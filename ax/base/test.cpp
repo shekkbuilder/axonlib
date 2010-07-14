@@ -23,32 +23,6 @@
 
 //----------------------------------------------------------------------
 
-class debug_log
-{
-  public:
-    debug_log() {}
-    ~debug_log() {}
-    void print(char* str)
-      {
-        //printf("%s\n",str);
-        //printf("module path: '%s'\n",        gGlobalScope.getBase()->getPlatform()->getPath());
-        //printf("hinstance:    0x%08x\n",(int)gGlobalScope.getBase()->getPlatform()->getHandle());
-      }
-};
-
-//----------
-
-class debug_console
-{
-  public:
-    debug_console() {}
-    ~debug_console() {}
-    void print(char* str)
-      {
-        //printf("%s\n",str);
-      }
-};
-
 //--------------------------------------------------
 
 /*
@@ -162,12 +136,13 @@ class myInstance : public AX_INSTANCE
         trace("format:          '" << mBase->getFormat()->getFormatName() << "'");
         trace("w32 class name   '" << mBase->getInterface()->getName() << "'");
         axCpu cpu;
-        cpu.axCpuId();
+        //cpu.axCpuId();
         unsigned long long start_time, end_time, diff;
         start_time = cpu.rdtsc();
+        trace("---------------"); // some code to measure
         end_time   = cpu.rdtsc();
         diff       = end_time - start_time;
-        //trace("axCpuCaps:        " << cpu.axCpuCaps() );
+        trace("axCpuCaps:        " << cpu.axCpuCaps() );
         trace("cpu caps          " << cpu.axCpuCaps() << " '" << cpu.axCpuCapsString() << "'" );
         trace("rdtsc:            " << diff << " (may not be correct for multi-core)");
       }
