@@ -25,51 +25,51 @@
 
 //----------------------------------------------------------------------
 
-//--------------------------------------------------
-
-/*
-class axDebug : public AX_PLATFORM
-{
-  private:
-    debug_log* log;
-    debug_console* console;
-  public:
-    axDebug(axBase* aBase) : AX_PLATFORM(aBase)
-      {
-        printf("module path: '%s'\n",        getPath());
-        printf("hinstance:    0x%08x\n",(int)getHandle());
-        //log = new debug_log(aBase);
-        //console = new debug_console(aBase);
-        gGlobalScope.setPtr(this);
-      }
-    virtual ~axDebug()
-      {
-        // if (log) delete log;
-        // if (console) delete console;
-      }
-    void print(char* str)
-      {
-        printf("axDebug: '%s'\n",str);
-        if (log) log->print(str);
-        if (console) console->print(str);
-      }
-    // getLog/Console???
-};
-*/
-
-//----------
-
-#ifdef AX_DEBUG
-  //#define trc(s) ((axDebug*)gGlobalScope.getPtr())->print((char*)s)
-#endif
-
-void testfunc(char* s)
-{
-  //axDebug* dbg = (axDebug*)gGlobalScope.getPtr();
-  //printf("testfunc: '%s'\n",s);
-  //dbg->print( s );
-}
-
+////--------------------------------------------------
+//
+///*
+//class axDebug : public AX_PLATFORM
+//{
+//  private:
+//    debug_log* log;
+//    debug_console* console;
+//  public:
+//    axDebug(axBase* aBase) : AX_PLATFORM(aBase)
+//      {
+//        printf("module path: '%s'\n",        getPath());
+//        printf("hinstance:    0x%08x\n",(int)getHandle());
+//        //log = new debug_log(aBase);
+//        //console = new debug_console(aBase);
+//        gGlobalScope.setPtr(this);
+//      }
+//    virtual ~axDebug()
+//      {
+//        // if (log) delete log;
+//        // if (console) delete console;
+//      }
+//    void print(char* str)
+//      {
+//        printf("axDebug: '%s'\n",str);
+//        if (log) log->print(str);
+//        if (console) console->print(str);
+//      }
+//    // getLog/Console???
+//};
+//*/
+//
+////----------
+//
+//#ifdef AX_DEBUG
+//  //#define trc(s) ((axDebug*)gGlobalScope.getPtr())->print((char*)s)
+//#endif
+//
+//void testfunc(char* s)
+//{
+//  //axDebug* dbg = (axDebug*)gGlobalScope.getPtr();
+//  //printf("testfunc: '%s'\n",s);
+//  //dbg->print( s );
+//}
+//
 //----------------------------------------------------------------------
 //
 // descriptor
@@ -164,7 +164,7 @@ class myInstance : public AX_INSTANCE
         float value = aParameter->getValue();
         //trace("doSetParameter(" << index << ") = " << value);
         if (index==0) m_gain = value;
-        testfunc( (char*)"doSetParameter" );
+        //testfunc( (char*)"doSetParameter" );
       }
 
     //virtual bool doProcessBlock(float** aInputs, float** aOutputs, int Length)

@@ -1,45 +1,16 @@
 #ifndef axBase_included
 #define axBase_included
 //----------------------------------------------------------------------
-/*
-
-- axGlobalScope
-  - base = NULL
-  - ptr = NULL
-- DllMain [win32]
-  - gWinInstance
-- AX_ENTRYPOINT
-  - create base <template classes>
-    - create platform
-      - GetModuleFileName/dladdr (for axGetBasePath)
-      - create debug
-        - global.setPtr(debug)
-    - create interface
-    - create descriptor
-    - create format
-  - global.setBase(base)
-  - format.entrypoiunt
-    - create instance [vst]
-
-*/
-
-#include "hack_hack.h"
 
 #include "axConfig.h"
 #include "core/axDefines.h"
 #include "core/axRect.h"
-
 #include "core/axMalloc.h"
 #include "core/axDebug.h"
 #include "core/axRand.h"
 #include "core/axStdlib.h"
 #include "core/axUtils.h"
-
 #include "par/axParameter.h"
-//^ moved some of the includes bellow the global singleton
-
-//----------------------------------------------------------------------
-
 
 //----------------------------------------------------------------------
 
@@ -64,7 +35,7 @@ class axBase
 };
 
 //----------------------------------------------------------------------
-//
+// descriptor & instance
 //----------------------------------------------------------------------
 
 #include "base/axDescriptor.h"
@@ -128,6 +99,11 @@ class axFormat
 // helper function which is never optimized
 // a.k.a. " a test with the ugliest hack ever !!!"
 // #############################################################################
+
+// this gives a
+// "warning: ‘optimize’ attribute directive ignored"
+// when cross compiling to win32 (from linux) with
+// (GCC) 4.2.1-sjlj (mingw32-2)
 
 inline axInstance* __instance_no_opt(axInstance* aMember)
   __attribute__ ((optimize(0)))  // <- specify a stable optimization level
@@ -213,21 +189,9 @@ class axGlobalScope
 
 //----------
 
-// __thread?
-// __thread works only for primitive data types like 'int' or 'void*'
 static axGlobalScope gGlobalScope;
 
 //----------------------------------------------------------------------
-
-// after gGlobalScope is defined we can include axDebug, which will need it
-//
-
-//#include "core/axMalloc.h"
-//#include "core/axDebug.h"
-//#include "core/axAssert.h"
-//#include "core/axRand.h"
-//#include "core/axStdlib.h"
-//#include "core/axUtils.h"
 
 #include "base/axPlatform.h"
 #include "base/axInterface.h"
@@ -242,3 +206,28 @@ static axGlobalScope gGlobalScope;
 
 //TODO: reparent (axWindowWin32/Linux)
 //      use void* as parent, not int (32/64 bit safety)
+
+/*
+
+TODO: go through it again, after latest changes, note down the full
+exec order of things....
+
+- axGlobalScope
+  - base = NULL
+  - ptr = NULL
+- DllMain [win32]
+  - gWinInstance
+- AX_ENTRYPOINT
+  - create base <template classes>
+    - create platform
+      - GetModuleFileName/dladdr (for axGetBasePath)
+      - create debug
+        - global.setPtr(debug)
+    - create interface
+    - create descriptor
+    - create format
+  - global.setBase(base)
+  - format.entrypoiunt
+    - create instance [vst]
+
+*/
