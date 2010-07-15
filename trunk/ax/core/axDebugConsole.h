@@ -25,9 +25,11 @@
 
 #if defined AX_WIN32 && defined AX_DEBUG && defined AX_DEBUG_CONSOLE
 
-#ifndef _WIN32_WINNT
-  #define _WIN32_WINNT 0x0501
-#endif
+//in axDefines.h
+//#ifndef _WIN32_WINNT
+//  #define _WIN32_WINNT 0x0501
+//#endif
+
 #include <windows.h>
 #include <io.h>
 #include <stdio.h>

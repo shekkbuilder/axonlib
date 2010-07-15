@@ -33,8 +33,8 @@ class axInstance : public axParameterListener
     //
     virtual void    notifyParamChanged(axParameter* aParameter) {}
     virtual void    notifyResizeEditor(int aWidth, int aHeight) {}
-
     //
+    virtual void    onChange(axParameter* aParameter) {}
 
 //    virtual void        appendParameter(axParameter* aParameter) {}
 //    virtual void        deleteParameters(void)

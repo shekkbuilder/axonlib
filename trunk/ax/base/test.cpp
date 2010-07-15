@@ -1,14 +1,14 @@
 // i586-mingw32msvc-g++ -Wall -O3 -mwindows -lmsimg32 -Wno-unused -Wno-long-long -DAX_FORMAT_EXE -I../ -c test.cpp -o test.exe
 
-//#define AX_DEBUG_AUTO_STD
-//#define AX_DEBUG_MEM
-//#define AX_DEBUG_PNG
-//#define AX_DEBUG_NEW
-//#define AX_DEBUG_LOG "test.log"
-
 //#define AX_NOGUI
 //#define AX_WIDGET_NOUPDATELIST
-#define AX_DEBUG_CONSOLE
+
+//#define AX_DEBUG_AUTO_STD    // not used
+
+//#define AX_DEBUG_PNG
+#define AX_DEBUG_MEM
+#define AX_DEBUG_NEW
+//#define AX_DEBUG_CONSOLE
 #define AX_DEBUG_LOG "test.log"
 
 //----------
@@ -110,7 +110,7 @@ class myInstance : public AX_INSTANCE
 
     myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
-        //printf("myInstance\n");
+        trace("myInstance: " << this);
         //trc("myInstance");
         mBase = aBase;
         edit  = NULL;
@@ -128,6 +128,14 @@ class myInstance : public AX_INSTANCE
     //virtual ~myInstance()
     //  {
     //  }
+
+    //--------------------------------------------------
+
+//    virtual void onChange(axParameter* aParameter)
+//      {
+//        trace("onChange par");
+//      }
+
 
     //--------------------------------------------------
 
@@ -162,7 +170,7 @@ class myInstance : public AX_INSTANCE
       {
         int   index = aParameter->getIndex();
         float value = aParameter->getValue();
-        //trace("doSetParameter(" << index << ") = " << value);
+        trace("doSetParameter(" << index << ") = " << value);
         if (index==0) m_gain = value;
         //testfunc( (char*)"doSetParameter" );
       }

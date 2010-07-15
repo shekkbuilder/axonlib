@@ -232,15 +232,16 @@ class axEditor : public axWindow
 
     virtual void onChange(axWidget* aWidget)
       {
-        //trace("onChange wdg");
+        trace("onChange wdg");
         int conn = aWidget->getConnection();
         //trace("  conn: " << conn);
         if (conn>=0)
         {
+          trace("...connected...");
           axParameter* par = mConnections[conn].mParameter;
           float val = aWidget->getValue();
           //trace("  mInstance: " << mInstance);
-          if (mInstance) mInstance->notifyParamChanged(par);
+//          if (mInstance) mInstance->notifyParamChanged(par);
           //par->doSetValue(val,false);
           par->doSetValue(val,true); // true = notify listener
         }
