@@ -1,3 +1,5 @@
+// i586-mingw32msvc-g++ -Wall -O3 -mwindows -lmsimg32 -Wno-unused -Wno-long-long -DAX_FORMAT_EXE -I../ -c test.cpp -o test.exe
+
 //#define AX_DEBUG_AUTO_STD
 //#define AX_DEBUG_MEM
 //#define AX_DEBUG_PNG
@@ -108,6 +110,7 @@ class myInstance : public AX_INSTANCE
 
     myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
+        //printf("myInstance\n");
         //trc("myInstance");
         mBase = aBase;
         edit  = NULL;
@@ -117,6 +120,7 @@ class myInstance : public AX_INSTANCE
         gain = new parFloat(this,"gain","",0.5);
         appendParameter( gain );
         setupParameters();
+        //printf("myInstance ok\n");
       }
 
     //----------

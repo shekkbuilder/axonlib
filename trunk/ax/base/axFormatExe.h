@@ -31,6 +31,7 @@ typedef axDescriptorExe AX_DESCRIPTOR;
 class axInstanceExe : public axInstance
 {
   private:
+    axBase* mBase;
     //axRect mEditorRect;
     axParameters        mParameters;
     axPrograms          mPrograms;
@@ -39,7 +40,9 @@ class axInstanceExe : public axInstance
     bool                mEditorOpen;
     axRect              mEditorRect;
     //void*               mEditorWindow;
+    #ifndef AX_NOGUI
     axEditor*           mEditor;
+    #endif
     int                 mPlayState;
     double              mSamplePos;
     double              mSampleRate;
@@ -51,10 +54,34 @@ class axInstanceExe : public axInstance
 
     axInstanceExe(axBase* aBase) : axInstance(aBase)
       {
+        //printf("axInstanceExe\n");
+        //printf("aBase: %i\n",(int)aBase);
+
+        //mBase = aBase;
         /*trace("axInstanceExe.constructor");*/
-        mEditorRect =aBase->getDescriptor()->getEditorRect();
+        mFlags                    = 0;
+        mCurrentProgram           = 0;
+        mPlayState                = 0;
+        mSamplePos                = 0;
+        mSampleRate               = 0;
+        mBeatPos                  = 0;
+        mTempo                    = 0;
+        mBlockSize                = 0;
+        mEditorOpen               = false;
+        #ifndef AX_NOGUI
+        mEditor                   = NULL;
+        #endif
+        mEditorRect               = aBase->getDescriptor()->getEditorRect();
+        //printf("... axInstanceExe... ok\n");
       }
-    virtual ~axInstanceExe() { /*trace("axInstanceExe.destructor");*/ }
+    virtual ~axInstanceExe()
+      {
+        /*trace("axInstanceExe.destructor");*/
+        #ifndef AX_NOAUTODELETE
+          deleteParameters();
+          //deletePrograms();
+        #endif
+        }
     virtual axRect getEditorRect(void) { return mEditorRect; }
 
     //----------------------------------------
@@ -297,8 +324,10 @@ class axInstanceExe : public axInstance
 
     virtual void onChange(axParameter* aParameter)
       {
+        #ifndef AX_NOGUI
         //trace("onChange par");
         if (mEditorOpen) mEditor->paramChanged(aParameter);
+        #endif
       }
 
     //----------
@@ -343,17 +372,30 @@ class axFormatExe : public axFormat
     axBase*       mBase;
     axDescriptor* mDescriptor;
     axInstance*   mInstance;
+    #ifndef AX_NOGUI
     axEditor*     mEditor;
+    #endif
 
   protected:
 
     virtual void* entrypoint(void* ptr)
       {
+        //printf("axFormatExe.constructor\n");
+        //printf("mBase: 0x%08X\n",(int)mBase);
+        //printf("mDescriptor: 0x%08X\n",(int)&mDescriptor);
+        //printf("mInstance: 0x%08X\n",(int)&mInstance);
+        //printf("1\n");
         mDescriptor = mBase->getDescriptor();
-        mInstance   = mBase->createInstance();
+        //printf("2\n");
+        axInstance* inst; /*=*/
+        //printf("3\n");
+        inst = mBase->createInstance();
+        //printf("4\n");
+        mInstance   = inst;
+        //printf("5\n");
         #ifndef AX_NOGUI
         {
-          mEditor = (axEditor*)mInstance->doOpenEditor(ptr/*NULL*/);
+          mEditor = (axEditor*)mInstance->doOpenEditor(ptr); // NULL
           if (mEditor) { mEditor->eventLoop(); }
           mInstance->doCloseEditor();
         }

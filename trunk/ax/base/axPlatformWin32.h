@@ -77,7 +77,7 @@ DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
     case DLL_PROCESS_ATTACH:
       __trace("DllMain (reason: process attach)");
       gWinInstance = hModule;
-      printf("gWinInstance = %i\n",(int)gWinInstance);
+      //printf("gWinInstance = %i\n",(int)gWinInstance);
       break;
     case DLL_PROCESS_DETACH:
       __trace("DllMain (reason: process detach)");
@@ -120,7 +120,7 @@ class axPlatformWin32 : public axPlatform
 {
   private:
     //axDebugLog      mDebugLog;
-    axDebugConsole  mDebugConsole;    
+    axDebugConsole  mDebugConsole;
     HINSTANCE       mWinInstance;
     char            mPath[AX_MAX_PATH];
 
