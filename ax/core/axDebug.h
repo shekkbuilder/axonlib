@@ -35,6 +35,7 @@
     #include "axDebugLog.h"
     axDebugLog axCout;
   #else
+    #include "axBasePath.h"
     #define axCout std::cout
   #endif
 

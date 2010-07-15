@@ -1222,7 +1222,7 @@ class axInstanceVst : public axInstance//,
         for (int i=0; i<num; i++)
         {
           axParameter* par = mParameters[i];
-          par->setIndex(i);
+          //par->setIndex(i);
           //doSetParameter(par);
         }
       }
@@ -1426,6 +1426,8 @@ class axInstanceVst : public axInstance//,
     // axInstanceBase
     //----------------------------------------
 
+  public:
+
     // called from editor
     // indicating, about to change the value..
     virtual void notifyParamChanged(axParameter* aParameter)
@@ -1438,12 +1440,15 @@ class axInstanceVst : public axInstance//,
         //doSetParameter(aParameter);
       }
 
+    //----------
+
     virtual void onChange(axParameter* aParameter)
       {
-        trace("onChange");
+        trace("onChange par");
         #ifndef AX_NOGUI
         if (mEditorWindow) mEditorWindow->paramChanged(aParameter);
         #endif
+        doSetParameter(aParameter);
       }
 
     //----------

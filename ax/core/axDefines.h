@@ -49,6 +49,9 @@
   #define _WIN32_WINNT 0x0501
 #endif
 
+//#define  WINVER      0x0501
+//#define _WIN32_WINNT 0x0501
+
 /*
  lii:
  AX_FORMAT_LIB is the general flag for dll binaries.

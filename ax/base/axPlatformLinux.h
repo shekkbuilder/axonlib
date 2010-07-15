@@ -3,6 +3,8 @@
 //----------------------------------------------------------------------
 
 #include <dlfcn.h>
+//#include "core/axDebugConsole.h"
+#include "core/axBasePath.h"
 
 class axPlatformLinux : public axPlatform
 {

@@ -42,6 +42,16 @@ inline const char* axGetFileName(const char* path)
 // axGetBasePath
 #ifdef AX_WIN32
 
+  // including windows.h here is bad, bad...
+  // we need to set some flags before windows.h is included the first time,
+  // and with several places having windows.h, and we're uncertain about the
+  // order our .h files are included in, we have to hunt down, and replicate
+  // all flags for all places windows.h might be included..
+  //
+  // a better strategy would be to define these in axDefins.h
+
+  #include <windows.h>
+
   static __thread HINSTANCE__* gWinInstance;
 
   const char* axGetBasePath(char* path)
@@ -71,6 +81,7 @@ inline const char* axGetFileName(const char* path)
 #ifdef AX_LINUX
 
 #include <dlfcn.h>
+#include <unistd.h> // readlink
 
 const char* axGetBasePath(char* path)
 {

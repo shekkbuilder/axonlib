@@ -125,7 +125,7 @@ class axInstanceExe : public axInstance
         for (int i=0; i<num; i++)
         {
           axParameter* par = mParameters[i];
-          par->setIndex(i);
+          //par->setIndex(i);
           //doSetParameter(par);
         }
       }
@@ -324,10 +324,11 @@ class axInstanceExe : public axInstance
 
     virtual void onChange(axParameter* aParameter)
       {
+        trace("onChange par");
         #ifndef AX_NOGUI
-        //trace("onChange par");
         if (mEditorOpen) mEditor->paramChanged(aParameter);
         #endif
+        doSetParameter(aParameter);
       }
 
     //----------
