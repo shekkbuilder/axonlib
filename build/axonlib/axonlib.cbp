@@ -118,7 +118,7 @@
 				<Option type="1" />
 				<Option compiler="mingw32" />
 				<Compiler>
-					<Add option="-O3" />
+					<Add option="-O1" />
 					<Add option="-mwindows" />
 					<Add option="-Wno-unused" />
 					<Add option="-Wno-long-long" />

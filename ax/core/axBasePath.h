@@ -35,6 +35,10 @@ inline const char* axGetFileName(const char* path)
   return path;
 }
 
+// "No null-character is implicitly appended to the end of destination,
+//  so destination will only be null-terminated if the length of the
+// C string in source is less than num."
+
 // axGetBasePath
 #ifdef AX_WIN32
 
@@ -43,12 +47,16 @@ inline const char* axGetFileName(const char* path)
   const char* axGetBasePath(char* path)
   {
     #if defined AX_FORMAT_LIB || defined AX_FORMAT_EXE
-    
+
       char filepath[AX_MAX_PATH] = "";
       GetModuleFileName((HINSTANCE__*)gWinInstance, filepath, MAX_PATH);
       const char* slash = axStrrchr(filepath, '\\');
       if (slash)
-        axStrncpy(path, filepath, (slash + 1) - (char*)filepath);
+      {
+        int len = (slash + 1) - (char*)filepath;
+        axStrncpy(path, filepath, len/*(slash + 1) - (char*)filepath*/);
+        path[len] = 0;
+      }
       else
         axStrcat(path, (char*)".\\");
 
@@ -62,6 +70,8 @@ inline const char* axGetFileName(const char* path)
 
 #ifdef AX_LINUX
 
+#include <dlfcn.h>
+
 const char* axGetBasePath(char* path)
 {
   #ifdef AX_FORMAT_LIB
@@ -70,7 +80,11 @@ const char* axGetBasePath(char* path)
     dladdr(__func__, &dli);
     const char* slash = axStrrchr(dli.dli_fname, '/');
     if (slash)
-	    axStrncpy(path, dli.dli_fname, (slash + 1) - (char*)dli.dli_fname);
+    {
+      int len = (slash + 1) - (char*)dli.dli_fname;
+	    axStrncpy(path, dli.dli_fname, len/*(slash + 1) - (char*)dli.dli_fname*/);
+	    path[len] = 0;
+    }
     else
       axStrcat(path, (char*)"./");
   #elif defined AX_FORMAT_EXE
@@ -79,7 +93,11 @@ const char* axGetBasePath(char* path)
     {
       const char* slash = axStrrchr(filepath, '/');
       if (slash)
-		    axStrncpy(path, filepath, (slash + 1) - (char*)filepath);
+      {
+        int len = (slash + 1) - (char*)filepath;
+		    axStrncpy(path, filepath, len/*(slash + 1) - (char*)filepath*/);
+		    path[len] = 0;
+      }
       else
         axStrcat(path, (char*)"./");
     }

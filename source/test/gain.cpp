@@ -1,146 +1,109 @@
-
-//#define AX_NOGUI
-
 //#define AX_DEBUG_AUTO_STD
 //#define AX_DEBUG_MEM
 //#define AX_DEBUG_PNG
 //#define AX_DEBUG_NEW
-//#define AX_DEBUG_LOG  "gain.log"
+//#define AX_DEBUG_LOG "test.log"
+
+#define AX_NOGUI
+//#define AX_WIDGET_NOUPDATELIST
+#define AX_DEBUG_CONSOLE
+#define AX_DEBUG_LOG "test.log"
+
+//----------
+
+#include "base/axBase.h"
+//#include "core/axCpu.h"
+//#include "gui/axWindow.h"
+//#include "gui/axEditor.h"
+//#include "skins/axSkinBasic.h"
+//#include "wdg/wdgPanel.h"
+//#include "wdg/wdgButton.h"
+//#include "wdg/wdgKnob.h"
+#include "par/parFloat.h"
 
 //----------------------------------------------------------------------
-
-#include "base/axFormat.h"
-#include "gui/axEditor.h"
-#include "skins/axSkinBasic.h"
-#include "wdg/wdgPanel.h"
-#include "wdg/wdgKnob.h"
-
+//
+// descriptor
+//
 //----------------------------------------------------------------------
 
-static char* g_params[]  = { (char*)"gain" };
-
-//----------------------------------------------------------------------
-
-class myDescriptor : public axDescriptor
+class myDescriptor : public AX_DESCRIPTOR
 {
   public:
-    myDescriptor(axInterface* aInterface) : axDescriptor(aInterface) {}
-    virtual char* getName(void)             { return (char*)"test_gain_nogui"; }
-    virtual char* getAuthor(void)           { return (char*)"ccernn"; }
-    virtual char* getProduct(void)          { return (char*)"axonlib example plugin"; }
-    virtual int   getNumParams(void)        { return 1; }
-    virtual char* getParamName(int aIndex)  { return g_params[aIndex]; }
+    myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) {}
+    //virtual ~myDescriptor() {}
+    //virtual bool    hasEditor(void)     { return true; }
+    //virtual axRect  getEditorRect(void) { return axRect(0,0,320,240); }
+    virtual char*   getName(void)             { return (char*)"gain"; }
+    virtual char*   getAuthor(void)           { return (char*)"ccernn"; }
+    virtual char*   getProduct(void)          { return (char*)"gain :: axonlib example plugin"; }
+    virtual int     getNumParams(void)        { return 1; }
+    virtual char*   getParamName(int aIndex)  { if (aIndex==0) return (char*)"gain !!!"; return (char*)""; }
 };
 
 //----------------------------------------------------------------------
+//
+// instance
+//
+//----------------------------------------------------------------------
 
-class myInstance : public axInstance
+class myInstance : public AX_INSTANCE
 {
   private:
-    float         m_Gain;
-    axParameter*  p_Gain;
-    axSkinBasic*  mSkin;
+    axBase*   mBase;
+    parFloat* pGain;
+    float     mGain;
+
   public:
 
-    myInstance(axDescriptor* aDescriptor) : axInstance(aDescriptor)
+    myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
-        m_Gain = 0.5;
-        describe("test_gain_gui","ccernn","axonlib example",0,AX_MAGIC+0x0000);
-        setupAudio(2,2,false);
-        setupEditor(200,200);
-        appendParameter( p_Gain = new axParameter(this,"gain","") );
+        mBase = aBase;
+        mGain = 0.5; // !!
+        appendParameter( pGain = new parFloat(this,"gain","",0.5) );
         setupParameters();
       }
 
-    // called from editor
-    virtual void  doSetParameter(axParameter* aParameter)
+    //----------
+
+    //virtual ~myInstance()
+    //  {
+    //  }
+
+    //--------------------------------------------------
+
+    //virtual void doStateChange(int aState)
+    //  {
+    //    trace("doStateChange: " << aState);
+    //  }
+
+    virtual void doSetParameter(axParameter* aParameter)
       {
-        trace("doSetParameter");
-        if (aParameter->getIndex()==0) m_Gain = aParameter->getValue();
+        int   index = aParameter->getIndex();
+        float value = aParameter->getValue();
+        trace("doSetParameter(" << index << ") = " << value);
+        if (index==0) mGain = value;
       }
 
-    virtual void  doProcessSample(SPL** aInputs, SPL** aOutputs)
+    //virtual bool doProcessBlock(float** aInputs, float** aOutputs, int Length)
+    //  {
+    //    trace("block");
+    //    return false;
+    //  }
+
+    virtual void doProcessSample(float** aInputs, float** aOutputs)
       {
-        *aOutputs[0] = *aInputs[0] * m_Gain;
-        *aOutputs[1] = *aInputs[1] * m_Gain;
-      }
-
-  //----------------------------------------
-  // main (only called if exe)
-  //----------------------------------------
-
-  public:
-
-    //#ifdef AX_FORMAT_EXE
-    virtual int main(int argc, char** argv)
-      {
-        trace("main");
-        #ifndef AX_NOGUI
-
-        axInterface* interface = getDescriptor()->getInterface();
-        void* parent = interface->getRootWindow();
-        axWindow* window = new axWindow(interface,parent,getEditorRect(),AX_WIN_DEFAULT);
-        axCanvas* canvas = window->getCanvas();
-        mSkin = new axSkinBasic(canvas);
-        window->applySkin(mSkin);
-
-        wdgPanel* panel = new wdgPanel( window,NULL_RECT,wa_Client);
-        window->appendWidget( panel );
-        panel->setBorders(20,20,5,5);
-        for (int i=0; i<10; i++)
-          panel->appendWidget( new wdgKnob( window,axRect(80,26),wa_StackedVert,"knob") );
-        window->doRealign();
-
-        window->show();
-        window->eventLoop();
-        window->hide();
-
-        delete window;
-        delete mSkin;
-
-        #endif //AX_NOGUI
-        return 0;
-      }
-    //#endif //AX_FORMAT_EXE
-
-
-  //----------------------------------------
-  // gui
-  //----------------------------------------
-
-  private:
-    axEditor* mEditor;
-    wdgPanel* wPanel;
-    wdgKnob*  w_Gain;
-
-  public:
-
-    virtual void* doOpenEditor(/*axInterface* aInterface,*/ void* aParent)
-      {
-        axInterface* interface = getDescriptor()->getInterface();
-        //void* parent = interface->getRootWindow();
-        axEditor* editor = new axEditor(interface,aParent,getEditorRect(),AX_WIN_DEFAULT);
-        editor->appendWidget( wPanel = new wdgPanel(editor,NULL_RECT,wa_Client) );
-        wPanel->appendWidget( w_Gain = new wdgKnob( editor,axRect(10,10,128,32),wa_None,"gain",0.75) );
-        editor->connect(w_Gain,p_Gain);
-        editor->doRealign();
-        editor->show();
-        mEditor = editor;
-        return mEditor;
-      }
-////
-////    //----------
-////
-    virtual void doCloseEditor(void)
-      {
-        axEditor* editor = mEditor;
-        mEditor->hide();
-        mEditor = NULL;
-        delete editor;
+        *aOutputs[0] = *aInputs[0] * mGain;
+        *aOutputs[1] = *aInputs[1] * mGain;
+        //trace(".");
       }
 
 };
 
 //----------------------------------------------------------------------
-AX_ENTRYPOINT(myDescriptor,myInstance,axInterface,axPlatform)
+
+// in axFormat/Base?
+#define AX_MAIN(d,i) AX_ENTRYPOINT(AX_PLATFORM, AX_INTERFACE,AX_FORMAT,d,i)
+
+AX_MAIN(myDescriptor,myInstance)
 

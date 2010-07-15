@@ -125,7 +125,7 @@ class axFormat
 //----------------------------------------------------------------------
 
 // #############################################################################
-// helper function which is never optimized 
+// helper function which is never optimized
 // a.k.a. " a test with the ugliest hack ever !!!"
 // #############################################################################
 
@@ -177,7 +177,7 @@ class axBaseImpl : public axBase
     virtual axInterface*  getInterface(void)    { return mInterface; }
     virtual axFormat*     getFormat(void)       { return mFormat; }
     virtual axDescriptor* getDescriptor(void)   { return mDescriptor; }
-    
+
     virtual axInstance*   createInstance(void)
     {
       axInstance* aInstance = new _I(this);
@@ -193,7 +193,7 @@ class axBaseImpl : public axBase
 // singleton???
 class axGlobalScope
 {
-  private:    
+  private:
     axBase*     mBase;
     void*       mPtr;
   public:
@@ -202,7 +202,7 @@ class axGlobalScope
     inline void     setBase(axBase* aBase)
     {
       mBase=aBase;
-      #if defined AX_DEBUG && defined AX_DEBUG_LOG 
+      #if defined AX_DEBUG && defined AX_DEBUG_LOG
         axCout.setup();
       #endif
     }

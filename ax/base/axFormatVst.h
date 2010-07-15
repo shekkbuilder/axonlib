@@ -89,7 +89,9 @@ class axInstanceVst : public axInstance//,
     bool                mEditorOpen;
     axRect              mEditorRect;
     //void*               mEditorWindow;
+    #ifndef AX_NOGUI
     axEditor*           mEditorWindow;
+    #endif
     int                 mPlayState;
     double              mSamplePos;
     double              mSampleRate;
@@ -120,7 +122,9 @@ class axInstanceVst : public axInstance//,
         mMidiEventList.numEvents  = 0;
         mMidiEventList.reserved   = 0;
         mEditorOpen               = false;
+        #ifndef AX_NOGUI
         mEditorWindow             = NULL;
+        #endif
         mEditorRect               = mDescriptor->getEditorRect();//  = axRect(0,0,256,256);
         for( int i=0; i<MAX_MIDI_SEND; i++ ) mMidiEventList.events[i] = &mMidiEvents[i];
         vst_canProcessReplacing();
@@ -244,36 +248,41 @@ class axInstanceVst : public axInstance//,
 
           // 14
           case effEditOpen:
+            #ifndef AX_NOGUI
             //if ((mFlags&if_HasEditor) && !mEditorOpen)
             if (mDescriptor->hasEditor() && !mEditorOpen)
             {
 
               //mEditorWindow = doOpenEditor(&ptr);
               mEditorWindow = (axEditor*)doOpenEditor(&ptr);
-
               //mEditorWindow->reparent((int)win);
               mEditorOpen = true;
               v = 1;
             }
+            #endif
             break;
 
           // 15
           case effEditClose:
+            #ifndef AX_NOGUI
             //if ((mFlags&if_HasEditor) && mEditorOpen)
             if (mDescriptor->hasEditor() && mEditorOpen)
             {
               mEditorOpen = false;
               doCloseEditor();
             }
+            #endif
             break;
 
           // 19
           case effEditIdle:
+            #ifndef AX_NOGUI
             //if ((mFlags&if_HasEditor) && mEditorOpen)
             if (mDescriptor->hasEditor() && mEditorOpen)
             {
               doIdleEditor();
             }
+            #endif
             break;
 
           // 22
@@ -1432,7 +1441,9 @@ class axInstanceVst : public axInstance//,
     virtual void onChange(axParameter* aParameter)
       {
         trace("onChange");
-        mEditorWindow->paramChanged(aParameter);
+        #ifndef AX_NOGUI
+        if (mEditorWindow) mEditorWindow->paramChanged(aParameter);
+        #endif
       }
 
     //----------
