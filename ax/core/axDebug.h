@@ -31,19 +31,21 @@
   #include <iostream>
   #include <fstream>
 
-  #ifdef AX_DEBUG_LOG
-    #include "axDebugLog.h"
-    axDebugLog axCout;
+  #ifdef AX_DEBUG_LOG    
+    #include    "axDebugLog.h"
+    axDebugLog  axCout;
   #else
-    #include "axBasePath.h"
-    #define axCout std::cout
+    #include    "axBasePath.h"
+    #define     axCout std::cout
   #endif
 
   #define trace(x) \
-    axCout  <<  "["  << axGetFileName(__FILE__) << ":" <<  __LINE__ << "] " \
-            << x << std::endl
+    if (axCout.init) \
+      axCout  <<  "["  << axGetFileName(__FILE__) << ":" <<  __LINE__ << "] " \
+              << x << std::endl
   #define _trace(x) \
-    axCout  <<  x << std::endl
+    if (axCout.init) \
+      axCout << x << std::endl
 
 #else // AX_DEBUG
 

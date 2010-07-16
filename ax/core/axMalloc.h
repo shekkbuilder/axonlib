@@ -207,7 +207,7 @@ static __axmalloc_inline void init_buckets()
 }
 
 // axMalloc
-static __axmalloc_inline void* axMalloc (register unsigned int size)
+static void* axMalloc (register unsigned int size)
 {
   __builtin_printf("%d\n", size);
   if (size <= 0)
@@ -238,7 +238,7 @@ static __axmalloc_inline void* axMalloc (register unsigned int size)
 }
 
 // axCalloc
-static __axmalloc_inline void* axCalloc (register const unsigned int n,
+static void* axCalloc (register const unsigned int n,
   register unsigned int size)
 {
   //__builtin_printf("<< axCalloc\n");
@@ -257,7 +257,7 @@ static __axmalloc_inline void* axCalloc (register const unsigned int n,
 
 
 // axFree
-static __axmalloc_inline void axFree (void* _ptr)
+static void axFree (void* _ptr)
 {
   //__builtin_printf("<< axFree\n");
   if (_ptr)
@@ -275,7 +275,7 @@ static __axmalloc_inline void axFree (void* _ptr)
 }
 
 // axRealloc
-static __axmalloc_inline void* axRealloc (void* _ptr,
+static void* axRealloc (void* _ptr,
   register const unsigned int size)
 {
   //__builtin_printf("<< axRealloc\n");
@@ -318,16 +318,6 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
 // -----------------------------------------------------------------------------
 #if defined (AX_DEBUG) && defined (AX_DEBUG_MEM)
   #include "axDebug.h"
-  #include "axStdlib.h"
-
-//  #include "axUtils.h" // axStrcpy
-/*
-char* axStrcpy(register char* dest, register const char* src)
-{
-  while ( (*dest++ = *src++) );
-  return dest;
-}
-*/
 
   #ifdef AX_NO_MALLOC
     #include "malloc.h"
@@ -341,7 +331,7 @@ char* axStrcpy(register char* dest, register const char* src)
   static __thread int _axMemTotal = 0;
 
   // malloc debug
-  __axmalloc_inline void* axMallocDebug
+  __unused static void* axMallocDebug
     (register unsigned int _size, const char* _file, const unsigned int _line,
     const unsigned int flag = 0)
   {
@@ -371,7 +361,7 @@ char* axStrcpy(register char* dest, register const char* src)
   }
 
   // calloc debug
-  __axmalloc_inline void* axCallocDebug
+  __unused static void* axCallocDebug
     (register const unsigned int _n, register unsigned int _size,
     const char* _file, const unsigned int _line)
   {
@@ -398,7 +388,7 @@ char* axStrcpy(register char* dest, register const char* src)
   }
 
   // realloc debug
-  __axmalloc_inline void* axReallocDebug
+  __unused static void* axReallocDebug
     (void* _ptr, register const unsigned int _size, const char* _file,
     const unsigned int _line)
   {
@@ -432,7 +422,7 @@ char* axStrcpy(register char* dest, register const char* src)
   }
 
   // free debug
-  __axmalloc_inline void axFreeDebug
+  __unused static void axFreeDebug
     (void* _ptr, const char* _file, const unsigned int _line,
     const unsigned int flag = 0)
   {
@@ -527,7 +517,6 @@ char* axStrcpy(register char* dest, register const char* src)
     __axmalloc_inline void* operator new (const size_t size,
       const char* file, unsigned int line) throw (std::bad_alloc)
     {
-      _trace("here");
       return axMallocDebug(size, file, line, 1);
     }
     __axmalloc_inline void* operator new[] (const size_t size,
