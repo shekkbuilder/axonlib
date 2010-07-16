@@ -14,8 +14,8 @@
 class axInstance : public axParameterListener
 {
   public:
-    axInstance(axBase* aBase)  { /*printf("axInstance.constructor\n");*/ }
-    virtual ~axInstance()      { /*trace("axInstance.destructor");*/ }
+    //axInstance(axBase* aBase)  { /*printf("axInstance.constructor\n");*/ }
+    //virtual ~axInstance()      { /*trace("axInstance.destructor");*/ }
     //
     virtual void    doStateChange(int aState) {}
     virtual void    doSetParameter(axParameter* aParameter) {}

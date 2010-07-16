@@ -11,8 +11,8 @@ static char* g_default_stereo_outputs[] = { (char*)"out1",(char*)"out2" };
 class axDescriptor
 {
   public:
-    axDescriptor(axBase* aBase)  { /*trace("axDescriptor.constructor");*/ }
-    virtual ~axDescriptor()      { /*trace("axDescriptor.destructor");*/ }
+    //axDescriptor(axBase* aBase)  { /*trace("axDescriptor.constructor");*/ }
+    //virtual ~axDescriptor()      { /*trace("axDescriptor.destructor");*/ }
     //
     virtual char*         getName(void)             { return (char*)"plugin"; }
     virtual char*         getAuthor(void)           { return (char*)"anonymous"; }

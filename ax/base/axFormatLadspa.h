@@ -14,8 +14,10 @@
 class axDescriptorLadspa : public axDescriptor
 {
   public:
-    axDescriptorLadspa(axBase* aBase) : axDescriptor(aBase) { /*trace("  axDescriptorLadspa.constructor");*/ }
-    virtual ~axDescriptorLadspa()     { /*trace("  axDescriptorLadspa.destructor");*/ }
+    axDescriptorLadspa(axBase* aBase)// : axDescriptor(aBase)
+      { /*trace("  axDescriptorLadspa.constructor");*/ }
+    virtual ~axDescriptorLadspa()
+      { /*trace("  axDescriptorLadspa.destructor");*/ }
 };
 
 typedef axDescriptorLadspa AX_DESCRIPTOR;
@@ -28,9 +30,15 @@ typedef axDescriptorLadspa AX_DESCRIPTOR;
 
 class axInstanceLadspa : public axInstance
 {
+  protected:
+    axBase* mBase;
   public:
-    axInstanceLadspa(axBase* aBase) : axInstance(aBase) { /*trace("  axInstanceLadspa.constructor");*/ }
-    virtual ~axInstanceLadspa()     { /*trace("  axInstanceLadspa.destructor");*/ }
+    axInstanceLadspa(axBase* aBase) /*: axInstance(aBase)*/
+      {
+        mBase = aBase;
+        /*trace("  axInstanceLadspa.constructor");*/
+      }
+    virtual ~axInstanceLadspa() { /*trace("  axInstanceLadspa.destructor");*/ }
     // callbacks
     virtual void lad_connect_port(unsigned long Port, LADSPA_Data* DataLocation) { /*trace("axFormatLadspa.lad_connect_port");*/ }
     virtual void lad_activate(void) { /*trace("axFormatLadspa.lad_activate");*/ }
@@ -39,6 +47,9 @@ class axInstanceLadspa : public axInstance
   //virtual void lad_set_run_adding_gain(LADSPA_Data Gain) {}
     virtual void lad_deactivate(void) { /*trace("axFormatLadspa.lad_deactivate");*/ }
     virtual void lad_cleanup(void) { /*trace("axFormatLadspa.lad_cleanup");*/ }
+    //
+    virtual void appendParameter(axParameter* aParameter) {}
+    virtual void setupParameters(void) {}
 };
 
 typedef axInstanceLadspa AX_INSTANCE;
@@ -196,7 +207,7 @@ class axFormatLadspa : public axFormat
 
   public:
 
-    axFormatLadspa(axBase* aBase) : axFormat(aBase)
+    axFormatLadspa(axBase* aBase)// : axFormat(aBase)
       {
         //trace("- axFormatLadspa.constructor");
         mBase = aBase;

@@ -1,15 +1,13 @@
 // i586-mingw32msvc-g++ -Wall -O3 -mwindows -lmsimg32 -Wno-unused -Wno-long-long -DAX_FORMAT_EXE -I../ -c test.cpp -o test.exe
 
-//#define AX_NOGUI
+#define AX_NOGUI
 //#define AX_WIDGET_NOUPDATELIST
 
-//#define AX_DEBUG_AUTO_STD    // not used
-
-//#define AX_DEBUG_PNG
 #define AX_DEBUG_MEM
 #define AX_DEBUG_NEW
+//#define AX_DEBUG_PNG
 //#define AX_DEBUG_CONSOLE
-#define AX_DEBUG_LOG "test.log"
+//#define AX_DEBUG_LOG "test.log"
 
 //----------
 
@@ -24,53 +22,6 @@
 #include "par/parFloat.h"
 
 //----------------------------------------------------------------------
-
-////--------------------------------------------------
-//
-///*
-//class axDebug : public AX_PLATFORM
-//{
-//  private:
-//    debug_log* log;
-//    debug_console* console;
-//  public:
-//    axDebug(axBase* aBase) : AX_PLATFORM(aBase)
-//      {
-//        printf("module path: '%s'\n",        getPath());
-//        printf("hinstance:    0x%08x\n",(int)getHandle());
-//        //log = new debug_log(aBase);
-//        //console = new debug_console(aBase);
-//        gGlobalScope.setPtr(this);
-//      }
-//    virtual ~axDebug()
-//      {
-//        // if (log) delete log;
-//        // if (console) delete console;
-//      }
-//    void print(char* str)
-//      {
-//        printf("axDebug: '%s'\n",str);
-//        if (log) log->print(str);
-//        if (console) console->print(str);
-//      }
-//    // getLog/Console???
-//};
-//*/
-//
-////----------
-//
-//#ifdef AX_DEBUG
-//  //#define trc(s) ((axDebug*)gGlobalScope.getPtr())->print((char*)s)
-//#endif
-//
-//void testfunc(char* s)
-//{
-//  //axDebug* dbg = (axDebug*)gGlobalScope.getPtr();
-//  //printf("testfunc: '%s'\n",s);
-//  //dbg->print( s );
-//}
-//
-//----------------------------------------------------------------------
 //
 // descriptor
 //
@@ -84,7 +35,7 @@ class myDescriptor : public AX_DESCRIPTOR
     virtual bool    hasEditor(void)     { return true; }
     virtual axRect  getEditorRect(void) { return axRect(0,0,320,240); }
     virtual int     getNumParams(void) { return 1; }
-    virtual char*   getParamName(int aIndex)  { if (aIndex==0) return (char*)"param"; return (char*)""; }
+    virtual char*   getParamName(int aIndex)  { if (aIndex==0) return (char*)"gain.descr"; return (char*)""; }
 };
 
 //----------------------------------------------------------------------
@@ -172,7 +123,6 @@ class myInstance : public AX_INSTANCE
         float value = aParameter->getValue();
         trace("doSetParameter(" << index << ") = " << value);
         if (index==0) m_gain = value;
-        //testfunc( (char*)"doSetParameter" );
       }
 
     //virtual bool doProcessBlock(float** aInputs, float** aOutputs, int Length)

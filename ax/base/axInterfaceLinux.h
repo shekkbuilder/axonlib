@@ -11,14 +11,15 @@
 
 class axInterfaceLinux : public axInterface
 {
-  private:
+  protected:
     axBase*   mBase;
+  private:
     Display*  mDisplay;
     Window    mRootWindow;
 
   public:
 
-    axInterfaceLinux(axBase* aBase) : axInterface(aBase)
+    axInterfaceLinux(axBase* aBase)// : axInterface(aBase)
       {
         //trace("axInterfaceLinux.constructor");
         mBase = aBase;

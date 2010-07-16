@@ -119,6 +119,8 @@ DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
 
 class axPlatformWin32 : public axPlatform
 {
+  protected:
+    axBase* mBase;
   private:
     //axDebugLog      mDebugLog;
     axDebugConsole  mDebugConsole;
@@ -126,9 +128,10 @@ class axPlatformWin32 : public axPlatform
     char            mPath[AX_MAX_PATH];
 
   public:
-    axPlatformWin32(axBase* aBase) : axPlatform(aBase)
+    axPlatformWin32(axBase* aBase)// : axPlatform(aBase)
       {
         //trace("axPlatformWin32.constructor");
+        mBase = aBase;
         mWinInstance = gWinInstance;
         //trace("mWinInstance: " << mWinInstance);
         //trc("mWinInstance: " << mWinInstance);
