@@ -21,7 +21,9 @@
 // axDebugLog.h
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined AX_DEBUG && defined AX_DEBUG_LOG
+#if defined AX_DEBUG
+
+#if defined AX_DEBUG_LOG
 
 #include <iostream>
 #include <fstream>
@@ -112,6 +114,8 @@ class axDebugLog : public std::ostream
     }
 };
 
-#endif // AX_DEBUG && AX_DEBUG_LOG
+#endif // AX_DEBUG_LOG 
+
+#endif // AX_DEBUG
 
 #endif // axDebugLog_included

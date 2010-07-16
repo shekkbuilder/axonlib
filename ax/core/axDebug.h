@@ -31,22 +31,52 @@
   #include <iostream>
   #include <fstream>
 
-  #ifdef AX_DEBUG_LOG    
-    #include    "axDebugLog.h"
+  #include        "axBasePath.h"
+  
+  // AX_DEBUG_CONSOLE
+  // ------------------------------------------------------
+  #if defined AX_WIN32 && defined AX_DEBUG_CONSOLE
+    #include        "axDebugConsole.h"    
+    #define         _AX_D_CON_CHECK if (axCon.init)
+    axDebugConsole  axCon;    
+  #else  
+    #define         _AX_D_CON_CHECK
+  #endif  
+  
+  // AX_DEBUG_LOG
+  // ------------------------------------------------------
+  #ifdef AX_DEBUG_LOG
+    #include    "axDebugLog.h"    
+    #define     _AX_D_LOG_CHECK if (axCout.init)
     axDebugLog  axCout;
-  #else
-    #include    "axBasePath.h"
-    #define     axCout std::cout
-  #endif
-
-  #define trace(x) \
-    if (axCout.init) \
-      axCout  <<  "["  << axGetFileName(__FILE__) << ":" <<  __LINE__ << "] " \
-              << x << std::endl
-  #define _trace(x) \
-    if (axCout.init) \
+  
+    // trace macros
+    #define trace(x) \
+    _AX_D_CON_CHECK \
+    _AX_D_LOG_CHECK \
+      axCout  << "["  << axGetFileName(__FILE__) << ":" <<  __LINE__ \
+              << "] " << x << std::endl
+    #define _trace(x) \
+    _AX_D_CON_CHECK \
+    _AX_D_LOG_CHECK \
+      axCout << x << std::endl
+          
+  #else // AX_DEBUG_LOG
+  // ------------------------------------------------------
+    #define axCout std::cout    
+    
+    // trace macros
+    #define trace(x) \
+      _AX_D_CON_CHECK \
+      axCout  << "["  << axGetFileName(__FILE__) << ":" <<  __LINE__ \
+              << "] " << x << std::endl
+    #define _trace(x) \
+      _AX_D_CON_CHECK \
       axCout << x << std::endl
 
+  #endif
+  // -------------------------------------------
+  
 #else // AX_DEBUG
 
   #define trace(x)

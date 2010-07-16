@@ -122,8 +122,13 @@ class axPlatformWin32 : public axPlatform
   protected:
     axBase* mBase;
   private:
-    //axDebugLog      mDebugLog;
-    axDebugConsole  mDebugConsole;
+    // axDebugConsole  mDebugConsole;
+    // ^ 
+    // has to be global after all.
+    // see axDebug.h ...
+    // trace() needs to check for the console is ready on win32
+    // so some of the #ifdefs are back i.e. no other way to do it
+    // 
     HINSTANCE       mWinInstance;
     char            mPath[AX_MAX_PATH];
 

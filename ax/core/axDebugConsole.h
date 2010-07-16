@@ -40,6 +40,7 @@ class axDebugConsole
     FILE* axSfile;  // file stream
 
   public:
+    bool init; 
 
     axDebugConsole()
     {
@@ -72,6 +73,7 @@ class axDebugConsole
           {
             *stdout = *axSfile;
             setvbuf(stdout,NULL,_IONBF,0);
+            init = 1;
           }
         }
       }
