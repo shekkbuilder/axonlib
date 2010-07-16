@@ -6,15 +6,15 @@
 
 class axInterfaceNone : public axInterface
 {
-  //private:
-  //  axBase*   mBase;
+  protected:
+    axBase*   mBase;
 
   public:
 
-    axInterfaceNone(axBase* aBase) : axInterface(aBase)
+    axInterfaceNone(axBase* aBase) // : axInterface(aBase)
       {
         //trace("axInterfaceNone.constructor");
-        //mBase = aBase;
+        mBase = aBase;
       }
 
     virtual ~axInterfaceNone()

@@ -21,8 +21,9 @@ LRESULT CALLBACK eventProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 
 class axInterfaceWin32 : public axInterface
 {
-  private:
+  protected:
     axBase*   mBase;
+  private:
     HINSTANCE mWinInstance;
     char      mWinClassName[256];
     HCURSOR   mWinCursor;
@@ -31,7 +32,7 @@ class axInterfaceWin32 : public axInterface
 
   public:
 
-    axInterfaceWin32(axBase* aBase) : axInterface(aBase)
+    axInterfaceWin32(axBase* aBase)// : axInterface(aBase)
       {
         //trace("axInterfaceWin32.constructor");
         mBase = aBase;

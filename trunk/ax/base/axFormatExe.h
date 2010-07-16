@@ -16,7 +16,7 @@
 class axDescriptorExe : public axDescriptor
 {
   public:
-    axDescriptorExe(axBase* aBase) : axDescriptor(aBase) { /*trace("axDescriptorExe.constructor");*/ }
+    axDescriptorExe(axBase* aBase) /*: axDescriptor(aBase)*/ { /*trace("axDescriptorExe.constructor");*/ }
     virtual ~axDescriptorExe() { /*trace("axDescriptorExe.destructor");*/ }
 };
 
@@ -30,8 +30,9 @@ typedef axDescriptorExe AX_DESCRIPTOR;
 
 class axInstanceExe : public axInstance
 {
-  private:
+  protected:
     axBase* mBase;
+  private:
     //axRect mEditorRect;
     axParameters        mParameters;
     axPrograms          mPrograms;
@@ -52,26 +53,25 @@ class axInstanceExe : public axInstance
 
   public:
 
-    axInstanceExe(axBase* aBase) : axInstance(aBase)
+    axInstanceExe(axBase* aBase) //: axInstance(aBase)
       {
         //printf("axInstanceExe\n");
         //printf("aBase: %i\n",(int)aBase);
-
-        //mBase = aBase;
+        mBase = aBase;
         /*trace("axInstanceExe.constructor");*/
-        mFlags                    = 0;
-        mCurrentProgram           = 0;
-        mPlayState                = 0;
-        mSamplePos                = 0;
-        mSampleRate               = 0;
-        mBeatPos                  = 0;
-        mTempo                    = 0;
-        mBlockSize                = 0;
-        mEditorOpen               = false;
+        mFlags          = 0;
+        mCurrentProgram = 0;
+        mPlayState      = 0;
+        mSamplePos      = 0;
+        mSampleRate     = 0;
+        mBeatPos        = 0;
+        mTempo          = 0;
+        mBlockSize      = 0;
+        mEditorOpen     = false;
         #ifndef AX_NOGUI
-        mEditor                   = NULL;
+        mEditor         = NULL;
         #endif
-        mEditorRect               = aBase->getDescriptor()->getEditorRect();
+        mEditorRect     = aBase->getDescriptor()->getEditorRect();
         //printf("... axInstanceExe... ok\n");
       }
     virtual ~axInstanceExe()
@@ -409,7 +409,7 @@ class axFormatExe : public axFormat
 
   public:
 
-    axFormatExe(axBase* aBase) : axFormat(aBase)
+    axFormatExe(axBase* aBase) // : axFormat(aBase)
       {
         //trace("axFormatExe.constructor");
         mBase = aBase;

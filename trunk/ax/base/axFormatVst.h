@@ -45,7 +45,7 @@ struct axVstEvents
 class axDescriptorVst : public axDescriptor
 {
   public:
-    axDescriptorVst(axBase* aBase) : axDescriptor(aBase)  { /*trace("axDescriptorVst.constructor");*/ }
+    axDescriptorVst(axBase* aBase) /*: axDescriptor(aBase)*/  { /*trace("axDescriptorVst.constructor");*/ }
     virtual ~axDescriptorVst()                            { /*trace("axDescriptorVst.destructor");*/ }
     //virtual char*         getName(void)             { return (char*)"plugin"; }
     //virtual char*         getAuthor(void)           { return (char*)"anonymous"; }
@@ -69,8 +69,7 @@ typedef axDescriptorVst AX_DESCRIPTOR;
 //
 //----------------------------------------------------------------------
 
-class axInstanceVst : public axInstance//,
-                      //public axParameterListener
+class axInstanceVst : public axInstance //, public axParameterListener
 {
   protected:
     axBase*             mBase;
@@ -101,7 +100,7 @@ class axInstanceVst : public axInstance//,
 
   public:
 
-    axInstanceVst(axBase* aBase) : axInstance(aBase)
+    axInstanceVst(axBase* aBase) // : axInstance(aBase)
       {
         mBase = aBase;
         mDescriptor = mBase->getDescriptor();
@@ -129,7 +128,9 @@ class axInstanceVst : public axInstance//,
         for( int i=0; i<MAX_MIDI_SEND; i++ ) mMidiEventList.events[i] = &mMidiEvents[i];
         vst_canProcessReplacing();
         if (mDescriptor->isSynth())   { vst_isSynth(true);   }
+        #ifndef AX_NOGUI
         if (mDescriptor->hasEditor()) { vst_hasEditor(true); }
+        #endif
       }
 
     virtual ~axInstanceVst()
@@ -209,7 +210,8 @@ class axInstanceVst : public axInstance//,
 
           // 08
           case effGetParamName:
-            mParameters[index]->doGetName((char*)ptr);
+            //mParameters[index]->doGetName((char*)ptr);
+            axStrcpy((char*)ptr,mDescriptor->getParamName(index));
             //axStrcpy( (char*)ptr, mDescriptor->getParamName(index) );
             break;
 
@@ -428,7 +430,8 @@ class axInstanceVst : public axInstance//,
             // kPlugCategShell,			      ///< Plug-in is container of other plug-ins  @see effShellGetNextPlugin
             // kPlugCategGenerator,		    ///< ToneGenerator, ...
 
-            if (vst_get_aeFlag(effFlagsIsSynth)) v = kPlugCategSynth;
+            //if (vst_get_aeFlag(effFlagsIsSynth)) v = kPlugCategSynth;
+            if (mDescriptor->isSynth()) v = kPlugCategSynth;
             //if ( mDescriptor->isSynth()) v = kPlugCategSynth;
             else v = kPlugCategEffect;
             break;
@@ -1612,7 +1615,7 @@ class axFormatVst : public axFormat
 
   public:
 
-    axFormatVst(axBase* aBase) : axFormat(aBase)
+    axFormatVst(axBase* aBase) // : axFormat(aBase)
       {
         trace("axFormatVst.constructor");
         mBase = aBase;
