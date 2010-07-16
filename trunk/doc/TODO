@@ -46,6 +46,7 @@ plugin:
 ----------------------------------------------------------------------
 
 - programs/banks
+  some initial support is in place..
 
 - host info (id, name, specific features)
   for host-dependent things
@@ -66,11 +67,6 @@ plugin:
   another thread or something in the middle of out processing() calculations
 
 - event manager (ala voice manager but for all kinds of events)
-
-- [done?]
-  find default/specific directory (for data files, etc)
-  relative to host or plugin? doesn't really matter,
-  as long as it's predictable and 'stable' in all hosts (and standalone)
 
 ----------------------------------------------------------------------
 gui:
@@ -105,6 +101,27 @@ gui:
 
 - don't propagate change if widget/parameter value not changed
   (no repeatedly sending 0's, etc..)
+
+- optimize redrawing.
+  - clip background images to update Rectangle
+  - don't draw widgets that are fully obscured by other widgets on top off it.
+  - transparent/opaque widget flag?
+  - another connected things is _when_ we ca call for the redrawing..
+    (timer, idle editor, ..)
+
+  one problem with the redrawing is that it is asynchronous, and completely
+  separated. we send an invalidate message to the host/os when something changes,
+  indicating that we want to update this or that rectangle on the screen.
+  then a bit later, when an WM_PAINT or Expose message is coming,
+  we are only given the rectangle to update, not what has changed, or why,
+  or anything else.. and the drawing messages have a quite low priority,
+  so they could be delayed for quite some time, if the cpu is busy with
+  'other things'. and, the os can combine several invalidated rectangles
+  into one larger one...
+  currently we are using 'brute force', and redraw everythig, starting from
+  the bottom and upwards.. some intersection testing is done to avoid
+  drawing widgets that are outside of the update rect.
+
 
 ----------------------------------------------------------------------
 widgets:

@@ -94,4 +94,6 @@ class myInstance : public AX_INSTANCE
 };
 
 //AX_ENTRYPOINT(myPlugin)
-AX_ENTRYPOINT(AX_PLATFORM,AX_INTERFACE,AX_FORMAT,myDescriptor,myInstance)
+
+//AX_ENTRYPOINT(AX_PLATFORM,AX_INTERFACE,AX_FORMAT,myDescriptor,myInstance)
+AX_MAIN(myDescriptor,myInstance)

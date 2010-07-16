@@ -20,6 +20,10 @@
 
 //----------------------------------------------------------------------
 
+#define AX_MAIN(d,i) AX_ENTRYPOINT(AX_PLATFORM,AX_INTERFACE,AX_FORMAT,d,i)
+
+//----------------------------------------------------------------------
+
 #ifndef AX_WIN_DEFAULT
   #define AX_WIN_DEFAULT 0
 #endif

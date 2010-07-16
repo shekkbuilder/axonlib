@@ -1,7 +1,8 @@
 #define AX_ALPHA
 //#define AX_WIDGET_NOUPDATELIST
 
-#include "format/axFormat.h"
+#include "base/axBase.h"
+//#include "format/axFormat.h"
 #include "gui/axEditor.h"
 #include "skins/axSkinBasic.h"
 #include "par/parFloat.h"
@@ -24,7 +25,32 @@
 
 //----------------------------------------------------------------------
 
-class myPlugin : public axFormat
+char* str_params[] =
+{
+  (char*)"delay",
+  (char*)"feedback",
+  (char*)"dry",
+  (char*)"wet"
+};
+
+//----------
+
+class myDescriptor : public AX_DESCRIPTOR
+{
+  public:
+    myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { }
+    virtual char*         getName(void)             { return (char*)"fx_tempodelay"; }
+    virtual char*         getAuthor(void)           { return (char*)"ccernn"; }
+    virtual char*         getProduct(void)          { return (char*)"axonlib example plugin"; }
+    virtual unsigned int  getUniqueId(void)         { return AX_MAGIC + 0x0000; }
+    virtual int           getNumParams(void)        { return 4; }
+    virtual char*         getParamName(int aIndex)  { return str_params[aIndex]; }
+};
+
+//----------------------------------------------------------------------
+
+//class myPlugin : public axFormat
+class myInstance : public AX_INSTANCE
 {
   private:
   // process
@@ -55,8 +81,9 @@ class myPlugin : public axFormat
 
   public:
 
-    myPlugin(axContext* aContext, int aFlags)
-    : axFormat(aContext)
+    //myPlugin(axContext* aContext, int aFlags)
+    //: axFormat(aContext)
+    myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
         if (!gui_initialized)
         {
@@ -190,4 +217,6 @@ class myPlugin : public axFormat
 };
 
 //----------------------------------------------------------------------
-AX_ENTRYPOINT(myPlugin)
+//AX_ENTRYPOINT(myPlugin)
+AX_MAIN(myDescriptor,myInstance)
+

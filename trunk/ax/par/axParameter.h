@@ -89,6 +89,8 @@ class axParameter// : public axParameterBase
         mPtr        = NULL;   //aPtr;
       }
 
+    virtual ~axParameter() {}
+
     //--------------------------------------------------
     // inline
     //--------------------------------------------------

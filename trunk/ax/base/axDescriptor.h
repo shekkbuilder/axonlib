@@ -12,7 +12,7 @@ class axDescriptor
 {
   public:
     //axDescriptor(axBase* aBase)  { /*trace("axDescriptor.constructor");*/ }
-    //virtual ~axDescriptor()      { /*trace("axDescriptor.destructor");*/ }
+    virtual ~axDescriptor()      { /*trace("axDescriptor.destructor");*/ }
     //
     virtual char*         getName(void)             { return (char*)"plugin"; }
     virtual char*         getAuthor(void)           { return (char*)"anonymous"; }

@@ -42,7 +42,7 @@ class axProgram
         mValues = (float*)axMalloc( aNumVal*sizeof(float) );
       }
 
-    ~axProgram()
+    virtual ~axProgram()
       {
         if (mValues) axFree(mValues);
       }
