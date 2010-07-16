@@ -8,6 +8,7 @@
 #define is_Resume   4
 #define is_Rate     5
 #define is_Block    6
+#define is_Bypass   7
 
 //----------------------------------------------------------------------
 
@@ -31,8 +32,8 @@ class axInstance : public axParameterListener
     virtual void    doCloseEditor(void) {}
     virtual void    doIdleEditor(void) {}
     //
-    virtual void    notifyParamChanged(axParameter* aParameter) {}
-    virtual void    notifyResizeEditor(int aWidth, int aHeight) {}
+    //virtual void    notifyParamChanged(axParameter* aParameter) {}
+    //virtual void    notifyResizeEditor(int aWidth, int aHeight) {}
     //
     virtual void    onChange(axParameter* aParameter) {}
 
