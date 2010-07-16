@@ -14,11 +14,20 @@
  * If not, see <http://axonlib.googlecode.com/>.
  */
 
+#if 0
+
 #ifndef axDebugLog_included
 #define axDebugLog_included
 
 ///////////////////////////////////////////////////////////////////////////////
 // axDebugLog.h
+//
+//
+//
+//   disabled / is not being used !!!
+//
+//
+//
 ///////////////////////////////////////////////////////////////////////////////
 
 #if defined AX_DEBUG
@@ -77,20 +86,33 @@ class axTeebuf : public std::streambuf
   ~axTeebuf() {}
 };
 
+/*
+// blackhole stream
+class axBlackhole : public std::ostream
+{
+  public:
+    axBlackhole () :
+      std::ostream (NULL) {}
+    ~axBlackhole () {}
+};
+*/
+
 // axDebugLog is an ostream object
 class axDebugLog : public std::ostream
 {
   private:
 
-    std::fstream    axfstream;
-    axTeebuf        tbuf;
-    // axMutex         mtx;
+    std::fstream        filestream;    
+    axTeebuf            tbuf;
+    
+    //axBlackhole       blackhole;
+    //axMutex           mtx;
 
   public:
     bool init;
-
+    
     axDebugLog() :
-      std::ostream(&tbuf), tbuf(std::cout.rdbuf(), axfstream.rdbuf())
+      std::ostream(&tbuf), tbuf(std::cerr.rdbuf(), filestream.rdbuf())
     {
       init = 0;
     }
@@ -98,19 +120,22 @@ class axDebugLog : public std::ostream
     ~axDebugLog()
     {
       // mtx.unlock();
-      axfstream.close();
+      
+      // do not close fstream with this destructor or log data will be lost !
+      // leave it to the OS
+      //axfstream.close();
     }
 
     //void setup(void)
     void setup(void)
     {
-      init = 1;    
+      init = 1;
       char filepath[AX_MAX_PATH] = "";
       axGetBasePath(filepath);
       axStrcat(filepath, AX_DEBUG_LOG);
       // std::cout << "dbg_log_filepath: " << filepath << std::endl;
       // mtx.lock();
-      axfstream.open(AX_DEBUG_LOG, std::fstream::out AX_DEBUG_LOG_APPEND);
+      filestream.open(AX_DEBUG_LOG, std::fstream::out AX_DEBUG_LOG_APPEND);
     }
 };
 
@@ -119,3 +144,5 @@ class axDebugLog : public std::ostream
 #endif // AX_DEBUG
 
 #endif // axDebugLog_included
+
+#endif // 0

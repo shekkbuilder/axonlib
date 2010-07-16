@@ -25,10 +25,6 @@
 
 #if defined AX_WIN32 && defined AX_DEBUG && defined AX_DEBUG_CONSOLE
 
-//in axDefines.h
-//#ifndef _WIN32_WINNT
-//  #define _WIN32_WINNT 0x0501
-//#endif
 
 #include <windows.h>
 #include <io.h>
@@ -98,3 +94,65 @@ class axDebugConsole
 #endif
 
 #endif // axDebugConsole_included
+
+
+/*
+    #include <windows.h>  
+    #include <io.h>
+    #include <stdio.h>
+
+    
+    // create a console debugger window (only one instance per process, fast)
+    //allocates console and routes stdout as seen in example:
+    //http://support.microsoft.com/kb/105305
+     
+    static __thread unsigned int axHcrt = 0;          // crt handle
+    static __thread FILE *axSfile;                    // file stream
+    
+    // ----------------
+    // destroy console
+    #define axDebugConsoleDestroy \
+      FreeConsole(); \
+      close((int)axSfile); \
+      axHcrt = 0 \
+
+    // ----------------
+    // create console
+    #define axDebugConsoleCreate _axDebugConsoleCreate()    
+    void _axDebugConsoleCreate(void)
+      if (!axHcrt)
+      {
+        // allocate console
+        AllocConsole();
+        // set title
+        SetConsoleTitle("axDebug");
+        // get handle for console
+        // requires _WIN32_WINNT >= 0x0500 (set before windows.h)
+        HWND hCw = GetConsoleWindow();
+        if(hCw)
+	      {
+          // ENABLE_EXTENDED_FLAGS = 0x0080
+          // ENABLE_QUICK_EDIT_MODE = 0x0040
+          HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
+          SetConsoleMode(hIn, 0x0080|0x0040);
+          // size & color
+          HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+          SMALL_RECT cDim = {0, 0, 50, 20};
+          SetConsoleWindowInfo(hOut, true, &cDim);
+          SetConsoleCtrlHandler(NULL, true);
+          SetWindowPos(hCw, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
+		      HMENU hMenu = GetSystemMenu(hCw, 0);
+		      if(hMenu)
+		      {
+            DeleteMenu(hMenu, SC_CLOSE, MF_BYCOMMAND);
+            DrawMenuBar(hCw);
+		      }
+        }
+        // get std handle for text output, _O_TEXT = 0x4000
+        axHcrt = _open_osfhandle((long)GetStdHandle(STD_OUTPUT_HANDLE), 0x4000);
+        axSfile = _fdopen(axHcrt, "w");
+        *stdout = *axSfile;
+        setvbuf(stdout, NULL, _IONBF, 0);
+      }
+    }
+*/

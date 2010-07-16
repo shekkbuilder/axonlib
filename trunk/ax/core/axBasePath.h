@@ -120,4 +120,12 @@ const char* axGetBasePath(char* path)
 
 #endif // AX_LINUX
 
+
+const char* axFromBasePath(char* path, const char* file)
+{
+  axGetBasePath(path);
+  axStrcat(path, file);
+  return path;
+}
+
 #endif // axBasePath_included

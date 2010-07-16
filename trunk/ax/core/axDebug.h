@@ -17,78 +17,131 @@
 #ifndef axDebug_included
 #define axDebug_included
 
-///////////////////////////////////////////////////////////////////////////////
-// axDebug.h
-///////////////////////////////////////////////////////////////////////////////
-
-#include "axDefines.h"
-
 // pragma message
 #define _pmsg(x)  _Pragma (#x)
 #define pmsg(x)   _pmsg(message (#x))
 
-//----------
+// get file name from a path string
+#include "axBasePath.h"
 
-// set macros depending on which flags are enabled
+// case: debug enabled
 #ifdef AX_DEBUG
+
+  #define _WIN32_WINNT 0x0501
 
   #include <iostream>
   #include <fstream>
-
-  #include        "axBasePath.h"
+  using namespace std;
   
-  // AX_DEBUG_CONSOLE
-  // ------------------------------------------------------
-  #if defined AX_WIN32 && defined AX_DEBUG_CONSOLE
-    #include        "axDebugConsole.h"    
-    #define         _AX_D_CON_CHECK if (axCon.init)
-    axDebugConsole  axCon;    
-  #else  
-    #define         _AX_D_CON_CHECK
-  #endif  
-  
-  // AX_DEBUG_LOG
-  // ------------------------------------------------------
-  #ifdef AX_DEBUG_LOG
-    #include    "axDebugLog.h"    
-    #define     _AX_D_LOG_CHECK if (axCout.init)
-    axDebugLog  axCout;
-  
-    // trace macros
-    #define trace(x) \
-    _AX_D_CON_CHECK \
-    _AX_D_LOG_CHECK \
-      axCout  << "["  << axGetFileName(__FILE__) << ":" <<  __LINE__ \
-              << "] " << x << std::endl
-    #define _trace(x) \
-    _AX_D_CON_CHECK \
-    _AX_D_LOG_CHECK \
-      axCout << x << std::endl
-          
-  #else // AX_DEBUG_LOG
-  // ------------------------------------------------------
-    #define axCout std::cout    
+  // --------------------------------------------------------------------------
     
-    // trace macros
-    #define trace(x) \
-      _AX_D_CON_CHECK \
-      axCout  << "["  << axGetFileName(__FILE__) << ":" <<  __LINE__ \
-              << "] " << x << std::endl
-    #define _trace(x) \
-      _AX_D_CON_CHECK \
-      axCout << x << std::endl
+  // cout macro
+  #define axCout(x) \
+    cout  << "[" << axGetFileName(__FILE__) <<  ":" \
+          << __LINE__ << "] " << x << endl;
+  #define _axCout(x) \
+    cout << x << endl;
 
+  // --------------------------------------------------------------------------  
+  // check for debug log append
+  #ifndef AX_DEBUG_LOG_APPEND
+    #define AX_DEBUG_LOG_APPEND
+  #else
+    #undef AX_DEBUG_LOG_APPEND
+    #define AX_DEBUG_LOG_APPEND | std::fstream::app
   #endif
-  // -------------------------------------------
   
+  // enable log file  
+  #ifdef AX_DEBUG_LOG
+  
+    fstream axDfs;
+    #define axDLog(x) \
+      axDfs  << "[" << axGetFileName(__FILE__) << ":" \
+              << __LINE__ << "] " << x << endl;
+    #define _axDLog(x) \
+      axDfs << x  << endl;
+    
+    #define _AX_DLOG_CHECK    if (axDfs)
+    #define _AX_DEBUG_SETUP \
+      char filepath[AX_MAX_PATH] = ""; \
+      axFromBasePath(filepath, AX_DEBUG_LOG); \
+      axDfs.open(filepath, std::fstream::out AX_DEBUG_LOG_APPEND);
+    
+  #else // AX_DEBUG_LOG
+  
+    #define  axDLog(x) (void(0))
+    #define _axDLog(x) (void(0))
+    #define _AX_DLOG_CHECK    if (0)
+    #define _AX_DEBUG_SETUP
+    
+  #endif  // AX_DEBUG_LOG
+
+  // --------------------------------------------------------------------------
+  #ifdef AX_WIN32
+  
+    // create console
+    #ifdef AX_DEBUG_CONSOLE
+      #include "axDebugConsole.h"
+      #define _AX_CONCHECK if (axCon.init)
+      axDebugConsole axCon;
+    #else
+      #define _AX_CONCHECK if (0)
+    #endif
+
+    // trace macros win32
+    #define trace(x)  \
+      _AX_CONCHECK  axCout(x); _AX_DLOG_CHECK  axDLog(x);
+    #define _trace(x) \
+      _AX_CONCHECK _axCout(x); _AX_DLOG_CHECK _axDLog(x);    
+
+  #endif // AX_WIN32
+
+  // --------------------------------------------------------------------------
+  #ifdef AX_LINUX
+  
+    // trace macros linux   
+    #define  trace(x)  axCout(x); _AX_DLOG_CHECK  axDLog(x);
+    #define _trace(x) _axCout(x); _AX_DLOG_CHECK _axDLog(x);
+
+  #endif // AX_LINUX
+
+  // --------------------------------------------------------------------------
 #else // AX_DEBUG
 
-  #define trace(x)
-  #define _trace(x)
+  #define NDEBUG
+  #define _trace(x) ((void)0)
+  #define trace(x) ((void)0)
+  
+#endif // AX_DEBUG
 
-#endif
-
-// include assert
 #include "axAssert.h"
 
 #endif // axDebug_included
+
+/**
+ * @file axDebug.h
+ * \brief debugger methods
+ *
+ * if AX_DEBUG is defined, library debug mode will be enabled. usually using the 
+ * compile flag -DAX_DEBUG <br><br> 
+ *
+ * while you can observe program output in linux by running a program directly
+ * from a terminal, on win32 you need to define AX_DEBUG_CONSOLE.
+ *
+ * methods:
+ * \code
+ *  trace("somevar:" << somevar);
+ *  pmsg("somemsg");           // compile time msg 
+ *  axAssert(somevar == 0);
+ *  axStaticAssert(somevar == 0); 
+ * \endcode
+ * 
+ * other:
+ * \code
+ * #define AX_DEBUG_LOG "somefile.log" //will log to "somefile.log"
+ * #define AX_DEBUG_PNG // will debug picopng and PNG loading  
+ * #define AX_DEBUG_MEM // will debug standard axMalloc(), axFree() calls etc. 
+ * #define AX_DEBUG_NEW // will debug operators "new" and "delete" (needs AX_DEBUG_MEM)
+ * \endcode
+ *  
+*/

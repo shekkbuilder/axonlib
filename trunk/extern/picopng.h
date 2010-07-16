@@ -1173,7 +1173,7 @@ PNG_info_t *PNG_decode(const ax_uint8 *in, ax_uint32 size)
   {
     _trace
     (
-      "[" << axGetFileName(_file) << "|" << _line << "] axPngDecode, " <<
+      "[" << axGetFileName(_file) << ":" << _line << "] axPngDecode, " <<
       (void*)&in << ", " << size
     );
     return PNG_decode(in, size);
@@ -1186,7 +1186,7 @@ PNG_info_t *PNG_decode(const ax_uint8 *in, ax_uint32 size)
     int ret = PNG_convert(info, out, in);
     _trace
     (
-      "[" << axGetFileName(_file) << "|" << _line << "] axPngConvert, " <<
+      "[" << axGetFileName(_file) << ":" << _line << "] axPngConvert, " <<
       (void*)&in << ", " << (void*)&out << ", " << ret
     );
     return ret;
@@ -1198,7 +1198,7 @@ PNG_info_t *PNG_decode(const ax_uint8 *in, ax_uint32 size)
   {
     _trace
     (
-      "[" << axGetFileName(_file) << "|" << _line << "] axPngReadHeader, " <<
+      "[" << axGetFileName(_file) << ":" << _line << "] axPngReadHeader, " <<
       (void*)&in << ", " << inlength
     );
     return PNG_readPngHeader(info, in, inlength);
@@ -1211,7 +1211,7 @@ PNG_info_t *PNG_decode(const ax_uint8 *in, ax_uint32 size)
     int ret = Zlib_decompress(out, in);
     _trace
     (
-      "[" << axGetFileName(_file) << "|" << _line << "] axPngZlibDecompress, "
+      "[" << axGetFileName(_file) << ":" << _line << "] axPngZlibDecompress, "
       << (void*)&in << ", " << (void*)&out << ", " << ret
     );
     return ret;
@@ -1222,7 +1222,7 @@ PNG_info_t *PNG_decode(const ax_uint8 *in, ax_uint32 size)
   {
     _trace
     (
-      "[" << axGetFileName(_file) << "|" << _line << "] axPngFreeAll"
+      "[" << axGetFileName(_file) << ":" << _line << "] axPngFreeAll"
     );
     return png_alloc_free_all();
   }
