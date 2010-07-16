@@ -20,8 +20,8 @@
 #include "axDefines.h"
 #include "axStdlib.h"
 
-#ifndef axGetBit
-  #define axGetBit(x, bit) ( 1 & ((x) >> (bit)) )
+#ifndef axBitGet
+  #define axBitGet(x, bit)  ( 1  &  ((x)  >> (bit)))
 #endif
 
 // fPIC compatible
@@ -73,12 +73,12 @@ class axCpu
           : "=a" (a), "="_AXCPU_EBX_REG"" (b),
             "=c" (c), "=d" (d) : "a" (0x00000001) : "cc"
         );
-        _SSE3   = axGetBit(c, 0);
-        _SSSE3  = axGetBit(c, 9);
-        _FPU    = axGetBit(d, 0);
-        _CMOV   = axGetBit(d, 15);
-        _SSE    = axGetBit(d, 25);
-        _SSE2   = axGetBit(d, 26);
+        _SSE3   = axBitGet(c, 0);
+        _SSSE3  = axBitGet(c, 9);
+        _FPU    = axBitGet(d, 0);
+        _CMOV   = axBitGet(d, 15);
+        _SSE    = axBitGet(d, 25);
+        _SSE2   = axBitGet(d, 26);
         // -----------------
         // 0x80000001
         __asmv
@@ -87,12 +87,12 @@ class axCpu
           : "=a" (a), "="_AXCPU_EBX_REG"" (b),
             "=c" (c), "=d" (d) : "a" (0x80000001) : "cc"
         );
-        _SSE4A    = axGetBit(c, 4);
-        _SSE5     = axGetBit(c, 11);
-        _MMX      = axGetBit(d, 23);
-        _MMXEXT   = axGetBit(d, 22);
-        _3DNOW    = axGetBit(d, 31);
-        _3DNOWEXT = axGetBit(d, 30);
+        _SSE4A    = axBitGet(c, 4);
+        _SSE5     = axBitGet(c, 11);
+        _MMX      = axBitGet(d, 23);
+        _MMXEXT   = axBitGet(d, 22);
+        _3DNOW    = axBitGet(d, 31);
+        _3DNOWEXT = axBitGet(d, 30);
       }
       // user defined call
       // -----------------
@@ -173,7 +173,7 @@ class axCpu
           : "=A" (val)
           //:: "%eax", "%ebx", "%ecx", "%edx" 
         );        
-        return (long)val;
+        return (unsigned long)val;
       }
     #endif
 

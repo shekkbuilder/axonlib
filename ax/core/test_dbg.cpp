@@ -8,7 +8,9 @@
 #define ___TMP_NO_GLOBAL
 #define AX_DEBUG // !
 #define AX_FORMAT_EXE // !
-#define AX_DEBUG
+#define AX_DEBUG_CONSOLE
+#define AX_DEBUG_MEM
+#define AX_DEBUG_NEW
 #define AX_DEBUG_LOG "./test.log"
 // #define AX_DEBUG_LOG_APPEND // append will append to the log file
 
@@ -21,6 +23,7 @@
 #include "axDebug.h"
 #include "axDebugConsole.h"
 
+#include "axMalloc.h"
 #include "axRand.h"
 #include "axCpu.h"
 
@@ -48,7 +51,9 @@
   \
   short i = 5000; \
   while (i--) \
-    trace(some_n);
+    trace(some_n); \
+  int* j = new int; \
+  int* m = (int*)axMalloc(12)
 
 ///////////////////////////////
 
@@ -88,7 +93,7 @@
     // in this case
     _TEST_CODE_PORTION;
     
-    trace("test done");    
+    trace("test done");
     return 0;
   }
 

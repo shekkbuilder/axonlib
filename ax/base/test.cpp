@@ -6,9 +6,9 @@
 
 #define AX_DEBUG_MEM
 #define AX_DEBUG_NEW
-//#define AX_DEBUG_PNG
-//#define AX_DEBUG_CONSOLE
-//#define AX_DEBUG_LOG "test.log"
+#define AX_DEBUG_PNG
+#define AX_DEBUG_CONSOLE
+#define AX_DEBUG_LOG "test.log"
 
 //----------
 

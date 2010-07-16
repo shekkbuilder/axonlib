@@ -318,13 +318,16 @@ static __axmalloc_inline void* axRealloc (void* _ptr,
 // -----------------------------------------------------------------------------
 #if defined (AX_DEBUG) && defined (AX_DEBUG_MEM)
   #include "axDebug.h"
+  #include "axStdlib.h"
 
 //  #include "axUtils.h" // axStrcpy
-char* ax__Strcpy(register char* dest, register const char* src)
+/*
+char* axStrcpy(register char* dest, register const char* src)
 {
   while ( (*dest++ = *src++) );
   return dest;
 }
+*/
 
   #ifdef AX_NO_MALLOC
     #include "malloc.h"
@@ -347,9 +350,9 @@ char* ax__Strcpy(register char* dest, register const char* src)
       void* _ptr = malloc(_size);
       _axMemTotal += malloc_usable_size(_ptr);
       if (flag)
-        ax__Strcpy(_name, "malloc(new), ");
+        axStrcpy(_name, "malloc(new), ");
       else
-        ax__Strcpy(_name, "malloc, ");
+        axStrcpy(_name, "malloc, ");
     #else
       void* _ptr = axMalloc(_size);
       _axMemTotal += bucket2size[*(unsigned int*)((char*)_ptr-4)];
@@ -377,7 +380,7 @@ char* ax__Strcpy(register char* dest, register const char* src)
       void* _ptr = calloc(_n, _size);
       unsigned int size = malloc_usable_size(_ptr);
       _axMemTotal += size;
-      ax__Strcpy(_name, "calloc, ");
+      axStrcpy(_name, "calloc, ");
     #else
       void* _ptr = axCalloc(_n, _size);
       unsigned int size = bucket2size[*(unsigned int*)((char*)_ptr-4)];
@@ -408,7 +411,7 @@ char* ax__Strcpy(register char* dest, register const char* src)
         _axMemTotal = 0;
       void* _ptr0 = realloc(_ptr, _size);
       _axMemTotal += malloc_usable_size(_ptr0);
-      ax__Strcpy(_name, "realloc, ");
+      axStrcpy(_name, "realloc, ");
     #else
       int nsize = bucket2size[*(unsigned int*)((char*)_ptr-4)];
       if (_axMemTotal - nsize >= 0)
@@ -440,9 +443,9 @@ char* ax__Strcpy(register char* dest, register const char* src)
       #ifdef AX_NO_MALLOC
         _size = malloc_usable_size(_ptr);
         if (flag)
-          ax__Strcpy(_name, "free(delete), ");
+          axStrcpy(_name, "free(delete), ");
         else
-          ax__Strcpy(_name, "free, ");
+          axStrcpy(_name, "free, ");
       #else
         unsigned int b = *(unsigned int*)((char*)_ptr-4);
         if (b < AX_M_MAX_BUCKETS)
@@ -524,6 +527,7 @@ char* ax__Strcpy(register char* dest, register const char* src)
     __axmalloc_inline void* operator new (const size_t size,
       const char* file, unsigned int line) throw (std::bad_alloc)
     {
+      _trace("here");
       return axMallocDebug(size, file, line, 1);
     }
     __axmalloc_inline void* operator new[] (const size_t size,

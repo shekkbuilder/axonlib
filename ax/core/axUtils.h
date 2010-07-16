@@ -105,20 +105,16 @@ __axutils_inline unsigned int axBitReverse(unsigned int v)
 
 //----------
 
-/**
- * returns a specific bit of an integer
- * \code
- * int x = 0x0f;
- * for(unsigned int i=0; i<32; i++)
- * { cout << axGetBit(x, i); }      // 11110000000000000000000000000000
- * cout << axGetBit(x, 0);          // 1
- * cout << axGetBit(x, 4);          // 0
- * \endcode
- * @param[in] x long int - input value
- * @param[in] bit unsigned int - which bit
- * @return unsigned int - 0x0 / 0x1
- */
-#define axGetBit(x, bit) ( 1 & ((x) >> (bit)) )
+/// convert to boolean
+#define axBool(x)         (!(!(x)))
+/// get bit
+#define axBitGet(x, bit)  ( 1  &  ((x)  >> (bit)))
+/// set bit
+#define axBitSet(x, bit)  ((x) |  (1    << (bit)))
+/// clear bit
+#define axBitClr(x, bit)  ((x) & ~(1    << (bit)))
+/// flip bit
+#define axBitFlp(x, bit)  ((x) ^  (1    << (bit)))
 
 //----------
 
