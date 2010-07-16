@@ -107,7 +107,7 @@ class axDebugLog : public std::ostream
       char filepath[AX_MAX_PATH] = "";
       axGetBasePath(filepath);
       axStrcat(filepath, AX_DEBUG_LOG);
-      std::cout << "dbg_log_filepath = " << filepath << std::endl;
+      // std::cout << "dbg_log_filepath: " << filepath << std::endl;
       // mtx.lock();
       axfstream.open(AX_DEBUG_LOG, std::fstream::out AX_DEBUG_LOG_APPEND);
     }
