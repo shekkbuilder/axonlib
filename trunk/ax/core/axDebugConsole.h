@@ -36,7 +36,7 @@ class axDebugConsole
     FILE* axSfile;  // file stream
 
   public:
-    bool init; 
+    bool init;
 
     axDebugConsole()
     {
@@ -97,18 +97,18 @@ class axDebugConsole
 
 
 /*
-    #include <windows.h>  
+    #include <windows.h>
     #include <io.h>
     #include <stdio.h>
 
-    
+
     // create a console debugger window (only one instance per process, fast)
     //allocates console and routes stdout as seen in example:
     //http://support.microsoft.com/kb/105305
-     
+
     static __thread unsigned int axHcrt = 0;          // crt handle
     static __thread FILE *axSfile;                    // file stream
-    
+
     // ----------------
     // destroy console
     #define axDebugConsoleDestroy \
@@ -118,7 +118,7 @@ class axDebugConsole
 
     // ----------------
     // create console
-    #define axDebugConsoleCreate _axDebugConsoleCreate()    
+    #define axDebugConsoleCreate _axDebugConsoleCreate()
     void _axDebugConsoleCreate(void)
       if (!axHcrt)
       {

@@ -5,11 +5,17 @@
 //#define AX_DEBUG_PNG
 //#define AX_DEBUG_LOG "plugin.log"
 
+#define AX_DEBUG_MEM
+#define AX_DEBUG_NEW
+//#define AX_DEBUG_PNG
+//#define AX_DEBUG_CONSOLE
+#define AX_DEBUG_LOG "test.log"
+
+
 //----------------------------------------------------------------------
 
-#include "../ax/base/test.cpp"
+//#include "../ax/base/test.cpp"
 //#include "../test/test_test.cpp"
-
 
 //----------------------------------------------------------------------
 // test / demo
@@ -58,7 +64,7 @@
 // gui
 
 //#include "../source/ccernn/fx_grains.cpp"
-//#include "../source/ccernn/fx_tempodelay.cpp"
+#include "../source/ccernn/fx_tempodelay.cpp"
 
 //----------------------------------------------------------------------
 // liteon / neolit123

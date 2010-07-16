@@ -50,22 +50,22 @@ inline char* __axStrrchr(const char* s, int c)
 
 class axFile
 {
-  private:    
+  private:
     FILE* f;             // used by all
-  
+
   public:
-    unsigned int* size;  // size of a buffer is stored here
-    
+    unsigned int size;  // size of a buffer is stored here
+
     axFile()  { f = NULL; }
     ~axFile() {}
-    
+
     // close
     void close(void)
     {
       if (f)
         fclose(f);
     }
-    
+
     // file read
     unsigned char* read (const char* _file,
       const unsigned int mode = 0)
@@ -74,13 +74,13 @@ class axFile
       char _path[AX_MAX_PATH] = "";
       const char* path = axGetBasePath(_path);
       axStrcat(filepath, (char*)path);
-      axStrcat(filepath, (char*)_file);      
-      trace("axFileRead(" << mode << "): " << filepath);      
+      axStrcat(filepath, (char*)_file);
+      trace("axFileRead(" << mode << "): " << filepath);
       switch (mode)
       {
         case 0: f = fopen(filepath, "rb"); break;
         case 1: f = fopen(filepath, "r");  break;
-      }  
+      }
       if (!f)
       {
         trace("axFileRead, #ERR open(" << mode << "): " << filepath);
@@ -95,17 +95,17 @@ class axFile
         return 0;
       }
       unsigned char* b;// = (unsigned char*)axMalloc(size);
-      unsigned int res = fread(b, size, 1, f);      
-      close();      
+      unsigned int res = fread(b, size, 1, f);
+      close();
       if (!res)
       {
         trace("axFileRead, #ERR read: " << filepath);
         return 0;
-      }  
+      }
       return b;
     }
-    
-    // write buffer 'b' with 'size' into 'file' using 'mode'    
+
+    // write buffer 'b' with 'size' into 'file' using 'mode'
     unsigned int write (const char* _file,
       const char* b, const unsigned int mode = 0 )
     {
@@ -114,7 +114,7 @@ class axFile
       const char* path = axGetBasePath(_path);
       axStrcat(filepath, (char*)path);
       axStrcat(filepath, (char*)_file);
-      trace("axFileWrite(" << mode << "): " << filepath);     
+      trace("axFileWrite(" << mode << "): " << filepath);
       switch (mode)
       {
         case 0: f = fopen(filepath, "wb"); break;
@@ -126,14 +126,14 @@ class axFile
       {
         trace("axFileWrite, #ERR open(" << mode << "): " << filepath);
         return 0;
-      }      
+      }
       if (!size)
       {
         trace("axFileWrite, #ERR write 0 bytes: " << filepath);
         return 0;
       }
-      unsigned int res = fwrite(b, sizeof(b[0]), size, f);      
-      close();      
+      unsigned int res = fwrite(b, sizeof(b[0]), size, f);
+      close();
       if (!res)
       {
         trace("axFileWrite, #ERR write: " << filepath);
@@ -156,14 +156,14 @@ void test_file_methods(void)
   const char* buffer1 = "hello";
   tFile.size = 5; // set size before write
   tFile.write("./myfile.32", buffer, 0);
-  
+
   // read the same file
   char* buffer2 = tFile.read("./myfile.32", 0);
   trace("size of file is:" << tFile.size);
-  
+
   // buffer2  has to be free-ed
   axFree(buffer2);
-  
+
   // new instance...
   axFile tFile2;
   // ...

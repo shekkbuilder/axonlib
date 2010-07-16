@@ -29,6 +29,7 @@
 //#include "axSurface.h"
 
 #include "core/axStdlib.h"
+#include "core/axFile.h"
 #include "../extern/picopng.h"
 
 //----------------------------------------------------------------------
@@ -92,7 +93,8 @@ class axBitmapLoader
    int decodeLoadPng(const char* file)
       {
         unsigned int size;
-        unsigned char* b = axFileRead(file, &size, 0);
+        axFile f;
+        unsigned char* b = /*axFileRead*/f.read(file, size/*, 0*/);
 
         // check if the buffer contains a png (or a least partially)
         if (b[0] != 0x89 || b[1] != 0x50 || b[2] != 0x4E || b[3] != 0x47)

@@ -280,6 +280,7 @@ __externc __dllexport                                                         \
 const LADSPA_Descriptor* ladspa_descriptor(unsigned long index)               \
 {                                                                             \
   if (index>0) return NULL;                                                   \
+  _AX_DEBUG_SETUP                                                             \
   axBaseImpl<_PL,_IF,_FO,_D,_I>* base = new axBaseImpl<_PL,_IF,_FO,_D,_I>();  \
   gGlobalScope.setBase(base);                                                 \
   _FO* format = (_FO*)base->getFormat();                                      \
