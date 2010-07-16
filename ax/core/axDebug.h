@@ -23,6 +23,10 @@
 
 #include "axDefines.h"
 
+// pragma message
+#define _pmsg(x)  _Pragma (#x)
+#define pmsg(x)   _pmsg(message (#x))
+
 //----------
 
 // set macros depending on which flags are enabled
@@ -84,6 +88,7 @@
 
 #endif
 
+// include assert
 #include "axAssert.h"
 
 #endif // axDebug_included
