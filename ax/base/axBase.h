@@ -5,8 +5,8 @@
 #include "axConfig.h"
 #include "core/axDefines.h"
 #include "core/axRect.h"
-#include "core/axMalloc.h"
 #include "core/axDebug.h"
+#include "core/axMalloc.h"
 #include "core/axRand.h"
 #include "core/axStdlib.h"
 #include "core/axUtils.h"
@@ -95,26 +95,6 @@ class axFormat
 // base implementation
 //----------------------------------------------------------------------
 
-// #############################################################################
-// helper function which is never optimized
-// a.k.a. " a test with the ugliest hack ever !!!"
-// #############################################################################
-
-// this gives a
-// "warning: ‘optimize’ attribute directive ignored"
-// when cross compiling to win32 (from linux) with
-// (GCC) 4.2.1-sjlj (mingw32-2)
-
-inline axInstance* __instance_no_opt(axInstance* aMember)
-  __attribute__ ((optimize(0)))  // <- specify a stable optimization level
-  ;
-
-inline axInstance* __instance_no_opt(axInstance* aMember)
-{
-  return aMember;
-}
-// #############################################################################
-
 //  PL - Platform
 //  IF - Interface
 //  FO - Format
@@ -147,7 +127,7 @@ class axBaseImpl : public axBase
         delete mFormat;
         delete mDescriptor;
         delete mInterface;
-        delete mPlatform;
+        delete mPlatform;       
       }
   //protected:
   public:
@@ -180,9 +160,6 @@ class axGlobalScope
     inline void setBase(axBase* aBase)
     {
       mBase=aBase;
-      #if defined AX_DEBUG && defined AX_DEBUG_LOG
-        axCout.setup();
-      #endif
     }
     inline void     setPtr(void* aPtr)      { mPtr=aPtr; }
     inline axBase*  getBase(void)           { return mBase; }

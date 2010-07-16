@@ -2,6 +2,7 @@
 #define axFormatExe_included
 //----------------------------------------------------------------------
 
+#include "core/axDebug.h"
 #include "par/axParameter.h"
 #include "par/axProgram.h"
 
@@ -450,7 +451,8 @@ typedef axFormatExe AX_FORMAT;
 #define AX_ENTRYPOINT(_PL,_IF,_FO,_D,_I)                                      \
                                                                               \
 int main(int argc, char** argv)                                               \
-{                                                                             \
+{ \
+  _AX_DEBUG_SETUP \
   axBaseImpl<_PL,_IF,_FO,_D,_I>* base = new axBaseImpl<_PL,_IF,_FO,_D,_I>();  \
   gGlobalScope.setBase(base);                                                 \
   _FO* format = (_FO*)base->getFormat();                                      \

@@ -354,7 +354,7 @@ static void* axRealloc (void* _ptr,
     // output cout / log
     _trace
     (
-      "[" << axGetFileName(_file) << "|" << _line << "] " << _name <<
+      "[" << axGetFileName(_file) << ":" << _line << "] " << _name <<
       (void*)&_ptr << ", " << _size << ", " << _axMemTotal
     );
     return _ptr;
@@ -380,7 +380,7 @@ static void* axRealloc (void* _ptr,
     // output cout / log
     _trace
     (
-      "[" << axGetFileName(_file) << "|" << _line << "] " << _name <<
+      "[" << axGetFileName(_file) << ":" << _line << "] " << _name <<
       (void*)&_ptr << ", " << _n << ", " << _size << ", " << size << ", " <<
       _axMemTotal
     );
@@ -413,7 +413,7 @@ static void* axRealloc (void* _ptr,
     // output cout / log
     _trace
     (
-      "[" << axGetFileName(_file) << "|" << _line << "] " << _name <<
+      "[" << axGetFileName(_file) << ":" << _line << "] " << _name <<
       (void*)&_ptr << ", " << (void*)&_ptr0 <<
       ", " << _size << ", " << _axMemTotal
     );
@@ -451,7 +451,7 @@ static void* axRealloc (void* _ptr,
         _axMemTotal -= _size;
         _trace
         (
-          "[" << axGetFileName(_file) << "|" << _line << "] " << _name <<
+          "[" << axGetFileName(_file) << ":" << _line << "] " << _name <<
           (void*)&_ptr << ", " << _size << ", " << _axMemTotal
         );
 
