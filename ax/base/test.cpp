@@ -5,7 +5,7 @@
 //#define AX_WIDGET_NOUPDATELIST
 
 #define AX_DEBUG_MEM
-//#define AX_DEBUG_NEW
+#define AX_DEBUG_NEW
 //#define AX_DEBUG_PNG
 //#define AX_DEBUG_CONSOLE
 #define AX_DEBUG_LOG "test.log"
@@ -67,7 +67,7 @@ class myInstance : public AX_INSTANCE
         mBase = aBase;
         edit  = NULL;
         skin  = NULL;
-        test();
+        //test();
         m_gain = 1;
         gain = new parFloat(this,"gain","",0.5);
         appendParameter( gain );
@@ -95,7 +95,7 @@ class myInstance : public AX_INSTANCE
       {
         // pragma message (compile time)
         pmsg("some note here")
-         
+
         trace(AX_AXONLIB_TEXT);
         char temp[256];
         //trace("basepath:        '" << axGetBasePath(temp) << "'");

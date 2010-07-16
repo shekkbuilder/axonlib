@@ -230,7 +230,8 @@
 		<Unit filename="../../ax/base/axPlatformLinux.h" />
 		<Unit filename="../../ax/base/axPlatformWin32.h" />
 		<Unit filename="../../ax/base/hack_hack.h" />
-		<Unit filename="../../ax/base/test.cpp" />
+		<Unit filename="../../ax/core/_disabled_axDebug.h" />
+		<Unit filename="../../ax/core/_disabled_axDebugLog.h" />
 		<Unit filename="../../ax/core/axArray.h" />
 		<Unit filename="../../ax/core/axAssert.h" />
 		<Unit filename="../../ax/core/axBasePath.h" />
@@ -239,7 +240,6 @@
 		<Unit filename="../../ax/core/axCpu.h" />
 		<Unit filename="../../ax/core/axDebug.h" />
 		<Unit filename="../../ax/core/axDebugConsole.h" />
-		<Unit filename="../../ax/core/axDebugLog.h" />
 		<Unit filename="../../ax/core/axDefines.h" />
 		<Unit filename="../../ax/core/axFile.h" />
 		<Unit filename="../../ax/core/axList.h" />
@@ -324,6 +324,7 @@
 		<Unit filename="../../ax/wdg/wdgSizer.h" />
 		<Unit filename="../../ax/wdg/wdgSlider.h" />
 		<Unit filename="../../ax/wdg/wdgValue.h" />
+		<Unit filename="../plugin.cpp" />
 		<Unit filename="../../doc/AUTHORS" />
 		<Unit filename="../../doc/FEATURES" />
 		<Unit filename="../../doc/HISTORY" />

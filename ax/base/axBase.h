@@ -26,7 +26,7 @@ class axBase
 {
   public:
     //axBase() {}
-    //virtual ~axBase() {}
+    virtual ~axBase() {}
     virtual axPlatform*   getPlatform(void)     { return NULL; }
     virtual axInterface*  getInterface(void)    { return NULL; }
     virtual axFormat*     getFormat(void)       { return NULL; }
@@ -52,7 +52,7 @@ class axPlatform
 {
   public:
     //axPlatform(axBase* aBase) { /*trace("axPlatform.constructor");*/ }
-    //virtual ~axPlatform()     { /*trace("axPlatform.destructor");*/ }
+    virtual ~axPlatform()     { /*trace("axPlatform.destructor");*/ }
     virtual void* getHandle(void) { return NULL; }  // win32: hinstance
     virtual char* getPlatformName(void) { return (char*)""; }
     virtual char* getPath(void) { return (char*)""; }
@@ -67,7 +67,7 @@ class axInterface
 {
   public:
     //axInterface(axBase* aBase)  { /*trace("axInterface.constructor");*/ }
-    //virtual ~axInterface()      { /*trace("axInterface.destructor");*/ }
+    virtual ~axInterface()      { /*trace("axInterface.destructor");*/ }
     virtual void* getHandle(void) { return NULL; }    // linux: display*
     virtual char* getName(void) { return (char*)""; } // win32: window class name
     virtual void* createEditor(void* aParent, axRect aRect, int aFlags) { return NULL; }
@@ -84,7 +84,7 @@ class axFormat
 {
   public:
     //axFormat(axBase* aBase) { /*trace("axFormat.constructor");*/ }
-    //virtual ~axFormat()     { /*trace("axFormat.destructor");*/ }
+    virtual ~axFormat()     { /*trace("axFormat.destructor");*/ }
     virtual void* entrypoint(void* ptr) { return NULL; }
     virtual char* getFormatName(void) { return (char*)""; }
     virtual void* getHostPtr(void) { return NULL; } // vst: audioMasterCallback
@@ -118,8 +118,8 @@ class axBaseImpl : public axBase
         mInterface    = new _IF(this);
         mDescriptor   = new _D(this);
         mFormat       = new _FO(this);
-        printf("%i\n", sizeof(_PL) + sizeof(_IF) + sizeof(_D) + sizeof(_FO) );
-        fflush(stdout);
+        //printf("%i\n", sizeof(_PL) + sizeof(_IF) + sizeof(_D) + sizeof(_FO) );
+        //fflush(stdout);
       }
     virtual ~axBaseImpl()
       {
@@ -127,7 +127,7 @@ class axBaseImpl : public axBase
         delete mFormat;
         delete mDescriptor;
         delete mInterface;
-        delete mPlatform;       
+        delete mPlatform;
       }
   //protected:
   public:
@@ -148,22 +148,19 @@ class axBaseImpl : public axBase
 //
 //----------------------------------------------------------------------
 
-// singleton???
+// singleton??? (no virtuals)
 class axGlobalScope
 {
   private:
     axBase*     mBase;
     void*       mPtr;
   public:
-    axGlobalScope()  { mBase=NULL; mPtr=NULL; }
-    ~axGlobalScope() { if (mBase) delete mBase; }
-    inline void setBase(axBase* aBase)
-    {
-      mBase=aBase;
-    }
-    inline void     setPtr(void* aPtr)      { mPtr=aPtr; }
-    inline axBase*  getBase(void)           { return mBase; }
-    inline void*    getPtr(void)            { return mPtr; }
+    axGlobalScope()                     { /*printf("create base\n");*/ mBase=NULL; mPtr=NULL; }
+    ~axGlobalScope()                    { /*printf("delete base\n");*/ if (mBase) delete mBase; }
+    inline void setBase(axBase* aBase)  { mBase=aBase; }
+    inline void     setPtr(void* aPtr)  { mPtr=aPtr; }
+    inline axBase*  getBase(void)       { return mBase; }
+    inline void*    getPtr(void)        { return mPtr; }
 };
 
 //----------

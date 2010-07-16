@@ -419,7 +419,7 @@ class axFormatExe : public axFormat
 
     virtual ~axFormatExe()
       {
-        //trace("axFormatExe.destructor");
+        trace("axFormatExe.destructor");
         //mInstance->doCloseEditor();
         //delete mDescriptor;
         delete mInstance;
@@ -451,8 +451,8 @@ typedef axFormatExe AX_FORMAT;
 #define AX_ENTRYPOINT(_PL,_IF,_FO,_D,_I)                                      \
                                                                               \
 int main(int argc, char** argv)                                               \
-{ \
-  _AX_DEBUG_SETUP \
+{                                                                             \
+  _AX_DEBUG_SETUP                                                             \
   axBaseImpl<_PL,_IF,_FO,_D,_I>* base = new axBaseImpl<_PL,_IF,_FO,_D,_I>();  \
   gGlobalScope.setBase(base);                                                 \
   _FO* format = (_FO*)base->getFormat();                                      \

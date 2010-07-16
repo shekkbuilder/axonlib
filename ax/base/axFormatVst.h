@@ -5,8 +5,13 @@
 #include "pluginterfaces/vst2.x/aeffect.h"
 #include "pluginterfaces/vst2.x/aeffectx.h"
 
+#include "core/axDebug.h"
 #include "par/axParameter.h"
 #include "par/axProgram.h"
+
+#ifndef AX_NOGUI
+#include "gui/axEditor.h"
+#endif
 
 //----------------------------------------------------------------------
 
@@ -1707,6 +1712,7 @@ typedef axFormatVst AX_FORMAT;
                                                                               \
 _AX_VST_MAIN_DEF                                                              \
 {                                                                             \
+  _AX_DEBUG_SETUP \
   axBaseImpl<_PL,_IF,_FO,_D,_I>* base = new axBaseImpl<_PL,_IF,_FO,_D,_I>();  \
   gGlobalScope.setBase(base);                                                 \
   _FO* format = (_FO*)base->getFormat();                                      \
