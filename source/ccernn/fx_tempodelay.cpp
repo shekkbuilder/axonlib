@@ -45,6 +45,9 @@ class myDescriptor : public AX_DESCRIPTOR
     virtual unsigned int  getUniqueId(void)         { return AX_MAGIC + 0x0000; }
     virtual int           getNumParams(void)        { return 4; }
     virtual char*         getParamName(int aIndex)  { return str_params[aIndex]; }
+    virtual bool          hasEditor(void)     { return true; }
+    virtual axRect        getEditorRect(void) { return axRect(0,0,120,163); }
+
 };
 
 //----------------------------------------------------------------------
@@ -95,9 +98,9 @@ class myInstance : public AX_INSTANCE
         }
         m_Index = 0;
         m_Size  = 0;
-        describe("fx_tempodelay","ccernn","axonlib example",2,AX_MAGIC+0x1001);
-        setupAudio(2,2,false);
-        setupEditor(100+20,(32*4)+15+20);
+        //describe("fx_tempodelay","ccernn","axonlib example",2,AX_MAGIC+0x1001);
+        //setupAudio(2,2,false);
+        //setupEditor(100+20,(32*4)+15+20);
         appendParameter( p_Delay    = new parFloat(this,"delay",   "",0.75, 0.25, MAX_BEATS, 0.25 ) );
         appendParameter( p_Feedback = new parFloat(this,"feedback","",0.75 ) );
         appendParameter( p_Dry      = new parFloat(this,"dry",     "",0.75 ) );
@@ -107,7 +110,7 @@ class myInstance : public AX_INSTANCE
 
     //----------
 
-    ~myPlugin()
+    ~myInstance()
       {
         if (gui_initialized)
         {
@@ -179,27 +182,31 @@ class myInstance : public AX_INSTANCE
     // editor
     //--------------------------------------------------
 
-    virtual axWindow* doOpenEditor(axContext* aContext)
+    virtual void* doOpenEditor(void* ptr)
       {
-        axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
-        axCanvas* canvas = editor->getCanvas();
-        m_Skin = new axSkinDef(canvas);
-        m_Skin->loadSkinBitmap(editor,(char*)skinloader->getImage(),256,256,32);
-        m_Skin->loadKnobBitmap(editor,(char*)knobloader->getImage(),32,(32*65),32);
-        editor->applySkin(m_Skin);
-        editor->appendWidget(  w_Panel = new wdgPanel(editor,NULL_RECT,wa_Client) );
-        w_Panel->setBorders(10,10,5,5);
-        w_Panel->appendWidget( w_Delay    = new wdgKnob(editor,axRect(100,32),wa_TopLeft,"delay"    ) );
-        w_Panel->appendWidget( w_Feedback = new wdgKnob(editor,axRect(100,32),wa_TopLeft,"feedback" ) );
-        w_Panel->appendWidget( w_Dry      = new wdgKnob(editor,axRect(100,32),wa_TopLeft,"dry"      ) );
-        w_Panel->appendWidget( w_Wet      = new wdgKnob(editor,axRect(100,32),wa_TopLeft,"wet"      ) );
-        editor->connect(w_Delay,   p_Delay);
-        editor->connect(w_Feedback,p_Feedback);
-        editor->connect(w_Dry,     p_Dry);
-        editor->connect(w_Wet,     p_Wet);
-        editor->doRealign();
-        //w_Delay->clearFlag(wf_Vertical);
-        editor->show();
+        //axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
+        axEditor* editor = (axEditor*)mBase->getInterface()->createEditor(ptr,getEditorRect(),AX_WIN_DEFAULT);
+        if (editor)
+        {
+          axCanvas* canvas = editor->getCanvas();
+          m_Skin = new axSkinDef(canvas);
+          m_Skin->loadSkinBitmap(editor,(char*)skinloader->getImage(),256,256,32);
+          m_Skin->loadKnobBitmap(editor,(char*)knobloader->getImage(),32,(32*65),32);
+          editor->applySkin(m_Skin);
+          editor->appendWidget(  w_Panel = new wdgPanel(editor,NULL_RECT,wa_Client) );
+          w_Panel->setBorders(10,10,5,5);
+          w_Panel->appendWidget( w_Delay    = new wdgKnob(editor,axRect(100,32),wa_TopLeft,"delay"    ) );
+          w_Panel->appendWidget( w_Feedback = new wdgKnob(editor,axRect(100,32),wa_TopLeft,"feedback" ) );
+          w_Panel->appendWidget( w_Dry      = new wdgKnob(editor,axRect(100,32),wa_TopLeft,"dry"      ) );
+          w_Panel->appendWidget( w_Wet      = new wdgKnob(editor,axRect(100,32),wa_TopLeft,"wet"      ) );
+          editor->connect(w_Delay,   p_Delay);
+          editor->connect(w_Feedback,p_Feedback);
+          editor->connect(w_Dry,     p_Dry);
+          editor->connect(w_Wet,     p_Wet);
+          editor->doRealign();
+          //w_Delay->clearFlag(wf_Vertical);
+          editor->show();
+        }
         m_Editor = editor;
         return m_Editor;
       }
@@ -209,9 +216,19 @@ class myInstance : public AX_INSTANCE
     virtual void doCloseEditor(void)
       {
         m_Editor->hide();
+        delete m_Skin;
         delete m_Editor;
         m_Editor = NULL;
-        delete m_Skin;
+      }
+
+    //TODO: this should be hidden (lower level..)
+    virtual void doIdleEditor(void)
+      {
+        //trace("doIdleEditor");
+        #ifndef AX_WIDGET_NOUPDATELIST
+          //trace("axFormat.doIdleEditor");
+          if (m_Editor && isEditorOpen() ) m_Editor->redrawUpdates();
+        #endif
       }
 
 };

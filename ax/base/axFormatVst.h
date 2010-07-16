@@ -280,6 +280,7 @@ class axInstanceVst : public axInstance //, public axParameterListener
             {
               mEditorOpen = false;
               doCloseEditor();
+              mEditorWindow = NULL;
             }
             #endif
             break;
@@ -1487,7 +1488,7 @@ class axInstanceVst : public axInstance //, public axParameterListener
       {
         //trace("onChange par");
         #ifndef AX_NOGUI
-        if (mEditorWindow) mEditorWindow->paramChanged(aParameter);
+        if (mEditorOpen) mEditorWindow->paramChanged(aParameter);
         #endif
         doSetParameter(aParameter);
       }

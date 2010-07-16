@@ -27,7 +27,6 @@ class axInstance : public axParameterListener
     virtual void    doProcessSample(float** aInputs, float** aOutputs) {}
     virtual void    doPostProcess(float** aInputs, float** aOutputs, int Length) {}
     //
-    virtual axRect  getEditorRect(void) { return axRect(0,0,100,100); }
     virtual void*   doOpenEditor(void* ptr) { return NULL; }
     virtual void    doCloseEditor(void) {}
     virtual void    doIdleEditor(void) {}
@@ -50,6 +49,14 @@ class axInstance : public axParameterListener
 //    virtual void        saveProgram(int aIndex)
 //    virtual void        loadProgram(int aIndex)
 
+    virtual bool    isEditorOpen(void)      { return false; }
+    virtual axRect  getEditorRect(void)     { return axRect(0,0,100,100); }
+    virtual int     getCurrentProgram(void) { return 0; }
+    virtual int     getPlayState(void)      { return 0; }
+    virtual double  getSamplePos(void)      { return 0; }
+    virtual double  getSampleRate(void)     { return 0; } // 44100
+    virtual double  getBeatPos(void)        { return 0; }
+    virtual double  getTempo(void)          { return 0; }
 
 };
 
