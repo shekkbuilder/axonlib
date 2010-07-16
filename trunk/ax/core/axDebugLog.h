@@ -31,10 +31,6 @@
 #include "axMutex.h" // linux: undefined reference to `pthread_mutex_trylock'
 #include "axBasePath.h" // axGetBasePath is now there
 
-//////////////////////////////////////////  temp stuff
-
-////////////////////////////////////////// end of temp stuff
-
 // check for debug log append
 #ifndef AX_DEBUG_LOG_APPEND
   #define AX_DEBUG_LOG_APPEND
@@ -89,10 +85,12 @@ class axDebugLog : public std::ostream
     // axMutex         mtx;
 
   public:
+    bool init;
 
     axDebugLog() :
       std::ostream(&tbuf), tbuf(std::cout.rdbuf(), axfstream.rdbuf())
     {
+      init = 0;
     }
 
     ~axDebugLog()
@@ -104,6 +102,7 @@ class axDebugLog : public std::ostream
     //void setup(void)
     void setup(void)
     {
+      init = 1;    
       char filepath[AX_MAX_PATH] = "";
       axGetBasePath(filepath);
       axStrcat(filepath, AX_DEBUG_LOG);
