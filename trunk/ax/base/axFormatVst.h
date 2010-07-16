@@ -98,12 +98,18 @@ class axInstanceVst : public axInstance //, public axParameterListener
     double              mTempo;
     long                mBlockSize;
 
+    int mNumInputs;
+    int mNumOutputs;
+
   public:
 
     axInstanceVst(axBase* aBase) // : axInstance(aBase)
       {
         mBase = aBase;
         mDescriptor = mBase->getDescriptor();
+        mNumInputs = mDescriptor->getNumInputs();
+        mNumOutputs = mDescriptor->getNumOutputs();
+
         //trace("format: " << mBase->getFormat());
         audioMaster = (audioMasterCallback)mBase->getFormat()->getHostPtr();
         aeffect     = (AEffect*)mBase->getFormat()->getUserPtr();
@@ -148,7 +154,7 @@ class axInstanceVst : public axInstance //, public axParameterListener
 
     virtual VstIntPtr vst_dispatcher(VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
       {
-//trace("vst_dispatcher: " << opcode);
+        //trace("vst_dispatcher: " << opcode);
         //return 0;
         VstIntPtr v = 0;
         switch (opcode)
@@ -169,8 +175,7 @@ class axInstanceVst : public axInstance //, public axParameterListener
             doPreProgram(mCurrentProgram);
             mCurrentProgram = (VstInt32)value;
             loadProgram(mCurrentProgram);
-            // let plugin know the program have changed
-            doSetProgram(mCurrentProgram);
+            doSetProgram(mCurrentProgram); // let plugin know the program have changed
             break;
 
           // 03
@@ -199,21 +204,20 @@ class axInstanceVst : public axInstance //, public axParameterListener
           // 06
           case effGetParamLabel:
             mParameters[index]->doGetLabel((char*)ptr);
-            //axStrcpy( (char*)ptr, (char*)"" );
             break;
 
           // 07
           case effGetParamDisplay:
             mParameters[index]->doGetDisplay((char*)ptr);
-            //axItoa((char*)ptr,0);
             break;
 
           // 08
           case effGetParamName:
             //mParameters[index]->doGetName((char*)ptr);
             axStrcpy((char*)ptr,mDescriptor->getParamName(index));
-            //axStrcpy( (char*)ptr, mDescriptor->getParamName(index) );
             break;
+
+          // 09
 
           // 10
           case effSetSampleRate:
@@ -235,8 +239,7 @@ class axInstanceVst : public axInstance //, public axParameterListener
 
           // 13
           case effEditGetRect:
-
-            //if (mFlags&if_HasEditor)
+            #ifndef AX_NOGUI
             if (mDescriptor->hasEditor())
             {
               rect.left     = mEditorRect.x;
@@ -246,6 +249,7 @@ class axInstanceVst : public axInstance //, public axParameterListener
               *(ERect**)ptr = &rect;
               v = 1;
             }
+            #endif
             break;
 
           // 14
@@ -254,7 +258,6 @@ class axInstanceVst : public axInstance //, public axParameterListener
             //if ((mFlags&if_HasEditor) && !mEditorOpen)
             if (mDescriptor->hasEditor() && !mEditorOpen)
             {
-
               //mEditorWindow = doOpenEditor(&ptr);
               mEditorWindow = (axEditor*)doOpenEditor(&ptr);
               //mEditorWindow->reparent((int)win);
@@ -276,6 +279,10 @@ class axInstanceVst : public axInstance //, public axParameterListener
             #endif
             break;
 
+          // 16
+          // 17
+          // 18
+
           // 19
           case effEditIdle:
             #ifndef AX_NOGUI
@@ -286,6 +293,9 @@ class axInstanceVst : public axInstance //, public axParameterListener
             }
             #endif
             break;
+
+          // 20
+          // 21
 
           // 22
           case DECLARE_VST_DEPRECATED (effIdentify):
@@ -348,6 +358,8 @@ class axInstanceVst : public axInstance //, public axParameterListener
           case effString2Parameter:
             break;
 
+          // 28
+
           // 29
           case effGetProgramNameIndexed:
             if (index<mPrograms.size())
@@ -356,6 +368,10 @@ class axInstanceVst : public axInstance //, public axParameterListener
               v = 1;
             }
             break;
+
+          // 30
+          // 31
+          // 32
 
           // 33
           case effGetInputProperties:
@@ -436,6 +452,9 @@ class axInstanceVst : public axInstance //, public axParameterListener
             else v = kPlugCategEffect;
             break;
 
+          // 36
+          // 37
+
           // 38
           case effOfflineNotify:
             //trace("axFormatVst.dispatcher :: effOfflineNotify");
@@ -466,20 +485,27 @@ class axInstanceVst : public axInstance //, public axParameterListener
             //v = setSpeakerArrangement (FromVstPtr<VstSpeakerArrangement> (value), (VstSpeakerArrangement*)ptr) ? 1 : 0;
             break;
 
+          // 43
+
           // 44
           case effSetBypass:
             //trace("axFormatVst.dispatcher :: effSetBypass");
             //v = setBypass (value ? true : false) ? 1 : 0;
-            //doStateChange(fs_Bypass);
+            //doStateChange(is_Bypass);
             break;
 
           //----------
 
           // 45
           case effGetEffectName:
-            strcpy((char*)ptr,mDescriptor->getName());
+            axStrcpy((char*)ptr,mDescriptor->getName());
+            #ifdef AX_DEBUG
+            axStrcat((char*)ptr,"_debug");
+            #endif
             v = 1;
             break;
+
+          // 46
 
           // 47
           case effGetVendorString:
@@ -524,11 +550,11 @@ class axInstanceVst : public axInstance //, public axParameterListener
               if (!strcmp(p,"receiveVstEvents"))     v=1; // plug-in can receive MIDI events from Host
               if (!strcmp(p,"receiveVstMidiEvent"))  v=1; // plug-in can receive MIDI events from Host
               if (!strcmp(p,"receiveVstTimeInfo"))   v=1; // plug-in can receive Time info from Host
-              //if (strcmp(ptr,"offline"))              return 0; // plug-in supports offline functions (#offlineNotify, #offlinePrepare, #offlineRun)
-              //if (strcmp(ptr,"midiProgramNames"))     return 0; // plug-in supports function #getMidiProgramName ()
-              //if (strcmp(ptr,"bypass"))               return 0; // plug-in supports function #setBypass ()
+            //if (strcmp(ptr,"offline"))             v=0; // plug-in supports offline functions (#offlineNotify, #offlinePrepare, #offlineRun)
+            //if (strcmp(ptr,"midiProgramNames"))    v=0; // plug-in supports function #getMidiProgramName ()
+            //if (strcmp(ptr,"bypass"))              v=0; // plug-in supports function #setBypass ()
               if (!strcmp(p,"hasCockosExtensions"))  v=0xbeef0000;
-              trace("effCanDo: '" << p << "' (return: " << /*hex <<*/ v << /*dec <<*/ ")");
+              trace("effCanDo: '" << p << "' (return: " << v << ")");
             }
             break;
 
@@ -543,6 +569,9 @@ class axInstanceVst : public axInstance //, public axParameterListener
             //  trace("axFormatVst.dispatcher :: effIdle (deprecated)");
             //  //v = getGetTailSize ();
             //  break;
+
+          // 54
+          // 55
 
           // 56
           case effGetParameterProperties:
@@ -590,6 +619,8 @@ class axInstanceVst : public axInstance //, public axParameterListener
             //trace("axFormatVst.dispatcher :: effGetParameterProperties");
             //v = getParameterProperties (index, (VstParameterProperties*)ptr) ? 1 : 0;
             break;
+
+          // 57
 
           // 58
           case effGetVstVersion:
@@ -730,6 +761,7 @@ class axInstanceVst : public axInstance //, public axParameterListener
           case effGetNumMidiInputChannels:
             //trace("axFormatVst.dispatcher :: effGetNumMidiInputChannels");
             //v = getNumMidiInputChannels ();
+            v = 4; // test!
             break;
 
           // 79
@@ -751,53 +783,52 @@ class axInstanceVst : public axInstance //, public axParameterListener
     virtual float vst_getParameter(VstInt32 aIndex)
       {
         return mParameters[aIndex]->doGetValue();
-        return 0;
       }
 
     //----------
 
     virtual void vst_setParameter(VstInt32 aIndex, float aValue)
       {
-        trace("vst_setParameter");
+        //trace("vst_setParameter");
         axParameter* par = mParameters[aIndex];
         par->doSetValue(aValue,true);
       }
 
     //----------
 
-//    #ifdef AX_MULTICHANNEL
+    #ifdef AX_MULTICHANNEL
 
       // multi-channel
-//    virtual void vst_processReplacing(float** aInputs, float** aOutputs, int aLength)
-//      {
-//        //sendMidiClear();
-//        #ifdef AX_AUTOSYNC
-//          updateTimeInfo();
-//          if( mPlayState&1 ) doProcessTransport(mPlayState);
-//        #endif
-//        mBlockSize = sampleFrames;
-//        if ( !doProcessBlock(inputs,outputs,sampleFrames) )
-//        {
-//          // save the pointers
-//          // these are pointers to the _start_ of each channel buffer
-//          // so we save them in our own variables,
-//          // and increase them one by one when calling doProcessSample
-//          int i;
-//          float*  ins[AX_NUMINPUTS];
-//          float* outs[AX_NUMOUTPUTS];
-//          for( i=0; i<AX_NUMINPUTS;  i++ ) ins[i]  = inputs[i];
-//          for( i=0; i<AX_NUMOUTPUTS; i++ ) outs[i] = outputs[i];
-//          while (--sampleFrames >= 0)
-//          {
-//            doProcessSample(ins,outs);
-//            for( i=0; i<AX_NUMINPUTS;  i++ ) ins[i]++;
-//            for( i=0; i<AX_NUMOUTPUTS; i++ ) outs[i]++;
-//          } //sampleflrames
-//        } //process_block
-//        doPostProcess(inputs,outputs,sampleFrames);
-//        sendMidiAll();
-//      }
-//    #else
+    virtual void vst_processReplacing(float** inputs, float** outputs, int sampleFrames)
+      {
+        #ifdef AX_AUTOSYNC
+          updateTimeInfo();
+          if( mPlayState&1 ) doProcessTransport(mPlayState);
+        #endif
+        mBlockSize = sampleFrames;
+        if ( !doProcessBlock(inputs,outputs,sampleFrames) )
+        {
+          // save the pointers
+          // these are pointers to the _start_ of each channel buffer
+          // so we save them in our own variables,
+          // and increase them one by one when calling doProcessSample
+          int i;
+          float*  ins[mNumInputs];
+          float* outs[mNumOutputs];
+          for( i=0; i<mNumInputs;  i++ ) ins[i]  = inputs[i];
+          for( i=0; i<mNumOutputs; i++ ) outs[i] = outputs[i];
+          while (--sampleFrames >= 0)
+          {
+            doProcessSample(ins,outs);
+            for( i=0; i<mNumInputs;  i++ ) ins[i]++;
+            for( i=0; i<mNumOutputs; i++ ) outs[i]++;
+          } //sampleflrames
+        } //process_block
+        doPostProcess(inputs,outputs,sampleFrames);
+        sendMidiAll();
+      }
+
+    #else
 
     // stereo
     virtual void vst_processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames)
@@ -825,6 +856,8 @@ class axInstanceVst : public axInstance //, public axParameterListener
         doPostProcess(inputs,outputs,sampleFrames);
         sendMidiAll();
       }
+
+    #endif //MULTICHANNEL
 
     //----------
 
@@ -1431,23 +1464,23 @@ class axInstanceVst : public axInstance //, public axParameterListener
 
   public:
 
-    // called from editor
-    // indicating, about to change the value..
-    virtual void notifyParamChanged(axParameter* aParameter)
-      {
-        trace("notifyParamChanged");
-        int index = aParameter->getIndex();
-        float value = aParameter->doGetValue(); // 0..1
-        //aParameter->doSetValue(value,true);
-        vst_setParameterAutomated(index,value);
-        //doSetParameter(aParameter);
-      }
+//    // called from editor
+//    // indicating, about to change the value..
+//    virtual void notifyParamChanged(axParameter* aParameter)
+//      {
+//        trace("notifyParamChanged");
+//        int index = aParameter->getIndex();
+//        float value = aParameter->doGetValue(); // 0..1
+//        //aParameter->doSetValue(value,true);
+//        vst_setParameterAutomated(index,value);
+//        //doSetParameter(aParameter);
+//      }
 
     //----------
 
     virtual void onChange(axParameter* aParameter)
       {
-        trace("onChange par");
+        //trace("onChange par");
         #ifndef AX_NOGUI
         if (mEditorWindow) mEditorWindow->paramChanged(aParameter);
         #endif
@@ -1463,12 +1496,12 @@ class axInstanceVst : public axInstance //, public axParameterListener
 
     //----------
 
-    virtual void notifyResizeEditor(int aWidth, int aHeight)
-      {
-        mEditorRect.w = aWidth;
-        mEditorRect.h = aHeight;
-        vst_sizeWindow(aWidth, aHeight); // vst
-      }
+//    virtual void notifyResizeEditor(int aWidth, int aHeight)
+//      {
+//        mEditorRect.w = aWidth;
+//        mEditorRect.h = aHeight;
+//        vst_sizeWindow(aWidth, aHeight); // vst
+//      }
 
 };
 

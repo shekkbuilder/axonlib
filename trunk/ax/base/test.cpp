@@ -1,6 +1,7 @@
 // i586-mingw32msvc-g++ -Wall -O3 -mwindows -lmsimg32 -Wno-unused -Wno-long-long -DAX_FORMAT_EXE -I../ -c test.cpp -o test.exe
 
-#define AX_NOGUI
+//#define AX_NOGUI
+//#define AX_MULTICHANNEL
 //#define AX_WIDGET_NOUPDATELIST
 
 #define AX_DEBUG_MEM
@@ -121,7 +122,7 @@ class myInstance : public AX_INSTANCE
       {
         int   index = aParameter->getIndex();
         float value = aParameter->getValue();
-        trace("doSetParameter(" << index << ") = " << value);
+        //trace("doSetParameter(" << index << ") = " << value);
         if (index==0) m_gain = value;
       }
 
@@ -171,6 +172,7 @@ class myInstance : public AX_INSTANCE
 
     //
 
+    //TODO: this should be hidden (lower level..)
     virtual void doIdleEditor(void)
       {
         //trace("doIdleEditor");

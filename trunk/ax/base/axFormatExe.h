@@ -311,20 +311,20 @@ class axInstanceExe : public axInstance
     // axInstanceBase
     //----------------------------------------
 
-    // called from editor
-    // indicating, about to change the value..
-    virtual void notifyParamChanged(axParameter* aParameter)
-      {
-        //trace("notifyParamChanged");
-        int index = aParameter->getIndex();
-        float value = aParameter->doGetValue(); // 0..1
-        //vst_setParameterAutomated(index,value);
-        doSetParameter(aParameter);
-      }
+//    // called from editor
+//    // indicating, about to change the value..
+//    virtual void notifyParamChanged(axParameter* aParameter)
+//      {
+//        //trace("notifyParamChanged");
+//        int index = aParameter->getIndex();
+//        float value = aParameter->doGetValue(); // 0..1
+//        //vst_setParameterAutomated(index,value);
+//        doSetParameter(aParameter);
+//      }
 
     virtual void onChange(axParameter* aParameter)
       {
-        trace("onChange par");
+        //trace("onChange par");
         #ifndef AX_NOGUI
         if (mEditorOpen) mEditor->paramChanged(aParameter);
         #endif
@@ -340,12 +340,12 @@ class axInstanceExe : public axInstance
 
     //----------
 
-    virtual void notifyResizeEditor(int aWidth, int aHeight)
-      {
-        mEditorRect.w = aWidth;
-        mEditorRect.h = aHeight;
-        //vst_sizeWindow(aWidth, aHeight); // vst
-      }
+//    virtual void notifyResizeEditor(int aWidth, int aHeight)
+//      {
+//        mEditorRect.w = aWidth;
+//        mEditorRect.h = aHeight;
+//        //vst_sizeWindow(aWidth, aHeight); // vst
+//      }
 
 
 };
