@@ -138,6 +138,8 @@ class axBaseImpl : public axBase
         mInterface    = new _IF(this);
         mDescriptor   = new _D(this);
         mFormat       = new _FO(this);
+        printf("%i\n", sizeof(_PL) + sizeof(_IF) + sizeof(_D) + sizeof(_FO) );
+        fflush(stdout);
       }
     virtual ~axBaseImpl()
       {
