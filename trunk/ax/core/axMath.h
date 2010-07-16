@@ -140,7 +140,7 @@ __axmath_inline float axFmod(register const float x, register const float y)
   register float value;
   __asm__
   (
-    // gets remainder; copy floating point status register into ax register;
+    // gets remainder; copy floating point status word into ax register;
     // copy the ah register into the condition code bits (cc);
     // jump if parity;
     "1: fprem;"    "fstsw %%ax;"   "sahf;"   "jp 1b;"

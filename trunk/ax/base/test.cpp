@@ -93,6 +93,9 @@ class myInstance : public AX_INSTANCE
 
     void test(void)
       {
+        // pragma message (compile time)
+        pmsg("some note here")
+         
         trace(AX_AXONLIB_TEXT);
         char temp[256];
         //trace("basepath:        '" << axGetBasePath(temp) << "'");

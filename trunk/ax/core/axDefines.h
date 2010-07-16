@@ -49,42 +49,31 @@
   #define _WIN32_WINNT 0x0501
 #endif
 
-//#define  WINVER      0x0501
-//#define _WIN32_WINNT 0x0501
-
-/*
- lii:
- AX_FORMAT_LIB is the general flag for dll binaries.
- if a format supports both executable and dll format then we could
- sub-type it on user level e.g. AX_FORMAT_NAME_EXE, AX_FORMAT_NAME_LIB
- (and add a check for its _LIB flag below)
- should be before including other headers: axUtils
-*/
+// -----------------------------------------------------------------------------
+// define _FROMAT_LIB
 #if defined AX_FORMAT_VST  || defined AX_FORMAT_LADSPA || \
     defined AX_FORMAT_DSSI || defined AX_FORMAT_LV2
   #define AX_FORMAT_LIB
 #endif
 
-/* automatic -nogui for ladspa */
+// automatic -nogui for ladspa
 #ifdef AX_FORMAT_LADSPA
   #undef AX_NOGUI
   #define AX_NOGUI
 #endif
 
-// ??? if nogui, then gui?
-
-/* set AX_GUI */
-#ifdef AX_NOGUI
+// set AX_GUI
+#ifndef AX_NOGUI
   #undef AX_GUI
   #define AX_GUI
 #endif
 
-/* enable 'full' debug mode */
+// enable 'full' debug mode
 #if defined AX_DEBUG_FULL && defined AX_DEBUG
   #undef  AX_DEBUG
   #define AX_DEBUG
-  #undef  AX_DEBUG_AUTO_STD
-  #define AX_DEBUG_AUTO_STD
+  #undef  AX_DEBUG_CONSOLE
+  #define AX_DEBUG_CONSOLE
   #undef  AX_DEBUG_MEM
   #define AX_DEBUG_MEM
   #undef  AX_DEBUG_NEW
@@ -344,7 +333,7 @@ typedef unsigned char         __may_alias uchar_a;
 // other
 #define __hotinline   ___always_inline __hot __optimize(3)
 #define __asmv        __asm__ __volatile__
+#define __vlt         __volatile__
 
 //----------------------------------------------------------------------
 #endif // axDefines_included
-
