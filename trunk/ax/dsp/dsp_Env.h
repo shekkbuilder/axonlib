@@ -15,7 +15,7 @@
  */
 
 /**
-  \file dspEnvelope.h
+  \file dsp_Env.h
   \brief envelope
 */
 

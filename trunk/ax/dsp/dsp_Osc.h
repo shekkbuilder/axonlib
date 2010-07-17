@@ -15,7 +15,7 @@
  */
 
 /**
-  \file dspOsc0.h
+  \file dsp_Osc.h
   \brief primitive multi oscillator
 */
 
