@@ -112,7 +112,7 @@ class axWindowWin32 : public axWindowBase
             mInstance,
             0
           );
-          reparent((int)aParent);   // !!! int is not 64-bit safe, i guess... use void*
+          reparent(/*(int)*/aParent);   // !!! int is not 64-bit safe, i guess... use void*
         } //embedded
 
         else // windowed ---
@@ -321,7 +321,8 @@ class axWindowWin32 : public axWindowBase
 
     //----------
 
-    virtual void reparent(int aParent)
+    //virtual void reparent(int aParent)
+    virtual void reparent(void* aParent)
       {
         //trace("reparent");
         mParent = (HWND)aParent; // !!!

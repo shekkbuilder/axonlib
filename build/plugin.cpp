@@ -65,7 +65,7 @@
 // gui
 
 //#include "../source/ccernn/fx_grains.cpp"
-//#include "../source/ccernn/fx_tempodelay.cpp"
+#include "../source/ccernn/fx_tempodelay.cpp"
 
 //----------------------------------------------------------------------
 // liteon / neolit123

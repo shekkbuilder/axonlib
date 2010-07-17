@@ -97,7 +97,8 @@ class axWindowBase : public axWidget//axContainer
     virtual void    setSize(int aW, int aH) {}
     virtual void    setParentSize(int aW, int aH) {}
     virtual void    setTitle(axString aTitle) {}
-    virtual void    reparent(int aParent) {}
+  //virtual void    reparent(int aParent) {}
+    virtual void    reparent(void* aParent) {}
 
     virtual void    setCursor(int aCursor) {}
     virtual void    setCursorPos(int aX, int aY) {}
