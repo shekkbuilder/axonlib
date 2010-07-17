@@ -17,6 +17,9 @@
 
 #define AX_WIN_DEFAULT (AX_WIN_BUFFERED|AX_WIN_MSGTHREAD|AX_WIN_EMBEDDED)
 
+// see explaination below
+typedef audioMasterCallback __may_alias audioMasterCallback_a;
+
 //#define if_None       0
 //#define if_HasEditor  1
 
@@ -116,9 +119,10 @@ class axInstanceVst : public axInstance //, public axParameterListener
         mNumOutputs = mDescriptor->getNumOutputs();
 
         //trace("format: " << mBase->getFormat());
-        audioMaster = (audioMasterCallback)mBase->getFormat()->getHostPtr();
+        void* hostptr = mBase->getFormat()->getHostPtr();
+        audioMaster = *(audioMasterCallback_a*)(&hostptr);
         aeffect     = (AEffect*)mBase->getFormat()->getUserPtr();
-        trace("audioMaster: " << (int)audioMaster);
+        trace("audioMaster: " << (long)audioMaster);
         //trace("aeffect: "     << (int)aeffect);
         /*trace("axInstanceVst.constructor");*/
         mFlags                    = 0;
@@ -1592,7 +1596,29 @@ class axFormatVst : public axFormat
     virtual void* entrypoint(void* ptr)
       {
         //trace("axFormatVst.entrypoint");
-        audioMaster = (audioMasterCallback)ptr;
+        
+        //audioMaster = (audioMasterCallback)ptr;
+        
+        /*
+        -------------------------
+        this is one way to solve the warning (the other is with union):
+        "ISO C++ forbids casting between pointer-to-function
+        and pointer-to-object"        
+        
+        audioMaster = *(audioMasterCallback_a *)(&ptr)
+        where "audioMasterCallback_a" is previously defined as:
+        typedef audioMasterCallback __may_alias audioMasterCallback_a;
+        ^ in axFormatVst.h        
+        
+        same for the other way around:
+        typedef void* __may_alias void_ptr_a;
+        ^ in axDefines.h
+        
+        */
+        
+        audioMaster = *(audioMasterCallback_a *)(&ptr);
+        // -------------------------
+        
         mDescriptor = mBase->getDescriptor();
 
         axMemset(&aeffect,0,sizeof(aeffect));
@@ -1650,8 +1676,8 @@ class axFormatVst : public axFormat
       }
 
     virtual char* getFormatName(void) { return (char*)"vst"; }
-    virtual void* getHostPtr(void) { return (void*)audioMaster; }
-    virtual void* getUserPtr(void) { return &aeffect; }
+    virtual void* getHostPtr(void)    { return *(void_ptr_a *)(&audioMaster); }
+    virtual void* getUserPtr(void)    { return &aeffect; }
 
     //----------
 
@@ -1677,13 +1703,24 @@ typedef axFormatVst AX_FORMAT;
 //----------
 
 #ifdef AX_WIN32
-  #define _AX_VST_MAIN_DEF  int main(int audioMaster, char** empty)
-  #define _AX_VST_RET_DEF   return (int)ae
+  //#define _AX_VST_MAIN_DEF  int main(int audioMaster, char** empty)
+  //#define _AX_VST_RET_DEF   return (int)ae  
+  AEffect* main_plugin(audioMasterCallback audioMaster) asm ("_main");
+  #define main main_plugin
+  #define _AX_VST_MAIN_DEF  AEffect* main(audioMasterCallback audioMaster)
+  #define _AX_VST_RET_DEF   return ae
+
 #endif //WIN32
 
 // that (int) above...
 // what about 64-bit platform?
 // ^ does 'long' work for the above ?
+// -------------------------------------
+// this could be a problem since 'int' will be 32 bit on x86-64 builds
+// "long" will be the same size as "void*" but will produce a warning
+// if used as "long main(long audioMaster...".
+// take a look at the solution above:
+// same as linux but we define the "_main" symbol instead (a mingw thing).
 
 //----------------------------------------------------------------------
 
@@ -1699,7 +1736,7 @@ _AX_VST_MAIN_DEF                                                              \
   axBaseImpl<_PL,_IF,_FO,_D,_I>* base = new axBaseImpl<_PL,_IF,_FO,_D,_I>();  \
   gGlobalScope.setBase(base);                                                 \
   _FO* format = (_FO*)base->getFormat();                                      \
-  AEffect* ae = (AEffect*)format->entrypoint((void*)audioMaster);             \
+  AEffect* ae = (AEffect*)format->entrypoint(*(void_ptr_a *)(&audioMaster));  \
   _AX_VST_RET_DEF;                                                            \
 }
 

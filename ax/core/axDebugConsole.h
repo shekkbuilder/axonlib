@@ -84,14 +84,7 @@ class axDebugConsole
 
 };
 
-#else // defined AX_WIN32 && defined AX_DEBUG && defined AX_DEBUG_AUTOSTD
-
-class axDebugConsole
-{
-  // blank
-};
-
-#endif
+#endif // defined AX_WIN32 && defined AX_DEBUG && defined AX_DEBUG_AUTOSTD
 
 #endif // axDebugConsole_included
 
