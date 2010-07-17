@@ -80,7 +80,7 @@ class axInterfaceWin32 : public axInterface
       {
         //trace("axInterfaceWin32.createWindow");
         axEditor* editor;
-        if (aParent) editor = new axEditor(mBase,*(void**)aParent,aRect,aFlags);
+        if (aParent) editor = new axEditor(mBase,*(void**)aParent,aRect,aFlags);  // !!!!!
         else editor = new axEditor(mBase,NULL,aRect,aFlags);
         return (void*)editor;
       }

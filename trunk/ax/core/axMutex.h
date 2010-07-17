@@ -34,6 +34,7 @@ class axMutexBase
 #ifdef AX_LINUX
 //----------------------------------------------------------------------
 
+// -lpthread
 #include <pthread.h>
 
 class axMutexImpl : public axMutexBase

@@ -30,9 +30,11 @@ class axThreadBase
   public:
     axThreadBase()                      { mThreadRunning=false; mThreadSleep=-1; }
     virtual ~axThreadBase()             {}
-    virtual void startThread(int ms=-1) {}
+    virtual void startThread(int ms=-1) {} // -1 = no timer
     virtual void stopThread(void)       {}
     //
+    // override this..
+    // called at thread creation, or every timer tick if ms > 0
     virtual void doThreadFunc(void)     {}
     //
 };
