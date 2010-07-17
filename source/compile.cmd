@@ -15,7 +15,7 @@ set vstpath=..\..\vstsdk24
 set ladspapath=..\..\ladspa_sdk\src
 
 :: set g++ path, e.g: c:\mingw\bin\g++
-set mgwpath=g++3
+set mgwpath=g++
 
 :: set windres path, e.g: c:\mingw\bin\windres
 set windrespath=windres
