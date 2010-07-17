@@ -1693,17 +1693,7 @@ typedef axFormatVst AX_FORMAT;
 //
 //----------------------------------------------------------------------
 
-#ifdef AX_LINUX
-  #define _AX_ASM_MAIN_SYMBOL asm ("_main");
-#endif
-
-//----------------------------------------------------------------------
-
-#ifdef AX_WIN32
-  #define _AX_ASM_MAIN_SYMBOL asm ("_main"); 
-#endif
-
-AEffect*  main_plugin(audioMasterCallback audioMaster) _AX_ASM_MAIN_SYMBOL
+AEffect*  main_plugin(audioMasterCallback audioMaster) asm ("_main");
 #define   main main_plugin
 
 // that (int) above...
@@ -1714,7 +1704,8 @@ AEffect*  main_plugin(audioMasterCallback audioMaster) _AX_ASM_MAIN_SYMBOL
 // "long" will be the same size as "void*" but will produce a warning
 // if used as "long main(long audioMaster...".
 // take a look at the solution above:
-// same as linux but we define the "_main" symbol instead (a mingw thing).
+// same as linux but we define the "_main" symbol instead.
+// actually asm ("_main") should work on linux as well
 
 //----------------------------------------------------------------------
 
