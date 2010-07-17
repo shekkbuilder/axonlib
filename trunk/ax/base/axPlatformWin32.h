@@ -60,7 +60,11 @@
 
 // The lpReserved parameter indicates whether the DLL is being loaded statically or dynamically.
 
-__externc BOOL APIENTRY
+
+#ifdef AX_FORMAT_LADSPA
+__externc
+#endif
+BOOL APIENTRY
 DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
 {
   trace("win32 DllMain");
