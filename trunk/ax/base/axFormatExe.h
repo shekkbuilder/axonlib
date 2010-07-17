@@ -84,6 +84,7 @@ class axInstanceExe : public axInstance
         #endif
         }
     virtual axRect getEditorRect(void) { return mEditorRect; }
+    virtual axParameter* getParameter(int aIndex) { return mParameters[aIndex]; }
 
     //----------------------------------------
     // parameters

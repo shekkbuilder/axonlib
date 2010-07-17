@@ -9,7 +9,7 @@
 #define AX_DEBUG_NEW
 //#define AX_DEBUG_PNG
 //#define AX_DEBUG_CONSOLE
-#define AX_DEBUG_LOG "mverb.log"
+#define AX_DEBUG_LOG "plugin.log"
 
 
 //----------------------------------------------------------------------
@@ -71,11 +71,11 @@
 //----------------------------------------------------------------------
 
 //#include "../source/liteon/liteon_biquad.cpp"
-//#include "../source/liteon/liteon_tilteq.cpp"
+#include "../source/liteon/liteon_tilteq.cpp"
 
 //----------------------------------------------------------------------
 // ports
 //----------------------------------------------------------------------
 
 //#include "../source/ports/sstillwell_eventhorizon.cpp"
-#include "../source/ports/mverb.cpp"
+//#include "../source/ports/mverb.cpp"

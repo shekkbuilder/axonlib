@@ -1,6 +1,6 @@
 #define AX_NOGUI
 
-#include "format/axFormat.h"
+#include "base/axBase.h"
 #include "par/parInteger.h"
 #include "par/parFloat.h"
 
@@ -8,8 +8,22 @@
 // or some variables needs to be re-initialized when tweaking sliders?
 
 char* str_processing[] = { (char*)"stereo",(char*)"mono" };
+char* str_params[] = { (char*)"process", (char*)"center", (char*)"tilt", (char*)"output" };
 
-class myPlugin : public axFormat
+class myDescriptor : public AX_DESCRIPTOR
+{
+  public:
+    myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { }
+    virtual char*         getName(void)             { return (char*)"biquad_rbj"; }
+    virtual char*         getAuthor(void)           { return (char*)"liteon"; }
+    virtual char*         getProduct(void)          { return (char*)"axonlib example plugin"; }
+    virtual unsigned int  getUniqueId(void)         { return AX_MAGIC + 0x0000; }
+    virtual int           getNumParams(void)        { return 4; }
+    virtual char*         getParamName(int aIndex)  { return str_params[aIndex]; }
+};
+
+
+class myInstance : public AX_INSTANCE
 {
   private:
     float amp, pi, sr3;
@@ -21,40 +35,29 @@ class myPlugin : public axFormat
 
   public:
 
-    myPlugin(axContext* aContext, int aFlags)
-    : axFormat(aContext)
+    myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
-
-
-        describe("liteon_tilteq","liteon","axonlib example",0,AX_MAGIC+0x7000);
-        setupAudio(2,2);
-
         //float srate = 44100;
         //sr3 = 3*srate;
-
         amp = 6/axLogf(2);//log(2);
         a0=b1 = 0;
         lp_out = lp_out_r = 0;
-
         appendParameter( new parInteger(this, "processing",       "",       0,   0,  1,   str_processing) );
         appendParameter( new parFloat(  this, "center frequency", "scale",  50,  0,  100, 0.05   ) );
         appendParameter( new parFloat(  this, "tilt (low/high)",  "db",     0,  -6,  6,   0.05   ) );
         appendParameter( new parFloat(  this, "output gain",      "db",     0,  -25, 25,  0.05   ) );
-
         // prepare for vst use, but don't transfer variables yet
         // wait until resume, so we have the samplew rate...
-
         //setupParameters();
         prepareParameters();
         //transferParameters();
-
       }
 
     virtual void doStateChange(int aState)
       {
         switch(aState)
         {
-          case fs_Resume:
+          case is_Resume:
             sr3 = 3*getSampleRate();
             transferParameters();
             break;
@@ -142,4 +145,4 @@ class myPlugin : public axFormat
 
 };
 
-AX_ENTRYPOINT(myPlugin)
+AX_MAIN(myDescriptor,myInstance)

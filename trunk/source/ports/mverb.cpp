@@ -105,7 +105,7 @@ class mverb_skin : public axSkin
         mKnobWidth        = 32;
         mKnobHeight       = 32;
         mKnobCount        = 129;
-        mKnobTextCol      = aCanvas->getColor(0,0,0);//ed for the class, C++ u // huh? where did this come from?
+        mKnobTextCol      = aCanvas->getColor(0,0,0);
         mKnobValCol       = aCanvas->getColor(255,255,255);
       }
 
@@ -179,21 +179,17 @@ class myInstance : public AX_INSTANCE
     //: axFormat(aContext,aFormatFlags)
     myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
-        //describe("mverb","martin eastwood","mverb",0,AX_MAGIC+0x0000);
-        //setupAudio(2,2);
         #ifndef AX_NOGUI
           m_GuiInitialized = false;
-          //setupEditor(456,108);
         #endif //gui
-
         //float prog1[] = { 0.0, 0.5, 1.0, 0.5, 0.0, 0.5, 1.0, 0.15, 0.75 }; // Subtle
-        appendParameter( new axParameter(this,"damping freq", "",0.0) );
-        appendParameter( new axParameter(this,"density",      "",0.5) );
-        appendParameter( new axParameter(this,"bandwidthfreq","",1.0) );
-        appendParameter( new axParameter(this,"decay",        "",0.5) );
-        appendParameter( new axParameter(this,"predelay",     "",0.0) );
-        appendParameter( new axParameter(this,"size",         "",0.5) );
-        appendParameter( new axParameter(this,"gain",         "",1.0) );
+        appendParameter( new axParameter(this,"damping freq", "",0.0 ) );
+        appendParameter( new axParameter(this,"density",      "",0.5 ) );
+        appendParameter( new axParameter(this,"bandwidthfreq","",1.0 ) );
+        appendParameter( new axParameter(this,"decay",        "",0.5 ) );
+        appendParameter( new axParameter(this,"predelay",     "",0.0 ) );
+        appendParameter( new axParameter(this,"size",         "",0.5 ) );
+        appendParameter( new axParameter(this,"gain",         "",1.0 ) );
         appendParameter( new axParameter(this,"mix",          "",0.15) );
         appendParameter( new axParameter(this,"earlymix",     "",0.75) );
         setupParameters();
@@ -227,7 +223,7 @@ class myInstance : public AX_INSTANCE
         switch (aState)
         {
           case is_Resume:
-            trace("--- resume ---");
+            //trace("--- resume ---");
             transferParameters();
             em_verb.setSampleRate(getSampleRate());
             break;
@@ -239,9 +235,9 @@ class myInstance : public AX_INSTANCE
         //trace("doSetParameter");
         int   index = aParameter->getIndex();
         float value = aParameter->getValue();
-        trace("doSetParameter(" << index << ") = " << value);
+        //trace("doSetParameter(" << index << ") = " << value);
         em_verb.setParameter(index,value);
-        trace(getSampleRate());
+        //trace(getSampleRate());
       }
 
     virtual bool doProcessBlock(SPL** aInputs, SPL** aOutputs, int aSize)
@@ -288,7 +284,8 @@ class myInstance : public AX_INSTANCE
           w_Panel->appendWidget( new wdgKnob( editor,axRect(56, 40,40,64),wa_None) );
           w_Panel->appendWidget( new wdgKnob( editor,axRect(136,40,40,64),wa_None) );
           // setup
-          for (int i=0; i<9; i++) editor->connect( w_Panel->getWidget(i), mParameters[i] );
+          //for (int i=0; i<9; i++) editor->connect( w_Panel->getWidget(i), mParameters[i] );
+          for (int i=0; i<9; i++) editor->connect( w_Panel->getWidget(i), getParameter(i) );
           editor->doRealign();
           editor->show();
         }

@@ -20,7 +20,11 @@
 
 //----------------------------------------------------------------------
 
-#define AX_MAIN(d,i) AX_ENTRYPOINT(AX_PLATFORM,AX_INTERFACE,AX_FORMAT,d,i)
+#ifdef AX_NOGUI
+  #define AX_MAIN(d,i) AX_ENTRYPOINT(AX_PLATFORM,axInterfaceNone,AX_FORMAT,d,i)
+#else
+  #define AX_MAIN(d,i) AX_ENTRYPOINT(AX_PLATFORM,AX_INTERFACE,AX_FORMAT,d,i)
+#endif
 
 //----------------------------------------------------------------------
 
