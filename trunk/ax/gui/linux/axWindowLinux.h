@@ -500,9 +500,10 @@ class axWindowLinux : public axWindowBase
 
     //----------
 
-    virtual void reparent(int aParent)
+    //virtual void reparent(int aParent)
+    virtual void reparent(void* aParent)
       {
-        mParent = aParent;
+        mParent = *(Window*)aParent;
         XReparentWindow(mDisplay,mWindow,mParent,0,0);
         XFlush(mDisplay);
       }

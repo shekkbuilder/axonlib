@@ -430,12 +430,12 @@ class axScript
               val = next();
               mOpcodes[val]->execute();
               break;
-            case op_Word:
+            case op_Word: // gosub
               val = next();
               pushCall();
               mCodePos = val;
               break;
-            case op_Label:
+            case op_Label: // goto
               val = next();
               //pushCall();
               mCodePos = val;
