@@ -134,7 +134,7 @@ class axCpu
       if (!isCalled)
         axCpuId();
       cpustringbuf[0] = 0;
-      if (_SSE3)     axStrcat(cpustringbuf,(char*)"sse3 ");
+      if (_SSE3)     axStrcat(cpustringbuf,(char*)"sse3 "); // space at the end make them easier to string together
       if (_SSSE3)    axStrcat(cpustringbuf,(char*)"ssse3 ");
       if (_FPU)      axStrcat(cpustringbuf,(char*)"fpu ");
       if (_CMOV)     axStrcat(cpustringbuf,(char*)"cmov ");
@@ -171,8 +171,8 @@ class axCpu
           //"movl %%eax, (%%ecx);"
           //"movl %%edx, 4(%%ecx);"
           : "=A" (val)
-          //:: "%eax", "%ebx", "%ecx", "%edx" 
-        );        
+          //:: "%eax", "%ebx", "%ecx", "%edx"
+        );
         return (unsigned long)val;
       }
     #endif

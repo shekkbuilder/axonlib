@@ -18,6 +18,7 @@ class axPlatformLinux : public axPlatform
       {
         /*trace("axPlatformLinux.constructor");*/
         mBase = aBase;
+        // ???
         mPath[0] = 0;
         Dl_info dli;
         dladdr(__func__, &dli);

@@ -22,7 +22,7 @@
 #define AX_MINOR_VERSION   1
 #define AX_SUB_VERSION     2
 #define AX_VERSION_STRING "0.1.2"
-#define AX_AXONLIB_TEXT   "uses axonlib v" AX_VERSION_STRING " (http://axonlib.googlecode.com/)"
+#define AX_AXONLIB_TEXT   "powered by axonlib v" AX_VERSION_STRING " (http://axonlib.googlecode.com/)"
 
 // architechture
 // -----------------------------------------------------------------------------

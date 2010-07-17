@@ -263,10 +263,10 @@
 		<Unit filename="../../ax/deprecated/axFormatVst.h" />
 		<Unit filename="../../ax/deprecated/axProgram.h" />
 		<Unit filename="../../ax/deprecated/axReaperExt.h" />
+		<Unit filename="../../ax/doxygen/doxygen_pages.h" />
 		<Unit filename="../../ax/dsp/dspDCF.h" />
 		<Unit filename="../../ax/dsp/dspInterpolate.h" />
 		<Unit filename="../../ax/dsp/dspOnePole.h" />
-		<Unit filename="../../ax/dsp/dspPRNG.h" />
 		<Unit filename="../../ax/dsp/dspRBJ.h" />
 		<Unit filename="../../ax/dsp/dspRC.h" />
 		<Unit filename="../../ax/dsp/dspRMS.h" />

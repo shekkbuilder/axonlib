@@ -16,7 +16,29 @@
 
 //#include "audio/axLibaam.h"
 
-class axDemo : public axFormat
+//----------------------------------------------------------------------
+
+char* str_params[] = { (char*)"param1", (char*)"param2", (char*)"param3", (char*)"param4", (char*)"param5..." };
+
+//----------
+
+class myDescriptor : public AX_DESCRIPTOR
+{
+  public:
+    myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { }
+    virtual char*         getName(void)             { return (char*)"axDemo"; }
+    virtual char*         getAuthor(void)           { return (char*)"ccernn"; }
+    virtual char*         getProduct(void)          { return (char*)"axonlib example plugin"; }
+    virtual unsigned int  getUniqueId(void)         { return AX_MAGIC + 0x0000; }
+    virtual int           getNumParams(void)        { return 5; }
+    virtual char*         getParamName(int aIndex)  { return str_params[aIndex]; }
+    virtual bool          hasEditor(void)     { return true; }
+    virtual axRect        getEditorRect(void) { return axRect(0,0,500,500); }
+};
+
+//----------------------------------------------------------------------
+
+class myInstance : public AX_INSTANCE
 {
   private:
     axDemo_editor* m_Editor;
@@ -27,15 +49,14 @@ class axDemo : public axFormat
     axBitmapLoader* knobloader;
   public:
 
-    axDemo(axContext* aContext, int aFormatFlags)
-    : axFormat(aContext)
+    myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
         m_GuiInitialized = false;
         m_Graph = new axDemo_graph("axDemo graph");
         m_Graph->doCompile();
-        describe("axDemo","ccernn","axonlib example",0,AX_MAGIC+0xFFFF);
-        setupAudio(2,2,false);
-        setupEditor(500,500);
+        //describe("axDemo","ccernn","axonlib example",0,AX_MAGIC+0xFFFF);
+        //setupAudio(2,2,false);
+        //setupEditor(500,500);
         appendParameter( p1 = new axParameter(this,"p1","",0.2) );
         appendParameter( p2 = new axParameter(this,"p2","",0.4) );
         appendParameter( p3 = new axParameter(this,"p3","",0.6) );
@@ -57,7 +78,7 @@ class axDemo : public axFormat
 
     //----------
 
-    virtual ~axDemo()
+    virtual ~myInstance()
       {
         delete m_Graph;
         if (m_GuiInitialized)
@@ -154,7 +175,8 @@ class axDemo : public axFormat
 //                        | AX_WIN_MSGTHREAD
 //                        | AX_WIN_EMBEDDED)
 
-    virtual axWindow* doOpenEditor(axContext* aContext)
+    //virtual axWindow* doOpenEditor(axContext* aContext)
+    virtual void* doOpenEditor(void* ptr)
       {
         trace(":: doOpenEditor");
         //if (!m_GuiInitialized)

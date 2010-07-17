@@ -148,7 +148,7 @@ class axBaseImpl : public axBase
 //
 //----------------------------------------------------------------------
 
-// singleton??? (no virtuals)
+// singleton???
 class axGlobalScope
 {
   private:
