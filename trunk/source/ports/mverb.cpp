@@ -6,6 +6,11 @@
 #define AX_ALPHA
 //#define AX_NOGUI
 
+#define AX_DEBUG_MEM
+#define AX_DEBUG_NEW
+#define AX_DEBUG_CONSOLE
+#define AX_DEBUG_LOG      "mverb.log"
+
 //----------
 
 //#include "format/axFormat.h"

@@ -292,6 +292,7 @@ typedef double      __aligned(8) double_8;
 typedef long long   __aligned(8) longlong_8;
 
 // aliasing types
+typedef void*                 __may_alias void_ptr_a;
 typedef long double           __may_alias ldouble_a;
 typedef double                __may_alias double_a;
 typedef float                 __may_alias float_a;
