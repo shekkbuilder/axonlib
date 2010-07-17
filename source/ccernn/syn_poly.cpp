@@ -1,6 +1,6 @@
 #define AX_NOGUI
 
-#include "format/axFormat.h"
+#include "base/axBase.h"
 #include "par/parFloat.h"
 #include "par/parInteger.h"
 
@@ -106,22 +106,41 @@ class myVoice : public axVoice
 //
 //----------------------------------------------------------------------
 
-class myPlugin : public axFormat
+char* str_params[] = { (char*)"gain", (char*)"att", (char*)"rel", (char*)"oct", (char*)"semi", (char*)"cent" };
+
+//----------
+
+class myDescriptor : public AX_DESCRIPTOR
+{
+  public:
+    myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { }
+    virtual char*         getName(void)             { return (char*)"syn_poly"; }
+    virtual char*         getAuthor(void)           { return (char*)"ccernn"; }
+    virtual char*         getProduct(void)          { return (char*)"axonlib example plugin"; }
+    virtual unsigned int  getUniqueId(void)         { return AX_MAGIC + 0x0000; }
+    virtual int           getNumParams(void)        { return 6; }
+    virtual char*         getParamName(int aIndex)  { return str_params[aIndex]; }
+    virtual bool          isSynth(void)             { return true; }
+
+};
+
+//----------------------------------------------------------------------
+
+class myInstance : public AX_INSTANCE
 {
   private:
     axVoiceManager* VM;
 
   public:
 
-    myPlugin(axContext* aContext, int aFlags)
-    : axFormat(aContext)
+    myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
 
         axRand(19);
         VM = new axVoiceManager();
         for (int i=0; i<MAX_VOICES; i++) VM->appendVoice( new myVoice() );
-        describe("syn_poly","ccernn","axonlib example",0,AX_MAGIC+0x1007);
-        setupAudio(2,2,true);
+        //describe("syn_poly","ccernn","axonlib example",0,AX_MAGIC+0x1007);
+        //setupAudio(2,2,true);
         appendParameter( new parFloat(  this,"gain","db",1,  0, 1  ));
         appendParameter( new parFloat(  this,"att", "",  3,  1, 50 ));
         appendParameter( new parFloat(  this,"rel", "",  20, 1, 50 ));
@@ -131,7 +150,7 @@ class myPlugin : public axFormat
         setupParameters();
       }
 
-    virtual ~myPlugin()
+    virtual ~myInstance()
       {
         delete VM;
       }
@@ -178,4 +197,4 @@ class myPlugin : public axFormat
 
 };
 
-AX_ENTRYPOINT(myPlugin)
+AX_MAIN(myDescriptor,myInstance)

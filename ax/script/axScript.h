@@ -167,6 +167,7 @@ class axScript
 
     axScript()
       {
+        trace("axScript.constructor");
         mSrcSize    = 0;
         mSource     = NULL;
         mCode       = new int[MAX_CODESIZE];
@@ -192,13 +193,14 @@ class axScript
     virtual ~axScript()
       {
         delete[] mCode;
-        if (mSource)
-        {
-          delete[] mSource;
-          mSource = NULL;
-        }
+        delete[] mDataStack;
+        delete[] mCallStack;
+        delete[] mCondStack;
         deleteTokens();
         deleteOpcodes();
+//        deleteWords();
+//        deleteLabels();
+        if (mSource) delete[] mSource;
       }
 
     //--------------------------------------------------
@@ -224,6 +226,7 @@ class axScript
 
     inline char*      nextToken(void)     { return mTokens[mCurToken++]->name(); }
     inline void       deleteTokens(void)  { for (int i=0; i<mTokens.size(); i++) delete mTokens[i]; }
+    inline void       deleteWords(void)   { for (int i=0; i<mWords.size(); i++) delete mWords[i]; }
 
     inline int        numOpcodes(void)    { return mOpcodes.size(); }
     inline axOpcode*  opcode(int aIndex)  { return mOpcodes[aIndex]; }
@@ -397,6 +400,13 @@ class axScript
       }
 
     //--------------------------------------------------
+    /*
+    the 'heart' of the vm (virtual machine).
+    pretty rudimentary at the moment, even though we
+    already have program flow, conditionals,
+    functions,
+
+    */
 
     // todo/idea:
     // split opcode bits into some kind of binary tree,
@@ -476,7 +486,7 @@ class axScript
         appendOpcode( new opDiv() );
         appendOpcode( new opInc() );
         appendOpcode( new opDec() );
-        // io
+//        // io
         appendOpcode( new opPrintInt() );
 
       }

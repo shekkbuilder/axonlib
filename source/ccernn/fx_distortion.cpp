@@ -1,8 +1,27 @@
 #define AX_NOGUI
-#include "format/axFormat.h"
+#include "base/axBase.h"
 #include "par/parInteger.h"
 #include "par/parFloat.h"
 #include "dsp/dspRC.h"
+
+//----------------------------------------------------------------------
+
+char* str_params[] = { (char*)"type", (char*)"thresh", (char*)"pregain", (char*)"postgain", (char*)"filter", (char*)"volume" };
+
+//----------
+
+class myDescriptor : public AX_DESCRIPTOR
+{
+  public:
+    myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { }
+    virtual char*         getName(void)             { return (char*)"fx_ditortion"; }
+    virtual char*         getAuthor(void)           { return (char*)"ccernn"; }
+    virtual char*         getProduct(void)          { return (char*)"axonlib example plugin"; }
+    virtual unsigned int  getUniqueId(void)         { return AX_MAGIC + 0x0000; }
+    virtual int           getNumParams(void)        { return 6; }
+    virtual char*         getParamName(int aIndex)  { return str_params[aIndex]; }
+};
+
 
 //----------------------------------------------------------------------
 
@@ -18,7 +37,7 @@ char* str_type[] =
 
 //----------------------------------------------------------------------
 
-class myPlugin : public axFormat
+class myInstance : public AX_INSTANCE
 {
   private:
   // process
@@ -40,17 +59,16 @@ class myPlugin : public axFormat
 
   public:
 
-    myPlugin(axContext* aContext, int aFlags)
-    : axFormat(aContext)
+    myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
-        describe("fx_distortion","ccernn","axonlib example",2,AX_MAGIC+0x1003);
-        setupAudio(2,2,false);
+        //describe("fx_distortion","ccernn","axonlib example",2,AX_MAGIC+0x1003);
+        //setupAudio(2,2,false);
         appendParameter( p_Type = new parInteger( this,"type",      "", 0, 0,5, str_type) );
-        appendParameter( p_Thr  = new parFloatPow(  this,"threshold", "", 1, 0,1,0, 3 ) );
-        appendParameter( p_Pre  = new parFloatPow(  this,"pre gain",  "", 1, 1,2,0, 3 ) );
-        appendParameter( p_Post = new parFloatPow(  this,"post gain", "", 1, 0,2,0, 3 ) );
-        appendParameter( p_Flt  = new parFloatPow(  this,"filter",    "", 1, 0,1,0, 3 ) );
-        appendParameter( p_Vol  = new parFloatPow(  this,"volume",    "", 1, 0,1,0, 3 ) );
+        appendParameter( p_Thr  = new parFloatPow(this,"threshold", "", 1, 0,1,0, 3 ) );
+        appendParameter( p_Pre  = new parFloatPow(this,"pre gain",  "", 1, 1,2,0, 3 ) );
+        appendParameter( p_Post = new parFloatPow(this,"post gain", "", 1, 0,2,0, 3 ) );
+        appendParameter( p_Flt  = new parFloatPow(this,"filter",    "", 1, 0,1,0, 3 ) );
+        appendParameter( p_Vol  = new parFloatPow(this,"volume",    "", 1, 0,1,0, 3 ) );
         setupParameters();
       }
 
@@ -127,5 +145,4 @@ class myPlugin : public axFormat
 };
 
 //----------------------------------------------------------------------
-AX_ENTRYPOINT(myPlugin)
-
+AX_MAIN(myDescriptor,myInstance)

@@ -165,6 +165,7 @@ class axArray
         mSize++;
         if (mSize > mRealSize)
         {
+          mRealSize *= SIZE_MULT;
           mArray = (_T*)axRealloc(mArray, mTsize*mRealSize);
         }
         mArray[mSize-1] = aItem;

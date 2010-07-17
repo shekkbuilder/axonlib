@@ -1,23 +1,42 @@
 #define AX_NOGUI
-#include "format/axFormat.h"
+#include "base/axBase.h"
 #include "par/parFloat.h"
 #include "par/parInteger.h"
 
-char* str_onoff[] =
-{
-  (char*)"off",
-  (char*)"on"
-};
+//----------------------------------------------------------------------
+//TODO: fix this!
+
+char* str_params[] = { (char*)"size", (char*)"decay", (char*)"xfade", (char*)"volume", (char*)"freeze" };
 
 //----------
 
-class myPlugin : public axFormat
+class myDescriptor : public AX_DESCRIPTOR
+{
+  public:
+    myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { }
+    virtual char*         getName(void)             { return (char*)"fx_blur"; }
+    virtual char*         getAuthor(void)           { return (char*)"ccernn"; }
+    virtual char*         getProduct(void)          { return (char*)"axonlib example plugin"; }
+    virtual unsigned int  getUniqueId(void)         { return AX_MAGIC + 0x0000; }
+    virtual int           getNumParams(void)        { return 5; }
+    virtual char*         getParamName(int aIndex)  { return str_params[aIndex]; }
+};
+
+//----------------------------------------------------------------------
+
+char* str_onoff[] = { (char*)"off", (char*)"on" };
+
+//----------
+
+class myInstance : public AX_INSTANCE
 {
   private:
-    int         pos;
-    float*      BUF;
-    float*      BUF_t;
-    float       bufsize, bufsize_t;
+    float*  BUF;
+    float*  BUF_t;
+    int     pos;
+    int     bufsize;
+    int     bufsize_t;
+  public:
     float       decay, decay_t;
     float       decay2;
     float       vol;
@@ -31,8 +50,7 @@ class myPlugin : public axFormat
 
   public:
 
-    myPlugin(axContext* aContext, int aFlags)
-    : axFormat(aContext)
+    myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
 
         BUF     = new float[0x40000];
@@ -48,26 +66,28 @@ class myPlugin : public axFormat
         decay2    = d2*d2;
         vol       = v*v;
 
-        describe("fx_blur","ccernn","axonlib example",0,AX_MAGIC+0x1008);
-        setupAudio(2,2);
+        //describe("fx_blur","ccernn","axonlib example",0,AX_MAGIC+0x1008);
+        //setupAudio(2,2);
         //appendParameter( new axParameter(this,"gain","",0) );
-        mParameters.append( p_Size   = new parFloat(  this,"size",  "", 0.5,  0,1 ) );
-        mParameters.append( p_Decay  = new parFloat(  this,"decay", "", 0.2,  0,1 ) );
-        mParameters.append( p_Xfade  = new parFloat(  this,"xfade", "", 0.5,  0,1 ) );
-        mParameters.append( p_Volume = new parFloat(  this,"volume","", 0.7,  0,1 ) );
-        mParameters.append( p_Freeze = new parInteger(this,"freeze","", 0,    0,1, str_onoff)  );
+        appendParameter( p_Size   = new parFloat(  this,"size",  "", 0.5,  0,1 ) );
+        appendParameter( p_Decay  = new parFloat(  this,"decay", "", 0.2,  0,1 ) );
+        appendParameter( p_Xfade  = new parFloat(  this,"xfade", "", 0.5,  0,1 ) );
+        appendParameter( p_Volume = new parFloat(  this,"volume","", 0.7,  0,1 ) );
+        appendParameter( p_Freeze = new parInteger(this,"freeze","", 0,    0,1, str_onoff)  );
         setupParameters();
       }
 
-    virtual ~myPlugin()
+    virtual ~myInstance()
       {
         delete BUF;
       }
 
+    //todo:
+    // srate is not available until resume...
+
     virtual void  doSetParameter(axParameter* aParameter)
       {
-        //if (aParameter->getIndex()==0) m_Gain = aParameter->getValue();
-        float srate = getSampleRate();
+        float srate = getSampleRate(); // not available until is_Resume
         int id  = aParameter->getIndex();
         float f = aParameter->getValue();
         switch(id)
@@ -122,4 +142,4 @@ class myPlugin : public axFormat
 
 };
 
-AX_ENTRYPOINT(myPlugin)
+AX_MAIN(myDescriptor,myInstance)

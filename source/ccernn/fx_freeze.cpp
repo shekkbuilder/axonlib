@@ -1,12 +1,12 @@
 #define AX_NOGUI
-#define AX_DEBUG_AUTO_STD
+
+//#define AX_DEBUG_AUTO_STD
 //#define AX_DEBUG_MEM
 //#define AX_DEBUG_NEW
 //#define AX_DEBUG_PNG
 //#define AX_DEBUG_LOG "plugin.log"
 
-
-#include "format/axFormat.h"
+#include "base/axBase.h"
 #include "par/parFloat.h"
 #include "par/parInteger.h"
 
@@ -16,12 +16,31 @@
 #define MAX_SECONDS   1
 #define MAX_BUFSIZE   (MAX_SECONDS*MAX_SRATE*2)
 
+//----------------------------------------------------------------------
+
+char* str_params[] = { (char*)"buffer", (char*)"size", (char*)"speed", (char*)"start", (char*)"freeze", (char*)"loopmode" };
+
+//----------
+
+class myDescriptor : public AX_DESCRIPTOR
+{
+  public:
+    myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { }
+    virtual char*         getName(void)             { return (char*)"fx_freeze"; }
+    virtual char*         getAuthor(void)           { return (char*)"ccernn"; }
+    virtual char*         getProduct(void)          { return (char*)"axonlib example plugin"; }
+    virtual unsigned int  getUniqueId(void)         { return AX_MAGIC + 0x0000; }
+    virtual int           getNumParams(void)        { return 6; }
+    virtual char*         getParamName(int aIndex)  { return str_params[aIndex]; }
+};
+
+//----------------------------------------------------------------------
 char* str_freeze[] = { (char*)"off", (char*)"on" };
 char* str_loopmode[] = { (char*)"wrap", (char*)"bidi" };
 
 //----------
 
-class myPlugin : public axFormat
+class myInstance : public AX_INSTANCE
 {
   private:
 
@@ -44,15 +63,13 @@ class myPlugin : public axFormat
 
   public:
 
-    myPlugin(axContext* aContext, int aFlags)
-    : axFormat(aContext)
+    myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
         BUFFER = new float[MAX_BUFSIZE];
         index  = 0;
         pos    = 0;
-        describe("fx_freeze","ccernn","axonlib example",0,AX_MAGIC+0x1009);
-        setupAudio(2,2);
-        //appendParameter( new axParameter(this,"gain","",0) );
+        //describe("fx_freeze","ccernn","axonlib example",0,AX_MAGIC+0x1009);
+        //setupAudio(2,2);
         appendParameter( new parFloat(  this,"buffersize","ms", 1000, 1, 1000 ));
         appendParameter( new parFloat(  this,"size",      "",   1,    0, 1 ));
         appendParameter( new parFloat(  this,"speed",     "",   1,    0, 2 ));
@@ -62,7 +79,7 @@ class myPlugin : public axFormat
         setupParameters();
       }
 
-    virtual ~myPlugin()
+    virtual ~myInstance()
       {
         delete[] BUFFER;
       }
@@ -144,4 +161,4 @@ class myPlugin : public axFormat
 
 };
 
-AX_ENTRYPOINT(myPlugin)
+AX_MAIN(myDescriptor,myInstance)
