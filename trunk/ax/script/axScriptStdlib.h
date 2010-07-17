@@ -48,6 +48,7 @@ IF ELSE ENDIF
 //----------------------------------------------------------------------
 
 // :
+
 class opColon : public axOpcode
 {
   public:
@@ -60,6 +61,7 @@ class opColon : public axOpcode
 //----------
 
 // ;
+
 class opSemiColon : public axOpcode
 {
   public:
@@ -72,7 +74,8 @@ class opSemiColon : public axOpcode
 
 //----------
 
-// :
+// $
+
 class opDollar : public axOpcode
 {
   public:

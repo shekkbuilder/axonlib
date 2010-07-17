@@ -1192,38 +1192,6 @@ class axInstanceVst : public axInstance //, public axParameterListener
   protected:
 
     //----------------------------------------
-    // description
-    //----------------------------------------
-
-//    virtual void describe(axString aName, axString aVendor, axString aProduct, int aVersion, unsigned int aID)
-//      {
-//        //#ifdef AX_DEBUG
-//        //char buf[256];
-//        //buf[0] = 0;
-//        //axStrcat(buf,aName.ptr());
-//        //axStrcat(buf,(char*)"_debug");
-//        //axStrncpy(mEffectName,buf,kVstMaxEffectNameLen);
-//        //#else
-//        //axStrncpy(mEffectName,aName.ptr(),kVstMaxEffectNameLen);
-//        //#endif
-//        //axStrncpy(mVendorString,aVendor.ptr(),kVstMaxVendorStrLen);
-//        //axStrncpy(mProductString,aProduct.ptr(),kVstMaxProductStrLen);
-//        //mVendorVersion = aVersion;
-//        vst_setUniqueID(aID);
-//      }
-
-    //----------------------------------------
-    // audio
-    //----------------------------------------
-
-//    virtual void setupAudio(int aInputs=2, int aOutputs=2, bool aIsSynth=false)
-//      {
-//        vst_setNumInputs(aInputs);    // defaults to 2 inputs & outputs
-//        vst_setNumOutputs(aOutputs);  // aka stereo effect
-//        vst_isSynth(aIsSynth);
-//      }
-
-    //----------------------------------------
     // parameters
     //----------------------------------------
 
@@ -1494,6 +1462,18 @@ class axInstanceVst : public axInstance //, public axParameterListener
       }
 
     //----------
+
+    virtual void doIdleEditor(void)
+      {
+        #ifndef AX_NOGUI
+          //trace("doIdleEditor");
+          #ifndef AX_WIDGET_NOUPDATELIST
+            //trace("axFormat.doIdleEditor");
+            if (mEditorOpen) mEditorWindow->redrawUpdates();
+          #endif
+        #endif
+      }
+
 
     //virtual axRect getEditorRect(void)
     //  {
