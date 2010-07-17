@@ -15,7 +15,7 @@
  */
 
 /**
-  \file axVoice.h
+  \file axVoices.h
   \brief polyphonic voice manager
  */
 
