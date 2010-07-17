@@ -56,14 +56,6 @@
 
 //----------------------------------------------------------------------
 
-// used in axUtils,getBasePath
-
-#ifdef AX_DEBUG
-  #define __trace(x) trace (std::cout << x << std::endl)
-#else
-  #define __trace(x)
-#endif
-
 //----------------------------------------------------------------------
 
 // The lpReserved parameter indicates whether the DLL is being loaded statically or dynamically.
@@ -71,26 +63,26 @@
 __externc BOOL APIENTRY
 DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
 {
-  __trace("win32 DllMain");
+  trace("win32 DllMain");
   //g_Instance = hModule;
   switch(reason)
   {
     case DLL_PROCESS_ATTACH:
-      __trace("DllMain (reason: process attach)");
+      trace("DllMain (reason: process attach)");
       gWinInstance = hModule;
       //printf("gWinInstance = %i\n",(int)gWinInstance);
       break;
     case DLL_PROCESS_DETACH:
-      __trace("DllMain (reason: process detach)");
+      trace("DllMain (reason: process detach)");
       break;
     case DLL_THREAD_ATTACH:
-      __trace("DllMain (reason: thread attach)");
+      trace("DllMain (reason: thread attach)");
       break;
     case DLL_THREAD_DETACH:
-      __trace("DllMain (reason: thread detach)");
+      trace("DllMain (reason: thread detach)");
       break;
     default:
-      __trace("DllMain (reason: unknown)");
+      trace("DllMain (reason: unknown)");
       break;
   }
   return TRUE;
