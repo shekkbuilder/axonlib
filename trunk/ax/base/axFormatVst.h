@@ -1694,23 +1694,17 @@ typedef axFormatVst AX_FORMAT;
 //----------------------------------------------------------------------
 
 #ifdef AX_LINUX
-  AEffect* main_plugin(audioMasterCallback audioMaster) asm ("main");
-  #define main main_plugin
-  #define _AX_VST_MAIN_DEF  AEffect* main(audioMasterCallback audioMaster)
-  #define _AX_VST_RET_DEF   return ae
-#endif //LINUX
+  #define _AX_ASM_MAIN_SYMBOL asm ("_main");
+#endif
 
-//----------
+//----------------------------------------------------------------------
 
 #ifdef AX_WIN32
-  //#define _AX_VST_MAIN_DEF  int main(int audioMaster, char** empty)
-  //#define _AX_VST_RET_DEF   return (int)ae  
-  AEffect* main_plugin(audioMasterCallback audioMaster) asm ("_main");
-  #define main main_plugin
-  #define _AX_VST_MAIN_DEF  AEffect* main(audioMasterCallback audioMaster)
-  #define _AX_VST_RET_DEF   return ae
+  #define _AX_ASM_MAIN_SYMBOL asm ("_main"); 
+#endif
 
-#endif //WIN32
+AEffect*  main_plugin(audioMasterCallback audioMaster) _AX_ASM_MAIN_SYMBOL
+#define   main main_plugin
 
 // that (int) above...
 // what about 64-bit platform?
@@ -1730,14 +1724,14 @@ typedef axFormatVst AX_FORMAT;
 
 #define AX_ENTRYPOINT(_PL,_IF,_FO,_D,_I)                                      \
                                                                               \
-_AX_VST_MAIN_DEF                                                              \
+AEffect* main(audioMasterCallback audioMaster)                                \
 {                                                                             \
   _AX_DEBUG_SETUP                                                             \
   axBaseImpl<_PL,_IF,_FO,_D,_I>* base = new axBaseImpl<_PL,_IF,_FO,_D,_I>();  \
   gGlobalScope.setBase(base);                                                 \
   _FO* format = (_FO*)base->getFormat();                                      \
   AEffect* ae = (AEffect*)format->entrypoint(*(void_ptr_a *)(&audioMaster));  \
-  _AX_VST_RET_DEF;                                                            \
+  return ae;                                                                  \
 }
 
 //----------------------------------------------------------------------
