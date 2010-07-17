@@ -153,6 +153,8 @@ class axInstanceVst : public axInstance //, public axParameterListener
         #endif
       }
 
+    virtual axParameter* getParameter(int aIndex) { return mParameters[aIndex]; }
+
     //--------------------------------------------------
     // callbacks
     //--------------------------------------------------
@@ -1693,7 +1695,7 @@ typedef axFormatVst AX_FORMAT;
                                                                               \
 _AX_VST_MAIN_DEF                                                              \
 {                                                                             \
-  _AX_DEBUG_SETUP \
+  _AX_DEBUG_SETUP                                                             \
   axBaseImpl<_PL,_IF,_FO,_D,_I>* base = new axBaseImpl<_PL,_IF,_FO,_D,_I>();  \
   gGlobalScope.setBase(base);                                                 \
   _FO* format = (_FO*)base->getFormat();                                      \

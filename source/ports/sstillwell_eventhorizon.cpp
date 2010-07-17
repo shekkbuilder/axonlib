@@ -29,10 +29,26 @@
   OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "format/axFormat.h"
+#define AX_NOGUI
+
+#include "base/axBase.h"
 #include "par/parFloat.h"
 
-class myPlugin : public axFormat
+char* str_params[] = { (char*)"threshold", (char*)"ceiling", (char*)"softclip"/*, (char*)"ratio"*/ };
+
+class myDescriptor : public AX_DESCRIPTOR
+{
+  public:
+    myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { }
+    virtual char*         getName(void)             { return (char*)"eventhorizon"; }
+    virtual char*         getAuthor(void)           { return (char*)"sstillwell"; }
+    virtual char*         getProduct(void)          { return (char*)"axonlib port"; }
+    virtual unsigned int  getUniqueId(void)         { return AX_MAGIC + 0x0000; }
+    virtual int           getNumParams(void)        { return 3; } //4
+    virtual char*         getParamName(int aIndex)  { return str_params[aIndex]; }
+};
+
+class myInstance : public AX_INSTANCE
 {
   private:
     float _log2db, _db2log;
@@ -44,27 +60,17 @@ class myPlugin : public axFormat
 
   public:
 
-    myPlugin(axContext* aContext, int aFlags)
-    : axFormat(aContext)
+    //myPlugin(axContext* aContext, int aFlags)
+    //: axFormat(aContext)
+    myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
-
         _log2db = 8.6858896380650365530225783783321; // 20 / ln(10)
         _db2log = 0.11512925464970228420089957273422; // ln(10) / 20
-
         slider1=slider2=slider3=slider4 = 0;
-        //thresh=threshdb=0;
-        //ceiling=ceildb=makeup=makeupdb=0;
-        //sc=scv=sccomp=peakdb=peaklvl=0;
-        //scratio=scmult=0;
-
-        describe("eventhorizon","sstillwell","axonlib port",0,AX_MAGIC+0x0000);
-        setupAudio(2,2);
-
         appendParameter( new parFloat(this,"threshold",      "",    0.0, -30.0,  0.0, 0.1  ) );
         appendParameter( new parFloat(this,"ceiling",        "",   -0.1, -20.0,  0.0, 0.1  ) );
         appendParameter( new parFloat(this,"soft clip",      "db",  2.0,   0.0,  6.0, 0.01 ) );
       //appendParameter( new parFloat(this,"soft clip ratio","",   10.0,   3.0, 20.0, 0.1  ) );
-
         //setupParameters();
         prepareParameters();
 
@@ -76,7 +82,7 @@ class myPlugin : public axFormat
       {
         switch (aState)
         {
-          case fs_Resume:
+          case is_Resume:
             //transferParameters();
             recalcAll();
             break;
@@ -143,7 +149,8 @@ class myPlugin : public axFormat
 
 };
 
-AX_ENTRYPOINT(myPlugin)
+AX_MAIN(myDescriptor,myInstance)
+//AX_ENTRYPOINT(AX_PLATFORM,axInterfaceNone,AX_FORMAT,myDescriptor,myInstance)
 
 //----------------------------------------------------------------------
 

@@ -15,7 +15,7 @@
 
 #define AX_NOGUI
 
-#include "format/axFormat.h"
+#include "base/axBase.h"
 #include "par/parInteger.h"
 #include "par/parFloat.h"
 #include "dsp/dspRBJ.h"   // add filter
@@ -37,9 +37,29 @@ char* ftype_ar[] =
   (char*)"LS",
   (char*)"HS"
 };
+char* str_params[] =
+{
+  (char*)"mode",
+  (char*)"filter",
+  (char*)"freq",
+  (char*)"bw",
+  (char*)"gain"
+};
+
+class myDescriptor : public AX_DESCRIPTOR
+{
+  public:
+    myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { }
+    virtual char*         getName(void)             { return (char*)"biquad_rbj"; }
+    virtual char*         getAuthor(void)           { return (char*)"liteon"; }
+    virtual char*         getProduct(void)          { return (char*)"axonlib example plugin"; }
+    virtual unsigned int  getUniqueId(void)         { return AX_MAGIC + 0x0000; }
+    virtual int           getNumParams(void)        { return 5; }
+    virtual char*         getParamName(int aIndex)  { return str_params[aIndex]; }
+};
 
 // class
-class myPlugin : public axFormat
+class myInstance : public AX_INSTANCE
 {
 
 private:
@@ -51,12 +71,8 @@ private:
 
 public:
   // constructor
-  myPlugin(axContext* aContext, int aFlags)
-  : axFormat(aContext)
+  myInstance(axBase* aBase) : AX_INSTANCE(aBase)
   {
-    describe("biquad_rbj", "liteon", "biquad_rbj", 0, AX_MAGIC+0x7000);
-    // add 2 ins 2 outs
-    setupAudio(2,2);
     // set init values
     mono = 0;
     freq = q = gain = 0.f;
@@ -86,16 +102,16 @@ public:
   {
     switch (aState)
     {
-      //case fs_Open:
+      //case is_Open:
       //  trace("open. srate=" << getSampleRate() );
       //  break;
-      //case fs_Close:
+      //case is_Close:
       //  trace("close.");
       //  break;
-      //case fs_Suspend:
+      //case is_Suspend:
       //  trace("suspend: srate=" << getSampleRate() );
       //  break;
-      case fs_Resume:
+      case is_Resume:
         //trace("resume.");
         setup_filters(mono,ftype,freq,q,gain/*, bool intrp*/);
         break;
@@ -176,4 +192,4 @@ public:
 };
 
 // -----------------
-AX_ENTRYPOINT(myPlugin)
+AX_MAIN(myDescriptor,myInstance)
