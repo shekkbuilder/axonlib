@@ -30,6 +30,7 @@
 #include "axBasePath.h"
 
 //#include "axStdlib.h"
+#include <stdio.h>
 
 // ccernn:
 // this created a curcular-inclusion (if AX_DEBUG_MEM or something defined)

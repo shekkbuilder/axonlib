@@ -221,15 +221,15 @@ class myInstance : public AX_INSTANCE
         m_Editor = NULL;
       }
 
-    //TODO: this should be hidden (lower level..)
-    virtual void doIdleEditor(void)
-      {
-        //trace("doIdleEditor");
-        #ifndef AX_WIDGET_NOUPDATELIST
-          //trace("axFormat.doIdleEditor");
-          if (m_Editor && isEditorOpen() ) m_Editor->redrawUpdates();
-        #endif
-      }
+//    //TODO: this should be hidden (lower level..)
+//    virtual void doIdleEditor(void)
+//      {
+//        //trace("doIdleEditor");
+//        #ifndef AX_WIDGET_NOUPDATELIST
+//          //trace("axFormat.doIdleEditor");
+//          if (m_Editor && isEditorOpen() ) m_Editor->redrawUpdates();
+//        #endif
+//      }
 
 };
 

@@ -83,7 +83,7 @@ class axToken
     //int       mType;
     //union     mValue
     //{
-    //  int   i;
+    //  int   i; // long?
     //  float f;
     //  void* p;
     //};
@@ -167,24 +167,24 @@ class axScript
 
     axScript()
       {
-        mSrcSize = 0;
-        mSource = NULL;
+        mSrcSize    = 0;
+        mSource     = NULL;
+        mCode       = new int[MAX_CODESIZE];
+        mDataStack  = new int[MAX_STACKSIZE];
+        mCallStack  = new int[MAX_STACKSIZE];
+        mCondStack  = new int[MAX_STACKSIZE];
+        mCodePos    = 0;
+        mDataPos    = 0;
+        mCallPos    = 0;
+        mCondPos    = 0;
+        mCurToken   = 0;
         mTokens.clear();
         mOpcodes.clear();
-        mCode = new int[MAX_CODESIZE];
-        mDataStack = new int[MAX_STACKSIZE];
-        mCallStack = new int[MAX_STACKSIZE];
-        mCondStack = new int[MAX_STACKSIZE];
-        mCodePos = 0;
-        mDataPos = 0;
-        mCallPos = 0;
-        mCondPos = 0;
         mWords.clear();
         mLabels.clear();
         #ifdef AX_SCRIPT_STDLIB
         append_stdlib();
         #endif
-        mCurToken = 0;
       }
 
     //----------
@@ -237,8 +237,8 @@ class axScript
     inline int        peekData(void)        { return mDataStack[mDataPos-1]; }
 
     inline int        wordPos(int aWord)    { return mWords[aWord]->pos(); }
-    inline int        labelPos(int aLabel)    { return mLabels[aLabel]->pos(); }
-    //inline void       callWord(int aWord)   { pushCall(); mCodePos = mWords[aWord]->pos(); }
+    inline int        labelPos(int aLabel)  { return mLabels[aLabel]->pos(); }
+  //inline void       callWord(int aWord)   { pushCall(); mCodePos = mWords[aWord]->pos(); }
 
     inline void       pushCond(void)        { mCondStack[mCondPos++] = mCodePos; }
     inline int        popCond(void)         { return mCondStack[--mCondPos]; }
@@ -397,6 +397,9 @@ class axScript
       }
 
     //--------------------------------------------------
+
+    // todo/idea:
+    // split opcode bits into some kind of binary tree,
 
     virtual int execute(int aStart=0)
       {

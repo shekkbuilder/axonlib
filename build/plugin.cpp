@@ -9,7 +9,7 @@
 #define AX_DEBUG_NEW
 //#define AX_DEBUG_PNG
 //#define AX_DEBUG_CONSOLE
-#define AX_DEBUG_LOG "test.log"
+#define AX_DEBUG_LOG "mverb.log"
 
 
 //----------------------------------------------------------------------
@@ -64,7 +64,7 @@
 // gui
 
 //#include "../source/ccernn/fx_grains.cpp"
-#include "../source/ccernn/fx_tempodelay.cpp"
+//#include "../source/ccernn/fx_tempodelay.cpp"
 
 //----------------------------------------------------------------------
 // liteon / neolit123
@@ -78,4 +78,4 @@
 //----------------------------------------------------------------------
 
 //#include "../source/ports/sstillwell_eventhorizon.cpp"
-//#include "../source/ports/mverb.cpp"
+#include "../source/ports/mverb.cpp"

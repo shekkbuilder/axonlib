@@ -4,10 +4,12 @@
 */
 
 #define AX_ALPHA
+//#define AX_NOGUI
 
 //----------
 
-#include "format/axFormat.h"
+//#include "format/axFormat.h"
+#include "base/axBase.h"
 #include <math.h>
 #include <memory.h>
 #include "../../extern/mverb/MVerb.h"
@@ -31,6 +33,39 @@ float prog2[] = { 0.0, 0.5,	1.0, 0.5, 0.0, 1.0, 1.0, 0.35, 0.75 }; // Stadium
 float prog3[] = { 0.0, 0.5, 1.0, 0.5, 0.0, 0.25,1.0, 0.35, 0.75 }; // Cupboard
 float prog4[] = { 0.9, 0.5, 0.1, 0.5, 0.0, 0.5, 1.0, 0.5,  0.75 }; // Dark
 float prog5[] = { 0.5, 0.5, 0.5, 0.5, 0.5, 1.0, 0.5, 0.5,  0.75 }; // Halves
+
+//----------------------------------------------------------------------
+
+char* str_params[] =
+{
+  (char*)"dampfreq",
+  (char*)"density",
+  (char*)"bwfreq",
+  (char*)"decay",
+  (char*)"predelay",
+  (char*)"size",
+  (char*)"gain",
+  (char*)"mix",
+  (char*)"earlymix"
+};
+
+//----------
+
+class myDescriptor : public AX_DESCRIPTOR
+{
+  public:
+    myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { }
+    virtual char*         getName(void)             { return (char*)"mverb"; }
+    virtual char*         getAuthor(void)           { return (char*)"martin eastwood"; }
+    virtual char*         getProduct(void)          { return (char*)"axonlib port"; }
+    virtual unsigned int  getUniqueId(void)         { return AX_MAGIC + 0x0000; }
+    virtual int           getNumProgs(void)         { return 5; }
+    virtual int           getNumParams(void)        { return 9; }
+    virtual char*         getParamName(int aIndex)  { return str_params[aIndex]; }
+    virtual bool          hasEditor(void)           { return true; }
+    virtual axRect        getEditorRect(void)       { return axRect(0,0,456,108); }
+
+};
 
 //----------------------------------------------------------------------
 //
@@ -123,7 +158,8 @@ class mverb_skin : public axSkin
 //
 //----------------------------------------------------------------------
 
-class myPlugin : public axFormat
+//class myPlugin : public axFormat
+class myInstance : public AX_INSTANCE
 {
   private:
     MVerb<float>    em_verb;
@@ -139,16 +175,17 @@ class myPlugin : public axFormat
 
   public:
 
-    myPlugin(axContext* aContext, int aFormatFlags)
-    : axFormat(aContext,aFormatFlags)
+    //myPlugin(axContext* aContext, int aFormatFlags)
+    //: axFormat(aContext,aFormatFlags)
+    myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
-        describe("mverb","martin eastwood","mverb",0,AX_MAGIC+0x0000);
-        setupAudio(2,2);
+        //describe("mverb","martin eastwood","mverb",0,AX_MAGIC+0x0000);
+        //setupAudio(2,2);
         #ifndef AX_NOGUI
           m_GuiInitialized = false;
-          setupEditor(456,108);
+          //setupEditor(456,108);
         #endif //gui
-        
+
         //float prog1[] = { 0.0, 0.5, 1.0, 0.5, 0.0, 0.5, 1.0, 0.15, 0.75 }; // Subtle
         appendParameter( new axParameter(this,"damping freq", "",0.0) );
         appendParameter( new axParameter(this,"density",      "",0.5) );
@@ -168,7 +205,7 @@ class myPlugin : public axFormat
         setupPrograms();
       }
 
-    virtual ~myPlugin()
+    virtual ~myInstance()
       {
         #ifndef AX_NOGUI
         if (m_GuiInitialized)
@@ -189,7 +226,7 @@ class myPlugin : public axFormat
       {
         switch (aState)
         {
-          case fs_Resume:
+          case is_Resume:
             trace("--- resume ---");
             transferParameters();
             em_verb.setSampleRate(getSampleRate());
@@ -216,7 +253,8 @@ class myPlugin : public axFormat
 
 #ifndef AX_NOGUI
 
-    virtual axWindow* doOpenEditor(axContext* aContext)
+    //virtual axWindow* doOpenEditor(axContext* aContext)
+    virtual void* doOpenEditor(void* ptr)
       {
         if (!m_GuiInitialized)
         {
@@ -226,32 +264,34 @@ class myPlugin : public axFormat
           m_KnobLoader->decodePng((unsigned char*)mverb_knob,mverb_knob_size);
           m_GuiInitialized = true;
         }
-        axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
-        // skin
-        axCanvas* canvas = editor->getCanvas();
-        m_Skin = new mverb_skin(canvas);
-        m_Skin->loadKnobBitmap(editor,(char*)m_KnobLoader->getImage(),32,(32*129),32);  // bitmap depth
-        editor->applySkin(m_Skin);
-        // background image
-        editor->appendWidget( w_Panel = new wdgImage(editor,NULL_RECT,wa_Client) );
-        w_Panel->loadBitmap(editor,(char*)m_BackLoader->getImage(),456,108, 24);        // screen depth
-        // knobs
-
-        // hopefully this is in order now :-)
-        w_Panel->appendWidget( new wdgKnob( editor,axRect(336,40,40,64),wa_None) );
-        w_Panel->appendWidget( new wdgKnob( editor,axRect(216,40,40,64),wa_None) );
-        w_Panel->appendWidget( new wdgKnob( editor,axRect(256,40,40,64),wa_None) );
-        w_Panel->appendWidget( new wdgKnob( editor,axRect(296,40,40,64),wa_None) );
-        w_Panel->appendWidget( new wdgKnob( editor,axRect(96, 40,40,64),wa_None) );
-        w_Panel->appendWidget( new wdgKnob( editor,axRect(176,40,40,64),wa_None) );
-        w_Panel->appendWidget( new wdgKnob( editor,axRect(376,40,40,64),wa_None) );
-        w_Panel->appendWidget( new wdgKnob( editor,axRect(56, 40,40,64),wa_None) );
-        w_Panel->appendWidget( new wdgKnob( editor,axRect(136,40,40,64),wa_None) );
-
-        // setup
-        for (int i=0; i<9; i++) editor->connect( w_Panel->getWidget(i), mParameters[i] );
-        editor->doRealign();
-        editor->show();
+        //axEditor* editor = new axEditor(this,aContext,mEditorRect,AX_WIN_DEFAULT);
+        axEditor* editor = (axEditor*)mBase->getInterface()->createEditor(ptr,getEditorRect(),AX_WIN_DEFAULT);
+        if (editor)
+        {
+          // skin
+          axCanvas* canvas = editor->getCanvas();
+          m_Skin = new mverb_skin(canvas);
+          m_Skin->loadKnobBitmap(editor,(char*)m_KnobLoader->getImage(),32,(32*129),32);  // bitmap depth
+          editor->applySkin(m_Skin);
+          // background image
+          editor->appendWidget( w_Panel = new wdgImage(editor,NULL_RECT,wa_Client) );
+          w_Panel->loadBitmap(editor,(char*)m_BackLoader->getImage(),456,108, 24);        // screen depth
+          // knobs
+          // hopefully this is in order now :-)
+          w_Panel->appendWidget( new wdgKnob( editor,axRect(336,40,40,64),wa_None) );
+          w_Panel->appendWidget( new wdgKnob( editor,axRect(216,40,40,64),wa_None) );
+          w_Panel->appendWidget( new wdgKnob( editor,axRect(256,40,40,64),wa_None) );
+          w_Panel->appendWidget( new wdgKnob( editor,axRect(296,40,40,64),wa_None) );
+          w_Panel->appendWidget( new wdgKnob( editor,axRect(96, 40,40,64),wa_None) );
+          w_Panel->appendWidget( new wdgKnob( editor,axRect(176,40,40,64),wa_None) );
+          w_Panel->appendWidget( new wdgKnob( editor,axRect(376,40,40,64),wa_None) );
+          w_Panel->appendWidget( new wdgKnob( editor,axRect(56, 40,40,64),wa_None) );
+          w_Panel->appendWidget( new wdgKnob( editor,axRect(136,40,40,64),wa_None) );
+          // setup
+          for (int i=0; i<9; i++) editor->connect( w_Panel->getWidget(i), mParameters[i] );
+          editor->doRealign();
+          editor->show();
+        }
         m_Editor = editor;
         return m_Editor;
       }
@@ -271,4 +311,5 @@ class myPlugin : public axFormat
 
 };
 
-AX_ENTRYPOINT(myPlugin)
+//AX_ENTRYPOINT(myPlugin)
+AX_MAIN(myDescriptor,myInstance)
