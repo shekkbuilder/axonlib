@@ -23,6 +23,8 @@
 #define dspOsc0_included
 //----------------------------------------------------------------------
 
+#include "core/axRand.h"
+
 // osc types
 #define osc_None    0
 #define osc_Const   1
@@ -40,10 +42,11 @@
 class dspOsc0
 {
   private:
-    int   mType;
-    float mFreq;
-    float mPhase;
-    float iRate;
+    int     mType;
+    float   mFreq;
+    float   mPhase;
+    float   iRate;
+    axRand  rand;
 
   public:
     dspOsc0()
@@ -68,7 +71,7 @@ class dspOsc0
       {
         case osc_Const: out = 1; break;
         case osc_Input: out = in; break;
-        case osc_Noise: out = axRandSigned(); break;
+        case osc_Noise: out = rand.randSigned(); break;
         case osc_Ramp:  out = (mPhase*2)-1; break;
         case osc_Saw:   out = 1-(mPhase*2); break;
         case osc_Squ:   if (mPhase<0.5) out=1; else out=-1; break;
@@ -92,7 +95,7 @@ class dspOsc0
       {
         case osc_Const: out = 1; break;
         case osc_Input: out = in; break;
-        case osc_Noise: out = axRandSigned(); break;
+        case osc_Noise: out = rand.randSigned(); break;
         case osc_Ramp:  out = (p2*2)-1; break;
         case osc_Saw:   out = 1-(p2*2); break;
         case osc_Squ:   if (p2<0.5) out=1; else out=-1; break;

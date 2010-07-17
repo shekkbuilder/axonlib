@@ -420,7 +420,7 @@ class axFormatExe : public axFormat
 
     virtual ~axFormatExe()
       {
-        trace("axFormatExe.destructor");
+        //trace("axFormatExe.destructor");
         //mInstance->doCloseEditor();
         //delete mDescriptor;
         delete mInstance;

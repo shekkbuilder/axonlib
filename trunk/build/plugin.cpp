@@ -5,12 +5,11 @@
 //#define AX_DEBUG_PNG
 //#define AX_DEBUG_LOG "plugin.log"
 
-#define AX_DEBUG_MEM
-#define AX_DEBUG_NEW
+//#define AX_DEBUG_MEM
+//#define AX_DEBUG_NEW
 //#define AX_DEBUG_PNG
 //#define AX_DEBUG_CONSOLE
-#define AX_DEBUG_LOG "plugin.log"
-
+//#define AX_DEBUG_LOG "test_script.log"
 
 //----------------------------------------------------------------------
 
@@ -27,6 +26,8 @@
 
 //#include "../test/test_dmc.cpp"
 //#include "../test/test_math.cpp"
+
+//#include "../test/test_script.cpp"
 
 //#include "../test/test_memory.cpp"
 //#include "../test/test_render.cpp"
@@ -71,7 +72,7 @@
 //----------------------------------------------------------------------
 
 //#include "../source/liteon/liteon_biquad.cpp"
-#include "../source/liteon/liteon_tilteq.cpp"
+//#include "../source/liteon/liteon_tilteq.cpp"
 
 //----------------------------------------------------------------------
 // ports

@@ -8,12 +8,7 @@
 
 //----------------------------------------------------------------------
 
-char* str_params[] =
-{
-  (char*)"mode",
-  (char*)"freq",
-  (char*)"bw"
-};
+char* str_params[] = { (char*)"mode", (char*)"freq", (char*)"bw" };
 
 //----------
 

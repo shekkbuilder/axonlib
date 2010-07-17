@@ -1,13 +1,35 @@
 #define AX_NOGUI
 
-#include "format/axFormat.h"
+#include "base/axBase.h"
 #include "par/parFloat.h"
 #include "par/parInteger.h"
 #include "dsp/dspRC.h"
 
+//----------------------------------------------------------------------
+
+char* str_params[] = { (char*)"mode", (char*)"weight" };
+
+//----------
+
+class myDescriptor : public AX_DESCRIPTOR
+{
+  public:
+    myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { }
+    virtual char*         getName(void)             { return (char*)"fx_wgtavg"; }
+    virtual char*         getAuthor(void)           { return (char*)"ccernn"; }
+    virtual char*         getProduct(void)          { return (char*)"axonlib example plugin"; }
+    virtual unsigned int  getUniqueId(void)         { return AX_MAGIC + 0x0000; }
+    virtual int           getNumParams(void)        { return 2; }
+    virtual char*         getParamName(int aIndex)  { return str_params[aIndex]; }
+};
+
+//----------------------------------------------------------------------
+
 char* str_mode[] = { (char*)"lowpass", (char*)"highpass" };
 
-class myPlugin : public axFormat
+//----------
+
+class myInstance : public AX_INSTANCE
 {
   private:
     int     m_Mode;
@@ -15,17 +37,16 @@ class myPlugin : public axFormat
 
   public:
 
-    myPlugin(axContext* aContext, int aFlags)
-    : axFormat(aContext)
+    myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
-        describe("fx_wgtavg","ccernn","axonlib example",0,AX_MAGIC+0x1005);
-        setupAudio(2,2);
+        //describe("fx_wgtavg","ccernn","axonlib example",0,AX_MAGIC+0x1005);
+        //setupAudio(2,2);
         appendParameter( new parInteger( this,"mode",  "", 0,   0,1,   str_mode) );
         appendParameter( new parFloatPow(this,"weight","", 0.5, 0,1,0, 3) );
         setupParameters();
       }
 
-    virtual ~myPlugin()
+    virtual ~myInstance()
       {
         //delete rc1;
         //delete rc2;
@@ -36,7 +57,7 @@ class myPlugin : public axFormat
         float s;
         switch (aState)
         {
-          case fs_Resume:
+          case is_Resume:
             s = getSampleRate();
             //trace("samplerate = " << s);
             m_RC0.setSRate(s);
@@ -81,4 +102,4 @@ class myPlugin : public axFormat
 
 };
 
-AX_ENTRYPOINT(myPlugin)
+AX_MAIN(myDescriptor,myInstance)
