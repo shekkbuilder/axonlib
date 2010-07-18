@@ -126,7 +126,7 @@ class axInstanceExe : public axInstance
         //vst_setNumParams(num); // vst
         for (int i=0; i<num; i++)
         {
-          axParameter* par = mParameters[i];
+          __unused axParameter* par = mParameters[i];
           //par->setIndex(i);
           //doSetParameter(par);
         }
@@ -170,7 +170,7 @@ class axInstanceExe : public axInstance
 
     virtual void setupPrograms()
       {
-        int num = mPrograms.size();
+        __unused int num = mPrograms.size();        
         //if (num>0) { vst_setNumPrograms(num); } // vst
         //else
         {
