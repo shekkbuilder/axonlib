@@ -58,10 +58,7 @@
 
 // The lpReserved parameter indicates whether the DLL is being loaded statically or dynamically.
 
-
-#ifdef AX_FORMAT_LADSPA
 __externc
-#endif
 BOOL APIENTRY
 DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
 {
