@@ -8,8 +8,6 @@
 
 #include <windows.h>
 
-#include "core/axDebugConsole.h"
-#include "core/axBasePath.h"
 
 
 //----------------------------------------------------------------------
@@ -92,41 +90,12 @@ DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
   return TRUE;
 }
 
-//----------------------------------------------------------------------
-//
-//----------------------------------------------------------------------
-
-//class axDebugWindow
-//{
-//  public:
-//    axDebugWindow(axBase* aBase) {}
-//    ~axDebugWindow() {}
-//};
-//
-//class axLogFile
-//{
-//  public:
-//    axLogFile(axBase* aBase) {}
-//    ~axLogFile() {}
-//};
-
-//----------------------------------------------------------------------
-//----------------------------------------------------------------------
-
 class axPlatformWin32 : public axPlatform
 {
   protected:
     axBase* mBase;
   private:
-    // axDebugConsole  mDebugConsole;
-    // ^ 
-    // has to be global after all.
-    // see axDebug.h ...
-    // trace() needs to check for the console is ready on win32
-    // so some of the #ifdefs are back i.e. no other way to do it
-    // 
     HINSTANCE       mWinInstance;
-    char            mPath[AX_MAX_PATH];
 
   public:
     axPlatformWin32(axBase* aBase)// : axPlatform(aBase)
@@ -134,11 +103,6 @@ class axPlatformWin32 : public axPlatform
         //trace("axPlatformWin32.constructor");
         mBase = aBase;
         mWinInstance = gWinInstance;
-        //trace("mWinInstance: " << mWinInstance);
-        //trc("mWinInstance: " << mWinInstance);
-        //mPath[0] = 0;
-        //GetModuleFileName(mWinInstance,mPath,MAX_PATH);
-        //mDebugLog.setup(mPath);
       }
     virtual ~axPlatformWin32()
       {
@@ -148,19 +112,12 @@ class axPlatformWin32 : public axPlatform
 
     virtual char* getPlatformName(void) { return (char*)"win32"; }
     virtual void* getHandle(void) { return (void*)mWinInstance; }
-    virtual char* getPath(void) { return mPath; }
 
 };
 
 //----------
 
 typedef axPlatformWin32 AX_PLATFORM;
-
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
 
 
 

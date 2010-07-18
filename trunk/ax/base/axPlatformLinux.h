@@ -2,41 +2,37 @@
 #define axPlatformLinux_included
 //----------------------------------------------------------------------
 
-#include <dlfcn.h>
-//#include "core/axDebugConsole.h"
-#include "core/axBasePath.h"
-
 class axPlatformLinux : public axPlatform
 {
   protected:
     axBase* mBase;
-  private:
-    char mPath[AX_MAX_PATH];
+  private:    
 
   public:
     axPlatformLinux(axBase* aBase)// : axPlatform(aBase)
       {
         /*trace("axPlatformLinux.constructor");*/
-        mBase = aBase;
-        // ???
-        mPath[0] = 0;
-        Dl_info dli;
-        dladdr(__func__, &dli);
-        axStrncpy(mPath,dli.dli_fname,AX_MAX_PATH);
+        mBase = aBase;        
       }
     //virtual ~axPlatformLinux() { /*trace("axPlatformLinux.destructor");*/ }
-    virtual char* getPlatformName(void) { return (char*)"linux"; }
-    virtual char* getPath(void) { return mPath; }
+    virtual char* getPlatformName(void) { return (char*)"linux"; }    
 };
-
-//----------
 
 typedef axPlatformLinux AX_PLATFORM;
 
 //----------------------------------------------------------------------
-//----------------------------------------------------------------------
 
+__externc void _ax_init(void) __constructor;
+__externc void _ax_init(void)
+{
+  std::cout << "_ax_init()" << std::endl;
+}
 
+__externc void _ax_fini(void) __destructor;
+__externc void _ax_fini(void)
+{
+  std::cout << "_ax_fini()" << std::endl;
+}
 
 //----------------------------------------------------------------------
 #endif

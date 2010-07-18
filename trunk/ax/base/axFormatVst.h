@@ -1693,7 +1693,14 @@ typedef axFormatVst AX_FORMAT;
 //
 //----------------------------------------------------------------------
 
-AEffect*  main_plugin(audioMasterCallback audioMaster) asm ("_main");
+#ifdef AX_LINUX
+   #define _AX_ASM_MAIN_SYMBOL asm ("main");
+#endif
+#ifdef AX_WIN32
+   #define _AX_ASM_MAIN_SYMBOL asm ("_main");
+#endif
+
+AEffect*  main_plugin(audioMasterCallback audioMaster) _AX_ASM_MAIN_SYMBOL
 #define   main main_plugin
 
 // that (int) above...
