@@ -61,7 +61,7 @@
     #define _axDLog(x) \
       axDfs << x  << endl;
 
-    #define _AX_DLOG_CHECK    if (axDfs)
+    #define _AX_DLOG_CHECK    if (axDfs.is_open())
     #define _AX_DEBUG_SETUP \
       char filepath[AX_MAX_PATH] = ""; \
       axFromBasePath(filepath, AX_DEBUG_LOG); \
