@@ -234,48 +234,8 @@ typedef axFormatLadspa AX_FORMAT;
 // entrypoint
 //
 //----------------------------------------------------------------------
-
-//#ifdef AX_WIN32
-
-//  //---
-//
-//  // this could (should?) be moved to axPlatform
-//  static __thread HINSTANCE gInstance;
-//
-//  #define _AX_LADSPA_DLLMAIN                                    \
-//    __externc BOOL APIENTRY                                     \
-//    DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved) \
-//    {                                                           \
-//      trace("ladspa DllMain()");                                \
-//      gInstance = hModule;                                      \
-//      return TRUE;                                              \
-//    }
-//
-//  //---
-
-  /*
-  yes no need for the __externc {}
-   __externc
-  {
-  */
-
-  //---
-
-//#endif
-
-//----------
-
-//#ifdef AX_LINUX
-
-  #define _AX_LADSPA_DLLMAIN
-
-//#endif
-
-//----------------------------------------------------------------------
-
 #define AX_ENTRYPOINT(_PL,_IF,_FO,_D,_I)                                      \
                                                                               \
-_AX_LADSPA_DLLMAIN                                                            \
 __externc __dllexport                                                         \
 const LADSPA_Descriptor* ladspa_descriptor(unsigned long index)               \
 {                                                                             \
@@ -288,14 +248,5 @@ const LADSPA_Descriptor* ladspa_descriptor(unsigned long index)               \
   return descr;                                                               \
 }
 
-//----------
-
-/*
-#ifdef AX_WIN32
-  } // extern "C"
-#endif
-*/
-
 //----------------------------------------------------------------------
 #endif
-
