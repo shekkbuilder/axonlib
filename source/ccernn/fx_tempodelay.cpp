@@ -1,6 +1,9 @@
 #define AX_ALPHA
 //#define AX_WIDGET_NOUPDATELIST
 
+#define AX_DEBUG_CONSOLE  // define before axBase.h or from cmd line
+#define AX_DEBUG_LOG      "tempodelay.log"
+
 #include "base/axBase.h"
 //#include "format/axFormat.h"
 #include "gui/axEditor.h"
@@ -236,4 +239,5 @@ class myInstance : public AX_INSTANCE
 //----------------------------------------------------------------------
 //AX_ENTRYPOINT(myPlugin)
 AX_MAIN(myDescriptor,myInstance)
+
 
