@@ -12,22 +12,26 @@
 #include "script/axScript.h"
 //#include "script/axScriptStdlib.h"
 
-// uses 16% cpu on my laptop when called for every sample...
-
-//char* source = (char*)
-//  ": testproc "
+char* source = (char*)
+  ": proc1 "
 //  "  0 "
-//  "$ label1 "
-//  "  DUP . "
-//  "  1+ "
-//  "  DUP 100 < IF label1 ENDIF "
-//  "; "
-//  "$ main "
-//  "  testproc "
-//  ;
+  "$ label1 "
+  "  DUP . "
+  "  1+ "
+  "  DUP 10 < IF label1 ENDIF "
+  "; "
+  "$ main "
+  "  5 "
+  "  proc1 "
+  "  2 "
+  "  proc1 "
+  ;
 
-char* source = (char*)": testproc 0 $ label1 1+ DUP 100 < IF label1 ENDIF ; $ main testproc ";
-
+// char* source = (char*)": testproc 0 $ label1 1+ DUP 100 < IF label1 ENDIF ; $ main testproc ";
+//
+// uses 16% cpu on my laptop when called for every sample...
+// 48.000 * 100 = 4.800.000 'rounds' through the mainloop = 7-8 tokens
+// estimated tokens per sec = 30m ? :-)
 
 //----------------------------------------------------------------------
 
@@ -74,7 +78,9 @@ class myInstance : public AX_INSTANCE
         script->dumpCode();
         main_pos = script->labelPos( script->findLabel((char*)"main") );
         trace("main_pos = " << main_pos);
-        //script->execute(main_pos);
+
+        script->execute(main_pos);
+
       }
 
     virtual ~myInstance()

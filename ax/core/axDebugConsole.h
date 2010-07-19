@@ -52,7 +52,10 @@ class axDebugConsole
         SMALL_RECT cDim = {0,0,70,20};
         SetConsoleWindowInfo(hOut,true,&cDim);
         SetConsoleCtrlHandler(NULL,true);
-        SetWindowPos(hCw,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+
+        //causese reaper to hang...
+        //SetWindowPos(hCw,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+
 	      HMENU hMenu = GetSystemMenu(hCw,0);
 	      if (hMenu)
 	      {
