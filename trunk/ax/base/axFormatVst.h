@@ -153,7 +153,7 @@ class axInstanceVst : public axInstance //, public axParameterListener
         /*trace("axInstanceVst.destructor");*/
         #ifndef AX_NOAUTODELETE
           deleteParameters();
-          //deletePrograms();
+          deletePrograms();
         #endif
       }
 
@@ -1596,29 +1596,29 @@ class axFormatVst : public axFormat
     virtual void* entrypoint(void* ptr)
       {
         //trace("axFormatVst.entrypoint");
-        
+
         //audioMaster = (audioMasterCallback)ptr;
-        
+
         /*
         -------------------------
         this is one way to solve the warning (the other is with union):
         "ISO C++ forbids casting between pointer-to-function
-        and pointer-to-object"        
-        
+        and pointer-to-object"
+
         audioMaster = *(audioMasterCallback_a *)(&ptr)
         where "audioMasterCallback_a" is previously defined as:
         typedef audioMasterCallback __may_alias audioMasterCallback_a;
-        ^ in axFormatVst.h        
-        
+        ^ in axFormatVst.h
+
         same for the other way around:
         typedef void* __may_alias void_ptr_a;
         ^ in axDefines.h
-        
+
         */
-        
+
         audioMaster = *(audioMasterCallback_a *)(&ptr);
         // -------------------------
-        
+
         mDescriptor = mBase->getDescriptor();
 
         axMemset(&aeffect,0,sizeof(aeffect));
