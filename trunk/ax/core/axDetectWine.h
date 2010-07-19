@@ -27,7 +27,7 @@ int axDetectWine(void)
   HINSTANCE hLib = LoadLibrary(TEXT("ntdll.dll"));
   if (hLib)
   {
-    FARPROC pAddr = GetProcAddress(hLib, "get_wine_version");          
+    FARPROC pAddr = GetProcAddress(hLib, "get_wine_version");
     if (pAddr)
       ret = 1;
     if (!FreeLibrary(hLib))
@@ -35,6 +35,7 @@ int axDetectWine(void)
   }
   else
     ret = -1;
+  printf("wine detect: %i\n",ret); // returns 0 in wine/ubuntu !!
   return ret;
 }
 
