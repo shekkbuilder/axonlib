@@ -21,21 +21,23 @@
 #include "windows.h"
 
 // detect wine
-int axDetectWine(void)
+BOOL axDetectWine(void)
 {
-  int ret = 0;
+  BOOL ret = 0;
   HINSTANCE hLib = LoadLibrary(TEXT("ntdll.dll"));
   if (hLib)
   {
-    FARPROC pAddr = GetProcAddress(hLib, "get_wine_version");
-    if (pAddr)
-      ret = 1;
-    if (!FreeLibrary(hLib))
-      ret = -2;
+    ret = GetProcAddress(hLib, "wine_get_version") != NULL ||
+				  GetProcAddress(hLib, "wine_nt_to_unix_file_name") != NULL;
+    BOOL unload = FreeLibrary(hLib);
+    if (!unload)
+      printf("wine detect: # cannot release ntdll.dll");
   }
   else
-    ret = -1;
-  printf("wine detect: %i\n",ret); // returns 0 in wine/ubuntu !!
+    printf("wine detect: # cannot load ntdll.dll"); 
+  // give it a try now. here is a refference:
+  // http://wave-notify.googlecode.com/svn-history/r270/wave-notify/branches/stable/Wine.cpp
+  printf("wine detect: %i\n",ret); // returns 0 in wine/ubuntu !!  
   return ret;
 }
 
