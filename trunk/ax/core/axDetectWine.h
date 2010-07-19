@@ -31,13 +31,11 @@ BOOL axDetectWine(void)
 				  GetProcAddress(hLib, "wine_nt_to_unix_file_name") != NULL;
     BOOL unload = FreeLibrary(hLib);
     if (!unload)
-      printf("wine detect: # cannot release ntdll.dll");
+      printf("[axDetectWine.h:34] wine detect: # cannot release ntdll.dll\n");
   }
   else
-    printf("wine detect: # cannot load ntdll.dll"); 
-  // give it a try now. here is a refference:
-  // http://wave-notify.googlecode.com/svn-history/r270/wave-notify/branches/stable/Wine.cpp
-  printf("wine detect: %i\n",ret); // returns 0 in wine/ubuntu !!  
+    printf("[axDetectWine.h:37] wine detect: # cannot load ntdll.dll\n");
+  printf("[axDetectWine.h:38] wine detect: %d\n", ret);
   return ret;
 }
 

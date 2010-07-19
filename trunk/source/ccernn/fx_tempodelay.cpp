@@ -1,6 +1,8 @@
 #define AX_ALPHA
 //#define AX_WIDGET_NOUPDATELIST
 
+#define AX_DEBUG_MEM
+#define AX_DEBUG_NEW
 #define AX_DEBUG_CONSOLE  // define before axBase.h or from cmd line
 #define AX_DEBUG_LOG      "tempodelay.log"
 
@@ -15,9 +17,6 @@
 #include "gui/axBitmapLoader.h"
 #include "../../ax/skins/img/skin1.h"
 #include "../../ax/skins/img/knob1.h"
-
-
-#include "core/axDetectWine.h"
 
 //----------------------------------------------------------------------
 
@@ -94,7 +93,6 @@ class myInstance : public AX_INSTANCE
     //: axFormat(aContext)
     myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
-        trace("detect wine:" << axDetectWine());
         if (!gui_initialized)
         {
           skinloader = new axBitmapLoader();
