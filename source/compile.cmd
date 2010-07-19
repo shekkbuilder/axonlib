@@ -284,7 +284,7 @@ if exist %target% del %target%
 
 :: echo settings
 echo.
-For /F "Tokens=*" %%I in ('g++ -dumpversion') Do set gccversion=%%I
+for /f "tokens=*" %%i in ('%mgwpath% -dumpversion') do set gccversion=%%i
 echo * compiling windows binary for '%infile%'...
 if not [%v%]==[] echo * using gcc version: %gccversion%
 if not [%v%]==[] echo * binary format is:%libfmt% %ext%
