@@ -147,7 +147,7 @@ TODO:
   {
     static long g_pagesize;
     static long g_regionsize;
-    int rc = NULL;
+    long rc = NULL;
     //slwait(&g_sl);
     while ( InterlockedCompareExchange( &g_sl, 1, 0) != 0 )
       Sleep(0);
