@@ -47,7 +47,7 @@ IF ELSE ENDIF
 // base
 //----------------------------------------------------------------------
 
-// :
+// : word (gosub)
 
 class opColon : public axOpcode
 {
@@ -60,7 +60,7 @@ class opColon : public axOpcode
 
 //----------
 
-// ;
+// ; return
 
 class opSemiColon : public axOpcode
 {
@@ -74,7 +74,7 @@ class opSemiColon : public axOpcode
 
 //----------
 
-// $
+// $ label (goto)
 
 class opDollar : public axOpcode
 {
