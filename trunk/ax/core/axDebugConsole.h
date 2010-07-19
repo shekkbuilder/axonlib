@@ -25,10 +25,11 @@
 
 #if defined AX_WIN32 && defined AX_DEBUG && defined AX_DEBUG_CONSOLE
 
-
 #include <windows.h>
 #include <io.h>
 #include <stdio.h>
+
+#include "axDetectWine.h"
 
 class axDebugConsole
 {
@@ -52,10 +53,11 @@ class axDebugConsole
         SMALL_RECT cDim = {0,0,70,20};
         SetConsoleWindowInfo(hOut,true,&cDim);
         SetConsoleCtrlHandler(NULL,true);
-
-        //causese reaper to hang...
-        //SetWindowPos(hCw,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
-
+        // ------------
+        // detect wine
+        if (!axDetectWine())
+          SetWindowPos(hCw,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+        // ------------
 	      HMENU hMenu = GetSystemMenu(hCw,0);
 	      if (hMenu)
 	      {
@@ -63,7 +65,7 @@ class axDebugConsole
           DrawMenuBar(hCw);
 	      }
         // _O_TEXT = 0x4000
-        int axHcrt = _open_osfhandle((long)GetStdHandle(STD_OUTPUT_HANDLE),
+        long axHcrt = _open_osfhandle((long)GetStdHandle(STD_OUTPUT_HANDLE),
                         0x4000);
         if (axHcrt)
         {
@@ -82,7 +84,7 @@ class axDebugConsole
     {
       FreeConsole();
       if (axSfile)
-        close((int)axSfile);
+        close((long)axSfile);
     }
 
 };
