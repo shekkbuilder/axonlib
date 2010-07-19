@@ -16,6 +16,9 @@
 #include "../../ax/skins/img/skin1.h"
 #include "../../ax/skins/img/knob1.h"
 
+
+#include "core/axDetectWine.h"
+
 //----------------------------------------------------------------------
 
 #define MAX_BEATS             4
@@ -91,6 +94,7 @@ class myInstance : public AX_INSTANCE
     //: axFormat(aContext)
     myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
+        trace("detect wine:" << axDetectWine());
         if (!gui_initialized)
         {
           skinloader = new axBitmapLoader();
