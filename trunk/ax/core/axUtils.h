@@ -76,12 +76,16 @@ __axutils_inline unsigned long axBitReverse (unsigned long v)
 
 /// convert to boolean
 #define axBool(x)         (!(!(x)))
+
 /// get bit
 #define axBitGet(x, bit)  ( 1  &  ((x)  >> (bit)))
+
 /// set bit
 #define axBitSet(x, bit)  ((x) |  (1    << (bit)))
+
 /// clear bit
 #define axBitClr(x, bit)  ((x) & ~(1    << (bit)))
+
 /// flip bit
 #define axBitFlp(x, bit)  ((x) ^  (1    << (bit)))
 

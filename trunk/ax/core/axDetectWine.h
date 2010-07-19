@@ -23,7 +23,7 @@
 // detect wine
 int axDetectWine(void)
 {
-  unsigned int ret = 0;
+  int ret = 0;
   HINSTANCE hLib = LoadLibrary(TEXT("ntdll.dll"));
   if (hLib)
   {

@@ -97,7 +97,7 @@ class parFloat : public axParameter
         if( mStep > 0 )
         {
           const float n = mValue * mNumSteps;
-          const int st = axMinInt(n, (mNumSteps - 1));
+          const int st = axMinInt((int)n, (int)(mNumSteps - 1));
           return mMin + (st*mStep);
         }
         else
