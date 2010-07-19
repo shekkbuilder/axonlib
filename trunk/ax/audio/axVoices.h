@@ -82,7 +82,7 @@ typedef axArray<axVoice*> axVoices;
 [assume events in buffer are sorted by their offset in the audiobuffer]
 
 we have:
-- an array with all vailable voices (allocated at startup)
+- an array with all available voices (allocated at startup)
 - a list of available voices (initially containing ptr to all available voices)
 - a list of playing voices
 - a list of released (decaying) voices
@@ -94,9 +94,9 @@ note off:
 process:
 - process both playing and released lists,
   call process for each voice, and add their outputs
-  voices can set their mState to vst_Off to shut themselves off (see post-process)
+  voices can set their mState to vs_Off to shut themselves off (see post-process)
 post-process:
-- move all voices with mState == vst_Off from released to free voices list
+- move all voices with mState == vs_Off from released to free voices list
 - cleanup buffers and counters
 
 midi:

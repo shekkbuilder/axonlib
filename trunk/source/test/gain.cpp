@@ -103,7 +103,7 @@ class myInstance : public AX_INSTANCE
 //----------------------------------------------------------------------
 
 // in axFormat/Base?
-#define AX_MAIN(d,i) AX_ENTRYPOINT(AX_PLATFORM, AX_INTERFACE,AX_FORMAT,d,i)
+//#define AX_MAIN(d,i) AX_ENTRYPOINT(AX_PLATFORM, AX_INTERFACE,AX_FORMAT,d,i)
 
 AX_MAIN(myDescriptor,myInstance)
 

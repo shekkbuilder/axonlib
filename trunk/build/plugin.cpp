@@ -4,10 +4,11 @@
 //#define AX_DEBUG_MEM
 //#define AX_DEBUG_NEW
 //#define AX_DEBUG_PNG
-#define AX_DEBUG_CONSOLE
-#define AX_DEBUG_LOG "plugin.log"
+//#define AX_DEBUG_CONSOLE
+//#define AX_DEBUG_LOG "plugin.log"
 
 //----------------------------------------------------------------------
+
 /*
 
 TODO:
@@ -54,13 +55,13 @@ TODO:
 // gui
 
 //#include "../source/ccernn/fx_grains.cpp"
-//#include "../source/ccernn/fx_tempodelay.cpp"
+#include "../source/ccernn/fx_tempodelay.cpp"
 
 //----------------------------------------------------------------------
 // liteon / neolit123
 //----------------------------------------------------------------------
 
-#include "../source/liteon/liteon_biquad.cpp"
+//#include "../source/liteon/liteon_biquad.cpp"
 //#include "../source/liteon/liteon_tilteq.cpp"
 
 //----------------------------------------------------------------------
@@ -69,3 +70,5 @@ TODO:
 
 //#include "../source/ports/sstillwell_eventhorizon.cpp"
 //#include "../source/ports/mverb.cpp"
+
+//----------------------------------------------------------------------

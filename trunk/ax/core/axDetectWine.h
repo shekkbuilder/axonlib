@@ -17,6 +17,8 @@
 #ifndef axDetectWine_included
 #define axDetectWine_included
 
+#ifdef AX_WIN32
+
 #include "axDefines.h" // sets winver etc..
 #include "windows.h"
 
@@ -38,5 +40,16 @@ BOOL axDetectWine(void)
   printf("[axDetectWine.h:38] wine detect: %d\n", ret);
   return ret;
 }
+
+#endif // AX_WIN32
+
+#ifdef AX_LINUX
+
+bool axDetectWine(void)
+{
+  return false;
+}
+
+#endif // AX_LINUX
 
 #endif // axDetectWine_included
