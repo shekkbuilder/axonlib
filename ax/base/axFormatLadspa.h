@@ -2,8 +2,13 @@
 #define axFormatLadspa_included
 //----------------------------------------------------------------------
 
+
 //TODO: proper ladspa sdk
 #include "../extern/ladspa.h"
+
+// this might be overkill?
+// inputs + outputs + parameters
+#define MAX_LADSPA_PORTS    256
 
 //----------------------------------------------------------------------
 //
@@ -31,25 +36,122 @@ typedef axDescriptorLadspa AX_DESCRIPTOR;
 class axInstanceLadspa : public axInstance
 {
   protected:
-    axBase* mBase;
+    axBase*       mBase;
+    axDescriptor* mDescriptor;
+    int           mNumInputs;
+    int           mNumOutputs;
+    int           mNumParams;
+    float*        mInputs[MAX_LADSPA_PORTS];
+    float*        mOutputs[MAX_LADSPA_PORTS];
+    LADSPA_Data*  mParamPtr[MAX_LADSPA_PORTS];
+    LADSPA_Data   mParamPrev[MAX_LADSPA_PORTS];
+    int mBlockSize;
+
   public:
+
     axInstanceLadspa(axBase* aBase) /*: axInstance(aBase)*/
       {
-        mBase = aBase;
-        /*trace("  axInstanceLadspa.constructor");*/
+        //trace("axInstanceLadspa.constructor")
+        mBase       = aBase;
+        mDescriptor = mBase->getDescriptor();
+        mNumInputs  = mDescriptor->getNumInputs();
+        mNumOutputs = mDescriptor->getNumOutputs();
+        mNumParams  = mDescriptor->getNumParams();
       }
-    virtual ~axInstanceLadspa() { /*trace("  axInstanceLadspa.destructor");*/ }
+
+
+    virtual ~axInstanceLadspa()
+      {
+        //trace("axInstanceLadspa.destructor");
+      }
+
     // callbacks
-    virtual void lad_connect_port(unsigned long Port, LADSPA_Data* DataLocation) { /*trace("axFormatLadspa.lad_connect_port");*/ }
-    virtual void lad_activate(void) { /*trace("axFormatLadspa.lad_activate");*/ }
-    virtual void lad_run(unsigned long SampleCount) { /*trace("axFormatLadspa.lad_run");*/ }
-  //virtual void lad_run_adding(unsigned long SampleCount) {}
-  //virtual void lad_set_run_adding_gain(LADSPA_Data Gain) {}
-    virtual void lad_deactivate(void) { /*trace("axFormatLadspa.lad_deactivate");*/ }
-    virtual void lad_cleanup(void) { /*trace("axFormatLadspa.lad_cleanup");*/ }
+
+    virtual void lad_connect_port(unsigned long Port, LADSPA_Data* DataLocation)
+      {
+        //trace("axFormatLadspa.lad_connect_port");
+        unsigned int io = mNumInputs + mNumOutputs;
+        if (Port<io) // audio in/out
+        {
+          //TODO: don't hardcode ports!!!
+          switch (Port)
+          {
+            case 0: mInputs[0]  = DataLocation; break;
+            case 1: mInputs[1]  = DataLocation; break;
+            case 2: mOutputs[0] = DataLocation; break;
+            case 3: mOutputs[1] = DataLocation; break;
+          }
+        }
+        else // parameter
+        {
+          int po = Port - io;
+          mParamPtr[po] = DataLocation;
+        }
+      }
+
+    virtual void lad_activate(void)
+      {
+        //trace("axFormatLadspa.lad_activate");
+        doStateChange(is_Resume);
+      }
+
+    virtual void lad_run(unsigned long SampleCount)
+      {
+        //trace("axFormatLadspa.lad_run");
+        int io  = mNumInputs + mNumOutputs;
+        int par = mNumParams;//mParameters.size();
+        for (int i=0; i<par; i++)
+        {
+          float val = *mParamPtr[i];
+          if (val!=mParamPrev[i])
+          {
+//            mParameters[i]->doSetValue(val,true);
+            mParamPrev[i] = val;
+          }
+        }
+        mBlockSize = SampleCount;
+        bool swallowed = doProcessBlock(mInputs,mOutputs,mBlockSize);
+        if ( !swallowed )
+        {
+          float* ins[2];
+          float* outs[2];
+          ins[0]  = mInputs[0];
+          ins[1]  = mInputs[1];
+          outs[0] = mOutputs[0];
+          outs[1] = mOutputs[1];
+          //trace(SampleCount);
+          int num = SampleCount;
+          while (--num >= 0)
+          {
+            doProcessSample(ins,outs);
+            ins[0]++;   ins[1]++;
+            outs[0]++;  outs[1]++;
+          } //SampleCount
+        } //process_block
+        doPostProcess(mInputs,mOutputs,mBlockSize);
+      }
+
+    //virtual void lad_run_adding(unsigned long SampleCount) {}
+    //virtual void lad_set_run_adding_gain(LADSPA_Data Gain) {}
+
+    virtual void lad_deactivate(void)
+      {
+        //trace("axFormatLadspa.lad_deactivate");
+        doStateChange(is_Suspend);
+      }
+
+    virtual void lad_cleanup(void)
+      {
+        //trace("axFormatLadspa.lad_cleanup");*/
+        doStateChange(is_Close);
+      }
+
     //
+
     virtual void appendParameter(axParameter* aParameter) {}
     virtual void setupParameters(void) {}
+    virtual void updateTimeInfo();
+
 };
 
 typedef axInstanceLadspa AX_INSTANCE;
@@ -102,6 +204,8 @@ class axFormatLadspa : public axFormat
         //trace("lad_activate_callback");
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_activate();
+        //
+        //
       }
 
     //----------
@@ -111,6 +215,8 @@ class axFormatLadspa : public axFormat
         //trace("lad_run_callback");
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_run(SampleCount);
+        //
+        //
       }
 
     //----------
@@ -136,6 +242,8 @@ class axFormatLadspa : public axFormat
         //trace("lad_deactivate_callback");
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_deactivate();
+        //
+        //
       }
 
     //----------
@@ -146,6 +254,8 @@ class axFormatLadspa : public axFormat
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_cleanup();
         delete inst; // !!!
+        //
+        //
       }
 
     //--------------------------------------------------
@@ -160,6 +270,8 @@ class axFormatLadspa : public axFormat
       {
         //trace("axFormatLadspa.lad_instantiate");
         axInstance* instance = mBase->createInstance();
+        //instance->mSampleRate = SampleRate;
+        instance->doStateChange(is_Open);
         return instance;
       }
 
@@ -168,8 +280,11 @@ class axFormatLadspa : public axFormat
     //--------------------------------------------------
 
   protected:
-    axBase*       mBase;
-    axDescriptor* mDescriptor;
+    axBase*               mBase;
+    axDescriptor*         mDescriptor;
+    char*                 mPortNames[MAX_LADSPA_PORTS];
+    LADSPA_PortDescriptor mPortDesc[MAX_LADSPA_PORTS];
+    LADSPA_PortRangeHint  mPortHint[MAX_LADSPA_PORTS];
 
   protected:
 
@@ -177,6 +292,12 @@ class axFormatLadspa : public axFormat
       {
         //trace("* axFormatLadspa.entrypoint");
         mDescriptor = mBase->getDescriptor();
+        int i;
+        int index=0;
+        for (i=0; i<mDescriptor->getNumInputs();  i++) { mPortNames[index++] = mDescriptor->getInputName(i);  }
+        for (i=0; i<mDescriptor->getNumOutputs(); i++) { mPortNames[index++] = mDescriptor->getOutputName(i); }
+        for (i=0; i<mDescriptor->getNumParams();  i++) { mPortNames[index++] = mDescriptor->getParamName(i);  }
+
         axMemset(&ladspadescr,0,sizeof(ladspadescr));
         ladspadescr.UniqueID            = 0;//mUniqueId;
         ladspadescr.Label               = mDescriptor->getName();//(char*)"label";
@@ -184,10 +305,10 @@ class axFormatLadspa : public axFormat
         ladspadescr.Name                = mDescriptor->getName();// (char*)"name";
         ladspadescr.Maker               = mDescriptor->getAuthor();//(char*)"maker";
         ladspadescr.Copyright           = mDescriptor->getProduct();//(char*)"copyright";
-        ladspadescr.PortCount           = 0;
-        ladspadescr.PortDescriptors     = NULL;
-        ladspadescr.PortNames           = NULL;//g_stereo_ports;
-        ladspadescr.PortRangeHints      = NULL;
+        ladspadescr.PortCount           = mDescriptor->getNumInputs() + mDescriptor->getNumOutputs() + mDescriptor->getNumParams();
+        ladspadescr.PortDescriptors     = mPortDesc;
+        ladspadescr.PortNames           = mPortNames;//g_stereo_ports;
+        ladspadescr.PortRangeHints      = mPortHint;
         ladspadescr.ImplementationData  = this;
         ladspadescr.instantiate         = lad_instantiate_callback;
         ladspadescr.connect_port        = lad_connect_port_callback;

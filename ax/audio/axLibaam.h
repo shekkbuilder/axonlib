@@ -18,44 +18,46 @@
 #define axLibaam_included
 //----------------------------------------------------------------------
 
+#include "core/axDefines.h"
+#include "core/axString.h"
+
+//----------
+
 #ifdef AX_LINUX
   #include <dlfcn.h>
 #endif
 
 #ifdef AX_WIN32
+  #include <windows.h>
 #endif
-
-//----------
-
-#include "core/axString.h"
 
 //----------------------------------------------------------------------
 
-#define STREAM_INIT         0
-#define STREAM_OPEN         1
-#define STREAM_CLOSE        2
-//#define STREAM_PLAY         3
-//#define STREAM_STOP         4
-#define STREAM_EXIT         5
-#define STREAM_ABOUT        6
-#define STREAM_AUDIO_COUNT  7
-#define STREAM_AUDIO_NAME   8
-#define STREAM_FRAMES       9
-#define STREAM_RATE         10
-#define STREAM_LATENCY      17
-#define STREAM_RELOAD       18
-#define MIDI_IN_COUNT       30
-#define MIDI_IN_NAME        31
-#define MIDI_IN_ENABLE      32
-#define MIDI_IN_ENABLED     33
-#define AUDIO_IN_COUNT      40
-#define AUDIO_IN_NAME       41
-#define AUDIO_IN_ENABLE     42
-#define AUDIO_IN_ENABLED    43
-#define AUDIO_OUT_COUNT     50
-#define AUDIO_OUT_NAME      51
-#define AUDIO_OUT_ENABLE    52
-#define AUDIO_OUT_ENABLED   53
+#define libaam_STREAM_INIT         0
+#define libaam_STREAM_OPEN         1
+#define libaam_STREAM_CLOSE        2
+//#define libaam_STREAM_PLAY         3
+//#define libaam_STREAM_STOP         4
+#define libaam_STREAM_EXIT         5
+#define libaam_STREAM_ABOUT        6
+#define libaam_STREAM_AUDIO_COUNT  7
+#define libaam_STREAM_AUDIO_NAME   8
+#define libaam_STREAM_FRAMES       9
+#define libaam_STREAM_RATE         10
+#define libaam_STREAM_LATENCY      17
+#define libaam_STREAM_RELOAD       18
+#define libaam_MIDI_IN_COUNT       30
+#define libaam_MIDI_IN_NAME        31
+#define libaam_MIDI_IN_ENABLE      32
+#define libaam_MIDI_IN_ENABLED     33
+#define libaam_AUDIO_IN_COUNT      40
+#define libaam_AUDIO_IN_NAME       41
+#define libaam_AUDIO_IN_ENABLE     42
+#define libaam_AUDIO_IN_ENABLED    43
+#define libaam_AUDIO_OUT_COUNT     50
+#define libaam_AUDIO_OUT_NAME      51
+#define libaam_AUDIO_OUT_ENABLE    52
+#define libaam_AUDIO_OUT_ENABLED   53
 
 //----------
 
@@ -68,6 +70,7 @@ class axLibaam
 {
   private:
 
+    bool              mLoaded;
     void*             mHandle;
     libaam_dispatcher mDispatcher;
 
@@ -75,6 +78,7 @@ class axLibaam
 
     axLibaam()
       {
+        mLoaded     = false;
         mHandle     = NULL;
         mDispatcher = NULL;
       }
@@ -83,22 +87,44 @@ class axLibaam
 
     virtual ~axLibaam()
       {
+        close();
       }
+
+    inline bool loaded(void) { return mLoaded; }
 
     //----------------------------------------
     // dll
     //----------------------------------------
 
+    // return:
+    //  0 OK
+    // -1 Already loaded
+    // -2 Library (dll/so) not found
+    // -3 Dispatcher function not found in library
+    // -4 Unknown
+
     int load(axString aFileName)
       {
+        char temp[256];
+        axStrcpy(temp,aFileName.ptr());
         #ifdef AX_LINUX
-          mHandle = dlopen(aFileName.ptr(),RTLD_NOW/*RTLD_LAZY*/);  // crashed if 0
+          axStrcat(temp,".so");
+          mHandle = dlopen(/*aFileName.ptr()*/temp,RTLD_NOW/*RTLD_LAZY*/);  // crashed if 0
+          //trace("mHandle: " << mHandle);
           if (!mHandle) return -2;
           mDispatcher = (libaam_dispatcher)dlsym(mHandle,(char*)"libaam");
           if (!mDispatcher) return -3;
         #endif
         #ifdef AX_WIN32
+          //mLoaded = false;
+          //return -4;
+          axStrcat(temp,".dll");
+          mHandle = LoadLibrary(temp);
+          if (!mHandle) return -2;
+          mDispatcher = (libaam_dispatcher)GetProcAddress((HINSTANCE)mHandle,"libaam");
+          if (!mDispatcher) return -3;
         #endif
+        mLoaded = true;
         return 0;
       }
 
@@ -111,6 +137,7 @@ class axLibaam
         #endif
         #ifdef AX_WIN32
         #endif
+        mLoaded = false;
         mHandle = NULL;
         mDispatcher = NULL;
         return 0;
@@ -133,7 +160,7 @@ class axLibaam
       {
         //case STREAM_INIT:
         //  process = (CProcess*)value1;
-        return mDispatcher(STREAM_INIT,(int)process,0);   // !!! 32-bit (int)
+        return mDispatcher(libaam_STREAM_INIT,(int)process,0);   // !!! 32-bit (int)
       }
 
     //----------
@@ -143,7 +170,7 @@ class axLibaam
       {
         //case STREAM_OPEN:
         //  result = 1;
-        return mDispatcher(STREAM_OPEN,num,0);
+        return mDispatcher(libaam_STREAM_OPEN,num,0);
       }
 
     //----------
@@ -153,13 +180,13 @@ class axLibaam
       {
         //case STREAM_CLOSE:
         //  result = 1;
-        return mDispatcher(STREAM_CLOSE,0,0);
+        return mDispatcher(libaam_STREAM_CLOSE,0,0);
       }
 
     //----------
 
-    // STREAM_PLAY
-    // STREAM_STOP
+    // libaam_STREAM_PLAY
+    // libaam_STREAM_STOP
 
     //----------
 
@@ -167,12 +194,12 @@ class axLibaam
     int streamExit(void)
       {
         //case STREAM_EXIT:
-        return mDispatcher(STREAM_EXIT,0,0);
+        return mDispatcher(libaam_STREAM_EXIT,0,0);
       }
 
     //----------
 
-    // STREAM_ABOUT
+    // libaam_STREAM_ABOUT
 
     //----------
 
@@ -181,7 +208,7 @@ class axLibaam
       {
         //case STREAM_AUDIO_COUNT:
         //  result = 1; // jack only
-        return mDispatcher(STREAM_AUDIO_COUNT,0,0);
+        return mDispatcher(libaam_STREAM_AUDIO_COUNT,0,0);
       }
 
     //----------
@@ -191,7 +218,7 @@ class axLibaam
       {
         //case STREAM_AUDIO_NAME:
         //  strcpy((char*)value2, "JACK Audio");
-        return mDispatcher(STREAM_AUDIO_NAME,num,(int)str);   // !!! 32-bit
+        return mDispatcher(libaam_STREAM_AUDIO_NAME,num,(int)str);   // !!! 32-bit
       }
 
     //----------
@@ -202,7 +229,7 @@ class axLibaam
         //case STREAM_FRAMES:
         //  if (value1 > 0) frames = value1;
         //  result = frames;
-        return mDispatcher(STREAM_FRAMES,frames,0);
+        return mDispatcher(libaam_STREAM_FRAMES,frames,0);
       }
 
     //----------
@@ -213,7 +240,7 @@ class axLibaam
         //case STREAM_RATE:
         //  if (value1 == 0) *(float*)value2 = rate;
         //  else if (value1 > 0) rate = value1;
-        return mDispatcher(STREAM_RATE,setRate,(int)getRate); // !!!
+        return mDispatcher(libaam_STREAM_RATE,setRate,(int)getRate); // !!!
       }
 
     //----------
@@ -230,7 +257,7 @@ class axLibaam
       {
         //case MIDI_IN_COUNT:
         //  return midiDevices;
-        return mDispatcher(MIDI_IN_COUNT,0,0);
+        return mDispatcher(libaam_MIDI_IN_COUNT,0,0);
       }
 
     //----------
@@ -241,7 +268,7 @@ class axLibaam
         //case MIDI_IN_NAME:
         //  if (value1 >= 0 && value1 < midiDevices)
         //    strcpy((char*)value2, mdevs[value1]->id);
-        return mDispatcher(MIDI_IN_NAME,num,(int)str);   // !!!
+        return mDispatcher(libaam_MIDI_IN_NAME,num,(int)str);   // !!!
       }
 
     //----------
@@ -251,7 +278,7 @@ class axLibaam
       {
         //case MIDI_IN_ENABLE:
         //  if (value1 >= 0 && value1 < midiDevices) mdevs[value1]->enable(value2);
-        return mDispatcher(MIDI_IN_ENABLE,num,enabled);
+        return mDispatcher(libaam_MIDI_IN_ENABLE,num,enabled);
       }
 
     //----------
@@ -261,7 +288,7 @@ class axLibaam
       {
         //case MIDI_IN_ENABLED:
         //  if (value1 >= 0 && value1 < midiDevices) return mdevs[value1]->enabled;
-        return mDispatcher(MIDI_IN_ENABLED,num,0);
+        return mDispatcher(libaam_MIDI_IN_ENABLED,num,0);
       }
 
     //----------------------------------------
@@ -273,7 +300,7 @@ class axLibaam
     {
       //case AUDIO_IN_COUNT:
       //  return aincount;
-      return mDispatcher(AUDIO_IN_COUNT,0,0);
+      return mDispatcher(libaam_AUDIO_IN_COUNT,0,0);
     }
 
     //----------
@@ -284,7 +311,7 @@ class axLibaam
       //case AUDIO_IN_NAME:
       //  if (value1 >= 0 && value1 < aincount)
       //    strcpy((char*)value2, ain[value1].id);
-      return mDispatcher(AUDIO_IN_NAME,num,(int)str);   // !!!
+      return mDispatcher(libaam_AUDIO_IN_NAME,num,(int)str);   // !!!
     }
 
     //----------
@@ -295,7 +322,7 @@ class axLibaam
       //case AUDIO_IN_ENABLE:
       //  if (value1 >= 0 && value1 < maxChs)
       //    ain[value1].enabled = value2;
-      return mDispatcher(AUDIO_IN_ENABLE,num,enabled);
+      return mDispatcher(libaam_AUDIO_IN_ENABLE,num,enabled);
     }
 
     //----------
@@ -306,7 +333,7 @@ class axLibaam
       //case AUDIO_IN_ENABLED:
       //  if (value1 >= 0 && value1 < maxChs)
       //    result = ain[value1].enabled;
-      return mDispatcher(AUDIO_IN_ENABLED,num,0);
+      return mDispatcher(libaam_AUDIO_IN_ENABLED,num,0);
     }
 
     //----------------------------------------
@@ -318,7 +345,7 @@ class axLibaam
     {
       //case AUDIO_OUT_COUNT:
       //  return aoutcount;
-      return mDispatcher(AUDIO_OUT_COUNT,0,0);
+      return mDispatcher(libaam_AUDIO_OUT_COUNT,0,0);
     }
 
     //----------
@@ -329,7 +356,7 @@ class axLibaam
       //case AUDIO_OUT_NAME:
       //  if (value1 >= 0 && value1 < aoutcount)
       //    strcpy((char*)value2, aout[value1].id);
-      return mDispatcher(AUDIO_OUT_NAME,num,(int)str);    // !!!
+      return mDispatcher(libaam_AUDIO_OUT_NAME,num,(int)str);    // !!!
     }
 
     //----------
@@ -340,7 +367,7 @@ class axLibaam
       //case AUDIO_OUT_ENABLE:
       //  if (value1 >= 0 && value1 < maxChs)
       //    aout[value1].enabled = value2;
-      return mDispatcher(AUDIO_OUT_ENABLE,num,enable);
+      return mDispatcher(libaam_AUDIO_OUT_ENABLE,num,enable);
     }
 
     //----------
@@ -351,7 +378,7 @@ class axLibaam
       //case AUDIO_OUT_ENABLED:
       //  if (value1 >= 0 && value1 < maxChs)
       //    result = aout[value1].enabled;
-      return mDispatcher(AUDIO_OUT_ENABLED,num,0);
+      return mDispatcher(libaam_AUDIO_OUT_ENABLED,num,0);
     }
 
 };
