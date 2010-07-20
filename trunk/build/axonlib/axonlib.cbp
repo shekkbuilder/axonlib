@@ -241,6 +241,7 @@
 		<Unit filename="../../ax/core/axDebug.h" />
 		<Unit filename="../../ax/core/axDebugConsole.h" />
 		<Unit filename="../../ax/core/axDefines.h" />
+		<Unit filename="../../ax/core/axDetectWine.h" />
 		<Unit filename="../../ax/core/axFile.h" />
 		<Unit filename="../../ax/core/axList.h" />
 		<Unit filename="../../ax/core/axMalloc.h" />

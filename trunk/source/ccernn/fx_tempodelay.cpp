@@ -1,8 +1,8 @@
 #define AX_ALPHA
 //#define AX_WIDGET_NOUPDATELIST
 
-#define AX_DEBUG_MEM
-#define AX_DEBUG_NEW
+//#define AX_DEBUG_MEM
+//#define AX_DEBUG_NEW
 #define AX_DEBUG_CONSOLE  // define before axBase.h or from cmd line
 #define AX_DEBUG_LOG      "tempodelay.log"
 
@@ -50,8 +50,8 @@ class myDescriptor : public AX_DESCRIPTOR
     virtual unsigned int  getUniqueId(void)         { return AX_MAGIC + 0x0000; }
     virtual int           getNumParams(void)        { return 4; }
     virtual char*         getParamName(int aIndex)  { return str_params[aIndex]; }
-    virtual bool          hasEditor(void)     { return true; }
-    virtual axRect        getEditorRect(void) { return axRect(0,0,120,163); }
+    virtual bool          hasEditor(void)           { return true; }
+    virtual axRect        getEditorRect(void)       { return axRect(0,0,120,163); }
 
 };
 

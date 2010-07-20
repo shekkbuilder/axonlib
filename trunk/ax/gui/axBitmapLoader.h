@@ -67,19 +67,19 @@ class axBitmapLoader
 
     int decodePng(unsigned char* buffer, unsigned int buffersize)
       {
-        trace("decodePng(), " << (void*)&buffer << ", " << buffersize);
+        //trace("decodePng(), " << (void*)&buffer << ", " << buffersize);
         int res = 0;
         //if (mPngInfo) axFree(mPngInfo);
         axPngInfo* png = axPngDecode(buffer, buffersize);
-        trace("decoded. png =" << (int)png);
-        trace("png error = " << PNG_error);
+        //trace("decoded. png =" << (int)png);
+        //trace("png error = " << PNG_error);
         res = (int)png;
         mWidth  = png->width;
         mHeight = png->height;
         //mImage  = mPngInfo->image->data;
         // allocate our own chunk of data, and free all temporary png decoder things
-        trace("image size:  " << png->image->size ); // 256k
-        trace("image alloc: " << png->image->allocsize );  // 2mb
+        //trace("image size:  " << png->image->size ); // 256k
+        //trace("image alloc: " << png->image->allocsize );  // 2mb
         mImage = (unsigned char*)axMalloc(png->image->size);
         axMemcpy(mImage,png->image->data,png->image->size);
         axPngFreeAll();                                                 // CHECK THIS !!!
@@ -99,12 +99,12 @@ class axBitmapLoader
         // check if the buffer contains a png (or a least partially)
         if (b[0] != 0x89 || b[1] != 0x50 || b[2] != 0x4E || b[3] != 0x47)
         {
-          trace("decodeLoadPng(), #ERR not a png: " << file);
+          //trace("decodeLoadPng(), #ERR not a png: " << file);
           return 0;
         }
         else
         {
-          trace("decodeLoadPng(), " << file << ", " << size);
+          //trace("decodeLoadPng(), " << file << ", " << size);
           // leave pico to clear the file buffer
           decodePng(b, size);
           return 1;

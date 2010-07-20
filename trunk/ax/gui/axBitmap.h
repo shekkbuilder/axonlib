@@ -99,9 +99,9 @@ class axBitmap : public axBitmapImpl
           drwtsn32.exe reports a "shared violation" for the axMemcpy()
           call bellow. but only for some images - strange...
         */
-        trace((void*)&mBuffer);
-        trace((void*)&aData);
-        trace(size);
+        //trace((void*)&mBuffer);
+        //trace((void*)&aData);
+        //trace(size);
         // ---
         if (aData)
           axMemcpy(mBuffer,/*(int)*/aData,size);
