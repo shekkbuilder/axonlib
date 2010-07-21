@@ -4,6 +4,7 @@
 
 //TODO: proper ladspa sdk
 #include "../extern/ladspa.h"
+#include "core/axDefines.h"
 
 // this might be overkill?
 // inputs + outputs + parameters
@@ -42,13 +43,13 @@ class axInstanceLadspa : public axInstance
     float*        mOutputs[MAX_LADSPA_PORTS];
     LADSPA_Data*  mParamPtr[MAX_LADSPA_PORTS];
     LADSPA_Data   mParamPrev[MAX_LADSPA_PORTS];
-    int mBlockSize;
+    int           mBlockSize;
 
   public:
 
     axInstanceLadspa(axBase* aBase) /*: axInstance(aBase)*/
       {
-        //trace("axInstanceLadspa.constructor")
+        trace("axInstanceLadspa.constructor")
         mBase       = aBase;
         mDescriptor = mBase->getDescriptor();
         mNumInputs  = mDescriptor->getNumInputs();
@@ -58,14 +59,16 @@ class axInstanceLadspa : public axInstance
 
     virtual ~axInstanceLadspa()
       {
-        //trace("axInstanceLadspa.destructor");
+        trace("axInstanceLadspa.destructor");
       }
 
+    //--------------------------------------------------
     // callbacks
+    //--------------------------------------------------
 
     virtual void lad_connect_port(unsigned long Port, LADSPA_Data* DataLocation)
       {
-        //trace("axFormatLadspa.lad_connect_port");
+        trace("axFormatLadspa.lad_connect_port");
         unsigned int io = mNumInputs + mNumOutputs;
         if (Port<io) // audio in/out
         {
@@ -87,7 +90,7 @@ class axInstanceLadspa : public axInstance
 
     virtual void lad_activate(void)
       {
-        //trace("axFormatLadspa.lad_activate");
+        trace("axFormatLadspa.lad_activate");
         doStateChange(is_Resume);
       }
 
@@ -132,13 +135,13 @@ class axInstanceLadspa : public axInstance
 
     virtual void lad_deactivate(void)
       {
-        //trace("axFormatLadspa.lad_deactivate");
+        trace("axFormatLadspa.lad_deactivate");
         doStateChange(is_Suspend);
       }
 
     virtual void lad_cleanup(void)
       {
-        //trace("axFormatLadspa.lad_cleanup");*/
+        trace("axFormatLadspa.lad_cleanup");
         doStateChange(is_Close);
       }
 
@@ -289,7 +292,7 @@ class axFormatLadspa : public axFormat
 
     static LADSPA_Handle lad_instantiate_callback(const LADSPA_Descriptor* Descriptor, unsigned long SampleRate)
       {
-        //trace("lad_instantiate_callback");
+        trace("lad_instantiate_callback");
         axFormatLadspa* desc = (axFormatLadspa*)Descriptor->ImplementationData;
         return desc->lad_instantiate(SampleRate);
       }
@@ -300,7 +303,7 @@ class axFormatLadspa : public axFormat
 
     static void lad_connect_port_callback(LADSPA_Handle Instance, unsigned long Port, LADSPA_Data * DataLocation)
       {
-        //trace("lad_connect_port_callback");
+        trace("lad_connect_port_callback");
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_connect_port(Port,DataLocation);
       }
@@ -309,7 +312,7 @@ class axFormatLadspa : public axFormat
 
     static void lad_activate_callback(LADSPA_Handle Instance)
       {
-        //trace("lad_activate_callback");
+        trace("lad_activate_callback");
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_activate();
         //
@@ -320,7 +323,7 @@ class axFormatLadspa : public axFormat
 
     static void lad_run_callback(LADSPA_Handle Instance, unsigned long SampleCount)
       {
-        //trace("lad_run_callback");
+        trace("lad_run_callback");
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_run(SampleCount);
         //
@@ -347,7 +350,7 @@ class axFormatLadspa : public axFormat
 
     static void lad_deactivate_callback(LADSPA_Handle Instance)
       {
-        //trace("lad_deactivate_callback");
+        trace("lad_deactivate_callback");
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_deactivate();
         //
@@ -358,7 +361,7 @@ class axFormatLadspa : public axFormat
 
     static void lad_cleanup_callback(LADSPA_Handle Instance)
       {
-        //trace("lad_cleanup_callback");
+        trace("lad_cleanup_callback");
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_cleanup();
         delete inst; // !!!
@@ -376,11 +379,12 @@ class axFormatLadspa : public axFormat
     // return ptr to instance
     virtual LADSPA_Handle lad_instantiate(unsigned long SampleRate)
       {
-        //trace("axFormatLadspa.lad_instantiate");
-        axInstance* instance = mBase->createInstance();
-        //instance->mSampleRate = SampleRate;
-        instance->doStateChange(is_Open);
-        return instance;
+        trace("axFormatLadspa.lad_instantiate");
+        //axInstanceLadspa* inst = (axInstanceLadspa*)mBase->createInstance();
+        axInstance* inst = mBase->createInstance();
+        //inst->mSampleRate = SampleRate;
+        inst->doStateChange(is_Open);
+        return inst;
       }
 
     //--------------------------------------------------
@@ -398,7 +402,7 @@ class axFormatLadspa : public axFormat
 
     virtual void* entrypoint(void* ptr)
       {
-        //trace("* axFormatLadspa.entrypoint");
+        trace("axFormatLadspa.entrypoint");
         mDescriptor = mBase->getDescriptor();
         int i;
         int index=0;
@@ -444,7 +448,7 @@ class axFormatLadspa : public axFormat
 
     virtual ~axFormatLadspa()
       {
-        //trace("- axFormatLadspa.destructor");
+        trace("axFormatLadspa.destructor");
       }
 
     virtual char* getFormatName(void)
@@ -473,6 +477,9 @@ linux:
 - jost
 - qtractor
 
+analyseplugin from the ladspa sdk reports:
+Failed to load plugin "../axonlib_debug_ladspa.so": ../axonlib_debug_ladspa.so: undefined symbol: _ZTV16axInstanceLadspa
+
 */
 
 #define AX_ENTRYPOINT(_PL,_IF,_FO,_D,_I)                                      \
@@ -480,7 +487,6 @@ linux:
 __externc __dllexport                                                         \
 const LADSPA_Descriptor* ladspa_descriptor(unsigned long index)               \
 {                                                                             \
-  printf("ladspa_descriptor\n"); fflush(stdout);                              \
   if (index>0) return NULL;                                                   \
   _AX_DEBUG_SETUP                                                             \
   axBaseImpl<_PL,_IF,_FO,_D,_I>* base = new axBaseImpl<_PL,_IF,_FO,_D,_I>();  \

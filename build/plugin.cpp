@@ -47,7 +47,7 @@ TODO:
 //#include "../source/ccernn/fx_blur.cpp"
 //#include "../source/ccernn/fx_distortion.cpp"
 //#include "../source/ccernn/fx_freeze.cpp"
-//#include "../source/ccernn/fx_svf.cpp"
+#include "../source/ccernn/fx_svf.cpp"
 //#include "../source/ccernn/fx_wgtavg.cpp"
 //#include "../source/ccernn/midi_transpose.cpp"
 //#include "../source/ccernn/syn_poly.cpp"
@@ -55,7 +55,7 @@ TODO:
 // gui
 
 //#include "../source/ccernn/fx_grains.cpp"
-#include "../source/ccernn/fx_tempodelay.cpp"
+//#include "../source/ccernn/fx_tempodelay.cpp"
 
 //----------------------------------------------------------------------
 // liteon / neolit123
