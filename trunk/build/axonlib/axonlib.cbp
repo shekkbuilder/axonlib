@@ -6,7 +6,7 @@
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="linux app - debug">
+			<Target title="linux exe - debug">
 				<Option output="../../bin/axonlib_debug" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/debug/" />
 				<Option type="1" />
@@ -26,26 +26,7 @@
 					<Add library="Xrender" />
 				</Linker>
 			</Target>
-			<Target title="linux app - release">
-				<Option output="../../bin/axonlib" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/release/" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-O3" />
-					<Add option="-Wno-unused" />
-					<Add option="-Wno-long-long" />
-					<Add option="-DAX_FORMAT_EXE" />
-					<Add directory="../../ax" />
-				</Compiler>
-				<Linker>
-					<Add option="-s" />
-					<Add library="X11" />
-					<Add library="pthread" />
-					<Add library="Xrender" />
-				</Linker>
-			</Target>
-			<Target title="linux plug - debug">
+			<Target title="linux vst - debug">
 				<Option output="../../bin/axonlib_debug" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/debug/" />
 				<Option type="3" />
@@ -69,30 +50,28 @@
 					<Add library="Xrender" />
 				</Linker>
 			</Target>
-			<Target title="linux plug - release">
-				<Option output="../../bin/axonlib" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/release/" />
+			<Target title="linux ladspa - debug">
+				<Option output="../../bin/axonlib_debug_ladspa" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/debug/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-g" />
 					<Add option="-shared" />
 					<Add option="-Wno-unused" />
 					<Add option="-Wno-long-long" />
-					<Add option="-DAX_FORMAT_VST" />
+					<Add option="-DAX_FORMAT_LADSPA" />
+					<Add option="-DAX_DEBUG" />
 					<Add directory="../../ax" />
-					<Add directory="../../../vstsdk24" />
 				</Compiler>
 				<Linker>
-					<Add option="-s" />
-					<Add library="X11" />
 					<Add library="pthread" />
-					<Add library="Xrender" />
 				</Linker>
 			</Target>
-			<Target title="win32 app - debug">
+			<Target title="win32 exe - debug">
 				<Option output="../../bin/axonlib_debug.exe" prefix_auto="1" extension_auto="0" />
 				<Option object_output="obj/debug/" />
 				<Option type="1" />
@@ -112,26 +91,7 @@
 					<Add library="libmsimg32" />
 				</Linker>
 			</Target>
-			<Target title="win32 app - release">
-				<Option output="../../bin/axonlib.exe" prefix_auto="1" extension_auto="0" />
-				<Option object_output="obj/release/" />
-				<Option type="1" />
-				<Option compiler="mingw32" />
-				<Compiler>
-					<Add option="-O3" />
-					<Add option="-mwindows" />
-					<Add option="-Wno-unused" />
-					<Add option="-Wno-long-long" />
-					<Add option="-DAX_FORMAT_EXE" />
-					<Add directory="../../ax" />
-				</Compiler>
-				<Linker>
-					<Add option="-s" />
-					<Add option="-mwindows" />
-					<Add library="libmsimg32" />
-				</Linker>
-			</Target>
-			<Target title="win32 plug - debug">
+			<Target title="win32 vst - debug">
 				<Option output="../../bin/axonlib_debug.dll" prefix_auto="1" extension_auto="0" />
 				<Option object_output="obj/debug/" />
 				<Option type="3" />
@@ -156,7 +116,68 @@
 					<Add library="libmsimg32" />
 				</Linker>
 			</Target>
-			<Target title="win32 plug - release">
+			<Target title="linux exe - release">
+				<Option output="../../bin/axonlib" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wno-unused" />
+					<Add option="-Wno-long-long" />
+					<Add option="-DAX_FORMAT_EXE" />
+					<Add directory="../../ax" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="X11" />
+					<Add library="pthread" />
+					<Add library="Xrender" />
+				</Linker>
+			</Target>
+			<Target title="linux vst - release">
+				<Option output="../../bin/axonlib" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/release/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-shared" />
+					<Add option="-Wno-unused" />
+					<Add option="-Wno-long-long" />
+					<Add option="-DAX_FORMAT_VST" />
+					<Add directory="../../ax" />
+					<Add directory="../../../vstsdk24" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="X11" />
+					<Add library="pthread" />
+					<Add library="Xrender" />
+				</Linker>
+			</Target>
+			<Target title="win32 exe - release">
+				<Option output="../../bin/axonlib.exe" prefix_auto="1" extension_auto="0" />
+				<Option object_output="obj/release/" />
+				<Option type="1" />
+				<Option compiler="mingw32" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-mwindows" />
+					<Add option="-Wno-unused" />
+					<Add option="-Wno-long-long" />
+					<Add option="-DAX_FORMAT_EXE" />
+					<Add directory="../../ax" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-mwindows" />
+					<Add library="libmsimg32" />
+				</Linker>
+			</Target>
+			<Target title="win32 vst - release">
 				<Option output="../../bin/axonlib.dll" prefix_auto="1" extension_auto="0" />
 				<Option object_output="obj/release/" />
 				<Option type="3" />
@@ -178,30 +199,6 @@
 					<Add option="-shared" />
 					<Add option="-mwindows" />
 					<Add library="libmsimg32" />
-				</Linker>
-			</Target>
-			<Target title="linux ladspa - debug">
-				<Option output="../../bin/axonlib_debug_ladspa" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/debug/" />
-				<Option type="3" />
-				<Option compiler="gcc" />
-				<Option createDefFile="1" />
-				<Option createStaticLib="1" />
-				<Compiler>
-					<Add option="-Wall" />
-					<Add option="-g" />
-					<Add option="-shared" />
-					<Add option="-Wno-unused" />
-					<Add option="-Wno-long-long" />
-					<Add option="-DAX_FORMAT_LADSPA" />
-					<Add option="-DAX_DEBUG" />
-					<Add directory="../../ax" />
-					<Add directory="../../../vstsdk24" />
-				</Compiler>
-				<Linker>
-					<Add library="X11" />
-					<Add library="pthread" />
-					<Add library="Xrender" />
 				</Linker>
 			</Target>
 		</Build>
@@ -230,8 +227,6 @@
 		<Unit filename="../../ax/base/axPlatformLinux.h" />
 		<Unit filename="../../ax/base/axPlatformWin32.h" />
 		<Unit filename="../../ax/base/hack_hack.h" />
-		<Unit filename="../../ax/core/_disabled_axDebug.h" />
-		<Unit filename="../../ax/core/_disabled_axDebugLog.h" />
 		<Unit filename="../../ax/core/axArray.h" />
 		<Unit filename="../../ax/core/axAssert.h" />
 		<Unit filename="../../ax/core/axBasePath.h" />
@@ -254,16 +249,6 @@
 		<Unit filename="../../ax/core/axString.h" />
 		<Unit filename="../../ax/core/axThread.h" />
 		<Unit filename="../../ax/core/axUtils.h" />
-		<Unit filename="../../ax/deprecated/axFormat.h" />
-		<Unit filename="../../ax/deprecated/axFormatAu.h" />
-		<Unit filename="../../ax/deprecated/axFormatBase.h" />
-		<Unit filename="../../ax/deprecated/axFormatDssi.h" />
-		<Unit filename="../../ax/deprecated/axFormatExe.h" />
-		<Unit filename="../../ax/deprecated/axFormatLadspa.h" />
-		<Unit filename="../../ax/deprecated/axFormatLv2.h" />
-		<Unit filename="../../ax/deprecated/axFormatVst.h" />
-		<Unit filename="../../ax/deprecated/axProgram.h" />
-		<Unit filename="../../ax/deprecated/axReaperExt.h" />
 		<Unit filename="../../ax/doxygen/doxygen_pages.h" />
 		<Unit filename="../../ax/dsp/dspDCF.h" />
 		<Unit filename="../../ax/dsp/dspInterpolate.h" />

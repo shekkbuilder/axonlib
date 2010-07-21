@@ -135,13 +135,7 @@ class axBaseImpl : public axBase
     virtual axInterface*  getInterface(void)    { return mInterface; }
     virtual axFormat*     getFormat(void)       { return mFormat; }
     virtual axDescriptor* getDescriptor(void)   { return mDescriptor; }
-
-    virtual axInstance*   createInstance(void)
-    {
-      axInstance* aInstance = new _I(this);
-      return aInstance;
-      //return __instance_no_opt(aInstance);
-    }
+    virtual axInstance*   createInstance(void)  { return new _I(this); }
 };
 
 //----------------------------------------------------------------------
