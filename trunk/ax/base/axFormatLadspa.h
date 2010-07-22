@@ -49,7 +49,7 @@ class axInstanceLadspa : public axInstance
 
     axInstanceLadspa(axBase* aBase) /*: axInstance(aBase)*/
       {
-        trace("axInstanceLadspa.constructor")
+        trace("axInstanceLadspa.constructor");
         mBase       = aBase;
         mDescriptor = mBase->getDescriptor();
         mNumInputs  = mDescriptor->getNumInputs();
