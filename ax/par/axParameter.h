@@ -26,6 +26,17 @@
 
 //----------------------------------------------------------------------
 
+class axParameterInfo
+{
+  public:
+    virtual char* getName(int aIndex)  { return (char*)"param"; }
+    virtual float* getDefaultValue(void)    { return 0; }
+};
+
+typedef axArray<axParameterInfo*> axParameterInfos;
+
+//----------------------------------------------------------------------
+
 class axParameter;
 
 class axParameterListener
@@ -57,10 +68,10 @@ class axParameter// : public axParameterBase
 
   protected:
     axParameterListener* mListener;
-    axString  mName;
-    axString  mLabel;
+    axString  mName;              // move to axParameterInfo
+    axString  mLabel;             // move to axParameterInfo
     float     mValue;   // 0..1
-    float     mDefault;
+    float     mDefault;           // move to axParameterInfo
     int       mFlags;
   public:
     int       mId;
@@ -74,6 +85,11 @@ class axParameter// : public axParameterBase
     // aLabel:    extra string, like "db", "%", etc, to append after the
     //            normal display string (for vst hosts)
     // aValue:    internal value (0..1)
+
+    // some of these must be moved to the descriptor, and the parameterinfo, because we need it
+    // before the plugin is instanciated, and so it can't be a part of the plugin itself.
+    // we set up some axParameterInfo's in the descriptor, and the appendParameter() can read
+    // from it if it needs some info...
 
     axParameter(axParameterListener* aListener, axString aName, axString aLabel="", float aValue=0)
       {
