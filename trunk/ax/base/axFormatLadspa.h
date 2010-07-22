@@ -61,7 +61,7 @@ class axInstanceLadspa : public axInstance
       {
         trace("axInstanceLadspa.destructor");
       }
-
+      
     //--------------------------------------------------
     // callbacks
     //--------------------------------------------------
@@ -149,7 +149,10 @@ class axInstanceLadspa : public axInstance
 
     virtual void appendParameter(axParameter* aParameter) {}
     virtual void setupParameters(void) {}
-    virtual void updateTimeInfo();
+    
+    // # methods have to be overloaded properly i.e. defined even if never
+    // used otherwise the linker will apparently report the vtable errors
+    virtual void updateTimeInfo(void) {}
 
 //    virtual void setupParameters(void)
 //      {

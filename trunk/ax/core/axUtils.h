@@ -90,10 +90,10 @@ __axutils_inline unsigned long axBitReverse (unsigned long v)
 #define axBitFlp(x, bit)  ((x) ^  (1    << (bit)))
 
 /// converts linear value to decibel
-#define axLin2DB(lin) ( LOG2DB*axLogf( (lin) ) )
+#define axLOG2DB(x) ( LOG2DB*axLogf( (x) ) )
 
 /// converts decibel value to linear 
-#define axDB2Lin(dB) ( axExpf( DB2LOG*(dB) ) )
+#define axDB2LOG(x) ( axExpf( DB2LOG*(x) ) )
 
 /**
  * sums a set (array) of dBFS values
@@ -104,7 +104,7 @@ __axutils_inline unsigned long axBitReverse (unsigned long v)
 __axutils_inline float axSumDB(unsigned int n, const float* ar)
 {
   float sum = 0.f;
-  for (unsigned int i=0; i<n; i++) sum += axDB2Lin(ar[i]);
+  for (unsigned int i=0; i<n; i++) sum += axDB2LOG(ar[i]);
   return axLogf(sum)*LOG2DB;
 }
 
