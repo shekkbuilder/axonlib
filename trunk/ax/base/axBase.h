@@ -116,7 +116,7 @@ class axBaseImpl : public axBase
         //trace("axBaseImpl.constructor");
         mPlatform     = new _PL(this);
         mInterface    = new _IF(this);
-        mDescriptor   = new _D(this);
+        mDescriptor   = new _D(this);   // descriptor must be created before format, so format can get info
         mFormat       = new _FO(this);
         //printf("%i\n", sizeof(_PL) + sizeof(_IF) + sizeof(_D) + sizeof(_FO) );
         //fflush(stdout);
@@ -149,12 +149,12 @@ class axGlobalScope
     axBase*     mBase;
     void*       mPtr;
   public:
-    axGlobalScope()                     { /*printf("create base\n");*/ mBase=NULL; mPtr=NULL; }
-    ~axGlobalScope()                    { /*printf("delete base\n");*/ if (mBase) delete mBase; }
-    inline void setBase(axBase* aBase)  { mBase=aBase; }
-    inline void     setPtr(void* aPtr)  { mPtr=aPtr; }
-    inline axBase*  getBase(void)       { return mBase; }
-    inline void*    getPtr(void)        { return mPtr; }
+    axGlobalScope()   { /*printf("create base\n");*/ mBase=NULL; mPtr=NULL; }
+    ~axGlobalScope()  { /*printf("delete base\n");*/ if (mBase) delete mBase; }
+    inline void     setBase(axBase* aBase)  { mBase=aBase; }
+    inline void     setPtr(void* aPtr)      { mPtr=aPtr; }
+    inline axBase*  getBase(void)           { return mBase; }
+    inline void*    getPtr(void)            { return mPtr; }
 };
 
 //----------

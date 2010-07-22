@@ -61,6 +61,7 @@
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-shared" />
+					<Add option="-fpic" />
 					<Add option="-Wno-unused" />
 					<Add option="-Wno-long-long" />
 					<Add option="-DAX_FORMAT_LADSPA" />
@@ -317,6 +318,8 @@
 		<Unit filename="../../doc/OVERVIEW" />
 		<Unit filename="../../doc/TODO" />
 		<Unit filename="../../extern/Daubechies.h" />
+		<Unit filename="../../extern/isaac.h" />
+		<Unit filename="../../extern/ladspa.h" />
 		<Unit filename="../../extern/mayer_fft.h" />
 		<Unit filename="../../extern/mtrand.h" />
 		<Unit filename="../../extern/picopng.h" />
