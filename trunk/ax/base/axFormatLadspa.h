@@ -148,7 +148,7 @@ class axInstanceLadspa : public axInstance
         doStateChange(is_Close);
       }
 
-    //
+    //--------------------------------------------------
 
     //virtual void appendParameter(axParameter* aParameter) {}
     //virtual void setupParameters(void) {}
@@ -156,7 +156,9 @@ class axInstanceLadspa : public axInstance
     // # methods have to be overloaded properly i.e. defined even if never
     // used otherwise the linker will apparently report the vtable errors
 
-    virtual void updateTimeInfo(void) {}
+    virtual void updateTimeInfo(void)
+      {
+      }
 
     virtual void appendParameter(axParameter* aParameter)
       {
@@ -182,76 +184,8 @@ class axInstanceLadspa : public axInstance
     virtual void prepareParameters(void)
       {
         trace("prepareParameters");
-//        int io = mNumInputs + mNumOutputs;
-//        int par = mParameters.size();
-//        mNumPorts = io+par;
-//        trace("mNumPorts: "<<mNumPorts);
-////----------
-//        char temp[16];
-//        int po = 0;
-//        for (int i=0; i<mNumInputs; i++)
-//        {
-//          mPortNames[po] = (char*)axMalloc(16);                       // TODO: free
-//          axStrcpy( mPortNames[po],"input ");
-//          axStrcat( mPortNames[po], axItoa(temp,i) );
-//          mPortDesc[po]                 = LADSPA_PORT_AUDIO | LADSPA_PORT_INPUT;
-//          mPortHint[po].HintDescriptor  = LADSPA_HINT_DEFAULT_NONE;
-//          mPortHint[po].LowerBound      = 0;
-//          mPortHint[po].UpperBound      = 1;
-//          po++;
-//        }
-//        for (int i=0; i<mNumOutputs; i++)
-//        {
-//          mPortNames[po] = (char*)axMalloc(16);                         // TODO: free this
-//          axStrcpy( mPortNames[po],"output ");
-//          axStrcat(mPortNames[po], axItoa(temp,i) );
-//          mPortDesc[po]                 = LADSPA_PORT_AUDIO | LADSPA_PORT_OUTPUT;
-//          mPortHint[po].HintDescriptor  = LADSPA_HINT_DEFAULT_NONE;
-//          mPortHint[po].LowerBound      = 0;
-//          mPortHint[po].UpperBound      = 1;
-//          po++;
-//        }
-//        // ------------------------------------------------------
-//        // below we override the user parameters and set hints
-//        // lii: set tmp value for the parameter list
-//        float pval;
-//        for (int i=0; i<par; i++)
-//        {
-//          mPortNames[po] = (char*)axMalloc(16);                   // TODO: free
-//          axStrcpy( mPortNames[po], mParameters[i]->getName().ptr() );
-//          mPortDesc[po] = LADSPA_PORT_CONTROL | LADSPA_PORT_INPUT;
-//          // lii: get the user value
-//          pval = (float)mParameters[i]->getValue();
-//          if (pval < 0.33f)
-//          {
-//            // lii: override to 0.25 and set a hint for def. logaritmic low
-//            mParameters[i]->setValue(0.25f);
-//            mPortHint[po].HintDescriptor = LADSPA_HINT_DEFAULT_LOW;
-//          }
-//          else if (pval > 0.66f)
-//          {
-//            // lii: override to 0.75 and set a hint for def. logaritmic high
-//            mParameters[i]->setValue(0.75f);
-//            mPortHint[po].HintDescriptor = LADSPA_HINT_DEFAULT_HIGH;
-//          }
-//          else
-//          {
-//            // lii: override to 0.5 and set a hint to def. middle
-//            mParameters[i]->setValue(0.5f);
-//            mPortHint[po].HintDescriptor = LADSPA_HINT_DEFAULT_MIDDLE;
-//          }
-//          // lii: add hints for limits
-//          mPortHint[po].HintDescriptor |= LADSPA_HINT_BOUNDED_BELOW |  LADSPA_HINT_BOUNDED_ABOVE;
-//          // ------------------------------------------------------
-//          mPortHint[po].LowerBound      = 0;
-//          mPortHint[po].UpperBound      = 1;
-//          po++;
-//        }
-//        mDescriptor.PortCount       = mNumPorts;
-//        mDescriptor.PortDescriptors = mPortDesc;
-//        mDescriptor.PortNames       = (const char * const *)mPortNames;
-//        mDescriptor.PortRangeHints  = mPortHint;
-//        //trace("prepareParameters finished");
+        // no point in setting ladspa's port hints etc here...
+        // the descriptor has already been delivered to the host
       }
 
     //----------
@@ -437,10 +371,9 @@ class axFormatLadspa : public axFormat
         {
           mPortNames[index] = mDescriptor->getParamName(i);
           mPortDesc[index] = LADSPA_PORT_CONTROL | LADSPA_PORT_INPUT;
-          // lii: get the user value
-
+          // we don't  have any mParameters here!
 //----------
-
+//          // lii: get the user value
 //          float pval = (float)mParameters[i]->getValue();
 //          if (pval < 0.33f)
 //          {
@@ -460,11 +393,10 @@ class axFormatLadspa : public axFormat
 //            mParameters[i]->setValue(0.5f);
 //            mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_MIDDLE;
 //          }
-//          // lii: add hints for limits
-//          mPortHint[index].HintDescriptor |= LADSPA_HINT_BOUNDED_BELOW |  LADSPA_HINT_BOUNDED_ABOVE;
-
 //----------
-
+          mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_0;
+          // lii: add hints for limits
+          mPortHint[index].HintDescriptor |= LADSPA_HINT_BOUNDED_BELOW |  LADSPA_HINT_BOUNDED_ABOVE;
           mPortHint[index].LowerBound      = 0;
           mPortHint[index].UpperBound      = 1;
           index++;
@@ -474,82 +406,6 @@ class axFormatLadspa : public axFormat
         //mDescriptor.PortDescriptors = mPortDesc;
         //mDescriptor.PortNames       = (const char * const *)mPortNames;
         //mDescriptor.PortRangeHints  = mPortHint;
-
-        //trace("num inputs:  " << mDescriptor->getNumInputs() );
-        //trace("num outputs: " << mDescriptor->getNumOutputs() );
-        //trace("num params:  " << mDescriptor->getNumParams() );
-
-//        int io = mNumInputs + mNumOutputs;
-//        int par = mParameters.size();
-//        mNumPorts = io+par;
-//        trace("mNumPorts: "<<mNumPorts);
-////----------
-//        char temp[16];
-//        int po = 0;
-//        for (int i=0; i<mNumInputs; i++)
-//        {
-//          mPortNames[po] = (char*)axMalloc(16);                       // TODO: free
-//          axStrcpy( mPortNames[po],"input ");
-//          axStrcat( mPortNames[po], axItoa(temp,i) );
-//          mPortDesc[po]                 = LADSPA_PORT_AUDIO | LADSPA_PORT_INPUT;
-//          mPortHint[po].HintDescriptor  = LADSPA_HINT_DEFAULT_NONE;
-//          mPortHint[po].LowerBound      = 0;
-//          mPortHint[po].UpperBound      = 1;
-//          po++;
-//        }
-//        for (int i=0; i<mNumOutputs; i++)
-//        {
-//          mPortNames[po] = (char*)axMalloc(16);                         // TODO: free this
-//          axStrcpy( mPortNames[po],"output ");
-//          axStrcat(mPortNames[po], axItoa(temp,i) );
-//          mPortDesc[po]                 = LADSPA_PORT_AUDIO | LADSPA_PORT_OUTPUT;
-//          mPortHint[po].HintDescriptor  = LADSPA_HINT_DEFAULT_NONE;
-//          mPortHint[po].LowerBound      = 0;
-//          mPortHint[po].UpperBound      = 1;
-//          po++;
-//        }
-//        // ------------------------------------------------------
-//        // below we override the user parameters and set hints
-//        // lii: set tmp value for the parameter list
-//        float pval;
-//        for (int i=0; i<par; i++)
-//        {
-//          mPortNames[po] = (char*)axMalloc(16);                   // TODO: free
-//          axStrcpy( mPortNames[po], mParameters[i]->getName().ptr() );
-//          mPortDesc[po] = LADSPA_PORT_CONTROL | LADSPA_PORT_INPUT;
-//          // lii: get the user value
-//          pval = (float)mParameters[i]->getValue();
-//          if (pval < 0.33f)
-//          {
-//            // lii: override to 0.25 and set a hint for def. logaritmic low
-//            mParameters[i]->setValue(0.25f);
-//            mPortHint[po].HintDescriptor = LADSPA_HINT_DEFAULT_LOW;
-//          }
-//          else if (pval > 0.66f)
-//          {
-//            // lii: override to 0.75 and set a hint for def. logaritmic high
-//            mParameters[i]->setValue(0.75f);
-//            mPortHint[po].HintDescriptor = LADSPA_HINT_DEFAULT_HIGH;
-//          }
-//          else
-//          {
-//            // lii: override to 0.5 and set a hint to def. middle
-//            mParameters[i]->setValue(0.5f);
-//            mPortHint[po].HintDescriptor = LADSPA_HINT_DEFAULT_MIDDLE;
-//          }
-//          // lii: add hints for limits
-//          mPortHint[po].HintDescriptor |= LADSPA_HINT_BOUNDED_BELOW |  LADSPA_HINT_BOUNDED_ABOVE;
-//          // ------------------------------------------------------
-//          mPortHint[po].LowerBound      = 0;
-//          mPortHint[po].UpperBound      = 1;
-//          po++;
-//        }
-//        mDescriptor.PortCount       = mNumPorts;
-//        mDescriptor.PortDescriptors = mPortDesc;
-//        mDescriptor.PortNames       = (const char * const *)mPortNames;
-//        mDescriptor.PortRangeHints  = mPortHint;
-//        //trace("prepareParameters finished");
-
 
         axMemset(&ladspadescr,0,sizeof(ladspadescr));
         ladspadescr.UniqueID            = 0;//mUniqueId;
@@ -572,7 +428,6 @@ class axFormatLadspa : public axFormat
         ladspadescr.deactivate          = lad_deactivate_callback;
         ladspadescr.cleanup             = lad_cleanup_callback;
         return (void*)&ladspadescr;
-        //TODO: fix
       }
 
     //--------------------------------------------------
@@ -608,23 +463,6 @@ typedef axFormatLadspa AX_FORMAT;
 // entrypoint
 //
 //----------------------------------------------------------------------
-
-/*
-
-not currently recognized as a ladspa plugin :-/
-
-tested with:
-linux:
-- jost
-- qtractor
-
-analyseplugin from the ladspa sdk reports:
-Failed to load plugin "../axonlib_debug_ladspa.so": ../axonlib_debug_ladspa.so: undefined symbol: _ZTV16axInstanceLadspa
-
-
-
-*/
-
 
 #define AX_ENTRYPOINT(_PL,_IF,_FO,_D,_I)                                      \
                                                                               \
