@@ -28,9 +28,9 @@
 
 //----------------------------------------------------------------------
 
-//#ifndef AX_WIN_DEFAULT
-//  #define AX_WIN_DEFAULT 0
-//#endif
+#ifndef AX_WIN_DEFAULT
+  #define AX_WIN_DEFAULT 0
+#endif
 
 //----------------------------------------------------------------------
 #endif
