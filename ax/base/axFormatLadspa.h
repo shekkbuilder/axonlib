@@ -38,18 +38,21 @@ class axInstanceLadspa : public axInstance
     axDescriptor* mDescriptor;
     int           mNumInputs;
     int           mNumOutputs;
+    int           mNumPorts;
     int           mNumParams;
     float*        mInputs[MAX_LADSPA_PORTS];
     float*        mOutputs[MAX_LADSPA_PORTS];
     LADSPA_Data*  mParamPtr[MAX_LADSPA_PORTS];
     LADSPA_Data   mParamPrev[MAX_LADSPA_PORTS];
     int           mBlockSize;
+    axParameters  mParameters;
+
 
   public:
 
     axInstanceLadspa(axBase* aBase) /*: axInstance(aBase)*/
       {
-        trace("axInstanceLadspa.constructor");
+        //trace("axInstanceLadspa.constructor");
         mBase       = aBase;
         mDescriptor = mBase->getDescriptor();
         mNumInputs  = mDescriptor->getNumInputs();
@@ -59,16 +62,16 @@ class axInstanceLadspa : public axInstance
 
     virtual ~axInstanceLadspa()
       {
-        trace("axInstanceLadspa.destructor");
+        //trace("axInstanceLadspa.destructor");
       }
-      
+
     //--------------------------------------------------
     // callbacks
     //--------------------------------------------------
 
     virtual void lad_connect_port(unsigned long Port, LADSPA_Data* DataLocation)
       {
-        trace("axFormatLadspa.lad_connect_port");
+        //trace("axFormatLadspa.lad_connect_port");
         unsigned int io = mNumInputs + mNumOutputs;
         if (Port<io) // audio in/out
         {
@@ -90,7 +93,7 @@ class axInstanceLadspa : public axInstance
 
     virtual void lad_activate(void)
       {
-        trace("axFormatLadspa.lad_activate");
+        //trace("axFormatLadspa.lad_activate");
         doStateChange(is_Resume);
       }
 
@@ -104,7 +107,7 @@ class axInstanceLadspa : public axInstance
           float val = *mParamPtr[i];
           if (val!=mParamPrev[i])
           {
-//            mParameters[i]->doSetValue(val,true);
+            mParameters[i]->doSetValue(val,true);
             mParamPrev[i] = val;
           }
         }
@@ -135,52 +138,63 @@ class axInstanceLadspa : public axInstance
 
     virtual void lad_deactivate(void)
       {
-        trace("axFormatLadspa.lad_deactivate");
+        //trace("axFormatLadspa.lad_deactivate");
         doStateChange(is_Suspend);
       }
 
     virtual void lad_cleanup(void)
       {
-        trace("axFormatLadspa.lad_cleanup");
+        //trace("axFormatLadspa.lad_cleanup");
         doStateChange(is_Close);
       }
 
     //
 
-    virtual void appendParameter(axParameter* aParameter) {}
-    virtual void setupParameters(void) {}
-    
+    //virtual void appendParameter(axParameter* aParameter) {}
+    //virtual void setupParameters(void) {}
+
     // # methods have to be overloaded properly i.e. defined even if never
     // used otherwise the linker will apparently report the vtable errors
+
     virtual void updateTimeInfo(void) {}
 
-//    virtual void setupParameters(void)
-//      {
-//        //trace("setupParameters");
-//        prepareParameters();
-//        //transferParameters();
-//      }
-//
-//    //----------
-//
-//    virtual void prepareParameters(void)
-//      {
-//        //trace("prepareParameters");
+    virtual void appendParameter(axParameter* aParameter)
+      {
+        int index = mParameters.size();
+        aParameter->setIndex(index);
+        mParameters.append(aParameter);
+      }
+
+    virtual void deleteParameters(void)
+      {
+        for (int i=0; i<mParameters.size(); i++) delete mParameters[i];
+      }
+
+    virtual void setupParameters(void)
+      {
+        //trace("setupParameters");
+        prepareParameters();
+        //transferParameters();
+      }
+
+    //----------
+
+    virtual void prepareParameters(void)
+      {
+        trace("prepareParameters");
 //        int io = mNumInputs + mNumOutputs;
 //        int par = mParameters.size();
 //        mNumPorts = io+par;
 //        trace("mNumPorts: "<<mNumPorts);
-//
+////----------
 //        char temp[16];
 //        int po = 0;
-//
 //        for (int i=0; i<mNumInputs; i++)
 //        {
 //          mPortNames[po] = (char*)axMalloc(16);                       // TODO: free
 //          axStrcpy( mPortNames[po],"input ");
 //          axStrcat( mPortNames[po], axItoa(temp,i) );
-//          mPortDesc[po]                 = LADSPA_PORT_AUDIO
-//                                        | LADSPA_PORT_INPUT;
+//          mPortDesc[po]                 = LADSPA_PORT_AUDIO | LADSPA_PORT_INPUT;
 //          mPortHint[po].HintDescriptor  = LADSPA_HINT_DEFAULT_NONE;
 //          mPortHint[po].LowerBound      = 0;
 //          mPortHint[po].UpperBound      = 1;
@@ -191,26 +205,21 @@ class axInstanceLadspa : public axInstance
 //          mPortNames[po] = (char*)axMalloc(16);                         // TODO: free this
 //          axStrcpy( mPortNames[po],"output ");
 //          axStrcat(mPortNames[po], axItoa(temp,i) );
-//          mPortDesc[po]                 = LADSPA_PORT_AUDIO
-//                                        | LADSPA_PORT_OUTPUT;
+//          mPortDesc[po]                 = LADSPA_PORT_AUDIO | LADSPA_PORT_OUTPUT;
 //          mPortHint[po].HintDescriptor  = LADSPA_HINT_DEFAULT_NONE;
 //          mPortHint[po].LowerBound      = 0;
 //          mPortHint[po].UpperBound      = 1;
 //          po++;
 //        }
-//
 //        // ------------------------------------------------------
-//        // bellow we override the user parameters and set hints
-//
+//        // below we override the user parameters and set hints
 //        // lii: set tmp value for the parameter list
 //        float pval;
 //        for (int i=0; i<par; i++)
 //        {
 //          mPortNames[po] = (char*)axMalloc(16);                   // TODO: free
 //          axStrcpy( mPortNames[po], mParameters[i]->getName().ptr() );
-//          mPortDesc[po]                 = LADSPA_PORT_CONTROL
-//                                        | LADSPA_PORT_INPUT;
-//
+//          mPortDesc[po] = LADSPA_PORT_CONTROL | LADSPA_PORT_INPUT;
 //          // lii: get the user value
 //          pval = (float)mParameters[i]->getValue();
 //          if (pval < 0.33f)
@@ -231,41 +240,36 @@ class axInstanceLadspa : public axInstance
 //            mParameters[i]->setValue(0.5f);
 //            mPortHint[po].HintDescriptor = LADSPA_HINT_DEFAULT_MIDDLE;
 //          }
-//
 //          // lii: add hints for limits
-//          mPortHint[po].HintDescriptor |= LADSPA_HINT_BOUNDED_BELOW
-//                                       |  LADSPA_HINT_BOUNDED_ABOVE;
-//
+//          mPortHint[po].HintDescriptor |= LADSPA_HINT_BOUNDED_BELOW |  LADSPA_HINT_BOUNDED_ABOVE;
 //          // ------------------------------------------------------
-//
 //          mPortHint[po].LowerBound      = 0;
 //          mPortHint[po].UpperBound      = 1;
 //          po++;
 //        }
 //        mDescriptor.PortCount       = mNumPorts;
-////        mDescriptor.PortDescriptors = mPortDesc;
-////        mDescriptor.PortNames       = (const char * const *)mPortNames;
-////        mDescriptor.PortRangeHints  = mPortHint;
+//        mDescriptor.PortDescriptors = mPortDesc;
+//        mDescriptor.PortNames       = (const char * const *)mPortNames;
+//        mDescriptor.PortRangeHints  = mPortHint;
 //        //trace("prepareParameters finished");
-//      }
-//
-//    //----------
-//
-//    // this can not be run in the constructor!
-//    // connect_port must have been called, so we
-//    // have the pointers...
-//
-//    virtual void transferParameters(void)
-//      {
-//        //trace("transferParameters");
-//        int par = mParameters.size();
-//        for (int i=0; i<par; i++)
-//        {
-//          float val = mParameters[i]->getValue(); //doGetValue();
-//          *mParamPtr[i] = val;
-//        }
-//      }
+      }
 
+    //----------
+
+    // this can not be run in the constructor!
+    // connect_port must have been called, so we
+    // have the pointers...
+
+    virtual void transferParameters(void)
+      {
+        //trace("transferParameters");
+        int par = mParameters.size();
+        for (int i=0; i<par; i++)
+        {
+          float val = mParameters[i]->getValue(); //doGetValue();
+          *mParamPtr[i] = val;
+        }
+      }
 
 };
 
@@ -279,6 +283,7 @@ typedef axInstanceLadspa AX_INSTANCE;
 
 class axFormatLadspa : public axFormat
 {
+
   friend const LADSPA_Descriptor* ladspa_descriptor(unsigned long index);// _AX_ASM_MAIN_SYMBOL
 
   private:
@@ -295,7 +300,7 @@ class axFormatLadspa : public axFormat
 
     static LADSPA_Handle lad_instantiate_callback(const LADSPA_Descriptor* Descriptor, unsigned long SampleRate)
       {
-        trace("lad_instantiate_callback");
+        //trace("lad_instantiate_callback");
         axFormatLadspa* desc = (axFormatLadspa*)Descriptor->ImplementationData;
         return desc->lad_instantiate(SampleRate);
       }
@@ -306,7 +311,7 @@ class axFormatLadspa : public axFormat
 
     static void lad_connect_port_callback(LADSPA_Handle Instance, unsigned long Port, LADSPA_Data * DataLocation)
       {
-        trace("lad_connect_port_callback");
+        //trace("lad_connect_port_callback");
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_connect_port(Port,DataLocation);
       }
@@ -315,7 +320,7 @@ class axFormatLadspa : public axFormat
 
     static void lad_activate_callback(LADSPA_Handle Instance)
       {
-        trace("lad_activate_callback");
+        //trace("lad_activate_callback");
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_activate();
         //
@@ -326,7 +331,7 @@ class axFormatLadspa : public axFormat
 
     static void lad_run_callback(LADSPA_Handle Instance, unsigned long SampleCount)
       {
-        trace("lad_run_callback");
+        //trace("lad_run_callback");
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_run(SampleCount);
         //
@@ -353,7 +358,7 @@ class axFormatLadspa : public axFormat
 
     static void lad_deactivate_callback(LADSPA_Handle Instance)
       {
-        trace("lad_deactivate_callback");
+        //trace("lad_deactivate_callback");
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_deactivate();
         //
@@ -364,7 +369,7 @@ class axFormatLadspa : public axFormat
 
     static void lad_cleanup_callback(LADSPA_Handle Instance)
       {
-        trace("lad_cleanup_callback");
+        //trace("lad_cleanup_callback");
         axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
         inst->lad_cleanup();
         delete inst; // !!!
@@ -386,6 +391,7 @@ class axFormatLadspa : public axFormat
         //axInstanceLadspa* inst = (axInstanceLadspa*)mBase->createInstance();
         axInstance* inst = mBase->createInstance();
         //inst->mSampleRate = SampleRate;
+
         inst->doStateChange(is_Open);
         return inst;
       }
@@ -409,9 +415,141 @@ class axFormatLadspa : public axFormat
         mDescriptor = mBase->getDescriptor();
         int i;
         int index=0;
-        for (i=0; i<mDescriptor->getNumInputs();  i++) { mPortNames[index++] = mDescriptor->getInputName(i);  }
-        for (i=0; i<mDescriptor->getNumOutputs(); i++) { mPortNames[index++] = mDescriptor->getOutputName(i); }
-        for (i=0; i<mDescriptor->getNumParams();  i++) { mPortNames[index++] = mDescriptor->getParamName(i);  }
+        for (i=0; i<mDescriptor->getNumInputs();  i++)
+        {
+          mPortNames[index]               = mDescriptor->getInputName(i);
+          mPortDesc[index]                = LADSPA_PORT_AUDIO | LADSPA_PORT_INPUT;
+          mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_NONE;
+          mPortHint[index].LowerBound     = 0;
+          mPortHint[index].UpperBound     = 1;
+          index++;
+        }
+        for (i=0; i<mDescriptor->getNumOutputs(); i++)
+        {
+          mPortNames[index]               = mDescriptor->getOutputName(i);
+          mPortDesc[index]                = LADSPA_PORT_AUDIO | LADSPA_PORT_OUTPUT;
+          mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_NONE;
+          mPortHint[index].LowerBound     = 0;
+          mPortHint[index].UpperBound     = 1;
+          index++;
+        }
+        for (i=0; i<mDescriptor->getNumParams();  i++)
+        {
+          mPortNames[index] = mDescriptor->getParamName(i);
+          mPortDesc[index] = LADSPA_PORT_CONTROL | LADSPA_PORT_INPUT;
+          // lii: get the user value
+
+//----------
+
+//          float pval = (float)mParameters[i]->getValue();
+//          if (pval < 0.33f)
+//          {
+//            // lii: override to 0.25 and set a hint for def. logaritmic low
+//            mParameters[i]->setValue(0.25f);
+//            mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_LOW;
+//          }
+//          else if (pval > 0.66f)
+//          {
+//            // lii: override to 0.75 and set a hint for def. logaritmic high
+//            mParameters[i]->setValue(0.75f);
+//            mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_HIGH;
+//          }
+//          else
+//          {
+//            // lii: override to 0.5 and set a hint to def. middle
+//            mParameters[i]->setValue(0.5f);
+//            mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_MIDDLE;
+//          }
+//          // lii: add hints for limits
+//          mPortHint[index].HintDescriptor |= LADSPA_HINT_BOUNDED_BELOW |  LADSPA_HINT_BOUNDED_ABOVE;
+
+//----------
+
+          mPortHint[index].LowerBound      = 0;
+          mPortHint[index].UpperBound      = 1;
+          index++;
+        }
+//
+        //mDescriptor.PortCount       = mNumPorts;
+        //mDescriptor.PortDescriptors = mPortDesc;
+        //mDescriptor.PortNames       = (const char * const *)mPortNames;
+        //mDescriptor.PortRangeHints  = mPortHint;
+
+        //trace("num inputs:  " << mDescriptor->getNumInputs() );
+        //trace("num outputs: " << mDescriptor->getNumOutputs() );
+        //trace("num params:  " << mDescriptor->getNumParams() );
+
+//        int io = mNumInputs + mNumOutputs;
+//        int par = mParameters.size();
+//        mNumPorts = io+par;
+//        trace("mNumPorts: "<<mNumPorts);
+////----------
+//        char temp[16];
+//        int po = 0;
+//        for (int i=0; i<mNumInputs; i++)
+//        {
+//          mPortNames[po] = (char*)axMalloc(16);                       // TODO: free
+//          axStrcpy( mPortNames[po],"input ");
+//          axStrcat( mPortNames[po], axItoa(temp,i) );
+//          mPortDesc[po]                 = LADSPA_PORT_AUDIO | LADSPA_PORT_INPUT;
+//          mPortHint[po].HintDescriptor  = LADSPA_HINT_DEFAULT_NONE;
+//          mPortHint[po].LowerBound      = 0;
+//          mPortHint[po].UpperBound      = 1;
+//          po++;
+//        }
+//        for (int i=0; i<mNumOutputs; i++)
+//        {
+//          mPortNames[po] = (char*)axMalloc(16);                         // TODO: free this
+//          axStrcpy( mPortNames[po],"output ");
+//          axStrcat(mPortNames[po], axItoa(temp,i) );
+//          mPortDesc[po]                 = LADSPA_PORT_AUDIO | LADSPA_PORT_OUTPUT;
+//          mPortHint[po].HintDescriptor  = LADSPA_HINT_DEFAULT_NONE;
+//          mPortHint[po].LowerBound      = 0;
+//          mPortHint[po].UpperBound      = 1;
+//          po++;
+//        }
+//        // ------------------------------------------------------
+//        // below we override the user parameters and set hints
+//        // lii: set tmp value for the parameter list
+//        float pval;
+//        for (int i=0; i<par; i++)
+//        {
+//          mPortNames[po] = (char*)axMalloc(16);                   // TODO: free
+//          axStrcpy( mPortNames[po], mParameters[i]->getName().ptr() );
+//          mPortDesc[po] = LADSPA_PORT_CONTROL | LADSPA_PORT_INPUT;
+//          // lii: get the user value
+//          pval = (float)mParameters[i]->getValue();
+//          if (pval < 0.33f)
+//          {
+//            // lii: override to 0.25 and set a hint for def. logaritmic low
+//            mParameters[i]->setValue(0.25f);
+//            mPortHint[po].HintDescriptor = LADSPA_HINT_DEFAULT_LOW;
+//          }
+//          else if (pval > 0.66f)
+//          {
+//            // lii: override to 0.75 and set a hint for def. logaritmic high
+//            mParameters[i]->setValue(0.75f);
+//            mPortHint[po].HintDescriptor = LADSPA_HINT_DEFAULT_HIGH;
+//          }
+//          else
+//          {
+//            // lii: override to 0.5 and set a hint to def. middle
+//            mParameters[i]->setValue(0.5f);
+//            mPortHint[po].HintDescriptor = LADSPA_HINT_DEFAULT_MIDDLE;
+//          }
+//          // lii: add hints for limits
+//          mPortHint[po].HintDescriptor |= LADSPA_HINT_BOUNDED_BELOW |  LADSPA_HINT_BOUNDED_ABOVE;
+//          // ------------------------------------------------------
+//          mPortHint[po].LowerBound      = 0;
+//          mPortHint[po].UpperBound      = 1;
+//          po++;
+//        }
+//        mDescriptor.PortCount       = mNumPorts;
+//        mDescriptor.PortDescriptors = mPortDesc;
+//        mDescriptor.PortNames       = (const char * const *)mPortNames;
+//        mDescriptor.PortRangeHints  = mPortHint;
+//        //trace("prepareParameters finished");
+
 
         axMemset(&ladspadescr,0,sizeof(ladspadescr));
         ladspadescr.UniqueID            = 0;//mUniqueId;
@@ -483,14 +621,18 @@ linux:
 analyseplugin from the ladspa sdk reports:
 Failed to load plugin "../axonlib_debug_ladspa.so": ../axonlib_debug_ladspa.so: undefined symbol: _ZTV16axInstanceLadspa
 
+
+
 */
+
 
 #define AX_ENTRYPOINT(_PL,_IF,_FO,_D,_I)                                      \
                                                                               \
 __externc __dllexport                                                         \
-const LADSPA_Descriptor* ladspa_descriptor(unsigned long index)               \
+const LADSPA_Descriptor* ladspa_descriptor(unsigned long Index)               \
 {                                                                             \
-  if (index>0) return NULL;                                                   \
+  printf("ladspa_descriptor, Index: %i\n",(int)Index); \
+  if (Index>0) return NULL;                                                   \
   _AX_DEBUG_SETUP                                                             \
   axBaseImpl<_PL,_IF,_FO,_D,_I>* base = new axBaseImpl<_PL,_IF,_FO,_D,_I>();  \
   gGlobalScope.setBase(base);                                                 \
@@ -503,3 +645,11 @@ const LADSPA_Descriptor* ladspa_descriptor(unsigned long index)               \
 #endif
 
 
+/*
+
+if (index>0)--
+ladspa can have multiple plugins in one .so file
+host will call this function until we return NULL.
+we only want AX_DEBUG_SETUP once
+
+*/
