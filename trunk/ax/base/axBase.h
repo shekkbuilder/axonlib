@@ -4,13 +4,14 @@
 
 #include "axConfig.h"
 #include "core/axDefines.h"
-#include "core/axRect.h"
 #include "core/axDebug.h"
-#include "core/axMalloc.h"
-#include "core/axRand.h"
-#include "core/axStdlib.h"
-#include "core/axUtils.h"
+#include "core/axRect.h"
 #include "par/axParameter.h"
+
+//#include "core/axMalloc.h"
+//#include "core/axStdlib.h"
+//#include "core/axRand.h"
+//#include "core/axUtils.h"
 
 //----------------------------------------------------------------------
 
