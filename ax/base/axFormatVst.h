@@ -1703,17 +1703,6 @@ typedef axFormatVst AX_FORMAT;
 AEffect*  main_plugin(audioMasterCallback audioMaster) _AX_ASM_MAIN_SYMBOL
 #define   main main_plugin
 
-// that (int) above...
-// what about 64-bit platform?
-// ^ does 'long' work for the above ?
-// -------------------------------------
-// this could be a problem since 'int' will be 32 bit on x86-64 builds
-// "long" will be the same size as "void*" but will produce a warning
-// if used as "long main(long audioMaster...".
-// take a look at the solution above:
-// same as linux but we define the "_main" symbol instead.
-// actually asm ("_main") should work on linux as well
-
 //----------------------------------------------------------------------
 
 // _PL = platform   win32, linux

@@ -16,13 +16,24 @@
 
 #ifndef axDefines_included
 #define axDefines_included
-//----------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
+// version
+// -----------------------------------------------------------------------------
 #define AX_MAJOR_VERSION   0
 #define AX_MINOR_VERSION   1
 #define AX_SUB_VERSION     2
-#define AX_VERSION_STRING "0.1.2"
-#define AX_AXONLIB_TEXT   "powered by axonlib v" AX_VERSION_STRING " (http://axonlib.googlecode.com/)"
+
+// -----------------------------------------------------------------------------
+#define axStrExpand(x) #x
+#define axStr(x) axStrExpand(x)
+#define AX_VERSION_STRING  \
+  axStr(AX_MAJOR_VERSION)"." \
+  axStr(AX_MINOR_VERSION)"." \
+  axStr(AX_SUB_VERSION)
+
+#define AX_AXONLIB_TEXT \
+  "powered by axonlib v" AX_VERSION_STRING " (http://axonlib.googlecode.com/)"
 
 // architechture
 // -----------------------------------------------------------------------------
@@ -69,7 +80,7 @@
 #endif
 
 // enable 'full' debug mode
-#if defined AX_DEBUG_FULL && defined AX_DEBUG
+#if defined AX_DEBUG_FULL
   #undef  AX_DEBUG
   #define AX_DEBUG
   #undef  AX_DEBUG_CONSOLE
@@ -336,5 +347,5 @@ typedef unsigned char         __may_alias uchar_a;
 #define __asmv        __asm__ __volatile__
 #define __vlt         __volatile__
 
-//----------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 #endif // axDefines_included

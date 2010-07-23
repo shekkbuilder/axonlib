@@ -201,12 +201,12 @@
   #define axFree(p)       axFreeDebug     (p, __FILE__, __LINE__)
 
   // same for the standard methods if 'AX_NO_MALLOC'
-  #ifdef AX_NO_MALLOC
+  //#ifdef AX_NO_MALLOC
     #define malloc(s)       axMallocDebug   (s, __FILE__, __LINE__)
     #define calloc(n, s)    axCallocDebug   (n, s, __FILE__, __LINE__)
     #define realloc(p, s)   axReallocDebug  (p, s, __FILE__, __LINE__)
     #define free(p)         axFreeDebug     (p, __FILE__, __LINE__)
-  #endif
+  //#endif
 
   #ifdef AX_DEBUG_NEW
     // define some helpers for the delete operator
