@@ -5,6 +5,8 @@
 //TODO: proper ladspa sdk
 #include "../extern/ladspa.h"
 #include "core/axDefines.h"
+#include "par/parFloat.h"
+#include "par/parInteger.h"
 
 // this might be overkill?
 // inputs + outputs + parameters
@@ -47,7 +49,6 @@ class axInstanceLadspa : public axInstance
     int           mBlockSize;
     axParameters  mParameters;
 
-
   public:
 
     axInstanceLadspa(axBase* aBase) /*: axInstance(aBase)*/
@@ -58,7 +59,38 @@ class axInstanceLadspa : public axInstance
         mNumInputs  = mDescriptor->getNumInputs();
         mNumOutputs = mDescriptor->getNumOutputs();
         mNumParams  = mDescriptor->getNumParams();
+
+        // setup parameters
+
+        for (int i=0; i<mDescriptor->getNumParams(); i++)
+        {
+          axParamInfo p = mDescriptor->getParamInfo(i);
+
+          float val = p.mDef;
+          if (val<0.33) val=0.25;
+          else if (val>0.66) val=0.75;
+          else val=0.5;
+
+          switch(p.mType)
+          {
+            case pa_Par:
+              appendParameter( new axParameter( this,p.mName,"", val ) );
+              break;
+            case pa_Float:
+              appendParameter( new parFloat(    this,p.mName,"",val, p.mMin, p.mMax, p.mStep ) );
+              break;
+            case pa_Pow:
+              appendParameter( new parFloatPow( this,p.mName,"",val, p.mMin, p.mMax, p.mStep, p.mAux ) );
+              break;
+            case pa_Int:
+              appendParameter( new parInteger(  this,p.mName,"",val, p.mMin, p.mMax, p.mStr ) );
+              break;
+          }
+        }
+        setupParameters();
       }
+
+    //----------
 
     virtual ~axInstanceLadspa()
       {
@@ -91,17 +123,26 @@ class axInstanceLadspa : public axInstance
         }
       }
 
+    //----------
+
     virtual void lad_activate(void)
       {
         //trace("axFormatLadspa.lad_activate");
         doStateChange(is_Resume);
       }
 
+    //----------
+
     virtual void lad_run(unsigned long SampleCount)
       {
         //trace("axFormatLadspa.lad_run");
         int io  = mNumInputs + mNumOutputs;
-        int par = mNumParams;//mParameters.size();
+        int par = mNumParams; // mParameters.size();
+
+        // check if any parameter have changed tjhe values since last time,
+        // and if so, call doSetValue, so the new value is propagated
+        // throughout the library (mainly our doSetParameter)
+
         for (int i=0; i<par; i++)
         {
           float val = *mParamPtr[i];
@@ -111,6 +152,11 @@ class axInstanceLadspa : public axInstance
             mParamPrev[i] = val;
           }
         }
+
+        // process audio.. if doProcessBlock returns false, we call
+        // doProcessSample for each sample in the block..
+        // (and keep track of the pointers to the input/output buffers)
+
         mBlockSize = SampleCount;
         bool swallowed = doProcessBlock(mInputs,mOutputs,mBlockSize);
         if ( !swallowed )
@@ -130,17 +176,26 @@ class axInstanceLadspa : public axInstance
             outs[0]++;  outs[1]++;
           } //SampleCount
         } //process_block
+
+        // and eventual posrprocessing...
+
         doPostProcess(mInputs,mOutputs,mBlockSize);
       }
 
+    //----------
+
     //virtual void lad_run_adding(unsigned long SampleCount) {}
     //virtual void lad_set_run_adding_gain(LADSPA_Data Gain) {}
+
+    //----------
 
     virtual void lad_deactivate(void)
       {
         //trace("axFormatLadspa.lad_deactivate");
         doStateChange(is_Suspend);
       }
+
+    //----------
 
     virtual void lad_cleanup(void)
       {
@@ -153,12 +208,18 @@ class axInstanceLadspa : public axInstance
     //virtual void appendParameter(axParameter* aParameter) {}
     //virtual void setupParameters(void) {}
 
+    //----------
+
     // # methods have to be overloaded properly i.e. defined even if never
     // used otherwise the linker will apparently report the vtable errors
+
+    //----------
 
     virtual void updateTimeInfo(void)
       {
       }
+
+    //----------
 
     virtual void appendParameter(axParameter* aParameter)
       {
@@ -167,10 +228,14 @@ class axInstanceLadspa : public axInstance
         mParameters.append(aParameter);
       }
 
+    //----------
+
     virtual void deleteParameters(void)
       {
         for (int i=0; i<mParameters.size(); i++) delete mParameters[i];
       }
+
+    //----------
 
     virtual void setupParameters(void)
       {
@@ -206,6 +271,8 @@ class axInstanceLadspa : public axInstance
       }
 
 };
+
+//----------
 
 typedef axInstanceLadspa AX_INSTANCE;
 
@@ -348,8 +415,8 @@ class axFormatLadspa : public axFormat
         trace("axFormatLadspa.entrypoint");
         mDescriptor = mBase->getDescriptor();
         int i;
-        int index=0;
-        for (i=0; i<mDescriptor->getNumInputs();  i++)
+        int index = 0;
+        for (i=0; i<mDescriptor->getNumInputs(); i++)
         {
           mPortNames[index]               = mDescriptor->getInputName(i);
           mPortDesc[index]                = LADSPA_PORT_AUDIO | LADSPA_PORT_INPUT;
@@ -369,32 +436,33 @@ class axFormatLadspa : public axFormat
         }
         for (i=0; i<mDescriptor->getNumParams();  i++)
         {
-          mPortNames[index] = mDescriptor->getParamName(i);
-          mPortDesc[index] = LADSPA_PORT_CONTROL | LADSPA_PORT_INPUT;
+          axParamInfo paraminfo = mDescriptor->getParamInfo(i);
+          mPortNames[index] = paraminfo.mName;//mDescriptor->getParamName(i);
+          mPortDesc[index]  = LADSPA_PORT_CONTROL | LADSPA_PORT_INPUT;
           // we don't  have any mParameters here!
 //----------
-//          // lii: get the user value
-//          float pval = (float)mParameters[i]->getValue();
-//          if (pval < 0.33f)
-//          {
-//            // lii: override to 0.25 and set a hint for def. logaritmic low
-//            mParameters[i]->setValue(0.25f);
-//            mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_LOW;
-//          }
-//          else if (pval > 0.66f)
-//          {
-//            // lii: override to 0.75 and set a hint for def. logaritmic high
-//            mParameters[i]->setValue(0.75f);
-//            mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_HIGH;
-//          }
-//          else
-//          {
-//            // lii: override to 0.5 and set a hint to def. middle
-//            mParameters[i]->setValue(0.5f);
-//            mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_MIDDLE;
-//          }
+          // lii: get the user value
+          float pval = paraminfo.mDef;    // !!!!
+          if (pval < 0.33f)
+          {
+            // lii: override to 0.25 and set a hint for def. logaritmic low
+            //mParameters[i]->setValue(0.25f);
+            mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_LOW;
+          }
+          else if (pval > 0.66f)
+          {
+            // lii: override to 0.75 and set a hint for def. logaritmic high
+            //mParameters[i]->setValue(0.75f);
+            mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_HIGH;
+          }
+          else
+          {
+            // lii: override to 0.5 and set a hint to def. middle
+            //mParameters[i]->setValue(0.5f);
+            mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_MIDDLE;
+          }
 //----------
-          mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_0;
+          //mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_0;
           // lii: add hints for limits
           mPortHint[index].HintDescriptor |= LADSPA_HINT_BOUNDED_BELOW |  LADSPA_HINT_BOUNDED_ABOVE;
           mPortHint[index].LowerBound      = 0;
@@ -442,10 +510,14 @@ class axFormatLadspa : public axFormat
         mBase = aBase;
       }
 
+    //----------
+
     virtual ~axFormatLadspa()
       {
         trace("axFormatLadspa.destructor");
       }
+
+    //----------
 
     virtual char* getFormatName(void)
       {

@@ -7,6 +7,8 @@
 
 #include "core/axDebug.h"
 #include "par/axParameter.h"
+#include "par/parFloat.h"
+#include "par/parInteger.h"
 #include "par/axProgram.h"
 
 #ifndef AX_NOGUI
@@ -17,20 +19,10 @@
 
 #define AX_WIN_DEFAULT (AX_WIN_BUFFERED|AX_WIN_MSGTHREAD|AX_WIN_EMBEDDED)
 
-// see explaination below
-typedef audioMasterCallback __may_alias audioMasterCallback_a;
-
-//#define if_None       0
-//#define if_HasEditor  1
-
 //----------
 
-//VstStringConstants
-//  kVstMaxProgNameLen    24
-//  kVstMaxParamStrLen    8
-//  kVstMaxVendorStrLen   64
-//  kVstMaxProductStrLen  64
-//  kVstMaxEffectNameLen  32
+// see explaination below
+typedef audioMasterCallback __may_alias audioMasterCallback_a;
 
 //----------
 
@@ -53,21 +45,11 @@ struct axVstEvents
 class axDescriptorVst : public axDescriptor
 {
   public:
-    axDescriptorVst(axBase* aBase) /*: axDescriptor(aBase)*/  { /*trace("axDescriptorVst.constructor");*/ }
-    virtual ~axDescriptorVst()                            { /*trace("axDescriptorVst.destructor");*/ }
-    //virtual char*         getName(void)             { return (char*)"plugin"; }
-    //virtual char*         getAuthor(void)           { return (char*)"anonymous"; }
-    //virtual char*         getProduct(void)          { return (char*)"unknown plugin"; }
-    //virtual int           getVersion(void)          { return 0; }
-    //virtual unsigned int  getUniqueId(void)         { return 0x00000000; }
-    //virtual int           getNumInputs(void)        { return 2; }
-    //virtual int           getNumOutputs(void)       { return 2; }
-    //virtual int           getNumParams(void)        { return 0; }
-    //virtual int           getNumProgs(void)         { return 0; }
-    //virtual char*         getInputName(int aIndex)  { return g_default_stereo_inputs[aIndex]; }
-    //virtual char*         getOutputName(int aIndex) { return g_default_stereo_outputs[aIndex]; }
-    //virtual char*         getParamName(int aIndex)  { return (char*)"param"; }
+    axDescriptorVst(axBase* aBase) {}
+    virtual ~axDescriptorVst() {}
 };
+
+//----------
 
 typedef axDescriptorVst AX_DESCRIPTOR;
 
@@ -77,7 +59,7 @@ typedef axDescriptorVst AX_DESCRIPTOR;
 //
 //----------------------------------------------------------------------
 
-class axInstanceVst : public axInstance //, public axParameterListener
+class axInstanceVst : public axInstance
 {
   protected:
     axBase*             mBase;
@@ -146,6 +128,36 @@ class axInstanceVst : public axInstance //, public axParameterListener
         #ifndef AX_NOGUI
         if (mDescriptor->hasEditor()) { vst_hasEditor(true); }
         #endif
+
+        // transfer parameter info from descriptor to our
+        // parameter system...
+        //
+        // duplicate to ladspa, and eventually exe
+        //
+        // ladspa can potentially modify the default values, etc..
+        // port hints and stuff is set up in the format constructor,
+        // since the host want that info before this instancve is created
+
+        for (int i=0; i<mDescriptor->getNumParams(); i++)
+        {
+          axParamInfo p = mDescriptor->getParamInfo(i);
+          switch(p.mType)
+          {
+            case pa_Par:
+              appendParameter( new axParameter( this,p.mName,"",p.mDef ) );
+              break;
+            case pa_Float:
+              appendParameter( new parFloat(    this,p.mName,"",p.mDef, p.mMin, p.mMax, p.mStep ) );
+              break;
+            case pa_Pow:
+              appendParameter( new parFloatPow( this,p.mName,"",p.mDef, p.mMin, p.mMax, p.mStep, p.mAux ) );
+              break;
+            case pa_Int:
+              appendParameter( new parInteger(  this,p.mName,"",p.mDef, p.mMin, p.mMax, p.mStr ) );
+              break;
+          }
+        }
+        setupParameters();
       }
 
     virtual ~axInstanceVst()
@@ -225,7 +237,7 @@ class axInstanceVst : public axInstance //, public axParameterListener
           // 08
           case effGetParamName:
             //mParameters[index]->doGetName((char*)ptr);
-            axStrcpy((char*)ptr,mDescriptor->getParamName(index));
+            axStrcpy((char*)ptr, mDescriptor->getParamInfo(index).mName );    // todo: cache
             break;
 
           // 09
