@@ -26,14 +26,14 @@
 
 //----------------------------------------------------------------------
 
-class axParameterInfo
-{
-  public:
-    virtual char* getName(int aIndex)  { return (char*)"param"; }
-    virtual float* getDefaultValue(void)    { return 0; }
-};
-
-typedef axArray<axParameterInfo*> axParameterInfos;
+//class axParameterInfo
+//{
+//  public:
+//    virtual char* getName(int aIndex)  { return (char*)"param"; }
+//    virtual float* getDefaultValue(void)    { return 0; }
+//};
+//
+//typedef axArray<axParameterInfo*> axParameterInfos;
 
 //----------------------------------------------------------------------
 

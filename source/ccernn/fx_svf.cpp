@@ -1,32 +1,11 @@
 #define AX_NOGUI
 
-//#include "format/axFormat.h"
 #include "base/axBase.h"
-#include "par/parFloat.h"
-#include "par/parInteger.h"
 #include "dsp/dspSVF.h"
 
 //----------------------------------------------------------------------
 
-char* str_params[] = { (char*)"mode", (char*)"freq", (char*)"bw" };
-
-//----------
-
-class myDescriptor : public AX_DESCRIPTOR
-{
-  public:
-    myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { }
-    virtual char*         getName(void)             { return (char*)"fx_svf"; }
-    virtual char*         getAuthor(void)           { return (char*)"ccernn"; }
-    virtual char*         getProduct(void)          { return (char*)"axonlib example plugin"; }
-    virtual unsigned int  getUniqueId(void)         { return AX_MAGIC + 0x0000; }
-    virtual int           getNumParams(void)        { return 3; }
-    virtual char*         getParamName(int aIndex)  { return str_params[aIndex]; }
-};
-
-//----------------------------------------------------------------------
-
-char* str_filter[] =
+char* str_flt[] =
 {
   (char*)"off",
   (char*)"lowpass",
@@ -37,7 +16,30 @@ char* str_filter[] =
 
 //----------
 
-//class myPlugin : public axFormat
+axParamInfo param_infos[] =
+{
+//  type           name    def,min,max,step,str,     aux
+  { pa_Int, (char*)"mode", 0,  0,  4,  1,   str_flt    },
+  { pa_Pow, (char*)"freq", 1,  0,  1,  0,   NULL,    2 },
+  { pa_Pow, (char*)"bw",   1,  0,  1,  0,   NULL,    2 }
+};
+
+//----------------------------------------------------------------------
+
+class myDescriptor : public AX_DESCRIPTOR
+{
+  public:
+    myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { }
+    virtual char*         getName(void)             { return (char*)"fx_svf"; }
+    virtual char*         getAuthor(void)           { return (char*)"ccernn"; }
+    virtual char*         getProduct(void)          { return (char*)"axonlib example plugin"; }
+    virtual unsigned int  getUniqueId(void)         { return AX_MAGIC + 0x0000; }
+    virtual int           getNumParams(void)        { return 3; }
+    virtual axParamInfo   getParamInfo(int aIndex)  { return param_infos[aIndex]; }
+};
+
+//----------------------------------------------------------------------
+
 class myInstance : public AX_INSTANCE
 {
   private:
@@ -45,19 +47,10 @@ class myInstance : public AX_INSTANCE
 
   public:
 
-    //myPlugin(axContext* aContext, int aFlags)
-    //: axFormat(aContext)
     myInstance(axBase* aBase) : AX_INSTANCE(aBase)
       {
-        //describe("fx_svf","ccernn","axonlib example",0,AX_MAGIC+0x1006);
-        //setupAudio(2,2);
-        appendParameter( new parInteger(  this,"_mode_", "", 0, 0,4, str_filter ) );
-        appendParameter( new parFloatPow( this,"_freq_", "", 1, 0,1,0, 2 ) );
-        appendParameter( new parFloatPow( this,"_bw_",   "", 1, 0,1,0, 2 ) );
-        setupParameters();
         svf1.setup(0,1,1);
         svf2.setup(0,1,1);
-
       }
 
     virtual void  doSetParameter(axParameter* aParameter)
@@ -88,7 +81,5 @@ class myInstance : public AX_INSTANCE
 
 };
 
-//AX_ENTRYPOINT(myPlugin)
-
-//AX_ENTRYPOINT(AX_PLATFORM,AX_INTERFACE,AX_FORMAT,myDescriptor,myInstance)
+//----------------------------------------------------------------------
 AX_MAIN(myDescriptor,myInstance)
