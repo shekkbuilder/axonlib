@@ -29,7 +29,7 @@ axParamInfo param_infos[] =
 class myDescriptor : public AX_DESCRIPTOR
 {
   public:
-    DESCRIPTOR_CONSTRUCT(myDescriptor);
+    DESCRIPTOR_CONSTRUCT(myDescriptor)
     DESCRIPTOR_NAME(fx_svf)
     DESCRIPTOR_AUTHOR(ccernn)
     DESCRIPTOR_PRODUCT(axonlib example plugin)
