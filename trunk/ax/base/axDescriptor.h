@@ -53,5 +53,23 @@ class axDescriptor
     virtual int           getNumProgs(void)         { return 0; }
 };
 
+#define DESCRIPTOR_CONSTRUCT(v) v(axBase* aBase) : AX_DESCRIPTOR(aBase) {}
+
+#define DESCRIPTOR_NAME(v)        virtual char*         getName(void)             { return (char*) #v ; }
+#define DESCRIPTOR_AUTHOR(v)      virtual char*         getAuthor(void)           { return (char*) #v ; }
+#define DESCRIPTOR_PRODUCT(v)     virtual char*         getProduct(void)          { return (char*) #v ; }
+#define DESCRIPTOR_VERSION(v)     virtual int           getVersion(void)          { return v; }
+#define DESCRIPTOR_UNIQUEID(v)    virtual unsigned int  getUniqueId(void)         { return v; }
+#define DESCRIPTOR_ISSYNTH(v)     virtual bool          isSynth(void)             { return v; }
+#define DESCRIPTOR_HASEDITOR(v)   virtual bool          hasEditor(void)           { return v; }
+#define DESCRIPTOR_EDITORRECT(v)  virtual axRect        getEditorRect(void)       { return v; }
+#define DESCRIPTOR_NUMINPUTS(v)   virtual int           getNumInputs(void)        { return v; }
+#define DESCRIPTOR_INPUTNAME(v)   virtual char*         getInputName(void)        { return (char*) #v ; }
+#define DESCRIPTOR_NUMOUTPUTS(v)  virtual int           getNumOutputs(void)       { return v; }
+#define DESCRIPTOR_OUTPUTNAME(v)  virtual char*         getOutputName(void)       { return (char*) #v ; }
+#define DESCRIPTOR_NUMPARAMS(v)   virtual int           getNumParams(void)        { return v; }
+#define DESCRIPTOR_PARAMINFOS(v)  virtual axParamInfo   getParamInfo(int aIndex)  { return v[aIndex]; }
+#define DESCRIPTOR_NUMPROGS(v)    virtual int           getNumProgs(void)         { return v; }
+
 //----------------------------------------------------------------------
 #endif

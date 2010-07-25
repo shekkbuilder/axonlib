@@ -20,7 +20,7 @@ axParamInfo param_infos[] =
 {
 //  type           name    def,min,max,step,str,     aux
   { pa_Int, (char*)"mode", 0,  0,  4,  1,   str_flt    },
-  { pa_Pow, (char*)"freq", 1,  0,  1,  0,   NULL,    2 },
+  { pa_Pow, (char*)"freq", 1,  0,  1,  0,   NULL,    3 },
   { pa_Pow, (char*)"bw",   1,  0,  1,  0,   NULL,    2 }
 };
 
@@ -29,13 +29,14 @@ axParamInfo param_infos[] =
 class myDescriptor : public AX_DESCRIPTOR
 {
   public:
-    myDescriptor(axBase* aBase) : AX_DESCRIPTOR(aBase) { }
-    virtual char*         getName(void)             { return (char*)"fx_svf"; }
-    virtual char*         getAuthor(void)           { return (char*)"ccernn"; }
-    virtual char*         getProduct(void)          { return (char*)"axonlib example plugin"; }
-    virtual unsigned int  getUniqueId(void)         { return AX_MAGIC + 0x0000; }
-    virtual int           getNumParams(void)        { return 3; }
-    virtual axParamInfo   getParamInfo(int aIndex)  { return param_infos[aIndex]; }
+    DESCRIPTOR_CONSTRUCT(myDescriptor);
+    DESCRIPTOR_NAME(fx_svf)
+    DESCRIPTOR_AUTHOR(ccernn)
+    DESCRIPTOR_PRODUCT(axonlib example plugin)
+    DESCRIPTOR_VERSION(0)
+    DESCRIPTOR_UNIQUEID(AX_MAGIC + 0x0000)
+    DESCRIPTOR_NUMPARAMS(3)
+    DESCRIPTOR_PARAMINFOS(param_infos)
 };
 
 //----------------------------------------------------------------------
