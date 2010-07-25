@@ -236,8 +236,8 @@ class axInstanceVst : public axInstance
 
           // 08
           case effGetParamName:
-            //mParameters[index]->doGetName((char*)ptr);
-            axStrcpy((char*)ptr, mDescriptor->getParamInfo(index).mName );    // todo: cache
+            mParameters[index]->doGetName((char*)ptr);
+            //axStrcpy((char*)ptr, mDescriptor->getParamInfo(index).mName );    // todo: cache
             break;
 
           // 09
