@@ -2,13 +2,11 @@
 #define axFormatLadspa_included
 //----------------------------------------------------------------------
 
-//TODO: proper ladspa sdk
-#include "../extern/ladspa.h"
+#include "../extern/ladspa.h" //TODO: proper ladspa sdk
 #include "core/axDefines.h"
 #include "par/parFloat.h"
 #include "par/parInteger.h"
 
-// this might be overkill?
 // inputs + outputs + parameters
 #define MAX_LADSPA_PORTS    256
 
@@ -21,9 +19,11 @@
 class axDescriptorLadspa : public axDescriptor
 {
   public:
-    axDescriptorLadspa(axBase* aBase) /* : axDescriptor(aBase) */ { /*trace("  axDescriptorLadspa.constructor");*/ }
-    virtual ~axDescriptorLadspa() { /*trace("  axDescriptorLadspa.destructor");*/ }
+    axDescriptorLadspa(axBase* aBase) {}
+    virtual ~axDescriptorLadspa() {}
 };
+
+//----------
 
 typedef axDescriptorLadspa AX_DESCRIPTOR;
 
@@ -107,7 +107,7 @@ class axInstanceLadspa : public axInstance
         unsigned int io = mNumInputs + mNumOutputs;
         if (Port<io) // audio in/out
         {
-          //TODO: don't hardcode ports!!!
+          //TODO: don't hardcode ports!!! (multichannel...)
           switch (Port)
           {
             case 0: mInputs[0]  = DataLocation; break;
@@ -120,6 +120,7 @@ class axInstanceLadspa : public axInstance
         {
           int po = Port - io;
           mParamPtr[po] = DataLocation;
+          // TODO: doSetParameter ?
         }
       }
 
@@ -167,7 +168,6 @@ class axInstanceLadspa : public axInstance
           ins[1]  = mInputs[1];
           outs[0] = mOutputs[0];
           outs[1] = mOutputs[1];
-          //trace(SampleCount);
           int num = SampleCount;
           while (--num >= 0)
           {
@@ -285,7 +285,7 @@ typedef axInstanceLadspa AX_INSTANCE;
 class axFormatLadspa : public axFormat
 {
 
-  friend const LADSPA_Descriptor* ladspa_descriptor(unsigned long index);// _AX_ASM_MAIN_SYMBOL
+  friend const LADSPA_Descriptor* ladspa_descriptor(unsigned long index);
 
   private:
     LADSPA_Descriptor ladspadescr;
@@ -410,89 +410,193 @@ class axFormatLadspa : public axFormat
 
   protected:
 
+    // temporary
+    // while setting up the port hints...
+
+/* Hint LADSPA_HINT_BOUNDED_BELOW indicates that the LowerBound field
+   of the LADSPA_PortRangeHint should be considered meaningful. The
+   value in this field should be considered the (inclusive) lower
+   bound of the valid range. If LADSPA_HINT_SAMPLE_RATE is also
+   specified then the value of LowerBound should be multiplied by the
+   sample rate. */
+
+/* Hint LADSPA_HINT_BOUNDED_ABOVE indicates that the UpperBound field
+   of the LADSPA_PortRangeHint should be considered meaningful. The
+   value in this field should be considered the (inclusive) upper
+   bound of the valid range. If LADSPA_HINT_SAMPLE_RATE is also
+   specified then the value of UpperBound should be multiplied by the
+   sample rate. */
+
+/* Hint LADSPA_HINT_TOGGLED indicates that the data item should be
+   considered a Boolean toggle. Data less than or equal to zero should
+   be considered `off' or `false,' and data above zero should be
+   considered `on' or `true.' LADSPA_HINT_TOGGLED may not be used in
+   conjunction with any other hint except LADSPA_HINT_DEFAULT_0 or
+   LADSPA_HINT_DEFAULT_1. */
+
+/* Hint LADSPA_HINT_SAMPLE_RATE indicates that any bounds specified
+   should be interpreted as multiples of the sample rate. For
+   instance, a frequency range from 0Hz to the Nyquist frequency (half
+   the sample rate) could be requested by this hint in conjunction
+   with LowerBound = 0 and UpperBound = 0.5. Hosts that support bounds
+   at all must support this hint to retain meaning. */
+
+/* Hint LADSPA_HINT_LOGARITHMIC indicates that it is likely that the
+   user will find it more intuitive to view values using a logarithmic
+   scale. This is particularly useful for frequencies and gains. */
+
+/* Hint LADSPA_HINT_INTEGER indicates that a user interface would
+   probably wish to provide a stepped control taking only integer
+   values. Any bounds set should be slightly wider than the actual
+   integer range required to avoid floating point rounding errors. For
+   instance, the integer set {0,1,2,3} might be described as [-0.1,
+   3.1]. */
+
+   //
+
+/* The various LADSPA_HINT_HAS_DEFAULT_* hints indicate a `normal'
+   value for the port that is sensible as a default. For instance,
+   this value is suitable for use as an initial value in a user
+   interface or as a value the host might assign to a control port
+   when the user has not provided one. Defaults are encoded using a
+   mask so only one default may be specified for a port. Some of the
+   hints make use of lower and upper bounds, in which case the
+   relevant bound or bounds must be available and
+   LADSPA_HINT_SAMPLE_RATE must be applied as usual. The resulting
+   default must be rounded if LADSPA_HINT_INTEGER is present. Default
+   values were introduced in LADSPA v1.1. */
+
+/* LADSPA_HINT_DEFAULT_NONE indicates that no default is provided. */
+
+/* LADSPA_HINT_DEFAULT_MINIMUM indicates that the suggested lower bound for the
+   port should be used. */
+
+/* LADSPA_HINT_DEFAULT_LOW indicates that a low value between the suggested
+   lower and upper bounds should be chosen. For ports with
+   LADSPA_HINT_LOGARITHMIC, this should be exp(log(lower) * 0.75 +
+   log(upper) * 0.25). Otherwise, this should be (lower * 0.75 + upper
+   * 0.25). */
+
+/* LADSPA_HINT_DEFAULT_MIDDLE indicates that a middle value between the
+   suggested lower and upper bounds should be chosen. For ports with
+   LADSPA_HINT_LOGARITHMIC, this should be exp(log(lower) * 0.5 +
+   log(upper) * 0.5). Otherwise, this should be (lower * 0.5 + upper *
+   0.5). */
+
+/* LADSPA_HINT_DEFAULT_HIGH indicates that a high value between the suggested
+   lower and upper bounds should be chosen. For ports with
+   LADSPA_HINT_LOGARITHMIC, this should be exp(log(lower) * 0.25 +
+   log(upper) * 0.75). Otherwise, this should be (lower * 0.25 + upper
+   * 0.75). */
+
+/* LADSPA_HINT_DEFAULT_MAXIMUM indicates that the suggested upper bound for the
+   port should be used. */
+
+/* LADSPA_HINT_DEFAULT_0 indicates that the number 0 should be used. Note
+   that this default may be used in conjunction with
+   LADSPA_HINT_TOGGLED. */
+
+/* LADSPA_HINT_DEFAULT_1 indicates that the number 1 should be used. Note
+   that this default may be used in conjunction with
+   LADSPA_HINT_TOGGLED. */
+
+/* LADSPA_HINT_DEFAULT_100 indicates that the number 100 should be used. */
+
+/* LADSPA_HINT_DEFAULT_440 indicates that the Hz frequency of `concert A'
+   should be used. This will be 440 unless the host uses an unusual
+   tuning convention, in which case it may be within a few Hz. */
+
     virtual void* entrypoint(void* ptr)
       {
         trace("axFormatLadspa.entrypoint");
         mDescriptor = mBase->getDescriptor();
         int i;
         int index = 0;
+
+        // audio inputs
+
         for (i=0; i<mDescriptor->getNumInputs(); i++)
         {
           mPortNames[index]               = mDescriptor->getInputName(i);
           mPortDesc[index]                = LADSPA_PORT_AUDIO | LADSPA_PORT_INPUT;
           mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_NONE;
-          mPortHint[index].LowerBound     = 0;
-          mPortHint[index].UpperBound     = 1;
+          mPortHint[index].LowerBound     = -1;
+          mPortHint[index].UpperBound     =  1;
           index++;
         }
+
+        // audio outputs
+
         for (i=0; i<mDescriptor->getNumOutputs(); i++)
         {
           mPortNames[index]               = mDescriptor->getOutputName(i);
           mPortDesc[index]                = LADSPA_PORT_AUDIO | LADSPA_PORT_OUTPUT;
           mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_NONE;
-          mPortHint[index].LowerBound     = 0;
-          mPortHint[index].UpperBound     = 1;
+          mPortHint[index].LowerBound     = -1;
+          mPortHint[index].UpperBound     =  1;
           index++;
         }
+
+        // parameters
+
         for (i=0; i<mDescriptor->getNumParams();  i++)
         {
           axParamInfo paraminfo = mDescriptor->getParamInfo(i);
-          mPortNames[index] = paraminfo.mName;//mDescriptor->getParamName(i);
+          mPortNames[index] = paraminfo.mName;
           mPortDesc[index]  = LADSPA_PORT_CONTROL | LADSPA_PORT_INPUT;
-          // we don't  have any mParameters here!
-//----------
-          // lii: get the user value
-          float pval = paraminfo.mDef;    // !!!!
-          if (pval < 0.33f)
-          {
-            // lii: override to 0.25 and set a hint for def. logaritmic low
-            //mParameters[i]->setValue(0.25f);
-            mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_LOW;
-          }
-          else if (pval > 0.66f)
-          {
-            // lii: override to 0.75 and set a hint for def. logaritmic high
-            //mParameters[i]->setValue(0.75f);
-            mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_HIGH;
-          }
+
+          LADSPA_PortRangeHintDescriptor hint = LADSPA_HINT_DEFAULT_NONE;
+          // default value
+          float val   = paraminfo.mDef - paraminfo.mMin;
+               if (val == paraminfo.mMin ) mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_MINIMUM;
+          else if (val == paraminfo.mMax ) mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_MAXIMUM;
+          else if (val == 0 )   mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_0;
+          else if (val == 1 )   mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_1;
+          else if (val == 100 ) mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_100;
+          else if (val == 440 ) mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_440;
           else
           {
-            // lii: override to 0.5 and set a hint to def. middle
-            //mParameters[i]->setValue(0.5f);
-            mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_MIDDLE;
+            float sval  = (paraminfo.mDef-paraminfo.mMin) / (paraminfo.mMax-paraminfo.mMin);
+            if (sval < 0.25) mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_LOW;
+            else if (sval > 0.75) mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_HIGH;
+            else mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_MIDDLE;
           }
-//----------
-          //mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_0;
-          // lii: add hints for limits
-          mPortHint[index].HintDescriptor |= LADSPA_HINT_BOUNDED_BELOW |  LADSPA_HINT_BOUNDED_ABOVE;
-          mPortHint[index].LowerBound      = 0;
-          mPortHint[index].UpperBound      = 1;
+
+          if (paraminfo.mType==pa_Pow) hint |= LADSPA_HINT_LOGARITHMIC;
+
+          if (paraminfo.mType==pa_Int)
+          {
+            if (paraminfo.mMin==0 && paraminfo.mMax==1) hint |= LADSPA_HINT_TOGGLED;
+            else hint |= LADSPA_HINT_INTEGER;
+          }
+
+          mPortHint[index].HintDescriptor = hint | LADSPA_HINT_BOUNDED_BELOW |  LADSPA_HINT_BOUNDED_ABOVE;
+          mPortHint[index].LowerBound = paraminfo.mMin;
+          mPortHint[index].UpperBound = paraminfo.mMax;
+
           index++;
         }
-//
-        //mDescriptor.PortCount       = mNumPorts;
-        //mDescriptor.PortDescriptors = mPortDesc;
-        //mDescriptor.PortNames       = (const char * const *)mPortNames;
-        //mDescriptor.PortRangeHints  = mPortHint;
+
+        // descriptor
 
         axMemset(&ladspadescr,0,sizeof(ladspadescr));
-        ladspadescr.UniqueID            = 0;//mUniqueId;
-        ladspadescr.Label               = mDescriptor->getName();//(char*)"label";
+        ladspadescr.UniqueID            = mDescriptor->getUniqueId();
+        ladspadescr.Label               = mDescriptor->getName();
         ladspadescr.Properties          = LADSPA_PROPERTY_REALTIME | LADSPA_PROPERTY_HARD_RT_CAPABLE;
-        ladspadescr.Name                = mDescriptor->getName();// (char*)"name";
-        ladspadescr.Maker               = mDescriptor->getAuthor();//(char*)"maker";
-        ladspadescr.Copyright           = mDescriptor->getProduct();//(char*)"copyright";
+        ladspadescr.Name                = mDescriptor->getName();
+        ladspadescr.Maker               = mDescriptor->getAuthor();
+        ladspadescr.Copyright           = mDescriptor->getProduct();
         ladspadescr.PortCount           = mDescriptor->getNumInputs() + mDescriptor->getNumOutputs() + mDescriptor->getNumParams();
         ladspadescr.PortDescriptors     = mPortDesc;
-        ladspadescr.PortNames           = mPortNames;//g_stereo_ports;
+        ladspadescr.PortNames           = mPortNames;
         ladspadescr.PortRangeHints      = mPortHint;
         ladspadescr.ImplementationData  = this;
         ladspadescr.instantiate         = lad_instantiate_callback;
         ladspadescr.connect_port        = lad_connect_port_callback;
         ladspadescr.activate            = lad_activate_callback;
         ladspadescr.run                 = lad_run_callback;
-        ladspadescr.run_adding          = NULL;//lad_run_adding_callback;            // ala process, optional
-        ladspadescr.set_run_adding_gain = NULL;//lad_set_run_adding_gain_callback;   // if above
+        ladspadescr.run_adding          = NULL; //lad_run_adding_callback;
+        ladspadescr.set_run_adding_gain = NULL; //lad_set_run_adding_gain_callback;
         ladspadescr.deactivate          = lad_deactivate_callback;
         ladspadescr.cleanup             = lad_cleanup_callback;
         return (void*)&ladspadescr;
@@ -504,7 +608,7 @@ class axFormatLadspa : public axFormat
 
   public:
 
-    axFormatLadspa(axBase* aBase)// : axFormat(aBase)
+    axFormatLadspa(axBase* aBase)
       {
         trace("axFormatLadspa.constructor");
         mBase = aBase;
@@ -553,13 +657,3 @@ const LADSPA_Descriptor* ladspa_descriptor(unsigned long Index)               \
 
 //----------------------------------------------------------------------
 #endif
-
-
-/*
-
-if (index>0)--
-ladspa can have multiple plugins in one .so file
-host will call this function until we return NULL.
-we only want AX_DEBUG_SETUP once
-
-*/
