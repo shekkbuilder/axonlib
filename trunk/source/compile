@@ -105,6 +105,7 @@ else
   res="" 
   v="no"
   suffix=""
+  dbgsx=""
   ts=""
   nogui=""
   noguisx=""
@@ -209,9 +210,9 @@ else
         fmt_ext=".so"
         if [ "$nogui" == "yes" ]; 
         then
-          tgt="-DAX_NOGUI -shared"
+          tgt="-DAX_NOGUI -shared -fPIC"
         else
-          tgt="-lX11 -lXrender -lpthread -shared"
+          tgt="-lX11 -lXrender -lpthread -shared -fPIC"
         fi        
       fi
     fi
@@ -240,14 +241,16 @@ else
     # ------------------------- enable lib debug
     if [ "$2" == "-d" ] || [ "$3" == "-d" ] || [ "$4" == "-d" ] || [ "$5" == "-d" ] || [ "$6" == "-d" ] || [ "$7" == "-d" ] || [ "$8" == "-d" ] || [ "$9" == "-d" ];
     then
+      dbgsx=-debug
       libdebug="-DAX_DEBUG"
       libdebugstatus="ON"
     fi
     # ------------------------- enable gcc debug
     if [ "$2" == "-g" ] || [ "$3" == "-g" ] || [ "$4" == "-g" ] || [ "$5" == "-g" ] || [ "$6" == "-g" ] || [ "$7" == "-g" ] || [ "$8" == "-g" ] || [ "$9" == "-g" ];
     then
+      dbgsx=-debug
       gccdebug="-DDEBUG -gstabs"
-      linker=""
+      linker=""      
       gccdebugstatus="ON"
     fi
         
@@ -335,7 +338,7 @@ else
       fi
     fi
     
-    target_s_ext=$file$suffix$noguisx$ts$fmt_ext
+    target_s_ext=$file$suffix$noguisx$dbgsx$ts$fmt_ext
     
     # ------------------------- delete old file if exist
     if [ -e "$target_s_ext" ];

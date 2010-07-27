@@ -319,21 +319,23 @@ typedef char                  __may_alias char_a;
 typedef unsigned char         __may_alias uchar_a;
 
 // cdecl, stdcall
-#undef  __cdecl
-#define __cdecl     __attribute__((cdecl))
-#undef  __stdcall
-#define __stdcall   __attribute__((stdcall))
 
-// dllexport, dllimport
+// dllexport, dllimport, cdecl, stdcall
 #undef  __dllexport
 #undef  __dllimport
+#undef  __stdcall
+#undef  __cdecl
 #ifdef AX_WIN32
   #define __dllexport __attribute__ ((dllexport))
   #define __dllimport __attribute__ ((dllimport))
+  #define __cdecl     __attribute__ ((cdecl))
+  #define __stdcall   __attribute__ ((stdcall))
 #endif
 #ifdef AX_LINUX
   #define __dllexport
   #define __dllimport
+  #define __cdecl
+  #define __stdcall
 #endif
 
 // externc
