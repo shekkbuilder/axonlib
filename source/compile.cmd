@@ -43,6 +43,7 @@ set linker=-fstack-check -fdata-sections -ffunction-sections -Wl,-gc-sections -s
 set dstatus=OFF
 set gccdstatus=OFF
 set noguisx=
+set dbgsuffix=
 set nmv=
 set dbg=
 set res=
@@ -184,12 +185,14 @@ goto :exetarget
 
 :: set lib debug
 :setlibdebug
+set dbgsuffix=-debug
 set dbg=-DAX_DEBUG
 set dstatus=ON
 goto getgccdebug
 
 :: set gcc debug
 :setgccdebug
+set dbgsuffix=-debug
 set gccdbg=-DDEBUG -gstabs
 set gccdstatus=ON
 set resfile=
@@ -276,7 +279,7 @@ if not [%usets%]==yes set td1=
 :: set target
 :settarget
 call set target=%%infile:%srcext%=%%
-set target=%target%%suffix%%noguisx%%td1%%ext%
+set target=%target%%suffix%%noguisx%%dbgsuffix%%td1%%ext%
 set cmdpath=%~p0
 
 :: delete old target
