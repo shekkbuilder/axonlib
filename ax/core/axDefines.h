@@ -143,7 +143,6 @@
 #define REC         axRect
 #define STR         axString
 #define COL         axColor
-#define AX_PTRCAST  int // same size on 32/64
 
 // limits
 // -----------------------------------------------------------------------------
@@ -182,6 +181,7 @@
   #define ax_uint32 unsigned long
   #define ax_int64  long long
   #define ax_uint64 unsigned long long
+  #define ax_intptr ax_uint32
 
   #define AX_LONG_MAX       2147483647L
   #define AX_ULONG_MAX      8589934591UL
@@ -191,8 +191,9 @@
 
   #define ax_int32  int
   #define ax_uint32 unsigned int
-  #define ax_int64  long
-  #define ax_uint64 unsigned long
+  #define ax_int64  long long
+  #define ax_uint64 unsigned long long
+  #define ax_intptr ax_uint64
 
   #define AX_LONG_MAX       9223372036854775807L
   #define AX_ULONG_MAX      18446744073709551615UL

@@ -113,7 +113,7 @@ class axCanvasLinux : public axCanvasBase
     //--------------------------------------------------
 
     //virtual int getHandle(void) { return (int)mDrawable; }
-    virtual void setPicture(int pic)
+    virtual void setPicture(long pic)
       {
         #ifdef AX_ALPHA
         mPicture = pic;
@@ -390,7 +390,7 @@ class axCanvasLinux : public axCanvasBase
     virtual void drawSurface(axSurfaceBase* aSurface, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
         //XCopyArea(mDisplay,aImage->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
-        XCopyArea(mDisplay,aSurface->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
+        XCopyArea(mDisplay,(Drawable)aSurface->getHandle(),mDrawable,mGC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY); // mWinHandle = dst
       }
 
     //void
@@ -532,7 +532,7 @@ class axCanvasLinux : public axCanvasBase
         #ifdef AX_ALPHA
           int op = PictOpOver;
           //XRenderComposite(mDisplay,op,aImage->getPicture(),None,mPicture,aSrcX,aSrcY,0,0,aX,aY,aSrcW,aSrcH);
-          XRenderComposite(mDisplay,op,aSurface->getPicture(),None,mPicture,aSrcX,aSrcY,0,0,aX,aY,aSrcW,aSrcH);
+          XRenderComposite(mDisplay,op,(Picture)aSurface->getPicture(),None,mPicture,aSrcX,aSrcY,0,0,aX,aY,aSrcW,aSrcH);
         //#else
         //  drawImage(aImage,aX,aY,aSrcX,aSrcY,aSrcW,aSrcH);
         #endif
@@ -560,7 +560,7 @@ class axCanvasLinux : public axCanvasBase
               }
             };
             //Picture pic = aImage->getPicture();
-            Picture pic = aSurface->getPicture();
+            Picture pic = (Picture)aSurface->getPicture();
             XRenderSetPictureTransform(mDisplay, pic, &xform );
             int op = PictOpOver;
             // hmmm.. is srcx, srcy transformed by the matrix too?

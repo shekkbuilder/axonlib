@@ -640,12 +640,14 @@ typedef axFormatLadspa AX_FORMAT;
 //
 //----------------------------------------------------------------------
 
+#include <stdio.h> // printf
+
 #define AX_ENTRYPOINT(_PL,_IF,_FO,_D,_I)                                      \
                                                                               \
 __externc __dllexport                                                         \
 const LADSPA_Descriptor* ladspa_descriptor(unsigned long Index)               \
 {                                                                             \
-  printf("ladspa_descriptor, Index: %i\n",(int)Index); \
+  printf("ladspa_descriptor, Index: %lu\n", Index);                           \
   if (Index>0) return NULL;                                                   \
   _AX_DEBUG_SETUP                                                             \
   axBaseImpl<_PL,_IF,_FO,_D,_I>* base = new axBaseImpl<_PL,_IF,_FO,_D,_I>();  \

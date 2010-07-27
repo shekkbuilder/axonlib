@@ -108,8 +108,8 @@ class axSurfaceLinux : public axSurfaceBase
     //----------
 
     // called from axCanvas.blit
-    virtual int getHandle(void)  { return mPixmap; }
-    virtual int getPicture(void) { return mPicture; }
+    virtual void* getHandle(void)  { return (void*)mPixmap; }
+    virtual long getPicture(void)  { return mPicture; }
 
     //----------
 

@@ -65,7 +65,7 @@ class axDebugConsole
           DrawMenuBar(hCw);
 	      }
         // _O_TEXT = 0x4000
-        long axHcrt = _open_osfhandle((long)GetStdHandle(STD_OUTPUT_HANDLE),
+        ax_intptr axHcrt = _open_osfhandle((ax_intptr)GetStdHandle(STD_OUTPUT_HANDLE),
                         0x4000);
         if (axHcrt)
         {
@@ -84,7 +84,7 @@ class axDebugConsole
     {
       FreeConsole();
       if (axSfile)
-        close((long)axSfile);
+        close((ax_intptr)axSfile);
     }
 
 };
