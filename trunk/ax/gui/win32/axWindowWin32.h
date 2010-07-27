@@ -27,22 +27,23 @@
 //----------------------------------------------------------------------
 
 // mouse cursor shapes
-#define cu_Arrow           ((int)IDC_ARROW)
-#define cu_ArrowUp         ((int)IDC_UPARROW)
+// LoadCursor accepts LPCTSTR / char*
+#define cu_Arrow           ((char*)IDC_ARROW)
+#define cu_ArrowUp         ((char*)IDC_UPARROW)
 #define cu_ArrowDown       cu_Arrow
 #define cu_ArrowLeft       cu_Arrow
 #define cu_ArrowRight      cu_Arrow
-#define cu_ArrowUpDown     ((int)IDC_SIZENS)
-#define cu_ArrowLeftRight  ((int)IDC_SIZEWE)
-#define cu_ArrowDiagLeft   ((int)IDC_SIZENESW)
-#define cu_ArrowDiagRight  ((int)IDC_SIZENWSE)
-#define cu_Move            ((int)IDC_SIZEALL)
-#define cu_Wait            ((int)IDC_WAIT)
-#define cu_ArrowWait       ((int)IDC_APPSTARTING)
-#define cu_Hand            ((int)IDC_HAND)
+#define cu_ArrowUpDown     ((char*)IDC_SIZENS)
+#define cu_ArrowLeftRight  ((char*)IDC_SIZEWE)
+#define cu_ArrowDiagLeft   ((char*)IDC_SIZENESW)
+#define cu_ArrowDiagRight  ((char*)IDC_SIZENWSE)
+#define cu_Move            ((char*)IDC_SIZEALL)
+#define cu_Wait            ((char*)IDC_WAIT)
+#define cu_ArrowWait       ((char*)IDC_APPSTARTING)
+#define cu_Hand            ((char*)IDC_HAND)
 //#define cu_Finger          cu_Arrow
-#define cu_Finger          ((int)IDC_HAND)
-#define cu_Cross           ((int)IDC_CROSS)
+#define cu_Finger          ((char*)IDC_HAND)
+#define cu_Cross           ((char*)IDC_CROSS)
 #define cu_Pencil          cu_Arrow
 #define cu_Plus            cu_Arrow
 #define cu_Question        cu_Arrow
@@ -144,8 +145,14 @@ class axWindowWin32 : public axWindowBase
         mAdjustHeight = (rc.bottom - rc.top + 1) - mRect.h;
 
         // ---
-
-        SetWindowLong(mWindow,GWL_USERDATA,(int)this);
+        // vista / gcc / x64:
+        // GWPL_USERDATA undefined (deprecated)
+                
+        #ifndef GWL_USERDATA
+          #define GWL_USERDATA -21
+        #endif 
+        SetWindowLong(mWindow,GWL_USERDATA,(LONG_PTR)this);
+        
         //DragAcceptFiles(mWindow,true);
         mCanvas = createCanvas();
         if (aWinFlags & AX_WIN_BUFFERED) mSurface = createSurface(mRect.w,mRect.h,32);

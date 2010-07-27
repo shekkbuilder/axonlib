@@ -126,7 +126,7 @@ class axBitmapWin32 : public axBitmapBase
 
     //----------
 
-    virtual int getHandle(void) { return (int)mBitmap; }
+    virtual void* getHandle(void) { return (void*)mBitmap; }
     virtual char* getBuffer(void) { return (char*)mBuffer; }
 
 

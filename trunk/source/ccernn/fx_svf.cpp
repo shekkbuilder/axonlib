@@ -19,7 +19,7 @@ char* str_flt[] =
 axParamInfo param_infos[] =
 {
 //  type           name    def,min,max,step,str,     aux
-  { pa_Int, (char*)"mode", 0,  0,  4,  1,   str_flt    },
+  { pa_Int, (char*)"mode", 0,  0,  4,  1,   str_flt, 0 },
   { pa_Pow, (char*)"freq", 1,  0,  1,  0,   NULL,    3 },
   { pa_Pow, (char*)"bw",   1,  0,  1,  0,   NULL,    2 }
 };

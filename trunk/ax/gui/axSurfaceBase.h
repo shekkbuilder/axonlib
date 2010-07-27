@@ -47,8 +47,8 @@ class axSurfaceBase// : public axImage
     virtual axCanvas* getCanvas(void) { return NULL; }
 
     // was axImage.h
-    virtual int getHandle(void)   { return  0; }
-    virtual int getPicture(void)  { return 0; }
+    virtual void* getHandle(void)   { return  0; }
+    virtual void* getPicture(void)  { return 0; }
 
 
 };

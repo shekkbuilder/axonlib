@@ -53,7 +53,7 @@ class axCanvasBase
       {
       }
 
-    virtual int getHandle(void) { return 0; }
+    virtual void* getHandle(void) { return 0; }
 
     // get / set
 
