@@ -85,7 +85,7 @@ class axBitmapBase
 
     // overloaded by w32/x11
 
-    virtual int   getHandle(void) { return 0; }
+    virtual void* getHandle(void) { return 0; }
     virtual void  prepare(void) {}
 
 };

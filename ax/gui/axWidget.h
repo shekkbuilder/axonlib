@@ -95,7 +95,7 @@ class axWidgetListener
   public:
     virtual void onChange(axWidget* aWidget) {}
     virtual void onRedraw(axWidget* aWidget) {}
-    virtual void onCursor(int aCursor=DEF_PENWIDTH) {}
+    virtual void onCursor(void* aCursor=DEF_PENWIDTH) {}
     virtual void onHint(axString aHint) {}
     virtual void onSize(axWidget* aWidget, int aDeltaX, int aDeltaY, int aMode) {}
     virtual void onModal(bool aModal, axWidget* aWidget) {}
@@ -919,7 +919,7 @@ class axWidget : public axWidgetListener
 
     //----------
 
-    virtual void onCursor(int aCursor/*=DEF_PENWIDTH*/)
+    virtual void onCursor(void* aCursor/*=DEF_PENWIDTH*/)
       {
         mListener->onCursor(aCursor);
       }

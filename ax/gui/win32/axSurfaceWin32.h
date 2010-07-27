@@ -77,8 +77,8 @@ class axSurfaceWin32 : public axSurfaceBase
     //----------
 
     // called by: axCanvasLinux.drawImage
-    virtual int getHandle(void) { return (int)mCanvas->getHandle(); }
-    virtual int getBitmap(void) { return (int)mBitmap; }
+    virtual void* getHandle(void) { return (void*)mCanvas->getHandle(); }
+    virtual void* getBitmap(void) { return (void*)mBitmap; }
     virtual axCanvas* getCanvas(void) { return mCanvas; }
 
     virtual axCanvas* createCanvas(void)

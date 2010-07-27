@@ -140,7 +140,7 @@ class axCanvasWin32 : public axCanvasBase
 
     //----------
 
-    virtual int getHandle(void) { return (int)mDC; }
+    virtual void* getHandle(void) { return (void*)mDC; }
 
     //--------------------------------------------------
     //

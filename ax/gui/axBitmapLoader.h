@@ -65,15 +65,15 @@ class axBitmapLoader
 
     //--------------------------------------------------
 
-    long decodePng(unsigned char* buffer, unsigned int buffersize)
+    void* decodePng(unsigned char* buffer, unsigned int buffersize)
       {
         //trace("decodePng(), " << (void*)&buffer << ", " << buffersize);
-        long res = 0;
+        void* res = 0;
         //if (mPngInfo) axFree(mPngInfo);
         axPngInfo* png = axPngDecode(buffer, buffersize);
         //trace("decoded. png =" << (int)png);
         //trace("png error = " << PNG_error);
-        res = (long)png;
+        res = (void*)png;
         mWidth  = png->width;
         mHeight = png->height;
         //mImage  = mPngInfo->image->data;
