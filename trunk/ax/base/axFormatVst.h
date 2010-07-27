@@ -104,7 +104,7 @@ class axInstanceVst : public axInstance
         void* hostptr = mBase->getFormat()->getHostPtr();
         audioMaster = *(audioMasterCallback_a*)(&hostptr);
         aeffect     = (AEffect*)mBase->getFormat()->getUserPtr();
-        trace("audioMaster: " << (long)audioMaster);
+        trace("audioMaster: " << (ax_intptr)audioMaster);
         //trace("aeffect: "     << (int)aeffect);
         /*trace("axInstanceVst.constructor");*/
         mFlags                    = 0;

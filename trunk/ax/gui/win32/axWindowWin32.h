@@ -27,31 +27,31 @@
 //----------------------------------------------------------------------
 
 // mouse cursor shapes
-// LoadCursor accepts LPCTSTR / char*
-#define cu_Arrow           ((char*)IDC_ARROW)
-#define cu_ArrowUp         ((char*)IDC_UPARROW)
+// we need an integer with max length here - ax_intptr
+#define cu_Arrow           ((ax_intptr)IDC_ARROW)
+#define cu_ArrowUp         ((ax_intptr)IDC_UPARROW)
 #define cu_ArrowDown       cu_Arrow
 #define cu_ArrowLeft       cu_Arrow
 #define cu_ArrowRight      cu_Arrow
-#define cu_ArrowUpDown     ((char*)IDC_SIZENS)
-#define cu_ArrowLeftRight  ((char*)IDC_SIZEWE)
-#define cu_ArrowDiagLeft   ((char*)IDC_SIZENESW)
-#define cu_ArrowDiagRight  ((char*)IDC_SIZENWSE)
-#define cu_Move            ((char*)IDC_SIZEALL)
-#define cu_Wait            ((char*)IDC_WAIT)
-#define cu_ArrowWait       ((char*)IDC_APPSTARTING)
-#define cu_Hand            ((char*)IDC_HAND)
+#define cu_ArrowUpDown     ((ax_intptr)IDC_SIZENS)
+#define cu_ArrowLeftRight  ((ax_intptr)IDC_SIZEWE)
+#define cu_ArrowDiagLeft   ((ax_intptr)IDC_SIZENESW)
+#define cu_ArrowDiagRight  ((ax_intptr)IDC_SIZENWSE)
+#define cu_Move            ((ax_intptr)IDC_SIZEALL)
+#define cu_Wait            ((ax_intptr)IDC_WAIT)
+#define cu_ArrowWait       ((ax_intptr)IDC_APPSTARTING)
+#define cu_Hand            ((ax_intptr)IDC_HAND)
 //#define cu_Finger          cu_Arrow
-#define cu_Finger          ((char*)IDC_HAND)
-#define cu_Cross           ((char*)IDC_CROSS)
+#define cu_Finger          ((ax_intptr)IDC_HAND)
+#define cu_Cross           ((ax_intptr)IDC_CROSS)
 #define cu_Pencil          cu_Arrow
 #define cu_Plus            cu_Arrow
 #define cu_Question        cu_Arrow
 #define cu_Ibeam           cu_Arrow
 
 
-
-#define DEF_CURSOR    cu_Arrow
+                      
+#define DEF_CURSOR    (cu_Arrow)
 
 // #DEFINE idc_arrow       (32512)
 // #DEFINE idc_ibeam       (32513)
