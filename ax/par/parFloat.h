@@ -129,11 +129,12 @@ class parFloatPow : public parFloat
 {
   private:
     float mPower;
+
   public:
     parFloatPow(axParameterListener* aListener, const axString aName,
-              const axString aLabel="", const float aValue=0,
-              const float aMin=0, const float aMax=1, const float aStep=0,
-              const float aPower=1.f)
+                const axString aLabel="", const float aValue=0,
+                const float aMin=0, const float aMax=1, const float aStep=0,
+                const float aPower=1.f)
     : parFloat(aListener,aName,aLabel,aValue,aMin,aMax,aStep)
       {
         mPower = aPower;
@@ -141,58 +142,47 @@ class parFloatPow : public parFloat
     virtual float getValue(void)
       {
         const float v = parFloat::getValue();
-
-  // TODO: check?
-  if (v>0)
-  {
-        if (mPower != 1.f)
-          return axPowf(v, mPower);
+        // TODO: check?
+        if (v>0)
+        {
+          if (mPower != 1.f)
+            return axPowf(v, mPower);
+          else
+            return v;
+        }
         else
-          return v;
+          return 0;
+      }
+};
 
-  } else return 0;
 
+// user can pass a function pointer 
+class parFloatCustom : public parFloat
+{
+  private:
+    // local function pointer
+    float (* mPtr)(float);
+    
+  public:
+    parFloatCustom(axParameterListener* aListener, const axString aName,
+                    const axString aLabel="", const float aValue=0,
+                    const float aMin=0, const float aMax=1, const float aStep=0,
+                    float (* aPtr)(float) = NULL)
+    : parFloat(aListener,aName,aLabel,aValue,aMin,aMax,aStep)
+      {
+        mPtr = aPtr;
+      }
+    
+    virtual float getValue(void)
+      {
+        // check if no function pointer passed
+        if (mPtr == NULL)
+          return parFloat::getValue();
+        return mPtr(parFloat::getValue());
       }
 };
 
 //----------------------------------------------------------------------
 #endif
-
-/*
-
-//----------------------------------------------------------------------
-
-class parFloat2 : public parFloat
-{
-  public:
-    parFloat2(axParameterListener* aListener, axString aName, axString aLabel="",
-              float aValue=0, float aMin=0, float aMax=1, float aStep=0)
-    : parFloat(aListener,aName,aLabel,aValue,aMin,aMax,aStep)
-      {
-      }
-    virtual float getValue(void)
-      {
-        float v = parFloat::getValue();
-        return v*v;
-      }
-};
-
-//----------------------------------------------------------------------
-
-class parFloat3 : public parFloat
-{
-  public:
-    parFloat3(axParameterListener* aListener, axString aName, axString aLabel="",
-              float aValue=0, float aMin=0, float aMax=1, float aStep=0)
-    : parFloat(aListener,aName,aLabel,aValue,aMin,aMax,aStep)
-      {
-      }
-    virtual float getValue(void)
-      {
-        float v = parFloat::getValue();
-        return v*v*v;
-      }
-};
-*/
 
 
