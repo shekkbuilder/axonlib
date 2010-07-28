@@ -7,6 +7,7 @@
 #define pa_Float  1   // parFloat
 #define pa_Pow    2   // parFloatPow
 #define pa_Int    3   // parInteger
+#define pa_Ctm    4   // parFloatCustom
 
 //----------
 
@@ -20,6 +21,7 @@ struct axParamInfo
   float   mStep;  // stepsize (0 for no stepping)
   char**  mStr;   // default value
   float   mAux;   // auxilliary value.. parFloatPow, ...
+  float  (*mPtr)(float);  // function pointer
 };
 
 //----------------------------------------------------------------------

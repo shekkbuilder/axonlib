@@ -15,13 +15,21 @@ char* str_flt[] =
 };
 
 //----------
+// test
+#include "core/axMath.h"
+float test_pow2(const float x)
+{
+  return axPowf(x,4.f);
+}
+// test
+//----------
 
 axParamInfo param_infos[] =
 {
-//  type           name    def,min,max,step,str,     aux
-  { pa_Int, (char*)"mode", 0,  0,  4,  1,   str_flt, 0 },
-  { pa_Pow, (char*)"freq", 1,  0,  1,  0,   NULL,    3 },
-  { pa_Pow, (char*)"bw",   1,  0,  1,  0,   NULL,    2 }
+//  type           name    def,min,max,step,str,    aux, fptr
+  { pa_Int, (char*)"mode", 0,  0,  4,  1,   str_flt, 0, NULL },
+  { pa_Pow, (char*)"freq", 1,  0,  1,  0,   NULL,    1, NULL },
+  { pa_Ctm, (char*)"bw",   1,  0,  1,  0,   NULL,    0, test_pow2 } // test
 };
 
 //----------------------------------------------------------------------

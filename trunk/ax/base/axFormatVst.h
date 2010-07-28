@@ -155,6 +155,9 @@ class axInstanceVst : public axInstance
             case pa_Int:
               appendParameter( new parInteger(  this,p.mName,"",p.mDef, p.mMin, p.mMax, p.mStr ) );
               break;
+            case pa_Ctm:
+              appendParameter( new parFloatCustom( this,p.mName,"",p.mDef, p.mMin, p.mMax, p.mStep, p.mPtr ) );
+              break;
           }
         }
         setupParameters();

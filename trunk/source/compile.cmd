@@ -45,12 +45,14 @@ set gccdstatus=OFF
 set noguisx=
 set dbgsuffix=
 set nmv=
+set nogui=
 set dbg=
 set res=
 set gccdbg=
 set cmdline=
 set v=
 set suffix=
+set platform=
 set ext_params=
 set ext_p2=
 set ext_p3=
@@ -110,8 +112,9 @@ if [%6]==[-nogui] set nogui=yes
 if [%7]==[-nogui] set nogui=yes
 if [%8]==[-nogui] set nogui=yes
 if [%9]==[-nogui] set nogui=yes
-if [%nogui%]==[yes] set tgtlib=-DAX_NOGUI && set noguisx=-nogui
+if not [%nogui%]==[] set tgtlib=-DAX_NOGUI && set noguisx=-nogui
 
+:skipnogui
 :: check for verbose
 if [%2]==[-v] set v=yes
 if [%3]==[-v] set v=yes

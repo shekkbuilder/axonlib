@@ -319,8 +319,6 @@ typedef unsigned short        __may_alias ushort_a;
 typedef char                  __may_alias char_a;
 typedef unsigned char         __may_alias uchar_a;
 
-// cdecl, stdcall
-
 // dllexport, dllimport, cdecl, stdcall
 #undef  __dllexport
 #undef  __dllimport
