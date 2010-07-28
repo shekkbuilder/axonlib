@@ -50,13 +50,14 @@ function show_help
   echo "* axonlib compile script for linux"
   echo ""
   echo "usage:"
-  echo "./compile [file.cpp] [-h] [-linux or -win32] [format] [-nogui] [-nmv] [-d] [-v] [...]"
+  echo "./compile [file.cpp] [-h] [-linux or -win32] [format] [options] [...]"
   echo ""  
   echo "-linux : target linux (default)"
   echo "-win32 : target windows using mingw"
   echo "-exe : create an executable (default)"
   echo "-ladspa : create a ladspa library"
-  echo "-vst : create a vst library"   
+  echo "-vst : create a vst library"
+  echo "-64 : target 64bit (default is 32bit)"   
   echo "-nogui : compile without gui"
   echo "-nmv : do not move result to ../bin"
   echo "-ts : add time stamp to name e.g. plugin-vst-20153569.so" 
@@ -105,10 +106,12 @@ else
   res="" 
   v="no"
   suffix=""
-  dbgsx=""
+  dbgsx=""  
   ts=""
   nogui=""
   noguisx=""
+  mplt="-m32"
+  mpltsx="x86"
     
   # ------------------------- get timestamp
   if [ "$2" == "-ts" ] || [ "$3" == "-ts" ] || [ "$4" == "-ts" ] || [ "$5" == "-ts" ] || [ "$6" == "-ts" ] || [ "$7" == "-ts" ] || [ "$8" == "-ts" ]
@@ -121,41 +124,49 @@ else
   
   # ------------------------- check for extra paramers
   ext_params=""
-  if [ "$2" != "-linux" ] && [ "$2" != "-win32" ] && [ "$2" != "-exe" ] && [ "$2" != "-ladspa" ] && [ "$2" != "-vst" ] && [ "$2" != "-nmv" ] && [ "$2" != "-d" ] && [ "$2" != "-g" ] && [ "$2" != "-v" ] && [ "$2" != "-ts" ] && [ "$2" != "-nogui" ];
+  if [ "$2" != "-linux" ] && [ "$2" != "-win32" ] && [ "$2" != "-exe" ] && [ "$2" != "-ladspa" ] && [ "$2" != "-vst" ] && [ "$2" != "-nmv" ] && [ "$2" != "-d" ] && [ "$2" != "-g" ] && [ "$2" != "-v" ] && [ "$2" != "-ts" ] && [ "$2" != "-nogui"] && [ "$2" != "-64" ] && [ "$2" != "-32" ];
     then
   # exp_t2=" $2"
       ext_p2=" $2"
   fi
-  if [ "$3" != "-linux" ] && [ "$3" != "-win32" ] && [ "$3" != "-exe" ] && [ "$3" != "-ladspa" ] && [ "$3" != "-vst" ] && [ "$3" != "-nmv" ] && [ "$3" != "-d" ] && [ "$3" != "-g" ] && [ "$3" != "-v" ] && [ "$3" != "-ts" ] && [ "$3" != "-nogui" ];
+  if [ "$3" != "-linux" ] && [ "$3" != "-win32" ] && [ "$3" != "-exe" ] && [ "$3" != "-ladspa" ] && [ "$3" != "-vst" ] && [ "$3" != "-nmv" ] && [ "$3" != "-d" ] && [ "$3" != "-g" ] && [ "$3" != "-v" ] && [ "$3" != "-ts" ] && [ "$3" != "-nogui" ] && [ "$3" != "-64" ] && [ "$3" != "-32" ];
     then
       ext_p3=" $3"
   fi
-  if [ "$4" != "-linux" ] && [ "$4" != "-win32" ] && [ "$4" != "-exe" ] && [ "$4" != "-ladspa" ] && [ "$4" != "-vst" ] && [ "$4" != "-nmv" ] && [ "$4" != "-d" ] && [ "$4" != "-g" ] && [ "$4" != "-v" ] && [ "$4" != "-ts" ] && [ "$4" != "-nogui" ];
+  if [ "$4" != "-linux" ] && [ "$4" != "-win32" ] && [ "$4" != "-exe" ] && [ "$4" != "-ladspa" ] && [ "$4" != "-vst" ] && [ "$4" != "-nmv" ] && [ "$4" != "-d" ] && [ "$4" != "-g" ] && [ "$4" != "-v" ] && [ "$4" != "-ts" ] && [ "$4" != "-nogui" ] && [ "$4" != "-64" ] && [ "$4" != "-32" ];
     then
       ext_p4=" $4"
   fi
-  if [ "$5" != "-linux" ] && [ "$5" != "-win32" ] && [ "$5" != "-exe" ] && [ "$5" != "-ladspa" ] && [ "$5" != "-vst" ] && [ "$5" != "-nmv" ] && [ "$5" != "-d" ] && [ "$5" != "-g" ] && [ "$5" != "-v" ] && [ "$5" != "-ts" ] && [ "$5" != "-nogui" ];
+  if [ "$5" != "-linux" ] && [ "$5" != "-win32" ] && [ "$5" != "-exe" ] && [ "$5" != "-ladspa" ] && [ "$5" != "-vst" ] && [ "$5" != "-nmv" ] && [ "$5" != "-d" ] && [ "$5" != "-g" ] && [ "$5" != "-v" ] && [ "$5" != "-ts" ] && [ "$5" != "-nogui" ] && [ "$5" != "-64" ] && [ "$5" != "-32" ];
     then
       ext_p5=" $5"
   fi
-  if [ "$6" != "-linux" ] && [ "$6" != "-win32" ] && [ "$6" != "-exe" ] && [ "$6" != "-ladspa" ] && [ "$6" != "-vst" ] && [ "$6" != "-nmv" ] && [ "$6" != "-d" ] && [ "$6" != "-g" ] && [ "$6" != "-v" ] && [ "$6" != "-ts" ] && [ "$6" != "-nogui" ];
+  if [ "$6" != "-linux" ] && [ "$6" != "-win32" ] && [ "$6" != "-exe" ] && [ "$6" != "-ladspa" ] && [ "$6" != "-vst" ] && [ "$6" != "-nmv" ] && [ "$6" != "-d" ] && [ "$6" != "-g" ] && [ "$6" != "-v" ] && [ "$6" != "-ts" ] && [ "$6" != "-nogui" ] && [ "$6" != "-64" ] && [ "$6" != "-32" ];
     then
       ext_p6=" $6"
   fi
-  if [ "$7" != "-linux" ] && [ "$7" != "-win32" ] && [ "$7" != "-exe" ] && [ "$7" != "-ladspa" ] && [ "$7" != "-vst" ] && [ "$7" != "-nmv" ] && [ "$7" != "-d" ] && [ "$7" != "-g" ] && [ "$7" != "-v" ] && [ "$7" != "-ts" ] && [ "$7" != "-nogui" ];
+  if [ "$7" != "-linux" ] && [ "$7" != "-win32" ] && [ "$7" != "-exe" ] && [ "$7" != "-ladspa" ] && [ "$7" != "-vst" ] && [ "$7" != "-nmv" ] && [ "$7" != "-d" ] && [ "$7" != "-g" ] && [ "$7" != "-v" ] && [ "$7" != "-ts" ] && [ "$7" != "-nogui" ] && [ "$7" != "-64" ] && [ "$7" != "-32" ];
     then
       ext_p7=" $7"
   fi
-  if [ "$8" != "-linux" ] && [ "$8" != "-win32" ] && [ "$8" != "-exe" ] && [ "$8" != "-ladspa" ] && [ "$8" != "-vst" ] && [ "$8" != "-nmv" ] && [ "$8" != "-d" ] && [ "$8" != "-g" ] && [ "$8" != "-v" ] && [ "$8" != "-ts" ] && [ "$8" != "-nogui" ];
+  if [ "$8" != "-linux" ] && [ "$8" != "-win32" ] && [ "$8" != "-exe" ] && [ "$8" != "-ladspa" ] && [ "$8" != "-vst" ] && [ "$8" != "-nmv" ] && [ "$8" != "-d" ] && [ "$8" != "-g" ] && [ "$8" != "-v" ] && [ "$8" != "-ts" ] && [ "$8" != "-nogui" ] && [ "$8" != "-64" ] && [ "$8" != "-32" ];
     then
       ext_p8=" $8"
   fi
-  if [ "$9" != "-linux" ] && [ "$9" != "-win32" ] && [ "$9" != "-exe" ] && [ "$9" != "-ladspa" ] && [ "$9" != "-vst" ] && [ "$9" != "-nmv" ] && [ "$9" != "-d" ] && [ "$9" != "-g" ] && [ "$9" != "-v" ] && [ "$9" != "-ts" ] && [ "$9" != "-nogui" ];
+  if [ "$9" != "-linux" ] && [ "$9" != "-win32" ] && [ "$9" != "-exe" ] && [ "$9" != "-ladspa" ] && [ "$9" != "-vst" ] && [ "$9" != "-nmv" ] && [ "$9" != "-d" ] && [ "$9" != "-g" ] && [ "$9" != "-v" ] && [ "$9" != "-ts" ] && [ "$9" != "-nogui" ] && [ "$9" != "-64" ] && [ "$9" != "-32" ];
     then
       ext_p9=" $9"
   fi
   
   ext_params=$ext_p2$ext_p3$ext_p4$ext_p5$ext_p6$ext_p7$ext_p8$ext_p9
+  
+  # ------------------------- check for 64bit
+  
+  if [ "$2" == "-64" ] || [ "$3" == "-64" ] || [ "$4" == "-64" ] || [ "$5" == "-64" ] || [ "$6" == "-64" ] || [ "$7" == "-64" ] || [ "$8" == "-64" ] || [ "$9" == "-64" ];
+  then
+    mplt="-m64"
+    mpltsx="x64"
+  fi
   
   # ------------------------- check if no gui
   
@@ -291,7 +302,8 @@ else
         echo "* target binary format is: exe (ELF)"
       else
         echo "* target binary format is:$libformat $fmt_ext"
-      fi      
+      fi
+      echo "* target platform is: $mpltsx"
       echo "* lib debug is: $libdebugstatus"
       echo "* gcc debug is: $gccdebugstatus"
       if [ "$nogui" == "yes" ];
@@ -338,7 +350,7 @@ else
       fi
     fi
     
-    target_s_ext=$file$suffix$noguisx$dbgsx$ts$fmt_ext
+    target_s_ext=$file$suffix$noguisx$dbgsx-$mpltsx$ts$fmt_ext
     
     # ------------------------- delete old file if exist
     if [ -e "$target_s_ext" ];
@@ -347,7 +359,7 @@ else
     fi
     
     # ------------------------- command line (compile)
-    _cmdline="$compiler \"${1}\" -o \"${target_s_ext}\" -I$ladspapath -I$vstpath -I$axpath $tgt $res $gccdebug $libdebug $ext_params $format $warn $opt $linker"
+    _cmdline="$compiler \"${1}\" -o \"${target_s_ext}\" -I$ladspapath -I$vstpath -I$axpath $tgt $res $gccdebug $libdebug $ext_params $format $warn $opt $mplt $linker"
     if [ "$v" == "yes" ];
     then
         echo ""
