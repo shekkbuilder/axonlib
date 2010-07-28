@@ -52,7 +52,7 @@ set gccdbg=
 set cmdline=
 set v=
 set suffix=
-set platform=
+set m64=
 set ext_params=
 set ext_p2=
 set ext_p3=
@@ -84,15 +84,32 @@ if not "%infile:~-4%"=="%srcext%" goto nocpp
 if not exist %axpath% goto noax
 
 :: check for additional params
-if not [%2]==[] (if not [%2]==[-v] (if not [%2]==[-d] (if not [%2]==[-g] (if not [%2]==[-ladspa] (if not [%2]==[-vst] (if not [%2]==[-exe] (if not [%2]==[-ts] (if not [%2]==[-nogui] (if not [%2]==[-nmv] set ext_p2= %2)))))))))
-if not [%3]==[] (if not [%3]==[-v] (if not [%3]==[-d] (if not [%3]==[-g] (if not [%3]==[-ladspa] (if not [%3]==[-vst] (if not [%3]==[-exe] (if not [%3]==[-ts] (if not [%3]==[-nogui] (if not [%3]==[-nmv] set ext_p3= %3)))))))))
-if not [%4]==[] (if not [%4]==[-v] (if not [%4]==[-d] (if not [%4]==[-g] (if not [%4]==[-ladspa] (if not [%4]==[-vst] (if not [%4]==[-exe] (if not [%4]==[-ts] (if not [%4]==[-nogui] (if not [%4]==[-nmv] set ext_p4= %4)))))))))
-if not [%5]==[] (if not [%5]==[-v] (if not [%5]==[-d] (if not [%5]==[-g] (if not [%5]==[-ladspa] (if not [%5]==[-vst] (if not [%5]==[-exe] (if not [%5]==[-ts] (if not [%5]==[-nogui] (if not [%5]==[-nmv] set ext_p5= %5)))))))))
-if not [%6]==[] (if not [%6]==[-v] (if not [%6]==[-d] (if not [%6]==[-g] (if not [%6]==[-ladspa] (if not [%6]==[-vst] (if not [%6]==[-exe] (if not [%6]==[-ts] (if not [%6]==[-nogui] (if not [%6]==[-nmv] set ext_p6= %6)))))))))
-if not [%7]==[] (if not [%7]==[-v] (if not [%7]==[-d] (if not [%7]==[-g] (if not [%7]==[-ladspa] (if not [%7]==[-vst] (if not [%7]==[-exe] (if not [%7]==[-ts] (if not [%7]==[-nogui] (if not [%7]==[-nmv] set ext_p7= %7)))))))))
-if not [%8]==[] (if not [%8]==[-v] (if not [%8]==[-d] (if not [%8]==[-g] (if not [%8]==[-ladspa] (if not [%8]==[-vst] (if not [%8]==[-exe] (if not [%8]==[-ts] (if not [%8]==[-nogui] (if not [%8]==[-nmv] set ext_p8= %8)))))))))
-if not [%9]==[] (if not [%9]==[-v] (if not [%9]==[-d] (if not [%9]==[-g] (if not [%9]==[-ladspa] (if not [%9]==[-vst] (if not [%9]==[-exe] (if not [%9]==[-ts] (if not [%9]==[-nogui] (if not [%9]==[-nmv] set ext_p9= %9)))))))))
+if not [%2]==[] (if not [%2]==[-v] (if not [%2]==[-d] (if not [%2]==[-g] (if not [%2]==[-ladspa] (if not [%2]==[-vst] (if not [%2]==[-exe] (if not [%2]==[-ts] (if not [%2]==[-nogui] (if not [%2]==[-nmv] (if not [%2]==[-64] (if not [%2]==[-32] set ext_p2= %2)))))))))))
+if not [%3]==[] (if not [%3]==[-v] (if not [%3]==[-d] (if not [%3]==[-g] (if not [%3]==[-ladspa] (if not [%3]==[-vst] (if not [%3]==[-exe] (if not [%3]==[-ts] (if not [%3]==[-nogui] (if not [%3]==[-nmv] (if not [%3]==[-64] (if not [%3]==[-32] set ext_p3= %3)))))))))))
+if not [%4]==[] (if not [%4]==[-v] (if not [%4]==[-d] (if not [%4]==[-g] (if not [%4]==[-ladspa] (if not [%4]==[-vst] (if not [%4]==[-exe] (if not [%4]==[-ts] (if not [%4]==[-nogui] (if not [%4]==[-nmv] (if not [%4]==[-64] (if not [%4]==[-32] set ext_p4= %4)))))))))))
+if not [%5]==[] (if not [%5]==[-v] (if not [%5]==[-d] (if not [%5]==[-g] (if not [%5]==[-ladspa] (if not [%5]==[-vst] (if not [%5]==[-exe] (if not [%5]==[-ts] (if not [%5]==[-nogui] (if not [%5]==[-nmv] (if not [%5]==[-64] (if not [%5]==[-32] set ext_p5= %5)))))))))))
+if not [%6]==[] (if not [%6]==[-v] (if not [%6]==[-d] (if not [%6]==[-g] (if not [%6]==[-ladspa] (if not [%6]==[-vst] (if not [%6]==[-exe] (if not [%6]==[-ts] (if not [%6]==[-nogui] (if not [%6]==[-nmv] (if not [%6]==[-64] (if not [%6]==[-32] set ext_p6= %6)))))))))))
+if not [%7]==[] (if not [%7]==[-v] (if not [%7]==[-d] (if not [%7]==[-g] (if not [%7]==[-ladspa] (if not [%7]==[-vst] (if not [%7]==[-exe] (if not [%7]==[-ts] (if not [%7]==[-nogui] (if not [%7]==[-nmv] (if not [%7]==[-64] (if not [%7]==[-32] set ext_p7= %7)))))))))))
+if not [%8]==[] (if not [%8]==[-v] (if not [%8]==[-d] (if not [%8]==[-g] (if not [%8]==[-ladspa] (if not [%8]==[-vst] (if not [%8]==[-exe] (if not [%8]==[-ts] (if not [%8]==[-nogui] (if not [%8]==[-nmv] (if not [%8]==[-64] (if not [%8]==[-32] set ext_p8= %8)))))))))))
+if not [%9]==[] (if not [%9]==[-v] (if not [%9]==[-d] (if not [%9]==[-g] (if not [%9]==[-ladspa] (if not [%9]==[-vst] (if not [%9]==[-exe] (if not [%9]==[-ts] (if not [%9]==[-nogui] (if not [%9]==[-nmv] (if not [%9]==[-64] (if not [%9]==[-32] set ext_p9= %9)))))))))))
 set ext_params=%ext_p2%%ext_p3%%ext_p4%%ext_p5%%ext_p6%%ext_p7%%ext_p8%%ext_p9%
+
+:: check platform
+if [%2]==[-64] set m64=yes
+if [%3]==[-64] set m64=yes
+if [%4]==[-64] set m64=yes
+if [%5]==[-64] set m64=yes
+if [%6]==[-64] set m64=yes
+if [%7]==[-64] set m64=yes
+if [%8]==[-64] set m64=yes
+if [%9]==[-64] set m64=yes
+if [%m64%]==[] ( 
+  set mplt=-m32
+  set mpltsx=x86
+) else (
+  set mplt=-m64
+  set mpltsx=x64
+)
 
 :: check for 'not move'
 if [%2]==[-nmv] set nmv=yes
@@ -245,12 +262,13 @@ echo.
 echo ---------------------------------------------------------------------------
 echo * axonlib compile script for windows
 echo.
-echo usage: compile.cmd [file.cpp] [-h] [format] [-nmv] [-nogui] [-d] [-g] [...]
+echo usage: compile.cmd [file.cpp] [-h] [format] [other options] [...]
 echo  -exe : create an executable (default)
 echo  -vst : create a vst dll
 echo  -ladspa : create a ladspa dll
 echo  -nmv : do not move result to ..\bin
 echo  -nogui : compile without gui
+echo  -64 : target 64bit (default is 32bit)
 echo  -ts : add time stamp to name e.g. plugin-vst-20153569.dll
 echo  -d : enable library debug mode
 echo  -g : enable gcc debug mode (-gstabs)
@@ -282,7 +300,7 @@ if not [%usets%]==yes set td1=
 :: set target
 :settarget
 call set target=%%infile:%srcext%=%%
-set target=%target%%suffix%%noguisx%%dbgsuffix%%td1%%ext%
+set target=%target%%suffix%%noguisx%%dbgsuffix%-%mpltsx%%td1%%ext%
 set cmdpath=%~p0
 
 :: delete old target
@@ -294,6 +312,7 @@ for /f "tokens=*" %%i in ('%mgwpath% -dumpversion') do set gccversion=%%i
 echo * compiling windows binary for '%infile%'...
 if not [%v%]==[] echo * using gcc version: %gccversion%
 if not [%v%]==[] echo * binary format is:%libfmt% %ext%
+if not [%v%]==[] echo * target platform is: %mpltsx%
 if not [%v%]==[] echo * lib debug is: %dstatus%
 if not [%v%]==[] echo * gcc debug is: %gccdstatus%
 if not [%v%]==[] if "%noguisx%" == "-nogui" echo * gui is: OFF
@@ -303,7 +322,7 @@ if not [%v%]==[] if "%libfmt%" == " LADSPA" echo * found ladpsa sdk path '%ladsp
 
 :compile
 if not [%v%]==[] echo.
-set cmdline=%mgwpath% -I%axpath% -I%vstpath% -I%ladspapath% %tgtformat% %opt% %warn% %gccdbg% %dbg% "%infile%" %res% -o "%target%" %ext_params% %tgtlib% %linker%
+set cmdline=%mgwpath% -I%axpath% -I%vstpath% -I%ladspapath% %tgtformat% %opt% %warn% %gccdbg% %dbg% "%infile%" %res% -o "%target%" %ext_params% %tgtlib% %mplt% %linker%
 :: show cmdline
 if not [%v%]==[] echo command line is: %cmdline% && echo.
 :: call g++
