@@ -244,13 +244,6 @@ goto begin
 :: format is exe
 :exetarget
 if not [%v%]==[] echo ---------------------------------------------------------------------------
-if [%resfile%]==[] goto exenores
-echo preparing resources...
-if exist %resfile%.o del %resfile%.o
-%windrespath% -i %resfile% -o %resfile%.o
-if not exist %resfile%.o goto nores
-set res=%resfile%.o
-:exenores
 set libfmt=
 set ext=.exe
 set tgtformat=-DAX_FORMAT_EXE
@@ -283,6 +276,15 @@ goto end
 :: --------------------------
 :begin
 
+:: resources
+if [%resfile%]==[] goto nores
+echo * preparing resources...
+if exist %resfile%.o del %resfile%.o
+%windrespath% -i %resfile% -o %resfile%.o
+if not exist %resfile%.o goto nores
+set res=%resfile%.o
+:nores
+
 :: get time stamp
 if [%usets%]==[] goto nots
 set td=%date%%time%
@@ -307,11 +309,11 @@ set cmdpath=%~p0
 if exist %target% del %target%
 
 :: echo settings
-echo.
 for /f "tokens=*" %%i in ('%mgwpath% -dumpversion') do set gccversion=%%i
 echo * compiling windows binary for '%infile%'...
-if not [%v%]==[] echo * using gcc version: %gccversion%
-if not [%v%]==[] echo * binary format is:%libfmt% %ext%
+if not [%v%]==[] echo.
+if not [%v%]==[] echo * compiler is: %gccversion%
+if not [%v%]==[] echo * target binary format is:%libfmt% %ext%
 if not [%v%]==[] echo * target platform is: %mpltsx%
 if not [%v%]==[] echo * lib debug is: %dstatus%
 if not [%v%]==[] echo * gcc debug is: %gccdstatus%
