@@ -19,14 +19,15 @@ ladspapath="../../ladspa_sdk/src"
 gpp="g++"
 
 # mingw command
+# rename if you are going to use a 64bit mingw
 mingw="i586-mingw32msvc-g++"
 
 # windres command
 windres="i586-mingw32msvc-windres"
 
 # set windows PE resource file (leave blank for no resources)
-# axonlib provides an example 'plugins/rc_default.rc' that adds an icon
-# 'plugins/rc_axlogo.ico' and some text details like author, program name etc.
+# axonlib provides an example 'source/rc_default.rc' that adds an icon
+# 'source/rc_axlogo.ico' and some text details like author, program name etc.
 resfile="rc_default.rc"
 
 # warning flags
@@ -273,16 +274,14 @@ else
     # ------------------------- resource file (mingw32-windres)
     if [ "{$resfile}" != "" ] && [ "$compiler" == "$mingw" ];
     then
-      echo "preparing resources..."
+      echo "* preparing resources..."
       if [ -e "{$resfile}".o ];
       then
         rm -f "{$resfile}".o
-      fi
-      #`$windres -i "{$resfile}" -o "{$resfile.o}"`
-      #if [ -e "{$resfile}".o ];
+      fi      
       `$windres -i "$resfile" -o "$resfile.o"`
       if [ -e "$resfile".o ];
-      then    
+      then
         res="$resfile".o
       else
         res="error"
@@ -290,8 +289,7 @@ else
       fi
     fi
     
-    # ------------------------- echo settings
-    echo ""
+    # ------------------------- echo settings    
     echo "* compiling binary for '$1'..."
     if [ "$v" == "yes" ];
     then
