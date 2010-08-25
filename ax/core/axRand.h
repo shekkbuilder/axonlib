@@ -38,7 +38,10 @@
 
 #ifndef AX_NO_RAND      // if not defined: use axonlib's axRand() methods
 
-//#include <iostream>
+/*
+  axRand
+  default fast prng
+*/
 
 class axRand
 {
@@ -47,15 +50,12 @@ class axRand
 
   public:
     axRand(const unsigned int x)
-    {
-      _axrnd = x;
-    }
+    { _axrnd = x; }
     
     axRand()
     {
       axCpu c;
       _axrnd = (unsigned int)c.rdtsc();
-      //std::cout << _axrnd << "\n";
     }
     
     ~axRand() {}
@@ -90,9 +90,65 @@ class axRand
 
 };
 
+
+/*
+  axRandAlvo
+  slightly better prng based on:
+  http://www.number.com.pt/Alvo.html  
+*/
+
+#define AXRANDSF_MAX  2147483647L
+#define AXALVORND_T   double
+
+class axRandAlvo
+{
+  private:
+    AXALVORND_T x,a;
+  public:
+    axRandAlvo()
+    {
+      axCpu c;
+      x = ((AXALVORND_T)((unsigned int)c.rdtsc()))*0.000000001f;
+      a = x*0.99f;
+    }
+    
+    ~axRandAlvo() {}
+    
+    __axrand_inline AXALVORND_T rand(const AXALVORND_T range = 1.f)
+    {
+      a += x;
+      x = a*x + 0.5f;
+      x -= (unsigned int)x;
+      a *= 0.5f;
+      return x*range;
+    }
+    
+    __axrand_inline void seed(unsigned int s)
+    {
+      if (s == 0)
+      {
+        x = 100.f;
+        a = x*0.99f;
+        return;
+      }
+      x = ((AXALVORND_T)(s *= 16807))*0.000000001f;
+      a = x*0.99f;
+    }
+    
+    __axrand_inline AXALVORND_T randSigned(const AXALVORND_T range = 1.f)
+    {  return (2.f*rand() - 1.f)*range; }
+    
+    __axrand_inline unsigned int randInt(const unsigned int top = AXRANDSF_MAX)
+    { return (unsigned long) (rand()*top); }
+    
+    __axrand_inline unsigned int randBit(const unsigned int bits = 16)
+    { return (unsigned int) (rand()*AXRANDSF_MAX) >> (31 - bits); }
+    
+};
+
 /*
   ------------------------------------------------------------------------------
-  axRandSinf()
+  axRandSinf
   - non-uniform, trigonometric, "negative" distribution
     (more values towards min, max)
   - uses class constructor
@@ -105,7 +161,6 @@ class axRand
 */
 
 #define AXRANDSINF_MAX    3.40282347e+38F
-#define AXRANDSF_MAX      2147483647L
 
 #define _AXRANDSINF \
   if (x >= AXRANDSINF_MAX ) x = 0.f; \
@@ -136,7 +191,7 @@ class axRandSinf
       y = 1.f;
     }
       
-    axRandSinf(const unsigned long _x)  { x = (float)_x; }
+    axRandSinf(const unsigned int _x)  { x = (float)_x; }
     axRandSinf(const float _x)          { x = _x;        }
 
     ~axRandSinf() {}
@@ -150,11 +205,11 @@ class axRandSinf
     __axrand_inline float randSigned(void)
     { _AXRANDSINF; return y; }
 
-    __axrand_inline unsigned long randInt(void)
-    { _AXRANDSINF;  return (unsigned long) (AXRANDSF_MAX * _AXRANDSINF_SHIFT); }
+    __axrand_inline unsigned int randInt(void)
+    { _AXRANDSINF;  return (unsigned int) (AXRANDSF_MAX * _AXRANDSINF_SHIFT); }
 
-    __axrand_inline unsigned long randInt(const unsigned long _top)
-    { _AXRANDSINF; return (unsigned long) ( _top * _AXRANDSINF_SHIFT ); }
+    __axrand_inline unsigned int randInt(const unsigned int _top)
+    { _AXRANDSINF; return (unsigned int) ( _top * _AXRANDSINF_SHIFT ); }
 };
 
 #else // AX_NO_RAND

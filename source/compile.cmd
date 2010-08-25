@@ -27,6 +27,7 @@ set warn=-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long
 set resfile="rc_default.rc"
 
 :: set optimization flags
+:: you can add --whole-program --combine here for newer GCC
 set opt=-O3
 
 :: target & libraries
@@ -312,7 +313,7 @@ if exist %target% del %target%
 for /f "tokens=*" %%i in ('%mgwpath% -dumpversion') do set gccversion=%%i
 echo * compiling windows binary for '%infile%'...
 if not [%v%]==[] echo.
-if not [%v%]==[] echo * compiler is: %gccversion%
+if not [%v%]==[] echo * compiler is: GCC %gccversion%
 if not [%v%]==[] echo * target binary format is:%libfmt% %ext%
 if not [%v%]==[] echo * target platform is: %mpltsx%
 if not [%v%]==[] echo * lib debug is: %dstatus%
