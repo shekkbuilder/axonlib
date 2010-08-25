@@ -34,6 +34,7 @@ resfile="rc_default.rc"
 warn="-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long"
 
 # optimization
+# you can add --whole-program --combine here for newer GCC
 opt="-O3"
 
 # linker options
